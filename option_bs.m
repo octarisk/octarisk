@@ -1,4 +1,4 @@
-## Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
+## Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
 ##
 ## This program is free software; you can redistribute it and/or modify it under
 ## the terms of the GNU General Public License as published by the Free Software
@@ -35,14 +35,8 @@
 ## @item @var{sigma}: implied volatility of the stock price measured as annual standard deviation
 ## @item @var{divrate}: dividend rate p.a., continously compounded
 ## @end itemize
-## @seealso{option_willowtree, crr_binomialoption, option_exotic_mc}
+## @seealso{option_willowtree, swaption_black76}
 ## @end deftypefn
-
-## Author: Schinzilord <schinzilord@octarisk.com>
-## Maintainer: Stefan Schloegl
-## Created: 2015/10/07
-## Version: 1.0
-## Keywords: option pricing black-scholes
 
 function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X,T,r,sigma,divrate)
  

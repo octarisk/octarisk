@@ -1,4 +1,4 @@
-## Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
+## Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
 ##
 ## This program is free software; you can redistribute it and/or modify it under
 ## the terms of the GNU General Public License as published by the Free Software
@@ -50,12 +50,6 @@
 ## @end itemize
 ## @seealso{option_binomial, option_bs, option_exotic_mc}
 ## @end deftypefn
-
-## Author: Schinzilord <schinzilord@octarisk.com>
-## Maintainer: Stefan Schloegl
-## Created: 2015/12/09
-## Version: 1.0
-## Keywords: option pricing black-schol
 
 function [option_willowtree delta] = option_willowtree(CallFlag,AmericanFlag,S0,K,T,rf,sigma,dividend,dk,nodes)
 
