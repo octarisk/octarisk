@@ -1,5 +1,5 @@
 # octarisk
-Financial Risk Measurement in Octave
+Market Risk Measurement in Octave
 
 This project aims to provide a framework for assessing the market risk of financial portfolios.
 
