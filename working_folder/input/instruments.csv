@@ -1,0 +1,43 @@
+#Instrument Specifications
+HeaderCASH,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,asset_classCHAR
+Item,Cash Account EUR,CASH_EUR,1,CASH,EUR Cash Account,EUR,cash
+HeaderFRB,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,reference_curveCHAR,spread_curveCHAR,notionalNMBR,coupon_rateNMBR,termNMBR,last_reset_rateNMBR,enable_business_day_ruleBOOL,business_day_ruleNMBR,business_day_directionNMBR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,compounding_freqCHAR
+Item,BASF SE MTN v.2014(2018/2019),A1YC04,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,RF_IR_EUR,,RF_SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,22-Jan-2014,22-Jan-2019,backward,disc,act/365,0,FALSE,daily
+HeaderZCB,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,notionalNMBR,termNMBR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,compounding_freqCHAR
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,RF_IR_EUR,100,12,Fixed Income,21-Apr-2015,21-Apr-2020,backward,disc,act/365,0,FALSE,daily
+HeaderFRN,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,reference_curveCHAR,notionalNMBR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,last_reset_rateNMBR,termNMBR,compounding_freqCHAR
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,RF_IR_EUR,RF_IR_EUR,100,Fixed Income,04-Dec-2014,03-Jun-2020,backward,disc,act/365,0,FALSE,0.001,12,daily
+HeaderCOM,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,asset_classCHAR
+Item,ComStage ETF Commerzbank Commodity EW Index,ETF090,90.9,COM,ComStage ETF Commerzbank Commodity EW Index,EUR,RF_COM_DIV,1,Commodity
+Item,Goldmuenze 1 Unze,GOLDPHYS,1050.18,COM,Goldmuenze 1 Unze,EUR,RF_COM_GOLD,1,Commodity
+Item,Silbermuenze 1 Unze,SILVERPHYS,14.04,COM,Silbermuenze 1 Unze,EUR,RF_COM_SILVER,1,Commodity
+HeaderDBT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,spread_curveCHAR,durationNMBR,convexityNMBR,asset_classCHAR
+Item,iShares Barclays Capital Emerging Market Local Govt Bond,A1JB4Q,60.5,DBT,iShares Barclays Capital Emerging Market Local Govt Bond,EUR,RF_IR_USD,RF_SPREAD_EUR_HY,4.5,0.0,Fixed Income
+Item,iShares Citigroup Global Government Bond,A0RM43,102.48,DBT,iShares Citigroup Global Government Bond,USD,RF_IR_USD,,5.6,0.0,Fixed Income
+Item,iShares JPMorgan $ Emerging Markets Bond Fund,A0RFFT,99.93,DBT,iShares JPMorgan $ Emerging Markets Bond Fund,USD,RF_IR_USD,RF_SPREAD_EUR_HY,7.8,0.0,Fixed Income
+Item,iShares Global Corporate Bond,A1J7CK,95.98,DBT,iShares Global Corporate Bond,USD,RF_IR_EUR,RF_SPREAD_EUR_HY,12.1,0.0,Fixed Income
+HeaderSENSI,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,idio_volaNMBR,asset_classCHAR
+Item,ComStage ETF S&P 500,ETF012,199.94,EQU,ComStage ETF S&P 500,EUR,RF_EQ_NA,1,,Equity
+Item,db x-trackers Dow Jones Euro STOXX50,DBX1EU,35.28,EQU,db x-trackers Dow Jones Euro STOXX50,EUR,RF_EQ_EU,1,,Equity
+Item,ComStage ETF MSCI Pacific,ETF114,46.28,EQU,comstage EF MSCI Pacific,EUR,RF_EQ_AP,1,,Equity
+Item,iShares MSCI Japan,A0DPMW,11.63,EQU,iShares ETF MSCI Japan,EUR,RF_EQ_AP,1,,Equity
+Item,Comstage ETF MSCI Emerging Markets,ETF127,35.51,EQU,comstage ETF MSCI EM,EUR,RF_EQ_EM,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,Lyxor ETF MSCI Emerging Markets,LYX0BX,8.89,EQU,Lyxor ETF MSCI Emerging Markets,EUR,RF_EQ_EM,1,,Equity
+Item,ComStage ETF DJ STOXX 600,ETF060,72.82,EQU,comstage ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,Lyxor ETF MSCI World,LYX0AG,157.32,EQU,Lyxor ETF MSCI World,EUR,RF_EQ_NA|RF_EQ_EU|RF_EQ_AP,0.5|0.3|0.2,,Equity
+Item,iShares FTSE EPRA/NAREIT Global Property,A0LGQL,23.85,RET,iShares FTSE EPRA/NAREIT Global Property Dividend Plus,USD,RF_RE_DM,1,,REIT
+Item,QSC AG,513700,1.79,STK,QSC AG,EUR,RF_EQ_DE|IDIO,1.2|0.25,0.35,Equity
+Item,BASF SE,BASF11,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,Bitcoins,BTCOIN,246.92,ALT,BitCoins,EUR,RF_ALT_BC,1,,Alternative
+HeaderCASHFLOW,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,spread_curveCHAR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR
+Item,Cashflowinstrument,CFANLEIHE1,105,CASHFLOW,Cashflow instrument with cashflow vector,EUR,RF_IR_EUR,RF_SPREAD_EUR_HY,17-Jul-2015|16-Jul-2016|17-Jul-2017,3.0|3.0|103.00,Fixed Income
+HeaderOPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,vola_sensiNMBR,spotNMBR,strikeNMBR,spreadNMBR,multiplierNMBR,maturity_dateDATE,asset_classCHAR
+Item,DAX Call Option,ODAXC20160318,15,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,RF_EQ_DE,RF_IR_EUR,1,9220,10200,0,5,18-Apr-2016,Derivative
+Item,Gold Future Call Option,GCFUTC20160126,176,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,RF_COM_GOLD,RF_IR_EUR,1,1073,1160,0,100,26-Apr-2016,Derivative
+HeaderSWAPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,tenorNMBR,no_paymentsNMBR,spotNMBR,strikeNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,modelCHAR
+Item,IR Payer Swaption,SWAPTIONC20151217,0.075,SWAPT_EUR_REC,IR Payer Swaption,EUR,RF_VOLA_IR_EUR,RF_IR_EUR,RF_IR_EUR,10,1,0.025,0.027,disc,30/360,100,17-Oct-2018,Derivative,Black76
+HeaderFWD,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,underlying_idCHAR,underlying_sensitivityNMBR,discount_curveCHAR,strike_priceNMBR,underlying_price_baseNMBR,spreadNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,dividend_yieldNMBR,convenience_yieldNMBR,storage_costNMBR
+Item,EQForward_test,EQFORW01,2,EQFWD,EQForward test instrument,EUR,RF_EQ_DE,1,RF_IR_EUR,9656,0,0,disc,act/365,0.1,17-Oct-2018,Derivative,0.00,0.00,0.00
+HeaderSYNTH,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,instrumentsCHAR,weightsCHAR,asset_classCHAR
+Item,Synthetic_test,SYNTH01,121.1,SYNTH,Synthetic test instrument,EUR,A0RM43|EQFORW01,0.4|0.6,Diversified
