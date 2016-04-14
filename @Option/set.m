@@ -73,6 +73,118 @@ function s = set (option, varargin)
         s.value_base = val;
       else
         error ("set: expecting the value to be a real vector");
+      endif 
+    % ====================== set id ======================
+    elseif (ischar (prop) && strcmp (prop, "id"))   
+      if (ischar(val))
+        s.id = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set name ======================
+    elseif (ischar (prop) && strcmp (prop, "name"))   
+      if (ischar(val))
+        s.name = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set currency ======================
+    elseif (ischar (prop) && strcmp (prop, "currency"))   
+      if (ischar (val))
+        s.currency = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif  
+    % ====================== set valuation_date ======================
+    elseif (ischar (prop) && strcmp (prop, "valuation_date"))   
+      if (ischar (val))
+        s.valuation_date = datestr(strtrim(val),1);
+      else
+        error ("set: expecting the value to be a char");
+      endif  
+    % ====================== set maturity_date ======================
+    elseif (ischar (prop) && strcmp (prop, "maturity_date"))   
+      if (ischar (val))
+        s.maturity_date = datestr(strtrim(val),1);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set discount_curve  ======================
+    elseif (ischar (prop) && strcmp (prop, "discount_curve"))   
+      if (ischar (val))
+        s.discount_curve = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set sub_type ======================
+    elseif (ischar (prop) && strcmp (prop, "sub_type"))   
+      if (ischar (val))
+        s.sub_type = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set underlying ======================
+    elseif (ischar (prop) && strcmp (prop, "underlying"))   
+      if (ischar (val))
+        s.underlying = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set vola_surface ======================
+    elseif (ischar (prop) && strcmp (prop, "vola_surface"))   
+      if (ischar (val))
+        s.vola_surface = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set description ======================
+    elseif (ischar (prop) && strcmp (prop, "description"))   
+      if (ischar (val))
+        s.description = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif   
+    % ====================== set asset_class ======================
+    elseif (ischar (prop) && strcmp (prop, "asset_class"))   
+      if (ischar (val))
+        s.asset_class = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif   
+    % ====================== set multiplier ======================
+    elseif (ischar (prop) && strcmp (prop, "multiplier"))   
+      if (isnumeric (val) && isreal (val))
+        s.multiplier = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif  
+    % ====================== set spread ======================
+    elseif (ischar (prop) && strcmp (prop, "spread"))   
+      if (isnumeric (val) && isreal (val))
+        s.spread = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set strike ======================
+    elseif (ischar (prop) && strcmp (prop, "strike"))   
+      if (isnumeric (val) && isreal (val))
+        s.strike = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set spot ======================
+    elseif (ischar (prop) && strcmp (prop, "spot"))   
+      if (isnumeric (val) && isreal (val))
+        s.spot = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set vola_sensi ======================
+    elseif (ischar (prop) && strcmp (prop, "vola_sensi"))   
+      if (isnumeric (val) && isreal (val))
+        s.vola_sensi = val;
+      else
+        error ("set: expecting the value to be a real number");
       endif  
     else
       error ("set: invalid property of option class");

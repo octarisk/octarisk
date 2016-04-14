@@ -57,8 +57,7 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
             tmp_swaptionvalue_base      = swaption_bachelier(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
         end
         tmp_impl_vola_spread        = calibrate_swaption(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,tmp_swap_no_pmt,tmp_swap_tenor,tmp_multiplier,tmp_value,tmp_model);
-        tmp_swaptionvalue_base
-        tmp_impl_vola_spread
+
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 )
             disp(" Calibration failed with Retcode 99. Setting market value to THEO/Value");

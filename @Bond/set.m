@@ -134,13 +134,289 @@ function s = set (bond, varargin)
       endif
     % ====================== set value_base ======================
     elseif (ischar (prop) && strcmp (prop, "value_base"))   
-      if (isvector (val) && isreal (val))
+      if (isreal (val) && isnumeric(val))
         s.value_base = val;
       else
-        error ("set: expecting the value to be a real vector");
+        error ("set: expecting the value to be a real numeric vector");
+      endif 
+    % ====================== set name ======================
+    elseif (ischar (prop) && strcmp (prop, "name"))   
+      if (ischar (val) )
+        s.name = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set id ======================
+    elseif (ischar (prop) && strcmp (prop, "id"))   
+      if (ischar(val))
+        s.id = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set maturity_date ======================
+    elseif (ischar (prop) && strcmp (prop, "maturity_date"))   
+      if (ischar (val))
+        s.maturity_date = datestr(strtrim(val),1);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set issue_date ======================
+    elseif (ischar (prop) && strcmp (prop, "issue_date"))   
+      if (ischar (val))
+        s.issue_date = datestr(strtrim(val),1);
+      else
+        error ("set: expecting the value to be a char");
       endif  
+    % ====================== set spread_curve  ======================
+    elseif (ischar (prop) && strcmp (prop, "spread_curve"))   
+      if (ischar (val))
+        s.spread_curve = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+      
+    % ====================== set reference_curve  ======================
+    elseif (ischar (prop) && strcmp (prop, "reference_curve"))   
+      if (ischar (val))
+        s.reference_curve = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif  
+    % ====================== set discount_curve  ======================
+    elseif (ischar (prop) && strcmp (prop, "discount_curve"))   
+      if (ischar (val))
+        s.discount_curve = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set coupon_generation_method  ======================
+    elseif (ischar (prop) && strcmp (prop, "coupon_generation_method"))   
+      if (ischar (val))
+        s.coupon_generation_method = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set term ======================
+    elseif (ischar (prop) && strcmp (prop, "term"))   
+      if (isnumeric (val) && isreal (val))
+        s.term = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set compounding_freq  ======================
+    elseif (ischar (prop) && strcmp (prop, "compounding_freq"))   
+      if (isnumeric (val) && isreal(val))
+        s.compounding_freq  = val;
+      elseif (ischar(val))
+        s.compounding_freq  = val;
+      else
+        error ("set: expecting the value to be a real number or char");
+      endif       
+    % ====================== set day_count_convention ======================
+    elseif (ischar (prop) && strcmp (prop, "day_count_convention"))   
+      if (ischar (val))
+        s.day_count_convention = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set compounding_type ======================
+    elseif (ischar (prop) && strcmp (prop, "compounding_type"))   
+      if (ischar (val))
+        s.compounding_type = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set sub_type ======================
+    elseif (ischar (prop) && strcmp (prop, "sub_type"))   
+      if (ischar (val))
+        s.sub_type = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif   
+    % ====================== set valuation_date ======================
+    elseif (ischar (prop) && strcmp (prop, "valuation_date"))   
+      if (ischar (val))
+        s.valuation_date = datestr(strtrim(val),1);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set asset_class ======================
+    elseif (ischar (prop) && strcmp (prop, "asset_class"))   
+      if (ischar (val))
+        s.asset_class = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set currency ======================
+    elseif (ischar (prop) && strcmp (prop, "currency"))   
+      if (ischar (val))
+        s.currency = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set description ======================
+    elseif (ischar (prop) && strcmp (prop, "description"))   
+      if (ischar (val))
+        s.description = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set notional ======================
+    elseif (ischar (prop) && strcmp (prop, "notional"))   
+      if (isnumeric (val) && isreal (val))
+        s.notional = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set coupon_rate ======================
+    elseif (ischar (prop) && strcmp (prop, "coupon_rate"))   
+      if (isnumeric (val) && isreal (val))
+        s.coupon_rate = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set business_day_rule ======================
+    elseif (ischar (prop) && strcmp (prop, "business_day_rule"))   
+      if (isnumeric (val) && isreal (val))
+        s.business_day_rule = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set business_day_direction ======================
+    elseif (ischar (prop) && strcmp (prop, "business_day_direction"))   
+      if (isnumeric (val) && isreal (val))
+        s.business_day_direction = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set enable_business_day_rule ======================
+    elseif (ischar (prop) && strcmp (prop, "enable_business_day_rule"))   
+      if (isnumeric (val) && isreal (val))
+        s.enable_business_day_rule = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',tolower(val)))
+            s.enable_business_day_rule = logical(0);
+        elseif ( strcmp('true',tolower(val)))
+            s.enable_business_day_rule = logical(1);
+        else
+            printf("WARNING: Unknown val: >>%s<<. Setting enable_business_day_rule to false.",val);
+            s.enable_business_day_rule = logical(0);
+        end
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set spread ======================
+    elseif (ischar (prop) && strcmp (prop, "spread"))   
+      if (isnumeric (val) && isreal (val))
+        s.spread = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set long_first_period ======================
+    elseif (ischar (prop) && strcmp (prop, "long_first_period"))   
+      if (isnumeric (val) && isreal (val))
+        s.long_first_period = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',tolower(val)))
+            s.long_first_period = logical(0);
+        elseif ( strcmp('true',tolower(val)))
+            s.long_first_period = logical(1);
+        else
+            printf("WARNING: Unknown val: >>%s<<. Setting long_first_period to false.",val);
+            s.long_first_period = logical(0);
+        end
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set long_last_period ======================
+    elseif (ischar (prop) && strcmp (prop, "long_last_period"))   
+      if (isnumeric (val) && isreal (val))
+        s.long_last_period = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',tolower(val)))
+            s.long_last_period = logical(0);
+        elseif ( strcmp('true',tolower(val)))
+            s.long_last_period = logical(1);
+        else
+            printf("WARNING: Unknown val: >>%s<<. Setting long_last_period to false.",val);
+            s.long_last_period = logical(0);
+        end
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set last_reset_rate ======================
+    elseif (ischar (prop) && strcmp (prop, "last_reset_rate"))   
+      if (isnumeric (val) && isreal (val))
+        s.last_reset_rate = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set in_arrears ======================
+    elseif (ischar (prop) && strcmp (prop, "in_arrears"))   
+      if (isnumeric (val) && isreal (val))
+        s.in_arrears = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',tolower(val)))
+            s.in_arrears = logical(0);
+        elseif ( strcmp('true',tolower(val)))
+            s.in_arrears = logical(1);
+        else
+            printf("WARNING: Unknown val: >>%s<<. Setting in_arrears to false.",val);
+            s.in_arrears = logical(0);
+        end
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set fixed_annuity ======================
+    elseif (ischar (prop) && strcmp (prop, "fixed_annuity"))   
+      if (isnumeric (val) && isreal (val))
+        s.fixed_annuity = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',tolower(val)))
+            s.fixed_annuity = logical(0);
+        elseif ( strcmp('true',tolower(val)))
+            s.fixed_annuity = logical(1);
+        else
+            printf("WARNING: Unknown val: >>%s<<. Setting fixed_annuity to false.",val);
+            s.fixed_annuity = logical(0);
+        end
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set notional_at_start ======================
+    elseif (ischar (prop) && strcmp (prop, "notional_at_start"))   
+      if (isnumeric (val) && isreal (val))
+        s.notional_at_start = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',tolower(val)))
+            s.notional_at_start = logical(0);
+        elseif ( strcmp('true',tolower(val)))
+            s.notional_at_start = logical(1);
+        else
+            printf("WARNING: Unknown val: >>%s<<. Setting notional_at_start to false.",val);
+            s.notional_at_start = logical(0);
+        end
+      else
+        error ("set: expecting the value to be a real number");
+      endif 
+    % ====================== set notional_at_end  ======================
+    elseif (ischar (prop) && strcmp (prop, "notional_at_end "))   
+      if (isnumeric (val) && isreal (val))
+        s.notional_at_end = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',tolower(val)))
+            s.notional_at_end = logical(0);
+        elseif ( strcmp('true',tolower(val)))
+            s.notional_at_end = logical(1);
+        else
+            printf("WARNING: Unknown val: >>%s<<. Setting notional_at_end to false.",val);
+            s.notional_at_end = logical(0);
+        end
+      else
+        error ("set: expecting the value to be a real number");
+      endif       
     else
-      error ("set: invalid property of bond class");
+      error ("set: invalid property of bond class: %s",prop);
     endif
   endwhile
 endfunction

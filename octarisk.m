@@ -135,6 +135,16 @@ if ( ispc == 1)
 elseif ( isunix == 1)
     path = "/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder";
 endif
+    path_output = strcat(path,'/output');
+    path_reports = strcat(path,'/reports');
+    path_archive = strcat(path,'/archive');
+    path_input = strcat(path,'/input');
+    path_mktdata = strcat(path,'/mktdata');
+    mkdir(path_output);
+    mkdir(path_archive);
+    mkdir(path_input);
+    mkdir(path_mktdata);
+    mkdir(path_reports);
 % Set current working directory to path
 chdir(path);
 act_pwd = strrep(pwd,'\','/');
@@ -143,11 +153,11 @@ if ~( strcmp(path,act_pwd) )
 end
 
 % set filenames for input:
-input_filename_instruments = 'or_instruments.csv';
-input_filename_corr_matrix = 'corr24.dat';
-input_filename_stresstests = 'stresstests.csv';
-input_filename_riskfactors = 'riskfactors.csv';
-input_filename_positions = 'or_positions.csv';
+input_filename_instruments = 'instruments.csv';
+input_filename_corr_matrix = strcat(path_mktdata,'/corr24.dat');
+input_filename_stresstests = strcat(path_input,'/stresstests.csv');
+input_filename_riskfactors = strcat(path_input,'/riskfactors.csv');
+input_filename_positions = strcat(path_input,'/or_positions.csv');
 
 % set filenames for vola surfaces
 input_filename_vola_index = 'vol_index_';
@@ -172,6 +182,11 @@ base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
 mc_timesteps    = {'10d'}                % MC timesteps
 scenario_set    = [mc_timesteps,'stress'];          % append stress scenarios
+
+% specify unique runcode and timestamp:
+runcode = substr(md5sum(num2str(time()),true),-6)
+timestamp = strftime ("%Y%m%d_%H%M%S", localtime (time ()))
+
 first_eval      = 0;
 % I) #######            INPUT                 ####
 tic;
@@ -191,73 +206,22 @@ scenario_ts_days = [mc_timestep_days; 0];
 % 1. Processing Instruments data
 persistent instrument_struct;
 instrument_struct=struct();
-% a) Read in From instruments.csv  EBDEL_Instruments.csv or_instruments instruments_example
-[name id value type description currency riskfactors sensitivity special_num special_str cf_dates cf_values asset_class] = textread( input_filename_instruments, '%s %s %f %s %s %s %s %s %s %s %s %s %s' ,'delimiter' , ';' ,13 );
 
-% b) Loop via all entries in columns
-for ii = 2 : 1 : length(name)
-    tmp_name        = cell2mat(name(ii));
-    tmp_id          = cell2mat(id(ii));
-    tmp_value       = value(ii);
-    tmp_type        = cell2mat(type(ii));
-    tmp_desc        = cell2mat(description(ii));
-    tmp_currency    = cell2mat(currency(ii));
-    tmp_riskfactors =  strsplit( cell2mat(riskfactors(ii)), ',');
-    tmp_sensitivities = str2num( cell2mat(sensitivity(ii)) );  
-    tmp_special_num = str2num( cell2mat(special_num(ii)) );
-    tmp_special_str = strsplit( cell2mat(special_str(ii)), ',');
-    tmp_cf_dates    = strsplit( cell2mat(cf_dates(ii)), ',');
-    tmp_cf_values   = str2num( cell2mat(cf_values(ii)) ); 
-    tmp_asset_class = cell2mat( asset_class(ii) );
-    % convert cashflow dates to numbers and apply busday rule
-	if ( length(tmp_cf_dates) > 1 )
-		tmp_cf_dates = busdate(datenum(tmp_cf_dates,1));
-    else
-        tmp_cf_dates = [];
-	end
-    instrument_struct( ii - 1 ).name        = tmp_name;
-    instrument_struct( ii - 1 ).id          = tmp_id;
-    % Store data in appropriate Classes
-        if ( sum(strcmp(tmp_type,{'FRB','FRN','ZCB','FAB','CASHFLOW'})) > 0)        % store data in Class Bond
-            %disp("Fixed Income found. storing in object.");
-            instrument_struct( ii - 1 ).object = Bond(tmp_name,tmp_id,tmp_desc,tmp_type,tmp_currency,tmp_value,tmp_asset_class, ...
-                    valuation_date,tmp_riskfactors, tmp_sensitivities,tmp_special_num,tmp_special_str,tmp_cf_dates,tmp_cf_values);  
-        elseif ( sum(strcmp(tmp_type,{'EQFWD','BONDFWD'})) > 0)        % store data in Class Forward
-            %disp("Forward found. Storing in object.");
-            instrument_struct( ii - 1 ).object = Forward(tmp_name,tmp_id,tmp_desc,tmp_type,tmp_currency,tmp_value,tmp_asset_class, ...
-                    valuation_date,tmp_riskfactors, tmp_sensitivities,tmp_special_num,tmp_special_str,tmp_cf_dates,tmp_cf_values); 
-        elseif ( sum(strcmp(tmp_type,{'DBT'})) > 0)        % store data in Class Debt
-            %disp("Debt found. Storing in object.");
-            instrument_struct( ii - 1 ).object = Debt(tmp_name,tmp_id,tmp_desc,tmp_type,tmp_currency,tmp_value,tmp_asset_class, ...
-                    valuation_date,tmp_riskfactors, tmp_sensitivities,tmp_special_num,tmp_special_str,tmp_cf_dates,tmp_cf_values); 
-         elseif ( sum(strcmp(tmp_type,{'EQU','RET','COM','STK','ALT'})) > 0)        % store data in Class Sensitivity Instrument
-            %disp("Sensitivity Instrument found. Storing in object.");
-            instrument_struct( ii - 1 ).object = Sensitivity(tmp_name,tmp_id,tmp_desc,tmp_type,tmp_currency,tmp_value,tmp_asset_class, ...
-                    valuation_date,tmp_riskfactors, tmp_sensitivities,tmp_special_num,tmp_special_str,tmp_cf_dates,tmp_cf_values); 
-        elseif ( sum(strcmp(tmp_type,{'SYNTH'})) > 0)        % store data in Class Synthetic Instrument
-            %disp("Synthetic Instrument found. Storing in object.");
-            instrument_struct( ii - 1 ).object = Synthetic(tmp_name,tmp_id,tmp_desc,tmp_type,tmp_currency,tmp_value,tmp_asset_class, ...
-                    valuation_date,tmp_riskfactors, tmp_sensitivities,tmp_special_num,tmp_special_str,tmp_cf_dates,tmp_cf_values);  
-        elseif ( regexp(tmp_type,'^OPT') == 1)        % store data in Class Option
-            %disp("Option found. Storing in object.");
-            instrument_struct( ii - 1 ).object = Option(tmp_name,tmp_id,tmp_desc,tmp_type,tmp_currency,tmp_value,tmp_asset_class, ...
-                    valuation_date,tmp_riskfactors, tmp_sensitivities,tmp_special_num,tmp_special_str,tmp_cf_dates,tmp_cf_values);
-        elseif ( regexp(tmp_type,'^SWAPT') == 1)      % store data in Class Swaption
-            disp("Swaption found. Storing in object.");
-            instrument_struct( ii - 1 ).object = Swaption(tmp_name,tmp_id,tmp_desc,tmp_type,tmp_currency,tmp_value,tmp_asset_class, ...
-                    valuation_date,tmp_riskfactors, tmp_sensitivities,tmp_special_num,tmp_special_str,tmp_cf_dates,tmp_cf_values);
-        elseif ( sum(strcmp(tmp_type,{'CASH'})) > 0)  % store data in Class Cash
-            %disp("Cash Instrument found. Storing in object.");
-            instrument_struct( ii - 1 ).object = Cash(tmp_name,tmp_id,tmp_desc,tmp_type,tmp_currency,tmp_value,tmp_asset_class, ...
-                    valuation_date,tmp_riskfactors, tmp_sensitivities,tmp_special_num,tmp_special_str,tmp_cf_dates,tmp_cf_values);                    
-        endif
-endfor
+% % a) Read in from instruments file
+[instrument_struct id_failed_cell] = io_octarisk(instrument_struct,valuation_date,path_input,input_filename_instruments,path_output,path_archive);
+% for kk = 1 : 1 : length(instrument_struct)
+    % printf("New Object: %d \n",kk);
+    % instrument_struct(kk).id
+    % instrument_struct(kk).name;
+    % i = instrument_struct(kk).object;
+    % is_object = isobject(i)
+% end
 
 % 2. Processing Riskfactor data
 persistent riskfactor_struct;
 riskfactor_struct=struct();
 % a) Read in 
-input_filename_riskfactors = 'riskfactors.csv';
+
 [name id type description model parameters] = textread( input_filename_riskfactors, '%s %s %s %s %s %s' ,'delimiter' , ';' ,6 );
 
 % b) Loop via all entries in columns
@@ -279,7 +243,6 @@ endfor
 persistent portfolio_struct;
 portfolio_struct=struct();
 % a) Read in 
-input_filename_positions = 'or_positions.csv';
 [port id quantity] = textread( input_filename_positions, '%f %s %f' ,'delimiter' , ';' ,3 );
 
 % b) Loop via all entries in columns
@@ -303,7 +266,6 @@ endfor
 persistent stresstest_struct;
 stresstest_struct=struct();
 % a) Read in 
-input_filename_stresstests = 'stresstests.csv';
 [number id name risktype shiftvalue shifttype ] = textread( input_filename_stresstests, '%f %s %s %s %s %s' ,'delimiter' , ';' ,6 );
 
 % b) Loop via all entries in columns
@@ -342,7 +304,6 @@ endif
 
 %cov_matrix = load('covmat_24.dat'); % path to covariance matrix
 %[std_vector corr_matrix] = cov2corr(cov_matrix);
-input_filename_corr_matrix = 'corr24.dat';
 corr_matrix = load(input_filename_corr_matrix); % path to correlation matrix
 %corr_matrix = eye(length(riskfactor_struct));
 %std_vector'
@@ -473,7 +434,7 @@ endung = ".mat";
         tmp_riskfactor_struct(ii).object = struct(tmp_riskfactor_struct(ii).object);
     endfor
     savename = "tmp_riskfactor_struct";
-	fullpath = [path, savename, endung];
+	fullpath = [path_output, savename, endung];
 	save ("-text", fullpath, savename);
  
     % Saving instruments: loop via all objects in structs and convert
@@ -482,15 +443,15 @@ endung = ".mat";
         tmp_instrument_struct(ii).object = struct(tmp_instrument_struct(ii).object);
     endfor 
     savename = "tmp_instrument_struct";
-	fullpath = [path, savename, endung];
+	fullpath = [path_output, savename, endung];
 	save ("-text", fullpath, savename);
 
 savename = "portfolio_struct";
-	fullpath = [path, savename, endung];
+	fullpath = [path_output, savename, endung];
 	save ("-text", fullpath, savename);
 
 savename = "stresstest_struct";
-	fullpath = [path, savename, endung];
+	fullpath = [path_output, savename, endung];
 	save ("-text", fullpath, savename);
 end
 saving_time = toc;    
@@ -599,7 +560,7 @@ curve_gen_time = toc;
        
 % b) BEGIN: Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 % i) Get list of all vol files
-tmp_list_files = dir(pwd);
+tmp_list_files = dir(path_mktdata);
 persistent surface_struct;
 surface_struct=struct();
 % Apply dummy surface for VOLA_INDEX
@@ -618,7 +579,7 @@ for ii = 1 : 1 : length(tmp_list_files)
     tmp_filename = tmp_list_files( ii ).name;
     if ( regexp(tmp_filename,input_filename_vola_index) == 1)       % vola for index found  
         tmp_len_struct = length(surface_struct);
-        M = load(tmp_filename);
+        M = load(strcat(path_mktdata,'/',tmp_filename));
         % Get axis values and matrix: 
         % Format: 3 columns: xx yy value [moneyness term impl_vola]
         xx_structure = unique(M(:,1))';
@@ -640,7 +601,7 @@ for ii = 1 : 1 : length(tmp_list_files)
         % %tmp_surface_object
     elseif ( regexp(tmp_filename,input_filename_vola_ir) == 1)       % vola for ir found  
         tmp_len_struct = length(surface_struct);
-        M = load(tmp_filename);
+        M = load(strcat(path_mktdata,'/',tmp_filename));
         % Get axis values and matrix: 
         % Format: 4 columns: xx yy zz value [underlying_tenor  swaption_term  moneyness  impl_cola]
         xx_structure = unique(M(:,1))';
@@ -673,7 +634,8 @@ endfor
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
 %   Total Loop over all Instruments and type dependent valuation
-tic;
+fulvia = 0.0;
+fulvia_performance = {};
 for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and other scenarios
   tmp_scenario  = scenario_set{ kk };    % get scenario from scenario_set
   tmp_ts        = scenario_ts_days(kk);  % get timestep days
@@ -685,6 +647,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
   printf('== Full evaluation | scenario set %s | number of scenarios %d | timestep in days %d ==\n',tmp_scenario, scen_number,tmp_ts);
   for ii = 1 : 1 : length( instrument_struct )
     tmp_id = instrument_struct( ii ).id;
+    tic;
     tmp_instr_obj = get_sub_object(instrument_struct, tmp_id);         
     tmp_type = tmp_instr_obj.type;
     tmp_sub_type = tmp_instr_obj.sub_type;
@@ -906,11 +869,12 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % store cash object in struct:
                     instrument_struct( ii ).object = cash;
             end
-         
+     % store performance data into cell array
+     fulvia_performance{end + 1} = strcat(tmp_id,'_',num2str(scen_number),'_',num2str(toc),' s');
+     fulvia = fulvia + toc ;   
   endfor 
   first_eval = 1;
 endfor      % endfor eval mc timesteps and stress loops
-fulvia = toc;
  
  tic;
 if ( saving == 1 )
@@ -920,7 +884,7 @@ if ( saving == 1 )
         tmp_instrument_struct(ii).object = struct(tmp_instrument_struct(ii).object);
     endfor 
     savename = "tmp_instrument_struct_fv";
-	fullpath = [path, savename, endung];
+	fullpath = [path_output, savename, endung];
 	save ("-v7", fullpath, savename);
 end
 saving_time = saving_time + toc;  
@@ -984,7 +948,7 @@ for mm = 1 : 1 : length( portfolio_struct )
     base_value = portfolio_value
 
     % Fileoutput:
-    filename = strcat(path,"/VaR_report_",num2str(mm),".txt");
+    filename = strcat(path_reports,"/VaR_report_",num2str(mm),".txt");
     fid = fopen (filename, "w");
 
     fprintf("==================================================================== \n");
@@ -1526,7 +1490,7 @@ function  match_obj = get_sub_object(input_struct, input_id)
 	    	match_obj = input_struct(matches).object;
 		return;
 	else
-	    	error(" No matches found")
+	    	error(" No matches found for input_id: >>%s<<",input_id);
 		return;
 	end
 end

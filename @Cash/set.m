@@ -67,6 +67,76 @@ function s = set (cash, varargin)
         s.value_base = val;
       else
         error ("set: expecting the value to be a real vector");
+      endif 
+    % ====================== set name ======================
+    elseif (ischar (prop) && strcmp (prop, "name"))   
+      if (ischar (val) )
+        s.name = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set id ======================
+    elseif (ischar (prop) && strcmp (prop, "id"))   
+      if (ischar(val))
+        s.id = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set sub_type ======================
+    elseif (ischar (prop) && strcmp (prop, "sub_type"))   
+      if (ischar (val))
+        s.sub_type = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif   
+    % ====================== set valuation_date ======================
+    elseif (ischar (prop) && strcmp (prop, "valuation_date"))   
+      if (ischar (val))
+        s.valuation_date = datestr(strtrim(val),1);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set asset_class ======================
+    elseif (ischar (prop) && strcmp (prop, "asset_class"))   
+      if (ischar (val))
+        s.asset_class = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set currency ======================
+    elseif (ischar (prop) && strcmp (prop, "currency"))   
+      if (ischar (val))
+        s.currency = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set description ======================
+    elseif (ischar (prop) && strcmp (prop, "description"))   
+      if (ischar (val))
+        s.description = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set discount_curve  ======================
+    elseif (ischar (prop) && strcmp (prop, "discount_curve"))   
+      if (ischar (val))
+        s.discount_curve = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+     % ====================== set cf_values ======================
+    elseif (ischar (prop) && strcmp (prop, "cf_values"))   
+      if (isvector (val) && isreal (val))
+        s.cf_values = val;
+      else
+        error ("set: expecting the base values to be a real vector");
+      endif
+    % ====================== set cf_dates ======================
+    elseif (ischar (prop) && strcmp (prop, "cf_dates"))   
+      if (isvector (val) && isreal (val))
+        s.cf_dates = val;
+      else
+        error ("set: expecting the value to be a real vector");
       endif  
     else
       error ("set: invalid property of cash class");

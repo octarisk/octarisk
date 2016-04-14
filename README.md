@@ -5,6 +5,9 @@ This project aims to provide a framework for assessing the market risk of financ
 
 The code is written in Octave / Matlab language and will be useable right out-of-the box with Octave version >= 4.0.0.
 
+## Contributors
+Stefan Schloegl (schinzilord@octarisk.com)
+
 ## Installation
 
 You need Octave in Version >=4.0 with installed statistics and financial package.

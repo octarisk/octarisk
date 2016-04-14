@@ -54,7 +54,7 @@ classdef Bond < Instrument
            asset_class = 'Fixed Income';
            riskfactors = {'RF_IR_DUMMY','RF_IR_DUMMY','RF_SPREAD_DUMMY'};
            sensitivities = [1,1,1];
-           special_num = [100,0.045,12,0.0,0.0002,0];
+           special_num = [100,0.00,12,0.0,0.0002,0];
            special_str = {'01-Feb-2011','01-Feb-2025','forward','simple','30/360'};
            tmp_cf_dates = [];
            tmp_cf_values = [];
@@ -64,7 +64,7 @@ classdef Bond < Instrument
            tmp_cf_values = [];
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
-                tmp_cf_dates = (tmp_cf_dates)' .- today;
+                tmp_cf_dates = (tmp_cf_dates)' .- valuation_date;
             endif
         end
         % use constructor inherited from Class Instrument
@@ -192,8 +192,12 @@ classdef Bond < Instrument
          fprintf('sub_type: %s\n',b.sub_type);              
          fprintf('issue_date: %s\n',b.issue_date);         
          fprintf('maturity_date: %s\n',b.maturity_date);      
-         fprintf('compounding_type: %s\n',b.compounding_type);  
-         fprintf('compounding_freq: %d\n',b.compounding_freq);   
+         fprintf('compounding_type: %s\n',b.compounding_type); 
+         if (ischar(b.compounding_freq))
+            fprintf('compounding_freq: %s\n',b.compounding_freq); 
+         else
+            fprintf('compounding_freq: %d\n',b.compounding_freq);  
+         end
          fprintf('term: %d\n',b.term);   
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('Notional: %f %s\n',b.notional,b.currency); 
@@ -264,7 +268,7 @@ classdef Bond < Instrument
       end
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FRN') || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') || strcmpi(sub_type,'ZCB'))
-            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED or SWAP_FLOATING')
+            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED or SWAP_FLOATING: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
