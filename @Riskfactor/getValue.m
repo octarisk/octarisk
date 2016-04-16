@@ -24,7 +24,7 @@ function s = getValue (riskfactor, property, abs_flag, sensitivity) % method get
       if ( strcmp(property,'stress'))
         s = obj.scenario_stress;
       elseif ( strcmp(property,'base'))
-        s = obj.start_value;  
+        s = obj.value_base;  
       else
         tmp_timestep_mc = obj.timestep_mc;
         tmp_vec = strcmp(property,tmp_timestep_mc);
@@ -54,7 +54,7 @@ function s = getValue (riskfactor, property, abs_flag, sensitivity) % method get
   endif
   if nargin >= 3
     if ( strcmp(abs_flag,'abs') )
-        s = Riskfactor.get_abs_values(obj.model, s, obj.start_value, sensi);
+        s = Riskfactor.get_abs_values(obj.model, s, obj.value_base, sensi);
     else
         s = s;
     endif  

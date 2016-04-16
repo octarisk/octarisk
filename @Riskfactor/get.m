@@ -29,8 +29,10 @@ function s = get (obj, property)
           s = obj.skew; 
         case "kurt"
           s = obj.kurt; 
+        case "value_base"
+          s = obj.value_base;
         case "start_value"
-          s = obj.start_value;
+          s = obj.value_base;
         case "mr_level"
           s = obj.mr_level;
         case "mr_rate"
@@ -38,7 +40,7 @@ function s = get (obj, property)
         case "node"
           s = obj.node;
         case "rate"
-          s = obj.rate; 
+          s = obj.value_base; 
         otherwise
           error ("get: invalid property %s", property);
       endswitch

@@ -10,11 +10,10 @@ classdef Riskfactor
       std
       skew
       kurt
-      start_value = 1;
+      value_base = 1;
       mr_level
       mr_rate
       node
-      rate
       type = ''; 
    end
    
@@ -27,7 +26,7 @@ classdef Riskfactor
       timestep_mc = {};
     end
  
-% model	mean	standard_deviation	skewness	kurtosis	para5	        para6	    para7       para8     para9
+% model	mean	standard_deviation	skewness	kurtosis	
 % GBM	    x	    x	                x	        x	    IR node	        IR value			
 % BM	    x	    x	                x	        x	    IR node	        IR value			
 % SRD	    x	    x	                x	        x	    start value	    mr level	mr rate	    IR node	  IR value
@@ -67,23 +66,23 @@ classdef Riskfactor
             if ( strcmp('RF_IR',a.type(1:5)) || strcmp('RF_SP',a.type(1:5)) )
                 if ( length(tmp_parameters) > 4 )
                     a.node  = tmp_parameters(5);          
-                    a.rate  = tmp_parameters(6);
+                    a.value_base  = tmp_parameters(6);
                 else
                     error("Error: Risk factor type RF_IR has no defined IR node or value")
                 endif
             else
                 if ( length(tmp_parameters) > 4 )
-                    a.start_value  = tmp_parameters(5);
+                    a.value_base  = tmp_parameters(5);
                 endif    
             endif
         else    % Mean reversion models (OE,SRD,BKM)
-            a.start_value  = tmp_parameters(5);
+            a.value_base  = tmp_parameters(5);
             a.mr_level  = tmp_parameters(6);
             a.mr_rate  = tmp_parameters(7);
             if ( strcmp('RF_IR',a.type(1:5)) || strcmp('RF_SP',a.type(1:5)) )
                 if ( length(tmp_parameters) > 7 )
                     a.node  = tmp_parameters(8);         
-                    a.rate  = tmp_parameters(9);
+                    a.value_base  = tmp_parameters(9);
                 else
                     error("Error: Risk factor type RF_IR has no defined IR node or value")    
                 endif   
@@ -103,13 +102,13 @@ classdef Riskfactor
          fprintf('mean: %f\nstandard deviation: %f\nskewness: %f\nkurtosis: %f\n', ... 
             a.mean,a.std,a.skew,a.kurt);
          if ( sum(strcmp(a.model,{'OU','BKM','SRD'})) > 0) 
-            fprintf('start_value: %f\n',a.start_value); 
+            fprintf('value_base: %f\n',a.value_base); 
             fprintf('mr_level: %f\n',a.mr_level); 
             fprintf('mr_rate: %f\n',a.mr_rate); 
          endif
-         if ( strcmp('RF_IR',a.type(1:5)) || strcmp('RF_SPREAD',a.type(1:5)) )
+         if ( regexp('RF_IR',a.type) || regexp('RF_SPREAD',a.type) )
             fprintf('node: %d\n',a.node); 
-            fprintf('rate: %f\n',a.rate); 
+            fprintf('rate: %f\n',a.value_base); 
          endif
          if ( length(a.scenario_stress) > 0 ) 
             fprintf('Scenario stress: %8.2f \n',a.scenario_stress(1:scenario_stress_rows));
@@ -153,17 +152,17 @@ classdef Riskfactor
       end %get_basis
       
       % The following function returns a vector with absolut scenario values depending on the start value and the scenario delta vector
-      function ret_vec = get_abs_values(model, scen_deltavec, start_value, sensitivity)
+      function ret_vec = get_abs_values(model, scen_deltavec, value_base, sensitivity)
         if nargin < 3
-            error("Not enough arguments. Please provide model, scenario deltas and start_value and sensitivity (optional)");
+            error("Not enough arguments. Please provide model, scenario deltas and value_base and sensitivity (optional)");
         endif
         if nargin < 4
             sensitivity = 1;
         endif
         if ( sum(strcmp(model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
-            ret_vec     =  exp(scen_deltavec .* sensitivity) .* start_value;
+            ret_vec     =  exp(scen_deltavec .* sensitivity) .* value_base;
         else        % Normal Model
-            ret_vec     = (scen_deltavec .* sensitivity) .+ start_value;
+            ret_vec     = (scen_deltavec .* sensitivity) .+ value_base;
         end
       end % get_abs_values
       
@@ -204,9 +203,9 @@ classdef Riskfactor
                 fprintf(fid, "\n");
                 fclose (fid); 
             else    
-                printf("Documentation for Class %s: \n",c{ii}(4:end));
-                printf(retval);
-                printf("\n");
+                fprintf("Documentation for Class %s: \n",c{ii}(4:end));
+                fprintf(retval);
+                fprintf("\n");
             end
                      
         else

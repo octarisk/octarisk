@@ -1,0 +1,3 @@
+HeaderPORTFOLIO,portfolio_idCHAR,portfolio_nameCHAR,position_descriptionCHAR
+Item,AAABBB,Testportfolio,Testportfolio A 1234
+Item,1CCCDDDE,Testportfolio2,Testportfolio B 12345
