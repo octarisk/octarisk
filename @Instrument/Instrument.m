@@ -66,7 +66,7 @@ classdef Instrument
          value_stress_rows = min(rows(a.value_stress),5);
          value_mc_rows = min(rows(a.value_mc),5);
          value_mc_cols = min(length(a.timestep_mc),2);
-         fprintf('name: %s\nid: %s\ndescription: %s\ntype: %s\nasset_class: %s\ncurrency: %s\nvalue_base: %8.2f %s\n', ... 
+         fprintf('name: %s\nid: %s\ndescription: %s\ntype: %s\nasset_class: %s\ncurrency: %s\nvalue_base: %f %s\n', ... 
             a.name,a.id,a.description,a.type,a.asset_class,a.currency,a.value_base,a.currency);
          fprintf('value_stress: %8.2f \n',a.value_stress(1:value_stress_rows));
          fprintf('\n');

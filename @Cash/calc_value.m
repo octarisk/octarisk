@@ -7,8 +7,8 @@ function obj = calc_value (cash,value_type,scen_number)
 
     value_type = tolower(value_type);
     % Get base value
-        theo_value_base = cash.get("value_base");    
-        theo_value      = theo_value_base .* ones(scen_number,1);       
+        theo_value_base = obj.get("value_base");    
+        theo_value      = theo_value_base .* ones(scen_number,1);      
     % store theo_value vector in appropriate class property
     if ( regexp(value_type,'stress'))
         obj = obj.set("value_stress",theo_value);

@@ -20,7 +20,7 @@
 ## @item @var{rates}: is MxN matrix with curve rates defined in columns. Each row contains a specific scenario with different curve structure
 ## @item @var{days_to_t1}: is a scalar, specifiying term1 in days
 ## @item @var{days_to_t2}: is a scalar, specifiying term2 in days after term1
-## @item @var{comp_type}: (optional) specifies compounding rule (simple, discrete, continuous (defaults to 'cont').
+## @item @var{comp_type}: (optional) specifies compounding rule (simple, discrete, continuous (defaults to 'cont')).
 ## @item @var{interp_method}: (optional) specifies interpolation method for retrieving interest rates (defaults to 'linear').
 ## @seealso{interpolate_curve}
 ## @end deftypefn
@@ -62,14 +62,14 @@ endif
 
 % Get compounding type:
 if ischar(comp_type)
-    if ( strcmp(comp_type,'simple') == 1 || strcmp(comp_type,'Simple') == 1 )
+    if ( strcmp(tolower(comp_type),'simple') == 1 )
         compounding_type = 1;
-    elseif ( strcmp(comp_type,'disc') == 1 || strcmp(comp_type,'Disc') == 1 )
+    elseif ( strcmp(tolower(comp_type),'disc') == 1 )
         compounding_type = 2;
-    elseif ( strcmp(comp_type,'cont') == 1 || strcmp(comp_type,'Cont') == 1 )
+    elseif ( strcmp(tolower(comp_type),'cont') == 1 )
         compounding_type = 3;
     else
-        error('Need valid compounding_type type')
+        error('Need valid comp_type type [disc, simple, cont]')
     endif
 endif
 % Start Calculation

@@ -36,10 +36,10 @@ function s = set (obj, varargin)
         if ( length(tmp_cell) > 0 ) % appending vector to existing vector
             s.timestep_mc{length(tmp_cell) + 1} = char(val);
         else    % setting vector
-            s.timestep_mc = val;
+            s.timestep_mc = strtrim(val);
         endif      
       elseif (iscell(val) && length(val) > 1) % replacing timestep_mc cell vector with new vector
-        s.timestep_mc = val;
+        s.timestep_mc = strtrim(val);
       elseif ( ischar(val) )
         tmp_cell = s.timestep_mc;
         if ( length(tmp_cell) > 0 ) % appending vector to existing vector
@@ -65,6 +65,83 @@ function s = set (obj, varargin)
     elseif (ischar (prop) && strcmp (prop, "value_base"))   
       if (isvector (val) && isreal (val))
         s.value_base = val;
+      else
+        error ("set: expecting the value to be a real vector");
+      endif 
+    % ====================== set name ======================
+    elseif (ischar (prop) && strcmp (prop, "name"))   
+      if (ischar (val) )
+        s.name = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set id ======================
+    elseif (ischar (prop) && strcmp (prop, "id"))   
+      if (ischar(val))
+        s.id = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set sub_type ======================
+    elseif (ischar (prop) && strcmp (prop, "sub_type"))   
+      if (ischar (val))
+        s.sub_type = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif   
+    % ====================== set valuation_date ======================
+    elseif (ischar (prop) && strcmp (prop, "valuation_date"))   
+      if (ischar (val))
+        s.valuation_date = datestr(strtrim(val),1);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set asset_class ======================
+    elseif (ischar (prop) && strcmp (prop, "asset_class"))   
+      if (ischar (val))
+        s.asset_class = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set currency ======================
+    elseif (ischar (prop) && strcmp (prop, "currency"))   
+      if (ischar (val))
+        s.currency = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set description ======================
+    elseif (ischar (prop) && strcmp (prop, "description"))   
+      if (ischar (val))
+        s.description = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set cf_values ======================
+    elseif (ischar (prop) && strcmp (prop, "cf_values"))   
+      if (isvector (val) && isreal (val))
+        s.cf_values = val;
+      else
+        error ("set: expecting the base values to be a real vector");
+      endif
+    % ====================== set cf_dates ======================
+    elseif (ischar (prop) && strcmp (prop, "cf_dates"))   
+      if (isvector (val) && isreal (val))
+        s.cf_dates = val;
+      else
+        error ("set: expecting the value to be a real vector");
+      endif
+    % ====================== set instruments ======================
+    elseif (ischar (prop) && strcmp (prop, "instruments"))   
+      if (iscell(val) )
+        s.instruments = strtrim(val);
+      else
+        error ("set: expecting the value to be a cell");
+      endif
+    % ====================== set weights ======================
+    elseif (ischar (prop) && strcmp (prop, "weights"))   
+      if (isvector(val))
+        s.weights = val;
       else
         error ("set: expecting the value to be a real vector");
       endif  

@@ -60,10 +60,4 @@ classdef Cash < Instrument
       end % set.sub_type
    end 
    
-   methods (Static = true)
-      function market_value = calc_value_tmp(notional,coupon_rate)
-            market_value = notional .* coupon_rate;
-      end 
-      
-   end
 end 

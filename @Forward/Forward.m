@@ -138,7 +138,11 @@ classdef Forward < Instrument
          fprintf('sub_type: %s\n',b.sub_type);                     
          fprintf('maturity_date: %s\n',b.maturity_date);      
          fprintf('compounding_type: %s\n',b.compounding_type);  
-         fprintf('compounding_freq: %s\n',b.compounding_freq);   
+         if (ischar(b.compounding_freq))
+            fprintf('compounding_freq: %s\n',b.compounding_freq); 
+         else
+            fprintf('compounding_freq: %d\n',b.compounding_freq);  
+         end   
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('strike_price: %f\n',b.strike_price);  
          fprintf('underlying_id: %s\n',b.underlying_id); 

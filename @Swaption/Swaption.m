@@ -8,7 +8,7 @@ classdef Swaption < Instrument
         spread = 0.0;             
         discount_curve = 'RF_IF_EUR';
         underlying = 'RF_IF_EUR';
-        vola_surface = 'vol_index_RF_EQ_DE';
+        vola_surface = 'RF_VOLA_IR_EUR';
         vola_sensi = 1;
         strike = 0.025;
         spot = 0.025;

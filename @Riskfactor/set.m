@@ -65,7 +65,98 @@ function s = set (obj, varargin)
         s.shift_type = [s.shift_type; val];
       else
         error ("set: expecting the value to be a real vector");
+      endif 
+    % ====================== set name ======================
+    elseif (ischar (prop) && strcmp (prop, "name"))   
+      if (ischar (val) )
+        s.name = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set id ======================
+    elseif (ischar (prop) && strcmp (prop, "id"))   
+      if (ischar(val))
+        s.id = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set description  ======================
+    elseif (ischar (prop) && strcmp (prop, "description"))   
+      if (ischar (val))
+        s.description = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif 
+    % ====================== set model  ======================
+    elseif (ischar (prop) && strcmp (prop, "model"))   
+      if (ischar (val))
+        s.model = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
+      endif
+    % ====================== set type  ======================
+    elseif (ischar (prop) && strcmp (prop, "type"))   
+      if (ischar (val))
+        s.type = strtrim(val);
+      else
+        error ("set: expecting the value to be a char");
       endif   
+    % ====================== set mean ======================
+    elseif (ischar (prop) && strcmp (prop, "mean"))   
+      if (isnumeric (val) && isreal (val))
+        s.mean = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set std ======================
+    elseif (ischar (prop) && strcmp (prop, "std"))   
+      if (isnumeric (val) && isreal (val))
+        s.std = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set skew ======================
+    elseif (ischar (prop) && strcmp (prop, "skew"))   
+      if (isnumeric (val) && isreal (val))
+        s.skew = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set kurt ======================
+    elseif (ischar (prop) && strcmp (prop, "kurt"))   
+      if (isnumeric (val) && isreal (val))
+        s.kurt = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set mr_level ======================
+    elseif (ischar (prop) && strcmp (prop, "mr_level"))   
+      if (isnumeric (val) && isreal (val))
+        s.mr_level = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set mr_rate ======================
+    elseif (ischar (prop) && strcmp (prop, "mr_rate"))   
+      if (isnumeric (val) && isreal (val))
+        s.mr_rate = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set node ======================
+    elseif (ischar (prop) && strcmp (prop, "node"))   
+      if (isnumeric (val) && isreal (val))
+        s.node = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif
+    % ====================== set value_base ======================
+    elseif (ischar (prop) && strcmp (prop, "value_base"))   
+      if (isnumeric (val) && isreal (val))
+        s.value_base = val;
+      else
+        error ("set: expecting the value to be a real number");
+      endif    
     else
       error ("set: invalid property of risk factor class");
     endif
