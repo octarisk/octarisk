@@ -131,15 +131,15 @@ fprintf('\n');
 % 0) #######            DEFINITION OF VARIABLES    ####
 % 1. general variables -> path dependent on operating system
 if ( ispc == 1)
-    path = 'C:/Dokumente/octarisk/working_folder';   % general load and save path for *.mat files
+    path = 'C:/Dokumente/octarisk/working_folder';   % general load and save path for all input and output files
 elseif ( isunix == 1)
     path = '/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder';
 endif
     path_output = strcat(path,'/output');
-    path_output_instruments = strcat(path,'/output/instruments');
-    path_output_riskfactors = strcat(path,'/output/riskfactors');
-    path_output_stresstests = strcat(path,'/output/stresstests');
-    path_output_positions = strcat(path,'/output/positions');
+    path_output_instruments = strcat(path_output,'/instruments');
+    path_output_riskfactors = strcat(path_output,'/riskfactors');
+    path_output_stresstests = strcat(path_output,'/stresstests');
+    path_output_positions = strcat(path_output,'/positions');
     path_reports = strcat(path,'/output/reports');
     path_archive = strcat(path,'/archive');
     path_input = strcat(path,'/input');
@@ -176,9 +176,9 @@ end
 % set filenames for input:
 input_filename_instruments = 'instruments.csv';
 input_filename_corr_matrix = strcat(path_mktdata,'/corr24.dat');
-input_filename_stresstests = strcat(path_input,'/stresstests.csv');
+input_filename_stresstests = 'stresstests.csv';
 input_filename_riskfactors = 'riskfactors.csv';
-input_filename_positions = strcat(path_input,'/or_positions.csv');
+input_filename_positions = 'positions.csv';
 
 % set filenames for vola surfaces
 input_filename_vola_index = 'vol_index_';
@@ -187,6 +187,7 @@ input_filename_vola_ir = 'vol_ir_';
 % set general variables
 plotting = 1;           % switch for plotting data (0/1)
 saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
+archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
 
 % load packages
 pkg load statistics;	% load statistics package (needed in scenario_generation_MC)
@@ -227,67 +228,24 @@ scenario_ts_days = [mc_timestep_days; 0];
 % 1. Processing Instruments data
 persistent instrument_struct;
 instrument_struct=struct();
-
-[instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_input,input_filename_instruments,path_output_instruments,path_archive,timestamp);
-% for kk = 1 : 1 : length(instrument_struct)
-    % printf('New Object: %d \n',kk);
-    % instrument_struct(kk).id
-    % instrument_struct(kk).name;
-    % i = instrument_struct(kk).object;
-    % is_object = isobject(i)
-% end
+[instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_input,input_filename_instruments,path_output_instruments,path_archive,timestamp,archive_flag);
 
 % 2. Processing Riskfactor data
 persistent riskfactor_struct;
 riskfactor_struct=struct();
-[riskfactor_struct id_failed_cell] = load_riskfactors(riskfactor_struct,path_input,input_filename_riskfactors,path_output_riskfactors,path_archive,timestamp);
-% for kk = 1 : 1 : length(riskfactor_struct)
-    % printf('New Object: %d \n',kk);
-    % riskfactor_struct(kk).id
-    % riskfactor_struct(kk).name
-    % i = riskfactor_struct(kk).object;
-    % is_object = isobject(i)
-    % i
-% end
+[riskfactor_struct id_failed_cell] = load_riskfactors(riskfactor_struct,path_input,input_filename_riskfactors,path_output_riskfactors,path_archive,timestamp,archive_flag);
 
 % 3. Processing Positions data
 persistent portfolio_struct;
-
-% a) Read in position data
-[portfolio_struct id_failed_cell] = load_positions(portfolio_struct, path_input,'positions.csv',path_output_positions,path_archive,timestamp);
-% Print portfolios with positions
-% for jj = 1 : 1 : length(portfolio_struct)
-    % fprintf("%s > %s > %s \n",portfolio_struct(jj).id,portfolio_struct(jj).name,portfolio_struct(jj).description);
-    % for kk = 1 : 1 : length( portfolio_struct(jj).position )
-        % fprintf("    %s > %s > %f \n",portfolio_struct(jj).position(kk).port_id,portfolio_struct(jj).position(kk).id,portfolio_struct(jj).position(kk).quantity);
-    % endfor
-% endfor
-
+portfolio_struct=struct();
+[portfolio_struct id_failed_cell] = load_positions(portfolio_struct, path_input,input_filename_positions,path_output_positions,path_archive,timestamp,archive_flag);
 
 % 4. Processing Stresstest data
-
 persistent stresstest_struct;
 stresstest_struct=struct();
-% a) Read in 
-[number id name risktype shiftvalue shifttype ] = textread( input_filename_stresstests, '%f %s %s %s %s %s' ,'delimiter' , ';' ,6 );
+[stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, path_input,input_filename_stresstests,path_output_stresstests,path_archive,timestamp,archive_flag);
+no_stresstests = length(stresstest_struct);
 
-% b) Loop via all entries in columns
-for ii = 2 : 1 : length(number)
-    tmp_number      = number(ii);
-    tmp_id          = cell2mat(id(ii));
-    tmp_name        = cell2mat(name(ii));
-    tmp_risktype    = strsplit( cell2mat(risktype(ii)), ',');
-    tmp_shiftvalue  = str2num( cell2mat(shiftvalue(ii)) );
-    tmp_shifttype   = str2num( cell2mat(shifttype(ii)) );
-
-    stresstest_struct( ii - 1 ).number      = tmp_number;
-    stresstest_struct( ii - 1 ).id          = tmp_id;
-    stresstest_struct( ii - 1 ).name        = tmp_name;
-    stresstest_struct( ii - 1 ).risktype    = tmp_risktype;
-    stresstest_struct( ii - 1 ).shiftvalue  = tmp_shiftvalue;
-    stresstest_struct( ii - 1 ).shifttype   = tmp_shifttype;
-endfor
-no_stresstests = tmp_number;
 parseinput = toc;
 
 
@@ -1282,17 +1240,16 @@ fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,50.0,-VAR50_shock);
 fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,70.0,-VAR70_shock);
 fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,-VAR90_shock);
 fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,-VAR95_shock);
-   
+
 if ( mc < hd_limit )
     fprintf(fid, '\n');
     fprintf(fid, 'Difference to HD-VaR %s:  %9.2f EUR\n',tmp_scen_set,mc_var_shock_diff_hd);    
 end
 fprintf(fid, '\n');
 
-
 fprintf(fid, 'Total Reduction in VaR via Diversification: \n');
 fprintf(fid, '|Portfolio VaR %s Diversification Effect| |%9.2f%%|\n',tmp_scen_set,(1 - mc_var_shock / total_var_undiversified)*100)
-    
+
 fprintf(fid, '====================================================================');
 fprintf(fid, '\n');
 aggr = toc;
@@ -1381,7 +1338,6 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
         position_struct( ii ).stresstests = pos_vec_stress;
         portfolio_stress = portfolio_stress .+ new_value_vec_stress .*  tmp_quantity ./ tmp_fx_value_stress;
     endfor
-
     % Calc absolute and relative stress values
     p_l_absolut_stress      = portfolio_stress .- base_value;
     p_l_relativ_stress      = (portfolio_stress .- base_value )./ base_value;
@@ -1401,13 +1357,17 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
         tmp_name = tmp_instr_object.get('name');
 
         % Get instrument IR and Spread sensitivity from stresstests 1-4:
-        tmp_values_stress_rel = 100.*(tmp_values_stress .- tmp_values_stress(end)) ./ tmp_values_stress(end);
+        if ~( tmp_values_stress(end) == 0 ) % test for base values 0 (e.g. matured option )
+            tmp_values_stress_rel = 100.*(tmp_values_stress .- tmp_values_stress(end)) ./ tmp_values_stress(end);
+        else
+            tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
+        endif
         tmp_ir_sensitivity = (abs(tmp_values_stress_rel(1)) + abs(tmp_values_stress_rel(2)))/2;
         tmp_spread_sensitivity = (abs(tmp_values_stress_rel(3)) + abs(tmp_values_stress_rel(4)))/2;
         fprintf(fid, '|Sensi ModDuration \t\t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_ir_sensitivity);
         fprintf(fid, '|Sensi ModSpreadDur \t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_spread_sensitivity);
     endfor 
-       
+ 
     fprintf(fid, 'Stress test results:\n');
     for xx=1:1:no_stresstests
         fprintf(fid, 'Relative PnL in Stresstest: |%s| \t |%3.2f%%|\n',stresstest_plot_desc{xx},p_l_relativ_stress(xx).*100);

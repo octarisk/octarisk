@@ -41,7 +41,7 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
     method_cell = cellstr( ['linear';'mm';'exponential';'loglinear';'spline';'smith-wilson';'monotone-convex']);
     findvec = strcmp(method,method_cell);
     if ( findvec == 0)
-         error("Error: Interpolation method must be either linear,mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson or monotone-convex");
+         error("Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson or monotone-convex");
     endif
   endif
   
@@ -64,11 +64,11 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
 % Checks:
 no_scen_nodes = columns(nodes);
 no_scen_rates = columns(rates);
-if ( no_scen_nodes != no_scen_rates )
+if ~( no_scen_nodes == no_scen_rates )
     error("Error: Number of columns must be equivalent");
 endif
 
-if ( issorted(nodes) != 1)
+if ~( issorted(nodes) == 1)
     error("Error: Nodes have to be sorted")
 endif
 

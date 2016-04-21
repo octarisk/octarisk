@@ -12,11 +12,11 @@
 ## details.
 
 ## -*- texinfo -*-
-## @deftypefn {Function File} {@var{portfolio_struct} @var{id_failed_cell}} = load_positions(@var{portfolio_struct}, @var{valuation_date},@var{path_positions},@var{file_positions},@var{path_output},@var{path_archive},@var{tmp_timestamp})
+## @deftypefn {Function File} {@var{portfolio_struct} @var{id_failed_cell}} = load_positions(@var{portfolio_struct}, @var{valuation_date},@var{path_positions},@var{file_positions},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
 ## Load data from position specification file and generate objects with parsed data. Store all objects in provided position struct and return the final struct and a cell containing the failed position ids.
 ## @end deftypefn
 
-function [tmp_portfolio_struct id_failed_cell] = load_positions(portfolio_struct, path_positions,file_positions,path_output,path_archive,tmp_timestamp)
+function [tmp_portfolio_struct id_failed_cell] = load_positions(portfolio_struct, path_positions,file_positions,path_output,path_archive,tmp_timestamp,archive_flag)
 
 % A) Prepare position object generation
 % A.0) Specify local variables
@@ -246,8 +246,10 @@ end
 % clean up
 
 % D) move all parsed files to an TAR in folder archive
-try
-    tarfiles = tar( strcat(path_archive,'/archive_positions_',tmp_timestamp,'.tar'),strcat(path,'/*'));
-end
+if (archive_flag == 1)
+    try
+        tarfiles = tar( strcat(path_archive,'/archive_positions_',tmp_timestamp,'.tar'),strcat(path,'/*'));
+    end
+endif
 
 end % end function

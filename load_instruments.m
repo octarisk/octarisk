@@ -12,11 +12,11 @@
 ## details.
 
 ## -*- texinfo -*-
-## @deftypefn {Function File} {@var{instrument_struct} @var{id_failed_cell}} = load_instruments(@var{instrument_struct},@var{valuation_date},@var{path_instruments},@var{file_instruments},@var{path_output},@var{path_archive},@var{tmp_timestamp})
+## @deftypefn {Function File} {@var{instrument_struct} @var{id_failed_cell}} = load_instruments(@var{instrument_struct},@var{valuation_date},@var{path_instruments},@var{file_instruments},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
 ## Load data from instrument specification file and generate objects with parsed data. Store all objects in provided instrument struct and return the final struct and a cell containing the failed instrument ids.
 ## @end deftypefn
 
-function [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_instruments,file_instruments,path_output,path_archive,tmp_timestamp)
+function [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_instruments,file_instruments,path_output,path_archive,tmp_timestamp,archive_flag)
 
 % A) Prepare instrument object generation
 % A.0) Specify local variables
@@ -300,8 +300,10 @@ if (length(id_failed_cell) > 0 )
 end
 
 % D) move all parsed files to an TAR in folder archive
-try
-    tarfiles = tar( strcat(path_archive,'/archive_instruments_',tmp_timestamp,'.tar'),strcat(path,'/*'));
-end
+if (archive_flag == 1)
+    try
+        tarfiles = tar( strcat(path_archive,'/archive_instruments_',tmp_timestamp,'.tar'),strcat(path,'/*'));
+    end
+endif
 
 end % end function
