@@ -294,9 +294,9 @@ function s = set (bond, varargin)
       if (isnumeric (val) && isreal (val))
         s.enable_business_day_rule = logical(val);
       elseif ( ischar(val))
-        if ( strcmp('false',tolower(val)))
+        if ( strcmp('false',lower(val)))
             s.enable_business_day_rule = logical(0);
-        elseif ( strcmp('true',tolower(val)))
+        elseif ( strcmp('true',lower(val)))
             s.enable_business_day_rule = logical(1);
         else
             printf('WARNING: Unknown val: >>%s<<. Setting enable_business_day_rule to false.',val);
@@ -317,9 +317,9 @@ function s = set (bond, varargin)
       if (isnumeric (val) && isreal (val))
         s.long_first_period = logical(val);
       elseif ( ischar(val))
-        if ( strcmp('false',tolower(val)))
+        if ( strcmp('false',lower(val)))
             s.long_first_period = logical(0);
-        elseif ( strcmp('true',tolower(val)))
+        elseif ( strcmp('true',lower(val)))
             s.long_first_period = logical(1);
         else
             printf('WARNING: Unknown val: >>%s<<. Setting long_first_period to false.',val);
@@ -333,9 +333,9 @@ function s = set (bond, varargin)
       if (isnumeric (val) && isreal (val))
         s.long_last_period = logical(val);
       elseif ( ischar(val))
-        if ( strcmp('false',tolower(val)))
+        if ( strcmp('false',lower(val)))
             s.long_last_period = logical(0);
-        elseif ( strcmp('true',tolower(val)))
+        elseif ( strcmp('true',lower(val)))
             s.long_last_period = logical(1);
         else
             printf('WARNING: Unknown val: >>%s<<. Setting long_last_period to false.',val);
@@ -356,9 +356,9 @@ function s = set (bond, varargin)
       if (isnumeric (val) && isreal (val))
         s.in_arrears = logical(val);
       elseif ( ischar(val))
-        if ( strcmp('false',tolower(val)))
+        if ( strcmp('false',lower(val)))
             s.in_arrears = logical(0);
-        elseif ( strcmp('true',tolower(val)))
+        elseif ( strcmp('true',lower(val)))
             s.in_arrears = logical(1);
         else
             printf('WARNING: Unknown val: >>%s<<. Setting in_arrears to false.',val);
@@ -372,9 +372,9 @@ function s = set (bond, varargin)
       if (isnumeric (val) && isreal (val))
         s.fixed_annuity = logical(val);
       elseif ( ischar(val))
-        if ( strcmp('false',tolower(val)))
+        if ( strcmp('false',lower(val)))
             s.fixed_annuity = logical(0);
-        elseif ( strcmp('true',tolower(val)))
+        elseif ( strcmp('true',lower(val)))
             s.fixed_annuity = logical(1);
         else
             printf('WARNING: Unknown val: >>%s<<. Setting fixed_annuity to false.',val);
@@ -388,9 +388,9 @@ function s = set (bond, varargin)
       if (isnumeric (val) && isreal (val))
         s.notional_at_start = logical(val);
       elseif ( ischar(val))
-        if ( strcmp('false',tolower(val)))
+        if ( strcmp('false',lower(val)))
             s.notional_at_start = logical(0);
-        elseif ( strcmp('true',tolower(val)))
+        elseif ( strcmp('true',lower(val)))
             s.notional_at_start = logical(1);
         else
             printf('WARNING: Unknown val: >>%s<<. Setting notional_at_start to false.',val);
@@ -404,9 +404,9 @@ function s = set (bond, varargin)
       if (isnumeric (val) && isreal (val))
         s.notional_at_end = logical(val);
       elseif ( ischar(val))
-        if ( strcmp('false',tolower(val)))
+        if ( strcmp('false',lower(val)))
             s.notional_at_end = logical(0);
-        elseif ( strcmp('true',tolower(val)))
+        elseif ( strcmp('true',lower(val)))
             s.notional_at_end = logical(1);
         else
             printf('WARNING: Unknown val: >>%s<<. Setting notional_at_end to false.',val);

@@ -90,7 +90,7 @@ classdef Bond < Instrument
             end  
             % setting property compounding_type
             if ( length(special_str) >= 4  )
-                b.compounding_type = tolower(special_str{4});
+                b.compounding_type = lower(special_str{4});
             end
             % setting property term and compounding_freq
             if ( length(special_num) < 3  )
@@ -105,7 +105,7 @@ classdef Bond < Instrument
             end
             % setting property coupon_generation_method 
             if ( length(special_str) >= 3  )
-                b.coupon_generation_method  = tolower(special_str{3});
+                b.coupon_generation_method  = lower(special_str{3});
             end      
             % setting property notional
             if ( length(special_num) < 1  )

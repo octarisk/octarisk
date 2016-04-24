@@ -5,7 +5,7 @@ function s = getValue (instrument, property)
     s = obj.name;
   elseif (nargin == 2)
     if (ischar (property))
-      property = tolower(property);
+      property = lower(property);
       if ( strcmp(property,'stress'))
         s = obj.value_stress;
       elseif ( strcmp(property,'base'))

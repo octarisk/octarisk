@@ -22,7 +22,7 @@ function vola_spread = calibrate_swaption(PayerReceiverFlag,F,X,T,r,sigma,m,tau,
 if ~(nargin == 11)
     print_usage();
 end
-model = toupper(model);
+model = upper(model);
 % Start parameter
 x0 = 0.0001;
 

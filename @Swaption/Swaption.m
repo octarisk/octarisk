@@ -73,7 +73,7 @@ classdef Swaption < Instrument
         % parsing attribute special_str
             % setting property compounding_type
             if ( length(special_str) >= 2  )
-                b.compounding_type = tolower(special_str{2});
+                b.compounding_type = lower(special_str{2});
             end
 
             % setting property day_count_convention
@@ -83,7 +83,7 @@ classdef Swaption < Instrument
             
             % setting property model
             if ( length(special_str) >= 4  )
-                b.model = toupper(special_str{4});
+                b.model = upper(special_str{4});
             end
  
         % parsing attribute special_num

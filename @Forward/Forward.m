@@ -63,7 +63,7 @@ classdef Forward < Instrument
         end
         % setting property compounding_type
         if ( length(special_str) >= 2  )
-            b.compounding_type = tolower(special_str{2});
+            b.compounding_type = lower(special_str{2});
         end
         % setting property compounding_freq
         if ( length(special_str) >= 3  )

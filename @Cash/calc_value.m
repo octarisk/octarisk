@@ -5,7 +5,7 @@ function obj = calc_value (cash,value_type,scen_number)
     error('No scenario number provided. Aborting.');
   end
 
-    value_type = tolower(value_type);
+    value_type = lower(value_type);
     % Get base value
         theo_value_base = obj.get('value_base');    
         theo_value      = theo_value_base .* ones(scen_number,1);      

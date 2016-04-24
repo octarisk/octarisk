@@ -55,7 +55,7 @@ classdef Riskfactor
         a.name          = tmp_name;
         a.id            = tmp_id;
         a.description   = tmp_description;
-        a.type          = toupper(tmp_type);
+        a.type          = upper(tmp_type);
         a.model         = tmp_model;
         a.mean          = tmp_parameters(1);
         a.std           = tmp_parameters(2);

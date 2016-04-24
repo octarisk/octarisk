@@ -6,7 +6,7 @@ function obj = calc_value (debt,discount_curve_object,spread_object,value_type)
    if ( nargin == 3)
         error('No value_type set. [stress,1d,10d,...]');
    end
-    value_type = tolower(value_type);
+    value_type = lower(value_type);
     % Get duration and convexity
         tmp_dur         = debt.get('duration');
         tmp_convex      = debt.get('convexity');

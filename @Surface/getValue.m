@@ -27,15 +27,15 @@ function y = getValue (surface, xx,yy,zz)
     end
     
     % type ir
-    if ( strcmp(toupper(s.type),'IR'))           
+    if ( strcmp(upper(s.type),'IR'))           
         if (len == 1 && length(s.axis_x) > 0 && length(s.axis_y) == 0 && length(s.axis_z) == 0 )                    %first case: object is curve
-          if ( strcmp(toupper(s.axis_x_name),'TERM') )
+          if ( strcmp(upper(s.axis_x_name),'TERM') )
             y = interpolate_curve(s.axix_x,s.values_base,xx,s.method_interpolation);
           else
             error('ERROR: Assuming curve for IR with term, got: %s',s.axis_x_name);
           end
         elseif (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0 )         %second case: object is surface 
-          if ( strcmp(toupper(s.axis_x_name),'TENOR') && strcmp(toupper(s.axis_y_name),'TERM'))
+          if ( strcmp(upper(s.axis_x_name),'TENOR') && strcmp(upper(s.axis_y_name),'TERM'))
             xx_structure = s.axis_x;    
             yy_structure = s.axis_y;    
             vola_matrix = s.values_base;               
@@ -52,7 +52,7 @@ function y = getValue (surface, xx,yy,zz)
             error('ERROR: Assuming surface for IR vol with tenor, term , got: %s, %s',s.axis_x_name,s.axis_y_name);
           end
         elseif (len == 3 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) > 0 )  %second case: object is cube 
-          if ( strcmp(toupper(s.axis_x_name),'TENOR') && strcmp(toupper(s.axis_y_name),'TERM')  && strcmp(toupper(s.axis_z_name),'MONEYNESS') )
+          if ( strcmp(upper(s.axis_x_name),'TENOR') && strcmp(upper(s.axis_y_name),'TERM')  && strcmp(upper(s.axis_z_name),'MONEYNESS') )
             xx_structure = s.axis_x;  
             yy_structure = s.axis_y;  
             zz_structure = s.axis_z;  
@@ -87,9 +87,9 @@ function y = getValue (surface, xx,yy,zz)
           end
         end
     % type index
-    elseif ( strcmp(toupper(s.type),'INDEX'))
+    elseif ( strcmp(upper(s.type),'INDEX'))
         if (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0  )         %second case: object is surface
-          if ( strcmp(toupper(s.axis_x_name),'TERM') && strcmp(toupper(s.axis_y_name),'MONEYNESS')  )
+          if ( strcmp(upper(s.axis_x_name),'TERM') && strcmp(upper(s.axis_y_name),'MONEYNESS')  )
             xx_structure = s.axis_x;    % first row equals structure of axis xx
             yy_structure = s.axis_y;    % first column equals structure of axis yy
 

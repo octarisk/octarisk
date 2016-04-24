@@ -205,7 +205,7 @@ scenario_set    = [mc_timesteps,'stress'];          % append stress scenarios
 
 % specify unique runcode and timestamp:
 runcode = '2015Q4'; %substr(md5sum(num2str(time()),true),-6)
-timestamp = strftime ('%Y%m%d_%H%M%S', localtime (time ()))
+timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
 
 first_eval      = 0;
 % I) %#%#%%#            INPUT                 %#%#
@@ -214,7 +214,7 @@ tic;
 mc_timestep_days = zeros(length(mc_timesteps),1);
 for kk = 1:1:length(mc_timesteps)
     tmp_ts = mc_timesteps{kk};
-    if ( strcmp(tolower(tmp_ts(end)),'d') )
+    if ( strcmp(lower(tmp_ts(end)),'d') )
         mc_timestep_days(kk) = str2num(tmp_ts(1:end-1));  % get timestep days
     elseif ( strcmp(to_lower(tmp_ts(end)),'y'))
         mc_timestep_days(kk) = 365 * str2num(tmp_ts(1:end-1));  % get timestep days

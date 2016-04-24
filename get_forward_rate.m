@@ -62,11 +62,11 @@ end
 
 % Get compounding type:
 if ischar(comp_type)
-    if ( strcmp(tolower(comp_type),'simple') == 1 )
+    if ( strcmp(lower(comp_type),'simple') == 1 )
         compounding_type = 1;
-    elseif ( strcmp(tolower(comp_type),'disc') == 1 )
+    elseif ( strcmp(lower(comp_type),'disc') == 1 )
         compounding_type = 2;
-    elseif ( strcmp(tolower(comp_type),'cont') == 1 )
+    elseif ( strcmp(lower(comp_type),'cont') == 1 )
         compounding_type = 3;
     else
         error('Need valid comp_type type [disc, simple, cont]')

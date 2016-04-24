@@ -65,7 +65,7 @@ classdef Curve
         a.name          = tmp_name;
         a.id            = tmp_id;
         a.description   = tmp_description;
-        a.type          = toupper(tmp_type);
+        a.type          = upper(tmp_type);
                      
       end % Curve
       

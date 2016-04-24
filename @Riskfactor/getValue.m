@@ -20,7 +20,7 @@ function s = getValue (riskfactor, property, abs_flag, sensitivity) % method get
     s = obj.name;
   elseif (nargin > 1)
     if (ischar (property))
-      property = tolower(property);
+      property = lower(property);
       if ( strcmp(property,'stress'))
         s = obj.scenario_stress;
       elseif ( strcmp(property,'base'))

@@ -52,7 +52,7 @@ classdef Instrument
             a.name = tmp_name;
             a.id = tmp_id;
             a.description = tmp_description;
-            a.type = tolower(tmp_type);
+            a.type = lower(tmp_type);
             a.value_base = tmp_spot_value;
             a.currency = tmp_currency;
             a.asset_class = tmp_asset_class;

@@ -4,7 +4,7 @@ function s = get (forward, property)
     s = obj.name;
   elseif (nargin == 2)
     if (ischar (property))
-      property = tolower(property);
+      property = lower(property);
       switch (property)
         case 'name'
           s = obj.name;

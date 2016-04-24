@@ -130,9 +130,9 @@ for ii = 1 : 1 : length(tmp_list_files)
             % B.3b)  Loop through all position attributes
             tmp_cell = content{jj};
             for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in row and set object attributes
-                tmp_columnname = tolower(tmp_colname{mm-1});
+                tmp_columnname = lower(tmp_colname{mm-1});
                 tmp_cell_item = tmp_cell{mm};
-                tmp_cell_type = toupper(tmp_header_type{mm-1});
+                tmp_cell_type = upper(tmp_header_type{mm-1});
                 % B.3b.i) convert item to appropriate type
                 if ( strcmp(tmp_cell_type,'NMBR'))
                     try
@@ -156,9 +156,9 @@ for ii = 1 : 1 : length(tmp_list_files)
                         if (isnumeric (tmp_cell_item))
                             tmp_entry = logical(tmp_cell_item);
                         elseif ( ischar(tmp_cell_item))
-                            if ( strcmp('false',tolower(tmp_cell_item)) || strcmp('0',tmp_cell_item))
+                            if ( strcmp('false',lower(tmp_cell_item)) || strcmp('0',tmp_cell_item))
                                 tmp_entry = 0;
-                            elseif ( strcmp('true',tolower(tmp_cell_item)) || strcmp('1',tmp_cell_item) )
+                            elseif ( strcmp('true',lower(tmp_cell_item)) || strcmp('1',tmp_cell_item) )
                                 tmp_entry = 1;
                             end
                         end  
@@ -201,9 +201,9 @@ for ii = 1 : 1 : length(tmp_list_files)
                 error_flag = 0;
             else
                 error_flag = 0;
-                if ( strcmp(toupper(tmp_position_type),'PORTFOLIO'))
+                if ( strcmp(upper(tmp_position_type),'PORTFOLIO'))
                     number_portfolios = number_portfolios + 1;
-                elseif ( strcmp(toupper(tmp_position_type),'POSITION'))
+                elseif ( strcmp(upper(tmp_position_type),'POSITION'))
                     number_positions = number_positions + 1;
                 end
                 number_positions = number_positions + 1;
@@ -211,9 +211,9 @@ for ii = 1 : 1 : length(tmp_list_files)
           end   % end if loop with meaningful data
         end  % next position / next row in specification
 
-        if ( strcmp(toupper(tmp_position_type),'PORTFOLIO'))
+        if ( strcmp(upper(tmp_position_type),'PORTFOLIO'))
             tmp_portfolio_struct = cell2struct(tmp_cell_struct,tmp_colname);
-        elseif ( strcmp(toupper(tmp_position_type),'POSITION'))
+        elseif ( strcmp(upper(tmp_position_type),'POSITION'))
             tmp_position_struct = cell2struct(tmp_cell_struct,tmp_colname);
         else
             fprintf('Unknown type. Neither position nor portfolio');
