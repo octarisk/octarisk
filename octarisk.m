@@ -11,7 +11,7 @@
 ## details.
 
 ## -*- texinfo -*-
-## @deftypefn {Function File} {} octarisk ()
+## @deftypefn {Function File} {} octarisk (@var{path_working_folder})
 ##
 ## Version: 0.0.0, 2015/11/24, Stefan Schloegl:   initial version @* 
 ##          0.0.1, 2015/12/16, Stefan Schloegl:   added Willow Tree model for pricing american equity options, 
@@ -22,6 +22,7 @@
 ##			0.0.3, 2016/02/05, Stefan Schloegl:	  added spread risk factors, general cash flow pricing 
 ##			0.0.4, 2016/03/28, Stefan Schloegl:   changed the implementation to object oriented approach (introduced instrument, risk factor classes)
 ##          0.1.0, 2016/04/02, Stefan Schloegl:   added volatility cube model (Surface class) for tenor / term / moneyness structure of volatility for ir vol
+##          0.2.0, 2016/04/19, Stefan Schloegl:   improved the file interface and format for input files (market data, risk factors, instruments, positions, stresstests) 
 ## @*
 ## @*
 ## Calculate Monte-Carlo Value-at-Risk (VAR) and Expected Shortfall (ES) for instruments, positions and portfolios at a given confidence level on 
@@ -83,7 +84,7 @@
 ## @seealso{option_willowtree, option_bs, harrell_davis_weight, swaption_black76, pricing_forward, rollout_cashflows, scenario_generation_MC}
 ## @end deftypefn
 
-function octarisk
+function octarisk(path_working_folder)
 
 % ###########################################################################################################
 % Content:
@@ -130,29 +131,26 @@ fprintf('\n');
 
 % 0) #######            DEFINITION OF VARIABLES    ####
 % 1. general variables -> path dependent on operating system
-if ( ispc == 1)
-    path = 'C:/Dokumente/octarisk/working_folder';   % general load and save path for all input and output files
-elseif ( isunix == 1)
-    path = '/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder';
-endif
-    path_output = strcat(path,'/output');
-    path_output_instruments = strcat(path_output,'/instruments');
-    path_output_riskfactors = strcat(path_output,'/riskfactors');
-    path_output_stresstests = strcat(path_output,'/stresstests');
-    path_output_positions = strcat(path_output,'/positions');
-    path_reports = strcat(path,'/output/reports');
-    path_archive = strcat(path,'/archive');
-    path_input = strcat(path,'/input');
-    path_mktdata = strcat(path,'/mktdata');
-    mkdir(path_output);
-    mkdir(path_output_instruments);
-    mkdir(path_output_riskfactors);
-    mkdir(path_output_stresstests);
-    mkdir(path_output_positions);
-    mkdir(path_archive);
-    mkdir(path_input);
-    mkdir(path_mktdata);
-    mkdir(path_reports);
+path = path_working_folder;   % general load and save path for all input and output files
+
+path_output = strcat(path,'/output');
+path_output_instruments = strcat(path_output,'/instruments');
+path_output_riskfactors = strcat(path_output,'/riskfactors');
+path_output_stresstests = strcat(path_output,'/stresstests');
+path_output_positions = strcat(path_output,'/positions');
+path_reports = strcat(path,'/output/reports');
+path_archive = strcat(path,'/archive');
+path_input = strcat(path,'/input');
+path_mktdata = strcat(path,'/mktdata');
+mkdir(path_output);
+mkdir(path_output_instruments);
+mkdir(path_output_riskfactors);
+mkdir(path_output_stresstests);
+mkdir(path_output_positions);
+mkdir(path_archive);
+mkdir(path_input);
+mkdir(path_mktdata);
+mkdir(path_reports);
 % Set current working directory to path
 chdir(path);
 act_pwd = strrep(pwd,'\','/');
