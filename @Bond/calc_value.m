@@ -2,10 +2,10 @@ function obj = calc_value(bond,valuation_date,discount_curve,spread_curve,value_
   obj = bond;
    if ( nargin < 3)
         error('Error: No  discount curve set. Aborting.');
-   endif
+   end
    if ( nargin < 5)
         error('No value_type set. [stress,1d,10d,...]');
-   endif
+   end
 
     % Get reference curve nodes and rate
         tmp_nodes    = discount_curve.get('nodes');
@@ -22,7 +22,7 @@ function obj = calc_value(bond,valuation_date,discount_curve,spread_curve,value_
     tmp_cashflow_values = obj.getCF(value_type);
     if ( columns(tmp_cashflow_values) == 0 || rows(tmp_cashflow_values) == 0 )
         error('No cash flow values set. CF rollout done?');    
-    endif
+    end
     % calculate value according to pricing formula
     [theo_value MacDur] = pricing_npv(valuation_date,tmp_cashflow_dates, tmp_cashflow_values,bond.soy,tmp_nodes,tmp_rates,spread_nodes,spread_rates,bond.basis,bond.compounding_type,bond.compounding_freq,tmp_interp_discount,tmp_interp_spread);
     % store theo_value vector in appropriate class property
@@ -30,7 +30,7 @@ function obj = calc_value(bond,valuation_date,discount_curve,spread_curve,value_
         obj.id
         theo_value(1:min(length(theo_value),100))     
         error('theo_value of bond is not real ')
-    endif
+    end
     if ( regexp(value_type,'stress'))
         obj = obj.set('value_stress',theo_value);
     elseif ( strcmp(value_type,'base'))
@@ -40,8 +40,8 @@ function obj = calc_value(bond,valuation_date,discount_curve,spread_curve,value_
     else
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);
-    endif
+    end
    
-endfunction
+end
 
 

@@ -282,7 +282,7 @@ end
          disp('WARNING: no distribution type defined, setting to default case')
          m1 = -0.999;
          m2 = m1;
-       endif
+       end
       type=1;
       retvec = [ type, m1, m2, a1, a2 ];
     elseif (kap==1 )                                                             % type V

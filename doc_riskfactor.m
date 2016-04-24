@@ -72,4 +72,4 @@
 
 function a = doc_riskfactor()
     % this is only a dummy function for containing all the documentation.
-endfunction
+end

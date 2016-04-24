@@ -84,9 +84,9 @@ elseif ( basis == 1 || basis == 4 || basis == 5 || basis == 6 || basis == 11 )  
         if ( basis == 11 )
             days1 = min(days1,30);
             days2 = min(days2,30);
-        endif
+        end
         dip = (years2 - years1) .* 360 + ( months2 - months1 ) .* 30 + ( days2 - days1 );
-endif
+end
 
 % calculate days in base (dib)
 if ( basis == 1 || basis == 2 || basis == 4 || basis == 5 || basis == 6 || basis == 9 || basis == 11)
@@ -105,7 +105,7 @@ elseif ( basis == 0 || basis == 8 ) % actual/actual
         if  years1 == years2  %coupon period in between one year
             dip = daysact(dvec1,dvec2);
             dib = yeardays(years1,basis);
-        endif 
+        end 
         
         if  years2 > years1
             end_of_year_period1 = [years1,12,31,0,0,0];
@@ -116,12 +116,12 @@ elseif ( basis == 0 || basis == 8 ) % actual/actual
             days_period2 = daysact(begin_of_year_period2,dvec2) + 1;
             dib = 1;
             dip = (days_period1 ./ yeardays(years1,basis)) + (days_period2 ./ yeardays(years2,basis)) + (years2 - years1 - 1);          
-        endif
+        end
         
-endif
+end
 
 % calculate timefactor
 tf = dip ./ dib;
  
-endfunction
+end
  

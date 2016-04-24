@@ -2,10 +2,10 @@ function obj = calc_value (forward,discount_curve_object,value_type,underlying_o
   obj = forward;
    if ( nargin < 2)
         error('Error: No  discount curve set. Aborting.');
-   endif
+   end
    if ( nargin == 2)
         error('No value_type set. [stress,1d,10d,...]');
-   endif
+   end
    % get underlying price vector according to value_type
    value_type = tolower(value_type);
    if ( strcmp(value_type,'base'))
@@ -17,8 +17,8 @@ function obj = calc_value (forward,discount_curve_object,value_type,underlying_o
             tmp_underlying_sensitivity = obj.get('underlying_sensitivity'); 
             tmp_underlying_delta = underlying_object.getValue(value_type);
             tmp_underlying_price = Riskfactor.get_abs_values(underlying_object.model, tmp_underlying_delta, obj.underlying_price_base, tmp_underlying_sensitivity);
-        endif
-   endif   
+        end
+   end   
     % Get Discount Curve nodes and rate
         discount_nodes  = discount_curve_object.get('nodes');
         discount_rates  = discount_curve_object.getValue(value_type);
@@ -32,8 +32,8 @@ function obj = calc_value (forward,discount_curve_object,value_type,underlying_o
     else
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);
-    endif
+    end
    
-endfunction
+end
 
 

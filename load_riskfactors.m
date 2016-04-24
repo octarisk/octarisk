@@ -31,7 +31,7 @@ try
             tmp_file = oldfiles(ii).name;
             if ( length(tmp_file) > 3 )
                 delete(strcat(path,'/',tmp_file));
-            endif
+            end
     end
 end    
 % A.2) read in whole instruments file with
@@ -61,9 +61,9 @@ for ii = 1 : 1 : length(celltmp);
             fprintf(fid, '%s\n',tmp_entries);
             % Close file
             fclose (fid);   
-        endif
-    endif
-endfor
+        end
+    end
+end
 fclose (file_comments); % close comments file
 
 
@@ -115,7 +115,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             tmp_item = tmp_header{kk};
             tmp_header_type{kk-1} = substr(tmp_item,-4);  % extract last 4 characters
             tmp_colname{kk-1} = substr(tmp_item, 1, length(tmp_item)-4);  % remove last 4 characters from colname
-        endfor   
+        end   
         % B.3) loop through all instruments   
         for jj = 2 : 1 : length(content)
           error_flag = 0;
@@ -191,12 +191,12 @@ for ii = 1 : 1 : length(tmp_list_files)
                         end
                     else
                         i = i.set(tmp_columnname,tmp_entry);
-                    endif
+                    end
                 catch
                     fprintf('Object attribute %s could not be set. There was an error: %s\n',tmp_columnname,lasterr);
                     error_flag = 1;
                 end
-            endfor
+            end
             %disp('=== Final Object ===')
             %i     
             % B.3c) Error checking for riskfactor: 
@@ -210,13 +210,13 @@ for ii = 1 : 1 : length(tmp_list_files)
                 riskfactor_struct( number_riskfactors ).id = i.id;
                 riskfactor_struct( number_riskfactors ).name = i.id;
                 riskfactor_struct( number_riskfactors ).object = i;
-            endif
+            end
           %  fprintf('Seems to be empty row. Skipping.\n');
           end   % end if loop with meaningful data
-        endfor  % next riskfactor / next row in specification
+        end  % next riskfactor / next row in specification
         
     end         % meaningful file
-endfor          % next file with specifications
+end          % next file with specifications
 % finished loading riskfactor into object
 
 % C) return final riskfactor objects  
@@ -233,6 +233,6 @@ if (archive_flag == 1)
     try
         tarfiles = tar( strcat(path_archive,'/archive_riskfactors_',tmp_timestamp,'.tar'),strcat(path,'/*'));
     end
-endif
+end
 
 end % end function

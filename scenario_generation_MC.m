@@ -25,16 +25,16 @@ function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,
 [pp_p cc_p] = size(P);
 if ( cc_c != cc_p )
     error('Numbers of risk factors and parameters does not match!');
-endif
+end
 
 % 1) Input Arguments checks
 if nargin < 5
     nu = 10;
     time_horizon = 256;
-endif
+end
 if nargin < 6
     time_horizon = 256; % assuming provided volatility and return are on yearly time horizon, will be scaled to time_horizon
-endif
+end
 
 % 2) Time horizon check
 factor_time_horizon = 256 / time_horizon;
@@ -56,7 +56,7 @@ elseif ( strcmp(copulatype, 't') == 1) % t-copula
     %randn('state',s); 
     Y   = mvtrnd(corr_matrix,nu,mc);     % draw random variables from multivariate student-t distribution
     Z   = tcdf(Y,nu);                   % generate bivariate normal copula
-endif
+end
 
 %     statistical checks:
 % std_Y = std(Y)
@@ -78,6 +78,6 @@ for ii = 1 : 1 : columns(Z);
     [ret_vec type]= get_marginal_distr_pearson(tmp_mu,tmp_sigma,tmp_skew,tmp_kurt,tmp_ucr); %generate distribution based on Pearson System (Type 1-7)
     distr_type(ii) = type;
     R(:,ii) = ret_vec;
-endfor
+end
 
-endfunction
+end

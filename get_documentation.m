@@ -45,8 +45,8 @@ if ( strcmp('html',type) == 1)
             c{ii}
         else
             disp('There was a problem')
-        endif
-    endfor
+        end
+    end
 elseif  ( strcmp('txt',type) == 1)  
     % Loop via all function names in cellstring, convert texinfo to plain text and print it to documentation.txt
     %filename = strcat(path,'documentation.txt');
@@ -68,8 +68,8 @@ elseif  ( strcmp('txt',type) == 1)
             c{ii}
         else
             disp('There was a problem')
-        endif
-    endfor
+        end
+    end
     fclose (fid);
 elseif  ( strcmp('texinfo',type) == 1)  
     % Loop via all function names in cellstring, print texinfo directly to functions.texi
@@ -79,7 +79,7 @@ elseif  ( strcmp('texinfo',type) == 1)
     for ii = 1:length(c)
         tmpstring = strcat('* \t', c{ii},'::\n');
         fprintf(fid, tmpstring);
-    endfor
+    end
     fprintf(fid,'\@end menu \n');
     for ii = 1:length(c)
         [retval status] = __makeinfo__(get_help_text(c{ii}),'texinfo');
@@ -102,10 +102,10 @@ elseif  ( strcmp('texinfo',type) == 1)
             c{ii}
         else
             disp('There was a problem')
-        endif
-    endfor
+        end
+    end
     fclose (fid);    
-endif
+end
 
 
-endfunction
+end

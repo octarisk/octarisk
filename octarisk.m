@@ -166,7 +166,7 @@ try
             tmp_file = oldfiles(ii).name;
             if ( length(tmp_file) > 3 )
                 delete(strcat(path_reports,'/',tmp_file));
-            endif
+            end
     end
 end    
 
@@ -220,8 +220,8 @@ for kk = 1:1:length(mc_timesteps)
         mc_timestep_days(kk) = 365 * str2num(tmp_ts(1:end-1));  % get timestep days
     else
         error('Unknown number of days in timestep: %s\n',tmp_ts);
-    endif
-endfor
+    end
+end
 scenario_ts_days = [mc_timestep_days; 0];
 % 1. Processing Instruments data
 persistent instrument_struct;
@@ -256,7 +256,7 @@ tic;
 
 if ( mc < 1000 ) 
     hd_limit = mc - 1;
-endif
+end
 
 % a.) Load input correlation matrix
 %corr_matrix = load('rf_corr_2011_2015.dat'); 
@@ -275,7 +275,7 @@ for ii = 1 : 1 : length(riskfactor_struct)
     rf_para_distributions(2,ii)   = rf_object.std;   % sigma
     rf_para_distributions(3,ii)   = rf_object.skew;  % skew
     rf_para_distributions(4,ii)   = rf_object.kurt;  % kurt    
-endfor
+end
 % c) call MC scenario generation (Copula approach, Pearson distribution types 1-7 according four moments of distribution parameters)
 %    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
 [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256);
@@ -290,7 +290,7 @@ endfor
     % skew_act = skewness(R(:,ii))
     % kurt_soll = rf_para_distributions(4,ii)   % kurt    
     % kurt_act = kurtosis(R(:,ii))
-% endfor
+% end
 
 % Correlation breach analysis: calculating norm of target and actual correlation matrix of all risk factors
 norm_corr_250 = norm( corr(R_250) - corr_matrix)
@@ -301,7 +301,7 @@ M_struct = struct();
 for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random matrix and derive all other timesteps from them
         % [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,mc_timestep_days(kk)); % uncomment, if new random numbers needed for each timestep
         M_struct( kk ).matrix = R_250 ./ sqrt(250/mc_timestep_days(kk));
-endfor
+end
 % --------------------------------------------------------------------------------------------------------------------
 % 2.) Monte Carlo Riskfactor Simulation for all timesteps
 
@@ -349,8 +349,8 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
         rf_object = rf_object.set('scenario_mc',tmp_delta,'timestep_mc',tmp_ts);
         % store risk factor object back into struct:
         riskfactor_struct( ii ).object = rf_object;    
-    endfor  % close loop via all risk factors  
-endfor      % close loop via all mc_timesteps
+    end  % close loop via all risk factors  
+end      % close loop via all mc_timesteps
 
 
 % 3.) Take Riskfactor Shiftvalues from Stressdefinition
@@ -378,8 +378,8 @@ for ii = 1 : 1 : length( stresstest_struct )
             rf_object = rf_object.set('shift_type',tmp_shift_type);
             % store risk factor object back into struct:
             riskfactor_struct( kk ).object = rf_object; 
-        endfor    
-endfor
+        end    
+end
 
 scengen = toc;
 tic;
@@ -391,7 +391,7 @@ endung = '.mat';
     tmp_riskfactor_struct = riskfactor_struct;
     for ii = 1 : 1 : length( tmp_riskfactor_struct )
         tmp_riskfactor_struct(ii).object = struct(tmp_riskfactor_struct(ii).object);
-    endfor
+    end
     savename = 'tmp_riskfactor_struct';
 	fullpath = [path_output, savename, endung];
 	save ('-text', fullpath, savename);
@@ -400,7 +400,7 @@ endung = '.mat';
     tmp_instrument_struct = instrument_struct;
     for ii = 1 : 1 : length( tmp_instrument_struct )
         tmp_instrument_struct(ii).object = struct(tmp_instrument_struct(ii).object);
-    endfor 
+    end 
     savename = 'tmp_instrument_struct';
 	fullpath = [path_output, savename, endung];
 	save ('-text', fullpath, savename);
@@ -430,11 +430,11 @@ for ii = 1 : 1 : length(riskfactor_struct)
         tmp_rf_curve = 'RF';
         for jj = 2 : 1 : length(tmp_rf_parts) -1    % concatenate the whole string except the last '_xY'
             tmp_rf_curve = strcat(tmp_rf_curve,'_',tmp_rf_parts{jj});
-        endfor
+        end
         rf_ir_cur_cell = cat(2,rf_ir_cur_cell,tmp_rf_curve);
     end
     rf_ir_cur_cell = unique(rf_ir_cur_cell);
-endfor
+end
 
 % generate RF_IR and RF_SPREAD objects from all nodes defined in riskfactor_struct
 tic;
@@ -449,7 +449,7 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
         tmp_curve_type = 'Spread Curve';
     else
         tmp_curve_type = 'Dummy Curve';
-    endif
+    end
     curve_struct( ii ).name     = tmp_curve_id;
     curve_struct( ii ).id       = tmp_curve_id;
     curve_object = Curve(tmp_curve_id,tmp_curve_id,tmp_curve_type,'');
@@ -472,7 +472,7 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
             tmp_rf_rates_stress = tmp_shift_type_inv .* (tmp_rate_original + (tmp_delta_stress ./ 10000)) + (tmp_shift_type .* tmp_rate_original .* tmp_delta_stress); %calculate abs and rel shocks and sum up (mutually exclusive)
             tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_rf_rates_stress);
         end
-    endfor 
+    end 
     curve_object = curve_object.set('nodes',tmp_nodes);
     curve_object = curve_object.set('rates_base',tmp_rates_original);
     curve_object = curve_object.set('rates_stress',tmp_rates_stress);
@@ -491,14 +491,14 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
                 tmp_model           = tmp_rf_struct_obj.get('model');
                 tmp_rf_rates_shock  = Riskfactor.get_abs_values(tmp_model, tmp_delta_shock, tmp_rf_struct_obj.get('rate')); 
                 tmp_rates_shock 	= cat(2,tmp_rates_shock,tmp_rf_rates_shock);
-            endif
-        endfor    
+            end
+        end    
         % Save curves into struct
         curve_object = curve_object.set('rates_mc',tmp_rates_shock,'timestep_mc',tmp_ts);           
-    endfor  % close loop via scenario_sets (mc,stress)
+    end  % close loop via scenario_sets (mc,stress)
     
     curve_struct( ii ).object = curve_object;
-endfor    % close loop via all curves
+end    % close loop via all curves
 
 % append Dummy Spread Curve (used for all instruments without defined spread curve): 
     curve_struct( length(rf_ir_cur_cell) + 1  ).id = 'RF_SPREAD_DUMMY';    
@@ -508,7 +508,7 @@ endfor    % close loop via all curves
     curve_object = curve_object.set('rates_stress',[0]);
     for kk = 1:1:length(mc_timesteps)       % append dummy curves for all mc_timesteps
         curve_object = curve_object.set('rates_mc',[0],'timestep_mc',mc_timesteps{ kk });
-    endfor    
+    end    
     curve_struct( length(rf_ir_cur_cell) + 1  ).object = curve_object;   
 curve_gen_time = toc;
 % end filling curve_struct
@@ -552,7 +552,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             index_xx = find(xx_structure==M(ii,1));
             index_yy = find(yy_structure==M(ii,2));
             vola_matrix(index_yy,index_xx) = M(ii,3);
-        endfor
+        end
         % Generate object and store data
         tmp_id = strrep(tmp_filename,input_filename_vola_index,''); % remove first string identifying file
         tmp_id = strrep(tmp_id,'.dat',''); % remove file ending
@@ -576,7 +576,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             index_yy = find(yy_structure==M(ii,2));
             index_zz = find(zz_structure==M(ii,3));
             vola_cube(index_xx,index_yy,index_zz) = M(ii,4);
-        endfor
+        end
         % Generate object and store data
         tmp_id = strrep(tmp_filename,input_filename_vola_ir,''); % remove first string identifying file
         tmp_id = strrep(tmp_id,'.dat',''); % remove file ending
@@ -589,7 +589,7 @@ for ii = 1 : 1 : length(tmp_list_files)
          % retvec = tmp_surface_object.getValue(380,700,zz_vec)'
          % retvec(1:10)
     end    
-endfor
+end
 %  END: Processing Vola surfaces
 
       
@@ -606,7 +606,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
       scen_number = no_stresstests;
   else
       scen_number = mc;
-  endif
+  end
   fprintf('== Full evaluation | scenario set %s | number of scenarios %d | timestep in days %d ==\n',tmp_scenario, scen_number,tmp_ts);
   for ii = 1 : 1 : length( instrument_struct )
     try
@@ -647,7 +647,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % Calibration of Option vola spread 
                 if ( option.get('vola_spread') == 0 )
                     option = option.calc_vola_spread(tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date);
-                endif
+                end
                 % calculate value
                 option = option.calc_value(tmp_scenario,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date);
 
@@ -665,7 +665,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % Calibration of swaption vola spread            
                 if ( swaption.get('vola_spread') == 0 )
                     swaption = swaption.calc_vola_spread(tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date);
-                endif
+                end
                 % calculate value
                 swaption = swaption.calc_value(tmp_scenario,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date);
                 % store swaption object in struct:
@@ -679,7 +679,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     tmp_underlying = forward.get('underlying_id');
                 if ( strfind(tmp_underlying,'RF_') )   % underlying instrument is a risk factor
                     tmp_underlying_object       = get_sub_object(riskfactor_struct, tmp_underlying);
-                endif
+                end
                 % Get discount curve
                     tmp_discount_curve          = forward.get('discount_curve');            
                     tmp_curve_object            = get_sub_object(curve_struct, tmp_discount_curve);	
@@ -688,7 +688,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 if ( first_eval == 0)
                 % Base value
                     forward = forward.calc_value(tmp_curve_object,'base',tmp_underlying_object);
-                endif
+                end
                 % calculation of value for scenario               
                     forward = forward.calc_value(tmp_curve_object,tmp_scenario,tmp_underlying_object);
 
@@ -714,14 +714,14 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                             tmp_idio_vola_p_a = sensi.get('idio_vola');
                             tmp_idio_vec = ones(scen_number,1) .* tmp_idio_vola_p_a;
                             tmp_shift = tmp_shift + tmp_sensitivities(jj) .* normrnd(0,tmp_idio_vec ./ sqrt(250/tmp_ts));
-                        endif
+                        end
                     % get sensitivity approach shift from underlying riskfactors
                     else
                         tmp_rf_struct_obj    = get_sub_object(riskfactor_struct, tmp_riskfactor);
                         tmp_delta   = tmp_rf_struct_obj.getValue(tmp_scenario);
                         tmp_shift   = tmp_shift + ( tmp_sensitivities(jj) .* tmp_delta );
                     end
-                endfor
+                end
 
                 % Calculate new absolute scenario values from Riskfactor PnL depending on riskfactor model
                 theo_value   = Riskfactor.get_abs_values('GBM', tmp_shift, sensi.getValue('base'));
@@ -731,7 +731,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     sensi = sensi.set('value_stress',theo_value);
                 else            
                     sensi = sensi.set('value_mc',theo_value,'timestep_mc',tmp_scenario);           
-                endif
+                end
                 % store bond object in struct:
                     instrument_struct( ii ).object = sensi;
                     
@@ -769,17 +769,17 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     end
                     tmp_value_base      = tmp_value_base    + tmp_weights(jj) .* underlying_value_base ./ tmp_fx_rate_base;
                     tmp_value           = tmp_value      + tmp_weights(jj) .* underlying_value_vec ./ tmp_fx_value;
-                endfor
+                end
 
                 % store values in sensitivity object:
                 if ( first_eval == 0)
                     synth = synth.set('value_base',tmp_value_base);
-                endif
+                end
                 if ( strcmp(tmp_scenario,'stress'))
                     synth = synth.set('value_stress',tmp_value);
                 else                    
                     synth = synth.set('value_mc',tmp_value,'timestep_mc',tmp_scenario);
-                endif
+                end
                 % store bond object in struct:
                     instrument_struct( ii ).object = synth;
                     
@@ -799,7 +799,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                         % rollout cash flows for all scenarios
                         if ( first_eval == 0)
                             bond = bond.rollout('base',valuation_date);
-                        endif
+                        end
                         bond = bond.rollout(tmp_scenario,valuation_date);
                     elseif( strcmp(tmp_sub_type,'FRN') == 1 || strcmp(tmp_sub_type,'SWAP_FLOAT') == 1)       % Floating Rate Notes (incl. swap floating leg)
                          %get reference curve object used for calculating floating rates:
@@ -808,19 +808,19 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                         % rollout cash flows for all scenarios
                             if ( first_eval == 0)
                                 bond = bond.rollout('base',tmp_ref_object,valuation_date);
-                            endif
+                            end
                             bond = bond.rollout(tmp_scenario,tmp_ref_object,valuation_date);         
-                    endif 
+                    end 
                     
                 % c) Get Spread over yield: 
                     if ~( bond.get('soy') == 0 )
                         bond = bond.calc_spread_over_yield(tmp_curve_object,tmp_spread_object,valuation_date);
-                    endif
+                    end
                     
                 % d) get net present value of all Cashflows (discounting of all cash flows)
 					if ( first_eval == 0)
                         bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_spread_object,'base');
-                    endif
+                    end
                     bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_spread_object,tmp_scenario);                                                                                  
 
                     % store bond object in struct:
@@ -845,9 +845,9 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
         cc = cc.calc_value(tmp_scenario,scen_number);
         instrument_struct( ii ).object = cc;
     end
-  endfor 
+  end 
   first_eval = 1;
-endfor      % endfor eval mc timesteps and stress loops
+end      % end eval mc timesteps and stress loops
  
  tic;
 if ( saving == 1 )
@@ -855,7 +855,7 @@ if ( saving == 1 )
     tmp_instrument_struct_fv = instrument_struct;
     for ii = 1 : 1 : length( tmp_instrument_struct )
         tmp_instrument_struct(ii).object = struct(tmp_instrument_struct(ii).object);
-    endfor 
+    end 
     savename = 'tmp_instrument_struct_fv';
 	fullpath = [path_output, savename, endung];
 	save ('-v7', fullpath, savename);
@@ -868,7 +868,7 @@ if ( length(instrument_valuation_failed_cell) >= 1 )
     instrument_valuation_failed_cell
 else
     fprintf('SUCCESS: All instruments valuated.\n');
-endif
+end
 
 
 % --------------------------------------------------------------------------------------------------------------------
@@ -920,7 +920,7 @@ for mm = 1 : 1 : length( portfolio_struct )
         position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate;
         portfolio_value = portfolio_value + tmp_value .* tmp_quantity  ./ tmp_fx_rate;
 
-    endfor
+    end
     
     base_value = portfolio_value
 
@@ -983,7 +983,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 	        octamat = [  pos_vec_shock ] ;
             position_struct( ii ).mc_scenarios.octamat = octamat;
             portfolio_shock = portfolio_shock +  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
-        endfor
+        end
 
 
 % b.) VaR Calculation
@@ -1067,7 +1067,7 @@ for ii = 1 : 1 : length( riskfactor_struct)
     tmp_id           = riskfactor_struct( ii ).object.id;
     tmp_delta_shock   = riskfactor_struct( ii ).object.getValue(tmp_scen_set);
     fprintf(fid, '|VaR %s scenario delta |%s|%1.3f|%1.3f|%1.3f|%1.3f|%1.3f|\n',tmp_scen_set,tmp_id,tmp_delta_shock(confi_scenarionumber_shock_m2),tmp_delta_shock(confi_scenarionumber_shock_m1),tmp_delta_shock(confi_scenarionumber_shock),tmp_delta_shock(confi_scenarionumber_shock_p1),tmp_delta_shock(confi_scenarionumber_shock_p2));
-endfor
+end
 % 7.1) Print Report for all Positions:
 total_var_undiversified = 0;
 
@@ -1108,13 +1108,13 @@ for ii = 1 : 1 : length( position_struct )
             tmp_aggr_cell           = aggr_key_struct( jj ).key_values;
             aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
             aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
-        endif
+        end
         if (isProp(tmp_instr_object,aggregation_key{jj}) == 1)
             tmp_aggr_key_value = getfield(tmp_instr_object,aggregation_key{jj});
             if (ischar(tmp_aggr_key_value))
                 if ( strcmp(tmp_aggr_key_value,'') == 1 )
                     tmp_aggr_key_value = 'Unknown';
-                endif
+                end
                 % Assign P&L to aggregation key
                 % check, wether aggr key already exist in cell array
                 if (sum(strcmp(tmp_aggr_cell,tmp_aggr_key_value)) > 0)   % aggregation key found
@@ -1127,19 +1127,19 @@ for ii = 1 : 1 : length( position_struct )
                     tmp_aggr_key_index = length(tmp_aggr_cell);
                     aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  - tmp_basevalue);
                     aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock;
-                endif
+                end
             else
                 disp('Aggregation key not valid');
-            endif
+            end
         else
             disp('Aggregation key not found in instrument definition');
-        endif
+        end
         % storing updated values in struct
         aggr_key_struct( jj ).key_name = aggregation_key{jj};
         aggr_key_struct( jj ).key_values = tmp_aggr_cell;
         aggr_key_struct( jj ).aggregation_mat = aggregation_mat;
         aggr_key_struct( jj ).aggregation_decomp_shock = aggregation_decomp_shock;
-    endfor
+    end
     
    
     total_var_undiversified = total_var_undiversified + tmp_pos_var;
@@ -1148,7 +1148,7 @@ for ii = 1 : 1 : length( position_struct )
     pie_chart_desc_instr_shock(ii) = cellstr( strcat(tmp_instr_object.id));
     pie_chart_values_pos_shock(ii) = round((tmp_decomp_var_shock) );
     pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
-endfor  % end loop for all positions
+end  % end loop for all positions
 % prepare vector for piechart:
 [pie_chart_values_sorted_instr_shock sorted_numbers_instr_shock ] = sort(pie_chart_values_instr_shock);
 [pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock);
@@ -1183,12 +1183,13 @@ for jj = 1:1:length(aggr_key_struct)
     fprintf(fid, '|VaR %s | Key value   | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
     for ii = 1 : 1 : length(tmp_aggr_cell)
         tmp_aggr_key_value          = tmp_aggr_cell{ii};
-        tmp_standalone_aggr_key_var = abs(sort(tmp_aggregation_mat(:,ii))(confi_scenario));
+        tmp_sorted_aggr_mat			= sort(tmp_aggregation_mat(:,ii));
+        tmp_standalone_aggr_key_var = abs(tmp_sorted_aggr_mat(confi_scenario));
         tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
         fprintf('|VaR %s | %s \t |%9.2f EUR \t |%9.2f EUR|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,tmp_decomp_aggr_key_var);
         fprintf(fid, '|VaR %s | %s \t |%9.2f EUR \t |%9.2f EUR|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,tmp_decomp_aggr_key_var);
-    endfor
-endfor
+    end
+end
 
 % Print Portfolio reports
 fprintf(fid, '\n');
@@ -1338,7 +1339,7 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
         octamat = [  pos_vec_shock ] ;
         position_struct( ii ).stresstests = pos_vec_stress;
         portfolio_stress = portfolio_stress + new_value_vec_stress .*  tmp_quantity ./ tmp_fx_value_stress;
-    endfor
+    end
     % Calc absolute and relative stress values
     p_l_absolut_stress      = portfolio_stress - base_value;
     p_l_relativ_stress      = (portfolio_stress - base_value )./ base_value;
@@ -1362,17 +1363,17 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
             tmp_values_stress_rel = 100.*(tmp_values_stress - tmp_values_stress(end)) ./ tmp_values_stress(end);
         else
             tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
-        endif
+        end
         tmp_ir_sensitivity = (abs(tmp_values_stress_rel(1)) + abs(tmp_values_stress_rel(2)))/2;
         tmp_spread_sensitivity = (abs(tmp_values_stress_rel(3)) + abs(tmp_values_stress_rel(4)))/2;
         fprintf(fid, '|Sensi ModDuration \t\t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_ir_sensitivity);
         fprintf(fid, '|Sensi ModSpreadDur \t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_spread_sensitivity);
-    endfor 
+    end 
  
     fprintf(fid, 'Stress test results:\n');
     for xx=1:1:no_stresstests
         fprintf(fid, 'Relative PnL in Stresstest: |%s| \t |%3.2f%%|\n',stresstest_plot_desc{xx},p_l_relativ_stress(xx).*100);
-    endfor
+    end
     fprintf(fid, '\n');
 
     if ( plotting == 1 )
@@ -1413,7 +1414,7 @@ fprintf(fid, 'Total Runtime:  %6.2f s\n',totaltime);
 fprintf('Total Runtime:  %6.2f s\n',totaltime);
 % Close file
 fclose (fid);
-endfor % closing main portfolioloop mm
+end % closing main portfolioloop mm
 
 fprintf('\n');
 fprintf('=======================================================\n');
@@ -1447,7 +1448,7 @@ function  match_struct = get_sub_struct(input_struct, input_id)
                 return;
             end            
             summe = summe + 1;
-        endfor       
+        end       
     end
     matches = b * c';
 	if (matches > 0)
@@ -1474,7 +1475,7 @@ function  match_obj = get_sub_object(input_struct, input_id)
                 return;
             end            
             summe = summe + 1;
-        endfor       
+        end       
     end
     matches = b * c';
 	if (matches > 0)

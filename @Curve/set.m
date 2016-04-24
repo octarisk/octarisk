@@ -3,7 +3,7 @@ function s = set (obj, varargin)
   s = obj;
   if (length (varargin) < 2 || rem (length (varargin), 2) != 0)
     error ('set: expecting property/value pairs');
-  endif
+  end
   while (length (varargin) > 1)
     prop = varargin{1};
     val = varargin{2};
@@ -17,14 +17,14 @@ function s = set (obj, varargin)
                 s.rates_mc(:,:,mc_stack + 1) = val;
             else
                 error('set: expecting length of new input vector to equal length of already existing rate vector');
-            endif
+            end
         else    % setting vector
             s.rates_mc(:,:,1) = val;
-        endif  
+        end  
         
       else
         error ('set: expecting the mc values to be real ');
-      endif
+      end
     % ====================== set timestep_mc: appending or setting timestep vector ======================
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc')) 
       if (iscell(val) && length(val) == 1)
@@ -33,7 +33,7 @@ function s = set (obj, varargin)
             s.timestep_mc{length(tmp_cell) + 1} = char(val);
         else    % setting vector
             s.timestep_mc = val;
-        endif      
+        end      
       elseif (iscell(val) && length(val) > 1) % replacing timestep_mc cell vector with new vector
         s.timestep_mc = val;
       elseif ( ischar(val) )
@@ -42,41 +42,41 @@ function s = set (obj, varargin)
             s.timestep_mc{length(tmp_cell) + 1} = char(val);
         else    % setting vector
             s.timestep_mc = cellstr(val);
-        endif 
+        end 
       else
         error ('set: expecting the cell value to be a cell vector');
-      endif  
+      end  
     % ====================== set rates_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'rates_stress'))   
       if (isreal (val))
         s.rates_stress = val;
       else
         error ('set: expecting the stress value to be real ');
-      endif
+      end
     % ====================== set rates_base ======================
     elseif (ischar (prop) && strcmp (prop, 'rates_base'))   
       if (isvector (val) && isreal (val))
         s.rates_base = val;
       else
         error ('set: expecting the base values to be a real vector');
-      endif
+      end
     % ====================== set nodes ======================
     elseif (ischar (prop) && strcmp (prop, 'nodes'))   
       if (isvector (val) && isreal (val))
         s.nodes = val;
       else
         error ('set: expecting the value to be a real vector');
-      endif
+      end
     % ====================== set method_interpolation ======================
     elseif (ischar (prop) && strcmp (prop, 'method_interpolation'))   
       if (ischar (val))
         s.method_interpolation = method_interpolation;
       else
         error ('set: expecting the value to be of type character');
-      endif 
+      end 
     % case else
     else
       error ('set: invalid property of curve class');
-    endif
+    end
   endwhile
-endfunction
+end

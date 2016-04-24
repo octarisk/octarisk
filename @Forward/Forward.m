@@ -47,7 +47,7 @@ classdef Forward < Instrument
         elseif ( nargin == 13)
             if ( length(tmp_cf_dates) > 0 )
                 tmp_cf_dates = (tmp_cf_dates)' - today;
-            endif
+            end
         end
         
         % Calling constructor
@@ -59,72 +59,72 @@ classdef Forward < Instrument
                 b.maturity_date =  datestr(special_str{1});
             else
                 error('Error: No maturity date specified');
-            endif
-        endif
+            end
+        end
         % setting property compounding_type
         if ( length(special_str) >= 2  )
             b.compounding_type = tolower(special_str{2});
-        endif
+        end
         % setting property compounding_freq
         if ( length(special_str) >= 3  )
             b.compounding_freq = special_str{3};
-        endif
+        end
         % setting property day_count_convention
         if ( length(special_str) >= 4  )
             b.day_count_convention = special_str{4};
-        endif
+        end
         % setting property sub_type
         if ( strcmp(sub_type,'') )
             error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
-        endif 
+        end 
         % === Parsing special_num ===        
         % setting property strike price
         if ( length(special_num) < 1  )
             error('Error: No strike_price specified');
         else
             b.strike_price = special_num(1);  
-        endif
+        end
         % setting property underlying price
         if ( length(special_num) < 2 )
             error('Error: No underlying_price specified');
         else
             b.underlying_price_base = special_num(2);  
-        endif  
+        end  
         % setting property multiplier
         if ( length(special_num) >= 3 )
             b.multiplier = special_num(3);  
-        endif 
+        end 
         % setting property dividend_yield
         if ( length(special_num) >= 4 )
             b.dividend_yield = special_num(4);  
-        endif 
+        end 
         % setting property storage_cost
         if ( length(special_num) >= 5 )
             b.storage_cost = special_num(5);  
-        endif 
+        end 
         % setting property convenience_yield
         if ( length(special_num) >= 6 )
             b.convenience_yield = special_num(6);  
-        endif 
+        end 
         % === Parsing riskfactors ===
         % setting property underlying_id
         if ( length(riskfactors) < 1  )
             error('Error: No underlying_id specified');
         else
             b.underlying_id = riskfactors{1};
-        endif
+        end
         % setting property discount_curve
         if ( length(riskfactors) < 2 )
             error('Error: No discount_curve specified');
         else
             b.discount_curve = riskfactors{2};
-        endif
+        end
          % setting property convenience_yield
         if ( length(sensitivities) >= 1 )
             b.underlying_sensitivity = sensitivities(1);  
-        endif 
+        end 
         % === Parsing cash flows ===
         b.cf_dates = tmp_cf_dates;
         b.cf_values = tmp_cf_values;

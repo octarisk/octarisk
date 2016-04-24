@@ -45,7 +45,7 @@ elseif (info == 104 )
 else
 	%disp ('       --- WARNING: Optimization did not converge! ---');
     x = -99;
-endif
+end
 
 % return spread over yield
 vola_spread = x;
@@ -63,5 +63,5 @@ function obj = phi (x,PayerReceiverFlag,F,X,T,r,sigma,m,tau,multiplicator,market
             tmp_swaption_value = swaption_bachelier(PayerReceiverFlag,F,X,T,r,sigma+x,m,tau) .* multiplicator;
         end
         obj = abs( tmp_swaption_value  - market_value)^2;
-endfunction
+end
  

@@ -42,7 +42,7 @@ function SwaptionB76Value = swaption_black76(PayerReceiverFlag,F,X,T,r,sigma,m,t
 
  if nargin < 8 || nargin > 8
     print_usage ();
- endif
+ end
    
 if ! isnumeric (PayerReceiverFlag)
     error ('PayerReceiverFlag must be either 1 or 0 ')
@@ -72,7 +72,7 @@ elseif ! isnumeric (tau)
     error ('Tenor of underlying swap must be numeric ')     
 elseif ( sigma < 0)
     error ('Volatility sigma must be positive ')        
-endif
+end
 T = T ./ 365;
     d1 = (log(F./X) + (0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
     d2 = d1 - sigma.*sqrt(T);

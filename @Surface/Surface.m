@@ -64,7 +64,7 @@ classdef Surface
         end
         if ( strcmp(tmp_id,''))
             error('Error: Surface requires a valid ID')
-        endif
+        end
         a.name          = tmp_name;
         a.id            = tmp_id;
         a.description   = tmp_description;
@@ -84,39 +84,39 @@ classdef Surface
             fprintf('Axis x %s : Values :\n[ ',a.axis_x_name);
             for (ii = 1 : 1 : length(a.axis_x))
                 fprintf('%d,',a.axis_x(ii));
-            endfor
+            end
             fprintf(' ]\n');
-         endif
+         end
          % looping via all y axis values if defined
          if ( length(a.axis_y) > 0 )
             fprintf('Axis y %s : Values :\n[ ',a.axis_y_name);
             for (ii = 1 : 1 : length(a.axis_y))
                 fprintf('%d,',a.axis_y(ii));
-            endfor
+            end
             fprintf(' ]\n');
-         endif
+         end
          % looping via all z axis values if defined
          if ( length(a.axis_z) > 0 )
             fprintf('Axis z %s : Values :\n[ ',a.axis_z_name);
             for (ii = 1 : 1 : length(a.axis_z))
                 fprintf('%d,',a.axis_z(ii));
-            endfor
+            end
             fprintf(' ]\n');
-         endif
+         end
          
          % looping via all values if defined
          if ( length(a.values_base) > 0 )
             fprintf('Surface base values:\n[ ');
             [aa bb cc ] = size(a.values_base);
             for ( kk = 1 : 1 : cc)
-                if ( length(a.axis_z) == cc );fprintf('%s : %d\n',a.axis_z_name, a.axis_z(kk));endif;
+                if ( length(a.axis_z) == cc );fprintf('%s : %d\n',a.axis_z_name, a.axis_z(kk));end;
                 for ( jj = 1 : 1 : aa)
                     fprintf('%f,',a.values_base(jj,:,kk));
                     fprintf('\n');
-                endfor
-            endfor
+                end
+            end
             fprintf(' ]\n');
-         endif   
+         end   
       end % disp
       
       function obj = set.type(obj,type)

@@ -42,10 +42,10 @@ function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X,T,
  
  if nargin < 6 || nargin > 7
     print_usage ();
-  endif
+  end
   if nargin == 6
     divrate = 0.00;
-  endif 
+  end 
    
   if ! isnumeric (CallPutFlag)
     error ('CallPutFlag must be either 1 or 0 ')
@@ -69,7 +69,7 @@ function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X,T,
     error ('Dividend rate must be numeric ')     
   elseif ( sigma < 0)
     error ('Volatility sigma must be positive ')        
-  endif
+  end
   
 % Calculation of BS value
 if ( CallPutFlag == 1 ) % Call

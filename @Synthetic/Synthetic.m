@@ -34,7 +34,7 @@ classdef Synthetic < Instrument
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
                 tmp_cf_dates = (tmp_cf_dates)' - today;
-            endif
+            end
         end
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'synthetic',currency,base_value,asset_class,valuation_date);
@@ -43,15 +43,15 @@ classdef Synthetic < Instrument
             error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
-        endif     
+        end     
         % setting property weights
         if ( length(sensitivities) >= 1  )
             b.weights = sensitivities;
-        endif
+        end
         % setting property instruments
         if ( length(riskfactors) >= 1  )
             b.instruments = riskfactors;
-        endif
+        end
         b.cf_dates = tmp_cf_dates;
         b.cf_values = tmp_cf_values;
         
@@ -63,7 +63,7 @@ classdef Synthetic < Instrument
          % looping via all instruments / weights
          for ( ii = 1 : 1 : length(b.weights))
             fprintf('Instrument: %s | weight: %f\n',b.instruments{ii},b.weights(ii));            
-         endfor
+         end
       end
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,{'SYNTH'}) )

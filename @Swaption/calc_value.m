@@ -2,13 +2,13 @@ function obj = calc_value(swaption,value_type,vola_riskfactor,discount_curve,tmp
     obj = swaption;
     if ( nargin < 5)
         error('Error: No  discount curve or vola surface set. Aborting.');
-    endif
+    end
     if ( nargin < 6)
         valuation_date = today;
-    endif
+    end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
-    endif
+    end
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates        = discount_curve.getValue(value_type);
@@ -65,13 +65,13 @@ function obj = calc_value(swaption,value_type,vola_riskfactor,discount_curve,tmp
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_swap_tenor,tmp_dtm,tmp_moneyness)) .* exp(vola_riskfactor.getValue(value_type));
             else
                 tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_swap_tenor,tmp_dtm,tmp_moneyness)  .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
-            endif
+            end
         else        % Normal Model
             if ( strcmp(value_type,'stress'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_swap_tenor,tmp_dtm,tmp_moneyness)) .* (vola_riskfactor.getValue(value_type) + 1);
             else
                 tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_swap_tenor,tmp_dtm,tmp_moneyness) + tmp_impl_vola_atm + tmp_impl_vola_spread;  
-            endif
+            end
         end
 
       % Valuation for: Black76 or Bachelier model
@@ -81,7 +81,7 @@ function obj = calc_value(swaption,value_type,vola_riskfactor,discount_curve,tmp
             theo_value      = max(swaption_bachelier(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier,0.001);
         end
         
-    endif   % close loop if tmp_dtm < 0
+    end   % close loop if tmp_dtm < 0
     
       
     % store theo_value vector in appropriate class property   
@@ -90,8 +90,8 @@ function obj = calc_value(swaption,value_type,vola_riskfactor,discount_curve,tmp
     else  
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);
-    endif
+    end
    
-endfunction
+end
 
 

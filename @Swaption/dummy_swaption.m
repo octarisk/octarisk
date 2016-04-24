@@ -69,8 +69,8 @@
                             %tmp_swaptionvalue_base 
                             instrument_struct( ii ).value = tmp_swaptionvalue_base;                           
                             tmp_impl_vola_spread = 0; 
-                        endif
-                    endif
+                        end
+                    end
                   % Get Volatility according to volatility smile given by vola surface
                     tmp_indexvol_imp_vola_250d  = get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_250d) + tmp_impl_vola_atm_250d + tmp_impl_vola_spread;
                     tmp_indexvol_imp_vola_1d    = get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_1d) + tmp_impl_vola_atm_1d + tmp_impl_vola_spread;

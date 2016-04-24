@@ -14,8 +14,8 @@ function ret = isProp (instrument, property)
         end_try_catch
     else
         error('Please provide a property string');
-    endif
+    end
   else
     print_usage ();
-  endif
-endfunction
+  end
+end

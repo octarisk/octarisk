@@ -27,7 +27,7 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#
   if nargin < 3 || nargin > 3
     print_usage ();
-  endif
+  end
    
   if ! isnumeric (scenarios)
     error ('scenarios must be numeric ')
@@ -37,7 +37,7 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
     error ('alpha must be numeric ')  
   elseif ( alpha > 1 || alpha < 0 )
     error ('alpha must be a level of significance between 0 and 1 ')
-  endif
+  end
 
     % Calculating the Weights of the Beta Distribution
     a = ( scenarios + 1 ) * alpha;
@@ -48,7 +48,7 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
     beta_2 = betacdf( x_2 , a , b );
     X = beta_1 - beta_2;
     
-endfunction
+end
 
 %# Tests:
 %scenarios  = 50000

@@ -21,12 +21,12 @@ function s = getVola (option, property)
             printf ('get: Allowed mc time steps:\n')
             obj.timestep_mc
             s = [];
-        endif
-      endif 
+        end
+      end 
     else
       error ('get: expecting the property to be a string');
-    endif
+    end
   else
     print_usage ();
-  endif
-endfunction
+  end
+end

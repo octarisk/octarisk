@@ -33,7 +33,7 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
 
   if (nargin < 3 || nargin > 6)
     print_usage ();
-  endif
+  end
   
   if ( nargin < 4)
     method = 'linear';
@@ -42,8 +42,8 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
     findvec = strcmp(method,method_cell);
     if ( findvec == 0)
          error('Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson or monotone-convex');
-    endif
-  endif
+    end
+  end
   
   if (strcmp(method,'smith-wilson'))
     if (nargin == 4)
@@ -56,9 +56,9 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
     elseif (nargin == 6)  
         if (alpha <= 0.0)
             error('Error: A positive reversion speed rate must be provided.');    
-        endif
-    endif
-  endif
+        end
+    end
+  end
 % dimension time -> columnwise
 % dimension scenarios -> rowwise
 % Checks:
@@ -66,11 +66,11 @@ no_scen_nodes = columns(nodes);
 no_scen_rates = columns(rates);
 if ~( no_scen_nodes == no_scen_rates )
     error('Error: Number of columns must be equivalent');
-endif
+end
 
 if ~( issorted(nodes) == 1)
     error('Error: Nodes have to be sorted')
-endif
+end
 
 dnodes = diff(nodes);
 
@@ -87,33 +87,33 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant extrapolatio
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                      y = ((1 - abs(timestep - nodes(ii))./ dnodes(ii)).* rates(:,ii) +  (1 - abs(nodes(ii + 1) - timestep)./ dnodes(ii)).* rates(:,ii+1)) ;            
-                endif
-            endfor
+                end
+            end
         elseif (strcmp(method,'mm'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                     alpha = (nodes(ii+1) - timestep) / ( nodes(ii+1 ) - nodes(ii) );
                     y = (alpha .* nodes(ii) .* rates(:,ii) + (1 - alpha) .* nodes(ii+1) .* rates(:,ii+1)) ./ timestep;
-                endif
-            endfor
+                end
+            end
         elseif (strcmp(method,'loglinear'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                     alpha = (timestep - nodes(ii) ) / ( nodes(ii+1 ) - nodes(ii) );
                     y = rates(:,ii) .* exp(alpha .* log(rates(ii+1) ./ rates(ii)));
-                endif
-            endfor    
+                end
+            end    
         elseif (strcmp(method,'exponential'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                     alpha = (nodes(ii+1) - timestep) / ( nodes(ii+1 ) - nodes(ii) );
                     y = log(exp(rates(:,ii)) .* alpha + exp(rates(ii+1)) .* (1 - alpha));
-                endif
-            endfor 
+                end
+            end 
         elseif (strcmp(method,'spline'))
             y = spline(nodes',rates',timestep); % use octave's built in function spline
-        endif
-    endif
+        end
+    end
 elseif (strcmp(method,'smith-wilson'))   % smith-wilson method
     ufrc = log(1+ufr);
     [P, y] = interpolate_smith_wilson(timestep,rates,nodes,ufrc,alpha);
@@ -137,10 +137,10 @@ elseif (strcmp(method,'monotone-convex'))
         
         % 2. Interpolate values
         y = CalcInterpolant(timestep,nodes,f,fdiscrete,dInterpolantatNode);
-    endif
+    end
 else
     error('ERROR: interpolation method not implemented'); 
-endif
+end
 
 
 end % end of Main function
@@ -164,7 +164,7 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
         i = length(Terms) -1;
     else
         i = lookup(Terms,Term);
-    endif
+    end
     x = (Term - Terms(i)) ./ (Terms(i + 1) - Terms(i));
     g0 = f(:,i) - fdiscrete(:,i + 1);
     g1 = f(:,i + 1) - fdiscrete(:,i + 1);
@@ -250,10 +250,10 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
     
     if x == 0 || x == 1 
       G = 0;
-    endif
+    end
     %(12)
     Interpolant_Value = 1 ./ Term .* (Terms(i) .* dInterpolantatNode(:,i) + (Term - Terms(i)) .* fdiscrete(:,i + 1) + (Terms(i + 1) - Terms(i)) .* G);
-  endif
+  end
 end
 
 function Forward = CalcForward(Term,Terms,f,fdiscrete)
@@ -267,7 +267,7 @@ function Forward = CalcForward(Term,Terms,f,fdiscrete)
         i = length(Terms) -1 ;
     else
         i = lookup(Terms,Term);
-    endif
+    end
     %the x in (25)
     x = (Term - Terms(i)) / (Terms(i + 1) - Terms(i));
     g0 = f(i) - fdiscrete(i + 1);
@@ -355,14 +355,14 @@ function Forward = CalcForward(Term,Terms,f,fdiscrete)
           G_4 = V_G_4 .* G_4_a + ~V_G_4 .* G_4_b;
        
        G = G_1 .* V_zone1 + G_2 .* V_zone2 + G_3 .* V_zone3 + G_4 .* V_zone4;
-    endif
+    end
     % replace NaN values with 0
     
     G(g0==0) = 0;
     G(g1==0) = 0;
     %(26)
     Forward = G + fdiscrete(i + 1);
-  endif
+  end
 end
 
 function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,InputsareForwards,Negative_Forwards_Allowed)
@@ -381,8 +381,8 @@ function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,Inputsa
       fdiscrete(:,j) = Values(:,j);
       termrate = termrate + fdiscrete(:,j) .* (Terms(:,j) - Terms(:,j - 1));
       dInterpolantatNode(:,j) = termrate ./ Terms(:,j);
-    endfor
-  endif
+    end
+  end
     %f_i estimation under the unameliorated method
     %numbering refers to Wilmott paper
     f = zeros(rows(Values),columns(Values));
@@ -390,7 +390,7 @@ function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,Inputsa
     %(22)
     for j = 2 : 1 :  columns(Terms) - 1
         f(:,j) = (Terms(:,j) - Terms(:,j - 1)) ./ (Terms(:,j + 1) - Terms(:,j - 1)) .* fdiscrete(:,j + 1) + (Terms(:,j + 1) - Terms(:,j)) ./ (Terms(:,j + 1) - Terms(:,j - 1)) .* fdiscrete(:,j);
-    endfor
+    end
     %(23)
     f(:,1) = fdiscrete(:,2) - 0.5 .*( f(:,2) - fdiscrete(:,2));
     %(24)
@@ -400,9 +400,9 @@ function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,Inputsa
       f(:,1) = bound(0, f(:,1), 2 * fdiscrete(:,1));
       for j = 2 : 1 :  columns(Terms) - 1
         f(:,j) = bound(0, f(:,j), 2 * min(fdiscrete(:,j), fdiscrete(:,j + 1)));
-      endfor
+      end
       f(:,end) = bound(0, f(:,end), 2 * fdiscrete(:,end));
-    endif
+    end
     
 end
 
@@ -414,7 +414,7 @@ function ret = bound(Minimum,Variable,Maximum)
     ret = Maximum;
   else
     ret = Variable;
-  endif
+  end
 end
 
 % ----------------------------------------------------------------------
@@ -438,10 +438,10 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
     % transpose input vectors if necessary
         if rows(tt) < columns(tt)
             tt = tt';
-        endif
+        end
         if rows(nodes_input_y) < columns(nodes_input_y)
             nodes_input_y = nodes_input_y';
-        endif
+        end
     % transpose rates input matrix (each vector rates(nodes) per scenario has to be in columns)
             rates_input = rates_input';        
     % checking for nodes_input to be in years instead of days
@@ -449,7 +449,7 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
             %disp('WARNING: Nodes_input seems to be defined in days, converting to years...')
             nodes_input_y = nodes_input_y ./365;
             tt = tt ./ 365;
-        endif
+        end
     % Calculate chi via solving linear equations  
         % 1. calculate vector mu
         mu = exp(- ufrc .* nodes_input_y);
@@ -477,5 +477,5 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
     R =  log(1 ./P) ./tt;
     if ~(isreal(R))
        error('ERROR: R vector not real');    
-    endif
+    end
 end

@@ -31,7 +31,7 @@ try
             tmp_file = oldfiles(ii).name;
             if ( length(tmp_file) > 3 )
                 delete(strcat(path,'/',tmp_file));
-            endif
+            end
     end
 end    
 % A.2) read in whole instruments file with
@@ -61,9 +61,9 @@ for ii = 1 : 1 : length(celltmp);
             fprintf(fid, '%s\n',tmp_entries);
             % Close file
             fclose (fid);   
-        endif
-    endif
-endfor
+        end
+    end
+end
 fclose (file_comments); % close comments file
 
 
@@ -119,7 +119,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             tmp_item = tmp_header{kk};
             tmp_header_type{kk-1} = substr(tmp_item,-4);  % extract last 4 characters
             tmp_colname{kk-1} = substr(tmp_item, 1, length(tmp_item)-4);  % remove last 4 characters from colname
-        endfor   
+        end   
         % B.3) loop through all entries of file 
         
         tmp_cell_struct = {};           
@@ -193,7 +193,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                 catch
                     error_flag = 1;
                 end
-            endfor  % end for loop via all attributes
+            end  % end for loop via all attributes
             % B.3c) Error checking for riskfactor: 
             if ( error_flag > 0 )
                 fprintf('ERROR: There has been an error for riskfactor: %s \n',tmp_cell_struct{1, jj - 1});
@@ -207,9 +207,9 @@ for ii = 1 : 1 : length(tmp_list_files)
                     number_positions = number_positions + 1;
                 end
                 number_positions = number_positions + 1;
-            endif
+            end
           end   % end if loop with meaningful data
-        endfor  % next position / next row in specification
+        end  % next position / next row in specification
 
         if ( strcmp(toupper(tmp_position_type),'PORTFOLIO'))
             tmp_portfolio_struct = cell2struct(tmp_cell_struct,tmp_colname);
@@ -221,7 +221,7 @@ for ii = 1 : 1 : length(tmp_list_files)
         
         
     end         % meaningful file
-endfor          % next file with specifications
+end          % next file with specifications
 % finished loading position into struct -> consolidate structure
 for kk = 1 : 1 : length(tmp_portfolio_struct)
     tmp_port_id = tmp_portfolio_struct( kk ).id;
@@ -231,9 +231,9 @@ for kk = 1 : 1 : length(tmp_portfolio_struct)
         if ( tmp_match_port_pos(ll) == 1 )
             tmp_portfolio_struct( kk ).position(idx) = tmp_position_struct(ll);
             idx = idx + 1;
-        endif
-    endfor   
-endfor
+        end
+    end   
+end
 
 % C) return final position objects  
 fprintf('SUCCESS: loaded >>%d<< positions. \n',number_positions);
@@ -250,6 +250,6 @@ if (archive_flag == 1)
     try
         tarfiles = tar( strcat(path_archive,'/archive_positions_',tmp_timestamp,'.tar'),strcat(path,'/*'));
     end
-endif
+end
 
 end % end function

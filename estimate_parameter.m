@@ -26,14 +26,14 @@ if nargin == 0
         path = 'C:/Dokumente/octarisk/working_folder/';   % general save path for *.mat files
     elseif ( isunix == 1)
         path = '/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder/';
-    endif
+    end
     filename = strcat(path,'timeseries_24.dat');
     printf('Loading from path: %s \n',filename);
     stepsize_days = 1       % number of timesteps between data points 
-endif
+end
 if nargin == 1
     stepsize_days = 1       % number of timesteps between data points
-endif
+end
 
 % 1. load input data: timeseries
 M = load(filename);
@@ -122,7 +122,7 @@ fprintf('MR rate ergodic \t %9.4f\n',mr_rate_ergodic);
 fprintf('MR level ergodic \t %9.4f\n',mr_level_ergodic);
 
 % ending outer loop
-endfor
+end
 
 	
 tt = 1 : 1 : rows(M);
@@ -131,6 +131,6 @@ clf;
 for ii = 1 : 1 : columns(M)
 	plot(tt,M(:,ii));
 	hold on;
-endfor
-endfunction
+end
+end
 

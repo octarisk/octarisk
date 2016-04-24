@@ -33,7 +33,7 @@ classdef Cash < Instrument
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
                 tmp_cf_dates = (tmp_cf_dates)' - today;
-            endif
+            end
         end
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'cash',currency,base_value,asset_class,valuation_date);
@@ -42,7 +42,7 @@ classdef Cash < Instrument
             error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
-        endif     
+        end     
         b.cf_dates = tmp_cf_dates;
         b.cf_values = tmp_cf_values;
         

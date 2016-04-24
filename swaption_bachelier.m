@@ -41,7 +41,7 @@ function SwaptionBachelierValue = swaption_bachelier(PayerReceiverFlag,F,X,T,r,s
  
  if nargin < 8 || nargin > 8
     print_usage ();
- endif
+ end
    
 if ! isnumeric (PayerReceiverFlag)
     error ('PayerReceiverFlag must be either 1 or 0 ')
@@ -71,7 +71,7 @@ elseif ! isnumeric (tau)
     error ('Tenor of underlying swap must be numeric ')     
 elseif ( sigma < 0)
     error ('Volatility sigma must be positive ')        
-endif
+end
 T = T ./ 365;
 
 # C = ((F-X)*N(d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)

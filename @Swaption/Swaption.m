@@ -52,7 +52,7 @@ classdef Swaption < Instrument
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
                 tmp_cf_dates = (tmp_cf_dates)' - today;
-            endif
+            end
         end
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'swaption',currency,base_value,asset_class,valuation_date);
@@ -61,40 +61,40 @@ classdef Swaption < Instrument
             error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
-        endif
+        end
 
         % setting property maturity_date
         if ( length(special_str) >= 1 )
             if ( !strcmp(special_str{1},'') )
                 b.maturity_date =  datestr(special_str{1});
-            endif
-        endif
+            end
+        end
 
         % parsing attribute special_str
             % setting property compounding_type
             if ( length(special_str) >= 2  )
                 b.compounding_type = tolower(special_str{2});
-            endif
+            end
 
             % setting property day_count_convention
             if ( length(special_str) >= 3  )
                 b.day_count_convention = special_str{3};
-            endif
+            end
             
             % setting property model
             if ( length(special_str) >= 4  )
                 b.model = toupper(special_str{4});
-            endif
+            end
  
         % parsing attribute special_num
             % setting property multiplier
             if ( length(special_num) >= 1  )
                 b.multiplier = special_num(1);  
-            endif
+            end
             % setting property compounding_freq
             if ( length(special_num) >= 2  )
                 b.compounding_freq = special_num(2);  
-            endif 
+            end 
 
         % parsing attribute sensitivities
             % setting property vola_sensi
@@ -102,35 +102,35 @@ classdef Swaption < Instrument
                 error('Error: No vola_sensi specified');
             else
                 b.vola_sensi = sensitivities(1);
-            endif        
+            end        
             % setting property spot
             if ( length(sensitivities) < 2  )
                 error('Error: No spot specified');
             else
                 b.spot = sensitivities(2);
-            endif       
+            end       
             % setting property strike
             if ( length(sensitivities) < 3  )
                 error('Error: No strike specified');
             else
                 b.strike = sensitivities(3);
-            endif
+            end
             % setting property spread
             if ( length(sensitivities) >= 4  )
                 b.spread = sensitivities(4);
-            endif
+            end
             % setting property tenor
             if ( length(sensitivities) < 5  )
                 error('Error: No tenor specified');
             else
                 b.tenor = sensitivities(5);
-            endif
+            end
             % setting property no_payments
             if ( length(sensitivities) < 6  )
                 error('Error: No no_payments specified');
             else
                 b.no_payments = sensitivities(6);
-            endif
+            end
 
         % parsing attribute riskfactors
             % setting property vola surface
@@ -138,19 +138,19 @@ classdef Swaption < Instrument
                 error('Error: No vola_surface specified');
             else
                 b.vola_surface = riskfactors{1};
-            endif
+            end
              % setting property underlying
             if ( length(riskfactors) < 2  )
                 error('Error: No underlying specified');
             else
                 b.underlying = riskfactors{2};
-            endif
+            end
              % setting property discount_curve
             if ( length(riskfactors) < 4  )
                 error('Error: No discount_curve specified');
             else
                 b.discount_curve = riskfactors{4};
-            endif
+            end
         b.cf_dates = tmp_cf_dates;
         b.cf_values = tmp_cf_values;
         
@@ -185,17 +185,17 @@ classdef Swaption < Instrument
             % fprintf('CF dates:\n[ ');
             % for (ii = 1 : 1 : length(b.cf_dates))
                 % fprintf('%d,',b.cf_dates(ii));
-            % endfor
+            % end
             % fprintf(' ]\n');
-         % endif
+         % end
          % % looping via all cf base values if defined
          % if ( length(b.cf_values) > 0 )
             % fprintf('CF Base values:\n[ ');
             % for ( kk = 1 : 1 : min(columns(b.cf_values),10))
                     % fprintf('%f,',b.cf_values(kk));
-                % endfor
+                % end
             % fprintf(' ]\n');
-         % endif   
+         % end   
           % % looping via all stress rates if defined
          % if ( rows(b.cf_values_stress) > 0 )
             % tmp_cf_values = b.getCF('stress');
@@ -203,11 +203,11 @@ classdef Swaption < Instrument
             % for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
                 % for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
                     % fprintf('%f,',tmp_cf_values(jj,kk));
-                % endfor
+                % end
                 % fprintf(' ]\n');
-            % endfor
+            % end
             % fprintf('\n');
-         % endif    
+         % end    
          % % looping via first 3 MC scenario values
          % for ( ii = 1 : 1 : mc_stack)
             % if ( length(b.timestep_mc_cf) >= ii )
@@ -217,14 +217,14 @@ classdef Swaption < Instrument
                 % for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
                     % for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
                         % fprintf('%f,',tmp_cf_values(jj,kk));
-                    % endfor
+                    % end
                     % fprintf(' ]\n');
-                % endfor
+                % end
                 % fprintf('\n');
             % else
                 % fprintf('MC timestep cf not defined\n');
-            % endif
-         % endfor
+            % end
+         % end
 
       end
       % converting object <-> struct for saving / loading purposes

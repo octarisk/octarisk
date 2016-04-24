@@ -7,24 +7,24 @@ function y = getValue (surface, xx,yy,zz)
     if ( nargin == 2)
         len = 1;
         y = zeros(rows(xx),1);
-    endif
+    end
     if ( nargin == 3 )
         y = zeros(rows(xx),1);
         len = 2;
         if (rows(xx) == 1)
             xx = ones(rows(yy),1) .* xx;
-        endif    
-    endif
+        end    
+    end
     if ( nargin == 4 )
         y = zeros(rows(zz),1);
         len = 3;
         if (rows(xx) == 1)
             xx = ones(rows(zz),1) .* xx;
-        endif
+        end
         if (rows(yy) == 1)
             yy = ones(rows(zz),1) .* yy;
-        endif         
-    endif
+        end         
+    end
     
     % type ir
     if ( strcmp(toupper(s.type),'IR'))           
@@ -115,4 +115,4 @@ function y = getValue (surface, xx,yy,zz)
     print_usage ();
   end
   %y(1:min(length(y),10))
-endfunction
+end

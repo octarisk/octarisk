@@ -58,7 +58,7 @@ function [option_willowtree delta] = option_willowtree(CallFlag,AmericanFlag,S0,
 %-------------------------------------------------------------------------
  if nargin < 9 || nargin > 10
     print_usage ();
-  endif
+  end
 
 
 if ! isnumeric (CallFlag)
@@ -87,7 +87,7 @@ elseif ! isnumeric (dk)
     error ('stepsize in days (dk) must be numeric ') 
 elseif ( dk < 0)
     error ('stepsize in days (dk)  must be positive ')     
-endif
+end
  
  
 % possible number of nodes:
@@ -99,7 +99,7 @@ else
         error ('Number of nodes must be numeric ')
     end
     z_method = nodes_possible(lookup(nodes_possible,nodes));
-endif 
+end 
  
 %-------------------------------------------------------------------------
 %           Setup of input parameters
@@ -128,13 +128,13 @@ if AmericanFlag==1,
     AmericanOptionFlag = 1; 
 else
     AmericanOptionFlag = 0; 
-endif
+end
         
 if CallFlag==1,
 	callputflag=1;
 else
 	callputflag=-1;
-endif
+end
 rf_input = rf;
 
 % checking for consistency between S0 and K (either equal size, or S0 has fixed value while K is a vector)
@@ -143,8 +143,8 @@ if (rows(S0) < rows(K))
         error ('Number of rows of spot (S0) and strike (K) does not match')
     else
         S0 = repmat(S0,rows(K),1);
-    endif
-endif
+    end
+end
 
 % applying multidimensionality (shifting all variables to 3rd dimension (1st (time) and 2nd (nodes) dimensions are used for building tree)
 S0      = reshape(S0,1,1,rows(S0));
@@ -204,7 +204,7 @@ elseif ( z_method == 50 )
     z = z_50';
 else
     z = z_20'; %default 20 nodes
-endif
+end
 
 % Calculate equally distributed values for q
 n = length(z);
@@ -218,7 +218,7 @@ N = round(T/dk);
 if ( N < 2 )    % in case of days to maturity <= dk -> adjust dk
     N = 2;
     dk = dk / 2;
-endif
+end
 T = dk * N;
 dt=T/(N.*365);  % timestep between two valuation points in years
 
@@ -249,7 +249,7 @@ for ii = 1 : 1 : (N-1)
         for i = 1:1:n
             B(i,:) = [ zeros(1,(i-1)*n), ones(1,n) , zeros(1,n^2-i*n) ];
             btmp(i) = 1;
-        endfor
+        end
         b = [b;btmp'];
         A = [A;B];
 
@@ -257,7 +257,7 @@ for ii = 1 : 1 : (N-1)
         B = zeros(n,n^2);
         for i = 1:1:n
             B(i,:) = [ zeros(1,(i-1)*n), zi , zeros(1,n^2-i*n) ];
-        endfor
+        end
         btmp = ones(n,1) .* beta .* zj; 
         b = [b;btmp];
         A = [A;B];
@@ -266,7 +266,7 @@ for ii = 1 : 1 : (N-1)
         B = zeros(n,n^2);
         for i = 1:1:n
             B(i,:) = [ zeros(1,(i-1)*n), zi.^2 , zeros(1,n^2-i*n) ];
-        endfor
+        end
         btmp = ones(n,1) .* ((beta^2 .* zj.^2) + (1 - beta.^2)) ;
         b = [b;btmp];
         A = [A;B];
@@ -275,7 +275,7 @@ for ii = 1 : 1 : (N-1)
         B = zeros(n,n^2);
         for i = 1:1:n
             B(i,:) = [ zeros(1,(i-1)*n), q' , zeros(1,n^2-i*n) ];
-        endfor
+        end
         b = [b;q];
         A = [A;B];
 
@@ -295,7 +295,7 @@ for ii = 1 : 1 : (N-1)
         [xmin, fmin, errnum, extra] = glpk(c,A,b,lb,ub,ctype,vartype,s,param);  % final optimization
         Pmin = reshape(xmin,n,n);   % reshape output to have transition vectors for each node in one column
         Transition_matrix(:,:,ii) = Pmin'; % transpose and append, ready for vector multiplication 
-endfor
+end
 
 %-------------------------------------------------------------------------
 %           Discounting values through the Willow Tree
@@ -335,8 +335,8 @@ for ii = (N-1) : -1 : 1
         V_t2 = present_value;
     elseif ( ii == 1)
         V_t1 = present_value;
-    endif
-endfor
+    end
+end
 
 % discounting from node k=+1 to k=0 
 immediate_val   = callputflag.*(S0 - K);

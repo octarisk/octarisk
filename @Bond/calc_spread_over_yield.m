@@ -7,7 +7,7 @@ function s = calc_spread_over_yield (bond,discount_curve,spread_curve,valuation_
 
    elseif ( nargin < 3)
         error('Error: No  discount curve or spread curve set. Aborting.');
-   endif
+   end
    % Get reference curve nodes and rate
         tmp_nodes    = discount_curve.get('nodes');
         tmp_rates    = discount_curve.getValue('base');
@@ -20,8 +20,8 @@ function s = calc_spread_over_yield (bond,discount_curve,spread_curve,valuation_
   else
     s.soy = calibrate_soy_sqp(valuation_date,s.cf_dates, s.cf_values(1,:),s.value_base, ... 
                 tmp_nodes,tmp_rates,spread_nodes,spread_rates,s.basis,s.compounding_type,s.compounding_freq);     
-  endif
+  end
    
-endfunction
+end
 
 

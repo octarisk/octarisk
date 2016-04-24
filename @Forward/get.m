@@ -47,8 +47,8 @@ function s = get (forward, property)
       endswitch
     else
       error ('get: expecting the property to be a string');
-    endif
+    end
   else
     print_usage ();
-  endif
-endfunction
+  end
+end

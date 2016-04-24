@@ -88,8 +88,8 @@ if ischar(comp_type)
         compounding_type = 3;
     else
         error('Need valid compounding_type type')
-    endif
-endif
+    end
+end
 
 % error check compounding frequency
 if ischar(comp_freq)
@@ -107,10 +107,10 @@ if ischar(comp_freq)
         compounding = 1;       
     else
         error('Need valid compounding frequency')
-    endif
+    end
 else
     compounding = comp_freq;
-endif
+end
 
 % get timefactor
 tf = timefactor(d1,d2,basis);
@@ -123,8 +123,8 @@ elseif ( compounding_type == 2)      % discrete
     df = 1 ./ (( 1 + ( rate ./ compounding) ).^( compounding .* tf));
 elseif ( compounding_type == 3)      % continuous
     df = exp(-rate .* tf );
-endif
+end
 
  
-endfunction
+end
  

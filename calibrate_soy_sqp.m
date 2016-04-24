@@ -34,11 +34,11 @@ elseif ( nargin == 10 )
   comp_freq = 1
 elseif ( nargin > 11)
     error('Too many arguments')
-endif
+end
 if ( rows(tmp_cashflow_values) > 1 )
 	tmp_cashflow_values = tmp_cashflow_values(1,:);
 	disp('WARNING: More than one cash flow value scenario provided. Taking only first scenario as base values')
-endif
+end
 % Start parameter
 x0 = -0.0001;
 
@@ -64,7 +64,7 @@ elseif (info == 104 )
     %disp ('       --- WARNING: The stepsize has become too small. ---');
 else
 	disp ('       --- WARNING: Optimization did not converge! ---');
-endif
+end
 % 
 % return spread over yield
 spread_over_yield = x;
@@ -91,7 +91,7 @@ function obj = phi_soy (x,valuation_date,cashflow_dates, cashflow_values,act_val
                 tmp_npv_cashflow = tmp_cf_value .* tmp_df;
                 tmp_npv = tmp_npv+ tmp_npv_cashflow;
             end
-        endfor 
+        end 
         obj = (act_value - tmp_npv).^2;
-endfunction
+end
 %------------------------------------------------------------------

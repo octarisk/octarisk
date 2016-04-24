@@ -64,4 +64,4 @@
 
 function a = doc_instrument()
     % this is only a dummy function for containing all the documentation.
-endfunction
+end

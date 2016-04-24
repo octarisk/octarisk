@@ -20,11 +20,11 @@ function [yield_to_maturity] = calibrate_yield_to_maturity(valuation_date,tmp_ca
 if ( nargin < 7 )
   spread_nodes = [365];
   spread_rates = [0];  
-endif
+end
 if ( rows(tmp_cashflow_values) > 1 )
 	tmp_cashflow_values = tmp_cashflow_values(1,:);
 	disp('WARNING: More than one cash flow value scenario provided. Taking only first scenario as base values')
-endif
+end
 % Start parameter
 x0 = 0.01;
 
@@ -46,7 +46,7 @@ elseif (info == 104 )
     %disp ('       --- WARNING: The stepsize has become too small. ---');
 else
 	disp ('       --- WARNING: Optimization did not converge! ---');
-endif
+end
 % 
 % return spread over yield
 yield_to_maturity = x;
@@ -62,5 +62,5 @@ function obj = phi_ytm (x,valuation_date,cashflow_dates,cashflow_values,act_valu
             nodes = [365];
             tmp_npv = pricing_npv(valuation_date,cashflow_dates, cashflow_values,0,nodes,tmp_yield);
 			obj = (act_value - tmp_npv).^2;
-endfunction
+end
 %------------------------------------------------------------------

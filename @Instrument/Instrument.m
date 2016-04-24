@@ -77,9 +77,9 @@ classdef Instrument
             fprintf('Scenariovalues:\n[ ')
                 for ( jj = 1 : 1 : value_mc_rows)
                     fprintf('%f,\n',a.value_mc(jj,ii));
-                endfor
+                end
             fprintf(' ]\n');
-         endfor
+         end
         
       end % disp
       
@@ -103,7 +103,7 @@ classdef Instrument
       function retval = get_doc(format,path)
         if nargin < 1
             format = 'plain text';
-        endif
+        end
         if nargin < 2
             printflag = 0;
         elseif nargin == 2
@@ -111,14 +111,14 @@ classdef Instrument
                 printflag = 1;
             else
                 error('Insufficient path: %s \n',path);
-            endif
-        endif
+            end
+        end
         % printing documentation for Class Instrument (ousourced to dummy function to use documentation behaviour)
         scripts = ['doc_instrument'];
         c = cellstr(scripts);
         for ii = 1:length(c)
             [retval status] = __makeinfo__(get_help_text(c{ii}),format);
-        endfor
+        end
         if ( status == 0 )
             if ( printflag == 1) % print to file
                 
@@ -152,7 +152,7 @@ classdef Instrument
 					fclose (fid);
                 else
                     ending = '.txt';
-                endif
+                end
                  
             else    
                 printf('Documentation for Class %s: \n',c{ii}(4:end));
@@ -162,7 +162,7 @@ classdef Instrument
                      
         else
             disp('There was a problem')
-        endif
+        end
         retval = status;
       end
    end

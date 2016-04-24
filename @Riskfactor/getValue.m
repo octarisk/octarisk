@@ -36,14 +36,14 @@ function s = getValue (riskfactor, property, abs_flag, sensitivity) % method get
             printf ('get: Allowed mc time steps:\n')
             obj.timestep_mc
             s = [];
-        endif
-      endif 
+        end
+      end 
     else
       error ('get: expecting the property to be a string');
-    endif
+    end
   else
     print_usage ();
-  endif
+  end
   
   % in case of abs_flag == 'abs' -> calculate and return absolute scenario value
   % take sensitivity into account
@@ -51,12 +51,12 @@ function s = getValue (riskfactor, property, abs_flag, sensitivity) % method get
       sensi = sensitivity;
   else
       sensi = 1;
-  endif
+  end
   if nargin >= 3
     if ( strcmp(abs_flag,'abs') )
         s = Riskfactor.get_abs_values(obj.model, s, obj.value_base, sensi);
     else
         s = s;
-    endif  
-  endif
-endfunction
+    end  
+  end
+end

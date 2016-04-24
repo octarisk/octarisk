@@ -61,7 +61,7 @@ classdef Curve
         end
         if ( strcmp(tmp_id,''))
             error('Error: Curve requires a valid ID')
-        endif
+        end
         a.name          = tmp_name;
         a.id            = tmp_id;
         a.description   = tmp_description;
@@ -82,17 +82,17 @@ classdef Curve
             fprintf('Nodes:\n[ ');
             for (ii = 1 : 1 : length(a.nodes))
                 fprintf('%d,',a.nodes(ii));
-            endfor
+            end
             fprintf(' ]\n');
-         endif
+         end
          % looping via all base values if defined
          if ( length(a.rates_base) > 0 )
             fprintf('Base rates:\n[ ');
             for ( kk = 1 : 1 : min(columns(a.rates_base),10))
                     fprintf('%f,',a.rates_base(kk));
-                endfor
+                end
             fprintf(' ]\n');
-         endif   
+         end   
           % looping via all stress rates if defined
          if ( rows(a.rates_stress) > 0 )
             tmp_rates = a.getValue('stress');
@@ -100,11 +100,11 @@ classdef Curve
             for ( jj = 1 : 1 : min(rows(tmp_rates),5))
                 for ( kk = 1 : 1 : min(columns(tmp_rates),10))
                     fprintf('%f,',tmp_rates(jj,kk));
-                endfor
+                end
                 fprintf(' ]\n');
-            endfor
+            end
             fprintf('\n');
-         endif    
+         end    
          % looping via first 3 MC scenario values
          for ( ii = 1 : 1 : mc_stack)
             if ( length(a.timestep_mc) >= ii )
@@ -114,14 +114,14 @@ classdef Curve
                 for ( jj = 1 : 1 : min(rows(tmp_rates),5))
                     for ( kk = 1 : 1 : min(columns(tmp_rates),10))
                         fprintf('%f,',tmp_rates(jj,kk));
-                    endfor
+                    end
                     fprintf(' ]\n');
-                endfor
+                end
                 fprintf('\n');
             else
                 fprintf('MC timestep not defined\n');
-            endif
-         endfor
+            end
+         end
       end % disp
       
       function obj = set.type(obj,type)

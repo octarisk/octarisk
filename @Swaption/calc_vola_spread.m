@@ -2,13 +2,13 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
     obj = swaption;
     if ( nargin < 4)
         error('Error: No discount curve or vola surface set. Aborting.');
-    endif
+    end
     if ( nargin < 5)
         valuation_date = today;
-    endif
+    end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
-    endif
+    end
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates_base   = discount_curve.getValue('base');
@@ -78,16 +78,16 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
                 disp(' Calibration failed, although it converged.. Setting market value to THEO/Value');
                 theo_value_base = tmp_swaptionvalue_base;
                 tmp_impl_vola_spread = 0; 
-            endif
-        endif
+            end
+        end
      
-    endif   % close loop if tmp_dtm < 0
+    end   % close loop if tmp_dtm < 0
     
       
     % store theo_value vector in appropriate class property
     obj.vola_spread = tmp_impl_vola_spread;
     obj.value_base = theo_value_base;
-endfunction
+end
 
 
 

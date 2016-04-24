@@ -57,7 +57,7 @@ elseif (info == 104 )
     %disp ('       --- WARNING: The stepsize has become too small. ---');
 else
 	disp ('       --- GPD Calibration WARNING: Optimization did not converge! ---');
-endif
+end
 % 
 % return scale and shape parameter
 chi = x(1);
@@ -74,5 +74,5 @@ function obj = min_GPD (x,y)
             beta = x(2);
             L = log( ( 1 + ( chi .* (y) )./beta ).^(-1./chi -1) ./ beta );
             obj = -(sum(L));
-endfunction
+end
 %------------------------------------------------------------------

@@ -3,7 +3,7 @@ function s = set (obj, varargin)
   s = obj;
   if (length (varargin) < 2 || rem (length (varargin), 2) != 0)
     error ('set: expecting property/value pairs');
-  endif
+  end
   while (length (varargin) > 1)
     prop = varargin{1};
     val = varargin{2};
@@ -21,14 +21,14 @@ function s = set (obj, varargin)
                     s.values_base(:,:,mc_stack + 1) = val;
                 else
                     error('set: expecting length of new input vector to equal length of already existing matrix');
-                endif
+                end
             else    % setting vector
                 s.values_base(:,:,1) = val;
-            endif  
-        endif
+            end  
+        end
       else
         error ('set: expecting the values to be real ');
-      endif
+      end
     % ====================== set axis_x: if isscalar -> append to existing vector , if isvector -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'axis_x'))   
       if (isvector (val) && isreal (val))
@@ -37,10 +37,10 @@ function s = set (obj, varargin)
             s.axis_x = val;
         else                 % is scalar
             s.axis_x = [s.axis_x, val];
-        endif 
+        end 
       else
         error ('set: expecting the value to be a real vector');
-      endif
+      end
     % ====================== set axis_y: if isscalar -> append to existing vector , if isvector -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'axis_y'))   
       if (isvector (val) && isreal (val))
@@ -49,10 +49,10 @@ function s = set (obj, varargin)
             s.axis_y = val;
         else                 % is scalar
             s.axis_y = [s.axis_y, val];
-        endif 
+        end 
       else
         error ('set: expecting the value to be a real vector');
-      endif
+      end
     % ====================== set axis_z: if isscalar -> append to existing vector , if isvector -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'axis_z'))   
       if (isreal (val))
@@ -61,55 +61,55 @@ function s = set (obj, varargin)
             s.axis_z = val;
         else                 % is scalar
             s.axis_z = [s.axis_z, val];
-        endif          
+        end          
       else
         error ('set: expecting the axis z values to be real ');
-      endif  
+      end  
     % ====================== set axis x name ======================
     elseif (ischar (prop) && strcmp (prop, 'axis_x_name'))   
       if (ischar (val) )
         s.axis_x_name = val;
       else
         error ('set: expecting the value to be a char');
-      endif
+      end
     % ====================== set axis y name ======================
     elseif (ischar (prop) && strcmp (prop, 'axis_y_name'))   
       if (ischar (val) )
         s.axis_y_name = val;
       else
         error ('set: expecting the value to be a char');
-      endif
+      end
     % ====================== set axis z name ======================
     elseif (ischar (prop) && strcmp (prop, 'axis_z_name'))   
       if (ischar (val) )
         s.axis_z_name = val;
       else
         error ('set: expecting the value to be a char');
-      endif  
+      end  
     % ====================== set moneyness_type ======================
     elseif (ischar (prop) && strcmp (prop, 'moneyness_type'))   
       if (ischar (val))
         s.moneyness_type = val;
       else
         error ('set: expecting the value to be of type character');
-      endif   
+      end   
     % ====================== set method_interpolation ======================
     elseif (ischar (prop) && strcmp (prop, 'method_interpolation'))   
       if (ischar (val))
         s.method_interpolation = val;
       else
         error ('set: expecting the value to be of type character');
-      endif 
+      end 
     % ====================== set type ======================
     elseif (ischar (prop) && strcmp (prop, 'type'))   
       if (ischar (val))
         s.type = val;
       else
         error ('set: expecting the value to be of type character');
-      endif   
+      end   
     % case else
     else
       error ('set: invalid property of surface class');
-    endif
+    end
   endwhile
-endfunction
+end

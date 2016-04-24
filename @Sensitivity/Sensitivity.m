@@ -35,7 +35,7 @@ classdef Sensitivity < Instrument
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
                 tmp_cf_dates = (tmp_cf_dates)' - today;
-            endif
+            end
         end
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'sensitivity',currency,base_value,asset_class,valuation_date);
@@ -44,19 +44,19 @@ classdef Sensitivity < Instrument
             error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
-        endif     
+        end     
         % setting property sensitivity
         if ( length(sensitivities) >= 1  )
             b.sensitivities = sensitivities;
-        endif
+        end
         % setting property riskfactors
         if ( length(riskfactors) >= 1  )
             b.riskfactors = riskfactors;
-        endif
+        end
         % setting property riskfactors
         if ( length(special_num) >= 1  )
             b.idio_vola = special_num(1);
-        endif
+        end
         b.cf_dates = tmp_cf_dates;
         b.cf_values = tmp_cf_values;
         
@@ -68,7 +68,7 @@ classdef Sensitivity < Instrument
          % looping via all riskfactors / sensitivities
          for ( ii = 1 : 1 : length(b.sensitivities))
             fprintf('Riskfactor: %s | Sensitivity: %f\n',b.riskfactors{ii},b.sensitivities(ii));            
-         endfor
+         end
          fprintf('idio_vola: %f\n',b.idio_vola); 
       end
       function obj = set.sub_type(obj,sub_type)

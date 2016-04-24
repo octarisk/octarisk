@@ -3,7 +3,7 @@ function obj = calc_value (cash,value_type,scen_number)
   obj = cash;
   if ( nargin < 3 )
     error('No scenario number provided. Aborting.');
-  endif
+  end
 
     value_type = tolower(value_type);
     % Get base value
@@ -17,8 +17,8 @@ function obj = calc_value (cash,value_type,scen_number)
     else
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);
-    endif
+    end
    
-endfunction
+end
 
 

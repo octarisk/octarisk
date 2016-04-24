@@ -36,7 +36,7 @@ classdef Debt < Instrument
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
                 tmp_cf_dates = (tmp_cf_dates)' - today;
-            endif
+            end
         end
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'debt',currency,base_value,asset_class,valuation_date);
@@ -45,25 +45,25 @@ classdef Debt < Instrument
             error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
-        endif     
+        end     
         % setting property duration
         if ( length(sensitivities) >= 1  )
             b.duration = sensitivities(1);
-        endif
+        end
         % setting property convexity
         if ( length(sensitivities) >= 2  )
             b.convexity = sensitivities(2);
-        endif
+        end
         % setting property discount_curve
         if ( length(riskfactors) < 1  )
             error('Error: No discount_curve specified');
         else
             b.discount_curve = riskfactors{1};
-        endif
+        end
         % setting property spread_curve
         if ( length(riskfactors) >= 2 )
             b.spread_curve = riskfactors{2};
-        endif
+        end
         b.cf_dates = tmp_cf_dates;
         b.cf_values = tmp_cf_values;
         

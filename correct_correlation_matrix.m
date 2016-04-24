@@ -28,7 +28,7 @@ if (pos_sem_def_bool == true)
     break;
 else
     disp ('Input matrix is not positive semidefinite. Starting correction.')
-endif
+end
 A_scaled = M;
 limit = 0.0;
 step = 0;
@@ -66,8 +66,8 @@ fprintf('Algorithm converged after %d steps.\n', step);
 pos_sem_def_bool =testpsd(A_scaled);
 if (pos_sem_def_bool == true)
     disp ('Correction successful: Matrix is positive semidefinite.\n')
-endif
-endfunction
+end
+end
 % %#%#%#%#%#%#%#%#%#%##    Helper Functions    %#%#%#%#%#%#%#%#%#%#
 
 % Function for rescaling and symmetrizing
@@ -81,17 +81,17 @@ function res = rescale ( A )
     [nr,nc]=size(trilower);
     triupper = trilower';
     res = trilower + triupper - eye(nc);
-endfunction
+end
 
 % set Eigenvalues to limit
 function lambda = limitEV(M, limit)
     % get Eigenvalues and Eigenvectors
     [V lambda] = eig(M);
     lambda(lambda < 0 ) = limit;
-endfunction
+end
 
 % test matrix for positive semidefinitness
 function pos_sem_def_bool = testpsd(M)
     [V lambda] = eig(M);
     pos_sem_def_bool = all( all ( lambda >= 0 ));
-endfunction
+end

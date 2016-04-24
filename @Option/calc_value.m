@@ -2,13 +2,13 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
     obj = option;
     if ( nargin < 5)
         error('Error: No  discount curve, vola surface or underlying set. Aborting.');
-    endif
+    end
     if ( nargin < 6)
         valuation_date = today;
-    endif
+    end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
-    endif
+    end
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates        = discount_curve.getValue(value_type);
@@ -58,13 +58,13 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* exp(vola_riskfactor.getValue(value_type));
             else
                 tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)  .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
-            endif
+            end
         else        % Normal Model
             if ( strcmp(value_type,'stress'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* (vola_riskfactor.getValue(value_type) + 1);
             else
                 tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) + tmp_impl_vola_atm + tmp_impl_vola_spread;  
-            endif
+            end
         end
 
       % Valuation for: Black-Scholes Modell (EU) or Willowtreemodel (AM):
@@ -72,8 +72,8 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
             theo_value	            = max(option_bs(call_flag,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock) .* tmp_multiplier,0.001);
         elseif ( strfind(tmp_type,'OPT_AM') > 0 )   % calling Willow tree option pricing model
             theo_value	            = max(option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,5,20) .* tmp_multiplier,0.001);
-        endif
-    endif   % close loop if tmp_dtm < 0
+        end
+    end   % close loop if tmp_dtm < 0
     
       
     % store theo_value vector in appropriate class property   
@@ -82,8 +82,8 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
     else  
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);
-    endif
+    end
    
-endfunction
+end
 
 

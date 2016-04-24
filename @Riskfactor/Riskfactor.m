@@ -48,10 +48,10 @@ classdef Riskfactor
         end 
         if ( strcmp(tmp_id,''))
             error('Error: Risk factor requires a valid ID')
-        endif
+        end
         if ( length(tmp_parameters) < 4)
             error('Error: Risk factor requires a at least mean,std,skew,kurt')
-        endif
+        end
         a.name          = tmp_name;
         a.id            = tmp_id;
         a.description   = tmp_description;
@@ -69,12 +69,12 @@ classdef Riskfactor
                     a.value_base  = tmp_parameters(6);
                 else
                     error('Error: Risk factor type RF_IR has no defined IR node or value')
-                endif
+                end
             else
                 if ( length(tmp_parameters) > 4 )
                     a.value_base  = tmp_parameters(5);
-                endif    
-            endif
+                end    
+            end
         else    % Mean reversion models (OE,SRD,BKM)
             a.value_base  = tmp_parameters(5);
             a.mr_level  = tmp_parameters(6);
@@ -85,9 +85,9 @@ classdef Riskfactor
                     a.value_base  = tmp_parameters(9);
                 else
                     error('Error: Risk factor type RF_IR has no defined IR node or value')    
-                endif   
-            endif
-        endif
+                end   
+            end
+        end
                
       end % Riskfactor
       
@@ -105,25 +105,25 @@ classdef Riskfactor
             fprintf('value_base: %f\n',a.value_base); 
             fprintf('mr_level: %f\n',a.mr_level); 
             fprintf('mr_rate: %f\n',a.mr_rate); 
-         endif
+         end
          if ( regexp('RF_IR',a.type) || regexp('RF_SPREAD',a.type) )
             fprintf('node: %d\n',a.node); 
             fprintf('rate: %f\n',a.value_base); 
-         endif
+         end
          if ( length(a.scenario_stress) > 0 ) 
             fprintf('Scenario stress: %8.2f \n',a.scenario_stress(1:scenario_stress_rows));
             fprintf('\n');
-         endif
+         end
          % looping via first 5 MC scenario values
          for ( ii = 1 : 1 : scenario_mc_cols)
             if ( length(a.timestep_mc) >= ii )
                 fprintf('MC timestep: %s\n',a.timestep_mc{ii});
             else
                 fprintf('MC timestep not defined\n');
-            endif
+            end
             fprintf('Scenariovalue: %8.2f \n',a.scenario_mc(1:scenario_mc_rows,ii));
             fprintf('\n');
-         endfor
+         end
       end % disp
       
       function obj = set.model(obj,model)
@@ -155,10 +155,10 @@ classdef Riskfactor
       function ret_vec = get_abs_values(model, scen_deltavec, value_base, sensitivity)
         if nargin < 3
             error('Not enough arguments. Please provide model, scenario deltas and value_base and sensitivity (optional)');
-        endif
+        end
         if nargin < 4
             sensitivity = 1;
-        endif
+        end
         if ( sum(strcmp(model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
             ret_vec     =  exp(scen_deltavec .* sensitivity) .* value_base;
         else        % Normal Model
@@ -169,7 +169,7 @@ classdef Riskfactor
       function retval = get_doc(format,path)
         if nargin < 1
             format = 'plain text';
-        endif
+        end
         if nargin < 2
             printflag = 0;
         elseif nargin == 2
@@ -177,14 +177,14 @@ classdef Riskfactor
                 printflag = 1;
             else
                 error('Insufficient path: %s \n',path);
-            endif
-        endif
+            end
+        end
         % printing documentation for Class Riskfactor (ousourced to dummy function to use documentation behaviour)
         scripts = ['doc_riskfactor'];
         c = cellstr(scripts);
         for ii = 1:length(c)
             [retval status] = __makeinfo__(get_help_text(c{ii}),format);
-        endfor
+        end
         if ( status == 0 )
             if ( printflag == 1) % print to file
                 if (strcmp(format,'html'))
@@ -196,7 +196,7 @@ classdef Riskfactor
                     ending = '.texi';
                 else
                     ending = '.txt';
-                endif
+                end
                 filename = strcat(path,c{ii},ending);
                 fid = fopen (filename, 'w');
                 fprintf(fid, retval);
@@ -210,7 +210,7 @@ classdef Riskfactor
                      
         else
             disp('There was a problem')
-        endif
+        end
         retval = status;
       end
             

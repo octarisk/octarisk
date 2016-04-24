@@ -72,7 +72,7 @@ elseif ( nargin < 12 )
   interp_spread  = 'linear'; 
 elseif ( nargin < 13 )
   interp_spread  = 'linear'; 
-endif
+end
 
 % Start time:
 if ischar(valuation_date)
@@ -103,7 +103,7 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
         % Add actual cash flow npv to total npv
 			tmp_npv 		= tmp_npv+ tmp_npv_cashflow;
     end
-endfor 
+end 
 % ------------------------------------------------------------------  
 
 % Return NPV and MacDur
@@ -111,7 +111,7 @@ npv = tmp_npv;
 MacDur = MacDur ./ npv;
             
             
-endfunction
+end
  
  %      Valid Basis are:
 %            0 = actual/actual (default)

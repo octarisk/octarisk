@@ -49,7 +49,7 @@ function [theo_value] = pricing_forward_oop(forward,discount_nodes,discount_rate
 
 if nargin < 4 || nargin > 4
     print_usage ();
- endif
+ end
 
  % Getting basis properties
     comp_type = forward.compounding_type;
@@ -72,10 +72,10 @@ if ( days_to_maturity < 1)
     disp('Maturity Date is equal or before valuation date. Return value 0.')
     theo_value = zeros(length(underlying_price),1);
     return
-endif
+end
 if ( rows(discount_rates) > 1 && rows(underlying_price) > 1 && (rows(underlying_price) != rows(discount_rates)))
     error('Rows of underlying price not equal to 1 or to number of rows of discount_rats. Aborting.')  
-endif
+end
 
 
 % Get discount curve and calculate cost of carry
@@ -93,9 +93,9 @@ elseif ( strcmp(type,'Bond') == 1 || strcmp(type,'BONDFWD') == 1)
     payoff          = underlying_price - (strike .* df_discount);
 else
     error('Not a valid type.')
-endif
+end
 
 theo_value = payoff;
 
 
-endfunction
+end

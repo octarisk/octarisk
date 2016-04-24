@@ -31,7 +31,7 @@ try
             tmp_file = oldfiles(ii).name;
             if ( length(tmp_file) > 3 )
                 delete(strcat(path,'/',tmp_file));
-            endif
+            end
     end
 end
 
@@ -61,8 +61,8 @@ for ii = 1 : 1 : length(celltmp);
         fprintf(fid, '%s\n',tmp_entries);
         % Close file
         fclose (fid);        
-    endif
-endfor
+    end
+end
 fclose (file_comments); % close comments file
 
 
@@ -114,7 +114,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             tmp_item = tmp_header{kk};
             tmp_header_type{kk-1} = substr(tmp_item,-4);  % extract last 4 characters
             tmp_colname{kk-1} = substr(tmp_item, 1, length(tmp_item)-4);  % remove last 4 characters from colname
-        endfor   
+        end   
         % B.3) loop through all instruments   
         for jj = 2 : 1 : length(content)
           error_flag = 0;
@@ -136,7 +136,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                 i = Swaption(); 
             elseif ( sum(strcmp(tmp_instrument_type,{'CASH'})) > 0)  % store data in Class Cash
                 i = Cash();                     
-            endif
+            end
             % B.3b)  Loop through all instrument attributes
             tmp_cell = content{jj};
             for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in row and set object attributes
@@ -263,13 +263,13 @@ for ii = 1 : 1 : length(tmp_list_files)
                             end
                         else
                             i = i.set(tmp_columnname,tmp_entry);
-                        endif
+                        end
                     end % end special case for cf dates and values
                 catch
                     fprintf('Object attribute %s could not be set. There was an error: %s\n',tmp_columnname,lasterr);
                     error_flag = 1;
                 end
-            endfor
+            end
             %disp('=== Final Object ===')
             %i     
             % B.3c) Error checking for instrument: 
@@ -283,13 +283,13 @@ for ii = 1 : 1 : length(tmp_list_files)
                 instrument_struct( number_instruments ).id = i.id;
                 instrument_struct( number_instruments ).name = i.id;
                 instrument_struct( number_instruments ).object = i;
-            endif
+            end
           %  fprintf('Seems to be empty row. Skipping.\n');
           end   % end if loop with meaningful data
-        endfor  % next instrument / next row in specification
+        end  % next instrument / next row in specification
         
     end         % meaningful file
-endfor          % next file with specifications
+end          % next file with specifications
 % finished loading instruments into object
 
 % C) return final instrument objects  
@@ -304,6 +304,6 @@ if (archive_flag == 1)
     try
         tarfiles = tar( strcat(path_archive,'/archive_instruments_',tmp_timestamp,'.tar'),strcat(path,'/*'));
     end
-endif
+end
 
 end % end function

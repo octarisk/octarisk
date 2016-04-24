@@ -29,7 +29,7 @@ function forward_rate = get_forward_rate(nodes,rates,days_to_t1,days_to_t2,comp_
  
  if nargin < 4 || nargin > 6
     print_usage ();
- endif
+ end
  
 % default continuous compounding and interpolation method
 if nargin < 5
@@ -49,16 +49,16 @@ elseif days_to_t1 <= 0
     error ('days_to_t1 must be positive ')
 elseif days_to_t2 <= 0
     error ('days_to_t2 must be positive ')        
-endif
+end
 no_scen_nodes = columns(nodes);
 no_scen_rates = columns(rates); 
 if ( no_scen_nodes != no_scen_rates )
     disp('Number of columns of nodes and rates must be equivalent');
-endif
+end
 
 if ( issorted(nodes) != 1)
     disp('Nodes have to be sorted')
-endif 
+end 
 
 % Get compounding type:
 if ischar(comp_type)
@@ -70,8 +70,8 @@ if ischar(comp_type)
         compounding_type = 3;
     else
         error('Need valid comp_type type [disc, simple, cont]')
-    endif
-endif
+    end
+end
 % Start Calculation
 % Get rates at timesteps1 / 2
 r1 = interpolate_curve(nodes,rates,days_to_t1,interp_method);
@@ -87,7 +87,7 @@ elseif ( compounding_type == 2)      % discrete
     tmp_rate = (  ( 1 + r2 ).^d2 ./ ( 1 + r1 ).^d1  ).^(1 ./ (d2 - d1)) - 1;
 elseif ( compounding_type == 3)      % continuous
     tmp_rate = ( r2 .* d2 - r1 .* d1  ) ./ (  d2 - d1 );
-endif
+end
 
 % Return forward rate:	% flooring rate!!!
 forward_rate = max(tmp_rate,0.000001);

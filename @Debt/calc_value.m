@@ -2,10 +2,10 @@ function obj = calc_value (debt,discount_curve_object,spread_object,value_type)
   obj = debt;
    if ( nargin < 3)
         error('Error: No  discount or spread curve set. Aborting.');
-   endif
+   end
    if ( nargin == 3)
         error('No value_type set. [stress,1d,10d,...]');
-   endif
+   end
     value_type = tolower(value_type);
     % Get duration and convexity
         tmp_dur         = debt.get('duration');
@@ -40,8 +40,8 @@ function obj = calc_value (debt,discount_curve_object,spread_object,value_type)
     else,
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);
-    endif
+    end
    
-endfunction
+end
 
 

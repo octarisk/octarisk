@@ -2,13 +2,13 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
     obj = option;
     if ( nargin < 4)
         error('Error: No discount curve, vola surface or underlying set. Aborting.');
-    endif
+    end
     if ( nargin < 5)
         valuation_date = today;
-    endif
+    end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
-    endif
+    end
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates_base   = discount_curve.getValue('base');
@@ -51,7 +51,7 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
         elseif ( strfind(tmp_type,'OPT_AM') > 0 )
             tmp_optionvalue_base        = option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,0.0,5,20) .* tmp_multiplier;
             tmp_impl_vola_spread        = calibrate_option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,0.0,5,20,tmp_multiplier,tmp_value);
-        endif
+        end
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 )
             disp(' Calibration failed with Retcode 99. Setting market value to THEO/Value');
@@ -64,7 +64,7 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
                 tmp_new_val             = option_bs(call_flag,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base + tmp_impl_vola_spread) .* tmp_multiplier;
             elseif ( strfind(tmp_type,'OPT_AM') > 0 )
                 tmp_new_val             = option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base + tmp_impl_vola_spread,0.0,5,20) .* tmp_multiplier;
-            endif
+            end
             
             if ( abs(tmp_value - tmp_new_val) < 0.05 )
                 disp('Calibration successful.');
@@ -73,16 +73,16 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
                 disp(' Calibration failed, although it converged.. Setting market value to THEO/Value');
                 theo_value_base = tmp_optionvalue_base;
                 tmp_impl_vola_spread = 0; 
-            endif
-        endif
+            end
+        end
      
-    endif   % close loop if tmp_dtm < 0
+    end   % close loop if tmp_dtm < 0
     
       
     % store theo_value vector in appropriate class property
     obj.vola_spread = tmp_impl_vola_spread;
     obj.value_base = theo_value_base;
-endfunction
+end
 
 
 

@@ -41,7 +41,7 @@ elseif (info == 104 )
 else
 	%disp ('       --- WARNING: Optimization did not converge! ---');
     x = -99;
-endif
+end
 
 % 
 %New_value = option_bs(putcallflag,S,X,T,rf,sigma+x) .* multiplicator
@@ -66,5 +66,5 @@ end
 			tmp_option_value = option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma+x,divyield,stepsize,nodes) .* multiplicator;
 			obj = abs( tmp_option_value  - market_value)^2;
 		%----------------------------------------------
-endfunction
+end
  

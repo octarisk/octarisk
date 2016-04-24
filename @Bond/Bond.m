@@ -65,7 +65,7 @@ classdef Bond < Instrument
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
                 tmp_cf_dates = (tmp_cf_dates)' - valuation_date;
-            endif
+            end
         end
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'bond',currency,base_value,asset_class,valuation_date);
@@ -74,110 +74,110 @@ classdef Bond < Instrument
             error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
-        endif
+        end
         if ( strcmp(sub_type,'CASHFLOW') == 0 ) % special case CASHFLOW instrument -> no informatio needed
             % setting property issue_date
             if ( length(special_str) >= 1 )
                 if ( !strcmp(special_str{1},'') )
                     b.issue_date =  datestr(special_str{1});
-                endif
-            endif
+                end
+            end
             % setting property maturity_date
             if ( length(special_str) < 2 )
                 error('Error: No maturity date specified');
             else
                 b.maturity_date = datestr(special_str{2});
-            endif  
+            end  
             % setting property compounding_type
             if ( length(special_str) >= 4  )
                 b.compounding_type = tolower(special_str{4});
-            endif
+            end
             % setting property term and compounding_freq
             if ( length(special_num) < 3  )
                 error('Error: No term specified');
             else
                 b.term = special_num(3);
                 b.compounding_freq = 12 / b.term;
-            endif
+            end
             % setting property day_count_convention
             if ( length(special_str) >= 5  )
                 b.day_count_convention = special_str{5};
-            endif
+            end
             % setting property coupon_generation_method 
             if ( length(special_str) >= 3  )
                 b.coupon_generation_method  = tolower(special_str{3});
-            endif      
+            end      
             % setting property notional
             if ( length(special_num) < 1  )
                 error('Error: No notional specified');
             else
                 b.notional = special_num(1);  
-            endif
+            end
             % setting property coupon_rate
             if ( length(special_num) < 2  )
                 error('Error: No coupon_rate specified');
             else
                 b.coupon_rate = special_num(2);  
-            endif 
+            end 
             % setting property enable_business_day_rule
             if ( length(special_num) >= 6  )
                 b.enable_business_day_rule = special_num(6);
-            endif
+            end
             % setting property business_day_rule
             if ( length(special_num) >= 7  )
                 b.business_day_rule = special_num(7);
-            endif
+            end
             % setting property business_day_direction
             if ( length(special_num) >= 8  )
                 b.business_day_direction = special_num(8);
-            endif
+            end
             % setting property notional_at_start
             if ( length(special_num) >= 8  )
                 b.notional_at_start= special_num(8);
-            endif
+            end
             % setting property notional_at_end
             if ( length(special_num) >= 9  )
                 b.notional_at_end = special_num(9);
-            endif
+            end
             % setting property in_arrears_flag
             if ( length(special_num) >= 10  )
                 b.in_arrears = special_num(10);
-            endif
+            end
             % setting property fixed_annuity
             if ( length(special_num) >= 11  )
                 b.fixed_annuity = special_num(11);
-            endif
+            end
             % setting property spread
             if ( length(special_num) >= 4  )
                 b.spread = special_num(4);
-            endif
+            end
             % setting property long_first_period
             if ( length(special_str) >= 6  )
                 b.long_first_period = special_str{6};
-            endif    
+            end    
             % setting property long_last_period
             if ( length(special_str) >= 7  )
                 b.long_last_period = special_str{7};
-            endif 
+            end 
             % setting property last_reset_rate
             if ( length(special_num) >= 5 )
                 b.last_reset_rate = special_num(5);
-            endif
-        endif
+            end
+        end
         % setting property discount_curve
         if ( length(riskfactors) < 1  )
             error('Error: No discount_curve specified');
         else
             b.discount_curve = riskfactors{1};
-        endif
+        end
         % setting property reference_curve
         if ( length(riskfactors) >= 2  )
             b.reference_curve = riskfactors{2};
-        endif
+        end
         % setting property spread_curve
         if ( length(riskfactors) >= 3 )
             b.spread_curve = riskfactors{3};
-        endif
+        end
         b.cf_dates = tmp_cf_dates;
         b.cf_values = tmp_cf_values;
         
@@ -224,17 +224,17 @@ classdef Bond < Instrument
             fprintf('CF dates:\n[ ');
             for (ii = 1 : 1 : length(b.cf_dates))
                 fprintf('%d,',b.cf_dates(ii));
-            endfor
+            end
             fprintf(' ]\n');
-         endif
+         end
          % looping via all cf base values if defined
          if ( length(b.cf_values) > 0 )
             fprintf('CF Base values:\n[ ');
             for ( kk = 1 : 1 : min(columns(b.cf_values),10))
                     fprintf('%f,',b.cf_values(kk));
-                endfor
+                end
             fprintf(' ]\n');
-         endif   
+         end   
           % looping via all stress rates if defined
          if ( rows(b.cf_values_stress) > 0 )
             tmp_cf_values = b.getCF('stress');
@@ -242,11 +242,11 @@ classdef Bond < Instrument
             for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
                 for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
                     fprintf('%f,',tmp_cf_values(jj,kk));
-                endfor
+                end
                 fprintf(' ]\n');
-            endfor
+            end
             fprintf('\n');
-         endif    
+         end    
          % looping via first 3 MC scenario values
          for ( ii = 1 : 1 : mc_stack)
             if ( length(b.timestep_mc_cf) >= ii )
@@ -256,14 +256,14 @@ classdef Bond < Instrument
                 for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
                     for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
                         fprintf('%f,',tmp_cf_values(jj,kk));
-                    endfor
+                    end
                     fprintf(' ]\n');
-                endfor
+                end
                 fprintf('\n');
             else
                 fprintf('MC timestep cf not defined\n');
-            endif
-         endfor
+            end
+         end
 
       end
       function obj = set.sub_type(obj,sub_type)

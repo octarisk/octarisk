@@ -2,7 +2,7 @@ function s = set (obj, varargin)
   s = obj;
   if (length (varargin) < 2 || rem (length (varargin), 2) != 0)
     error ('set: expecting property/value pairs');
-  endif
+  end
   while (length (varargin) > 1)
     prop = varargin{1};
     val = varargin{2};
@@ -16,10 +16,10 @@ function s = set (obj, varargin)
                 s.value_mc = [tmp_vector, val];
             else
                 error ('set: expecting equal number of rows')
-            endif
+            end
         else    % setting vector
             s.value_mc = val;
-        endif      
+        end      
       elseif (ismatrix(val) && isreal(val)) % replacing value_mc matrix with new matrix
         s.value_mc = val;
       else
@@ -27,8 +27,8 @@ function s = set (obj, varargin)
             s.value_mc = [];
         else
             error ('set: expecting the value to be a real vector');
-        endif
-      endif
+        end
+      end
     % ====================== set timestep_mc: appending or setting timestep vector ======================
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc'))   
       if (iscell(val) && length(val) == 1)
@@ -37,7 +37,7 @@ function s = set (obj, varargin)
             s.timestep_mc{length(tmp_cell) + 1} = char(val);
         else    % setting vector
             s.timestep_mc = strtrim(val);
-        endif      
+        end      
       elseif (iscell(val) && length(val) > 1) % replacing timestep_mc cell vector with new vector
         s.timestep_mc = strtrim(val);
       elseif ( ischar(val) )
@@ -46,10 +46,10 @@ function s = set (obj, varargin)
             s.timestep_mc{length(tmp_cell) + 1} = char(val);
         else    % setting vector
             s.timestep_mc = cellstr(val);
-        endif 
+        end 
       else
         error ('set: expecting the cell value to be a cell vector');
-      endif  
+      end  
     % ====================== set value_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'value_stress'))   
       if (isvector (val) && isreal (val))
@@ -59,94 +59,94 @@ function s = set (obj, varargin)
             s.value_stress = [];
         else
             error ('set: expecting the value to be a real vector');
-        endif
-      endif
+        end
+      end
     % ====================== set value_base ======================
     elseif (ischar (prop) && strcmp (prop, 'value_base'))   
       if (isvector (val) && isreal (val))
         s.value_base = val;
       else
         error ('set: expecting the value to be a real vector');
-      endif 
+      end 
     % ====================== set name ======================
     elseif (ischar (prop) && strcmp (prop, 'name'))   
       if (ischar (val) )
         s.name = strtrim(val);
       else
         error ('set: expecting the value to be a char');
-      endif
+      end
     % ====================== set id ======================
     elseif (ischar (prop) && strcmp (prop, 'id'))   
       if (ischar(val))
         s.id = strtrim(val);
       else
         error ('set: expecting the value to be a char');
-      endif
+      end
     % ====================== set sub_type ======================
     elseif (ischar (prop) && strcmp (prop, 'sub_type'))   
       if (ischar (val))
         s.sub_type = strtrim(val);
       else
         error ('set: expecting the value to be a char');
-      endif   
+      end   
     % ====================== set valuation_date ======================
     elseif (ischar (prop) && strcmp (prop, 'valuation_date'))   
       if (ischar (val))
         s.valuation_date = datestr(strtrim(val),1);
       else
         error ('set: expecting the value to be a char');
-      endif 
+      end 
     % ====================== set asset_class ======================
     elseif (ischar (prop) && strcmp (prop, 'asset_class'))   
       if (ischar (val))
         s.asset_class = strtrim(val);
       else
         error ('set: expecting the value to be a char');
-      endif 
+      end 
     % ====================== set currency ======================
     elseif (ischar (prop) && strcmp (prop, 'currency'))   
       if (ischar (val))
         s.currency = strtrim(val);
       else
         error ('set: expecting the value to be a char');
-      endif 
+      end 
     % ====================== set description ======================
     elseif (ischar (prop) && strcmp (prop, 'description'))   
       if (ischar (val))
         s.description = strtrim(val);
       else
         error ('set: expecting the value to be a char');
-      endif
+      end
     % ====================== set cf_values ======================
     elseif (ischar (prop) && strcmp (prop, 'cf_values'))   
       if (isvector (val) && isreal (val))
         s.cf_values = val;
       else
         error ('set: expecting the base values to be a real vector');
-      endif
+      end
     % ====================== set cf_dates ======================
     elseif (ischar (prop) && strcmp (prop, 'cf_dates'))   
       if (isvector (val) && isreal (val))
         s.cf_dates = val;
       else
         error ('set: expecting the value to be a real vector');
-      endif
+      end
     % ====================== set instruments ======================
     elseif (ischar (prop) && strcmp (prop, 'instruments'))   
       if (iscell(val) )
         s.instruments = strtrim(val);
       else
         error ('set: expecting the value to be a cell');
-      endif
+      end
     % ====================== set weights ======================
     elseif (ischar (prop) && strcmp (prop, 'weights'))   
       if (isvector(val))
         s.weights = val;
       else
         error ('set: expecting the value to be a real vector');
-      endif  
+      end  
     else
       error ('set: invalid property of sensitivity class');
-    endif
+    end
   endwhile
-endfunction
+end
