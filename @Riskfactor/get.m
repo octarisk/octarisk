@@ -14,7 +14,9 @@ function s = get (obj, property)
         case "type"
           s = obj.type; 
         case "model"
-          s = obj.model;   
+          s = obj.model; 
+        case "shift_type"
+          s = obj.shift_type;
         case "scenario_mc"
           s = obj.scenario_mc;    
         case "scenario_stress"

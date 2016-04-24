@@ -20,5 +20,5 @@ Item,BlackMonday1987,Black Monday 1987,RF_EQ|RF_VOLA_EQ|RF_IR_USD_1Y|RF_IR_USD_1
 Item,Terror2001-9-11,Terror 2001-9-11,RF_EQ|RF_RE|RF_VOLA_EQ,-0.15|-0.15|0.3,1|1|1
 Item,DotCom2000,DotCom bubble burst 2000,RF_EQ|RF_VOLA_EQ|RF_SPREAD,-0.35|0.5|150,1|1|0
 Item,AsianCurrencyCrisis1997,Asian Currency Crisis 1997,RF_EQ_EM|RF_FX,-0.5|-0.1,1|1
-Item,FinancialCrisis2008,Financial Crisis 2008,RF_IR|RF_EQ|RF_COM|RF_RE|RF_VOLA|RF_SPREAD,-200|-0.4|-0.5|-0.5|1.5|300,0|1|1|1|1|1
+Item,FinancialCrisis2008,Financial Crisis 2008,RF_IR|RF_EQ|RF_COM|RF_RE|RF_VOLA|RF_SPREAD_.*_HY,-200|-0.4|-0.5|-0.5|1.5|300,0|1|1|1|1|0
 Item,Basescenario,Basescenario,RF_IR,0,0

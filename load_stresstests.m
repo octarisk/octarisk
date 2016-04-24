@@ -196,6 +196,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                                 tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
                             end
                         end  
+                        tmp_entry(tmp_entry > 0) = 1;        % limit shift type to either 0 or 1 -> prevent problems with stress value calculation
                     elseif ( strcmp(tmp_columnname,'risktype'))  % split into cell
                         try
                             tmp_entry = strsplit( tmp_entry, '|');
