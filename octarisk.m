@@ -356,25 +356,25 @@ endfor      % close loop via all mc_timesteps
 % 3.) Take Riskfactor Shiftvalues from Stressdefinition
 % loop via all riskfactors, take IDs from struct und apply delta
 for ii = 1 : 1 : length( stresstest_struct )
-    tmp_shiftvalue  = [stresstest_struct( ii ).shiftvalue];
-    tmp_shifttypes  = [stresstest_struct( ii ).shifttype];
-    tmp_risktype    = stresstest_struct( ii ).risktype;
-        for kk = 1 : 1 : length( riskfactor_struct )
-            % get parameters of risk factor object
+    tmp_shiftvalue  = [stresstest_struct( ii ).shiftvalue]; % get vector of shift value of particular scenario
+    tmp_shifttypes  = [stresstest_struct( ii ).shifttype];  % get vector of shift type of particular scenario
+    tmp_risktype    = stresstest_struct( ii ).risktype;    % get risk type cell
+        for kk = 1 : 1 : length( riskfactor_struct )        % check whether risk factor is contained in risk type cell 
+            % get parameters of risk factor object          % and apply specific shock
             rf_object   = riskfactor_struct( kk ).object;
             tmp_rf_type = rf_object.type;
             tmp_rf_id   = rf_object.id;
-            c = regexp(tmp_rf_id, tmp_risktype);     % string comparison on whole cell -> multiply for shiftvalue
-            k = cellfun(@isempty,c) == 0;
-            tmp_shift = tmp_shiftvalue * k';
-            tmp_shift_type = tmp_shifttypes * k';
+            c = regexp(tmp_rf_id, tmp_risktype);    % regexp of stress test risk type on risk factor id -> return 1 if regexp matches
+            k = cellfun(@isempty,c) == 0;           % convert NaN to 0 values
+            tmp_shift = tmp_shiftvalue * k';        % get risk factor shift value (multiply regexp match vector with shift value vector -> return shift value
+            tmp_shift_type = tmp_shifttypes * k';   % apply same on shift type -> return scalar of shift type
 
             if ( sum(k) == 1 )
                 tmp_stress = [tmp_shift];
             else
                 tmp_stress = [0.0];
             end
-            rf_object = rf_object.set('scenario_stress',tmp_stress);
+            rf_object = rf_object.set('scenario_stress',tmp_stress);    % add stress shift value into stress test vector of risk factor -> order preserved
             rf_object = rf_object.set('shift_type',tmp_shift_type);
             % store risk factor object back into struct:
             riskfactor_struct( kk ).object = rf_object; 
@@ -417,6 +417,7 @@ saving_time = toc;
 
 
 % 4.) Process yield curves and vola surfaces: Generate object with riskfactor yield curves and surfaces 
+% TODO: make external function: [rf_ir_cur_cell curve_Struct] = load_yieldcurves(curve_struct, riskfactor_struct,saving_flag)
 % a) Processing Yield Curve: Getting Cell with IDs of IR nodes
 % load dynamically cellarray with all RF curves (IR and SPREAD) as defined in riskfactor_struct
 rf_ir_cur_cell = {};
@@ -461,13 +462,15 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
         tmp_rf_struct_obj = riskfactor_struct( jj ).object;
         tmp_rf_id = tmp_rf_struct_obj.id;
         if ( regexp(tmp_rf_id,tmp_curve_id) == 1 ) 
-            %tmp_rf_id
+            tmp_rf_id
             tmp_node            = tmp_rf_struct_obj.get('node');
             tmp_rate_original   = tmp_rf_struct_obj.get('rate');
             tmp_nodes 		    = cat(2,tmp_nodes,tmp_node); % final vectors with nodes in days
             tmp_rates_original  = cat(2,tmp_rates_original,tmp_rate_original); % final vector with rates in decimals
-            tmp_delta_stress    = tmp_rf_struct_obj.getValue('stress') ./ 10000;
-            tmp_rf_rates_stress	= tmp_rate_original .+ tmp_delta_stress;
+            tmp_delta_stress    = tmp_rf_struct_obj.getValue('stress') ;
+            tmp_shift_type      = tmp_rf_struct_obj.get('shift_type');  % distinguish between absolute shocks (in bp) and relative shocks
+            tmp_shift_type_inv  = 1 .- tmp_shift_type;
+            tmp_rf_rates_stress = tmp_shift_type_inv .* (tmp_rate_original .+ (tmp_delta_stress ./ 10000)) .+ (tmp_shift_type .* tmp_rate_original .* tmp_delta_stress); %calculate abs and rel shocks and sum up (mutually exclusive)
             tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_rf_rates_stress);
         end
     endfor 
@@ -518,6 +521,7 @@ curve_gen_time = toc;
        % save ('-ascii', fullpath, savename);
        
 % b) BEGIN: Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
+% TODO: move everything to new function [surface_struct] = load_volacubes(surface_struct,path_mktdata,timestamp,runcode,archive_flag)
 % i) Get list of all vol files
 tmp_list_files = dir(path_mktdata);
 persistent surface_struct;
@@ -613,7 +617,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
     tmp_type = tmp_instr_obj.type;
     tmp_sub_type = tmp_instr_obj.sub_type;
 	% Full Valuation depending on Type:
-		% ETF Debt Valuation:
+            % ETF Debt Valuation:
             if ( strcmp(tmp_type,'debt') == 1 )
             % Using debt class
                 debt = tmp_instr_obj;
@@ -836,7 +840,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
     catch   % catch error in instrument valuation
         fprintf('Instrument valuation for %s failed. There was an error: %s\n',tmp_id,lasterr);
         instrument_valuation_failed_cell{ length(instrument_valuation_failed_cell) + 1 } =  tmp_id;
-        % store instrument as Cash instrument with fixed value_base for all scenarios
+        % FALLBACK: store instrument as Cash instrument with fixed value_base for all scenarios
         cc = Cash();
         cc = cc.set('id',tmp_instr_obj.get('id'),'name',tmp_instr_obj.get('name'),'asset_class',tmp_instr_obj.get('asset_class'),'currency',tmp_instr_obj.get('currency'),'value_base',tmp_instr_obj.get('value_base'));
         cc = cc.calc_value(tmp_scenario,scen_number);
