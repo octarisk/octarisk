@@ -33,7 +33,7 @@ function [chi sigma u] = calibrate_evt_gpd(v)
 u = min(v);     % location parameter
 chi = 0.3;      % shape parameter
 beta = u/10;    % scale parameter
-y = v .- u;     % substitution of loss distribution which is shifted by location parameter
+y = v - u;     % substitution of loss distribution which is shifted by location parameter
 
 % Start parameter
 x0 = [chi;beta];
@@ -72,7 +72,7 @@ end
 function obj = min_GPD (x,y)
 			chi = x(1);
             beta = x(2);
-            L = log( ( 1 .+ ( chi .* (y) )./beta ).^(-1./chi .-1) ./ beta );
+            L = log( ( 1 + ( chi .* (y) )./beta ).^(-1./chi -1) ./ beta );
             obj = -(sum(L));
 endfunction
 %------------------------------------------------------------------

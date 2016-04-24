@@ -76,23 +76,23 @@ T = T ./ 365;
 
 # C = ((F-X)*N(d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)
 %# P = ((X-F)*N(-d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)
-    d1 = (F.-X)./(sigma.*sqrt(T));
+    d1 = (F-X)./(sigma.*sqrt(T));
 
     
 % Calculation of BS Price
 if ( PayerReceiverFlag == 1 ) % Call / Payer swaption 'p'
-    N1 = 0.5.*(1.+erf(d1./sqrt(2)));
+    N1 = 0.5.*(1+erf(d1./sqrt(2)));
     n1 = exp(- d1 .^2 /2)./sqrt(2*pi);
-    value = ((F.-X).*N1 .+ sigma.*sqrt(T).*n1).*exp(-r.*T);
+    value = ((F-X).*N1 + sigma.*sqrt(T).*n1).*exp(-r.*T);
 else   % Put / Receiver swaption 'r'  
     N1 = 0.5.*(1+erf(-d1./sqrt(2)));
     n1 = exp(- d1 .^2 /2)./sqrt(2*pi);
-    value = (-(X.-F).*N1 .+ sigma.*sqrt(T).*n1).*exp(-r.*T);
+    value = (-(X-F).*N1 + sigma.*sqrt(T).*n1).*exp(-r.*T);
 end
 
    
 % Calculate continuous compounding multiplicator for tenor of swap
-multi = (1 - (1 ./ ((1 .+ F ./ m) .^ (tau .* m)))) ./ F;
+multi = (1 - (1 ./ ((1 + F ./ m) .^ (tau .* m)))) ./ F;
 
 % Return total Swaption Value
 SwaptionBachelierValue = value .* multi;

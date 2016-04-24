@@ -293,8 +293,8 @@ endfor
 % endfor
 
 % Correlation breach analysis: calculating norm of target and actual correlation matrix of all risk factors
-norm_corr_250 = norm( corr(R_250) .- corr_matrix)
-%norm_corr_1 = norm( corr(R_1) .- corr_matrix)
+norm_corr_250 = norm( corr(R_250) - corr_matrix)
+%norm_corr_1 = norm( corr(R_1) - corr_matrix)
 std_vector = rf_vola_vector;
 
 M_struct = struct();
@@ -319,31 +319,31 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
         % Case Dependency:
             % Geometric Brownian Motion Riskfactor Modeling
                 if ( strcmp(tmp_model,'GBM') )
-                    tmp_delta 	    = Y .+ ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(256)).^2) .* ts);
+                    tmp_delta 	    = Y + ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(256)).^2) .* ts);
             % Brownian Motion Riskfactor Modeling
                 elseif ( strcmp(tmp_model,'BM') )
-                    tmp_delta 	    = Y .+ (tmp_drift * ts);
+                    tmp_delta 	    = Y + (tmp_drift * ts);
             % Black-Karasinski (log-normal mean reversion) Riskfactor Modeling
                 elseif ( strcmp(tmp_model,'BKM') )
                     % startlevel, sigma_p_a, mr_level, mr_rate
                     tmp_start       = rf_object.value_base;
                     tmp_mr_level    = rf_object.mr_level;
                     tmp_mr_rate     = rf_object.mr_rate;    
-                    tmp_delta       = Y .+ (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
+                    tmp_delta       = Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
             % Ornstein-Uhlenbeck process 
                 elseif ( strcmp(tmp_model,'OU') )    
                     % startlevel, sigma_p_a, mr_level, mr_rate
                     tmp_start       = rf_object.value_base;
                     tmp_mr_level    = rf_object.mr_level;
                     tmp_mr_rate     = rf_object.mr_rate;     
-                    tmp_delta       = Y .+ (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
+                    tmp_delta       = Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
             % Square-root diffusion process
                 elseif ( strcmp(tmp_model,'SRD') )    
                     % startlevel, sigma_p_a, mr_level, mr_rate
                     tmp_start       = rf_object.value_base;
                     tmp_mr_level    = rf_object.mr_level;
                     tmp_mr_rate     = rf_object.mr_rate;     
-                    tmp_delta       = sqrt(tmp_start) .* Y .+ (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
+                    tmp_delta       = sqrt(tmp_start) .* Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
                 end     
         % store increment for actual riskfactor and scenario number
         rf_object = rf_object.set('scenario_mc',tmp_delta,'timestep_mc',tmp_ts);
@@ -468,8 +468,8 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
             tmp_rates_original  = cat(2,tmp_rates_original,tmp_rate_original); % final vector with rates in decimals
             tmp_delta_stress    = tmp_rf_struct_obj.getValue('stress') ;
             tmp_shift_type      = tmp_rf_struct_obj.get('shift_type');  % distinguish between absolute shocks (in bp) and relative shocks
-            tmp_shift_type_inv  = 1 .- tmp_shift_type;
-            tmp_rf_rates_stress = tmp_shift_type_inv .* (tmp_rate_original .+ (tmp_delta_stress ./ 10000)) .+ (tmp_shift_type .* tmp_rate_original .* tmp_delta_stress); %calculate abs and rel shocks and sum up (mutually exclusive)
+            tmp_shift_type_inv  = 1 - tmp_shift_type;
+            tmp_rf_rates_stress = tmp_shift_type_inv .* (tmp_rate_original + (tmp_delta_stress ./ 10000)) + (tmp_shift_type .* tmp_rate_original .* tmp_delta_stress); %calculate abs and rel shocks and sum up (mutually exclusive)
             tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_rf_rates_stress);
         end
     endfor 
@@ -713,7 +713,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                         else    % append idiosyncratic term only if not a stress risk factor
                             tmp_idio_vola_p_a = sensi.get('idio_vola');
                             tmp_idio_vec = ones(scen_number,1) .* tmp_idio_vola_p_a;
-                            tmp_shift = tmp_shift .+ tmp_sensitivities(jj) .* normrnd(0,tmp_idio_vec ./ sqrt(250/tmp_ts));
+                            tmp_shift = tmp_shift + tmp_sensitivities(jj) .* normrnd(0,tmp_idio_vec ./ sqrt(250/tmp_ts));
                         endif
                     % get sensitivity approach shift from underlying riskfactors
                     else
@@ -767,8 +767,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                         tmp_fx_rate_base  = tmp_fx_struct_obj.value_base;
                         tmp_fx_value      = tmp_fx_struct_obj.getValue(tmp_scenario,'abs');
                     end
-                    tmp_value_base      = tmp_value_base    .+ tmp_weights(jj) .* underlying_value_base ./ tmp_fx_rate_base;
-                    tmp_value           = tmp_value      .+ tmp_weights(jj) .* underlying_value_vec ./ tmp_fx_value;
+                    tmp_value_base      = tmp_value_base    + tmp_weights(jj) .* underlying_value_base ./ tmp_fx_rate_base;
+                    tmp_value           = tmp_value      + tmp_weights(jj) .* underlying_value_vec ./ tmp_fx_value;
                 endfor
 
                 % store values in sensitivity object:
@@ -982,7 +982,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 	        pos_vec_shock 	= new_value_vec_shock .* sign(tmp_quantity) ./ tmp_fx_value_shock;
 	        octamat = [  pos_vec_shock ] ;
             position_struct( ii ).mc_scenarios.octamat = octamat;
-            portfolio_shock = portfolio_shock .+  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
+            portfolio_shock = portfolio_shock +  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
         endfor
 
 
@@ -991,7 +991,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 endstaende_reldiff_shock = portfolio_shock ./ base_value;
 endstaende_sort_shock    = sort(endstaende_reldiff_shock);
 [portfolio_shock_sort scen_order_shock] = sort(portfolio_shock');
-p_l_absolut_shock        = portfolio_shock_sort .- base_value;
+p_l_absolut_shock        = portfolio_shock_sort - base_value;
 % Preparing vector for extreme value theory VAR and ES
     confi_scenario_evt_95   = round(0.025 * mc);
     evt_tail_shock           = p_l_absolut_shock(1:confi_scenario_evt_95)';
@@ -1120,12 +1120,12 @@ for ii = 1 : 1 : length( position_struct )
                 if (sum(strcmp(tmp_aggr_cell,tmp_aggr_key_value)) > 0)   % aggregation key found
                     tmp_vec_xx = 1:1:length(tmp_aggr_cell);
                     tmp_aggr_key_index = strcmp(tmp_aggr_cell,tmp_aggr_key_value)*tmp_vec_xx';
-                    aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) .+ (octamat .* tmp_quantity .* sign(tmp_quantity) .- tmp_basevalue);
+                    aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) + (octamat .* tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);
                     aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + tmp_decomp_var_shock;
                 else    % aggregation key not found -> set value for first time
                     tmp_aggr_cell{end+1} = tmp_aggr_key_value;
                     tmp_aggr_key_index = length(tmp_aggr_cell);
-                    aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  .- tmp_basevalue);
+                    aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  - tmp_basevalue);
                     aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock;
                 endif
             else
@@ -1337,11 +1337,11 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
         pos_vec_stress  = new_value_vec_stress .*  sign(tmp_quantity) ./ tmp_fx_value_stress;
         octamat = [  pos_vec_shock ] ;
         position_struct( ii ).stresstests = pos_vec_stress;
-        portfolio_stress = portfolio_stress .+ new_value_vec_stress .*  tmp_quantity ./ tmp_fx_value_stress;
+        portfolio_stress = portfolio_stress + new_value_vec_stress .*  tmp_quantity ./ tmp_fx_value_stress;
     endfor
     % Calc absolute and relative stress values
-    p_l_absolut_stress      = portfolio_stress .- base_value;
-    p_l_relativ_stress      = (portfolio_stress .- base_value )./ base_value;
+    p_l_absolut_stress      = portfolio_stress - base_value;
+    p_l_relativ_stress      = (portfolio_stress - base_value )./ base_value;
 
     fprintf(fid, '\n');
     fprintf(fid, '=====    STRESS RESULTS    ===== \n');
@@ -1359,7 +1359,7 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
 
         % Get instrument IR and Spread sensitivity from stresstests 1-4:
         if ~( tmp_values_stress(end) == 0 ) % test for base values 0 (e.g. matured option )
-            tmp_values_stress_rel = 100.*(tmp_values_stress .- tmp_values_stress(end)) ./ tmp_values_stress(end);
+            tmp_values_stress_rel = 100.*(tmp_values_stress - tmp_values_stress(end)) ./ tmp_values_stress(end);
         else
             tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
         endif
@@ -1488,7 +1488,7 @@ end
 % function for calculating VAR and ES from GPD calibrated parameters
 % chi and sigma are GPD shape parameters, u is offset level, q is quantile, n is number of total scenarios, nu is number of tail scenarios
 function [VAR ES] = get_gpd_var(chi, sigma, u, q, n, nu) 
-    VAR = u .+ sigma/chi*(( n/nu *( 1- q ) )^(-chi) -1);
+    VAR = u + sigma/chi*(( n/nu *( 1- q ) )^(-chi) -1);
     ES = (VAR + sigma - chi * u) / ( 1 - chi );
 end
 % plot ( hd_plot_x, hd_vec_func, 'linewidth',1 );

@@ -267,7 +267,7 @@ for ii = 1 : 1 : (N-1)
         for i = 1:1:n
             B(i,:) = [ zeros(1,(i-1)*n), zi.^2 , zeros(1,n^2-i*n) ];
         endfor
-        btmp = ones(n,1) .* ((beta^2 .* zj.^2) + (1 .- beta.^2)) ;
+        btmp = ones(n,1) .* ((beta^2 .* zj.^2) + (1 - beta.^2)) ;
         b = [b;btmp];
         A = [A;B];
 
@@ -304,11 +304,11 @@ endfor
 % Setting tree at final timestep with underlying asset prices
 
 % Assuming geometric brownian motion:
-S_T = S0 .* (exp( (rf  .- divyield .- (sigma.^2 ./ 2)) .* T_years .+ sigma .* sqrt(T_years) .* z));
+S_T = S0 .* (exp( (rf  - divyield - (sigma.^2 ./ 2)) .* T_years + sigma .* sqrt(T_years) .* z));
 
 [a b c] = size(S0);
 % getting payoff of option at time T
-V_T = max(callputflag.*(S_T .- K ),0);
+V_T = max(callputflag.*(S_T - K ),0);
 % discounting iteratively
 discount_factor = exp(-rf_input'.*dt);
 
@@ -319,7 +319,7 @@ present_value = V_T;
 % discounting from node k=T to k=1
 %tic;
 
-tmp_drift = rf  .- divyield;
+tmp_drift = rf  - divyield;
 
 % %#%#%#%#%#  iterating through timesteps and discounting expected values  %#%#%#%#%#%#%#%#%#
 
@@ -327,8 +327,8 @@ for ii = (N-1) : -1 : 1
     timestep_value  = (Transition_matrix(:,:,ii) * present_value) .* discount_factor_mat ;
     timestep_value  = reshape(timestep_value,n,1,c);
     % Assuming geometric brownian motion:
-    S_act           = S0 .* exp( ((tmp_drift .- (sigma.^2 ./ 2)) .* dt .* ii) .+ sigma .* sqrt(dt .* ii) .* z);
-    immediate_val   = callputflag.*(S_act .- K);
+    S_act           = S0 .* exp( ((tmp_drift - (sigma.^2 ./ 2)) .* dt .* ii) + sigma .* sqrt(dt .* ii) .* z);
+    immediate_val   = callputflag.*(S_act - K);
     present_value   = max(timestep_value,AmericanOptionFlag.*immediate_val) ;
     % Saving present values for greeks
     if ( ii == 2)
@@ -339,7 +339,7 @@ for ii = (N-1) : -1 : 1
 endfor
 
 % discounting from node k=+1 to k=0 
-immediate_val   = callputflag.*(S0 .- K);
+immediate_val   = callputflag.*(S0 - K);
 present_value   = q' * (present_value) .* discount_factor;
 present_value   = reshape(present_value,1,1,c);
 V_option        =  max(present_value,AmericanOptionFlag.*immediate_val) ;
@@ -351,22 +351,22 @@ option_willowtree = V_option;
 
 % Calculation of Greeks:
 S_t0 = S0;
-S_t1 = S0 .* exp( (tmp_drift .- ((sigma).^2 ./ 2)) .* dt .* 1 .+ sigma .* sqrt(dt .* 1) .* z);
-S_t2 = S0 .* exp( (tmp_drift .- ((sigma).^2 ./ 2)) .* dt .* 2 .+ sigma .* sqrt(dt .* 2) .* z);
+S_t1 = S0 .* exp( (tmp_drift - ((sigma).^2 ./ 2)) .* dt .* 1 + sigma .* sqrt(dt .* 1) .* z);
+S_t2 = S0 .* exp( (tmp_drift - ((sigma).^2 ./ 2)) .* dt .* 2 + sigma .* sqrt(dt .* 2) .* z);
 %disp('Value per t');
 V_t0(1,1,:) = V_option;
 
 % Calculating delta:
-delta = callputflag .*( sum(abs(V_t1 .- V_t0))) ./ ( sum(abs(S_t1 .- S_t0)) );
+delta = callputflag .*( sum(abs(V_t1 - V_t0))) ./ ( sum(abs(S_t1 - S_t0)) );
 delta = reshape(delta,c,1,1);
 %delta = delta(1:length_input);
 % Calculating gamma: not working reliably  -> wrong?
-% gamma = (abs(mean(V_t2) - mean(V_t1) ) .+  abs( mean(V_t1) .- V_t0  ))./2;
+% gamma = (abs(mean(V_t2) - mean(V_t1) ) +  abs( mean(V_t1) - V_t0  ))./2;
 % gamma = reshape(gamma,c,1,1);
 % % Calculating Theta: averaging of change in option value at nodes at origin (n/2 and 1+n/2) -> wrong?
-% theta1 = (V_t2(n/2,:,:) .- V_t1(n/2,:,:)) ./ dt;
-% theta2 = (V_t2(1+n/2,:,:) .- V_t1(1+n/2,:,:)) ./ dt;
-% theta = 0.5 .*(theta1 .+ theta2);
+% theta1 = (V_t2(n/2,:,:) - V_t1(n/2,:,:)) ./ dt;
+% theta2 = (V_t2(1+n/2,:,:) - V_t1(1+n/2,:,:)) ./ dt;
+% theta = 0.5 .*(theta1 + theta2);
 % theta = reshape(theta,c,1,1);
 
 % reshape for greeks
@@ -377,10 +377,10 @@ delta = reshape(delta,c,1,1);
 % V_sigma = V_matrix(:,4);
 % %V_tau = V_matrix(:,5);
 
-% delta   = callputflag .* abs(V_delta .- V_base);
-% rho     = V_rho .- V_base;
-% vega    = (V_sigma .- V_base ) ./ 10;
-% %theta   = V_tau .- V_base
+% delta   = callputflag .* abs(V_delta - V_base);
+% rho     = V_rho - V_base;
+% vega    = (V_sigma - V_base ) ./ 10;
+% %theta   = V_tau - V_base
 % option_willowtree = V_base;
 end
   

@@ -47,14 +47,14 @@ timeseries = M(:,ii);
 len = rows(timeseries);
 
 % a. calculate diff
-diff_normal_ts = timeseries(2:end) .- timeseries(1:end-1);
+diff_normal_ts = timeseries(2:end) - timeseries(1:end-1);
 diff_normal_ts = cat(1,0,diff_normal_ts);
 
 diff_geo_ts = log(timeseries(2:end) ./ timeseries(1:end-1));
 diff_geo_ts = cat(1,0,diff_geo_ts);
 DD(:,ii) = diff_geo_ts;
 
-diff_simple_ts = (timeseries(2:end) ./ timeseries(1:end-1)) .- 1;
+diff_simple_ts = (timeseries(2:end) ./ timeseries(1:end-1)) - 1;
 diff_simple_ts = cat(1,0,diff_simple_ts);
 
 % b. estimate statistic parameters
@@ -107,9 +107,9 @@ Sminus1 = S(1:end-1);
 
 Splus1 = S(2:end);
 
-deltaS = (Splus1 .- Sminus1).^2;
+deltaS = (Splus1 - Sminus1).^2;
 SSxy = sum(deltaS);
-SSxx = sum((S .- mr_level_ergodic).^2);
+SSxx = sum((S - mr_level_ergodic).^2);
 
 mr_rate_ergodic = SSxy ./ (2*SSxx * deltat);
 

@@ -46,7 +46,7 @@ classdef Forward < Instrument
            tmp_cf_values = [];
         elseif ( nargin == 13)
             if ( length(tmp_cf_dates) > 0 )
-                tmp_cf_dates = (tmp_cf_dates)' .- today;
+                tmp_cf_dates = (tmp_cf_dates)' - today;
             endif
         end
         

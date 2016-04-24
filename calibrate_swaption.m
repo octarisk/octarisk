@@ -58,9 +58,9 @@ end
 % Definition Objective Function:	    
 function obj = phi (x,PayerReceiverFlag,F,X,T,r,sigma,m,tau,multiplicator,market_value,model)
         if ( strcmp(model,'BLACK76') )
-			tmp_swaption_value = swaption_black76(PayerReceiverFlag,F,X,T,r,sigma.+x,m,tau) .* multiplicator;
+			tmp_swaption_value = swaption_black76(PayerReceiverFlag,F,X,T,r,sigma+x,m,tau) .* multiplicator;
         else
-            tmp_swaption_value = swaption_bachelier(PayerReceiverFlag,F,X,T,r,sigma.+x,m,tau) .* multiplicator;
+            tmp_swaption_value = swaption_bachelier(PayerReceiverFlag,F,X,T,r,sigma+x,m,tau) .* multiplicator;
         end
         obj = abs( tmp_swaption_value  - market_value)^2;
 endfunction

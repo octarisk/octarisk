@@ -75,18 +75,18 @@ endif
 % Start Calculation
 % Get rates at timesteps1 / 2
 r1 = interpolate_curve(nodes,rates,days_to_t1,interp_method);
-r2 = interpolate_curve(nodes,rates,(days_to_t2 .+ days_to_t1),interp_method);
+r2 = interpolate_curve(nodes,rates,(days_to_t2 + days_to_t1),interp_method);
 % Get time length between today and timesteps (in years)
 d1 = days_to_t1 ./ 365 ;
-d2 = (days_to_t2 .+ days_to_t1 ) ./ 365;
+d2 = (days_to_t2 + days_to_t1 ) ./ 365;
 
 % 3 cases
 if ( compounding_type == 1)      % simple
-    tmp_rate = ( (( 1 .+ (r2 .* d2) ) ./ ( 1 .+ (r1 .* d1) ) ) .- 1 )  ./ ( d2 .- d1 );
+    tmp_rate = ( (( 1 + (r2 .* d2) ) ./ ( 1 + (r1 .* d1) ) ) - 1 )  ./ ( d2 - d1 );
 elseif ( compounding_type == 2)      % discrete
-    tmp_rate = (  ( 1 + r2 ).^d2 ./ ( 1 + r1 ).^d1  ).^(1 ./ (d2 .- d1)) .- 1;
+    tmp_rate = (  ( 1 + r2 ).^d2 ./ ( 1 + r1 ).^d1  ).^(1 ./ (d2 - d1)) - 1;
 elseif ( compounding_type == 3)      % continuous
-    tmp_rate = ( r2 .* d2 .- r1 .* d1  ) ./ (  d2 .- d1 );
+    tmp_rate = ( r2 .* d2 - r1 .* d1  ) ./ (  d2 - d1 );
 endif
 
 % Return forward rate:	% flooring rate!!!

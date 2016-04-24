@@ -25,7 +25,7 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
      
     % Get input variables
     tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date - 1); 
-    tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) .+ obj.spread;
+    tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
     
     % Get underlying absolute scenario value     
     %tmp_underlying_value            = underlying.get('start_value'); 
@@ -61,9 +61,9 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
             disp('Calibration seems to be successful.. checking');
             %tmp_value
             if ( strfind(tmp_type,'OPT_EUR') > 0  )
-                tmp_new_val             = option_bs(call_flag,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base .+ tmp_impl_vola_spread) .* tmp_multiplier;
+                tmp_new_val             = option_bs(call_flag,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base + tmp_impl_vola_spread) .* tmp_multiplier;
             elseif ( strfind(tmp_type,'OPT_AM') > 0 )
-                tmp_new_val             = option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base .+ tmp_impl_vola_spread,0.0,5,20) .* tmp_multiplier;
+                tmp_new_val             = option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base + tmp_impl_vola_spread,0.0,5,20) .* tmp_multiplier;
             endif
             
             if ( abs(tmp_value - tmp_new_val) < 0.05 )

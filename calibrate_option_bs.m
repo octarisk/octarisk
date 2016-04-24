@@ -63,7 +63,7 @@ end
 	function obj = phi (x,putcallflag,S,X,T,rf,sigma,multiplicator,market_value)
             % This is where we computer the sum of the square of the errors.
             % The parameters are in the vector p, which for us is a two by one.	
-			tmp_option_value = option_bs(putcallflag,S,X,T,rf,sigma.+x) .* multiplicator;
+			tmp_option_value = option_bs(putcallflag,S,X,T,rf,sigma+x) .* multiplicator;
 			obj = abs( tmp_option_value  - market_value)^2;
 		%----------------------------------------------
 endfunction

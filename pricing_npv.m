@@ -92,16 +92,16 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
         % Get yield at actual spot value
 			yield_discount 	= interpolate_curve(discount_nodes,discount_rates,tmp_dtm,interp_discount);  % get discount rate from discount curve
 			yield_spread 	= interpolate_curve(spread_nodes,spread_rates,tmp_dtm,interp_spread);        % get spread rate from spread curve
-			yield_total 	= yield_discount .+ yield_spread .+ spread_constant;            % combine with constant spread (e.g. spread over yield)
-			tmp_cf_date 	= valuation_date .+ tmp_dtm;
+			yield_total 	= yield_discount + yield_spread + spread_constant;            % combine with constant spread (e.g. spread over yield)
+			tmp_cf_date 	= valuation_date + tmp_dtm;
         % Get actual discount factor
 			tmp_df 			= discount_factor (valuation_date, tmp_cf_date, yield_total, comp_type, basis, comp_freq);            
 			tmp_tf          = timefactor(valuation_date,tmp_cf_date,basis);  
         %Calculate actual NPV of cash flows    
 			tmp_npv_cashflow = tmp_cf_value .* tmp_df;
-			MacDur = MacDur .+ tmp_tf .* tmp_npv_cashflow;
+			MacDur = MacDur + tmp_tf .* tmp_npv_cashflow;
         % Add actual cash flow npv to total npv
-			tmp_npv 		= tmp_npv.+ tmp_npv_cashflow;
+			tmp_npv 		= tmp_npv+ tmp_npv_cashflow;
     end
 endfor 
 % ------------------------------------------------------------------  
@@ -126,17 +126,17 @@ endfunction
 %            9 = act/360 ISMA
 %           10 = act/365 ISMA
 %           11 = 30/360E (ISMA)
-%tmp_df = (1 .+ yield_total).^(-tmp_dtm./365)
+%tmp_df = (1 + yield_total).^(-tmp_dtm./365)
 
 
 %if ( tmp_dtm > 0 )  % discount only future cashflows
         %% Get yield at actual spot value
         %yield_discount 	= interpolate_curve(discount_nodes,discount_rates,tmp_dtm);  % get discount rate from discount curve
         %yield_spread 	= interpolate_curve(spread_nodes,spread_rates,tmp_dtm);        % get spread rate from spread curve
-        %yield_total 				= yield_discount .+ yield_spread .+ spread_constant;            % combine with constant spread (e.g. spread over yield)
-        %%yield_duration_minus100bp 	= yield_total .- 0.01;
-        %%yield_duration_plus100bp 	= yield_total .+ 0.01;
-        %tmp_cf_date 				= valuation_date .+ tmp_dtm;
+        %yield_total 				= yield_discount + yield_spread + spread_constant;            % combine with constant spread (e.g. spread over yield)
+        %%yield_duration_minus100bp 	= yield_total - 0.01;
+        %%yield_duration_plus100bp 	= yield_total + 0.01;
+        %tmp_cf_date 				= valuation_date + tmp_dtm;
         %% Get actual discount factor
         %tmp_df 						= discount_factor (valuation_date, tmp_cf_date, yield_total, comp_type, basis, comp_freq); 
         %%tmp_df_duration_minus100bp 	= discount_factor (valuation_date, tmp_cf_date, yield_duration_minus100bp, comp_type, basis, comp_freq); 
@@ -146,10 +146,10 @@ endfunction
         %tmp_npv_cashflow 			= tmp_cf_value .* tmp_df;
         %%tmp_npv_cashflow_duration_minus100bp = tmp_cf_value .* tmp_df_duration_minus100bp;
         %%tmp_npv_cashflow_duration_plus100bp 	= tmp_cf_value .* tmp_df_duration_plus100bp;
-        %MacDur = MacDur .+ tmp_tf .* tmp_npv_cashflow;
+        %MacDur = MacDur + tmp_tf .* tmp_npv_cashflow;
         %% Add actual cash flow npv to total npv
-        %tmp_npv 					= tmp_npv.+ tmp_npv_cashflow;
-        %%tmp_npv_duration_minus100bp = tmp_npv_duration_minus100bp.+ tmp_npv_cashflow_duration_minus100bp;
-        %%tmp_npvduration_plus100bp 	= tmp_npvduration_plus100bp.+ tmp_npv_cashflow_duration_plus100bp;
+        %tmp_npv 					= tmp_npv+ tmp_npv_cashflow;
+        %%tmp_npv_duration_minus100bp = tmp_npv_duration_minus100bp+ tmp_npv_cashflow_duration_minus100bp;
+        %%tmp_npvduration_plus100bp 	= tmp_npvduration_plus100bp+ tmp_npv_cashflow_duration_plus100bp;
     %end
-%MacDur_sensi = abs(tmp_npv_duration_minus100bp .- tmp_npvduration_plus100bp) ./ 2;
+%MacDur_sensi = abs(tmp_npv_duration_minus100bp - tmp_npvduration_plus100bp) ./ 2;

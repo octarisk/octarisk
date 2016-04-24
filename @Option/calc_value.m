@@ -27,8 +27,8 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
     
     % Get input variables
     tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date - 1); 
-    tmp_rf_rate              = interpolate_curve(tmp_nodes,tmp_rates,tmp_dtm ) .+ obj.spread;
-    tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) .+ obj.spread;
+    tmp_rf_rate              = interpolate_curve(tmp_nodes,tmp_rates,tmp_dtm ) + obj.spread;
+    tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
     tmp_impl_vola_spread     = obj.vola_spread;
     % Get underlying absolute scenario value     
     tmp_underlying_value_delta      = underlying.getValue(value_type); 
@@ -55,15 +55,15 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         tmp_model = vola_riskfactor.model;
         if ( strcmp(tmp_model,'GBM') == 1 || strcmp(tmp_model,'BKM') ) % Log-normal Motion
             if ( strcmp(value_date,'stress'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread .+ tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* exp(vola_riskfactor.getValue(value_type));
+                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* exp(vola_riskfactor.getValue(value_type));
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)  .* exp(tmp_impl_vola_atm) .+ tmp_impl_vola_spread;
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)  .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
             endif
         else        % Normal Model
             if ( strcmp(value_type,'stress'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread .+ tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* (vola_riskfactor.getValue(value_type) .+ 1);
+                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* (vola_riskfactor.getValue(value_type) + 1);
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) .+ tmp_impl_vola_atm .+ tmp_impl_vola_spread;  
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) + tmp_impl_vola_atm + tmp_impl_vola_spread;  
             endif
         end
 

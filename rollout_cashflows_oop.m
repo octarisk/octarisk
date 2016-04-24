@@ -146,7 +146,7 @@ matvec = datevec(maturity_date);
 dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365';'30/360 PSA';'30/360 ISDA';'30/360 European';'act/365 Japanese';'act/act ISMA';'act/360 ISMA';'act/365 ISMA';'30/360E']);
 findvec = strcmp(day_count_convention,dcc_cell);
 tt = 1:1:length(dcc_cell);
-tt = (tt .- 1)';
+tt = (tt - 1)';
 dcc = dot(single(findvec),tt);
 %-------------------------------------------------------------------------------------------------------
 % cashflow rollout: method backwards
@@ -292,7 +292,7 @@ else
         cf_dates = [cf_dates;matvec];
     endif
 endif
-cf_business_dates = datevec(busdate(datenum(cf_dates).-1 .+ business_day_rule,business_day_direction));
+cf_business_dates = datevec(busdate(datenum(cf_dates)-1 + business_day_rule,business_day_direction));
 cf_dates = cf_dates;
 %-------------------------------------------------------------------------------------------------------
 
@@ -303,25 +303,25 @@ cf_dates = cf_dates;
 % Type FRB: Calculate CF Values for all CF Periods
 if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )
     cf_datesnum = datenum(cf_dates);
-    %cf_datesnum = cf_datesnum((cf_datesnum.-today)>0)
+    %cf_datesnum = cf_datesnum((cf_datesnum-today)>0)
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
     for ii = 1: 1 : length(d2)
-        cf_values(ii) = ((1 ./ discount_factor (d1(ii), d2(ii), coupon_rate, compounding_type, dcc, compounding_freq)) .- 1) .* notional;
+        cf_values(ii) = ((1 ./ discount_factor (d1(ii), d2(ii), coupon_rate, compounding_type, dcc, compounding_freq)) - 1) .* notional;
     endfor
     ret_values = cf_values;
     % Add notional payments
     if ( notional_at_start == 1)    % At notional payment at start
-        ret_values(:,1) = ret_values(:,1) .- notional;     
+        ret_values(:,1) = ret_values(:,1) - notional;     
     endif
     if ( notional_at_end == true) % Add notional payment at end to cf vector:
-        ret_values(:,end) = ret_values(:,end) .+ notional;
+        ret_values(:,end) = ret_values(:,end) + notional;
     endif
     
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on spot rate defined 
 elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
     cf_datesnum = datenum(cf_dates);
-    %cf_datesnum = cf_datesnum((cf_datesnum.-valuation_date)>0);
+    %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
     notvec = zeros(1,length(d1));
@@ -333,7 +333,7 @@ elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
         t1 = (d1(ii) - valuation_date) ./ dib;
         t2 = (d2(ii) - valuation_date) ./ dib;
         if ( t1 > 0 && t2 > 0 )             % for future cash flows use forward rates
-            forward_rate = (spread .+ get_forward_rate(tmp_nodes,tmp_rates,t1,t2-t1,compounding_type,method_interpolation)) .* tf;
+            forward_rate = (spread + get_forward_rate(tmp_nodes,tmp_rates,t1,t2-t1,compounding_type,method_interpolation)) .* tf;
         elseif ( t1 < 0 && t2 > 0 )         % if last cf date is in the past, while next is in future, use last reset rate
             forward_rate = last_reset_rate .* tf;
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
@@ -344,10 +344,10 @@ elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
     ret_values = cf_values .* notional;
     % Add notional payments
     if ( notional_at_start == true)    % At notional payment at start
-        ret_values(:,1) = ret_values(:,1) .- notional;     
+        ret_values(:,1) = ret_values(:,1) - notional;     
     endif
     if ( notional_at_end == true) % Add notional payment at end to cf vector:
-        ret_values(:,end) = ret_values(:,end) .+ notional;
+        ret_values(:,end) = ret_values(:,end) + notional;
     endif
 % Type ZCB: Zero Coupon Bond has notional cash flow at maturity date
 elseif ( strcmp(type,'ZCB') == 1 )   
@@ -378,10 +378,10 @@ elseif ( strcmp(type,'FAB') == 1 )
         cf_values = zeros(1,number_payments);
         amount_outstanding = notional;
         for ii = 1: 1 : number_payments
-            cf_values(ii) = ((1 ./ discount_factor (d1(ii), d2(ii), coupon_rate, compounding_type, dcc, compounding_freq)) .- 1) .* amount_outstanding;
+            cf_values(ii) = ((1 ./ discount_factor (d1(ii), d2(ii), coupon_rate, compounding_type, dcc, compounding_freq)) - 1) .* amount_outstanding;
             amount_outstanding = amount_outstanding - amortization_rate;
         endfor
-        ret_values = cf_values .+ amortization_rate;
+        ret_values = cf_values + amortization_rate;
     endif    
 endif
 %-------------------------------------------------------------------------------------------------------
@@ -395,7 +395,7 @@ else
     pay_dates = cf_dates;
 endif
 pay_dates(1,:)=[];
-ret_dates = datenum(pay_dates)' .- valuation_date;
+ret_dates = datenum(pay_dates)' - valuation_date;
 ret_dates = ret_dates(ret_dates>0);
 ret_values = ret_values(:,(end-length(ret_dates)+1):end);
 

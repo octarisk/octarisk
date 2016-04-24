@@ -61,7 +61,7 @@ endif
 %     statistical checks:
 % std_Y = std(Y)
 % corr_Y = corr(Y)
-% norm(abs(corr_Y .- corr_matrix))
+% norm(abs(corr_Y - corr_matrix))
 
 
 % C) Generate custom distributed random variables from correlated univariate randon numbers

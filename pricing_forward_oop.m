@@ -80,17 +80,17 @@ endif
 
 % Get discount curve and calculate cost of carry
 discount_rate       = interpolate_curve(discount_nodes,discount_rates,days_to_maturity);
-cost_of_carry       = discount_rate .- forward.dividend_yield .+ forward.storage_cost .- forward.convenience_yield;
+cost_of_carry       = discount_rate - forward.dividend_yield + forward.storage_cost - forward.convenience_yield;
 
 % Calculate forward value for equity and bond forwards
 if ( strcmp(type,'Equity') == 1 || strcmp(type,'EQFWD') == 1)
     df_forward      = discount_factor (valuation_date, maturity_date, cost_of_carry, comp_type, basis, comp_freq);
     df_discount     = discount_factor (valuation_date, maturity_date, discount_rate, comp_type, basis, comp_freq);
     forward_price   = underlying_price ./ df_forward;
-    payoff          = (forward_price .- strike ) .* df_discount;
+    payoff          = (forward_price - strike ) .* df_discount;
 elseif ( strcmp(type,'Bond') == 1 || strcmp(type,'BONDFWD') == 1)
     df_discount     = discount_factor (forward.valuation_date, forward.maturity_date, discount_rate, comp_type, basis, comp_freq);
-    payoff          = underlying_price .- (strike .* df_discount);
+    payoff          = underlying_price - (strike .* df_discount);
 else
     error('Not a valid type.')
 endif

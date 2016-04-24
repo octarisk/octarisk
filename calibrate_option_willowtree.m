@@ -63,7 +63,7 @@ end
 	function obj = phi (x,putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value)
             % This is where we computer the sum of the square of the errors.
             % The parameters are in the vector p, which for us is a two by one.	
-			tmp_option_value = option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma.+x,divyield,stepsize,nodes) .* multiplicator;
+			tmp_option_value = option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma+x,divyield,stepsize,nodes) .* multiplicator;
 			obj = abs( tmp_option_value  - market_value)^2;
 		%----------------------------------------------
 endfunction

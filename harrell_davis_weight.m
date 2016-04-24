@@ -43,10 +43,10 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
     a = ( scenarios + 1 ) * alpha;
     b = ( scenarios + 1 ) * ( 1 - alpha);
     x_1 = observation ./ scenarios;
-    x_2 = (observation .- 1 ) ./ scenarios;
+    x_2 = (observation - 1 ) ./ scenarios;
     beta_1 = betacdf( x_1 , a , b );
     beta_2 = betacdf( x_2 , a , b );
-    X = beta_1 .- beta_2;
+    X = beta_1 - beta_2;
     
 endfunction
 

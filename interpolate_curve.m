@@ -86,14 +86,14 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant extrapolatio
         if (strcmp(method,'linear'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
-                     y = ((1 - abs(timestep - nodes(ii))./ dnodes(ii)).* rates(:,ii) .+  (1 - abs(nodes(ii + 1) - timestep)./ dnodes(ii)).* rates(:,ii+1)) ;            
+                     y = ((1 - abs(timestep - nodes(ii))./ dnodes(ii)).* rates(:,ii) +  (1 - abs(nodes(ii + 1) - timestep)./ dnodes(ii)).* rates(:,ii+1)) ;            
                 endif
             endfor
         elseif (strcmp(method,'mm'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                     alpha = (nodes(ii+1) - timestep) / ( nodes(ii+1 ) - nodes(ii) );
-                    y = (alpha .* nodes(ii) .* rates(:,ii) .+ (1 .- alpha) .* nodes(ii+1) .* rates(:,ii+1)) ./ timestep;
+                    y = (alpha .* nodes(ii) .* rates(:,ii) + (1 - alpha) .* nodes(ii+1) .* rates(:,ii+1)) ./ timestep;
                 endif
             endfor
         elseif (strcmp(method,'loglinear'))
@@ -107,7 +107,7 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant extrapolatio
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                     alpha = (nodes(ii+1) - timestep) / ( nodes(ii+1 ) - nodes(ii) );
-                    y = log(exp(rates(:,ii)) .* alpha .+ exp(rates(ii+1)) .* (1 .- alpha));
+                    y = log(exp(rates(:,ii)) .* alpha + exp(rates(ii+1)) .* (1 - alpha));
                 endif
             endfor 
         elseif (strcmp(method,'spline'))
@@ -165,9 +165,9 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
     else
         i = lookup(Terms,Term);
     endif
-    x = (Term .- Terms(i)) ./ (Terms(i + 1) .- Terms(i));
-    g0 = f(:,i) .- fdiscrete(:,i + 1);
-    g1 = f(:,i + 1) .- fdiscrete(:,i + 1);
+    x = (Term - Terms(i)) ./ (Terms(i + 1) - Terms(i));
+    g0 = f(:,i) - fdiscrete(:,i + 1);
+    g1 = f(:,i + 1) - fdiscrete(:,i + 1);
     ZZ = zeros(length(g0),1);
     V_g0st0 = zeros(length(g0),1);
     V_g1st0 = zeros(length(g0),1);
@@ -180,70 +180,70 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
         V_g1geg0m05 = g1 >= (-0.5 .* g0);        %  0.5 .* g0 <= g1
         V_g1seg0m2 = g1 <= (-2 .* g0);           % g1 <= -2 .* g0
         %V_g0st0;                        % g0 < 0
-        V_zone1_a = V_g1geg0m05 .+ V_g1seg0m2 .+ V_g0st0;
+        V_zone1_a = V_g1geg0m05 + V_g1seg0m2 + V_g0st0;
         V_zone1_a = V_zone1_a == 3;
         % then
-        G = g0 .* (x .- 2 * x .^ 2 + x ^ 3) .+ g1 .* (-x .^ 2 .+ x .^ 3);
+        G = g0 .* (x - 2 * x .^ 2 + x ^ 3) + g1 .* (-x .^ 2 + x .^ 3);
       % or the following three conditions have all to be fulfilled:
         V_g1seg0m05 = g1 <= (-0.5 .* g0);        % -0.5 .* g0 >= g1 &&
         V_g1geg0m2 = g1 >= (-2 .* g0);           % g1 >= -2 .* g0
-        V_zone1_b = V_g1seg0m05 .+ V_g1geg0m2 .+ V_g0gt0;   % g0 > 0 && -0.5 .* g0 >= g1 && g1 >= -2 .* g0
+        V_zone1_b = V_g1seg0m05 + V_g1geg0m2 + V_g0gt0;   % g0 > 0 && -0.5 .* g0 >= g1 && g1 >= -2 .* g0
         V_zone1_b = V_zone1_b == 3;
-        V_zone1 = V_zone1_a .+ V_zone1_b;
+        V_zone1 = V_zone1_a + V_zone1_b;
     % conditions for zone 2:
         % the following two conditions have all to be fulfilled:
         V_g1gtg0m2 = g1 > (-2 .* g0);            % g1 > -2 .* g0 && g0 < 0
-        V_zone2_a = V_g0st0 .+ V_g1gtg0m2;
+        V_zone2_a = V_g0st0 + V_g1gtg0m2;
         V_zone2_a = V_zone2_a == 2;
         % or the following two conditions have all to be fulfilled:
         V_g0gt0;                                % g0 > 0
         V_g1stg0m2 = g1 < (-2 .* g0);           % g1 < -2 .* g0 && g0 > 0
-        V_zone2_b = V_g0gt0 .+ V_g1stg0m2;
+        V_zone2_b = V_g0gt0 + V_g1stg0m2;
         V_zone2_b = V_zone2_b == 2;
-        V_zone2 = V_zone2_a .+ V_zone2_b;
+        V_zone2 = V_zone2_a + V_zone2_b;
     % conditions for zone 3:   
         % a)
         V_g1gtg0m05 = g1 > (-0.5 .* g0);        % g1 > -0.5 .* g0  &&  g0 > 0 &&  0 > g1
-        V_zone3_a = V_g0gt0 .+ V_g1st0 .+ V_g1gtg0m05;
+        V_zone3_a = V_g0gt0 + V_g1st0 + V_g1gtg0m05;
         V_zone3_a = V_zone3_a == 3;
         % b)
         % V_g0st0                               % g0 < 0
         % V_g1gt0                               % 0 < g1
         V_g1stg0m05 = g1 < (-0.5 .* g0);       % g1 < -0.5 .* g0 && g0 < 0 && 0 < g1
-        V_zone3_b = V_g0st0 .+ V_g1gt0 .+ V_g1stg0m05;
+        V_zone3_b = V_g0st0 + V_g1gt0 + V_g1stg0m05;
         V_zone3_b = V_zone3_b == 3; 
-        V_zone3 = V_zone3_a .+ V_zone3_b;
-        V_zone1_3 = V_zone1 .+ V_zone2 .+ V_zone3; 
+        V_zone3 = V_zone3_a + V_zone3_b;
+        V_zone1_3 = V_zone1 + V_zone2 + V_zone3; 
         V_zone4 = V_zone1_3 == 0;
        % V_komplett = [ V_zone1 , V_zone2 , V_zone3 , V_zone4 ]
 
       %zone (i)
-          G_1 = g0 .* (x .- 2 * x .^ 2 + x ^ 3) .+ g1 .* (-x .^ 2 .+ x .^ 3);
+          G_1 = g0 .* (x - 2 * x .^ 2 + x ^ 3) + g1 .* (-x .^ 2 + x .^ 3);
 
       %zone (ii)   
-          eta_2 = (g1 .+ 2 .* g0) ./ (g1 .- g0);
+          eta_2 = (g1 + 2 .* g0) ./ (g1 - g0);
           V_G_2 = eta_2  >= x;
             G_2_a = g0 .* x;
-            G_2_b = g0 .* x .+ (g1 .- g0) .* (x .- eta_2) .^ 3 ./ (1 .- eta_2) .^ 2 ./ 3;
-          G_2 = V_G_2 .* G_2_a .+ ~V_G_2 .* G_2_b;         
+            G_2_b = g0 .* x + (g1 - g0) .* (x - eta_2) .^ 3 ./ (1 - eta_2) .^ 2 ./ 3;
+          G_2 = V_G_2 .* G_2_a + ~V_G_2 .* G_2_b;         
 
       %zone (iii)
-          eta_3 = 3 .* g1 ./ (g1 .- g0);
+          eta_3 = 3 .* g1 ./ (g1 - g0);
           V_G_3 = eta_3  > x;
-            G_3_a = g1 .* x .- 1 ./ 3 .* (g0 .- g1) .* ((eta_3 .- x) .^ 3 ./ eta_3 .^ 2 .- eta_3);
-            G_3_b = (2 ./ 3 .* g1 .+ 1 ./ 3 .* g0) .* eta_3 .+ g1 .* (x .- eta_3);
-          G_3 = V_G_3 .* G_3_a .+ ~V_G_3 .* G_3_b;
+            G_3_a = g1 .* x - 1 ./ 3 .* (g0 - g1) .* ((eta_3 - x) .^ 3 ./ eta_3 .^ 2 - eta_3);
+            G_3_b = (2 ./ 3 .* g1 + 1 ./ 3 .* g0) .* eta_3 + g1 .* (x - eta_3);
+          G_3 = V_G_3 .* G_3_a + ~V_G_3 .* G_3_b;
 
       %zone (iv)
-          eta_4 = g1 ./ (g1 .+ g0);
-          A = -g0 .* g1 ./ (g0 .+ g1);
+          eta_4 = g1 ./ (g1 + g0);
+          A = -g0 .* g1 ./ (g0 + g1);
           V_G_4 = eta_4  >=  x;
-            G_4_a = A .* x .- 1 ./ 3 .* (g0 .- A) .* ((eta_4 .- x) .^ 3 ./ eta_4 .^ 2 .- eta_4);
-            G_4_b = (2 ./ 3 .* A .+ 1 ./ 3 .* g0) .* eta_4 .+ A .* (x .- eta_4) .+ (g1 .- A) ./ 3 .* (x .- eta_4) .^ 3 ./ (1 .- eta_4) .^ 2;
-          G_4 = V_G_4 .* G_4_a .+ ~V_G_4 .* G_4_b;
+            G_4_a = A .* x - 1 ./ 3 .* (g0 - A) .* ((eta_4 - x) .^ 3 ./ eta_4 .^ 2 - eta_4);
+            G_4_b = (2 ./ 3 .* A + 1 ./ 3 .* g0) .* eta_4 + A .* (x - eta_4) + (g1 - A) ./ 3 .* (x - eta_4) .^ 3 ./ (1 - eta_4) .^ 2;
+          G_4 = V_G_4 .* G_4_a + ~V_G_4 .* G_4_b;
           
           
-    G = G_1 .* V_zone1 .+ G_2 .* V_zone2 .+ G_3 .* V_zone3 .+ G_4 .* V_zone4;
+    G = G_1 .* V_zone1 + G_2 .* V_zone2 + G_3 .* V_zone3 + G_4 .* V_zone4;
     % replace values with 0 where g0 or g1 == 0
     G(g0==0) = 0;
     G(g1==0) = 0;
@@ -252,7 +252,7 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
       G = 0;
     endif
     %(12)
-    Interpolant_Value = 1 ./ Term .* (Terms(i) .* dInterpolantatNode(:,i) .+ (Term .- Terms(i)) .* fdiscrete(:,i .+ 1) .+ (Terms(i .+ 1) .- Terms(i)) .* G);
+    Interpolant_Value = 1 ./ Term .* (Terms(i) .* dInterpolantatNode(:,i) + (Term - Terms(i)) .* fdiscrete(:,i + 1) + (Terms(i + 1) - Terms(i)) .* G);
   endif
 end
 
@@ -284,44 +284,44 @@ function Forward = CalcForward(Term,Terms,f,fdiscrete)
         V_g1geg0m05 = g1 >= (-0.5 .* g0);        %  0.5 .* g0 <= g1
         V_g1seg0m2 = g1 <= (-2 .* g0);           % g1 <= -2 .* g0
         %V_g0st0;                        % g0 < 0
-        V_zone1_a = V_g1geg0m05 .+ V_g1seg0m2 .+ V_g0st0;
+        V_zone1_a = V_g1geg0m05 + V_g1seg0m2 + V_g0st0;
         V_zone1_a = V_zone1_a == 3;
         % then
-        G = g0 .* (x .- 2 * x .^ 2 + x ^ 3) .+ g1 .* (-x .^ 2 .+ x .^ 3);
+        G = g0 .* (x - 2 * x .^ 2 + x ^ 3) + g1 .* (-x .^ 2 + x .^ 3);
       % or the following three conditions have all to be fulfilled:
         %V_g0gt0 ;                                % g0 > 0
         V_g1seg0m05 = g1 <= (-0.5 .* g0);        % -0.5 .* g0 >= g1
         V_g1geg0m2 = g1 >= (-2 .* g0);           % g1 >= -2 .* g0
-        V_zone1_b = V_g1seg0m05 .+ V_g1geg0m2 .+ V_g0gt0;
+        V_zone1_b = V_g1seg0m05 + V_g1geg0m2 + V_g0gt0;
         V_zone1_b = V_zone1_b == 3;
-        V_zone1 = V_zone1_a .+ V_zone1_b;
+        V_zone1 = V_zone1_a + V_zone1_b;
     % conditions for zone 2:
         % the following two conditions have all to be fulfilled:
         V_g0st0;                                 % g0 < 0
         V_g1gtg0m2 = g1 > (-2 .* g0);            % g1 > -2 .* g0
-        V_zone2_a = V_g0st0 .+ V_g1gtg0m2;
+        V_zone2_a = V_g0st0 + V_g1gtg0m2;
         V_zone2_a = V_zone2_a == 2;
         % or the following two conditions have all to be fulfilled:
         V_g0gt0;                                % g0 > 0
         V_g1stg0m2 = g1 < (-2 .* g0);           % g1 < -2 .* g0
-        V_zone2_b = V_g0gt0 .+ V_g1stg0m2;
+        V_zone2_b = V_g0gt0 + V_g1stg0m2;
         V_zone2_b = V_zone2_b == 2;
-        V_zone2 = V_zone2_a .+ V_zone2_b;
+        V_zone2 = V_zone2_a + V_zone2_b;
     % conditions for zone 3:   
         % a)
         %V_g0gt0                                 g0 > 0
         %V_g1st0                                 0 > g1
         V_g1gtg0m05 = g1 > (-0.5 .* g0);        % g1 > -0.5 .* g0   
-        V_zone3_a = V_g0gt0 .+ V_g1st0 .+ V_g1gtg0m05;
+        V_zone3_a = V_g0gt0 + V_g1st0 + V_g1gtg0m05;
         V_zone3_a = V_zone3_a == 3;
         % b)
         % V_g0st0                               % g0 < 0
         % V_g1gt0                               % 0 < g1
         V_g1stg0m05 = g1 < (-0.5 .* g0);       % g1 < -0.5 .* g0
-        V_zone3_b = V_g0st0 .+ V_g1gt0 .+ V_g1stg0m05;
+        V_zone3_b = V_g0st0 + V_g1gt0 + V_g1stg0m05;
         V_zone3_b = V_zone3_b == 3; 
-        V_zone3 = V_zone3_a .+ V_zone3_b;
-        V_zone1_3 = V_zone1 .+ V_zone2 .+ V_zone3; 
+        V_zone3 = V_zone3_a + V_zone3_b;
+        V_zone1_3 = V_zone1 + V_zone2 + V_zone3; 
         V_zone4 = V_zone1_3 == 0;
         
     if x == 0 
@@ -330,31 +330,31 @@ function Forward = CalcForward(Term,Terms,f,fdiscrete)
       G = g1;
     else
       %zone (i)
-            G_1 = g0 .* (1 .- 4 .* x .+ 3 .* x .^ 2) .+ g1 .* (-2 .* x .+ 3 .* x .^ 2);
+            G_1 = g0 .* (1 - 4 .* x + 3 .* x .^ 2) + g1 .* (-2 .* x + 3 .* x .^ 2);
 
       %zone (ii)   
-          eta_2 = (g1 .+ 2 .* g0) ./ (g1 .- g0);
+          eta_2 = (g1 + 2 .* g0) ./ (g1 - g0);
           V_G_2 = eta_2  >= x;
             G_2_a = g0;
-            G_2_b = g0 .+ (g1 .- g0) .* ((x .- eta_2) ./ (1 .- eta_2)) .^ 2;
-          G_2 = V_G_2 .* G_2_a .+ ~V_G_2 .* G_2_b;         
+            G_2_b = g0 + (g1 - g0) .* ((x - eta_2) ./ (1 - eta_2)) .^ 2;
+          G_2 = V_G_2 .* G_2_a + ~V_G_2 .* G_2_b;         
 
       %zone (iii)
-          eta_3 = 3 .* g1 ./ (g1 .- g0);
+          eta_3 = 3 .* g1 ./ (g1 - g0);
           V_G_3 = eta_3  > x;
-            G_3_a = g1 .+ (g0 .- g1) .* ((eta_3 .- x) ./ eta_3) .^ 2;
+            G_3_a = g1 + (g0 - g1) .* ((eta_3 - x) ./ eta_3) .^ 2;
             G_3_b =  g1;
-          G_3 = V_G_3 .* G_3_a .+ ~V_G_3 .* G_3_b;
+          G_3 = V_G_3 .* G_3_a + ~V_G_3 .* G_3_b;
 
       %zone (iv)
-          eta_4 = g1 ./ (g1 .+ g0);
-          A = -g0 .* g1 ./ (g0 .+ g1);
+          eta_4 = g1 ./ (g1 + g0);
+          A = -g0 .* g1 ./ (g0 + g1);
           V_G_4 = eta_4  >=  x;
-            G_4_a = A .+ (g0 .- A) .* ((eta_4 .- x) ./ eta_4) .^ 2;
-            G_4_b = A .+ (g1 .- A) .* ((eta_4 .- x) ./ (1 .- eta_4)) .^ 2;
-          G_4 = V_G_4 .* G_4_a .+ ~V_G_4 .* G_4_b;
+            G_4_a = A + (g0 - A) .* ((eta_4 - x) ./ eta_4) .^ 2;
+            G_4_b = A + (g1 - A) .* ((eta_4 - x) ./ (1 - eta_4)) .^ 2;
+          G_4 = V_G_4 .* G_4_a + ~V_G_4 .* G_4_b;
        
-       G = G_1 .* V_zone1 .+ G_2 .* V_zone2 .+ G_3 .* V_zone3 .+ G_4 .* V_zone4;
+       G = G_1 .* V_zone1 + G_2 .* V_zone2 + G_3 .* V_zone3 + G_4 .* V_zone4;
     endif
     % replace NaN values with 0
     
@@ -372,14 +372,14 @@ function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,Inputsa
   N = columns(Terms);
   ZZ = zeros(rows(Values),1);
   if InputsareForwards == 0
-    fdiscrete = ( Terms(:,2:end) .* Values(:,2:end) .- Terms(:,1:end-1) .* Values(:,1:end-1)  ) ./ ( Terms(:,2:end) .- Terms(:,1:end-1)  );
+    fdiscrete = ( Terms(:,2:end) .* Values(:,2:end) - Terms(:,1:end-1) .* Values(:,1:end-1)  ) ./ ( Terms(:,2:end) - Terms(:,1:end-1)  );
     dInterpolantatNode = Values;
     fdiscrete = [ZZ,fdiscrete];
   else
     termrate = 0
     for j = 2 : 1 :  columns(Terms) - 1
       fdiscrete(:,j) = Values(:,j);
-      termrate = termrate .+ fdiscrete(:,j) .* (Terms(:,j) .- Terms(:,j - 1));
+      termrate = termrate + fdiscrete(:,j) .* (Terms(:,j) - Terms(:,j - 1));
       dInterpolantatNode(:,j) = termrate ./ Terms(:,j);
     endfor
   endif
@@ -389,12 +389,12 @@ function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,Inputsa
     %step 2
     %(22)
     for j = 2 : 1 :  columns(Terms) - 1
-        f(:,j) = (Terms(:,j) .- Terms(:,j - 1)) ./ (Terms(:,j + 1) .- Terms(:,j - 1)) .* fdiscrete(:,j + 1) .+ (Terms(:,j + 1) .- Terms(:,j)) ./ (Terms(:,j .+ 1) .- Terms(:,j .- 1)) .* fdiscrete(:,j);
+        f(:,j) = (Terms(:,j) - Terms(:,j - 1)) ./ (Terms(:,j + 1) - Terms(:,j - 1)) .* fdiscrete(:,j + 1) + (Terms(:,j + 1) - Terms(:,j)) ./ (Terms(:,j + 1) - Terms(:,j - 1)) .* fdiscrete(:,j);
     endfor
     %(23)
-    f(:,1) = fdiscrete(:,2) .- 0.5 .*( f(:,2) .- fdiscrete(:,2));
+    f(:,1) = fdiscrete(:,2) - 0.5 .*( f(:,2) - fdiscrete(:,2));
     %(24)
-    f(:,end) = fdiscrete(:,end) .- 0.5 .* (f(:,end-1) .- fdiscrete(:,end));
+    f(:,end) = fdiscrete(:,end) - 0.5 .* (f(:,end-1) - fdiscrete(:,end));
     %step 3
     if Negative_Forwards_Allowed == 0 
       f(:,1) = bound(0, f(:,1), 2 * fdiscrete(:,1));
@@ -430,7 +430,7 @@ end
 function W = Wilson_function(t,u,ufrc,alpha)
     ma = max(t,u);
     mi = min(t,u);
-    W = exp(-ufrc .* (t .+ u)) .* ( alpha .* mi .- 0.5 .* exp(-alpha.*ma) .* ( exp(alpha.*mi) .- exp(-alpha.*mi) ) );
+    W = exp(-ufrc .* (t + u)) .* ( alpha .* mi - 0.5 .* exp(-alpha.*ma) .* ( exp(alpha.*mi) - exp(-alpha.*mi) ) );
 end
 
 % function for calculating new discount rates 
@@ -462,7 +462,7 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
 
         % 3. calculate vector chi: solving set of linear equaitons: 
         % m = mu + W*chi
-            d_vec = (m .- mu);
+            d_vec = (m - mu);
             chi = inv(W) * d_vec;
     % calculate discount rate and discount factor
         [X,Y] = meshgrid(nodes_input_y,tt);     % set up meshgrid for using vectorized code
@@ -471,7 +471,7 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
         M = chi_mat .* WW;
         S = sum(M,2);
     % Return discount factor and discount rates
-    P = exp(-ufrc*tt) .+ S;
+    P = exp(-ufrc*tt) + S;
     % set discount factors to positive values, anyway there will be singularities...
     P(P<0) = 0.001;
     R =  log(1 ./P) ./tt;

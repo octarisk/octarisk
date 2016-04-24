@@ -203,7 +203,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                         % convert cashflow dates to numbers and apply busday rule
                         if ( length(tmp_entry) > 1 )
                             tmp_cf_dates = busdate(datenum(tmp_cf_dates,1));
-                            tmp_entry = (tmp_cf_dates)' .- valuation_date;
+                            tmp_entry = (tmp_cf_dates)' - valuation_date;
                             i = i.set(tmp_columnname,tmp_entry);
                         else
                             tmp_entry = [];

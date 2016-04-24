@@ -45,7 +45,7 @@
                     tmp_rf_curve_struct         = get_sub_struct(curve_struct, tmp_riskfactor);	
                     tmp_rf_nodes                = [tmp_curve_struct.nodes];
                     tmp_rf_rates                = [tmp_curve_struct.original];
-                    tmp_rf_rate                 = interpolate_curve(tmp_rf_nodes,tmp_rf_rates,tmp_days_to_maturity ) .+ tmp_rf_spread;           
+                    tmp_rf_rate                 = interpolate_curve(tmp_rf_nodes,tmp_rf_rates,tmp_days_to_maturity ) + tmp_rf_spread;           
                   % get implied volatility spread (choose offset to vola, that tmp_value == option_bs with input of appropriate vol):
                     tmp_indexvol_base           = get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_base);
                     tmp_impl_vola_atm_1d        = max([tmp_rf_vola_struct.mc_scenarios.delta_1d],-tmp_indexvol_base);
@@ -58,7 +58,7 @@
                         tmp_impl_vola_spread = 0; 
                     else
                         %disp('Calibration seems to be successful.. checking');
-                        tmp_new_val = swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_maturity_d,tmp_rf_rate,tmp_indexvol_base .+ tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplikator;
+                        tmp_new_val = swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_maturity_d,tmp_rf_rate,tmp_indexvol_base + tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplikator;
                         if ( abs(tmp_value - tmp_new_val) < 0.05 )
                             disp('Calibration successful.');
                             %tmp_impl_vola_spread
@@ -72,9 +72,9 @@
                         endif
                     endif
                   % Get Volatility according to volatility smile given by vola surface
-                    tmp_indexvol_imp_vola_250d  = get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_250d) .+ tmp_impl_vola_atm_250d .+ tmp_impl_vola_spread;
-                    tmp_indexvol_imp_vola_1d    = get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_1d) .+ tmp_impl_vola_atm_1d .+ tmp_impl_vola_spread;
-                    tmp_stress_imp_vola         = (tmp_impl_vola_spread .+ get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_stress)) .* (tmp_rf_vola_struct.stresstests .+ 1);                 
+                    tmp_indexvol_imp_vola_250d  = get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_250d) + tmp_impl_vola_atm_250d + tmp_impl_vola_spread;
+                    tmp_indexvol_imp_vola_1d    = get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_1d) + tmp_impl_vola_atm_1d + tmp_impl_vola_spread;
+                    tmp_stress_imp_vola         = (tmp_impl_vola_spread + get_implvola(tmp_underlying,'index',tmp_maturity_d,tmp_moneyness_stress)) .* (tmp_rf_vola_struct.stresstests + 1);                 
                   % Get BlackScholes Option Price
                     new_value_1D	        = max(swaption_black76(call_flag,tmp_forward_1d,tmp_strike,tmp_maturity_d,tmp_rf_rate,tmp_indexvol_imp_vola_1d,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplikator,0.001); 
                     new_value_250D          = max(swaption_black76(call_flag,tmp_forward_250d,tmp_strike,tmp_maturity_d,tmp_rf_rate,tmp_indexvol_imp_vola_250d,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplikator ,0.001);

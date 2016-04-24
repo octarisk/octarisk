@@ -25,7 +25,7 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
      
     % Get input variables
     tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date - 1); 
-    tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) .+ obj.spread;
+    tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
     
     
     if ( tmp_dtm < 0 )
@@ -66,9 +66,9 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
         else
             %disp('Calibration seems to be successful.. checking');
             if ( strcmp(tmp_model,'BLACK76'))
-                tmp_new_val      = swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base.+ tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
+                tmp_new_val      = swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base+ tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
             else
-                tmp_new_val      = swaption_bachelier(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base.+ tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
+                tmp_new_val      = swaption_bachelier(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base+ tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
             end
         
             if ( abs(tmp_value - tmp_new_val) < 0.05 )

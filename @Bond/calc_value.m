@@ -36,7 +36,7 @@ function obj = calc_value(bond,valuation_date,discount_curve,spread_curve,value_
     elseif ( strcmp(value_type,'base'))
         obj = obj.set('value_base',theo_value(1));
         obj.mac_duration = MacDur(1);
-        obj.mod_duration = (MacDur(1) ./ (1 .+ obj.coupon_rate ./ obj.compounding_freq)) ./100;
+        obj.mod_duration = (MacDur(1) ./ (1 + obj.coupon_rate ./ obj.compounding_freq)) ./100;
     else
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);

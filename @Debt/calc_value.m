@@ -28,9 +28,9 @@ function obj = calc_value (debt,discount_curve_object,spread_object,value_type)
         
 
     % Calculate Shiftvalue
-        tmp_ir_abs_diff = ( yield_shifted .- yield_original .+ spread_shifted .- spread_original);
-        tmp_diff_rel    = -tmp_dur .* ( tmp_ir_abs_diff) .+ tmp_convex .* (tmp_ir_abs_diff).^2;
-        theo_value      = tmp_value_base .* ( tmp_diff_rel .+ 1);    
+        tmp_ir_abs_diff = ( yield_shifted - yield_original + spread_shifted - spread_original);
+        tmp_diff_rel    = -tmp_dur .* ( tmp_ir_abs_diff) + tmp_convex .* (tmp_ir_abs_diff).^2;
+        theo_value      = tmp_value_base .* ( tmp_diff_rel + 1);    
         
     % store theo_value vector in appropriate class property
     if ( regexp(value_type,'stress'))

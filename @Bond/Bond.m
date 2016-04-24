@@ -64,7 +64,7 @@ classdef Bond < Instrument
            tmp_cf_values = [];
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
-                tmp_cf_dates = (tmp_cf_dates)' .- valuation_date;
+                tmp_cf_dates = (tmp_cf_dates)' - valuation_date;
             endif
         end
         % use constructor inherited from Class Instrument

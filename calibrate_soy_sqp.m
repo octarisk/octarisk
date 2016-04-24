@@ -84,12 +84,12 @@ function obj = phi_soy (x,valuation_date,cashflow_dates, cashflow_values,act_val
             if ( tmp_dtm > 0 )  % discount only future cashflows
                 yield_discount = interpolate_curve(discount_nodes,discount_rates,tmp_dtm);  % get discount rate from discount curve
                 yield_spread = interpolate_curve(spread_nodes,spread_rates,tmp_dtm);        % get spread rate from spread curve
-                yield_total = yield_discount .+ yield_spread .+ x;            % combine with constant spread (e.g. spread over yield)
-                tmp_cf_date = valuation_date .+ tmp_dtm;
+                yield_total = yield_discount + yield_spread + x;            % combine with constant spread (e.g. spread over yield)
+                tmp_cf_date = valuation_date + tmp_dtm;
                 tmp_df = discount_factor (valuation_date, tmp_cf_date, yield_total, comp_type, basis, comp_freq);      
-                %tmp_df = (1 .+ yield_total).^(-tmp_dtm./365);
+                %tmp_df = (1 + yield_total).^(-tmp_dtm./365);
                 tmp_npv_cashflow = tmp_cf_value .* tmp_df;
-                tmp_npv = tmp_npv.+ tmp_npv_cashflow;
+                tmp_npv = tmp_npv+ tmp_npv_cashflow;
             end
         endfor 
         obj = (act_value - tmp_npv).^2;

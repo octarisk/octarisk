@@ -74,23 +74,23 @@ elseif ( sigma < 0)
     error ('Volatility sigma must be positive ')        
 endif
 T = T ./ 365;
-    d1 = (log(F./X) .+ (0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-    d2 = d1 .- sigma.*sqrt(T);
+    d1 = (log(F./X) + (0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    d2 = d1 - sigma.*sqrt(T);
     
 % Calculation of BS Price
 if ( PayerReceiverFlag == 1 ) % Call / Payer swaption 'p'
-    N1 = 0.5.*(1.+erf(d1./sqrt(2)));
-    N2 = 0.5.*(1.+erf(d2./sqrt(2)));
-    value = (F.*N1 .- X.*N2).*exp(-r.*T);
+    N1 = 0.5.*(1+erf(d1./sqrt(2)));
+    N2 = 0.5.*(1+erf(d2./sqrt(2)));
+    value = (F.*N1 - X.*N2).*exp(-r.*T);
 else   % Put / Receiver swaption 'r'  
     N1 = 0.5.*(1+erf(-d1./sqrt(2)));
     N2 = 0.5.*(1+erf(-d2./sqrt(2)));
-    value = (X.*N2 .- F.*N1).*exp(-r.*T);
+    value = (X.*N2 - F.*N1).*exp(-r.*T);
 end
 
    
 % Calculate continuous compounding multiplicator for tenor of swap
-multi = (1 - (1 ./ ((1 .+ F ./ m) .^ (tau .* m)))) ./ F;
+multi = (1 - (1 ./ ((1 + F ./ m) .^ (tau .* m)))) ./ F;
 
 % Return total Swaption Value
 SwaptionB76Value = value .* multi;

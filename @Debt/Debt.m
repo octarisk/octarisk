@@ -35,7 +35,7 @@ classdef Debt < Instrument
            tmp_cf_values = [];
         elseif ( nargin == 14)
             if ( length(tmp_cf_dates) > 0 )
-                tmp_cf_dates = (tmp_cf_dates)' .- today;
+                tmp_cf_dates = (tmp_cf_dates)' - today;
             endif
         end
         % use constructor inherited from Class Instrument

@@ -80,8 +80,8 @@ end
 T = T ./ 365;
 q = divrate;
 
-    d1 = (log(S./X) .+ (r .- q .+ 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-    d2 = d1 .- sigma.*sqrt(T);
+    d1 = (log(S./X) + (r - q + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    d2 = d1 - sigma.*sqrt(T);
     normcdf_eta_d1 = 0.5.*(1+erf(eta .* d1./sqrt(2)));
     normcdf_eta_d2 = 0.5.*(1+erf(eta .* d2./sqrt(2)));
     normcdf_d1 = 0.5.*(1+erf(d1./sqrt(2)));
@@ -90,10 +90,10 @@ q = divrate;
 % normal density corresponding to N1 (needed for greeks)
     N1s = exp(-d1 .* d1 ./ 2) ./ sqrt(2 .* pi);   
 % Calculating value and greeks: 
-    value   = eta .* (exp(-q.*T) .* S.*normcdf_eta_d1.- X.*exp(-r.*T).*normcdf_eta_d2); 
+    value   = eta .* (exp(-q.*T) .* S.*normcdf_eta_d1- X.*exp(-r.*T).*normcdf_eta_d2); 
     delta   = eta .* exp(-q.*T) .* normcdf_eta_d1;
     gamma   =  exp(-q .* T) .* N1s ./ S ./ sigma ./ sqrt(T);
-    theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) .+ q .* exp(-q .* T) .* S .* normcdf_d1 .- r .* exp(-r .* T) .* X .* normcdf_d2;
+    theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) + q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) .* X .* normcdf_d2;
     vega    = S .* exp(-q.*T) .* N1s .* sqrt(T);
     rho     = eta .* T.* X .*exp(-r.*T).* normcdf_eta_d2;
     omega   = delta .* S ./ value;

@@ -63,7 +63,7 @@ if ischar(basis)
     dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365';'30/360 PSA';'30/360 ISDA';'30/360 European';'act/365 Japanese';'act/act ISMA';'act/360 ISMA';'act/365 ISMA';'30/360E']);
     findvec = strcmp(basis,dcc_cell);
     tt = 1:1:length(dcc_cell);
-    tt = (tt .- 1)';
+    tt = (tt - 1)';
     basis = dot(single(findvec),tt);
 elseif (isempty(find([0:1:11] == basis)))
    error('no valid basis defined. ')
@@ -71,7 +71,7 @@ end
 
 % calculate nominator: days in period (dip)
 if ( basis == 0 || basis == 2 || basis == 3 || basis == 7 || basis == 8 || basis == 9 || basis == 10)   %actual days in period
-    dip = d2 .- d1;
+    dip = d2 - d1;
 elseif ( basis == 1 || basis == 4 || basis == 5 || basis == 6 || basis == 11 )              % 30 days per month
         dvec1 = datevec(d1);
         dvec2 = datevec(d2);
@@ -85,7 +85,7 @@ elseif ( basis == 1 || basis == 4 || basis == 5 || basis == 6 || basis == 11 )  
             days1 = min(days1,30);
             days2 = min(days2,30);
         endif
-        dip = (years2 .- years1) .* 360 + ( months2 .- months1 ) .* 30 + ( days2 .- days1 );
+        dip = (years2 - years1) .* 360 + ( months2 - months1 ) .* 30 + ( days2 - days1 );
 endif
 
 % calculate days in base (dib)
@@ -115,7 +115,7 @@ elseif ( basis == 0 || basis == 8 ) % actual/actual
             days_period1 = daysact(dvec1,end_of_year_period1) ;
             days_period2 = daysact(begin_of_year_period2,dvec2) + 1;
             dib = 1;
-            dip = (days_period1 ./ yeardays(years1,basis)) .+ (days_period2 ./ yeardays(years2,basis)) + (years2 .- years1 .- 1);          
+            dip = (days_period1 ./ yeardays(years1,basis)) + (days_period2 ./ yeardays(years2,basis)) + (years2 - years1 - 1);          
         endif
         
 endif

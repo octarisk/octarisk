@@ -144,7 +144,7 @@ classdef Curve
             dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365';'30/360 PSA';'30/360 ISDA';'30/360 European';'act/365 Japanese';'act/act ISMA';'act/360 ISMA';'act/365 ISMA';'30/360E']);
             findvec = strcmp(dcc_string,dcc_cell);
             tt = 1:1:length(dcc_cell);
-            tt = (tt .- 1)';
+            tt = (tt - 1)';
             basis = dot(single(findvec),tt);
       end %get_basis
    end
