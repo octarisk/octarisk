@@ -1,23 +1,23 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{A_scaled} @var{pos_sem_def_bool}]} = correct_correlation_matrix(@var{M})
-## Return a positive semi-definite matrix @var{A_scaled} to a given input matrix @var{M}.
-## This function tests for indefiniteness of the input matrix and eventuallry adjusts 
-## negative Eivenvalues to 0 or slightly positive values via some iteration steps.
-## @*
-## Reference: "Implementing Value at Risk", Best, Philip W., 1998.
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{A_scaled} @var{pos_sem_def_bool}]} = correct_correlation_matrix(@var{M})
+%# Return a positive semi-definite matrix @var{A_scaled} to a given input matrix @var{M}.
+%# This function tests for indefiniteness of the input matrix and eventuallry adjusts 
+%# negative Eivenvalues to 0 or slightly positive values via some iteration steps.
+%# @*
+%# Reference: "Implementing Value at Risk", Best, Philip W., 1998.
+%# @end deftypefn
 
 function [A_scaled pos_sem_def_bool]= correct_correlation_matrix(M)
 fprintf("\n"); 
@@ -68,7 +68,7 @@ if (pos_sem_def_bool == true)
     disp ("Correction successful: Matrix is positive semidefinite.\n")
 endif
 endfunction
-% #####################    Helper Functions    ####################
+% %#%#%#%#%#%#%#%#%#%##    Helper Functions    %#%#%#%#%#%#%#%#%#%#
 
 % Function for rescaling and symmetrizing
 function res = rescale ( A )

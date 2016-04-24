@@ -1,19 +1,19 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {@var{vola_spread}} = calibrate_option_willowtree(@var{putcallflag},@var{americanflag},@var{S},@var{X},@var{T},@var{rf},@var{sigma},@var{divyield},@var{stepsize},@var{nodes},@var{multiplicator},@var{market_value})
-## Calibrate the implied volatility spread for American options according to Willowtree valuation formula.
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{vola_spread}} = calibrate_option_willowtree(@var{putcallflag},@var{americanflag},@var{S},@var{X},@var{T},@var{rf},@var{sigma},@var{divyield},@var{stepsize},@var{nodes},@var{multiplicator},@var{market_value})
+%# Calibrate the implied volatility spread for American options according to Willowtree valuation formula.
+%# @end deftypefn
 
 function vola_spread = calibrate_option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value)
 

@@ -1,32 +1,32 @@
-## -*- texinfo -*-
-## @deftypefn  {Function File} {} Surface ()
-## @deftypefnx {Function File} {} Surface (@var{a})
-## Surface Superclass 
-##
-## @*
-## Superclass properties:
-## @itemize @bullet
-## @item name: Name of object
-## @item id: Id of object
-## @item description: Description of object
-## @item type: Actual spot value of object
-## @item model
-## @item mean 
-## @item std
-## @item skew 
-## @item start_value 
-## @item mr_level
-## @item mr_rate 
-## @item node
-## @item rate 
-## @item scenario_stress: Vector with values of stress scenarios
-## @item scenario_mc: Matrix with risk factor scenario values (values per timestep per column)
-## @item timestep_mc: MC timestep per column (cell string)
-## @end itemize
-## @*
-##
-## @seealso{Instrument}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn  {Function File} {} Surface ()
+%# @deftypefnx {Function File} {} Surface (@var{a})
+%# Surface Superclass 
+%#
+%# @*
+%# Superclass properties:
+%# @itemize @bullet
+%# @item name: Name of object
+%# @item id: Id of object
+%# @item description: Description of object
+%# @item type: Actual spot value of object
+%# @item model
+%# @item mean 
+%# @item std
+%# @item skew 
+%# @item start_value 
+%# @item mr_level
+%# @item mr_rate 
+%# @item node
+%# @item rate 
+%# @item scenario_stress: Vector with values of stress scenarios
+%# @item scenario_mc: Matrix with risk factor scenario values (values per timestep per column)
+%# @item timestep_mc: MC timestep per column (cell string)
+%# @end itemize
+%# @*
+%#
+%# @seealso{Instrument}
+%# @end deftypefn
 
 classdef Surface
    % file: @Surface/Surface.m

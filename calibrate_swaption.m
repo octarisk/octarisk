@@ -1,21 +1,21 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {@var{vola_spread}} = calibrate_swaption(@var{PayerReceiverFlag},@var{F},@var{X},@var{T},@var{r},@var{sigma},@var{m},@var{tau},@var{multiplicator},@var{market_value},@var{model})
-## Calibrate the implied volatility spread for European swaptions according to Black76 or Bachelier (default) valuation model.
-## In extreme out-of-the-money scenarios there could be no solution in changing the volatility. But we dont care in this case at all,
-## since the influence of the volatility is neglectable in this extreme cases.
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{vola_spread}} = calibrate_swaption(@var{PayerReceiverFlag},@var{F},@var{X},@var{T},@var{r},@var{sigma},@var{m},@var{tau},@var{multiplicator},@var{market_value},@var{model})
+%# Calibrate the implied volatility spread for European swaptions according to Black76 or Bachelier (default) valuation model.
+%# In extreme out-of-the-money scenarios there could be no solution in changing the volatility. But we dont care in this case at all,
+%# since the influence of the volatility is neglectable in this extreme cases.
+%# @end deftypefn
 
 function vola_spread = calibrate_swaption(PayerReceiverFlag,F,X,T,r,sigma,m,tau,multiplicator,market_value,model)
 

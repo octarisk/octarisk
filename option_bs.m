@@ -1,42 +1,42 @@
-## Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{value} @var{delta} @var{gamma} @var{vega} @var{theta} @var{rho} @var{omega}] =} option_bs (@var{CallPutFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
-##
-## Compute the prices of european call or put options according to Black-Scholes valuation formula:@*
-## @example
-## @group
-## C(S,T) = N(d_1)*S - N(d_2)*X*exp(-rT)
-## P(S,T) = N(-d_2)*X*exp(-rT) - N(-d_1)*S
-## d1 = (log(S/X) + (r + 0.5*sigma^2)*T)/(sigma*sqrt(T))
-## d2 = d1 - sigma*sqrt(T)
-## @end group
-## @end example
-## The Greeks are also computed (delta, gamma, vega, theta, rho, omega) by their closed form solution. @*
-## Parallel computation for column vectors of S,X,r and sigma is possible. @*
-## @*
-## Variables:
-## @itemize @bullet
-## @item @var{CallPutFlag}: Call: "1", Put: "0"
-## @item @var{S}: stock price at time 0
-## @item @var{X}: strike price 
-## @item @var{T}: time to maturity in days 
-## @item @var{r}: annual risk-free interest rate (continuously compounded)
-## @item @var{sigma}: implied volatility of the stock price measured as annual standard deviation
-## @item @var{divrate}: dividend rate p.a., continously compounded
-## @end itemize
-## @seealso{option_willowtree, swaption_black76}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{value} @var{delta} @var{gamma} @var{vega} @var{theta} @var{rho} @var{omega}] =} option_bs (@var{CallPutFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
+%#
+%# Compute the prices of european call or put options according to Black-Scholes valuation formula:@*
+%# @example
+%# @group
+%# C(S,T) = N(d_1)*S - N(d_2)*X*exp(-rT)
+%# P(S,T) = N(-d_2)*X*exp(-rT) - N(-d_1)*S
+%# d1 = (log(S/X) + (r + 0.5*sigma^2)*T)/(sigma*sqrt(T))
+%# d2 = d1 - sigma*sqrt(T)
+%# @end group
+%# @end example
+%# The Greeks are also computed (delta, gamma, vega, theta, rho, omega) by their closed form solution. @*
+%# Parallel computation for column vectors of S,X,r and sigma is possible. @*
+%# @*
+%# Variables:
+%# @itemize @bullet
+%# @item @var{CallPutFlag}: Call: "1", Put: "0"
+%# @item @var{S}: stock price at time 0
+%# @item @var{X}: strike price 
+%# @item @var{T}: time to maturity in days 
+%# @item @var{r}: annual risk-free interest rate (continuously compounded)
+%# @item @var{sigma}: implied volatility of the stock price measured as annual standard deviation
+%# @item @var{divrate}: dividend rate p.a., continously compounded
+%# @end itemize
+%# @seealso{option_willowtree, swaption_black76}
+%# @end deftypefn
 
 function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X,T,r,sigma,divrate)
  

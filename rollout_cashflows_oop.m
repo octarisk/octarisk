@@ -1,62 +1,62 @@
-## Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{ret_dates} @var{ret_values}] =} rollout_cashflows_oop (@var{bond_struct})
-## @deftypefnx  {Function File} {[@var{ret_dates} @var{ret_values}] =} rollout_cashflows_oop (@var{bond_struct}, @var{tmp_nodes}, @var{tmp_rates}, @var{valuation_date}, @var{method_interpolation})
-##
-## Compute the dates and values of cash flows given definitions for fixed rate bonds, floating rate notes and zero coupon bonds.@*
-## In the "oop" version no input data checks are performed. @* 
-## Pre-requirements:@*
-## @itemize @bullet
-## @item installed octave finance package
-## @item custom functions timefactor, discount_factor, get_forward_rate and interpolate_curve
-## @end itemize
-##
-## Input and output variables:
-## @itemize @bullet
-## @item @var{bond_struct}: Structure with relevant information for specification of the bond:@*
-##      @itemize @bullet
-##      @item bond_struct.type:                	Fixed Rate Bond (FRB), Floating Rate Note (FRN), Zero Coupon Bond (ZCB), Fixed Amortizing Bond (FAB)
-##      @item bond_struct.issue_date:          	Issue Date of Fixed Rate bond [DD-Mmm-YYYY]
-##      @item bond_struct.maturity_date:       	Maturity Date of Fixed Rate bond  [DD-Mmm-YYYY]
-##      @item bond_struct.compounding_type:    	Compounding Type [simple,disc,cont]
-##      @item bond_struct.compounding_freq:    	Compounding Frequency for coupon rates per year [1,2,4,12]
-##      @item bond_struct.term:                	Term of coupon payments in months [12,6,3,1]
-##      @item bond_struct.day_count_convention: 	Day Count Convention 
-##      @item bond_struct.notional:            	Notional Amount
-##      @item bond_struct.notional_at_start:    Boolean Parameter: Notional Amount paid at start
-##      @item bond_struct.notional_at_end:      Boolean Parameter: Notional Amount paid at maturity
-##      @item bond_struct.coupon_rate:         	Coupon Rate
-##      @item bond_struct.coupon_generation_method: 	Coupon Generation Method (forward, backward, zero)
-##      @item bond_struct.business_day_rule:   	Business day rule: days added to payment date
-##      @item bond_struct.business_day_direction: 	Business day direction: 1 
-##      @item bond_struct.enable_business_day_rule: 	Boolean flag for enabling business day rule
-##      @item bond_struct.spread:              	Constant Spread applied to forward rates
-##      @item bond_struct.long_first_period:   	Boolean parameter for long first coupon period, otherwise short (regular) period
-##      @item bond_struct.long_last_period:    	Boolean parameter for long last coupon period, otherwise short (regular) period
-##      @item bond_struct.last_reset_rate:	    Last reset rate used for determining fist cash flow of FRN
-##      @item bond_struct.fixed_annuity         Boolean parameter: true = annuity loan (total annuity payment is fixed), false = amortizable loan (amortization rate is fixed, interest payments variable)
-##      @item bond_struct.in_arrears            Boolean parameter: true = payments at end of period, false: payments at beginning of period (default)
-##      @end itemize
-## @item @var{tmp_nodes}: only relevant for type FRN: tmp_nodes is a 1xN vector with all timesteps of the given curve
-## @item @var{tmp_rates}: only relevant for type FRN: tmp_rates is a MxN matrix with curve rates defined in columns. Each row contains a specific scenario with different curve structure
-## @item @var{ret_dates}: returns a 1xN vector with time in days until all cash flows
-## @item @var{ret_values}: returs a MxN matrix with all cash flow values at each time step. Each cf row corresponds to rates defined in tmp_rates
-## @item @var{valuation_date}: Optional: valuation date
-## @item @var{method_interpolation}: Optional: interpolation method used for retrieving forward rate
-## @end itemize
-## @seealso{timefactor, discount_factor, get_forward_rate, interpolate_curve}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values}] =} rollout_cashflows_oop (@var{bond_struct})
+%# @deftypefnx  {Function File} {[@var{ret_dates} @var{ret_values}] =} rollout_cashflows_oop (@var{bond_struct}, @var{tmp_nodes}, @var{tmp_rates}, @var{valuation_date}, @var{method_interpolation})
+%#
+%# Compute the dates and values of cash flows given definitions for fixed rate bonds, floating rate notes and zero coupon bonds.@*
+%# In the "oop" version no input data checks are performed. @* 
+%# Pre-requirements:@*
+%# @itemize @bullet
+%# @item installed octave finance package
+%# @item custom functions timefactor, discount_factor, get_forward_rate and interpolate_curve
+%# @end itemize
+%#
+%# Input and output variables:
+%# @itemize @bullet
+%# @item @var{bond_struct}: Structure with relevant information for specification of the bond:@*
+%#      @itemize @bullet
+%#      @item bond_struct.type:                	Fixed Rate Bond (FRB), Floating Rate Note (FRN), Zero Coupon Bond (ZCB), Fixed Amortizing Bond (FAB)
+%#      @item bond_struct.issue_date:          	Issue Date of Fixed Rate bond [DD-Mmm-YYYY]
+%#      @item bond_struct.maturity_date:       	Maturity Date of Fixed Rate bond  [DD-Mmm-YYYY]
+%#      @item bond_struct.compounding_type:    	Compounding Type [simple,disc,cont]
+%#      @item bond_struct.compounding_freq:    	Compounding Frequency for coupon rates per year [1,2,4,12]
+%#      @item bond_struct.term:                	Term of coupon payments in months [12,6,3,1]
+%#      @item bond_struct.day_count_convention: 	Day Count Convention 
+%#      @item bond_struct.notional:            	Notional Amount
+%#      @item bond_struct.notional_at_start:    Boolean Parameter: Notional Amount paid at start
+%#      @item bond_struct.notional_at_end:      Boolean Parameter: Notional Amount paid at maturity
+%#      @item bond_struct.coupon_rate:         	Coupon Rate
+%#      @item bond_struct.coupon_generation_method: 	Coupon Generation Method (forward, backward, zero)
+%#      @item bond_struct.business_day_rule:   	Business day rule: days added to payment date
+%#      @item bond_struct.business_day_direction: 	Business day direction: 1 
+%#      @item bond_struct.enable_business_day_rule: 	Boolean flag for enabling business day rule
+%#      @item bond_struct.spread:              	Constant Spread applied to forward rates
+%#      @item bond_struct.long_first_period:   	Boolean parameter for long first coupon period, otherwise short (regular) period
+%#      @item bond_struct.long_last_period:    	Boolean parameter for long last coupon period, otherwise short (regular) period
+%#      @item bond_struct.last_reset_rate:	    Last reset rate used for determining fist cash flow of FRN
+%#      @item bond_struct.fixed_annuity         Boolean parameter: true = annuity loan (total annuity payment is fixed), false = amortizable loan (amortization rate is fixed, interest payments variable)
+%#      @item bond_struct.in_arrears            Boolean parameter: true = payments at end of period, false: payments at beginning of period (default)
+%#      @end itemize
+%# @item @var{tmp_nodes}: only relevant for type FRN: tmp_nodes is a 1xN vector with all timesteps of the given curve
+%# @item @var{tmp_rates}: only relevant for type FRN: tmp_rates is a MxN matrix with curve rates defined in columns. Each row contains a specific scenario with different curve structure
+%# @item @var{ret_dates}: returns a 1xN vector with time in days until all cash flows
+%# @item @var{ret_values}: returs a MxN matrix with all cash flow values at each time step. Each cf row corresponds to rates defined in tmp_rates
+%# @item @var{valuation_date}: Optional: valuation date
+%# @item @var{method_interpolation}: Optional: interpolation method used for retrieving forward rate
+%# @end itemize
+%# @seealso{timefactor, discount_factor, get_forward_rate, interpolate_curve}
+%# @end deftypefn
 
 function [ret_dates ret_values] = rollout_cashflows_oop(bond,tmp_nodes,tmp_rates,valuation_date,method_interpolation)
 % Parse bond struct
@@ -298,7 +298,7 @@ cf_dates = cf_dates;
 
 
 %-------------------------------------------------------------------------------------------------------
-% ##########   Calculate Cash Flow values depending on type   ##########   
+% %#%#%#%#%#   Calculate Cash Flow values depending on type   %#%#%#%#%#   
 %
 % Type FRB: Calculate CF Values for all CF Periods
 if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )

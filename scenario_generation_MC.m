@@ -1,23 +1,23 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{R} @var{distr_type} ] =} cenario_generation_MC (@var{corr_matrix}, @var{P}, @var{mc}, @var{copulatype}, @var{nu}, @var{time_horizon})
-##
-## Compute correlated random numbers according to Gaussian or Student-t copulas and
-## arbitrary marginal distributions within the Pearson distribution system.@*
-##
-## @seealso{pearsrnd_oct_z, mvnrnd, normcdf, mvtrnd ,tcdf}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{R} @var{distr_type} ] =} cenario_generation_MC (@var{corr_matrix}, @var{P}, @var{mc}, @var{copulatype}, @var{nu}, @var{time_horizon})
+%#
+%# Compute correlated random numbers according to Gaussian or Student-t copulas and
+%# arbitrary marginal distributions within the Pearson distribution system.@*
+%#
+%# @seealso{pearsrnd_oct_z, mvnrnd, normcdf, mvtrnd ,tcdf}
+%# @end deftypefn
 
 function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,time_horizon)
 % A) input data checks

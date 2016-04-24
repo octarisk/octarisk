@@ -1,30 +1,30 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {} harrell_davis_weight (@var{scenarios}, @var{observation}, @var{alpha})
-##
-## Compute the Harrell-Davis (1982) quantile estimator and jacknife standard errors of quantiles. 
-## The quantile estimator is a weighted linear combination or order statistics in which the order statistics used 
-## in traditional nonparametric quantile estimators are given the greatest weight. In small samples the H-D estimator 
-## is more efficient than traditional ones, and the two methods are asymptotically equivalent. 
-## The H-D estimator is the limit of a bootstrap average as the number of bootstrap resamples becomes infinitely large. 
-##
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {} harrell_davis_weight (@var{scenarios}, @var{observation}, @var{alpha})
+%#
+%# Compute the Harrell-Davis (1982) quantile estimator and jacknife standard errors of quantiles. 
+%# The quantile estimator is a weighted linear combination or order statistics in which the order statistics used 
+%# in traditional nonparametric quantile estimators are given the greatest weight. In small samples the H-D estimator 
+%# is more efficient than traditional ones, and the two methods are asymptotically equivalent. 
+%# The H-D estimator is the limit of a bootstrap average as the number of bootstrap resamples becomes infinitely large. 
+%#
+%# @end deftypefn
 
 function X = harrell_davis_weight(scenarios,observation,alpha)
-% ############################################################################################
+% %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#
 % #                                  Harrell-Davis Estimator                                 #
-% ############################################################################################
+% %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#
   if nargin < 3 || nargin > 3
     print_usage ();
   endif
@@ -50,7 +50,7 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
     
 endfunction
 
-## Tests:
+%# Tests:
 %scenarios  = 50000
 %alpha    = 0.01
 % ii = 250 :  750;

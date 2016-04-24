@@ -1,27 +1,27 @@
-## -*- texinfo -*-
-## @deftypefn  {Function File} {} Instrument ()
-## @deftypefnx {Function File} {} Instrument (@var{a})
-## Instrument Superclass 
-##
-## @*
-## Inherited superclass properties:
-## @itemize @bullet
-## @item name: Name of object
-## @item id: Id of object
-## @item description: Description of object
-## @item value_spot: Actual spot value of object
-## @item currency
-## @item asset_class 
-## @item type: Type of Instrument class (Bond,Forward,...) 
-## @item valuation_date 
-## @item value_stress: Vector with values under stress scenarios
-## @item value_mc: Matrix with values under MC scenarios (values per timestep per column)
-## @item timestep_mc: MC timestep per column (cell string)
-## @end itemize
-## @*
-##
-## @seealso{Bond, Forward, Option, Swaption, Debt, Sensitivity, Synthetic}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn  {Function File} {} Instrument ()
+%# @deftypefnx {Function File} {} Instrument (@var{a})
+%# Instrument Superclass 
+%#
+%# @*
+%# Inherited superclass properties:
+%# @itemize @bullet
+%# @item name: Name of object
+%# @item id: Id of object
+%# @item description: Description of object
+%# @item value_spot: Actual spot value of object
+%# @item currency
+%# @item asset_class 
+%# @item type: Type of Instrument class (Bond,Forward,...) 
+%# @item valuation_date 
+%# @item value_stress: Vector with values under stress scenarios
+%# @item value_mc: Matrix with values under MC scenarios (values per timestep per column)
+%# @item timestep_mc: MC timestep per column (cell string)
+%# @end itemize
+%# @*
+%#
+%# @seealso{Bond, Forward, Option, Swaption, Debt, Sensitivity, Synthetic}
+%# @end deftypefn
 
 classdef Instrument
    % file: @Instrument/Instrument.m

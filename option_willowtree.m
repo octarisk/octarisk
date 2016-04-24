@@ -1,55 +1,55 @@
-## Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk})
-## @deftypefnx {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk}, @var{nodes})
-##
-## Computes the price of european or american equity options according to the willow tree model.@*
-## The willow tree approach provides a fast and accurate way of calculating option prices. Furthermore, massive parallelization due to litte memory consumption  is possible.
-## This implementation of the willow tree concept is based on following
-## literature:
-## @itemize @bullet
-## @item "Willow Tree", Andy C.T. Ho, Master thesis, May 2000
-## @item "Willow Power: Optimizing Derivative Pricing Trees", Michael Curran, ALGO RESEARCH QUARTERLY, Vol. 4, No. 4, December 2001
-## @end itemize
-##
-## Efficient parallel computation for column vectors of S,X,r and sigma is possible (advantage: linear increase of calculation time in timesteps and nodes).@*
-## Runtime of parallel computations incl. tree transition optimization (360 days maturity, 5 day stepsize, 20 willow tree nodes) are performed (at 46 GFlops machine, 4 Gb Ram) in:@*
-## 50      | 0.5s @*
-## 500      | 0.5s @*
-## 5000     | 1.1s @*
-## 50000    | 9.0s @*
-## 200000   | 32s @*
-##
-## Example of an American Call Option with continuous dividends:@*
-## (365 days to maturity, vector with different spot prices and volatilities, strike = 8, r = 0.06, dividend = 0.05, timestep 5 days, 20 nodes):
-## @code{option_willowtree(1,1,[7;8;9;7;8;9],8,365,0.06,[0.2;0.2;0.2;0.3;0.3;0.3],0.05,5,20)}
-##
-## Variables:
-## @itemize @bullet
-## @item @var{CallPutFlag}: Call: "1", Put: "0"
-## @item @var{AmericanFlag}: American option: "1", European Option: "0"
-## @item @var{S}: stock price at time 0
-## @item @var{X}: strike price 
-## @item @var{T}: time in days to maturity
-## @item @var{r}: annual risk-free interest rate (continuously compounded, act/365)
-## @item @var{sigma}: implied volatility of the stock price measured as annual standard deviation
-## @item @var{dividend}: continuous dividend yield, act/365
-## @item @var{dk}: size of timesteps for valuation points (optimal accuracy vs. runtime choice : 5 days timestep)
-## @item @var{nodes}: number of nodes for willow tree setup. Number of nodes must be in list [10,15,20,30,40,50]. These vectors are optimized by Currans suggested Method to fulfill variance constraint (optimal accuracy vs. runtime choice: 20 nodes)
-## @end itemize
-## @seealso{option_binomial, option_bs, option_exotic_mc}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk})
+%# @deftypefnx {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk}, @var{nodes})
+%#
+%# Computes the price of european or american equity options according to the willow tree model.@*
+%# The willow tree approach provides a fast and accurate way of calculating option prices. Furthermore, massive parallelization due to litte memory consumption  is possible.
+%# This implementation of the willow tree concept is based on following
+%# literature:
+%# @itemize @bullet
+%# @item "Willow Tree", Andy C.T. Ho, Master thesis, May 2000
+%# @item "Willow Power: Optimizing Derivative Pricing Trees", Michael Curran, ALGO RESEARCH QUARTERLY, Vol. 4, No. 4, December 2001
+%# @end itemize
+%#
+%# Efficient parallel computation for column vectors of S,X,r and sigma is possible (advantage: linear increase of calculation time in timesteps and nodes).@*
+%# Runtime of parallel computations incl. tree transition optimization (360 days maturity, 5 day stepsize, 20 willow tree nodes) are performed (at 46 GFlops machine, 4 Gb Ram) in:@*
+%# 50      | 0.5s @*
+%# 500      | 0.5s @*
+%# 5000     | 1.1s @*
+%# 50000    | 9.0s @*
+%# 200000   | 32s @*
+%#
+%# Example of an American Call Option with continuous dividends:@*
+%# (365 days to maturity, vector with different spot prices and volatilities, strike = 8, r = 0.06, dividend = 0.05, timestep 5 days, 20 nodes):
+%# @code{option_willowtree(1,1,[7;8;9;7;8;9],8,365,0.06,[0.2;0.2;0.2;0.3;0.3;0.3],0.05,5,20)}
+%#
+%# Variables:
+%# @itemize @bullet
+%# @item @var{CallPutFlag}: Call: "1", Put: "0"
+%# @item @var{AmericanFlag}: American option: "1", European Option: "0"
+%# @item @var{S}: stock price at time 0
+%# @item @var{X}: strike price 
+%# @item @var{T}: time in days to maturity
+%# @item @var{r}: annual risk-free interest rate (continuously compounded, act/365)
+%# @item @var{sigma}: implied volatility of the stock price measured as annual standard deviation
+%# @item @var{dividend}: continuous dividend yield, act/365
+%# @item @var{dk}: size of timesteps for valuation points (optimal accuracy vs. runtime choice : 5 days timestep)
+%# @item @var{nodes}: number of nodes for willow tree setup. Number of nodes must be in list [10,15,20,30,40,50]. These vectors are optimized by Currans suggested Method to fulfill variance constraint (optimal accuracy vs. runtime choice: 20 nodes)
+%# @end itemize
+%# @seealso{option_binomial, option_bs, option_exotic_mc}
+%# @end deftypefn
 
 function [option_willowtree delta] = option_willowtree(CallFlag,AmericanFlag,S0,K,T,rf,sigma,dividend,dk,nodes)
 
@@ -321,7 +321,7 @@ present_value = V_T;
 
 tmp_drift = rf  .- divyield;
 
-% ##########  iterating through timesteps and discounting expected values  ##################
+% %#%#%#%#%#  iterating through timesteps and discounting expected values  %#%#%#%#%#%#%#%#%#
 
 for ii = (N-1) : -1 : 1  
     timestep_value  = (Transition_matrix(:,:,ii) * present_value) .* discount_factor_mat ;

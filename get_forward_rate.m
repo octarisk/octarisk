@@ -1,29 +1,29 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {@var{forward_rate}=} get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, @var{days_to_t2}, @var{comp_type}, @var{interp_method})
-## Compute the forward rate calculated from interpolated rates from a zero coupon yield curve. CAUTION: the forward rate is floored to 0.000001.
-## Explanation of Input Parameters:
-## @*
-## @itemize @bullet
-## @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
-## @item @var{rates}: is MxN matrix with curve rates defined in columns. Each row contains a specific scenario with different curve structure
-## @item @var{days_to_t1}: is a scalar, specifiying term1 in days
-## @item @var{days_to_t2}: is a scalar, specifiying term2 in days after term1
-## @item @var{comp_type}: (optional) specifies compounding rule (simple, discrete, continuous (defaults to 'cont')).
-## @item @var{interp_method}: (optional) specifies interpolation method for retrieving interest rates (defaults to 'linear').
-## @seealso{interpolate_curve}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{forward_rate}=} get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, @var{days_to_t2}, @var{comp_type}, @var{interp_method})
+%# Compute the forward rate calculated from interpolated rates from a zero coupon yield curve. CAUTION: the forward rate is floored to 0.000001.
+%# Explanation of Input Parameters:
+%# @*
+%# @itemize @bullet
+%# @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
+%# @item @var{rates}: is MxN matrix with curve rates defined in columns. Each row contains a specific scenario with different curve structure
+%# @item @var{days_to_t1}: is a scalar, specifiying term1 in days
+%# @item @var{days_to_t2}: is a scalar, specifiying term2 in days after term1
+%# @item @var{comp_type}: (optional) specifies compounding rule (simple, discrete, continuous (defaults to 'cont')).
+%# @item @var{interp_method}: (optional) specifies interpolation method for retrieving interest rates (defaults to 'linear').
+%# @seealso{interpolate_curve}
+%# @end deftypefn
 
 function forward_rate = get_forward_rate(nodes,rates,days_to_t1,days_to_t2,comp_type,interp_method)
  

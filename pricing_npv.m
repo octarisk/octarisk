@@ -1,46 +1,46 @@
-## Copyright (C) 2016 Schinzilord <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Schinzilord <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{npv} @var{MacDur} ] =} pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values},@var{spread_constant} ...
-##										,@var{discount_nodes}, @var{discount_rates}, @var{spread_nodes}, @var{spread_rates}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{interp_discount}, @var{interp_spread})
-##
-## Computes the net present value and Maccaulay Duration of a given cash flow pattern according to a given discount curve, spread curve and day count convention etc.@*
-## Pre-requirements:@*
-## @itemize @bullet
-## @item installed octave finance package
-## @item custom functions timefactor, discount_factor, interpolate_curve
-## @end itemize
-##
-## Input and output variables:
-## @itemize @bullet
-## @item @var{valuation_date}: 	Structure with relevant information for specification of the forward:@*
-## @item @var{cashflow_dates}: 	cashflow_dates is a 1xN vector with all timesteps of the cash flow pattern
-## @item @var{cashflow_values}: cashflow_values is a MxN matrix with cash flow pattern.
-## @item @var{spread_constant}: a constant spread added to the total yield extracted from discount curve and spread curve (can be used to spread over yield)
-## @item @var{discount_nodes}: 	tmp_nodes is a 1xN vector with all timesteps of the given curve
-## @item @var{discount_rates}: 	tmp_rates is a MxN matrix with discount curve rates defined in columns. Each row contains a specific scenario with different curve structure
-## @item @var{spread_nodes}: 	OPTIONAL: spread_nodes is a 1xN vector with all timesteps of the given spread curve
-## @item @var{spread_rates}: 	OPTIONAL: spread_rates is a MxN matrix with spread curve rates defined in columns. Each row contains a specific scenario with different curve structure
-## @item @var{basis}:			OPTIONAL: day-count convention (either basis number between 1 and 11, or specified as string (act/365 etc.)
-## @item @var{comp_type}:		OPTIONAL: compounding type (disc, cont, simple)
-## @item @var{comp_freq}:		OPTIONAL: compounding frequency (1,2,3,4,6,12 payments per year)
-## @item @var{interp_discount}: OPTIONAL: interpolation method of discount curve  (default: linear)
-## @item @var{interp_spread}:   OPTIONAL: interpolatoin method of spread curve (default: linear)
-## @item @var{npv}: 			returs a 1xN vector with all net present values per scenario
-## @item @var{MacDur}: 			returs a 1xN vector with all Maccaulay durations
-## @end itemize
-## @seealso{timefactor, discount_factor, interpolate_curve}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{npv} @var{MacDur} ] =} pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values},@var{spread_constant} ...
+%#										,@var{discount_nodes}, @var{discount_rates}, @var{spread_nodes}, @var{spread_rates}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{interp_discount}, @var{interp_spread})
+%#
+%# Computes the net present value and Maccaulay Duration of a given cash flow pattern according to a given discount curve, spread curve and day count convention etc.@*
+%# Pre-requirements:@*
+%# @itemize @bullet
+%# @item installed octave finance package
+%# @item custom functions timefactor, discount_factor, interpolate_curve
+%# @end itemize
+%#
+%# Input and output variables:
+%# @itemize @bullet
+%# @item @var{valuation_date}: 	Structure with relevant information for specification of the forward:@*
+%# @item @var{cashflow_dates}: 	cashflow_dates is a 1xN vector with all timesteps of the cash flow pattern
+%# @item @var{cashflow_values}: cashflow_values is a MxN matrix with cash flow pattern.
+%# @item @var{spread_constant}: a constant spread added to the total yield extracted from discount curve and spread curve (can be used to spread over yield)
+%# @item @var{discount_nodes}: 	tmp_nodes is a 1xN vector with all timesteps of the given curve
+%# @item @var{discount_rates}: 	tmp_rates is a MxN matrix with discount curve rates defined in columns. Each row contains a specific scenario with different curve structure
+%# @item @var{spread_nodes}: 	OPTIONAL: spread_nodes is a 1xN vector with all timesteps of the given spread curve
+%# @item @var{spread_rates}: 	OPTIONAL: spread_rates is a MxN matrix with spread curve rates defined in columns. Each row contains a specific scenario with different curve structure
+%# @item @var{basis}:			OPTIONAL: day-count convention (either basis number between 1 and 11, or specified as string (act/365 etc.)
+%# @item @var{comp_type}:		OPTIONAL: compounding type (disc, cont, simple)
+%# @item @var{comp_freq}:		OPTIONAL: compounding frequency (1,2,3,4,6,12 payments per year)
+%# @item @var{interp_discount}: OPTIONAL: interpolation method of discount curve  (default: linear)
+%# @item @var{interp_spread}:   OPTIONAL: interpolatoin method of spread curve (default: linear)
+%# @item @var{npv}: 			returs a 1xN vector with all net present values per scenario
+%# @item @var{MacDur}: 			returs a 1xN vector with all Maccaulay durations
+%# @end itemize
+%# @seealso{timefactor, discount_factor, interpolate_curve}
+%# @end deftypefn
 
 function [npv MacDur] = pricing_npv(valuation_date,cashflow_dates, cashflow_values,spread_constant,discount_nodes,discount_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq,interp_discount,interp_spread)
 % This function calculates the net present value, duration and convexity of a cash flows for a given discount and spread curve.

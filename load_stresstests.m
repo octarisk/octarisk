@@ -1,20 +1,20 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-## Copyright (C) 2009-2014 Pascal Dupuis <cdemills@gmail.com> (code reuse of his dataframe package)
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2009-2014 Pascal Dupuis <cdemills@gmail.com> (code reuse of his dataframe package)
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {@var{portfolio_struct} @var{id_failed_cell}} = load_stresstests(@var{portfolio_struct}, @var{valuation_date},@var{path_stresstests},@var{file_stresstests},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
-## Load data from stresstest specification file and generate a struct with parsed data. Store all stresstests in provided struct and return the final struct and a cell containing the failed position ids.
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{portfolio_struct} @var{id_failed_cell}} = load_stresstests(@var{portfolio_struct}, @var{valuation_date},@var{path_stresstests},@var{file_stresstests},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
+%# Load data from stresstest specification file and generate a struct with parsed data. Store all stresstests in provided struct and return the final struct and a cell containing the failed position ids.
+%# @end deftypefn
 
 function [stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, path_stresstests,file_stresstests,path_output,path_archive,tmp_timestamp,archive_flag)
 

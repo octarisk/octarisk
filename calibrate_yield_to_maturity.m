@@ -1,19 +1,19 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {@var{yield_to_maturity}} = calibrate_yield_to_maturity(@var{valuation_date},@var{tmp_cashflow_dates},@var{tmp_cashflow_values},@var{act_value})
-## Calibrate the yield to maturity according to given cashflows.
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{yield_to_maturity}} = calibrate_yield_to_maturity(@var{valuation_date},@var{tmp_cashflow_dates},@var{tmp_cashflow_values},@var{act_value})
+%# Calibrate the yield to maturity according to given cashflows.
+%# @end deftypefn
 
 function [yield_to_maturity] = calibrate_yield_to_maturity(valuation_date,tmp_cashflow_dates,tmp_cashflow_values,act_value)
 

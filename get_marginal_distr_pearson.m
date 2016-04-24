@@ -1,54 +1,54 @@
-## Copyright (C) 2016 Stefan Schlögl <schinzilord@octarisk.com>
-## Copyright (C) 2013 Martin Becker and Stefan Kloessner: modified R package "PearsonDS"
-## http://CRAN.R-project.org/package=PearsonDS
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
-##
-## You should have received a copy of the GNU General Public License along with
-## this program; if not, see <http://www.gnu.org/licenses/>.
+%# Copyright (C) 2016 Stefan Schlögl <schinzilord@octarisk.com>
+%# Copyright (C) 2013 Martin Becker and Stefan Kloessner: modified R package "PearsonDS"
+%# http://CRAN.R-project.org/package=PearsonDS
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
+%#
+%# You should have received a copy of the GNU General Public License along with
+%# this program; if not, see <http://www.gnu.org/licenses/>.
  
-## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{r} @var{type} ] =} get_marginal_distr_pearson (@var{mu}, @var{sigma}, @var{skew}, @var{kurt}, @var{Z})
-##
-## Compute a marginal distribution for given set of uniform random variables with given mean, standard deviation
-## skewness and kurtosis. The mapping is done via the Pearson distribution family.
-## @*
-## The implementation is based on the R package "PearsonDS: Pearson Distribution System" and the function "pearsonFitM" by @*
-## Martin Becker and Stefan Kloessner (2013) @* 
-## R package version 0.97. @*
-## URL http://CRAN.R-project.org/package=PearsonDS @*
-## licensed under the GPL >= 2.0 @*
-## Input and output variables:
-## @itemize @bullet
-## @item @var{mu}: 		mean of marginal distribution (scalar)
-## @item @var{sigma}: 	standard deviation of marginal distribution (scalar)
-## @item @var{skew}: 	skewness of marginal distribution (scalar)
-## @item @var{kurt}: 	kurtosis of marginal distribution (scalar)
-## @item @var{Z}: 		uniform distributed random variables (Nx1 vector)
-## @item @var{r}: 		OUTPUT: Nx1 vector with random variables distributed according to Pearson type (vector)
-## @item @var{type}: 	OUTPUT: Pearson distribution type (I - VII) (scalar)
-## @end itemize
-## The marginal distribution type is chosen according to the input parameters out of the Pearson Type I-VII distribution family: @*
-## @itemize @bullet
-## @item @var{Type 0}   = normal distribution
-## @item @var{Type I}   = generalization of beta distribution
-## @item @var{Type II}  = symmetric beta distribution
-## @item @var{Type III} = gamma or chi-squared distribution
-## @item @var{Type IV}  = special distribution, not related to any other distribution
-## @item @var{Type V}   = inverse gamma distribution
-## @item @var{Type VI}  = beta-prime or F distribution
-## @item @var{Type VII} = Student's t distribution 
-## @end itemize
-## @seealso{discount_factor}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{r} @var{type} ] =} get_marginal_distr_pearson (@var{mu}, @var{sigma}, @var{skew}, @var{kurt}, @var{Z})
+%#
+%# Compute a marginal distribution for given set of uniform random variables with given mean, standard deviation
+%# skewness and kurtosis. The mapping is done via the Pearson distribution family.
+%# @*
+%# The implementation is based on the R package "PearsonDS: Pearson Distribution System" and the function "pearsonFitM" by @*
+%# Martin Becker and Stefan Kloessner (2013) @* 
+%# R package version 0.97. @*
+%# URL http://CRAN.R-project.org/package=PearsonDS @*
+%# licensed under the GPL >= 2.0 @*
+%# Input and output variables:
+%# @itemize @bullet
+%# @item @var{mu}: 		mean of marginal distribution (scalar)
+%# @item @var{sigma}: 	standard deviation of marginal distribution (scalar)
+%# @item @var{skew}: 	skewness of marginal distribution (scalar)
+%# @item @var{kurt}: 	kurtosis of marginal distribution (scalar)
+%# @item @var{Z}: 		uniform distributed random variables (Nx1 vector)
+%# @item @var{r}: 		OUTPUT: Nx1 vector with random variables distributed according to Pearson type (vector)
+%# @item @var{type}: 	OUTPUT: Pearson distribution type (I - VII) (scalar)
+%# @end itemize
+%# The marginal distribution type is chosen according to the input parameters out of the Pearson Type I-VII distribution family: @*
+%# @itemize @bullet
+%# @item @var{Type 0}   = normal distribution
+%# @item @var{Type I}   = generalization of beta distribution
+%# @item @var{Type II}  = symmetric beta distribution
+%# @item @var{Type III} = gamma or chi-squared distribution
+%# @item @var{Type IV}  = special distribution, not related to any other distribution
+%# @item @var{Type V}   = inverse gamma distribution
+%# @item @var{Type VI}  = beta-prime or F distribution
+%# @item @var{Type VII} = Student's t distribution 
+%# @end itemize
+%# @seealso{discount_factor}
+%# @end deftypefn
 
 function [r,type] = get_marginal_distr_pearson(mu,sigma,skew,kurt,Z)
 
@@ -122,7 +122,7 @@ r = r.*sigma + mu;
 
 end % end of Main function
 
-%#################################
+%%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%##
 
 function r = rpears4(m,nu,a,lam,len_vec)
 %   Implemention taken from "Non-Uniform Random Variate Generation" by Luc Devroye (1986)
@@ -170,7 +170,7 @@ end
 r = a.*tan(r) + lam;
 end % end of rpears4 function
 
-%#################################
+%%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%##
 
 %=======================
 % Implementation of the complex hypergeometric distribution from 

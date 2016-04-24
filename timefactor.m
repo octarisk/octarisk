@@ -1,49 +1,49 @@
-## Copyright (C) 2015 Stefan Schlögl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
-##
-## You should have received a copy of the GNU General Public License along with
-## this program; if not, see <http://www.gnu.org/licenses/>.
+%# Copyright (C) 2015 Stefan Schlögl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
+%#
+%# You should have received a copy of the GNU General Public License along with
+%# this program; if not, see <http://www.gnu.org/licenses/>.
  
-## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{tf} @var{dip} @var{dib}] =} timefactor (@var{d1}, @var{d2}, @var{basis})
-##
-## Compute the time factor for a specific time period and day count basis.@*
-## Depending on day count basis, the time factor is evaluated as (days in period)/(days in year)
-##
-## Input and output variables:
-## @itemize @bullet
-## @item @var{d1}: 			number of days until first date (scalar)
-## @item @var{d2}: 			number of days until second date (scalar)
-## @item @var{basis}: 		day-count basis (scalar)
-##		@itemize @bullet
-## 			@item @var{0} = actual/actual 
-## 			@item @var{1} = 30/360 SIA (default)
-## 			@item @var{2} = act/360
-## 			@item @var{3} = act/365
-## 			@item @var{4} = 30/360 PSA
-## 			@item @var{5} = 30/360 ISDA
-## 			@item @var{6} = 30/360 European
-## 			@item @var{7} = act/365 Japanese
-## 			@item @var{8} = act/act ISMA
-## 			@item @var{9} = act/360 ISMA
-## 			@item @var{10} = act/365 ISMA
-## 			@item @var{11} = 30/360E (ISMA)
-##      @end itemize
-## @item @var{df}: 		OUTPUT: discount factor (scalar)
-## @item @var{dip}: 	OUTPUT: days in period (nominator of time factor) (scalar)
-## @item @var{dib}: 	OUTPUT: days in base (denominator of time factor) (scalar)
-## @end itemize
-## @seealso{discount_factor, daysact, yeardays}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{tf} @var{dip} @var{dib}] =} timefactor (@var{d1}, @var{d2}, @var{basis})
+%#
+%# Compute the time factor for a specific time period and day count basis.@*
+%# Depending on day count basis, the time factor is evaluated as (days in period)/(days in year)
+%#
+%# Input and output variables:
+%# @itemize @bullet
+%# @item @var{d1}: 			number of days until first date (scalar)
+%# @item @var{d2}: 			number of days until second date (scalar)
+%# @item @var{basis}: 		day-count basis (scalar)
+%#		@itemize @bullet
+%# 			@item @var{0} = actual/actual 
+%# 			@item @var{1} = 30/360 SIA (default)
+%# 			@item @var{2} = act/360
+%# 			@item @var{3} = act/365
+%# 			@item @var{4} = 30/360 PSA
+%# 			@item @var{5} = 30/360 ISDA
+%# 			@item @var{6} = 30/360 European
+%# 			@item @var{7} = act/365 Japanese
+%# 			@item @var{8} = act/act ISMA
+%# 			@item @var{9} = act/360 ISMA
+%# 			@item @var{10} = act/365 ISMA
+%# 			@item @var{11} = 30/360E (ISMA)
+%#      @end itemize
+%# @item @var{df}: 		OUTPUT: discount factor (scalar)
+%# @item @var{dip}: 	OUTPUT: days in period (nominator of time factor) (scalar)
+%# @item @var{dib}: 	OUTPUT: days in base (denominator of time factor) (scalar)
+%# @end itemize
+%# @seealso{discount_factor, daysact, yeardays}
+%# @end deftypefn
 
 function [tf dip dib] = timefactor (d1, d2, basis)
 

@@ -1,31 +1,24 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {} = get_documentation(@var{type})
-## Print documentation for all specified Octave functions. 
-## This script allows you to choose functions, for which the documentation is extracted from the function headers
-## and printed to a file "functions.texi", "functionname.html" or to standard output if a specific format (texinfo,  html, txt) is set.
-## The path to all files has to be set in this function.
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {} = get_documentation(@var{type},@var{path_documentation}))
+%# Print documentation for all specified Octave functions. 
+%# This script allows you to choose functions, for which the documentation is extracted from the function headers
+%# and printed to a file "functions.texi", "functionname.html" or to standard output if a specific format (texinfo,  html, txt) is set.
+%# The path to all files has to be set in the variable path_documentation.
+%# @end deftypefn
 
-function get_documentation(type)
-
-% specify input path
-if ( ispc == 1)
-    path = "C:/Dokumente/octarisk/Documentation/";   % general save path for *.mat files
-elseif ( isunix == 1)
-    path = "/home/schinzilord/Dokumente/Programmierung/octarisk/Documentation/";
-endif
+function get_documentation(type,path_documentation)
 
 % Definition of Cellstring with all relevant scripts
 scripts = ["octarisk"; "option_bs"; "option_willowtree"; "interpolate_curve"; "pricing_npv"; "harrell_davis_weight"];
@@ -43,7 +36,7 @@ if ( strcmp("html",type) == 1)
             repstring = strcat("<title>", c{ii} ,"</title>");
             retval = strrep( retval, "<title>Untitled</title>", repstring);
             %print html string to file
-            filename = strcat(path,c{ii},".html");
+            filename = strcat(path_documentation,c{ii},".html");
             fid = fopen (filename, "w");
             fprintf(fid, retval);
             fprintf(fid, "\n");
@@ -80,7 +73,7 @@ elseif  ( strcmp("txt",type) == 1)
     fclose (fid);
 elseif  ( strcmp("texinfo",type) == 1)  
     % Loop via all function names in cellstring, print texinfo directly to functions.texi
-    filename = strcat(path,"functions.texi");
+    filename = strcat(path_documentation,"functions.texi");
     fid = fopen (filename, "w");
     fprintf(fid,"\@menu\n");
     for ii = 1:length(c)

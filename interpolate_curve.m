@@ -1,32 +1,32 @@
-## Copyright (C) 2016 Schinzilord <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Schinzilord <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep})
-## @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{ufr}, @var{alpha})
-## Calculate an interpolated return on a curve for a given timestep
-## Supported methods are: linear (default), moneymarket, exponential, loglinear, spline, smith-wilson or monotone-convex.
-## A constant extrapolation is assumed, except for smith-wilson, where the ultimate forward rate will be reached proportional to reversion speed alpha.
-## For all methods except splines a fast taylormade algorithm is used. For splines see Octave function interp1 for more details. 
-## Explanation of Input Parameters of the interpolation curve function:
-## @*
-## @itemize @bullet
-## @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
-## @item @var{rates}: is MxN matrix with curve rates per timestep defined in columns. Each row contains a specific scenario with different curve structure
-## @item @var{timestep}: is a scalar, specifiying the interpolated timestep on vector nodes
-## @item @var{ufr}:   OPTIONAL: (only used for smith-wilson): ultimate forward rate (default: last liquid point)
-## @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed to ultimate forward rate (default: 0.1)
-## @seealso{interp1, interp2, interp3, interpn}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep})
+%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{ufr}, @var{alpha})
+%# Calculate an interpolated return on a curve for a given timestep
+%# Supported methods are: linear (default), moneymarket, exponential, loglinear, spline, smith-wilson or monotone-convex.
+%# A constant extrapolation is assumed, except for smith-wilson, where the ultimate forward rate will be reached proportional to reversion speed alpha.
+%# For all methods except splines a fast taylormade algorithm is used. For splines see Octave function interp1 for more details. 
+%# Explanation of Input Parameters of the interpolation curve function:
+%# @*
+%# @itemize @bullet
+%# @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
+%# @item @var{rates}: is MxN matrix with curve rates per timestep defined in columns. Each row contains a specific scenario with different curve structure
+%# @item @var{timestep}: is a scalar, specifiying the interpolated timestep on vector nodes
+%# @item @var{ufr}:   OPTIONAL: (only used for smith-wilson): ultimate forward rate (default: last liquid point)
+%# @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed to ultimate forward rate (default: 0.1)
+%# @seealso{interp1, interp2, interp3, interpn}
+%# @end deftypefn
 
 function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
 % This function makes a interpolation of an interest rate at a given timestep between nodes

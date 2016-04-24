@@ -1,19 +1,19 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {@var{spread_over_yield}} = calibrate_soy_sqp(@var{valuation_date},@var{tmp_cashflow_dates},@var{tmp_cashflow_values},@var{tmp_act_value},@var{tmp_nodes},@var{tmp_rates},@var{spread_nodes},@var{spread_rates},@var{basis},@var{comp_type},@var{comp_freq})
-## Calibrate the spread over yield according to given cashflows discounted on an appropriate yield curve.
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{spread_over_yield}} = calibrate_soy_sqp(@var{valuation_date},@var{tmp_cashflow_dates},@var{tmp_cashflow_values},@var{tmp_act_value},@var{tmp_nodes},@var{tmp_rates},@var{spread_nodes},@var{spread_rates},@var{basis},@var{comp_type},@var{comp_freq})
+%# Calibrate the spread over yield according to given cashflows discounted on an appropriate yield curve.
+%# @end deftypefn
 
 function [spread_over_yield ] = calibrate_soy_sqp(valuation_date,tmp_cashflow_dates, tmp_cashflow_values,tmp_act_value,tmp_nodes,tmp_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq)
 

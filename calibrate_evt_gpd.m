@@ -1,31 +1,31 @@
-## Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} { [@var{chi} @var{sigma} @var{u}] =} calibrate_evt_gpd(@var{v})
-## Calibrate sorted losses of historic or MC portfolio values 
-## to a generalized pareto distribution and returns chi, sigma and u as parameters for further VAR and ES calculation.
-## @*
-## Implementation according to @i{Risk Management and Financial Institutions} by John C. Hull, 4th edition, Wiley 2015, 
-##  section 13.6, page 292ff.
-## @*
-## Explanation of Parameters:
-## @itemize @bullet
-## @item @var{v}:       INPUT: sorted profit and loss distribution of all required tail events (1xN vector)
-## @item @var{chi}:     OUTPUT: Generalized Pareto distribution: shape parameter (scalar)
-## @item @var{sigma}:   OUTPUT: scale parameter (scalar)
-## @item @var{u}:       OUTPUT: location parameter(scalar)
-## @end itemize
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} { [@var{chi} @var{sigma} @var{u}] =} calibrate_evt_gpd(@var{v})
+%# Calibrate sorted losses of historic or MC portfolio values 
+%# to a generalized pareto distribution and returns chi, sigma and u as parameters for further VAR and ES calculation.
+%# @*
+%# Implementation according to @i{Risk Management and Financial Institutions} by John C. Hull, 4th edition, Wiley 2015, 
+%#  section 13.6, page 292ff.
+%# @*
+%# Explanation of Parameters:
+%# @itemize @bullet
+%# @item @var{v}:       INPUT: sorted profit and loss distribution of all required tail events (1xN vector)
+%# @item @var{chi}:     OUTPUT: Generalized Pareto distribution: shape parameter (scalar)
+%# @item @var{sigma}:   OUTPUT: scale parameter (scalar)
+%# @item @var{u}:       OUTPUT: location parameter(scalar)
+%# @end itemize
+%# @end deftypefn
 
 function [chi sigma u] = calibrate_evt_gpd(v)
 

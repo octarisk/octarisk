@@ -1,18 +1,18 @@
-## -*- texinfo -*-
-## @deftypefn  {Function File} {} Riskfactor ()
-## @deftypefnx {Function File} {} Riskfactor (@var{a})
-## Riskfactor Method getValue 
-## This method returns the value for a risk factor object. Specify the desired return values with a property parameter.
-## If the second argument abs is set, the absolut scenario value is calculated from scenario shocks and the risk factor start value.
-## @*
-## Timestep properties:
-## @itemize @bullet
-## @item base: return base value
-## @item stress: return stress values
-## @item 1d: return MC timestep
-## @end itemize
-## @seealso{Instrument}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn  {Function File} {} Riskfactor ()
+%# @deftypefnx {Function File} {} Riskfactor (@var{a})
+%# Riskfactor Method getValue 
+%# This method returns the value for a risk factor object. Specify the desired return values with a property parameter.
+%# If the second argument abs is set, the absolut scenario value is calculated from scenario shocks and the risk factor start value.
+%# @*
+%# Timestep properties:
+%# @itemize @bullet
+%# @item base: return base value
+%# @item stress: return stress values
+%# @item 1d: return MC timestep
+%# @end itemize
+%# @seealso{Instrument}
+%# @end deftypefn
 
 function s = getValue (riskfactor, property, abs_flag, sensitivity) % method getValue for riskfactors
   obj = riskfactor;

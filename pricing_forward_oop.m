@@ -1,49 +1,49 @@
-## Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
-##
-## This program is free software; you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 3 of the License, or (at your option) any later
-## version.
-##
-## This program is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-## FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-## details.
+%# Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
 
-## -*- texinfo -*-
-## @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward_oop (@var{forward}, @var{discount_nodes}, @var{discount_rates})
-##
-## Compute the theoretical value of equity and bond forwards.@*
-## In the "oop" version no input data checks are performed. @* 
-## Pre-requirements:@*
-## @itemize @bullet
-## @item installed octave financial package
-## @item custom functions timefactor, discount_factor, interpolate_curve
-## @end itemize
-##
-## Input and output variables:
-## @itemize @bullet
-## @item @var{forward}: Structure with relevant information for specification of the object forward:@*
-##      @itemize @bullet
-##      @item forward.type                   Equity, Bond
-##      @item forward.currency               [optional] Currency (string, ISO code)
-##      @item forward.maturity_date          Maturity date of forward
-##      @item forward.valuation_date         [optional] Valuation date (default today)
-##      @item forward.strike_price           strike price (float).  Can be a 1xN vector.
-##      @item forward.underlying_price       market price of underlying (float), in forward currency units. Can be a 1xN vector.
-##      @item forward.storage_cost           [optional] continuous storage cost p.a. (default 0)
-##      @item forward.convenience_yield      [optional] continuous convenience yield p.a. (default 0)
-##      @item forward.dividend_yield         [optional] continuous dividend yield p.a. (default 0)
-##      @item forward.compounding_type       [optional] compounding type [simple, discrete, continuous] (default 'disc')
-##      @item forward.compounding_frequency  [optional] compounding frequency [daily, weekly, monthly, semi-annual, annual] (default 'daily')
-##      @item forward.day_count_convention   [optional] day count convenction (e.g. 'act/act' or '30/360E') (default 'act/act')
-##      @end itemize
-## @item @var{discount_nodes}: tmp_nodes is a 1xN vector with all timesteps of the given curve
-## @item @var{discount_rates}: tmp_rates is a MxN matrix with discount curve rates defined in columns. Each row contains a specific scenario with different curve structure
-## @item @var{theo_value}: returs a 1xN vector with all forward values per scenario
-## @end itemize
-## @seealso{timefactor, discount_factor, interpolate_curve}
-## @end deftypefn
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward_oop (@var{forward}, @var{discount_nodes}, @var{discount_rates})
+%#
+%# Compute the theoretical value of equity and bond forwards.@*
+%# In the "oop" version no input data checks are performed. @* 
+%# Pre-requirements:@*
+%# @itemize @bullet
+%# @item installed octave financial package
+%# @item custom functions timefactor, discount_factor, interpolate_curve
+%# @end itemize
+%#
+%# Input and output variables:
+%# @itemize @bullet
+%# @item @var{forward}: Structure with relevant information for specification of the object forward:@*
+%#      @itemize @bullet
+%#      @item forward.type                   Equity, Bond
+%#      @item forward.currency               [optional] Currency (string, ISO code)
+%#      @item forward.maturity_date          Maturity date of forward
+%#      @item forward.valuation_date         [optional] Valuation date (default today)
+%#      @item forward.strike_price           strike price (float).  Can be a 1xN vector.
+%#      @item forward.underlying_price       market price of underlying (float), in forward currency units. Can be a 1xN vector.
+%#      @item forward.storage_cost           [optional] continuous storage cost p.a. (default 0)
+%#      @item forward.convenience_yield      [optional] continuous convenience yield p.a. (default 0)
+%#      @item forward.dividend_yield         [optional] continuous dividend yield p.a. (default 0)
+%#      @item forward.compounding_type       [optional] compounding type [simple, discrete, continuous] (default 'disc')
+%#      @item forward.compounding_frequency  [optional] compounding frequency [daily, weekly, monthly, semi-annual, annual] (default 'daily')
+%#      @item forward.day_count_convention   [optional] day count convenction (e.g. 'act/act' or '30/360E') (default 'act/act')
+%#      @end itemize
+%# @item @var{discount_nodes}: tmp_nodes is a 1xN vector with all timesteps of the given curve
+%# @item @var{discount_rates}: tmp_rates is a MxN matrix with discount curve rates defined in columns. Each row contains a specific scenario with different curve structure
+%# @item @var{theo_value}: returs a 1xN vector with all forward values per scenario
+%# @end itemize
+%# @seealso{timefactor, discount_factor, interpolate_curve}
+%# @end deftypefn
 
 function [theo_value] = pricing_forward_oop(forward,discount_nodes,discount_rates,underlying_price)
 
