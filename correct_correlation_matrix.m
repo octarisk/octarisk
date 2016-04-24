@@ -23,11 +23,11 @@ function [A_scaled pos_sem_def_bool]= correct_correlation_matrix(M)
 fprintf('\n'); 
 pos_sem_def_bool = testpsd(M);
 if (pos_sem_def_bool == true)
-    disp ('Input matrix is positive semidefinite')
+    fprintf ('Input matrix is positive semidefinite')
     A_scaled = M;
     break;
 else
-    disp ('Input matrix is not positive semidefinite. Starting correction.')
+    fprintf ('Input matrix is not positive semidefinite. Starting correction.')
 endif
 A_scaled = M;
 limit = 0.0;
@@ -50,7 +50,7 @@ while ( pos_sem_def_bool == 0 )
     end
 end
 if ( break_bool == 1 )
-    disp('!!!! Warning: No positive semidefinite solution was reached !!!!');
+    fprintf('!!!! Warning: No positive semidefinite solution was reached !!!!');
 end
 % Get final test statistics
     A_scaled_diff = A_scaled .- M;
@@ -65,7 +65,7 @@ fprintf('Frobenius norm: \n %1.4f \n', Frobenius_Norm);
 fprintf('Algorithm converged after %d steps.\n', step);
 pos_sem_def_bool =testpsd(A_scaled);
 if (pos_sem_def_bool == true)
-    disp ('Correction successful: Matrix is positive semidefinite.\n')
+    fprintf ('Correction successful: Matrix is positive semidefinite.\n')
 endif
 endfunction
 % %#%#%#%#%#%#%#%#%#%##    Helper Functions    %#%#%#%#%#%#%#%#%#%#
