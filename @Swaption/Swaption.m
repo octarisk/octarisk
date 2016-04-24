@@ -58,7 +58,7 @@ classdef Swaption < Instrument
         b = b@Instrument(name,id,description,'swaption',currency,base_value,asset_class,valuation_date);
         % setting property sub_type
         if ( strcmp(sub_type,'') )
-            error("Error: No sub_type specified");
+            error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
         endif
@@ -99,19 +99,19 @@ classdef Swaption < Instrument
         % parsing attribute sensitivities
             % setting property vola_sensi
             if ( length(sensitivities) < 1  )
-                error("Error: No vola_sensi specified");
+                error('Error: No vola_sensi specified');
             else
                 b.vola_sensi = sensitivities(1);
             endif        
             % setting property spot
             if ( length(sensitivities) < 2  )
-                error("Error: No spot specified");
+                error('Error: No spot specified');
             else
                 b.spot = sensitivities(2);
             endif       
             % setting property strike
             if ( length(sensitivities) < 3  )
-                error("Error: No strike specified");
+                error('Error: No strike specified');
             else
                 b.strike = sensitivities(3);
             endif
@@ -121,13 +121,13 @@ classdef Swaption < Instrument
             endif
             % setting property tenor
             if ( length(sensitivities) < 5  )
-                error("Error: No tenor specified");
+                error('Error: No tenor specified');
             else
                 b.tenor = sensitivities(5);
             endif
             % setting property no_payments
             if ( length(sensitivities) < 6  )
-                error("Error: No no_payments specified");
+                error('Error: No no_payments specified');
             else
                 b.no_payments = sensitivities(6);
             endif
@@ -135,19 +135,19 @@ classdef Swaption < Instrument
         % parsing attribute riskfactors
             % setting property vola surface
             if ( length(riskfactors) < 1  )
-                error("Error: No vola_surface specified");
+                error('Error: No vola_surface specified');
             else
                 b.vola_surface = riskfactors{1};
             endif
              % setting property underlying
             if ( length(riskfactors) < 2  )
-                error("Error: No underlying specified");
+                error('Error: No underlying specified');
             else
                 b.underlying = riskfactors{2};
             endif
              % setting property discount_curve
             if ( length(riskfactors) < 4  )
-                error("Error: No discount_curve specified");
+                error('Error: No discount_curve specified');
             else
                 b.discount_curve = riskfactors{4};
             endif
@@ -229,11 +229,11 @@ classdef Swaption < Instrument
       end
       % converting object <-> struct for saving / loading purposes
       % function b = saveobj (a)
-          % disp("Converting object to struct");
+          % disp('Converting object to struct');
           % b = struct(a);       
       % end
       function b = loadobj (t,a)
-          disp("Converting stuct to object");
+          disp('Converting stuct to object');
           b = Option();
           b.id          = a.id;
           b.name        = a.name; 

@@ -58,7 +58,7 @@ classdef Forward < Instrument
             if ( !strcmp(special_str{1},'')  )
                 b.maturity_date =  datestr(special_str{1});
             else
-                error("Error: No maturity date specified");
+                error('Error: No maturity date specified');
             endif
         endif
         % setting property compounding_type
@@ -75,20 +75,20 @@ classdef Forward < Instrument
         endif
         % setting property sub_type
         if ( strcmp(sub_type,'') )
-            error("Error: No sub_type specified");
+            error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
         endif 
         % === Parsing special_num ===        
         % setting property strike price
         if ( length(special_num) < 1  )
-            error("Error: No strike_price specified");
+            error('Error: No strike_price specified');
         else
             b.strike_price = special_num(1);  
         endif
         % setting property underlying price
         if ( length(special_num) < 2 )
-            error("Error: No underlying_price specified");
+            error('Error: No underlying_price specified');
         else
             b.underlying_price_base = special_num(2);  
         endif  
@@ -111,13 +111,13 @@ classdef Forward < Instrument
         % === Parsing riskfactors ===
         % setting property underlying_id
         if ( length(riskfactors) < 1  )
-            error("Error: No underlying_id specified");
+            error('Error: No underlying_id specified');
         else
             b.underlying_id = riskfactors{1};
         endif
         % setting property discount_curve
         if ( length(riskfactors) < 2 )
-            error("Error: No discount_curve specified");
+            error('Error: No discount_curve specified');
         else
             b.discount_curve = riskfactors{2};
         endif

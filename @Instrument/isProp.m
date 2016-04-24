@@ -13,7 +13,7 @@ function ret = isProp (instrument, property)
             ret = 0;
         end_try_catch
     else
-        error("Please provide a property string");
+        error('Please provide a property string');
     endif
   else
     print_usage ();

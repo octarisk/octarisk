@@ -31,19 +31,19 @@ lb = -sigma + 0.0001;
 [x, obj, info, iter] = sqp (x0, @ (x) phi(x,PayerReceiverFlag,F,X,T,r,sigma,m,tau,multiplicator,market_value,model), [], [], lb, [], 300);	%, obj, info, iter, nf, lambda @g
 
 if (info == 101 )
-	%disp ("       +++ SUCCESS: Optimization converged in +++");
+	%disp ('       +++ SUCCESS: Optimization converged in +++');
 	%steps = iter
 elseif (info == 102 )
-	%disp ("       --- WARNING: The BFGS update failed. ---");
+	%disp ('       --- WARNING: The BFGS update failed. ---');
     x = -99;
 elseif (info == 103 )
-	%disp ("       --- WARNING: The maximum number of iterations was reached. ---");
+	%disp ('       --- WARNING: The maximum number of iterations was reached. ---');
     x = -99;
 elseif (info == 104 )
-    disp ("       --- WARNING: The stepsize has become too small. ---");
+    disp ('       --- WARNING: The stepsize has become too small. ---');
     %x = -99;
 else
-	%disp ("       --- WARNING: Optimization did not converge! ---");
+	%disp ('       --- WARNING: Optimization did not converge! ---');
     x = -99;
 endif
 

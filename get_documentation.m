@@ -14,94 +14,94 @@
 %# @deftypefn {Function File} {} = get_documentation(@var{type},@var{path_documentation}))
 %# Print documentation for all specified Octave functions. 
 %# This script allows you to choose functions, for which the documentation is extracted from the function headers
-%# and printed to a file "functions.texi", "functionname.html" or to standard output if a specific format (texinfo,  html, txt) is set.
+%# and printed to a file 'functions.texi', 'functionname.html' or to standard output if a specific format (texinfo,  html, txt) is set.
 %# The path to all files has to be set in the variable path_documentation.
 %# @end deftypefn
 
 function get_documentation(type,path_documentation)
 
 % Definition of Cellstring with all relevant scripts
-scripts = ["octarisk"; "option_bs"; "option_willowtree"; "interpolate_curve"; "pricing_npv"; "harrell_davis_weight"];
+scripts = ['octarisk'; 'option_bs'; 'option_willowtree'; 'interpolate_curve'; 'pricing_npv'; 'harrell_davis_weight'];
 c = cellstr(scripts)
 
 
 % printing functions:
-if ( strcmp("html",type) == 1)
+if ( strcmp('html',type) == 1)
     % Loop via all function names in cellstring, convert texinfo to html and print it to functionname.html
     for ii = 1:length(c)
-        [retval status] = __makeinfo__(get_help_text(c{ii}),"html");
+        [retval status] = __makeinfo__(get_help_text(c{ii}),'html');
         
         if ( status == 0 )
             %replace html title
-            repstring = strcat("<title>", c{ii} ,"</title>");
-            retval = strrep( retval, "<title>Untitled</title>", repstring);
+            repstring = strcat('<title>', c{ii} ,'</title>');
+            retval = strrep( retval, '<title>Untitled</title>', repstring);
             %print html string to file
-            filename = strcat(path_documentation,c{ii},".html");
-            fid = fopen (filename, "w");
+            filename = strcat(path_documentation,c{ii},'.html');
+            fid = fopen (filename, 'w');
             fprintf(fid, retval);
-            fprintf(fid, "\n");
+            fprintf(fid, '\n');
             fclose (fid);
-            disp("Documentation printed for");
+            disp('Documentation printed for');
             c{ii}
         else
-            disp("There was a problem")
+            disp('There was a problem')
         endif
     endfor
-elseif  ( strcmp("txt",type) == 1)  
+elseif  ( strcmp('txt',type) == 1)  
     % Loop via all function names in cellstring, convert texinfo to plain text and print it to documentation.txt
-    %filename = strcat(path,"documentation.txt");
-    %fid = fopen (filename, "w");
+    %filename = strcat(path,'documentation.txt');
+    %fid = fopen (filename, 'w');
     for ii = 1:length(c)
-        [retval status] = __makeinfo__(get_help_text(c{ii}),"plain text");
+        [retval status] = __makeinfo__(get_help_text(c{ii}),'plain text');
         
         if ( status == 0 )
             %replace html title
-            %repstring = strcat("<title>", c{ii} ,"</title>");
-            %retval = strrep( retval, "<title>Untitled</title>", repstring);
+            %repstring = strcat('<title>', c{ii} ,'</title>');
+            %retval = strrep( retval, '<title>Untitled</title>', repstring);
             %print html string to file
-            %sectionstring = strcat("Function ", c{ii},)
-            fprintf(fid, "Function: %s \n", c{ii}); 
+            %sectionstring = strcat('Function ', c{ii},)
+            fprintf(fid, 'Function: %s \n', c{ii}); 
             %fprintf(fid, sectionstring);
             fprintf(fid, retval); 
-            fprintf(fid, "\n");
-            disp("Documentation printed for");
+            fprintf(fid, '\n');
+            disp('Documentation printed for');
             c{ii}
         else
-            disp("There was a problem")
+            disp('There was a problem')
         endif
     endfor
     fclose (fid);
-elseif  ( strcmp("texinfo",type) == 1)  
+elseif  ( strcmp('texinfo',type) == 1)  
     % Loop via all function names in cellstring, print texinfo directly to functions.texi
-    filename = strcat(path_documentation,"functions.texi");
-    fid = fopen (filename, "w");
-    fprintf(fid,"\@menu\n");
+    filename = strcat(path_documentation,'functions.texi');
+    fid = fopen (filename, 'w');
+    fprintf(fid,'\@menu\n');
     for ii = 1:length(c)
-        tmpstring = strcat("* \t", c{ii},"::\n");
+        tmpstring = strcat('* \t', c{ii},'::\n');
         fprintf(fid, tmpstring);
     endfor
-    fprintf(fid,"\@end menu \n");
+    fprintf(fid,'\@end menu \n');
     for ii = 1:length(c)
-        [retval status] = __makeinfo__(get_help_text(c{ii}),"texinfo");
+        [retval status] = __makeinfo__(get_help_text(c{ii}),'texinfo');
         
         if ( status == 0 )
             %replace html title
             % Problem: all \ have to be escaped:
-            %repstring = strcat("<title>", c{ii} ,"</title>");
+            %repstring = strcat('<title>', c{ii} ,'</title>');
             retval = strrep( retval, '\', '\\');
-            nodestring = strcat("\@node \t", c{ii},"\n")
+            nodestring = strcat('\@node \t', c{ii},'\n')
             fprintf(fid, nodestring);
             %print html string to file
-            sectionstring = strcat("\@section \t", c{ii},"\n")
+            sectionstring = strcat('\@section \t', c{ii},'\n')
             fprintf(fid, sectionstring); 
-            indexstring = strcat("@cindex \t Function \t", c{ii},"\n");
+            indexstring = strcat('@cindex \t Function \t', c{ii},'\n');
             fprintf(fid, indexstring);
             fprintf(fid, retval); 
-            fprintf(fid, "\n");
-            disp("Documentation printed for");
+            fprintf(fid, '\n');
+            disp('Documentation printed for');
             c{ii}
         else
-            disp("There was a problem")
+            disp('There was a problem')
         endif
     endfor
     fclose (fid);    

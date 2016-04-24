@@ -41,7 +41,7 @@ classdef Sensitivity < Instrument
         b = b@Instrument(name,id,description,'sensitivity',currency,base_value,asset_class,valuation_date);
         % setting property sub_type
         if ( strcmp(sub_type,'') )
-            error("Error: No sub_type specified");
+            error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
         endif     

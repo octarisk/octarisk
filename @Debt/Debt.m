@@ -42,7 +42,7 @@ classdef Debt < Instrument
         b = b@Instrument(name,id,description,'debt',currency,base_value,asset_class,valuation_date);
         % setting property sub_type
         if ( strcmp(sub_type,'') )
-            error("Error: No sub_type specified");
+            error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
         endif     
@@ -56,7 +56,7 @@ classdef Debt < Instrument
         endif
         % setting property discount_curve
         if ( length(riskfactors) < 1  )
-            error("Error: No discount_curve specified");
+            error('Error: No discount_curve specified');
         else
             b.discount_curve = riskfactors{1};
         endif

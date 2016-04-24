@@ -47,16 +47,16 @@ options(2) = 1e-5;
 
 
 if (info == 101 )
-	%disp ("       +++ SUCCESS: Optimization converged in +++");
+	%disp ('       +++ SUCCESS: Optimization converged in +++');
 	%steps = iter
 elseif (info == 102 )
-	disp ("       --- GPD Calibration WARNING: The BFGS update failed. ---");
+	disp ('       --- GPD Calibration WARNING: The BFGS update failed. ---');
 elseif (info == 103 )
-	disp ("       --- GPD Calibration WARNING: The maximum number of iterations was reached. ---");
+	disp ('       --- GPD Calibration WARNING: The maximum number of iterations was reached. ---');
 elseif (info == 104 )
-    %disp ("       --- WARNING: The stepsize has become too small. ---");
+    %disp ('       --- WARNING: The stepsize has become too small. ---');
 else
-	disp ("       --- GPD Calibration WARNING: Optimization did not converge! ---");
+	disp ('       --- GPD Calibration WARNING: Optimization did not converge! ---');
 endif
 % 
 % return scale and shape parameter

@@ -32,7 +32,7 @@ function y = getValue (surface, xx,yy,zz)
           if ( strcmp(toupper(s.axis_x_name),'TERM') )
             y = interpolate_curve(s.axix_x,s.values_base,xx,s.method_interpolation);
           else
-            error("ERROR: Assuming curve for IR with term, got: %s",s.axis_x_name);
+            error('ERROR: Assuming curve for IR with term, got: %s',s.axis_x_name);
           end
         elseif (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0 )         %second case: object is surface 
           if ( strcmp(toupper(s.axis_x_name),'TENOR') && strcmp(toupper(s.axis_y_name),'TERM'))
@@ -49,7 +49,7 @@ function y = getValue (surface, xx,yy,zz)
             % interpolate on surface
             y = interp2(xx_structure,yy_structure,vola_matrix,xx,yy,s.method_interpolation);
           else
-            error("ERROR: Assuming surface for IR vol with tenor, term , got: %s, %s",s.axis_x_name,s.axis_y_name);
+            error('ERROR: Assuming surface for IR vol with tenor, term , got: %s, %s',s.axis_x_name,s.axis_y_name);
           end
         elseif (len == 3 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) > 0 )  %second case: object is cube 
           if ( strcmp(toupper(s.axis_x_name),'TENOR') && strcmp(toupper(s.axis_y_name),'TERM')  && strcmp(toupper(s.axis_z_name),'MONEYNESS') )
@@ -83,7 +83,7 @@ function y = getValue (surface, xx,yy,zz)
             % interpolate on moneyness dimension, hold tenor and term fix (map to nearest)
             y = interp1(zz_structure,moneyness_vec,zz,s.method_interpolation);
           else
-            error("ERROR: Assuming cube for IR vol with tenor, term and moneyness, got: %s, %s, %s",s.axis_x_name,s.axis_y_name,s.axis_z_name);
+            error('ERROR: Assuming cube for IR vol with tenor, term and moneyness, got: %s, %s, %s',s.axis_x_name,s.axis_y_name,s.axis_z_name);
           end
         end
     % type index
@@ -105,10 +105,10 @@ function y = getValue (surface, xx,yy,zz)
             % interpolate on surface term / moneyness
             y = interp2(xx_structure,yy_structure,vola_matrix,xx,yy,s.method_interpolation);
            else
-            error("ERROR: Assuming surface for INDEX vol with term, moneyness, got: %s, %s",s.axis_x_name,s.axis_y_name);
+            error('ERROR: Assuming surface for INDEX vol with term, moneyness, got: %s, %s',s.axis_x_name,s.axis_y_name);
           end  
         else
-            error("ERROR: Surface Type Index has no surface defined");
+            error('ERROR: Surface Type Index has no surface defined');
         end
     end
   else

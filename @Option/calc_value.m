@@ -1,7 +1,7 @@
 function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,valuation_date)
     obj = option;
     if ( nargin < 5)
-        error("Error: No  discount curve, vola surface or underlying set. Aborting.");
+        error('Error: No  discount curve, vola surface or underlying set. Aborting.');
     endif
     if ( nargin < 6)
         valuation_date = today;
@@ -15,7 +15,7 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         tmp_rates_base   = discount_curve.getValue('base');
     tmp_type = obj.sub_type;
     % Get Call or Putflag
-    %fprintf("==============================\n");
+    %fprintf('==============================\n');
     if ( strcmp(tmp_type,'OPT_EUR_C') == 1 || strcmp(tmp_type,'OPT_AM_C') == 1)
         call_flag = 1;
         moneyness_exponent = 1;
@@ -78,10 +78,10 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
       
     % store theo_value vector in appropriate class property   
     if ( regexp(value_type,'stress'))
-        obj = obj.set("value_stress",theo_value);  
+        obj = obj.set('value_stress',theo_value);  
     else  
-        obj = obj.set("timestep_mc",value_type);
-        obj = obj.set("value_mc",theo_value);
+        obj = obj.set('timestep_mc',value_type);
+        obj = obj.set('value_mc',theo_value);
     endif
    
 endfunction

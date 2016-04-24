@@ -6,7 +6,7 @@ function s = calc_spread_over_yield (bond,discount_curve,spread_curve,valuation_
         valuation_date = datestr(valuation_date);
 
    elseif ( nargin < 3)
-        error("Error: No  discount curve or spread curve set. Aborting.");
+        error('Error: No  discount curve or spread curve set. Aborting.');
    endif
    % Get reference curve nodes and rate
         tmp_nodes    = discount_curve.get('nodes');
@@ -15,7 +15,7 @@ function s = calc_spread_over_yield (bond,discount_curve,spread_curve,valuation_
         spread_rates = spread_curve.getValue('base');
   % Check, whether cash flow have already been roll out    
   if ( length(s.cf_values) < 1)
-        disp("Warning: No cash flows defined for bond. setting SoY = 0.0")
+        disp('Warning: No cash flows defined for bond. setting SoY = 0.0')
         s.ytm = 0.0;
   else
     s.soy = calibrate_soy_sqp(valuation_date,s.cf_dates, s.cf_values(1,:),s.value_base, ... 

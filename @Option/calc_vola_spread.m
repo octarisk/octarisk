@@ -1,7 +1,7 @@
 function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,valuation_date)
     obj = option;
     if ( nargin < 4)
-        error("Error: No discount curve, vola surface or underlying set. Aborting.");
+        error('Error: No discount curve, vola surface or underlying set. Aborting.');
     endif
     if ( nargin < 5)
         valuation_date = today;
@@ -14,7 +14,7 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
         tmp_rates_base   = discount_curve.getValue('base');
     tmp_type = obj.sub_type;
     % Get Call or Putflag
-    %fprintf("==============================\n");
+    %fprintf('==============================\n');
     if ( strcmp(tmp_type,'OPT_EUR_C') == 1 || strcmp(tmp_type,'OPT_AM_C') == 1)
         call_flag = 1;
         moneyness_exponent = 1;
@@ -54,11 +54,11 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
         endif
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 )
-            disp(" Calibration failed with Retcode 99. Setting market value to THEO/Value");
+            disp(' Calibration failed with Retcode 99. Setting market value to THEO/Value');
             theo_value_base = tmp_optionvalue_base;
             tmp_impl_vola_spread    = 0; 
         else
-            disp("Calibration seems to be successful.. checking");
+            disp('Calibration seems to be successful.. checking');
             %tmp_value
             if ( strfind(tmp_type,'OPT_EUR') > 0  )
                 tmp_new_val             = option_bs(call_flag,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base .+ tmp_impl_vola_spread) .* tmp_multiplier;
@@ -67,10 +67,10 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
             endif
             
             if ( abs(tmp_value - tmp_new_val) < 0.05 )
-                disp("Calibration successful.");
+                disp('Calibration successful.');
                 theo_value_base = tmp_value;
             else
-                disp(" Calibration failed, although it converged.. Setting market value to THEO/Value");
+                disp(' Calibration failed, although it converged.. Setting market value to THEO/Value');
                 theo_value_base = tmp_optionvalue_base;
                 tmp_impl_vola_spread = 0; 
             endif

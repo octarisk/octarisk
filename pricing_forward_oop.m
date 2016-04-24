@@ -14,7 +14,7 @@
 %# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward_oop (@var{forward}, @var{discount_nodes}, @var{discount_rates})
 %#
 %# Compute the theoretical value of equity and bond forwards.@*
-%# In the "oop" version no input data checks are performed. @* 
+%# In the 'oop' version no input data checks are performed. @* 
 %# Pre-requirements:@*
 %# @itemize @bullet
 %# @item installed octave financial package
@@ -69,12 +69,12 @@ if nargin < 4 || nargin > 4
 
 days_to_maturity    = maturity_date - valuation_date; 
 if ( days_to_maturity < 1)
-    disp("Maturity Date is equal or before valuation date. Return value 0.")
+    disp('Maturity Date is equal or before valuation date. Return value 0.')
     theo_value = zeros(length(underlying_price),1);
     return
 endif
 if ( rows(discount_rates) > 1 && rows(underlying_price) > 1 && (rows(underlying_price) != rows(discount_rates)))
-    error("Rows of underlying price not equal to 1 or to number of rows of discount_rats. Aborting.")  
+    error('Rows of underlying price not equal to 1 or to number of rows of discount_rats. Aborting.')  
 endif
 
 
@@ -92,7 +92,7 @@ elseif ( strcmp(type,'Bond') == 1 || strcmp(type,'BONDFWD') == 1)
     df_discount     = discount_factor (forward.valuation_date, forward.maturity_date, discount_rate, comp_type, basis, comp_freq);
     payoff          = underlying_price .- (strike .* df_discount);
 else
-    error("Not a valid type.")
+    error('Not a valid type.')
 endif
 
 theo_value = payoff;

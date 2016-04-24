@@ -30,13 +30,13 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
   endif
    
   if ! isnumeric (scenarios)
-    error ("scenarios must be numeric ")
+    error ('scenarios must be numeric ')
   elseif ! isnumeric (observation)
-    error ("observation must be numeric ")
+    error ('observation must be numeric ')
   elseif ! isnumeric (alpha)
-    error ("alpha must be numeric ")  
+    error ('alpha must be numeric ')  
   elseif ( alpha > 1 || alpha < 0 )
-    error ("alpha must be a level of significance between 0 and 1 ")
+    error ('alpha must be a level of significance between 0 and 1 ')
   endif
 
     % Calculating the Weights of the Beta Distribution

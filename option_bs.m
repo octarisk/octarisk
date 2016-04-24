@@ -27,7 +27,7 @@
 %# @*
 %# Variables:
 %# @itemize @bullet
-%# @item @var{CallPutFlag}: Call: "1", Put: "0"
+%# @item @var{CallPutFlag}: Call: '1', Put: '0'
 %# @item @var{S}: stock price at time 0
 %# @item @var{X}: strike price 
 %# @item @var{T}: time to maturity in days 
@@ -48,27 +48,27 @@ function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X,T,
   endif 
    
   if ! isnumeric (CallPutFlag)
-    error ("CallPutFlag must be either 1 or 0 ")
+    error ('CallPutFlag must be either 1 or 0 ')
   elseif ! isnumeric (S)
-    error ("Underlying price S must be numeric ")
+    error ('Underlying price S must be numeric ')
   elseif ! isnumeric (X)
-    error ("Strike X must be numeric ")
+    error ('Strike X must be numeric ')
   elseif X < 0
-    error ("Strike X must be positive ")
+    error ('Strike X must be positive ')
   elseif S < 0
-    error ("Price S must be positive ")    
+    error ('Price S must be positive ')    
   elseif ! isnumeric (T)
-    error ("Time T in years must be numeric ")
+    error ('Time T in years must be numeric ')
   elseif ( T < 0)
-    error ("Time T must be positive ")    
+    error ('Time T must be positive ')    
   elseif ! isnumeric (r)
-    error ("Riskfree rate r must be numeric ")    
+    error ('Riskfree rate r must be numeric ')    
   elseif ! isnumeric (sigma)
-    error ("Implicit volatility sigma must be numeric ")
+    error ('Implicit volatility sigma must be numeric ')
   elseif ! isnumeric (divrate)
-    error ("Dividend rate must be numeric ")     
+    error ('Dividend rate must be numeric ')     
   elseif ( sigma < 0)
-    error ("Volatility sigma must be positive ")        
+    error ('Volatility sigma must be positive ')        
   endif
   
 % Calculation of BS value

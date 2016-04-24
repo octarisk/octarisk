@@ -1,5 +1,5 @@
 %# Copyright (C) 2016 Stefan Schlögl <schinzilord@octarisk.com>
-%# Copyright (C) 2013 Martin Becker and Stefan Kloessner: modified R package "PearsonDS"
+%# Copyright (C) 2013 Martin Becker and Stefan Kloessner: modified R package 'PearsonDS'
 %# http://CRAN.R-project.org/package=PearsonDS
 %#
 %# This program is free software; you can redistribute it and/or modify it under
@@ -21,7 +21,7 @@
 %# Compute a marginal distribution for given set of uniform random variables with given mean, standard deviation
 %# skewness and kurtosis. The mapping is done via the Pearson distribution family.
 %# @*
-%# The implementation is based on the R package "PearsonDS: Pearson Distribution System" and the function "pearsonFitM" by @*
+%# The implementation is based on the R package 'PearsonDS: Pearson Distribution System' and the function 'pearsonFitM' by @*
 %# Martin Becker and Stefan Kloessner (2013) @* 
 %# R package version 0.97. @*
 %# URL http://CRAN.R-project.org/package=PearsonDS @*
@@ -85,7 +85,7 @@ elseif ( type == 4)
     a = retvec(4);
     lambda = retvec(5);
     r_uncorr = rpears4(m,nu,a,lambda,length(Z));
-    % uncorrelated distribution -> draw correlated univariate random numbers from "empirical" pearson type IV distribution:
+    % uncorrelated distribution -> draw correlated univariate random numbers from 'empirical' pearson type IV distribution:
     r =  empirical_inv (Z, r_uncorr);
 elseif ( type == 5)
     % inverse gamma distribution
@@ -125,12 +125,12 @@ end % end of Main function
 %%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%##
 
 function r = rpears4(m,nu,a,lam,len_vec)
-%   Implemention taken from "Non-Uniform Random Variate Generation" by Luc Devroye (1986)
+%   Implemention taken from 'Non-Uniform Random Variate Generation' by Luc Devroye (1986)
 %   http://www.eirene.de/Devroye.pdf
 
 %  === returns random Pearson IV deviate ===
 %   
-%   "A Guide to the Pearson Type IV Distribution"
+%   'A Guide to the Pearson Type IV Distribution'
 %   Joel Heinrich—University of Pennsylvania
 %   December 21, 2004
 %   http://www-cdf.fnal.gov/physics/statistics/notes/cdf6820_pearson4.pdf
@@ -176,7 +176,7 @@ end % end of rpears4 function
 % Implementation of the complex hypergeometric distribution from 
 % the C-Code example from http://www-cdf.fnal.gov/physics/statistics/notes/cdf6820_pearson4.pdf
 % CDF/MEMO/STATISTICS/PUBLIC/6820:
-% "A Guide to the Pearson Type IV Distribution"
+% 'A Guide to the Pearson Type IV Distribution'
 % by Joel Heinrich—University of Pennsylvania
 % December 21, 2004
 function retval = gammar2_c(x,y)
@@ -208,7 +208,7 @@ end
 
 function retvec = classify_pearson(mean,stddev,skewness,kurtosis)
 % function for classification of pearson distribution system and calculation of scale and shape parameters
-% Modified and apapted from Function "pearsonFitM":
+% Modified and apapted from Function 'pearsonFitM':
 %   Martin Becker and Stefan Klößner (2013). 
 %   PearsonDS: Pearson Distribution System. 
 %   R package version 0.97. URL http://CRAN.R-project.org/package=PearsonDS
@@ -221,7 +221,7 @@ kkk = kurtosis;
 
 % special case singularity:  
 if (abs(10*kkk - 12*sss^2 - 18) < sqrt(realmin))
-    disp("Pearson distribution system: special case singularity for values of skewness and kurtosis")
+    disp('Pearson distribution system: special case singularity for values of skewness and kurtosis')
     type = 1;       % special case Type I
     a1 = 1/2*((-sss*(kkk+3)-sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
     a2 = 1/2*((-sss*(kkk+3)+sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
@@ -253,7 +253,7 @@ end
       a1 = -1/2*(-sqrt(-16*kkk*(2*kkk-6))/(2*kkk-6));
       m = (c1 + a1) ./ (c2 .* 2*abs(a1));
       if ( m < -1)
-        disp("WARNING: no distribution type defined, setting to default case")
+        disp('WARNING: no distribution type defined, setting to default case')
         m = -0.999;
       end
       % return:
@@ -279,7 +279,7 @@ end
       m1 = -(sss*(kkk+3)+a1*(10*kkk-12*sss^2-18)/1)/(sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)));
       m2 = -(-sss*(kkk+3)-a2*(10*kkk-12*sss^2-18)/1)/(sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)));
        if ~((m1>-1)&&(m2>-1))
-         disp("WARNING: no distribution type defined, setting to default case")
+         disp('WARNING: no distribution type defined, setting to default case')
          m1 = -0.999;
          m2 = m1;
        endif

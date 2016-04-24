@@ -216,7 +216,7 @@ for ii = 1 : 1 : length(tmp_list_files)
         elseif ( strcmp(toupper(tmp_position_type),'POSITION'))
             tmp_position_struct = cell2struct(tmp_cell_struct,tmp_colname);
         else
-            fprintf("Unknown type. Neither position nor portfolio");
+            fprintf('Unknown type. Neither position nor portfolio');
         end
         
         

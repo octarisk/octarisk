@@ -23,12 +23,12 @@ function estimate_parameter(filename,stepsize_days)
 
 if nargin == 0
     if ( ispc == 1)
-        path = "C:/Dokumente/octarisk/working_folder/";   % general save path for *.mat files
+        path = 'C:/Dokumente/octarisk/working_folder/';   % general save path for *.mat files
     elseif ( isunix == 1)
-        path = "/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder/";
+        path = '/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder/';
     endif
     filename = strcat(path,'timeseries_24.dat');
-    printf("Loading from path: %s \n",filename);
+    printf('Loading from path: %s \n',filename);
     stepsize_days = 1       % number of timesteps between data points 
 endif
 if nargin == 1
@@ -40,8 +40,8 @@ M = load(filename);
 
 % 2. outer for loop through all riskfactors
 for ii = 1:1:columns(M)
-disp ("========================================================");
-disp ("==================   Risk factor:   ===================");
+disp ('========================================================');
+disp ('==================   Risk factor:   ===================');
 ii
 timeseries = M(:,ii);
 len = rows(timeseries);
@@ -58,32 +58,32 @@ diff_simple_ts = (timeseries(2:end) ./ timeseries(1:end-1)) .- 1;
 diff_simple_ts = cat(1,0,diff_simple_ts);
 
 % b. estimate statistic parameters
-disp ( " Statistical parameters: " );
+disp ( ' Statistical parameters: ' );
 Volatility_normal = std(diff_normal_ts);
 Skewness_normal = skewness(diff_normal_ts)
 Kurtosis_normal = kurtosis(diff_normal_ts)
 Volatility_normal_p_a = Volatility_normal * sqrt(256 / stepsize_days);
-fprintf("Volatility p.a. normal \t %9.4f\n",Volatility_normal_p_a);
+fprintf('Volatility p.a. normal \t %9.4f\n',Volatility_normal_p_a);
 Volatility_geo = std(diff_geo_ts);
 Skewness_geo = skewness(diff_geo_ts)
 Kurtosis_geo = kurtosis(diff_normal_ts)
 Volatility_geo_p_a = Volatility_geo * sqrt(256 / stepsize_days);
-fprintf("Vola p.a. lognormal \t %9.4f\n",Volatility_geo_p_a);
+fprintf('Vola p.a. lognormal \t %9.4f\n',Volatility_geo_p_a);
 Volatility_simple = std(diff_simple_ts);
 Skewness_simple = skewness(diff_simple_ts)
 Kurtosis_simple = kurtosis(diff_normal_ts)
 Volatility_simple_p_a = Volatility_simple * sqrt(256 / stepsize_days);
-fprintf("Volatility p.a. simple \t %9.4f\n",Volatility_simple_p_a);
+fprintf('Volatility p.a. simple \t %9.4f\n',Volatility_simple_p_a);
 Return_timestep = (timeseries(end)/timeseries(1))^(stepsize_days/len) - 1;
 Return_p_a = (1 + Return_timestep)^(256/stepsize_days) -1;
-fprintf("Return p.a. simple \t %9.4f\n",Return_p_a);
+fprintf('Return p.a. simple \t %9.4f\n',Return_p_a);
 Return_timestep = (1+log(timeseries(end)/timeseries(1)))^(stepsize_days/len) -1;
 Return_p_a = exp(Return_timestep)^(256/stepsize_days) -1;
-fprintf("Return p.a. lognormal \t %9.4f\n",Return_p_a);
+fprintf('Return p.a. lognormal \t %9.4f\n',Return_p_a);
 
 % AR(1) Model: regress OU Process for calibration of mean reversion parameter:
-%disp ("========================================================");
-%disp ( " AR(1) Least Squares Regression of the Mean Reversion Parameters " );
+%disp ('========================================================');
+%disp ( ' AR(1) Least Squares Regression of the Mean Reversion Parameters ' );
 S = timeseries;
 deltat = stepsize_days;
 [ k,dummy,resid ] = regress(S(2:end),[ ones(size(S(1:end-1))) S(1:end-1) ] ); 
@@ -91,14 +91,14 @@ a = k(1);
 b = k(2);
 slope = b;
 intercept = a ;
-%disp ( " Regression Parameters for the Process: " );
+%disp ( ' Regression Parameters for the Process: ' );
 mr_rate_regress = -log(b)/deltat;
 mr_level_regress = a/(1-b);
 sigma_regress = std(resid) * sqrt( 2*mr_rate_regress/(1-b^2) );
 % Ergodic Model for calibration of mean reversion parameter:
 % only valid with very long timeseries and / or strong mr_rate
-%disp ("========================================================");
-%disp ( " Ergodic Estimation of Mean Reversion Parameters: " );
+%disp ('========================================================');
+%disp ( ' Ergodic Estimation of Mean Reversion Parameters: ' );
 deltat = 1;
 mr_level_ergodic = mean(S);
 SSxy = 0;
@@ -114,12 +114,12 @@ SSxx = sum((S .- mr_level_ergodic).^2);
 mr_rate_ergodic = SSxy ./ (2*SSxx * deltat);
 
 % c. print estimation parameter
-disp ( " Regression parameters: " );
-fprintf("MR rate regression \t %9.4f\n",mr_rate_regress);
-fprintf("MR level regression \t %9.4f\n",mr_level_regress);
-fprintf("MR sigma regression \t %9.4f\n",sigma_regress * sqrt(256/stepsize_days));
-fprintf("MR rate ergodic \t %9.4f\n",mr_rate_ergodic);
-fprintf("MR level ergodic \t %9.4f\n",mr_level_ergodic);
+disp ( ' Regression parameters: ' );
+fprintf('MR rate regression \t %9.4f\n',mr_rate_regress);
+fprintf('MR level regression \t %9.4f\n',mr_level_regress);
+fprintf('MR sigma regression \t %9.4f\n',sigma_regress * sqrt(256/stepsize_days));
+fprintf('MR rate ergodic \t %9.4f\n',mr_rate_ergodic);
+fprintf('MR level ergodic \t %9.4f\n',mr_level_ergodic);
 
 % ending outer loop
 endfor

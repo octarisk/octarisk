@@ -1,7 +1,7 @@
             % European Swaption Valuation according to Back-76 Model 
             elseif ( strcmp(tmp_type,'SWAPT_EUR_REC') == 1 || strcmp(tmp_type,'SWAPT_EUR_PAY') == 1 )
                 % Get Call or Putflag
-                %fprintf("===============\n");
+                %fprintf('===============\n');
                 %tmp_id
                 %tmp_value
                 if ( strcmp(tmp_type,'SWAPT_EUR_PAY') == 1 )
@@ -53,18 +53,18 @@
                     tmp_swaptionvalue_base      = swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_maturity_d,tmp_rf_rate,tmp_indexvol_base,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplikator;
                     tmp_impl_vola_spread        = calibrate_swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_maturity_d,tmp_rf_rate,tmp_indexvol_base,tmp_swap_no_pmt,tmp_swap_tenor,tmp_multiplikator,tmp_value);
                     if ( tmp_impl_vola_spread < -98 )
-                        disp(" Calibration failed with Retcode 99. Setting market value to THEO/Value");
+                        disp(' Calibration failed with Retcode 99. Setting market value to THEO/Value');
                         instrument_struct( ii ).value = tmp_swaptionvalue_base; 
                         tmp_impl_vola_spread = 0; 
                     else
-                        %disp("Calibration seems to be successful.. checking");
+                        %disp('Calibration seems to be successful.. checking');
                         tmp_new_val = swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_maturity_d,tmp_rf_rate,tmp_indexvol_base .+ tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplikator;
                         if ( abs(tmp_value - tmp_new_val) < 0.05 )
-                            disp("Calibration successful.");
+                            disp('Calibration successful.');
                             %tmp_impl_vola_spread
                             %tmp_new_val
                         else
-                            disp(" Calibration failed although it converged. Setting market value to THEO/Value");
+                            disp(' Calibration failed although it converged. Setting market value to THEO/Value');
                             %tmp_id 
                             %tmp_swaptionvalue_base 
                             instrument_struct( ii ).value = tmp_swaptionvalue_base;                           

@@ -40,7 +40,7 @@ endif
 factor_time_horizon = 256 / time_horizon;
 
 % 3) Test for positive semi-definiteness
-disp("Testing correlation matrix for positive semi-definiteness");
+disp('Testing correlation matrix for positive semi-definiteness');
 corr_matrix = correct_correlation_matrix(corr_matrix);
 
 % 4) set seed for random number generator (works only for mvnrnd, not for t-distribution)

@@ -47,10 +47,10 @@ classdef Riskfactor
             tmp_parameters      = [0.0,0.16,-0.5,4.0,0.034,0.05,0.00001,365,0.024567];
         end 
         if ( strcmp(tmp_id,''))
-            error("Error: Risk factor requires a valid ID")
+            error('Error: Risk factor requires a valid ID')
         endif
         if ( length(tmp_parameters) < 4)
-            error("Error: Risk factor requires a at least mean,std,skew,kurt")
+            error('Error: Risk factor requires a at least mean,std,skew,kurt')
         endif
         a.name          = tmp_name;
         a.id            = tmp_id;
@@ -68,7 +68,7 @@ classdef Riskfactor
                     a.node  = tmp_parameters(5);          
                     a.value_base  = tmp_parameters(6);
                 else
-                    error("Error: Risk factor type RF_IR has no defined IR node or value")
+                    error('Error: Risk factor type RF_IR has no defined IR node or value')
                 endif
             else
                 if ( length(tmp_parameters) > 4 )
@@ -84,7 +84,7 @@ classdef Riskfactor
                     a.node  = tmp_parameters(8);         
                     a.value_base  = tmp_parameters(9);
                 else
-                    error("Error: Risk factor type RF_IR has no defined IR node or value")    
+                    error('Error: Risk factor type RF_IR has no defined IR node or value')    
                 endif   
             endif
         endif
@@ -154,7 +154,7 @@ classdef Riskfactor
       % The following function returns a vector with absolut scenario values depending on the start value and the scenario delta vector
       function ret_vec = get_abs_values(model, scen_deltavec, value_base, sensitivity)
         if nargin < 3
-            error("Not enough arguments. Please provide model, scenario deltas and value_base and sensitivity (optional)");
+            error('Not enough arguments. Please provide model, scenario deltas and value_base and sensitivity (optional)');
         endif
         if nargin < 4
             sensitivity = 1;
@@ -168,7 +168,7 @@ classdef Riskfactor
       
       function retval = get_doc(format,path)
         if nargin < 1
-            format = "plain text";
+            format = 'plain text';
         endif
         if nargin < 2
             printflag = 0;
@@ -176,11 +176,11 @@ classdef Riskfactor
             if (ischar(path) && length(path) > 1)
                 printflag = 1;
             else
-                error("Insufficient path: %s \n",path);
+                error('Insufficient path: %s \n',path);
             endif
         endif
         % printing documentation for Class Riskfactor (ousourced to dummy function to use documentation behaviour)
-        scripts = ["doc_riskfactor"];
+        scripts = ['doc_riskfactor'];
         c = cellstr(scripts);
         for ii = 1:length(c)
             [retval status] = __makeinfo__(get_help_text(c{ii}),format);
@@ -190,26 +190,26 @@ classdef Riskfactor
                 if (strcmp(format,'html'))
                     ending = '.html';
                     %replace html title
-                    repstring = strcat("<title>", c{ii} ,"</title>");
-                    retval = strrep( retval, "<title>Untitled</title>", repstring);
+                    repstring = strcat('<title>', c{ii} ,'</title>');
+                    retval = strrep( retval, '<title>Untitled</title>', repstring);
                 elseif (strcmp(format,'texinfo'))
                     ending = '.texi';
                 else
                     ending = '.txt';
                 endif
                 filename = strcat(path,c{ii},ending);
-                fid = fopen (filename, "w");
+                fid = fopen (filename, 'w');
                 fprintf(fid, retval);
-                fprintf(fid, "\n");
+                fprintf(fid, '\n');
                 fclose (fid); 
             else    
-                fprintf("Documentation for Class %s: \n",c{ii}(4:end));
+                fprintf('Documentation for Class %s: \n',c{ii}(4:end));
                 fprintf(retval);
-                fprintf("\n");
+                fprintf('\n');
             end
                      
         else
-            disp("There was a problem")
+            disp('There was a problem')
         endif
         retval = status;
       end

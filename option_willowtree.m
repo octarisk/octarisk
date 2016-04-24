@@ -19,8 +19,8 @@
 %# This implementation of the willow tree concept is based on following
 %# literature:
 %# @itemize @bullet
-%# @item "Willow Tree", Andy C.T. Ho, Master thesis, May 2000
-%# @item "Willow Power: Optimizing Derivative Pricing Trees", Michael Curran, ALGO RESEARCH QUARTERLY, Vol. 4, No. 4, December 2001
+%# @item 'Willow Tree', Andy C.T. Ho, Master thesis, May 2000
+%# @item 'Willow Power: Optimizing Derivative Pricing Trees', Michael Curran, ALGO RESEARCH QUARTERLY, Vol. 4, No. 4, December 2001
 %# @end itemize
 %#
 %# Efficient parallel computation for column vectors of S,X,r and sigma is possible (advantage: linear increase of calculation time in timesteps and nodes).@*
@@ -37,8 +37,8 @@
 %#
 %# Variables:
 %# @itemize @bullet
-%# @item @var{CallPutFlag}: Call: "1", Put: "0"
-%# @item @var{AmericanFlag}: American option: "1", European Option: "0"
+%# @item @var{CallPutFlag}: Call: '1', Put: '0'
+%# @item @var{AmericanFlag}: American option: '1', European Option: '0'
 %# @item @var{S}: stock price at time 0
 %# @item @var{X}: strike price 
 %# @item @var{T}: time in days to maturity
@@ -62,31 +62,31 @@ function [option_willowtree delta] = option_willowtree(CallFlag,AmericanFlag,S0,
 
 
 if ! isnumeric (CallFlag)
-    error ("CallPutFlag must be either 1 or 0 ")
+    error ('CallPutFlag must be either 1 or 0 ')
 elseif ! isnumeric (AmericanFlag)
-    error ("AmericanFlag must be either 1 or 0 ")    
+    error ('AmericanFlag must be either 1 or 0 ')    
 elseif ! isnumeric (S0)
-    error ("Underlying price S must be numeric ")
+    error ('Underlying price S must be numeric ')
 elseif ! isnumeric (K)
-    error ("Strike K must be numeric ")
+    error ('Strike K must be numeric ')
 elseif K < 0
-    error ("Strike K must be positive ")
+    error ('Strike K must be positive ')
 elseif S0 < 0
-    error ("Price S0 must be positive ")    
+    error ('Price S0 must be positive ')    
 elseif ! isnumeric (T)
-    error ("Time T in years must be numeric ")
+    error ('Time T in years must be numeric ')
 elseif ( T < 0)
-    error ("Time T must be positive ")    
+    error ('Time T must be positive ')    
 elseif ! isnumeric (rf)
-    error ("Riskfree rate rf must be numeric ")    
+    error ('Riskfree rate rf must be numeric ')    
 elseif ! isnumeric (sigma)
-    error ("Implicit volatility sigma must be numeric ") 
+    error ('Implicit volatility sigma must be numeric ') 
 elseif ( sigma < 0)
-    error ("Volatility sigma must be positive ")
+    error ('Volatility sigma must be positive ')
 elseif ! isnumeric (dk)
-    error ("stepsize in days (dk) must be numeric ") 
+    error ('stepsize in days (dk) must be numeric ') 
 elseif ( dk < 0)
-    error ("stepsize in days (dk)  must be positive ")     
+    error ('stepsize in days (dk)  must be positive ')     
 endif
  
  
@@ -96,7 +96,7 @@ if nargin < 10
     z_method  = 20; %default 20 nodes
 else
     if ! isnumeric (nodes)
-        error ("Number of nodes must be numeric ")
+        error ('Number of nodes must be numeric ')
     end
     z_method = nodes_possible(lookup(nodes_possible,nodes));
 endif 
@@ -140,7 +140,7 @@ rf_input = rf;
 % checking for consistency between S0 and K (either equal size, or S0 has fixed value while K is a vector)
 if (rows(S0) < rows(K))
     if (rows(S0) > 1 )
-        error ("Number of rows of spot (S0) and strike (K) doesn't match")
+        error ('Number of rows of spot (S0) and strike (K) does not match')
     else
         S0 = repmat(S0,rows(K),1);
     endif
@@ -228,7 +228,7 @@ dt=T/(N.*365);  % timestep between two valuation points in years
 %-------------------------------------------------------------------------
 % Iterating through the time nodes to optimize transition matrizes
 for ii = 1 : 1 : (N-1) 
-    %disp("Optimizing transition matrix per timestep:")
+    %disp('Optimizing transition matrix per timestep:')
     %ii
     h = dk;             % constant time steps only
     tk = ii .* h;
@@ -353,7 +353,7 @@ option_willowtree = V_option;
 S_t0 = S0;
 S_t1 = S0 .* exp( (tmp_drift .- ((sigma).^2 ./ 2)) .* dt .* 1 .+ sigma .* sqrt(dt .* 1) .* z);
 S_t2 = S0 .* exp( (tmp_drift .- ((sigma).^2 ./ 2)) .* dt .* 2 .+ sigma .* sqrt(dt .* 2) .* z);
-%disp("Value per t");
+%disp('Value per t');
 V_t0(1,1,:) = V_option;
 
 % Calculating delta:

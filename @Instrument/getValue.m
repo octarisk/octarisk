@@ -17,14 +17,14 @@ function s = getValue (instrument, property)
             tmp_col = tmp_vec * (1:length(tmp_vec))';
             s = obj.value_mc(:,tmp_col);    
         else
-            printf ("get: invalid property %s. Neither stress nor MC timestep found.\n", property);
-            printf ("get: Allowed mc time steps:\n")
+            printf ('get: invalid property %s. Neither stress nor MC timestep found.\n', property);
+            printf ('get: Allowed mc time steps:\n')
             obj.timestep_mc
             s = [];
         endif
       endif 
     else
-      error ("get: expecting the property to be a string");
+      error ('get: expecting the property to be a string');
     endif
   else
     print_usage ();

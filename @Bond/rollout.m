@@ -3,7 +3,7 @@ function s = rollout (bond, value_type, arg1, arg2)
 
   if ( strcmp(s.sub_type,'FRN'))
     if ( nargin < 3 )
-        error ("rollout for sub_type FRN: expecting reference curve object");
+        error ('rollout for sub_type FRN: expecting reference curve object');
     elseif ( nargin == 3)
         tmp_curve_object = arg1;
         valuation_date = datestr(today);
@@ -23,8 +23,8 @@ function s = rollout (bond, value_type, arg1, arg2)
   
   % type CASHFLOW -> duplicate all base cashflows
   elseif ( strcmp(s.sub_type,'CASHFLOW') )
-    ret_dates  = s.get("cf_dates");
-    ret_values = s.get("cf_values");
+    ret_dates  = s.get('cf_dates');
+    ret_values = s.get('cf_values');
     
   % all other bond types (like FRB etc.)
   else  

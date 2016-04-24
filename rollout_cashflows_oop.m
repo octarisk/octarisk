@@ -15,7 +15,7 @@
 %# @deftypefnx  {Function File} {[@var{ret_dates} @var{ret_values}] =} rollout_cashflows_oop (@var{bond_struct}, @var{tmp_nodes}, @var{tmp_rates}, @var{valuation_date}, @var{method_interpolation})
 %#
 %# Compute the dates and values of cash flows given definitions for fixed rate bonds, floating rate notes and zero coupon bonds.@*
-%# In the "oop" version no input data checks are performed. @* 
+%# In the 'oop' version no input data checks are performed. @* 
 %# Pre-requirements:@*
 %# @itemize @bullet
 %# @item installed octave finance package
@@ -113,15 +113,15 @@ endif
 
 % check for existing interest rate curve for FRN
 if (nargin < 2 && strcmp(type,'FRN') == 1)
-    error("Too few arguments. No existing IR curve (nodes and rates) for type FRN.");
+    error('Too few arguments. No existing IR curve (nodes and rates) for type FRN.');
 endif
 
 if (nargin < 2 && strcmp(type,'SWAP_FLOAT') == 1)
-    error("Too few arguments. No existing IR curve (nodes and rates) for type FRN.");
+    error('Too few arguments. No existing IR curve (nodes and rates) for type FRN.');
 endif
 
 if ( datenum(issue_date) > datenum(maturity_date ))
-    error("Error: Issue date later than maturity date");
+    error('Error: Issue date later than maturity date');
 endif
 
 % ----------------------------------------------------------------------------------------

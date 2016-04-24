@@ -41,21 +41,21 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
     method_cell = cellstr( ['linear';'mm';'exponential';'loglinear';'spline';'smith-wilson';'monotone-convex']);
     findvec = strcmp(method,method_cell);
     if ( findvec == 0)
-         error("Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson or monotone-convex");
+         error('Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson or monotone-convex');
     endif
   endif
   
   if (strcmp(method,'smith-wilson'))
     if (nargin == 4)
-        %disp("Warning: neither ufr nor reversion speed are specified. Setting ufr to last liquid rate and alpha = 0.1");
+        %disp('Warning: neither ufr nor reversion speed are specified. Setting ufr to last liquid rate and alpha = 0.1');
         alpha = 0.19;
         ufr = 0.042; %rates(end);
     elseif (nargin == 5)
-        disp("Warning: no reversion speed to the ultimate forward rate is provided. Setting alpha = 0.1");
+        disp('Warning: no reversion speed to the ultimate forward rate is provided. Setting alpha = 0.1');
         alpha = 0.19;
     elseif (nargin == 6)  
         if (alpha <= 0.0)
-            error("Error: A positive reversion speed rate must be provided.");    
+            error('Error: A positive reversion speed rate must be provided.');    
         endif
     endif
   endif
@@ -65,11 +65,11 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
 no_scen_nodes = columns(nodes);
 no_scen_rates = columns(rates);
 if ~( no_scen_nodes == no_scen_rates )
-    error("Error: Number of columns must be equivalent");
+    error('Error: Number of columns must be equivalent');
 endif
 
 if ~( issorted(nodes) == 1)
-    error("Error: Nodes have to be sorted")
+    error('Error: Nodes have to be sorted')
 endif
 
 dnodes = diff(nodes);
@@ -139,7 +139,7 @@ elseif (strcmp(method,'monotone-convex'))
         y = CalcInterpolant(timestep,nodes,f,fdiscrete,dInterpolantatNode);
     endif
 else
-    error("ERROR: interpolation method not implemented"); 
+    error('ERROR: interpolation method not implemented'); 
 endif
 
 
@@ -149,7 +149,7 @@ end % end of Main function
 % ----------------------------------------------------------------------
 %          Main functions for Monotone Convex Interpolation
 % ----------------------------------------------------------------------
-% This implementation refers to the Wilmott paper "Methods for Constructing a Yield Curve" by P. Hagan and G. West, 2008 
+% This implementation refers to the Wilmott paper 'Methods for Constructing a Yield Curve' by P. Hagan and G. West, 2008 
 % and the proposed VBA Algorithm.
 % the basic non-vectorized code was taken from G. West's Excel Spreadsheet (www.finmod.co.za) and adapted to Octave
 % The example calculation in West's preadsheet could not be validated (e.g. Forward calculation), but this implementation looks promising
@@ -421,10 +421,10 @@ end
 %          Main functions for Smith-Wilson Interpolation
 % ----------------------------------------------------------------------
 % This implementation is based on the explanations in the Paper: FINANSTILSYNET ,
-% "A Technical Note on the Smith-Wilson Method" by "The Financial Supervisory Authority of Norway", 2010 and
-% "QIS 5 Risk-free interest rates – Extrapolation method", published by CEIOPS (now EIOPA)
+% 'A Technical Note on the Smith-Wilson Method' by 'The Financial Supervisory Authority of Norway', 2010 and
+% 'QIS 5 Risk-free interest rates – Extrapolation method', published by CEIOPS (now EIOPA)
 % Be aware of singularities in extreme events. Take into account of increasing alpha in that cases.
-% See http://staff.math.su.se/andreas/smith_wilson_final.pdf: "Issues with the Smith-Wilson method" by Andreas Lager and Mathias Lindholm
+% See http://staff.math.su.se/andreas/smith_wilson_final.pdf: 'Issues with the Smith-Wilson method' by Andreas Lager and Mathias Lindholm
 
 % Wilson function
 function W = Wilson_function(t,u,ufrc,alpha)
@@ -446,7 +446,7 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
             rates_input = rates_input';        
     % checking for nodes_input to be in years instead of days
         if ( max(nodes_input_y) > 120)
-            %disp("WARNING: Nodes_input seems to be defined in days, converting to years...")
+            %disp('WARNING: Nodes_input seems to be defined in days, converting to years...')
             nodes_input_y = nodes_input_y ./365;
             tt = tt ./ 365;
         endif
@@ -476,6 +476,6 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
     P(P<0) = 0.001;
     R =  log(1 ./P) ./tt;
     if ~(isreal(R))
-       error("ERROR: R vector not real");    
+       error('ERROR: R vector not real');    
     endif
 end

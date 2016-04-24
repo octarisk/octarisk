@@ -71,7 +71,7 @@ classdef Bond < Instrument
         b = b@Instrument(name,id,description,'bond',currency,base_value,asset_class,valuation_date);
         % setting property sub_type
         if ( strcmp(sub_type,'') )
-            error("Error: No sub_type specified");
+            error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
         endif
@@ -84,7 +84,7 @@ classdef Bond < Instrument
             endif
             % setting property maturity_date
             if ( length(special_str) < 2 )
-                error("Error: No maturity date specified");
+                error('Error: No maturity date specified');
             else
                 b.maturity_date = datestr(special_str{2});
             endif  
@@ -94,7 +94,7 @@ classdef Bond < Instrument
             endif
             % setting property term and compounding_freq
             if ( length(special_num) < 3  )
-                error("Error: No term specified");
+                error('Error: No term specified');
             else
                 b.term = special_num(3);
                 b.compounding_freq = 12 / b.term;
@@ -109,13 +109,13 @@ classdef Bond < Instrument
             endif      
             % setting property notional
             if ( length(special_num) < 1  )
-                error("Error: No notional specified");
+                error('Error: No notional specified');
             else
                 b.notional = special_num(1);  
             endif
             % setting property coupon_rate
             if ( length(special_num) < 2  )
-                error("Error: No coupon_rate specified");
+                error('Error: No coupon_rate specified');
             else
                 b.coupon_rate = special_num(2);  
             endif 
@@ -166,7 +166,7 @@ classdef Bond < Instrument
         endif
         % setting property discount_curve
         if ( length(riskfactors) < 1  )
-            error("Error: No discount_curve specified");
+            error('Error: No discount_curve specified');
         else
             b.discount_curve = riskfactors{1};
         endif

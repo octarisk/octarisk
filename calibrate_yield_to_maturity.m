@@ -23,7 +23,7 @@ if ( nargin < 7 )
 endif
 if ( rows(tmp_cashflow_values) > 1 )
 	tmp_cashflow_values = tmp_cashflow_values(1,:);
-	disp("WARNING: More than one cash flow value scenario provided. Taking only first scenario as base values")
+	disp('WARNING: More than one cash flow value scenario provided. Taking only first scenario as base values')
 endif
 % Start parameter
 x0 = 0.01;
@@ -36,16 +36,16 @@ options(2) = 1e-5;
 [x, obj, info, iter] = sqp (x0, @ (x) phi_ytm(x,valuation_date,tmp_cashflow_dates, tmp_cashflow_values,act_value), [], [], -1, 1, 300);	%, obj, info, iter, nf, lambda @g
 
 if (info == 101 )
-	%disp ("       +++ SUCCESS: Optimization converged in +++");
+	%disp ('       +++ SUCCESS: Optimization converged in +++');
 	%steps = iter
 elseif (info == 102 )
-	disp ("       --- WARNING: The BFGS update failed. ---");
+	disp ('       --- WARNING: The BFGS update failed. ---');
 elseif (info == 103 )
-	disp ("       --- WARNING: The maximum number of iterations was reached. ---");
+	disp ('       --- WARNING: The maximum number of iterations was reached. ---');
 elseif (info == 104 )
-    %disp ("       --- WARNING: The stepsize has become too small. ---");
+    %disp ('       --- WARNING: The stepsize has become too small. ---');
 else
-	disp ("       --- WARNING: Optimization did not converge! ---");
+	disp ('       --- WARNING: Optimization did not converge! ---');
 endif
 % 
 % return spread over yield

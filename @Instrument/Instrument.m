@@ -102,7 +102,7 @@ classdef Instrument
       
       function retval = get_doc(format,path)
         if nargin < 1
-            format = "plain text";
+            format = 'plain text';
         endif
         if nargin < 2
             printflag = 0;
@@ -110,11 +110,11 @@ classdef Instrument
             if (ischar(path) && length(path) > 1)
                 printflag = 1;
             else
-                error("Insufficient path: %s \n",path);
+                error('Insufficient path: %s \n',path);
             endif
         endif
         % printing documentation for Class Instrument (ousourced to dummy function to use documentation behaviour)
-        scripts = ["doc_instrument"];
+        scripts = ['doc_instrument'];
         c = cellstr(scripts);
         for ii = 1:length(c)
             [retval status] = __makeinfo__(get_help_text(c{ii}),format);
@@ -125,43 +125,43 @@ classdef Instrument
                 if (strcmp(format,'html'))
                     ending = '.html';
                     filename = strcat(path,'functions',ending);
-					fid = fopen (filename, "a");
+					fid = fopen (filename, 'a');
 					retval = strrep( retval, '\', '\\');
                     %replace html title
-                    repstring = strcat("<title>", c{ii} ,"</title>");
-                    retval = strrep( retval, "<title>Untitled</title>", repstring);
+                    repstring = strcat('<title>', c{ii} ,'</title>');
+                    retval = strrep( retval, '<title>Untitled</title>', repstring);
                     % print formatted documentation
 					fprintf(fid, retval);
-					fprintf(fid, "\n");
+					fprintf(fid, '\n');
 					fclose (fid);
                 elseif (strcmp(format,'texinfo'))
                     ending = '.texi';
                     filename = strcat(path,'functions',ending);
-					fid = fopen (filename, "a");
+					fid = fopen (filename, 'a');
 					retval = strrep( retval, '\', '\\');
                     % Print texinfo header
-					nodestring = strcat("\@node \t", c{ii},"\n")
+					nodestring = strcat('\@node \t', c{ii},'\n')
 					fprintf(fid, nodestring);
-					sectionstring = strcat("\@section \t", c{ii},"\n")
+					sectionstring = strcat('\@section \t', c{ii},'\n')
 					fprintf(fid, sectionstring); 
-					indexstring = strcat("@cindex \t Function \t", c{ii},"\n");
+					indexstring = strcat('@cindex \t Function \t', c{ii},'\n');
 					fprintf(fid, indexstring);
 					% print formatted documentation
 					fprintf(fid, retval);
-					fprintf(fid, "\n");
+					fprintf(fid, '\n');
 					fclose (fid);
                 else
                     ending = '.txt';
                 endif
                  
             else    
-                printf("Documentation for Class %s: \n",c{ii}(4:end));
+                printf('Documentation for Class %s: \n',c{ii}(4:end));
                 printf(retval);
-                printf("\n");
+                printf('\n');
             end
                      
         else
-            disp("There was a problem")
+            disp('There was a problem')
         endif
         retval = status;
       end

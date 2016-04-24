@@ -63,7 +63,7 @@ classdef Surface
             tmp_description     = 'Dummy Description';
         end
         if ( strcmp(tmp_id,''))
-            error("Error: Surface requires a valid ID")
+            error('Error: Surface requires a valid ID')
         endif
         a.name          = tmp_name;
         a.id            = tmp_id;

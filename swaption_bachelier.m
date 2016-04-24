@@ -25,7 +25,7 @@
 %# @*
 %# Variables:
 %# @itemize @bullet
-%# @item @var{PayerReceiverFlag}: Call / Payer "1" (pay fixed) or Put / Receiver "0" (receive fixed, pay floating) swaption
+%# @item @var{PayerReceiverFlag}: Call / Payer '1' (pay fixed) or Put / Receiver '0' (receive fixed, pay floating) swaption
 %# @item @var{F}: forward rate of underlying interest rate (forward in T years for tau years)
 %# @item @var{X}: strike rate 
 %# @item @var{T}: time in days to maturity
@@ -44,33 +44,33 @@ function SwaptionBachelierValue = swaption_bachelier(PayerReceiverFlag,F,X,T,r,s
  endif
    
 if ! isnumeric (PayerReceiverFlag)
-    error ("PayerReceiverFlag must be either 1 or 0 ")
+    error ('PayerReceiverFlag must be either 1 or 0 ')
 elseif ! isnumeric (F)
-    error ("Underlying future price F must be numeric ")
+    error ('Underlying future price F must be numeric ')
 elseif ! isnumeric (X)
-    error ("Strike X must be numeric ")
+    error ('Strike X must be numeric ')
 elseif X < 0
-    error ("Strike X must be positive ")
+    error ('Strike X must be positive ')
 elseif F < 0
-    error ("Price F must be positive ")    
+    error ('Price F must be positive ')    
 elseif ! isnumeric (T)
-    error ("Time T in years must be numeric ")
+    error ('Time T in years must be numeric ')
 elseif ( T < 0)
-    error ("Time T must be positive ")    
+    error ('Time T must be positive ')    
 elseif ! isnumeric (r)
-    error ("Riskfree rate r must be numeric ")    
+    error ('Riskfree rate r must be numeric ')    
 elseif ! isnumeric (sigma)
-    error ("Implicit volatility sigma must be numeric ") 
+    error ('Implicit volatility sigma must be numeric ') 
 elseif ! isnumeric (m)
-    error ("Number of payments must be numeric ") 
+    error ('Number of payments must be numeric ') 
 elseif (m < 0)
-    error ("Number of payments must be positive ")    
+    error ('Number of payments must be positive ')    
 elseif (tau < 0)
-    error ("Tenor of underlying swap must be positive ") 
+    error ('Tenor of underlying swap must be positive ') 
 elseif ! isnumeric (tau)
-    error ("Tenor of underlying swap must be numeric ")     
+    error ('Tenor of underlying swap must be numeric ')     
 elseif ( sigma < 0)
-    error ("Volatility sigma must be positive ")        
+    error ('Volatility sigma must be positive ')        
 endif
 T = T ./ 365;
 
