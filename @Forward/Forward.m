@@ -55,7 +55,7 @@ classdef Forward < Instrument
         % === Parsing special_str === 
         % setting property maturity_date
         if ( length(special_str) >= 1 )
-            if ( !strcmp(special_str{1},'')  )
+            if ( ~strcmp(special_str{1},'')  )
                 b.maturity_date =  datestr(special_str{1});
             else
                 error('Error: No maturity date specified');

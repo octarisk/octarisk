@@ -42,7 +42,7 @@ function s = get (obj, property)
           s = obj.spread_curve;  
         otherwise
           error ('get: invalid property %s', property);
-      endswitch
+      end
     else
       error ('get: expecting the property to be a string');
     end

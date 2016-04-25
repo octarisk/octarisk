@@ -23,7 +23,7 @@ function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,
 % A) input data checks
 [rr_c cc_c] = size(corr_matrix);
 [pp_p cc_p] = size(P);
-if ( cc_c != cc_p )
+if ( cc_c ~= cc_p )
     error('Numbers of risk factors and parameters does not match!');
 end
 

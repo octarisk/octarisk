@@ -38,7 +38,7 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
   if ( nargin < 4)
     method = 'linear';
   elseif (nargin >= 4)
-    method_cell = cellstr( ['linear';'mm';'exponential';'loglinear';'spline';'smith-wilson';'monotone-convex']);
+    method_cell = {'linear','mm','exponential','loglinear','spline','smith-wilson','monotone-convex'};
     findvec = strcmp(method,method_cell);
     if ( findvec == 0)
          error('Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson or monotone-convex');
@@ -77,10 +77,10 @@ dnodes = diff(nodes);
 if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant extrapolation only for methods except smith-wilson and monotone-convex
     if ( timestep <= nodes(1) ) % constant extrapolation
         y = rates(:,1);
-        break
+        return
     elseif ( timestep >= nodes(end) ) % constant extrapolation
         y = rates(:,end);
-        break
+        return
     else
         % linear interpolation
         if (strcmp(method,'linear'))
@@ -121,10 +121,10 @@ elseif (strcmp(method,'smith-wilson'))   % smith-wilson method
 elseif (strcmp(method,'monotone-convex'))
     if ( timestep <= nodes(1) ) % constant extrapolation
        y = rates(:,1);
-       break
+       return
     elseif ( timestep >= nodes(end) ) % constant extrapolation
        y = rates(:,end);
-       break
+       return
     else
         InputsareForwards = 0;
         Negative_Forwards_Allowed = 1;

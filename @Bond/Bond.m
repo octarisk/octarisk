@@ -78,7 +78,7 @@ classdef Bond < Instrument
         if ( strcmp(sub_type,'CASHFLOW') == 0 ) % special case CASHFLOW instrument -> no informatio needed
             % setting property issue_date
             if ( length(special_str) >= 1 )
-                if ( !strcmp(special_str{1},'') )
+                if ( ~strcmp(special_str{1},'') )
                     b.issue_date =  datestr(special_str{1});
                 end
             end

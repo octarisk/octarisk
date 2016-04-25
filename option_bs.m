@@ -47,25 +47,25 @@ function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X,T,
     divrate = 0.00;
   end 
    
-  if ! isnumeric (CallPutFlag)
+  if ~isnumeric (CallPutFlag)
     error ('CallPutFlag must be either 1 or 0 ')
-  elseif ! isnumeric (S)
+  elseif ~isnumeric (S)
     error ('Underlying price S must be numeric ')
-  elseif ! isnumeric (X)
+  elseif ~isnumeric (X)
     error ('Strike X must be numeric ')
   elseif X < 0
     error ('Strike X must be positive ')
   elseif S < 0
     error ('Price S must be positive ')    
-  elseif ! isnumeric (T)
+  elseif ~isnumeric (T)
     error ('Time T in years must be numeric ')
   elseif ( T < 0)
     error ('Time T must be positive ')    
-  elseif ! isnumeric (r)
+  elseif ~isnumeric (r)
     error ('Riskfree rate r must be numeric ')    
-  elseif ! isnumeric (sigma)
+  elseif ~isnumeric (sigma)
     error ('Implicit volatility sigma must be numeric ')
-  elseif ! isnumeric (divrate)
+  elseif ~isnumeric (divrate)
     error ('Dividend rate must be numeric ')     
   elseif ( sigma < 0)
     error ('Volatility sigma must be positive ')        

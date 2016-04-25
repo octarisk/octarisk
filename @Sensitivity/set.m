@@ -1,10 +1,11 @@
 function s = set (obj, varargin)
   s = obj;
-  if (length (varargin) < 2 || rem (length (varargin), 2) != 0)
+  if (length (varargin) < 2 || rem (length (varargin), 2) ~= 0)
     error ('set: expecting property/value pairs');
   end
   while (length (varargin) > 1)
     prop = varargin{1};
+    prop = lower(prop);
     val = varargin{2};
     varargin(1:2) = [];
     % ====================== set value_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
@@ -155,5 +156,5 @@ function s = set (obj, varargin)
     else
       error ('set: invalid property of sensitivity class:  >>%s<< \n',prop);
     end
-  endwhile
+  end
 end

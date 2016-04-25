@@ -29,11 +29,11 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
     print_usage ();
   end
    
-  if ! isnumeric (scenarios)
+  if ~isnumeric (scenarios)
     error ('scenarios must be numeric ')
-  elseif ! isnumeric (observation)
+  elseif ~isnumeric (observation)
     error ('observation must be numeric ')
-  elseif ! isnumeric (alpha)
+  elseif ~isnumeric (alpha)
     error ('alpha must be numeric ')  
   elseif ( alpha > 1 || alpha < 0 )
     error ('alpha must be a level of significance between 0 and 1 ')

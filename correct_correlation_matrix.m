@@ -25,7 +25,7 @@ pos_sem_def_bool = testpsd(M);
 if (pos_sem_def_bool == true)
     disp ('Input matrix is positive semidefinite')
     A_scaled = M;
-    break;
+    return;
 else
     disp ('Input matrix is not positive semidefinite. Starting correction.')
 end
@@ -42,7 +42,7 @@ while ( pos_sem_def_bool == 0 )
     A_scaled = rescale ( A );
     pos_sem_def_bool = testpsd(A_scaled);
     limit = step * 0.00000001;  
-    step++;
+    step = step + 1;
     %toc;
     if ( step > 50 )
         break_bool = 1;

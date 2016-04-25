@@ -95,15 +95,19 @@ for ii = 1 : 1 : length(tmp_list_files)
           end
           %# remove the EOL character(s)
           lines(1 == dummy) = {''};
-          %# use a positive lookahead -- eol is not part of the match
-          lines(dummy > 1) = cellfun (@(x) regexp (x, ['.*?(?=' eol ')'], ...
-                                                   'match'), lines(dummy > 1));
-          %# a field either starts at a word boundary, either by + - . for
-          %# a numeric data, either by ' for a string. 
-          %# content = cellfun(@(x) regexp(x, '(\b|[-+\.''])[^,]*(''|\b)', 'match'),\
-          %# lines, 'UniformOutput', false); %# extract fields
-          content = cellfun (@(x) strsplit (x, separator, 'collapsedelimiters', false), lines, ...
-                               'UniformOutput', false); %# extract fields               
+          lines_out = {};
+           %# remove everything beyond the eol character (the character number dummy value found)
+          for kk = 1 : 1 : length(lines)
+                tmp_lines = lines{kk};
+                dummy_eol = dummy(kk);
+                if ( length(tmp_lines)>1)
+                    lines_out{kk} = tmp_lines(1:dummy_eol-1);
+                end
+          end
+
+          %# extract fields
+          content = cellfun (@(x) strsplit (x, separator, 'collapsedelimiters', false), lines_out, ...
+                               'UniformOutput', false); %# extract fields           
         % ==========================================================
         % B.2) extract header from first row:
         tmp_header = content{1};
@@ -112,8 +116,8 @@ for ii = 1 : 1 : length(tmp_list_files)
         %fprintf('>>>%s<<<\n',tmp_instrument_type);
         for kk = 2 : 1 : length(tmp_header)
             tmp_item = tmp_header{kk};
-            tmp_header_type{kk-1} = substr(tmp_item,-4);  % extract last 4 characters
-            tmp_colname{kk-1} = substr(tmp_item, 1, length(tmp_item)-4);  % remove last 4 characters from colname
+            tmp_header_type{kk-1} = tmp_item(end-3:end); % extract last 4 characters
+            tmp_colname{kk-1} = tmp_item(1:end-4); %substr(tmp_item, 1, length(tmp_item)-4);  % remove last 4 characters from colname
         end   
         % B.3) loop through all instruments   
         for jj = 2 : 1 : length(content)
@@ -279,7 +283,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                 error_flag = 0;
             else
                 error_flag = 0;
-                number_instruments += 1;
+                number_instruments = number_instruments + 1;
                 instrument_struct( number_instruments ).id = i.id;
                 instrument_struct( number_instruments ).name = i.id;
                 instrument_struct( number_instruments ).object = i;

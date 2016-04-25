@@ -1,10 +1,11 @@
 function s = set (bond, varargin)
   s = bond;
-  if (length (varargin) < 2 || rem (length (varargin), 2) != 0)
+  if (length (varargin) < 2 || rem (length (varargin), 2) ~= 0)
     error ('set: expecting property/value pairs');
   end
   while (length (varargin) > 1)
     prop = varargin{1};
+    prop = lower(prop);
     val = varargin{2};
     varargin(1:2) = [];
     if (ischar (prop) && strcmp (prop, 'soy'))
@@ -418,5 +419,5 @@ function s = set (bond, varargin)
     else
       error ('set: invalid property of bond class: %s',prop);
     end
-  endwhile
+  end
 end

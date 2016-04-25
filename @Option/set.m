@@ -1,10 +1,11 @@
 function s = set (option, varargin)
   s = option;
-  if (length (varargin) < 2 || rem (length (varargin), 2) != 0)
+  if (length (varargin) < 2 || rem (length (varargin), 2) ~= 0)
     error ('set: expecting property/value pairs');
   end
   while (length (varargin) > 1)
     prop = varargin{1};
+    prop = lower(prop);
     val = varargin{2};
     varargin(1:2) = [];
     if (ischar (prop) && strcmp (prop, 'vola_spread'))
@@ -189,5 +190,5 @@ function s = set (option, varargin)
     else
       error ('set: invalid property of option class');
     end
-  endwhile
+  end
 end

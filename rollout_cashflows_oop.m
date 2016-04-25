@@ -143,7 +143,7 @@ matvec = datevec(maturity_date);
 %            9 = act/360 ISMA
 %           10 = act/365 ISMA
 %           11 = 30/360E (ISMA)
-dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365';'30/360 PSA';'30/360 ISDA';'30/360 European';'act/365 Japanese';'act/act ISMA';'act/360 ISMA';'act/365 ISMA';'30/360E']);
+dcc_cell = {'act/act','30/360 SIA','act/360','act/365','30/360 PSA','30/360 ISDA','30/360 European','act/365 Japanese','act/act ISMA','act/360 ISMA','act/365 ISMA','30/360E'};
 findvec = strcmp(day_count_convention,dcc_cell);
 tt = 1:1:length(dcc_cell);
 tt = (tt - 1)';
@@ -203,7 +203,7 @@ while datenum(cf_date) >= datenum(issue_date)
     if datenum(cf_date) >= datenum(issue_date) 
         cf_dates = [cf_dates ; cf_date];
     end
-endwhile % end coupon generation backward
+end % end coupon generation backward
 
 
 % cashflow rollout: method forward
@@ -260,7 +260,7 @@ while datenum(cf_date) <= datenum(maturity_date)
     if datenum(cf_date) <= datenum(maturity_date) 
         cf_dates = [cf_dates ; cf_date];
     end
-endwhile        % end coupon generation forward
+end        % end coupon generation forward
 %-------------------------------------------------------------------------------------------------------
 % cashflow rollout: method zero
 elseif ( strcmp(coupon_generation_method,'zero') == 1 )
@@ -388,7 +388,8 @@ end
 
 cf_dates;
 cf_business_dates;
-ret_dates = datenum(cf_business_dates)(2:rows(cf_business_dates));
+ret_dates_tmp = datenum(cf_business_dates);
+ret_dates = ret_dates_tmp(2:rows(cf_business_dates));
 if enable_business_day_rule == 1
     pay_dates = cf_business_dates;
 else

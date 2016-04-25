@@ -1,4 +1,4 @@
-#tenor  term    moneyness   implied_vola
+%tenor  term    moneyness   implied_vola
 365.00000 365.00000 1.00000 0.50000
 365.00000 730.00000 1.00000 0.40000
 365.00000 1095.00000 1.00000 0.30000

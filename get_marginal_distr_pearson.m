@@ -191,14 +191,14 @@ while(x<xmin)
     t = y/x;
     x = x + 1;
     r = r *( 1 + t*t);
-endwhile
+end
 
 while (p > s*eps)   
     f = f + 1;
     p = p * (y2 + f*f) / (x  * f);
     x = x + 1;
     s = s + p;
-endwhile
+end
 % scale retval
 retval = 1.0/(r*s);
 end

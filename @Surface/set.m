@@ -1,11 +1,12 @@
 % setting Surface base
 function s = set (obj, varargin)
   s = obj;
-  if (length (varargin) < 2 || rem (length (varargin), 2) != 0)
+  if (length (varargin) < 2 || rem (length (varargin), 2) ~= 0)
     error ('set: expecting property/value pairs');
   end
   while (length (varargin) > 1)
     prop = varargin{1};
+    prop = lower(prop);
     val = varargin{2};
     varargin(1:2) = [];
     % ====================== set values_base: if issurface -> append to existing surface, if iscube -> replace existing value
@@ -111,5 +112,5 @@ function s = set (obj, varargin)
     else
       error ('set: invalid property of surface class');
     end
-  endwhile
+  end
 end

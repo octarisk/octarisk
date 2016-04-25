@@ -47,7 +47,7 @@ function s = get (bond, property)
           s = obj.cf_values;  
         otherwise
           error ('get: invalid property %s', property);
-      endswitch
+      end
     else
       error ('get: expecting the property to be a string');
     end

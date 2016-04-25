@@ -61,29 +61,29 @@ function [option_willowtree delta] = option_willowtree(CallFlag,AmericanFlag,S0,
   end
 
 
-if ! isnumeric (CallFlag)
+if ~isnumeric (CallFlag)
     error ('CallPutFlag must be either 1 or 0 ')
-elseif ! isnumeric (AmericanFlag)
+elseif ~isnumeric (AmericanFlag)
     error ('AmericanFlag must be either 1 or 0 ')    
-elseif ! isnumeric (S0)
+elseif ~isnumeric (S0)
     error ('Underlying price S must be numeric ')
-elseif ! isnumeric (K)
+elseif ~isnumeric (K)
     error ('Strike K must be numeric ')
 elseif K < 0
     error ('Strike K must be positive ')
 elseif S0 < 0
     error ('Price S0 must be positive ')    
-elseif ! isnumeric (T)
+elseif ~isnumeric (T)
     error ('Time T in years must be numeric ')
 elseif ( T < 0)
     error ('Time T must be positive ')    
-elseif ! isnumeric (rf)
+elseif ~isnumeric (rf)
     error ('Riskfree rate rf must be numeric ')    
-elseif ! isnumeric (sigma)
+elseif ~isnumeric (sigma)
     error ('Implicit volatility sigma must be numeric ') 
 elseif ( sigma < 0)
     error ('Volatility sigma must be positive ')
-elseif ! isnumeric (dk)
+elseif ~isnumeric (dk)
     error ('stepsize in days (dk) must be numeric ') 
 elseif ( dk < 0)
     error ('stepsize in days (dk)  must be positive ')     
@@ -95,7 +95,7 @@ nodes_possible = [10,15,20,30,40,50];
 if nargin < 10
     z_method  = 20; %default 20 nodes
 else
-    if ! isnumeric (nodes)
+    if ~isnumeric (nodes)
         error ('Number of nodes must be numeric ')
     end
     z_method = nodes_possible(lookup(nodes_possible,nodes));

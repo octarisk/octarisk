@@ -41,9 +41,9 @@ if nargin < 6
 end
 
 % Checks:
-if ! isnumeric (days_to_t1)
+if ~isnumeric (days_to_t1)
     error ('days_to_t1 must be numeric ')
-elseif ! isnumeric (days_to_t2)
+elseif ~isnumeric (days_to_t2)
     error ('days_to_t2 must be numeric ')
 elseif days_to_t1 <= 0
     error ('days_to_t1 must be positive ')
@@ -52,11 +52,11 @@ elseif days_to_t2 <= 0
 end
 no_scen_nodes = columns(nodes);
 no_scen_rates = columns(rates); 
-if ( no_scen_nodes != no_scen_rates )
+if ( no_scen_nodes ~= no_scen_rates )
     disp('Number of columns of nodes and rates must be equivalent');
 end
 
-if ( issorted(nodes) != 1)
+if ( issorted(nodes) ~= 1)
     disp('Nodes have to be sorted')
 end 
 
