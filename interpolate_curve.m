@@ -183,7 +183,7 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
         V_zone1_a = V_g1geg0m05 + V_g1seg0m2 + V_g0st0;
         V_zone1_a = V_zone1_a == 3;
         % then
-        G = g0 .* (x - 2 * x .^ 2 + x ^ 3) + g1 .* (-x .^ 2 + x .^ 3);
+        G = g0 .* (x - 2 * x .^ 2 + x .^ 3) + g1 .* (-x .^ 2 + x .^ 3);
       % or the following three conditions have all to be fulfilled:
         V_g1seg0m05 = g1 <= (-0.5 .* g0);        % -0.5 .* g0 >= g1 &&
         V_g1geg0m2 = g1 >= (-2 .* g0);           % g1 >= -2 .* g0
@@ -241,7 +241,7 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
             G_4_a = A .* x - 1 ./ 3 .* (g0 - A) .* ((eta_4 - x) .^ 3 ./ eta_4 .^ 2 - eta_4);
             G_4_b = (2 ./ 3 .* A + 1 ./ 3 .* g0) .* eta_4 + A .* (x - eta_4) + (g1 - A) ./ 3 .* (x - eta_4) .^ 3 ./ (1 - eta_4) .^ 2;
           G_4 = V_G_4 .* G_4_a + ~V_G_4 .* G_4_b;
-          
+          G_4(isnan(G_4)) = 0; 
           
     G = G_1 .* V_zone1 + G_2 .* V_zone2 + G_3 .* V_zone3 + G_4 .* V_zone4;
     % replace values with 0 where g0 or g1 == 0

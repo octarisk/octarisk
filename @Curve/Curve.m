@@ -35,7 +35,7 @@ classdef Curve
       id = '';
       description = '';
       type = '';  
-      method_interpolation = 'monotone-convex'; %'linear';    
+      method_interpolation = 'linear'; %'monotone-convex';    
     end
    
     properties (SetAccess = protected )

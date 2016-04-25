@@ -11,7 +11,7 @@ function ret = isProp (instrument, property)
             ret = 1;
         catch
             ret = 0;
-        end_try_catch
+        end
     else
         error('Please provide a property string');
     end

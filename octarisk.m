@@ -879,7 +879,7 @@ base_value = 0;
 idx_figure = 0;
 confi = 1 - confidence;
 confi_scenario = max(round(confi * mc),1);
-
+persistent aggr_key_struct;
 % before looping via all portfolio make one time Harrel Davis Vector:
 % HD VaR only if number of scenarios < hd_limit
 if ( mc < hd_limit )
@@ -1071,7 +1071,7 @@ end
 % 7.1) Print Report for all Positions:
 total_var_undiversified = 0;
 
-persistent aggr_key_struct;
+
 aggr_key_struct=struct();
 
 % reset vectors for charts of riskiest instruments and positions
