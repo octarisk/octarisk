@@ -86,19 +86,19 @@
 
 function octarisk(path_working_folder)
 
-% %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%%#
+% ##############################################################################################
 % Content:
-% 0) %#%#%%#            DEFINITION OF VARIABLES    %#%#
+% 0) ###########            DEFINITION OF VARIABLES    ###########
 % 1. general variables
 % 2. VAR specific variables
 
-% I) %#%#%%#            INPUT                      %#%#
+% I) ###########            INPUT                      ###########
 %   1. Processing Instruments data
 %   2. Processing Riskfactor data
 %   3. Processing Positions data
 %   4. Processing Stresstest data
 
-% II) %#%#%%#           CALCULATION                %#%#
+% II) ###########           CALCULATION                ###########
 %   1. Model Riskfactor Scenario Generation
 %       a) Load input correlation matrix
 %       b) Get distribution parameters from riskfactors
@@ -118,18 +118,18 @@ function octarisk(path_working_folder)
 %   7. Print Report including position VaRs
 %   8. Plotting 
 
-% III) %#%#%%#         HELPER FUNCTIONS              %#%#
+% III) ###########         HELPER FUNCTIONS              ###########
 
-% %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%%#
-% ***********************************************************************************************************
-% %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%%#
+% ##############################################################################################
+% **********************************************************************************************
+% ##############################################################################################
 fprintf('\n');
 fprintf('=======================================================\n');
 fprintf('=== Starting octarisk market risk measurement tool  ===\n');
 fprintf('=======================================================\n');
 fprintf('\n');
 
-% 0) %#%#%%#            DEFINITION OF VARIABLES    %#%#
+% 0) ###########            DEFINITION OF VARIABLES    ###########
 % 1. general variables -> path dependent on operating system
 path = path_working_folder;   % general load and save path for all input and output files
 
@@ -304,294 +304,34 @@ for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random m
 end
 % --------------------------------------------------------------------------------------------------------------------
 % 2.) Monte Carlo Riskfactor Simulation for all timesteps
-
-for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
-    tmp_ts  = mc_timesteps{ kk };    % get timestep string
-    ts      = mc_timestep_days(kk);  % get timestep days
-    Y_tmp   = M_struct( kk ).matrix; % get matrix with correlated random numbers for all risk factors
-    for ii = 1 : 1 : length( riskfactor_struct )    % loop via all risk factors: calculate risk factor deltas in each MC scenario
-        rf_object = riskfactor_struct( ii ).object;
-        tmp_model = rf_object.model;
-        tmp_drift = rf_object.mean / 250;
-        tmp_sigma = rf_object.std;
-        % correlated random variables vector from corr. random matrix M:
-        Y       = Y_tmp(:,ii);
-        % Case Dependency:
-            % Geometric Brownian Motion Riskfactor Modeling
-                if ( strcmp(tmp_model,'GBM') )
-                    tmp_delta 	    = Y + ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(256)).^2) .* ts);
-            % Brownian Motion Riskfactor Modeling
-                elseif ( strcmp(tmp_model,'BM') )
-                    tmp_delta 	    = Y + (tmp_drift * ts);
-            % Black-Karasinski (log-normal mean reversion) Riskfactor Modeling
-                elseif ( strcmp(tmp_model,'BKM') )
-                    % startlevel, sigma_p_a, mr_level, mr_rate
-                    tmp_start       = rf_object.value_base;
-                    tmp_mr_level    = rf_object.mr_level;
-                    tmp_mr_rate     = rf_object.mr_rate;    
-                    tmp_delta       = Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
-            % Ornstein-Uhlenbeck process 
-                elseif ( strcmp(tmp_model,'OU') )    
-                    % startlevel, sigma_p_a, mr_level, mr_rate
-                    tmp_start       = rf_object.value_base;
-                    tmp_mr_level    = rf_object.mr_level;
-                    tmp_mr_rate     = rf_object.mr_rate;     
-                    tmp_delta       = Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
-            % Square-root diffusion process
-                elseif ( strcmp(tmp_model,'SRD') )    
-                    % startlevel, sigma_p_a, mr_level, mr_rate
-                    tmp_start       = rf_object.value_base;
-                    tmp_mr_level    = rf_object.mr_level;
-                    tmp_mr_rate     = rf_object.mr_rate;     
-                    tmp_delta       = sqrt(tmp_start) .* Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
-                end     
-        % store increment for actual riskfactor and scenario number
-        rf_object = rf_object.set('scenario_mc',tmp_delta,'timestep_mc',tmp_ts);
-        % store risk factor object back into struct:
-        riskfactor_struct( ii ).object = rf_object;    
-    end  % close loop via all risk factors  
-end      % close loop via all mc_timesteps
-
+[riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,mc_timesteps,mc_timestep_days);
 
 % 3.) Take Riskfactor Shiftvalues from Stressdefinition
-% loop via all riskfactors, take IDs from struct und apply delta
-for ii = 1 : 1 : length( stresstest_struct )
-    tmp_shiftvalue  = [stresstest_struct( ii ).shiftvalue]; % get vector of shift value of particular scenario
-    tmp_shifttypes  = [stresstest_struct( ii ).shifttype];  % get vector of shift type of particular scenario
-    tmp_risktype    = stresstest_struct( ii ).risktype;    % get risk type cell
-        for kk = 1 : 1 : length( riskfactor_struct )        % check whether risk factor is contained in risk type cell 
-            % get parameters of risk factor object          % and apply specific shock
-            rf_object   = riskfactor_struct( kk ).object;
-            tmp_rf_type = rf_object.type;
-            tmp_rf_id   = rf_object.id;
-            c = regexp(tmp_rf_id, tmp_risktype);    % regexp of stress test risk type on risk factor id -> return 1 if regexp matches
-            k = cellfun(@isempty,c) == 0;           % convert NaN to 0 values
-            tmp_shift = tmp_shiftvalue * k';        % get risk factor shift value (multiply regexp match vector with shift value vector -> return shift value
-            tmp_shift_type = tmp_shifttypes * k';   % apply same on shift type -> return scalar of shift type
-
-            if ( sum(k) == 1 )
-                tmp_stress = [tmp_shift];
-            else
-                tmp_stress = [0.0];
-            end
-            rf_object = rf_object.set('scenario_stress',tmp_stress);    % add stress shift value into stress test vector of risk factor -> order preserved
-            rf_object = rf_object.set('shift_type',tmp_shift_type);
-            % store risk factor object back into struct:
-            riskfactor_struct( kk ).object = rf_object; 
-        end    
-end
+[riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
 
 scengen = toc;
+
 tic;
 if ( saving == 1 )
-% Save structs to file
-endung = '.mat';
-
-    % Saving riskfactors: loop via all objects in structs and convert
-    tmp_riskfactor_struct = riskfactor_struct;
-    for ii = 1 : 1 : length( tmp_riskfactor_struct )
-        tmp_riskfactor_struct(ii).object = struct(tmp_riskfactor_struct(ii).object);
-    end
-    savename = 'tmp_riskfactor_struct';
-	fullpath = [path_output, savename, endung];
-	save ('-text', fullpath, savename);
- 
-    % Saving instruments: loop via all objects in structs and convert
-    tmp_instrument_struct = instrument_struct;
-    for ii = 1 : 1 : length( tmp_instrument_struct )
-        tmp_instrument_struct(ii).object = struct(tmp_instrument_struct(ii).object);
-    end 
-    savename = 'tmp_instrument_struct';
-	fullpath = [path_output, savename, endung];
-	save ('-text', fullpath, savename);
-
-savename = 'portfolio_struct';
-	fullpath = [path_output, savename, endung];
-	save ('-text', fullpath, savename);
-
-savename = 'stresstest_struct';
-	fullpath = [path_output, savename, endung];
-	save ('-text', fullpath, savename);
+    [save_cell] = save_objects(path_output,riskfactor_struct,instrument_struct,portfolio_struct,stresstest_struct);
 end
-saving_time = toc;    
+saving_time = toc;
 
+    
+% --------------------------------------------------------------------------------------------------------------------
 
 % 4.) Process yield curves and vola surfaces: Generate object with riskfactor yield curves and surfaces 
-% TODO: make external function: [rf_ir_cur_cell curve_Struct] = load_yieldcurves(curve_struct, riskfactor_struct,saving_flag)
-% a) Processing Yield Curve: Getting Cell with IDs of IR nodes
-% load dynamically cellarray with all RF curves (IR and SPREAD) as defined in riskfactor_struct
-rf_ir_cur_cell = {};
-for ii = 1 : 1 : length(riskfactor_struct)
-    tmp_rf_struct_obj = riskfactor_struct( ii ).object;
-    tmp_rf_id = tmp_rf_struct_obj.id;
-    tmp_rf_type = tmp_rf_struct_obj.type;
-    if ( strcmp(tmp_rf_type,'RF_IR') || strcmp(tmp_rf_type,'RF_SPREAD') )   % store riskfactor id in cell
-        tmp_rf_parts = strsplit(tmp_rf_id, '_');
-        tmp_rf_curve = 'RF';
-        for jj = 2 : 1 : length(tmp_rf_parts) -1    % concatenate the whole string except the last '_xY'
-            tmp_rf_curve = strcat(tmp_rf_curve,'_',tmp_rf_parts{jj});
-        end
-        rf_ir_cur_cell = cat(2,rf_ir_cur_cell,tmp_rf_curve);
-    end
-    rf_ir_cur_cell = unique(rf_ir_cur_cell);
-end
-
-% generate RF_IR and RF_SPREAD objects from all nodes defined in riskfactor_struct
 tic;
+% a) Processing yield curves
 persistent curve_struct;
 curve_struct=struct();
-% Loop via all entries in currency cell
-for ii = 1 : 1 : length(rf_ir_cur_cell)
-    tmp_curve_id         = rf_ir_cur_cell{ii};
-    if ( regexp(tmp_curve_id,'IR'))
-        tmp_curve_type = 'Discount Curve';
-    elseif ( regexp(tmp_curve_id,'SPREAD'))
-        tmp_curve_type = 'Spread Curve';
-    else
-        tmp_curve_type = 'Dummy Curve';
-    end
-    curve_struct( ii ).name     = tmp_curve_id;
-    curve_struct( ii ).id       = tmp_curve_id;
-    curve_object = Curve(tmp_curve_id,tmp_curve_id,tmp_curve_type,'');
-
-    % loop via all base and stress scenarios:
-    tmp_nodes = [];
-    tmp_rates_original = [];
-	tmp_rates_stress = [];
-    for jj = 1 : 1 : length( riskfactor_struct )
-        tmp_rf_struct_obj = riskfactor_struct( jj ).object;
-        tmp_rf_id = tmp_rf_struct_obj.id;
-        if ( regexp(tmp_rf_id,tmp_curve_id) == 1 ) 
-            tmp_node            = tmp_rf_struct_obj.get('node');
-            tmp_rate_original   = tmp_rf_struct_obj.get('rate');
-            tmp_nodes 		    = cat(2,tmp_nodes,tmp_node); % final vectors with nodes in days
-            tmp_rates_original  = cat(2,tmp_rates_original,tmp_rate_original); % final vector with rates in decimals
-            tmp_delta_stress    = tmp_rf_struct_obj.getValue('stress') ;
-            tmp_shift_type      = tmp_rf_struct_obj.get('shift_type');  % distinguish between absolute shocks (in bp) and relative shocks
-            tmp_shift_type_inv  = 1 - tmp_shift_type;
-            tmp_rf_rates_stress = tmp_shift_type_inv .* (tmp_rate_original + (tmp_delta_stress ./ 10000)) + (tmp_shift_type .* tmp_rate_original .* tmp_delta_stress); %calculate abs and rel shocks and sum up (mutually exclusive)
-            tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_rf_rates_stress);
-        end
-    end 
-    curve_object = curve_object.set('nodes',tmp_nodes);
-    curve_object = curve_object.set('rates_base',tmp_rates_original);
-    curve_object = curve_object.set('rates_stress',tmp_rates_stress);
-    
-    % loop via all mc timesteps
-    for kk = 1:1:length(mc_timesteps)
-        tmp_ts = mc_timesteps{kk};
-        % get original yield curve
-        tmp_rates_shock = [];            
-        for jj = 1 : 1 : length( riskfactor_struct )
-            tmp_rf_struct_obj = riskfactor_struct( jj ).object;
-            tmp_rf_id = tmp_rf_struct_obj.id;
-            if ( regexp(tmp_rf_id,tmp_curve_id) == 1 )           
-                tmp_delta_shock     = tmp_rf_struct_obj.getValue(tmp_ts);
-                % Calculate new absolute values from Riskfactor PnL depending on riskfactor model
-                tmp_model           = tmp_rf_struct_obj.get('model');
-                tmp_rf_rates_shock  = Riskfactor.get_abs_values(tmp_model, tmp_delta_shock, tmp_rf_struct_obj.get('rate')); 
-                tmp_rates_shock 	= cat(2,tmp_rates_shock,tmp_rf_rates_shock);
-            end
-        end    
-        % Save curves into struct
-        curve_object = curve_object.set('rates_mc',tmp_rates_shock,'timestep_mc',tmp_ts);           
-    end  % close loop via scenario_sets (mc,stress)
-    
-    curve_struct( ii ).object = curve_object;
-end    % close loop via all curves
-
-% append Dummy Spread Curve (used for all instruments without defined spread curve): 
-    curve_struct( length(rf_ir_cur_cell) + 1  ).id = 'RF_SPREAD_DUMMY';    
-    curve_object = Curve('RF_SPREAD_DUMMY','RF_SPREAD_DUMMY','Spread Curve','Dummy Spread curve with zero rates');
-    curve_object = curve_object.set('nodes',[365]);
-    curve_object = curve_object.set('rates_base',[0]);
-    curve_object = curve_object.set('rates_stress',[0]);
-    for kk = 1:1:length(mc_timesteps)       % append dummy curves for all mc_timesteps
-        curve_object = curve_object.set('rates_mc',[0],'timestep_mc',mc_timesteps{ kk });
-    end    
-    curve_struct( length(rf_ir_cur_cell) + 1  ).object = curve_object;   
-curve_gen_time = toc;
-% end filling curve_struct
-% tmp_rates_mc_250d
-       % Save interest rates data:	
-       % endung = strcat('_',tmp_curve_id,'.dat');
-       % savename = 'tmp_rates_mc_250d';
-       % fullpath = [path, savename, endung];
-       % save ('-ascii', fullpath, savename);
-       
-% b) BEGIN: Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
-% TODO: move everything to new function [surface_struct] = load_volacubes(surface_struct,path_mktdata,timestamp,runcode,archive_flag)
-% i) Get list of all vol files
-tmp_list_files = dir(path_mktdata);
+[rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving);
+     
+% b) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 persistent surface_struct;
 surface_struct=struct();
-% Apply dummy surface for VOLA_INDEX
-tmp_surface_object = Surface('RF_VOLA_INDEX_DUMMY','RF_VOLA_INDEX_DUMMY','INDEX','Dummy Vola Surface');
-tmp_surface_object = tmp_surface_object.set('axis_x_name','TERM','axis_y_name','MONEYNESS','axis_x',[365],'axis_y',[1],'values_base',[0.0]);
-surface_struct(1).id = 'RF_VOLA_INDEX_DUMMY';
-surface_struct(1).object = tmp_surface_object;
-% Apply dummy surface for VOLA_IR
-tmp_surface_object = Surface('RF_VOLA_IR_DUMMY','RF_VOLA_IR_DUMMY','IR','Dummy Vola Surface');
-tmp_surface_object = tmp_surface_object.set('axis_x_name','TENOR','axis_y_name','TERM','axis_z_name','MONEYNESS','axis_x',[365],'axis_y',[365],'axis_z',[1],'values_base',[0.0]);
-surface_struct(2).id = 'RF_VOLA_IR_DUMMY';
-surface_struct(2).object = tmp_surface_object;
-
-% Store marketdata
-for ii = 1 : 1 : length(tmp_list_files)
-    tmp_filename = tmp_list_files( ii ).name;
-    if ( regexp(tmp_filename,input_filename_vola_index) == 1)       % vola for index found  
-        tmp_len_struct = length(surface_struct);
-        M = load(strcat(path_mktdata,'/',tmp_filename));
-        % Get axis values and matrix: 
-        % Format: 3 columns: xx yy value [moneyness term impl_vola]
-        xx_structure = unique(M(:,1))';
-        yy_structure = unique(M(:,2))';
-        vola_matrix = zeros(length(yy_structure),length(xx_structure));   % dimensionality of matrix has to be swapped XX <-> YY
-        % loop through all rows and store values in vola_matrix
-        for ii = 1 : 1 : rows(M)
-            index_xx = find(xx_structure==M(ii,1));
-            index_yy = find(yy_structure==M(ii,2));
-            vola_matrix(index_yy,index_xx) = M(ii,3);
-        end
-        % Generate object and store data
-        tmp_id = strrep(tmp_filename,input_filename_vola_index,''); % remove first string identifying file
-        tmp_id = strrep(tmp_id,'.dat',''); % remove file ending
-        tmp_surface_object =  Surface(tmp_id,tmp_id,'INDEX','INDEX Vola Surface');
-        tmp_surface_object = tmp_surface_object.set('axis_x_name','TERM','axis_y_name','MONEYNESS','axis_x',xx_structure,'axis_y',yy_structure,'values_base',vola_matrix);
-        surface_struct( tmp_len_struct + 1).id = tmp_id;
-        surface_struct( tmp_len_struct + 1).object = tmp_surface_object;
-        % %tmp_surface_object
-    elseif ( regexp(tmp_filename,input_filename_vola_ir) == 1)       % vola for ir found  
-        tmp_len_struct = length(surface_struct);
-        M = load(strcat(path_mktdata,'/',tmp_filename));
-        % Get axis values and matrix: 
-        % Format: 4 columns: xx yy zz value [underlying_tenor  swaption_term  moneyness  impl_cola]
-        xx_structure = unique(M(:,1))';
-        yy_structure = unique(M(:,2))';
-        zz_structure = unique(M(:,3))';
-        vola_cube = zeros(length(xx_structure),length(yy_structure),length(zz_structure));    % dimensionality of matrix has to be swapped XX <-> YY
-        % loop through all rows and store values in vola_cube
-        for ii = 1 : 1 : rows(M)
-            index_xx = find(xx_structure==M(ii,1));
-            index_yy = find(yy_structure==M(ii,2));
-            index_zz = find(zz_structure==M(ii,3));
-            vola_cube(index_xx,index_yy,index_zz) = M(ii,4);
-        end
-        % Generate object and store data
-        tmp_id = strrep(tmp_filename,input_filename_vola_ir,''); % remove first string identifying file
-        tmp_id = strrep(tmp_id,'.dat',''); % remove file ending
-        tmp_surface_object =  Surface(tmp_id,tmp_id,'IR','IR Vola Surface');
-        tmp_surface_object = tmp_surface_object.set('axis_x_name','TENOR','axis_y_name','TERM','axis_z_name','MONEYNESS','axis_x',xx_structure,'axis_y',yy_structure,'axis_z',zz_structure,'values_base',vola_cube);
-        surface_struct( tmp_len_struct + 1).id = tmp_id;
-        surface_struct( tmp_len_struct + 1).object = tmp_surface_object;
-         % tmp_surface_object
-         % zz_vec = ones(10,1) .* (1 + rand(10,1)/10)
-         % retvec = tmp_surface_object.getValue(380,700,zz_vec)'
-         % retvec(1:10)
-    end    
-end
-%  END: Processing Vola surfaces
-
+[surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir);
+curve_gen_time = toc;
       
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
