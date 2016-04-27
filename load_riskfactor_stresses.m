@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{riskfactor_struct} @var{rf_failed_cell}} = load_riskfactor_stresses(@var{riskfactor_struct}, @var{stresstest_struct})
+%# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} load_riskfactor_stresses(@var{riskfactor_struct}, @var{stresstest_struct})
 %# Generate stresses for risk factor curve objects. Store all stresses in provided struct and return the final struct and a cell containing all failed risk factor ids.
 %# @end deftypefn
 

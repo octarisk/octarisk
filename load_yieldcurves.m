@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{rf_ir_cur_cell} @var{curve_struct}} = load_volacubes(@var{curve_struct}, @var{riskfactor_struct},@var{mc_timesteps},@var{path_output},@var{saving})
+%# @deftypefn {Function File} {[@var{rf_ir_cur_cell} @var{curve_struct}] =} load_volacubes(@var{curve_struct}, @var{riskfactor_struct},@var{mc_timesteps},@var{path_output},@var{saving})
 %# Generate curve objects from risk factor objects. Store all curves in provided struct and return the final struct and a cell containing all interest rate risk factor currency / ratings.
 %# @end deftypefn
 

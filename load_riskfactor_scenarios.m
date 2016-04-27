@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{riskfactor_struct} @var{rf_failed_cell}} = load_riskfactor_scenarios(@var{riskfactor_struct}, @var{M_struct},@var{mc_timesteps},@var{mc_timestep_days})
+%# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} load_riskfactor_scenarios(@var{riskfactor_struct}, @var{M_struct},@var{mc_timesteps},@var{mc_timestep_days})
 %# Generate MC scenario shock values for risk factor curve objects. Store all MC scenario shock values in provided struct and return the final struct and a cell containing all failed risk factor ids.
 %# @end deftypefn
 

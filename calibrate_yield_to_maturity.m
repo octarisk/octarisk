@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{yield_to_maturity}} = calibrate_yield_to_maturity(@var{valuation_date},@var{tmp_cashflow_dates},@var{tmp_cashflow_values},@var{act_value})
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_yield_to_maturity(@var{valuation_date},@var{tmp_cashflow_dates},@var{tmp_cashflow_values},@var{act_value})
 %# Calibrate the yield to maturity according to given cashflows.
 %# @end deftypefn
 

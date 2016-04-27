@@ -11,8 +11,8 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn  {Function File} {} @var{object} = Riskfactor ()
-%# @deftypefnx  {Function File} {} @var{object} = Riskfactor (@var{name},@var{id},@var{type},@var{description},@var{model},@var{parameters})
+%# @deftypefn  {Function File} { @var{object} =} Riskfactor ()
+%# @deftypefnx  {Function File} { @var{object} =} Riskfactor (@var{name},@var{id},@var{type},@var{description},@var{model},@var{parameters})
 %# Construct risk factor object. Riskfactor Class Inputs:
 %# @itemize @bullet
 %# @item @var{name} (string): Name of object

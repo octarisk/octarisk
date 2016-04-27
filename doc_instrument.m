@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} @var{object} = Instrument (@var{name},@var{id},@var{description},@var{type},@var{currency},@var{base_value},@var{asset_class},@var{valuation_date})
+%# @deftypefn {Function File} { @var{object} =} Instrument (@var{name},@var{id},@var{description},@var{type},@var{currency},@var{base_value},@var{asset_class},@var{valuation_date})
 %# Instrument Superclass Inputs:
 %# @itemize @bullet
 %# @item @var{name} (string): Name of object

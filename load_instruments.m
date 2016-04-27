@@ -12,7 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{instrument_struct} @var{id_failed_cell}} = load_instruments(@var{instrument_struct},@var{valuation_date},@var{path_instruments},@var{file_instruments},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
+%# @deftypefn {Function File} {[@var{instrument_struct} @var{id_failed_cell}] =} load_instruments(@var{instrument_struct},@var{valuation_date},@var{path_instruments},@var{file_instruments},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
 %# Load data from instrument specification file and generate objects with parsed data. Store all objects in provided instrument struct and return the final struct and a cell containing the failed instrument ids.
 %# @end deftypefn
 

@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{vola_spread}} = calibrate_swaption(@var{PayerReceiverFlag},@var{F},@var{X},@var{T},@var{r},@var{sigma},@var{m},@var{tau},@var{multiplicator},@var{market_value},@var{model})
+%# @deftypefn {Function File} {[@var{vola_spread}] =} calibrate_swaption(@var{PayerReceiverFlag},@var{F},@var{X},@var{T},@var{r},@var{sigma},@var{m},@var{tau},@var{multiplicator},@var{market_value},@var{model})
 %# Calibrate the implied volatility spread for European swaptions according to Black76 or Bachelier (default) valuation model.
 %# In extreme out-of-the-money scenarios there could be no solution in changing the volatility. But we dont care in this case at all,
 %# since the influence of the volatility is neglectable in this extreme cases.

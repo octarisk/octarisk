@@ -11,19 +11,29 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} = get_documentation(@var{type},@var{path_documentation}))
+%# @deftypefn {Function File} {} get_documentation(@var{type},@var{path_documentation}))
 %# Print documentation for all specified Octave functions. 
 %# This script allows you to choose functions, for which the documentation is extracted from the function headers
 %# and printed to a file 'functions.texi', 'functionname.html' or to standard output if a specific format (texinfo,  html, txt) is set.
 %# The path to all files has to be set in the variable path_documentation.
 %# @end deftypefn
 
-function get_documentation(type,path_documentation)
+function get_documentation(type,path_octarisk,path_documentation)
 
 % Definition of Cellstring with all relevant scripts
-scripts = ['octarisk'; 'option_bs'; 'option_willowtree'; 'interpolate_curve'; 'pricing_npv'; 'harrell_davis_weight'];
-c = cellstr(scripts)
+% scripts = ['octarisk'; 'option_bs'; 'option_willowtree'; 'interpolate_curve'; 'pricing_npv'; 'harrell_davis_weight'];
+% c = cellstr(scripts)
 
+% get names of all scripts
+cc = dir(path_octarisk);
+cell_scriptnames = {cc.name};
+c = {};
+for i = 1 : 1 : length(cell_scriptnames)
+    if ( regexp(cell_scriptnames{i},'.m$') )
+        c{ length(c) + 1 } = cell_scriptnames{i}(1:end-2);
+    end
+end
+c
 
 % printing functions:
 if ( strcmp('html',type) == 1)
@@ -36,15 +46,14 @@ if ( strcmp('html',type) == 1)
             repstring = strcat('<title>', c{ii} ,'</title>');
             retval = strrep( retval, '<title>Untitled</title>', repstring);
             %print html string to file
-            filename = strcat(path_documentation,c{ii},'.html');
+            filename = strcat(path_documentation,'/',c{ii},'.html');
             fid = fopen (filename, 'w');
             fprintf(fid, retval);
             fprintf(fid, '\n');
             fclose (fid);
-            disp('Documentation printed for');
-            c{ii}
+            fprintf('Documentation printed for: >>%s<<}n',c{ii}); 
         else
-            disp('There was a problem')
+            fprintf('There was a problem for: >>%s<<}n',c{ii}); 
         end
     end
 elseif  ( strcmp('txt',type) == 1)  
@@ -64,16 +73,15 @@ elseif  ( strcmp('txt',type) == 1)
             %fprintf(fid, sectionstring);
             fprintf(fid, retval); 
             fprintf(fid, '\n');
-            disp('Documentation printed for');
-            c{ii}
+            fprintf('Documentation printed for: >>%s<<}n',c{ii}); 
         else
-            disp('There was a problem')
+            fprintf('There was a problem for: >>%s<<}n',c{ii}); 
         end
     end
     fclose (fid);
 elseif  ( strcmp('texinfo',type) == 1)  
     % Loop via all function names in cellstring, print texinfo directly to functions.texi
-    filename = strcat(path_documentation,'functions.texi');
+    filename = strcat(path_documentation,'/functions.texi');
     fid = fopen (filename, 'w');
     fprintf(fid,'\@menu\n');
     for ii = 1:length(c)
@@ -89,19 +97,18 @@ elseif  ( strcmp('texinfo',type) == 1)
             % Problem: all \ have to be escaped:
             %repstring = strcat('<title>', c{ii} ,'</title>');
             retval = strrep( retval, '\', '\\');
-            nodestring = strcat('\@node \t', c{ii},'\n')
+            nodestring = strcat('\@node \t', c{ii},'\n');
             fprintf(fid, nodestring);
             %print html string to file
-            sectionstring = strcat('\@section \t', c{ii},'\n')
+            sectionstring = strcat('\@section \t', c{ii},'\n');
             fprintf(fid, sectionstring); 
             indexstring = strcat('@cindex \t Function \t', c{ii},'\n');
             fprintf(fid, indexstring);
             fprintf(fid, retval); 
             fprintf(fid, '\n');
-            disp('Documentation printed for');
-            c{ii}
+            fprintf('Documentation printed for: >>%s<<}n',c{ii}); 
         else
-            disp('There was a problem')
+            fprintf('There was a problem for: >>%s<<}n',c{ii}); 
         end
     end
     fclose (fid);    
