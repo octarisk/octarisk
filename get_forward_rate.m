@@ -22,6 +22,7 @@
 %# @item @var{days_to_t2}: is a scalar, specifiying term2 in days after term1
 %# @item @var{comp_type}: (optional) specifies compounding rule (simple, discrete, continuous (defaults to 'cont')).
 %# @item @var{interp_method}: (optional) specifies interpolation method for retrieving interest rates (defaults to 'linear').
+%# @end itemize
 %# @seealso{interpolate_curve}
 %# @end deftypefn
 

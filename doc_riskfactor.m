@@ -47,7 +47,7 @@
 %# @end itemize
 %# 
 %# @*
-%# @deftypefnx {Function File} {} @var{property_value} = Riskfactor.getValue ((@var{base,stress,mc_timestep}), 'abs')
+%# @var{property_value} = Riskfactor.getValue ((@var{base,stress,mc_timestep}), 'abs')
 %# Riskfactor Method getValue 
 %# @*
 %# Return the value for a risk factor object. Specify the desired return values with a property parameter.

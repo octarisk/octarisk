@@ -39,7 +39,7 @@
 %# @item timestep_mc: MC timestep per column (cell string)
 %# @end itemize
 %# 
-%# @deftypefnx {Function File} {} @var{value} = Instrument.getValue ({base,stress,mc_timestep})
+%# @var{value} = Instrument.getValue (@var{base},@var{stress},@var{mc_timestep})
 %# Superclass Method getValue 
 %# @*
 %# Return the scenario (shock) value for an instrument object. Specify the desired return values with a property parameter.
@@ -52,7 +52,7 @@
 %# @item 1d: return MC timestep
 %# @end itemize
 %# @*
-%# @deftypefnx {Function File} {} @var{boolean} = Instrument.isProp (property) 
+%# @var{boolean} = Instrument.isProp (@var{property}) 
 %# Instrument Method isProp
 %# @*
 %# Query all properties from the Instrument Superclass and sub classes and returns 1 in case of a valid property.

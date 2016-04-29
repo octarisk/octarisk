@@ -25,6 +25,7 @@
 %# @item @var{timestep}: is a scalar, specifiying the interpolated timestep on vector nodes
 %# @item @var{ufr}:   OPTIONAL: (only used for smith-wilson): ultimate forward rate (default: last liquid point)
 %# @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed to ultimate forward rate (default: 0.1)
+%# @end itemize
 %# @seealso{interp1, interp2, interp3, interpn}
 %# @end deftypefn
 
