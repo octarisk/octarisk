@@ -137,7 +137,8 @@ path_output = strcat(path,'/output');
 path_output_instruments = strcat(path_output,'/instruments');
 path_output_riskfactors = strcat(path_output,'/riskfactors');
 path_output_stresstests = strcat(path_output,'/stresstests');
-path_output_positions = strcat(path_output,'/positions');
+path_output_positions   = strcat(path_output,'/positions');
+path_output_mktdata     = strcat(path_output,'/mktdata');
 path_reports = strcat(path,'/output/reports');
 path_archive = strcat(path,'/archive');
 path_input = strcat(path,'/input');
@@ -147,6 +148,7 @@ mkdir(path_output_instruments);
 mkdir(path_output_riskfactors);
 mkdir(path_output_stresstests);
 mkdir(path_output_positions);
+mkdir(path_output_mktdata);
 mkdir(path_archive);
 mkdir(path_input);
 mkdir(path_mktdata);
@@ -172,11 +174,12 @@ end
 
 
 % set filenames for input:
-input_filename_instruments = 'instruments.csv';
-input_filename_corr_matrix = strcat(path_mktdata,'/corr24.dat');
-input_filename_stresstests = 'stresstests.csv';
-input_filename_riskfactors = 'riskfactors.csv';
-input_filename_positions = 'positions.csv';
+input_filename_instruments  = 'instruments.csv';
+input_filename_corr_matrix  = strcat(path_mktdata,'/corr24.dat');
+input_filename_stresstests  = 'stresstests.csv';
+input_filename_riskfactors  = 'riskfactors.csv';
+input_filename_positions    = 'positions.csv';
+input_filename_mktdata      = 'mktdata.csv';
 
 % set filenames for vola surfaces
 input_filename_vola_index = 'vol_index_';
@@ -197,7 +200,7 @@ hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be use
 confidence = 0.999      % level of confidence vor MC VAR calculation
 copulatype = 't'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
-valuation_date = today; % valuation date
+valuation_date = datenum('28-Apr-2016'); % valuation date
 base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
 mc_timesteps    = {'10d'}                % MC timesteps
@@ -208,7 +211,7 @@ runcode = '2015Q4'; %substr(md5sum(num2str(time()),true),-6)
 timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
 
 first_eval      = 0;
-% I) %#%#%%#            INPUT                 %#%#
+% I) #########            INPUT                 #########
 tic;
 % 0. Processing timestep values
 mc_timestep_days = zeros(length(mc_timesteps),1);
@@ -244,6 +247,15 @@ stresstest_struct=struct();
 [stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, path_input,input_filename_stresstests,path_output_stresstests,path_archive,timestamp,archive_flag);
 no_stresstests = length(stresstest_struct);
 
+% 5. Processing Market Data objects (Indizes and Marketcurves)
+persistent mktdata_struct;
+mktdata_struct=struct();
+[mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct,path_mktdata,input_filename_mktdata,path_output_mktdata,path_archive,timestamp,archive_flag);
+% for kk = 1 : 1 : length(mktdata_struct)
+    % printf('>>%s<<\n',mktdata_struct(kk).id)
+    % tmpobject = mktdata_struct(kk).object;
+    % tmpobject
+% end
 parseinput = toc;
 
 
@@ -326,13 +338,23 @@ tic;
 persistent curve_struct;
 curve_struct=struct();
 [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving);
-     
+
 % b) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 persistent surface_struct;
 surface_struct=struct();
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir);
 curve_gen_time = toc;
-      
+
+
+% c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
+persistent index_struct;
+index_struct=struct();
+[index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct);   
+ % for kk = 1  : 1 : length(curve_struct)
+    % curve_struct(kk).id
+    % curve_struct(kk).object
+ % end
+
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
 %   Total Loop over all Instruments and type dependent valuation
@@ -381,7 +403,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 
                 % Get relevant objects
                 tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, option.get('vola_surface'));
-                tmp_underlying_obj       = get_sub_object(riskfactor_struct, option.get('underlying'));
+                tmp_underlying_obj   = get_sub_object(index_struct, option.get('underlying'));
+
                 tmp_rf_curve_obj         = get_sub_object(curve_struct, option.get('discount_curve'));
                 tmp_vola_surf_obj        = get_sub_object(surface_struct, option.get('vola_surface'));
                 % Calibration of Option vola spread 
@@ -415,11 +438,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
             elseif (strcmp(tmp_type,'forward') )
                 % Using forward class
                     forward = tmp_instr_obj;
-                 % Get underlying risk factor / instrument    
+                 % Get underlying Index / instrument    
                     tmp_underlying = forward.get('underlying_id');
-                if ( strfind(tmp_underlying,'RF_') )   % underlying instrument is a risk factor
-                    tmp_underlying_object       = get_sub_object(riskfactor_struct, tmp_underlying);
-                end
+                    tmp_underlying_object       = get_sub_object(index_struct, tmp_underlying);
+
                 % Get discount curve
                     tmp_discount_curve          = forward.get('discount_curve');            
                     tmp_curve_object            = get_sub_object(curve_struct, tmp_discount_curve);	
@@ -582,7 +604,14 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
         % FALLBACK: store instrument as Cash instrument with fixed value_base for all scenarios
         cc = Cash();
         cc = cc.set('id',tmp_instr_obj.get('id'),'name',tmp_instr_obj.get('name'),'asset_class',tmp_instr_obj.get('asset_class'),'currency',tmp_instr_obj.get('currency'),'value_base',tmp_instr_obj.get('value_base'));
-        cc = cc.calc_value(tmp_scenario,scen_number);
+        for pp = 1 : 1 : length(scenario_set);
+            if ( strcmp(scenario_set{pp},'stress'))
+                scen_number = no_stresstests;
+            else
+                scen_number = mc;
+            end
+            cc = cc.calc_value(scenario_set{pp},scen_number);
+        end
         instrument_struct( ii ).object = cc;
     end
   end 
@@ -705,7 +734,6 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
             % Get instrument Value from full valuation instrument_struct:
             % absolute values from full valuation
             new_value_vec_shock      = tmp_instr_object.getValue(tmp_scen_set);              
- 
             % Get FX rate:
             if ( strcmp(tmp_currency,'EUR') == 1 )
                 tmp_fx_value_shock   = ones(mc,1);
@@ -962,20 +990,20 @@ fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_
 fprintf('ES  %s@%2.1f%%: \t %9.2f EUR\n\n',tmp_scen_set,confidence.*100,mc_es_shock);
 % Output of GPD calibrated VaR and ES:
 fprintf('GPD extreme value VAR and ES: \n');
-fprintf('VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,VAR90_EVT_shock);
-fprintf('VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,VAR95_EVT_shock);
-fprintf('VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,VAR975_EVT_shock);
-fprintf('VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,VAR99_EVT_shock);
-fprintf('VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock);
-fprintf('VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,VAR999_EVT_shock);
+fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,VAR90_EVT_shock);
+fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,VAR95_EVT_shock);
+fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,VAR975_EVT_shock);
+fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,VAR99_EVT_shock);
+fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock);
+fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,VAR999_EVT_shock);
 fprintf('VaR EVT %s@%2.2f%%: \t %9.2f EUR\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock);
 
-fprintf('ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,ES90_EVT_shock);
-fprintf('ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,ES95_EVT_shock);
-fprintf('ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,ES975_EVT_shock);
-fprintf('ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,ES99_EVT_shock);
-fprintf('ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,ES995_EVT_shock);
-fprintf('ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,ES999_EVT_shock);
+fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,ES90_EVT_shock);
+fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,ES95_EVT_shock);
+fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,ES975_EVT_shock);
+fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,ES99_EVT_shock);
+fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,ES995_EVT_shock);
+fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,ES999_EVT_shock);
 fprintf('ES  EVT %s@%2.2f%%: \t %9.2f EUR\n\n',tmp_scen_set,99.99,ES9999_EVT_shock);
 fprintf('Low tail VAR: \n');
 fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,50.0,-VAR50_shock);
@@ -1134,7 +1162,7 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
     end     % end plotting
 end     % close if loop MC / Stress scenarioset
 
-% %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    END  STRESS REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
+% #####################################    END  STRESS REPORTS    #####################################
 
 end % close kk loop: 
 

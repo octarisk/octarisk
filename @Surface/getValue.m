@@ -60,7 +60,7 @@ function y = getValue (surface, xx,yy,zz)
             % expand vectors and matrizes for constant extrapolation (add additional time steps and moneynesses, duplicate rows and cols)
             xx_structure = [0,xx_structure,21900];
             yy_structure = [0,yy_structure,21900];
-            zz_structure = [0,zz_structure,100];
+            zz_structure = [0,zz_structure,1000000];
             vola_cube = cat(2,vola_cube,vola_cube(:,end,:));
             vola_cube = cat(2,vola_cube(:,1,:),vola_cube);
             vola_cube = cat(1,vola_cube,vola_cube(end,:,:));
@@ -97,7 +97,7 @@ function y = getValue (surface, xx,yy,zz)
 
             % expand vectors and matrizes for constant extrapolation (add additional time steps and moneynesses, duplicate rows and cols)
             xx_structure = [0,xx_structure,21900];
-            yy_structure = [0,yy_structure,10];
+            yy_structure = [0,yy_structure,1000000];
             vola_matrix = cat(2,vola_matrix,vola_matrix(:,end));
             vola_matrix = cat(2,vola_matrix(:,1),vola_matrix);
             vola_matrix = cat(1,vola_matrix,vola_matrix(end,:));

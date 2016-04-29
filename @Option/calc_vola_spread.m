@@ -54,7 +54,7 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
         end
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 )
-            disp(' Calibration failed with Retcode 99. Setting market value to THEO/Value');
+            fprintf(' Calibration failed for >>%s<< with Retcode 99. Setting market value to THEO/Value\n',obj.id);
             theo_value_base = tmp_optionvalue_base;
             tmp_impl_vola_spread    = 0; 
         else
@@ -70,7 +70,7 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
                 disp('Calibration successful.');
                 theo_value_base = tmp_value;
             else
-                disp(' Calibration failed, although it converged.. Setting market value to THEO/Value');
+                fprintf(' Calibration failed for >>%s<<, although it converged.. Setting market value to THEO/Value\n',obj.id);
                 theo_value_base = tmp_optionvalue_base;
                 tmp_impl_vola_spread = 0; 
             end

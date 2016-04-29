@@ -14,9 +14,13 @@ function obj = calc_value (forward,discount_curve_object,value_type,underlying_o
         if ( nargin < 4 )
             error('No underlying_object set for value_type not being base.');
         else
-            tmp_underlying_sensitivity = obj.get('underlying_sensitivity'); 
-            tmp_underlying_delta = underlying_object.getValue(value_type);
-            tmp_underlying_price = Riskfactor.get_abs_values(underlying_object.model, tmp_underlying_delta, obj.underlying_price_base, tmp_underlying_sensitivity);
+            if ( strfind(underlying_object.get('id'),'RF_') )   % underlying instrument is a risk factor
+                tmp_underlying_sensitivity = obj.get('underlying_sensitivity'); 
+                tmp_underlying_delta = underlying_object.getValue(value_type);
+                tmp_underlying_price = Riskfactor.get_abs_values(underlying_object.model, tmp_underlying_delta, obj.underlying_price_base, tmp_underlying_sensitivity);
+            else    % underlying is a index
+                tmp_underlying_price = underlying_object.getValue(value_type);
+            end
         end
    end   
     % Get Discount Curve nodes and rate

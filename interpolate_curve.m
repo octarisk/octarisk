@@ -126,6 +126,8 @@ elseif (strcmp(method,'monotone-convex'))
        y = rates(:,end);
        return
     else
+        % due to unknown reasons, monotone convex doesn't like nice numbers, e.g. 0.01 or 0.02. So we add a small number to all rates and subtract it from results
+        rates = rates + 0.000001;
         InputsareForwards = 0;
         Negative_Forwards_Allowed = 1;
         % 0. prepare values
@@ -137,6 +139,7 @@ elseif (strcmp(method,'monotone-convex'))
         
         % 2. Interpolate values
         y = CalcInterpolant(timestep,nodes,f,fdiscrete,dInterpolantatNode);
+        y = y - 0.000001;
     end
 else
     error('ERROR: interpolation method not implemented'); 

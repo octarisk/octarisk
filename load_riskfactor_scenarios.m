@@ -70,7 +70,7 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
             number_riskfactors = number_riskfactors + 1;
         end  % close loop via all risk factors  
     catch
-        fprintf('WARNING: There has been an error for curve: >>%s<< in MC timestep: >>%s<<. Aborting: >>%s<<\n',tmp_id,tmp_ts,lasterr);
+        fprintf('WARNING: There has been an error for risk factor: >>%s<< in MC timestep: >>%s<<. Aborting: >>%s<<\n',tmp_id,tmp_ts,lasterr);
         rf_failed_cell{ length(rf_failed_cell) + 1 } =  tmp_id;
     end
 end      % close loop via all mc_timesteps

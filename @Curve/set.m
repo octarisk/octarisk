@@ -56,7 +56,7 @@ function s = set (obj, varargin)
       end
     % ====================== set rates_base ======================
     elseif (ischar (prop) && strcmp (prop, 'rates_base'))   
-      if (isvector (val) && isreal (val))
+      if (ismatrix (val) && isreal (val))
         s.rates_base = val;
       else
         error ('set: expecting the base values to be a real vector');
@@ -71,13 +71,48 @@ function s = set (obj, varargin)
     % ====================== set method_interpolation ======================
     elseif (ischar (prop) && strcmp (prop, 'method_interpolation'))   
       if (ischar (val))
-        s.method_interpolation = method_interpolation;
+        s.method_interpolation = strtrim(val);
       else
         error ('set: expecting the value to be of type character');
       end 
+    % ====================== set name ======================
+    elseif (ischar (prop) && strcmp (prop, 'name'))   
+      if (ischar (val) )
+        s.name = strtrim(val);
+      else
+        error ('set: expecting the value to be a char');
+      end
+    % ====================== set id ======================
+    elseif (ischar (prop) && strcmp (prop, 'id'))   
+      if (ischar(val))
+        s.id = strtrim(val);
+      else
+        error ('set: expecting the value to be a char');
+      end
+    % ====================== set description ======================
+    elseif (ischar (prop) && strcmp (prop, 'description'))   
+      if (ischar (val))
+        s.description = strtrim(val);
+      else
+        error ('set: expecting the value to be a char');
+      end
+    % ====================== set shocktype_mc ======================
+    elseif (ischar (prop) && strcmp (prop, 'shocktype_mc'))   
+      if (ischar (val))
+        s.shocktype_mc = strtrim(val);
+      else
+        error ('set: expecting the value to be a char');
+      end
+    % ====================== set type ======================
+    elseif (ischar (prop) && strcmp (prop, 'type'))   
+      if (ischar (val))
+        s.type = strtrim(val);
+      else
+        error ('set: expecting the value to be a char');
+      end   
     % case else
     else
-      error ('set: invalid property of curve class');
+      error ('set: invalid property of curve class: %s \n',prop);
     end
   end
 end

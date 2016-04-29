@@ -14,6 +14,7 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{instrument_struct} @var{id_failed_cell}] =} load_instruments(@var{instrument_struct},@var{valuation_date},@var{path_instruments},@var{file_instruments},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
 %# Load data from instrument specification file and generate objects with parsed data. Store all objects in provided instrument struct and return the final struct and a cell containing the failed instrument ids.
+%# The order of the final instrument struct is automatically set that all derivatives (OPT,SWAPT,SYNTH) are coming last.
 %# @end deftypefn
 
 function [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_instruments,file_instruments,path_output,path_archive,tmp_timestamp,archive_flag)
@@ -49,8 +50,8 @@ file_comments = fopen( strcat(path,'/','comments.txt'), 'a');
 for ii = 1 : 1 : length(celltmp);
     tmp_entries = celltmp{ii};
     if ( regexp(tmp_entries,'#') == 1)    % comment -> skip  print comment to stdout
-        fprintf(file_comments, 'Comment found: %s\n',tmp_entries);  
-    else        % parse entry
+        fprintf(file_comments, 'Comment found: %s\n',tmp_entries); 
+    elseif ( ~isempty(tmp_entries) )
         % extract filename:
         tmp_split_entries = strsplit(tmp_entries,',');
         tmp_producttype = strtrim(tmp_split_entries{1});
@@ -68,6 +69,35 @@ fclose (file_comments); % close comments file
 
 % B) Loop through all instrument files
 tmp_list_files = dir(path); % load all files of directory path into cell
+
+% B.i) Sort tmp_list_files in the following order: last three instrument types are SWAPTION, OPTION and SYNTHETIC
+%       then it is for sure, that all instruments, which serve as underlyings for these three types, already are valuated before calculating derivatives
+  % 1. move OPTION to last entry in tmp_filelist
+    for ii = 1 : 1 : length(tmp_list_files)
+        tmp_filename = tmp_list_files( ii ).name;
+        if (strcmp(upper(tmp_filename(1:end-4)),'SWAPT'))
+            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append OPT entry behind last entry of struct
+            tmp_list_files(ii) = [];                            % remove OPT entry           
+        end
+    end
+  % 2. move SWAPTION to last entry in tmp_filelist
+    for ii = 1 : 1 : length(tmp_list_files)
+        tmp_filename = tmp_list_files( ii ).name;
+        if (strcmp(upper(tmp_filename(1:end-4)),'OPT'))
+            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append SWAPT entry behind last entry of struct
+            tmp_list_files(ii) = [];                            % remove SWAPT entry           
+        end
+    end
+  % 3. move SYNTHETICs to last entry in tmp_filelist
+    for ii = 1 : 1 : length(tmp_list_files)
+        tmp_filename = tmp_list_files( ii ).name;
+        if (strcmp(upper(tmp_filename(1:end-4)),'SYNTH'))
+            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append SYNTH entry behind last entry of struct
+            tmp_list_files(ii) = [];                            % remove SYNTH entry           
+        end
+    end
+
+% B.ii) parse files
 number_instruments = 0;
 id_failed_cell = {};
 for ii = 1 : 1 : length(tmp_list_files)
@@ -141,6 +171,8 @@ for ii = 1 : 1 : length(tmp_list_files)
             elseif ( sum(strcmp(tmp_instrument_type,{'CASH'})) > 0)  % store data in Class Cash
                 i = Cash();                     
             end
+            % always store valuation date for all instruments
+            i = i.set('valuation_date',datestr(valuation_date,1));
             % B.3b)  Loop through all instrument attributes
             tmp_cell = content{jj};
             for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in row and set object attributes
@@ -200,7 +232,9 @@ for ii = 1 : 1 : length(tmp_list_files)
                     % tmp_columnname
                 % fprintf('\n');
                 % B.3b.ii) Store attribute in object
+                
                 try
+                    
                     % special case: cf_dates and cf_values come as vectors
                     if ( strcmp(tmp_columnname,'cf_dates'))
                         tmp_cf_dates= strsplit( tmp_entry, '|');

@@ -30,9 +30,13 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
     tmp_rf_rate              = interpolate_curve(tmp_nodes,tmp_rates,tmp_dtm ) + obj.spread;
     tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
     tmp_impl_vola_spread     = obj.vola_spread;
-    % Get underlying absolute scenario value     
-    tmp_underlying_value_delta      = underlying.getValue(value_type); 
-    tmp_underlying_value            = Riskfactor.get_abs_values('GBM', tmp_underlying_value_delta, obj.spot);
+    % Get underlying absolute scenario value 
+    if ( strfind(underlying.get('id'),'RF_') )   % underlying instrument is a risk factor
+        tmp_underlying_value_delta      = underlying.getValue(value_type); 
+        tmp_underlying_value            = Riskfactor.get_abs_values('GBM', tmp_underlying_value_delta, obj.spot);
+    else    % underlying is a Index
+        tmp_underlying_value            = underlying.getValue(value_type); 
+    end
     mc = length(tmp_underlying_value);
     
     if ( tmp_dtm < 0 )
@@ -66,7 +70,7 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
                 tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) + tmp_impl_vola_atm + tmp_impl_vola_spread;  
             end
         end
-
+    
       % Valuation for: Black-Scholes Modell (EU) or Willowtreemodel (AM):
         if ( strfind(tmp_type,'OPT_EUR') > 0  )     % calling Black-Scholes option pricing model
             theo_value	            = max(option_bs(call_flag,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock) .* tmp_multiplier,0.001);

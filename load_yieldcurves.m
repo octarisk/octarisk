@@ -64,25 +64,26 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
             tmp_rf_id = tmp_rf_struct_obj.id;
             if ( regexp(tmp_rf_id,tmp_curve_id) == 1 ) 
                 tmp_node            = tmp_rf_struct_obj.get('node');
-                tmp_rate_original   = tmp_rf_struct_obj.get('rate');
                 tmp_nodes 		    = cat(2,tmp_nodes,tmp_node); % final vectors with nodes in days
-                tmp_rates_original  = cat(2,tmp_rates_original,tmp_rate_original); % final vector with rates in decimals
                 tmp_delta_stress    = tmp_rf_struct_obj.getValue('stress') ;
                 tmp_shift_type      = tmp_rf_struct_obj.get('shift_type');  % distinguish between absolute shocks (in bp) and relative shocks
-                tmp_shift_type_inv  = 1 - tmp_shift_type;
-                tmp_rf_rates_stress = tmp_shift_type_inv .* (tmp_rate_original + (tmp_delta_stress ./ 10000)) + (tmp_shift_type .* tmp_rate_original .* tmp_delta_stress); %calculate abs and rel shocks and sum up (mutually exclusive)
-                tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_rf_rates_stress);
+                %tmp_shift_type_inv  = 1 - tmp_shift_type;
+                tmp_rate_original   = tmp_shift_type;   % set rate original according to shifttype: 0 absolute shift, 1 relative shift    %tmp_rf_struct_obj.get('rate');
+                tmp_rates_original  = cat(2,tmp_rates_original,tmp_rate_original); % final vector with shift types in decimals
+                %tmp_rf_rates_stress = tmp_shift_type_inv .* (tmp_rate_original + (tmp_delta_stress ./ 10000)) + (tmp_shift_type .* tmp_rate_original .* tmp_delta_stress); %calculate abs and rel shocks and sum up (mutually exclusive)
+                tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_delta_stress);
             end
         end 
         curve_object = curve_object.set('nodes',tmp_nodes);
-        curve_object = curve_object.set('rates_base',tmp_rates_original);
-        curve_object = curve_object.set('rates_stress',tmp_rates_stress);
+        curve_object = curve_object.set('rates_base',tmp_rates_original);   % contains matrix: rows = stress shift type values (0 or 1), columns: nodes of curve
+        curve_object = curve_object.set('rates_stress',tmp_rates_stress);   % contains matrix with delta of stress
         
         % loop via all mc timesteps
         for kk = 1:1:length(mc_timesteps)
             tmp_ts = mc_timesteps{kk};
             % get original yield curve
-            tmp_rates_shock = [];            
+            tmp_rates_shock = [];  
+            tmp_model_cell = {};
             for jj = 1 : 1 : length( riskfactor_struct )
                 tmp_rf_struct_obj = riskfactor_struct( jj ).object;
                 tmp_rf_id = tmp_rf_struct_obj.id;
@@ -90,13 +91,27 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
                     tmp_delta_shock     = tmp_rf_struct_obj.getValue(tmp_ts);
                     % Calculate new absolute values from Riskfactor PnL depending on riskfactor model
                     tmp_model           = tmp_rf_struct_obj.get('model');
-                    tmp_rf_rates_shock  = Riskfactor.get_abs_values(tmp_model, tmp_delta_shock, tmp_rf_struct_obj.get('rate')); 
-                    tmp_rates_shock 	= cat(2,tmp_rates_shock,tmp_rf_rates_shock);
+                    tmp_model_cell{end + 1 } = tmp_model;
+                    if ( strcmp(tmp_model,{'GBM','BKM'}))
+                        tmp_shocktype_mc = 'relative';
+                        tmp_delta_shock = exp(tmp_delta_shock);
+                    else
+                        tmp_shocktype_mc = 'absolute';
+                    end          
+                    %tmp_rf_rates_shock  = Riskfactor.get_abs_values(tmp_model, tmp_delta_shock, tmp_rf_struct_obj.get('rate')); 
+                    tmp_rates_shock 	= cat(2,tmp_rates_shock,tmp_delta_shock);
                 end
             end    
+            % check, whether all risk factors of one curve have the same model
+            if ( length(unique(tmp_model_cell)) > 1 )
+                fprintf('WARNING: one curve has different stochastic models for their nodes: %s\n',tmp_model_cell);
+            end
             % Save curves into struct
-            curve_object = curve_object.set('rates_mc',tmp_rates_shock,'timestep_mc',tmp_ts);           
+            curve_object = curve_object.set('rates_mc',tmp_rates_shock,'timestep_mc',tmp_ts); 
+            
         end  % close loop via scenario_sets (mc,stress)
+        % store shocktype_mc
+        curve_object = curve_object.set('shocktype_mc',tmp_shocktype_mc);
         % store curve object in final struct
         curve_struct( ii ).object = curve_object;
         

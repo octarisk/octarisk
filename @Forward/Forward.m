@@ -146,7 +146,7 @@ classdef Forward < Instrument
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('strike_price: %f\n',b.strike_price);  
          fprintf('underlying_id: %s\n',b.underlying_id); 
-         fprintf('underlying_price_base: %f\n',b.underlying_price_base); 
+         %fprintf('underlying_price_base: %f\n',b.underlying_price_base); 
          fprintf('underlying_sensitivity: %d\n',b.underlying_sensitivity); 
          fprintf('dividend_yield: %f\n',b.dividend_yield); 
          fprintf('convenience_yield: %f\n',b.convenience_yield);

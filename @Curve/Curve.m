@@ -35,7 +35,8 @@ classdef Curve
       id = '';
       description = '';
       type = '';  
-      method_interpolation = 'linear'; %'monotone-convex';    
+      method_interpolation = 'linear'; %'monotone-convex';  
+      shocktype_mc = 'absolute';  
     end
    
     properties (SetAccess = protected )
@@ -57,7 +58,7 @@ classdef Curve
             tmp_type            = 'Discount Curve';
         end 
         if nargin < 4
-            tmp_description     = 'Dummy Description'
+            tmp_description     = 'Dummy Description';
         end
         if ( strcmp(tmp_id,''))
             error('Error: Curve requires a valid ID')
@@ -77,6 +78,8 @@ classdef Curve
          rates_stress_cols = min(length(a.rates_stress),2);
          fprintf('name: %s\nid: %s\ndescription: %s\ntype: %s\n', ... 
             a.name,a.id,a.description,a.type);
+         fprintf('method_interpolation: %s\n',a.method_interpolation);
+         fprintf('shocktype_mc: %s\n',a.shocktype_mc);
          % looping via all nodes if defined
          if ( length(a.nodes) > 0 )
             fprintf('Nodes:\n[ ');
@@ -90,7 +93,7 @@ classdef Curve
             fprintf('Base rates:\n[ ');
             for ( kk = 1 : 1 : min(columns(a.rates_base),10))
                     fprintf('%f,',a.rates_base(kk));
-                end
+            end
             fprintf(' ]\n');
          end   
           % looping via all stress rates if defined
@@ -132,7 +135,7 @@ classdef Curve
       end % Set.type
       
       function obj = set.method_interpolation(obj,method_interpolation)
-         if ~(sum(strcmpi(type,{'smith-wilson','spline','linear','mm','exponential','loglinear','monotone-convex'}))>0  )
+         if ~(sum(strcmpi(method_interpolation,{'smith-wilson','spline','linear','mm','exponential','loglinear','monotone-convex'}))>0  )
             error('Interpolation method must be either smith-wilson,spline,linear,mm,exponential,monotone-convex or loglinear')
          end
          obj.method_interpolation = method_interpolation;

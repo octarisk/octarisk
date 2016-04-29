@@ -111,17 +111,18 @@ classdef Riskfactor
             fprintf('rate: %f\n',a.value_base); 
          end
          if ( length(a.scenario_stress) > 0 ) 
-            fprintf('Scenario stress: %8.2f \n',a.scenario_stress(1:scenario_stress_rows));
+            fprintf('Scenario stress: %8.5f \n',a.scenario_stress(1:scenario_stress_rows));
             fprintf('\n');
          end
          % looping via first 5 MC scenario values
          for ( ii = 1 : 1 : scenario_mc_cols)
             if ( length(a.timestep_mc) >= ii )
                 fprintf('MC timestep: %s\n',a.timestep_mc{ii});
+                fprintf('Scenariovalue: %8.5f \n',a.scenario_mc(1:scenario_mc_rows,ii));
             else
                 fprintf('MC timestep not defined\n');
             end
-            fprintf('Scenariovalue: %8.2f \n',a.scenario_mc(1:scenario_mc_rows,ii));
+            
             fprintf('\n');
          end
       end % disp

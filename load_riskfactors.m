@@ -49,7 +49,7 @@ for ii = 1 : 1 : length(celltmp);
     tmp_entries = celltmp{ii};
     if ( regexp(tmp_entries,'#') == 1)    % comment -> skip  print comment to stdout
         fprintf(file_comments, 'Comment found: %s\n',tmp_entries);  
-    else        % parse entry
+    elseif ( ~isempty(tmp_entries) )
         % extract filename:
         tmp_split_entries = strsplit(tmp_entries,',');
         tmp_rf_type = strtrim(tmp_split_entries{1});

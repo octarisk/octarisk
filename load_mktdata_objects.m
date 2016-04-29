@@ -12,16 +12,16 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{portfolio_struct} @var{id_failed_cell}] =} load_stresstests(@var{portfolio_struct}, @var{valuation_date},@var{path_stresstests},@var{file_stresstests},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
-%# Load data from stresstest specification file and generate a struct with parsed data. Store all stresstests in provided struct and return the final struct and a cell containing the failed position ids.
+%# @deftypefn {Function File} {[@var{mktdata_struct} @var{id_failed_cell}] =} load_mktdata_objects(@var{mktdata_struct},@var{path_mktdata},@var{file_mktdata},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
+%# Load data from mktdata object specification file and generate objects with parsed data. Store all objects in provided mktdata struct and return the final struct and a cell containing the failed mktdata ids.
 %# @end deftypefn
 
-function [stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, path_stresstests,file_stresstests,path_output,path_archive,tmp_timestamp,archive_flag)
+function [mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct,path_mktdata,file_mktdata,path_output,path_archive,tmp_timestamp,archive_flag)
 
-% A) Prepare position object generation
+% A) Prepare instrument object generation
 % A.0) Specify local variables
 separator = ',';
-path_stresstests_in = strcat(path_stresstests,'/',file_stresstests);
+file_mktdata_in = strcat(path_mktdata,'/',file_mktdata);
 path = path_output;
 
 % A.1) delete all old files in path_output
@@ -33,18 +33,18 @@ try
                 delete(strcat(path,'/',tmp_file));
             end
     end
-end    
+end
+
 % A.2) read in whole instruments file with
-strtmp = fileread(path_stresstests_in); 
+strtmp = fileread(file_mktdata_in); 
 
 % A.3) split file according to 'Header'
 celltmp = strsplit(strtmp,'Header');
-
-   
+ 
 % A.4) open file for printing all comments
 file_comments = fopen( strcat(path,'/','comments.txt'), 'a');   
 
-% A.6) loop via all entries of cell and save into files per position type
+% A.6) loop via all entries of cell and save into files per instrument type
 for ii = 1 : 1 : length(celltmp);
     tmp_entries = celltmp{ii};
     if ( regexp(tmp_entries,'#') == 1)    % comment -> skip  print comment to stdout
@@ -52,28 +52,25 @@ for ii = 1 : 1 : length(celltmp);
     elseif ( ~isempty(tmp_entries) )
         % extract filename:
         tmp_split_entries = strsplit(tmp_entries,',');
-        tmp_rf_type = strtrim(tmp_split_entries{1});
-        if ( length(tmp_rf_type) > 1 )
-            % save to file
-            filename = strcat(path,'/',tmp_rf_type,'.csv');
-            %fprintf('Saving position type: >>%s<< to file %s \n',tmp_rf_type ,filename);
-            fid = fopen (filename, 'w');
-            fprintf(fid, '%s\n',tmp_entries);
-            % Close file
-            fclose (fid);   
-        end
+        tmp_producttype = strtrim(tmp_split_entries{1});
+        % save to file
+        filename = strcat(path,'/',tmp_producttype,'.csv');
+        %fprintf('Saving instrument type: %s to file %s \n',tmp_producttype ,filename);
+        fid = fopen (filename, 'w');
+        fprintf(fid, '%s\n',tmp_entries);
+        % Close file
+        fclose (fid);        
     end
 end
 fclose (file_comments); % close comments file
 
 
-% B) Loop through all position files -> loop through all rows (first row = header), for each row loop through all columns = attributes -> store attributes in cell
+% B) Loop through all instrument files
 tmp_list_files = dir(path); % load all files of directory path into cell
-number_stresstests = 0;
+number_objects = 0;
 id_failed_cell = {};
 for ii = 1 : 1 : length(tmp_list_files)
     tmp_filename = tmp_list_files( ii ).name;
-    
     if (length(tmp_filename) > 3 && strcmp(tmp_filename,'comments.txt') == 0) 
         % B.1) parse input data
         tmp_filename = strcat(path,'/',tmp_filename);
@@ -109,25 +106,29 @@ for ii = 1 : 1 : length(tmp_list_files)
 
           %# extract fields
           content = cellfun (@(x) strsplit (x, separator, 'collapsedelimiters', false), lines_out, ...
-                               'UniformOutput', false); %# extract fields               
+                               'UniformOutput', false); %# extract fields           
         % ==========================================================
         % B.2) extract header from first row:
         tmp_header = content{1};
         tmp_colname = {};
-        tmp_position_type = strtrim(tmp_header{1});
+        tmp_mktdata_type = strtrim(tmp_header{1});
+        %fprintf('>>>%s<<<\n',tmp_mktdata_type);
         for kk = 2 : 1 : length(tmp_header)
             tmp_item = tmp_header{kk};
             tmp_header_type{kk-1} = tmp_item(end-3:end); % extract last 4 characters
             tmp_colname{kk-1} = tmp_item(1:end-4); %substr(tmp_item, 1, length(tmp_item)-4);  % remove last 4 characters from colname
-        end    
-        % B.3) loop through all entries of file 
-        
-        tmp_cell_struct = {};           
+        end   
+        % B.3) loop through all mktdata   
         for jj = 2 : 1 : length(content)
           error_flag = 0;
           if (length(content{jj}) > 3)  % parse row only if it contains some meaningful data
-            
-            % B.3b)  Loop through all position attributes
+            % B.3a) Generate object of appropriate class
+            if ( sum(strcmp(tmp_mktdata_type,{'INDEX'})) > 0)        % store data in Class INDEX
+                i = Index(); 
+            elseif ( sum(strcmp(tmp_mktdata_type,{'CURVE'}))  > 0)        % store data in Class CURVE
+                i = Curve();              
+            end
+            % B.3b)  Loop through all mktdata attributes
             tmp_cell = content{jj};
             for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in row and set object attributes
                 tmp_columnname = lower(tmp_colname{mm-1});
@@ -178,82 +179,84 @@ for ii = 1 : 1 : length(tmp_list_files)
                 else
                     fprintf('Unknown type: >>%s<< for item value >>%s<<. Aborting: >>%s<< \n',tmp_cell_type,tmp_cell_item,lasterr);
                 end
-                 
-                % B.3b.ii) Adjust input data according to columnname
+                % fprintf('Trying to store item:');
+                    % tmp_entry
+                % fprintf('of type: ');
+                    % tmp_cell_type
+                % fprintf(' into column: ');
+                    % tmp_columnname
+                % fprintf('\n');
+                % B.3b.ii) Store attribute in object
                 try
-                    % special case: risktype, shiftvalue, shifttype
-                    if ( strcmp(tmp_columnname,'shiftvalue'))
+                    % special case: some attributes come as vectors
+                    if ( strcmp(tmp_columnname,'nodes'))
+                        tmp_entry_split = strsplit(tmp_entry, '|');
+                        tmp_entry = [];
+                        %lsplit = tmp_entry_split{1}
+                        %isempty(tmp_entry_split{1})
+                        if ~( isempty(tmp_entry_split{1}))
+                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all cash flows and convert it to numbers
+                                tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
+                            end
+                            i = i.set(tmp_columnname,tmp_entry);
+                        end
+                    elseif ( strcmp(tmp_columnname,'rates_base'))
                         tmp_entry_split = strsplit(tmp_entry, '|');
                         tmp_entry = [];
                         %lsplit = tmp_entry_split{1};
                         if ~( isempty(tmp_entry_split{1}))
-                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all shift values and convert it to numbers
+                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all cash flows and convert it to numbers
                                 tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
                             end
-                        end                    
-                    elseif ( strcmp(tmp_columnname,'shifttype'))  % split into cell
-                        tmp_entry_split = strsplit(tmp_entry, '|');
-                        tmp_entry = [];
-                        %lsplit = tmp_entry_split{1};
-                        if ~( isempty(tmp_entry_split{1}))
-                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all shift types and convert it to numbers
-                                tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
+                            i = i.set(tmp_columnname,tmp_entry);
+                        end
+                    else    % set new attribute, no special treatment
+                        if ( ischar(tmp_entry))
+                            if (length(tmp_entry)>0)
+                                i = i.set(tmp_columnname,tmp_entry);
                             end
-                        end  
-                        tmp_entry(tmp_entry > 0) = 1;        % limit shift type to either 0 or 1 -> prevent problems with stress value calculation
-                    elseif ( strcmp(tmp_columnname,'risktype'))  % split into cell
-                        try
-                            tmp_entry = strsplit( tmp_entry, '|');
-                        catch
-                            tmp_entry = {};
-                        end 
-                    end % end special case for risktype, shiftvalue, shifttype
+                        else
+                            i = i.set(tmp_columnname,tmp_entry);
+                        end
+                    end % end special case for cf dates and values
                 catch
                     fprintf('Object attribute %s could not be set. There was an error: %s\n',tmp_columnname,lasterr);
                     error_flag = 1;
                 end
-                % B.3b.ii) Store attribute in cell (which will be converted to struct later)
-                try
-                    % jj -> rownumber
-                    % mm -> columnnumber
-                    tmp_cell_struct{mm - 1, jj - 1} = tmp_entry;
-                catch
-                    error_flag = 1;
-                end
-            end  % end for loop via all attributes
-            % B.3c) Error checking for riskfactor: 
+            end
+            %disp('=== Final Object ===')
+            %i     
+            % B.3c) Error checking for mktdata object: 
             if ( error_flag > 0 )
-                fprintf('ERROR: There has been an error for riskfactor: %s \n',tmp_cell_struct{1, jj - 1});
-                id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_cell_struct{1, jj - 1};
+                fprintf('ERROR: There has been an error for mktdata object: %s \n',i.id);
+                id_failed_cell{ length(id_failed_cell) + 1 } =  i.id;
                 error_flag = 0;
             else
                 error_flag = 0;
-                number_stresstests = number_stresstests + 1;
+                number_objects = number_objects + 1;
+                mktdata_struct( number_objects ).id = i.id;
+                mktdata_struct( number_objects ).name = i.name;
+                mktdata_struct( number_objects ).object = i;
             end
+          %  fprintf('Seems to be empty row. Skipping.\n');
           end   % end if loop with meaningful data
-        end  % next position / next row in specification
-
-
-        stresstest_struct = cell2struct(tmp_cell_struct,tmp_colname);
-
-        
+        end  % next mktdata_struct / next row in specification
         
     end         % meaningful file
 end          % next file with specifications
+% finished loading mktdata into object
 
-% C) return final position objects  
-fprintf('SUCCESS: loaded >>%d<< stresstests. \n',number_stresstests);
+% C) return final mktdata objects  
+fprintf('SUCCESS: loaded >>%d<< mktdata objects. \n',number_objects);
 if (length(id_failed_cell) > 0 )
-    fprintf('WARNING: >>%d<< positions failed: \n',length(id_failed_cell));
+    fprintf('WARNING: >>%d<< mktdata objects failed: \n',length(id_failed_cell));
     id_failed_cell
 end
-
-% clean up
 
 % D) move all parsed files to an TAR in folder archive
 if (archive_flag == 1)
     try
-        tarfiles = tar( strcat(path_archive,'/archive_stresstests_',tmp_timestamp,'.tar'),strcat(path,'/*'));
+        tarfiles = tar( strcat(path_archive,'/archive_mktdata_',tmp_timestamp,'.tar'),strcat(path,'/*'));
     end
 end
 

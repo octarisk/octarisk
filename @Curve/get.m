@@ -14,13 +14,17 @@ function s = get (obj, property)
         case 'type'
           s = obj.type; 
         case 'rates_mc'
-          s = obj.rates_mc;    
+          s = obj.rates_mc;   
+        case 'rates_base'
+          s = obj.rates_base;   
         case 'rates_stress'
           s = obj.rates_stress;
         case 'timestep_mc'
           s = obj.timestep_mc; 
         case 'nodes'
           s = obj.nodes; 
+        case 'shocktype_mc'
+          s = obj.shocktype_mc; 
         case 'method_interpolation'
           s = obj.method_interpolation;
         otherwise

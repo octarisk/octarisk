@@ -67,6 +67,10 @@ if nargin < 4 || nargin > 4
     maturity_date = datenum(forward.maturity_date);
     strike = forward.strike_price;
 
+    % convert valuation_date
+if (ischar(valuation_date))
+    valuation_date = datenum(valuation_date);
+endif
 days_to_maturity    = maturity_date - valuation_date; 
 if ( days_to_maturity < 1)
     disp('Maturity Date is equal or before valuation date. Return value 0.')

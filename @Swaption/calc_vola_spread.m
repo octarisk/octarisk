@@ -24,7 +24,7 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
     end
      
     % Get input variables
-    tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date - 1); 
+    tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date - 1);
     tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
     
     
@@ -51,21 +51,20 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
         tmp_indexvol_base           = tmp_vola_surf_obj.getValue(tmp_swap_tenor,tmp_dtm,tmp_moneyness_base);
 
         % Calculate Swaption base value and implied spread
-        if ( strcmp(tmp_model,'BLACK76'))
+        if ( strcmp(upper(tmp_model),'BLACK76'))
             tmp_swaptionvalue_base      = swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
         else
             tmp_swaptionvalue_base      = swaption_bachelier(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
         end
         tmp_impl_vola_spread        = calibrate_swaption(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,tmp_swap_no_pmt,tmp_swap_tenor,tmp_multiplier,tmp_value,tmp_model);
-
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 )
-            disp(' Calibration failed with Retcode 99. Setting market value to THEO/Value');
+            fprintf(' Calibration failed for >>%s<< with Retcode 99. Setting market value to THEO/Value\n',obj.id);
             theo_value_base = tmp_swaptionvalue_base;
             tmp_impl_vola_spread    = 0; 
         else
             %disp('Calibration seems to be successful.. checking');
-            if ( strcmp(tmp_model,'BLACK76'))
+            if ( strcmp(upper(tmp_model),'BLACK76'))
                 tmp_new_val      = swaption_black76(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base+ tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
             else
                 tmp_new_val      = swaption_bachelier(call_flag,tmp_forward_base,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base+ tmp_impl_vola_spread,tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
@@ -75,7 +74,7 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
                 %disp('Calibration successful.');
                 theo_value_base = tmp_value;
             else
-                disp(' Calibration failed, although it converged.. Setting market value to THEO/Value');
+                fprintf(' Calibration failed for >>%s<<, although it converged.. Setting market value to THEO/Value\n',obj.id);
                 theo_value_base = tmp_swaptionvalue_base;
                 tmp_impl_vola_spread = 0; 
             end
