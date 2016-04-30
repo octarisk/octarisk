@@ -1,5 +1,6 @@
 #Stresstests Specifications
 HeaderSTRESSTESTS,idCHAR,nameCHAR,risktypeCHAR,shiftvalueCHAR,shifttypeCHAR
+Item,IR_100bpDOWN_rel,IR - 10%,RF_IR,-0.1,1
 Item,IR_100bpDOWN,IR - 100bp,RF_IR,-100,0
 Item,IR_100bpUP,IR + 100bp,RF_IR,100,0
 Item,SPREAD_100bpDOWN,Spread - 100bp,RF_SPREAD,-100,0

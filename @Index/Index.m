@@ -64,8 +64,6 @@ classdef Index
             if ( length(a.timestep_mc) >= ii )
                 fprintf('MC timestep: %s\n',a.timestep_mc{ii});
                 fprintf('Scenariovalue: %8.5f \n',a.scenario_mc(1:scenario_mc_rows,ii));
-            else
-                fprintf('MC timestep not defined\n');
             end
             
             fprintf('\n');
@@ -73,8 +71,8 @@ classdef Index
       end % disp
            
       function obj = set.type(obj,type)
-         if ~(sum(strcmpi(upper(type),{'EQUITY INDEX','BOND INDEX','VOLATILITY INDEX','COMMODITY INDEX','REAL ESTATE INDEX'}))>0  )
-            error('Risk factor type must be either EQUITY INDEX, BOND INDEX, VOLATILITY INDEX, COMMODITY INDEX, REAL ESTATE INDEX')
+         if ~(sum(strcmpi(upper(type),{'EQUITY INDEX','BOND INDEX','VOLATILITY INDEX','COMMODITY INDEX','REAL ESTATE INDEX','EXCHANGE RATE'}))>0  )
+            error('Risk factor type must be either EQUITY INDEX, BOND INDEX, VOLATILITY INDEX, COMMODITY INDEX, REAL ESTATE INDEX,EXCHANGE RATE')
          end
          obj.type = type;
       end % Set.type

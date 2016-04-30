@@ -119,8 +119,6 @@ classdef Riskfactor
             if ( length(a.timestep_mc) >= ii )
                 fprintf('MC timestep: %s\n',a.timestep_mc{ii});
                 fprintf('Scenariovalue: %8.5f \n',a.scenario_mc(1:scenario_mc_rows,ii));
-            else
-                fprintf('MC timestep not defined\n');
             end
             
             fprintf('\n');

@@ -5,4 +5,4 @@ Curve,SPREAD_EUR_HY,SPREAD_EUR_HY,Spread Curve,SPREAD_EUR_High Yield Curve,linea
 HeaderINDEX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR
 Index,EQ_DE,DAX30,Equity Index,EUR,DAX Equity Index German Blue Chips,9820
 Index,COM_GOLD,Gold,Commodity Index,USD,Gold 1 Ounce USD,1073
-Index,FX_EURUSD,EUR_USD,Exchange Rate,EUR,EUR USD Exchange rate,1.08
+Index,FX_EURUSD,EUR_USD,Exchange Rate,EUR USD Exchange rate,1.08

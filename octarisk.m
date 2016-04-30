@@ -105,7 +105,7 @@ function octarisk(path_working_folder)
 %       c) call MC scenario generations
 %   2. Monte Carlo Riskfactor Simulation
 %   3. Setup Stress test definitions
-%   4. Process yield curves: Generate struct with riskfactor yield curves 
+%   4. Process yield curves and volatility surfaces, apply shocks to market data objects
 %   5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
 %       a) Total Loop over all Instruments and type dependent valuation
 %   6. Portfolio Aggregation
@@ -350,10 +350,10 @@ curve_gen_time = toc;
 persistent index_struct;
 index_struct=struct();
 [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct);   
- % for kk = 1  : 1 : length(curve_struct)
-    % curve_struct(kk).id
-    % curve_struct(kk).object
- % end
+ for kk = 1  : 1 : length(curve_struct)
+    curve_struct(kk).id
+    curve_struct(kk).object
+ end
 
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
@@ -380,17 +380,17 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
 	% Full Valuation depending on Type:
             % ETF Debt Valuation:
             if ( strcmp(tmp_type,'debt') == 1 )
-            % Using debt class
+				% Using debt class
                 debt = tmp_instr_obj;
-            % get discount curve
+				% get discount curve
                 tmp_discount_curve  = debt.get('discount_curve');
                 tmp_discount_object = get_sub_object(curve_struct, tmp_discount_curve);
 
-            % Get spread curve
+				% Get spread curve
                 tmp_spread_curve    = debt.get('spread_curve');
                 tmp_spread_object 	= get_sub_object(curve_struct, tmp_spread_curve);
 
-			% Calc value
+				% Calc value
 				debt = debt.calc_value(tmp_discount_object,tmp_spread_object,tmp_scenario);
 
                 % store debt object in struct:
@@ -457,7 +457,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % store bond object in struct:
                     instrument_struct( ii ).object = forward;
                     
-            % Equity Valuation: Sensitivity based Approach: dR_pos = Sum(Sensitivity_i * dR_i) via Geometric Brownian Motion      
+            % Equity Valuation: Sensitivity based Approach       
             elseif ( strcmp(tmp_type,'sensitivity') == 1 )
             tmp_delta = 0;
             tmp_shift = 0;
@@ -521,13 +521,13 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     tmp_underlying_currency = und_obj.get('currency'); 
                     if ( strcmp(tmp_underlying_currency,tmp_currency) == 1 )
                         tmp_fx_rate_base    = 1;
-                        tmp_fx_value        = ones(scen_number,1);
+                        tmp_fx_value        = 1; %ones(scen_number,1);
                     else
-                        %disp( ' Conversion of currency: ');
-                        tmp_fx_riskfactor = strcat('RF_FX_', tmp_currency, tmp_underlying_currency);
-                        tmp_fx_struct_obj = get_sub_object(riskfactor_struct, tmp_fx_riskfactor);
-                        tmp_fx_rate_base  = tmp_fx_struct_obj.value_base;
-                        tmp_fx_value      = tmp_fx_struct_obj.getValue(tmp_scenario,'abs');
+                        %Conversion of currency:;
+                        tmp_fx_index = strcat('FX_', tmp_currency, tmp_underlying_currency);
+                        tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
+                        tmp_fx_rate_base  = tmp_fx_struct_obj.getValue('base');
+                        tmp_fx_value      = tmp_fx_struct_obj.getValue(tmp_scenario);
                     end
                     tmp_value_base      = tmp_value_base    + tmp_weights(jj) .* underlying_value_base ./ tmp_fx_rate_base;
                     tmp_value           = tmp_value      + tmp_weights(jj) .* underlying_value_vec ./ tmp_fx_value;
@@ -678,13 +678,13 @@ for mm = 1 : 1 : length( portfolio_struct )
         tmp_value = tmp_instr_object.getValue('base');
         tmp_currency = tmp_instr_object.get('currency'); 
 
-        % conversion of position to EUR
-        if ( strcmp(tmp_currency,'EUR') == 1 )
+        % conversion of position to base_currency
+        if ( strcmp(tmp_currency,base_currency) == 1 )
                 tmp_fx_rate = 1;
         else
-                tmp_fx_riskfactor = strcat('RF_FX_EUR', tmp_currency);
-                tmp_fx_struct_obj = get_sub_object(riskfactor_struct, tmp_fx_riskfactor);
-                tmp_fx_rate = tmp_fx_struct_obj.value_base;
+                tmp_fx_index = strcat('FX_',base_currency, tmp_currency);
+                tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
+                tmp_fx_rate = tmp_fx_struct_obj.getValue('base');
         end        
         position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate;
         portfolio_value = portfolio_value + tmp_value .* tmp_quantity  ./ tmp_fx_rate;
@@ -712,7 +712,7 @@ for mm = 1 : 1 : length( portfolio_struct )
 for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     tmp_scen_set  = scenario_set{ kk };    % get timestep string
  
-  % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    BEGIN  MC REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
+  % ##############################    BEGIN  MC REPORTS    ##############################
   if ~( strcmp(tmp_scen_set,'stress') )     % MC scenario
     
     tmp_ts      = scenario_ts_days(kk);  % get timestep days 
@@ -734,16 +734,17 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
             % Get instrument Value from full valuation instrument_struct:
             % absolute values from full valuation
             new_value_vec_shock      = tmp_instr_object.getValue(tmp_scen_set);              
+           
+		
             % Get FX rate:
-            if ( strcmp(tmp_currency,'EUR') == 1 )
-                tmp_fx_value_shock   = ones(mc,1);
+            if ( strcmp(base_currency,tmp_currency) == 1 )
+                tmp_fx_value_shock   = 1;
             else
                 %disp( ' Conversion of currency: ');
-                tmp_fx_riskfactor   = strcat('RF_FX_', base_currency, tmp_currency);
-                tmp_fx_struct_obj   = get_sub_object(riskfactor_struct, tmp_fx_riskfactor);
+                tmp_fx_index   		= strcat('FX_', base_currency, tmp_currency);
+                tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
                 tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-                tmp_fx_value_shock   = tmp_fx_struct_obj.getValue(tmp_scen_set,'abs');
-                        
+                tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(tmp_scen_set);   
             end
               
             % Store new Values in Position's struct
@@ -754,13 +755,13 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
         end
 
 
-% b.) VaR Calculation
-%  i.) sort arrays
-endstaende_reldiff_shock = portfolio_shock ./ base_value;
-endstaende_sort_shock    = sort(endstaende_reldiff_shock);
-[portfolio_shock_sort scen_order_shock] = sort(portfolio_shock');
-p_l_absolut_shock        = portfolio_shock_sort - base_value;
-% Preparing vector for extreme value theory VAR and ES
+  % b.) VaR Calculation
+  %  i.) sort arrays
+  endstaende_reldiff_shock = portfolio_shock ./ base_value;
+  endstaende_sort_shock    = sort(endstaende_reldiff_shock);
+  [portfolio_shock_sort scen_order_shock] = sort(portfolio_shock');
+  p_l_absolut_shock        = portfolio_shock_sort - base_value;
+  % Preparing vector for extreme value theory VAR and ES
     confi_scenario_evt_95   = round(0.025 * mc);
     evt_tail_shock           = p_l_absolut_shock(1:confi_scenario_evt_95)';
     % Calculate VAR and ES from GPD:
@@ -776,7 +777,7 @@ p_l_absolut_shock        = portfolio_shock_sort - base_value;
     [VAR999_EVT_shock ES999_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.999, mc, nu);
     [VAR9999_EVT_shock ES9999_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.9999, mc, nu);
 
-% Preparing direct VAR measures:
+  % Preparing direct VAR measures:
     VAR50_shock      = p_l_absolut_shock(round(0.5*mc));
     VAR70_shock      = p_l_absolut_shock(round(0.3*mc));
     VAR90_shock      = p_l_absolut_shock(round(0.10*mc));
@@ -787,70 +788,70 @@ p_l_absolut_shock        = portfolio_shock_sort - base_value;
     VAR9999_shock    = p_l_absolut_shock(ceil(0.0001*mc));
 
 
-% ii.) Get Value of confidence scenario
+  % ii.) Get Value of confidence scenario
 
-confi_scenarionumber_shock = scen_order_shock(confi_scenario)
-skewness_shock           = skewness(endstaende_reldiff_shock)
-kurtosis_shock           = kurtosis(endstaende_reldiff_shock)
+  confi_scenarionumber_shock = scen_order_shock(confi_scenario)
+  skewness_shock           = skewness(endstaende_reldiff_shock)
+  kurtosis_shock           = kurtosis(endstaende_reldiff_shock)
 
-% iii.) Extract confidence scenarionumbers around quantile scenario
-confi_scenarionumber_shock_p1 = scen_order_shock(confi_scenario + 1);
-confi_scenarionumber_shock_p2 = scen_order_shock(confi_scenario + 2);
-confi_scenarionumber_shock_m1 = scen_order_shock(confi_scenario - 1);
-confi_scenarionumber_shock_m2 = scen_order_shock(confi_scenario - 2);
+  % iii.) Extract confidence scenarionumbers around quantile scenario
+  confi_scenarionumber_shock_p1 = scen_order_shock(confi_scenario + 1);
+  confi_scenarionumber_shock_p2 = scen_order_shock(confi_scenario + 2);
+  confi_scenarionumber_shock_m1 = scen_order_shock(confi_scenario - 1);
+  confi_scenarionumber_shock_m2 = scen_order_shock(confi_scenario - 2);
 
-% iv.) make vector with Harrel-Davis Weights
-% HD VaR only if number of scenarios < hd_limit
-if ( mc < hd_limit )
-size_hdvec = size(portfolio_shock_sort);
+  % iv.) make vector with Harrel-Davis Weights
+  % HD VaR only if number of scenarios < hd_limit
+  if ( mc < hd_limit )
+  size_hdvec = size(portfolio_shock_sort);
     mc_var_shock_value_abs    = dot(hd_vec,portfolio_shock_sort);
     mc_var_shock_value_rel    = dot(hd_vec,endstaende_sort_shock);
     mc_var_shock_diff_hd      = abs(portfolio_shock_sort(confi_scenario) - mc_var_shock_value_abs)
-else
+  else
     mc_var_shock_value_abs    = portfolio_shock_sort(confi_scenario);
     mc_var_shock_value_rel    = endstaende_sort_shock(confi_scenario);
-end
+  end
 
-mc_var_shock_pct  = -(1 - mc_var_shock_value_rel);
-mc_var_shock      = base_value - mc_var_shock_value_abs;
+  mc_var_shock_pct  = -(1 - mc_var_shock_value_rel);
+  mc_var_shock      = base_value - mc_var_shock_value_abs;
 
 
-% d) Calculate Expected Shortfall as average of losses in sorted profit and loss vector from [1:confi_scenario-1]:
-mc_es_shock			= base_value - mean(portfolio_shock_sort(1:confi_scenario-1));
-mc_es_shock_pct		= -(1 - mean(endstaende_sort_shock(1:confi_scenario-1)));
+  % d) Calculate Expected Shortfall as average of losses in sorted profit and loss vector from [1:confi_scenario-1]:
+  mc_es_shock			= base_value - mean(portfolio_shock_sort(1:confi_scenario-1));
+  mc_es_shock_pct		= -(1 - mean(endstaende_sort_shock(1:confi_scenario-1)));
 
-% e) Print Report including position VaRs
+  % e) Print Report including position VaRs
 
- % Printing P&L test statistics
-fprintf(fid, 'Test statistics on portfolio level:\n');
-fprintf(fid, '|MC %s Tail scenario number\t |%i| \n',tmp_scen_set,confi_scenarionumber_shock);
-fprintf(fid, '|MC %s P&L skewness  \t\t\t |%2.1f| \n',tmp_scen_set,skewness_shock);
-fprintf(fid, '|MC %s P&L kurtosis  \t\t\t |%2.1f| \n',tmp_scen_set,kurtosis_shock);
-% -------------------------------------------------------------------------------------------------------------------- 
+  % Printing P&L test statistics
+  fprintf(fid, 'Test statistics on portfolio level:\n');
+  fprintf(fid, '|MC %s Tail scenario number\t |%i| \n',tmp_scen_set,confi_scenarionumber_shock);
+  fprintf(fid, '|MC %s P&L skewness  \t\t\t |%2.1f| \n',tmp_scen_set,skewness_shock);
+  fprintf(fid, '|MC %s P&L kurtosis  \t\t\t |%2.1f| \n',tmp_scen_set,kurtosis_shock);
+  % -------------------------------------------------------------------------------------------------------------------- 
 
-% 7.0) Print Report for all Risk factor scenario values around confidence scenario
-fprintf(fid, 'Risk factor scenario values: \n');
-fprintf(fid, '|VaR %s scenario delta |RF_ID|Scen-2|Scen-1|Base|Scen+1|Scen+2|\n',tmp_scen_set);
-for ii = 1 : 1 : length( riskfactor_struct)
+  % 7.0) Print Report for all Risk factor scenario values around confidence scenario
+  fprintf(fid, 'Risk factor scenario values: \n');
+  fprintf(fid, '|VaR %s scenario delta |RF_ID|Scen-2|Scen-1|Base|Scen+1|Scen+2|\n',tmp_scen_set);
+  for ii = 1 : 1 : length( riskfactor_struct)
     tmp_id           = riskfactor_struct( ii ).object.id;
     tmp_delta_shock   = riskfactor_struct( ii ).object.getValue(tmp_scen_set);
     fprintf(fid, '|VaR %s scenario delta |%s|%1.3f|%1.3f|%1.3f|%1.3f|%1.3f|\n',tmp_scen_set,tmp_id,tmp_delta_shock(confi_scenarionumber_shock_m2),tmp_delta_shock(confi_scenarionumber_shock_m1),tmp_delta_shock(confi_scenarionumber_shock),tmp_delta_shock(confi_scenarionumber_shock_p1),tmp_delta_shock(confi_scenarionumber_shock_p2));
-end
-% 7.1) Print Report for all Positions:
-total_var_undiversified = 0;
+  end
+  % 7.1) Print Report for all Positions:
+  total_var_undiversified = 0;
 
 
-aggr_key_struct=struct();
+  aggr_key_struct=struct();
 
-% reset vectors for charts of riskiest instruments and positions
-pie_chart_values_instr_shock = [];
-pie_chart_desc_instr_shock = {};
-pie_chart_values_pos_shock = [];
-pie_chart_desc_pos_shock = {};
+  % reset vectors for charts of riskiest instruments and positions
+  pie_chart_values_instr_shock = [];
+  pie_chart_desc_instr_shock = {};
+  pie_chart_values_pos_shock = [];
+  pie_chart_desc_pos_shock = {};
     
-fprintf(fid, '\n');
-fprintf(fid, 'Sensitivities on Positional Level: \n');
-for ii = 1 : 1 : length( position_struct )
+  fprintf(fid, '\n');
+  fprintf(fid, 'Sensitivities on Positional Level: \n');
+  for ii = 1 : 1 : length( position_struct )
     octamat = position_struct( ii ).mc_scenarios.octamat;
     tmp_values_shock = sort(octamat);
     tmp_id = position_struct( ii ).id;
@@ -916,30 +917,30 @@ for ii = 1 : 1 : length( position_struct )
     pie_chart_desc_instr_shock(ii) = cellstr( strcat(tmp_instr_object.id));
     pie_chart_values_pos_shock(ii) = round((tmp_decomp_var_shock) );
     pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
-end  % end loop for all positions
-% prepare vector for piechart:
-[pie_chart_values_sorted_instr_shock sorted_numbers_instr_shock ] = sort(pie_chart_values_instr_shock);
-[pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock);
-idx = 1;
+  end  % end loop for all positions
+  % prepare vector for piechart:
+  [pie_chart_values_sorted_instr_shock sorted_numbers_instr_shock ] = sort(pie_chart_values_instr_shock);
+  [pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock);
+  idx = 1;
 
-% plot only 6 highest values
-for ii = length(pie_chart_values_instr_shock):-1:max(0,length(pie_chart_values_instr_shock)-5)
+  % plot only 6 highest values
+  for ii = length(pie_chart_values_instr_shock):-1:max(0,length(pie_chart_values_instr_shock)-5)
     pie_chart_values_plot_instr_shock(idx)   = pie_chart_values_sorted_instr_shock(ii) ;
     pie_chart_desc_plot_instr_shock(idx)     = pie_chart_desc_instr_shock(sorted_numbers_instr_shock(ii));
     pie_chart_values_plot_pos_shock(idx)     = pie_chart_values_sorted_pos_shock(ii) ;
     pie_chart_desc_plot_pos_shock(idx)       = pie_chart_desc_pos_shock(sorted_numbers_pos_shock(ii));
     idx = idx + 1;
-end
-plot_vec_pie = zeros(1,length(pie_chart_values_plot_instr_shock));
-plot_vec_pie(1) = 1;
+  end
+  plot_vec_pie = zeros(1,length(pie_chart_values_plot_instr_shock));
+  plot_vec_pie(1) = 1;
 
 
 
-fprintf(fid, '\n');
-% Print aggregation key report:  
-fprintf(fid, '=== Aggregation Key VAR === \n');  
-fprintf('=== Aggregation Key VAR === \n');  
-for jj = 1:1:length(aggr_key_struct)
+  fprintf(fid, '\n');
+  % Print aggregation key report:  
+  fprintf(fid, '=== Aggregation Key VAR === \n');  
+  fprintf('=== Aggregation Key VAR === \n');  
+  for jj = 1:1:length(aggr_key_struct)
     % load values from aggr_key_struct:
     tmp_aggr_cell               = aggr_key_struct( jj ).key_values;
     tmp_aggr_key_name           =  aggr_key_struct( jj ).key_name;
@@ -957,89 +958,89 @@ for jj = 1:1:length(aggr_key_struct)
         fprintf('|VaR %s | %s \t |%9.2f EUR \t |%9.2f EUR|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,tmp_decomp_aggr_key_var);
         fprintf(fid, '|VaR %s | %s \t |%9.2f EUR \t |%9.2f EUR|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,tmp_decomp_aggr_key_var);
     end
-end
+  end
 
-% Print Portfolio reports
-fprintf(fid, '\n');
-fprintf(fid, 'Total VaR undiversified: \n');
-fprintf(fid, '|VaR %s undiversified| |%9.2f EUR|\n',tmp_scen_set,total_var_undiversified);
-fprintf(fid, '\n');
-if ( mc < hd_limit )
+  % Print Portfolio reports
+  fprintf(fid, '\n');
+  fprintf(fid, 'Total VaR undiversified: \n');
+  fprintf(fid, '|VaR %s undiversified| |%9.2f EUR|\n',tmp_scen_set,total_var_undiversified);
+  fprintf(fid, '\n');
+  if ( mc < hd_limit )
     fprintf(fid, '=== Total Portfolio HD-VaR === \n');
     fprintf('=== Total Portfolio HD-VaR === \n');
-else
+  else
     fprintf(fid, '=== Total Portfolio VaR === \n');
     fprintf('=== Total Portfolio VaR === \n')
-end
-% Output to file: 
-fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
-fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,mc_var_shock);
-fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
-fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f EUR|\n\n',tmp_scen_set,confidence.*100,mc_es_shock);
-fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock);
-fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.9,VAR999_EVT_shock);
-fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f EUR|\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock);
-fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,ES995_EVT_shock);
-fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.9,ES999_EVT_shock);
-fprintf(fid, '|Port EVT  ES  %s@%2.2f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.99,ES9999_EVT_shock);
+  end
+  % Output to file: 
+  fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
+  fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,mc_var_shock);
+  fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
+  fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f EUR|\n\n',tmp_scen_set,confidence.*100,mc_es_shock);
+  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock);
+  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.9,VAR999_EVT_shock);
+  fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f EUR|\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock);
+  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,ES995_EVT_shock);
+  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.9,ES999_EVT_shock);
+  fprintf(fid, '|Port EVT  ES  %s@%2.2f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.99,ES9999_EVT_shock);
 
-% Output to stdout:
-fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
-fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,mc_var_shock);
-fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
-fprintf('ES  %s@%2.1f%%: \t %9.2f EUR\n\n',tmp_scen_set,confidence.*100,mc_es_shock);
-% Output of GPD calibrated VaR and ES:
-fprintf('GPD extreme value VAR and ES: \n');
-fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,VAR90_EVT_shock);
-fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,VAR95_EVT_shock);
-fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,VAR975_EVT_shock);
-fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,VAR99_EVT_shock);
-fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock);
-fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,VAR999_EVT_shock);
-fprintf('VaR EVT %s@%2.2f%%: \t %9.2f EUR\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock);
+  % Output to stdout:
+  fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,mc_var_shock);
+  fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
+  fprintf('ES  %s@%2.1f%%: \t %9.2f EUR\n\n',tmp_scen_set,confidence.*100,mc_es_shock);
+  % Output of GPD calibrated VaR and ES:
+  fprintf('GPD extreme value VAR and ES: \n');
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,VAR90_EVT_shock);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,VAR95_EVT_shock);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,VAR975_EVT_shock);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,VAR99_EVT_shock);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,VAR999_EVT_shock);
+  fprintf('VaR EVT %s@%2.2f%%: \t %9.2f EUR\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock);
 
-fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,ES90_EVT_shock);
-fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,ES95_EVT_shock);
-fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,ES975_EVT_shock);
-fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,ES99_EVT_shock);
-fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,ES995_EVT_shock);
-fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,ES999_EVT_shock);
-fprintf('ES  EVT %s@%2.2f%%: \t %9.2f EUR\n\n',tmp_scen_set,99.99,ES9999_EVT_shock);
-fprintf('Low tail VAR: \n');
-fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,50.0,-VAR50_shock);
-fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,70.0,-VAR70_shock);
-fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,-VAR90_shock);
-fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,-VAR95_shock);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,ES90_EVT_shock);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,ES95_EVT_shock);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,ES975_EVT_shock);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,ES99_EVT_shock);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,ES995_EVT_shock);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,ES999_EVT_shock);
+  fprintf('ES  EVT %s@%2.2f%%: \t %9.2f EUR\n\n',tmp_scen_set,99.99,ES9999_EVT_shock);
+  fprintf('Low tail VAR: \n');
+  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,50.0,-VAR50_shock);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,70.0,-VAR70_shock);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,-VAR90_shock);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,-VAR95_shock);
 
-if ( mc < hd_limit )
+  if ( mc < hd_limit )
     fprintf(fid, '\n');
     fprintf(fid, 'Difference to HD-VaR %s:  %9.2f EUR\n',tmp_scen_set,mc_var_shock_diff_hd);    
-end
-fprintf(fid, '\n');
+  end
+  fprintf(fid, '\n');
 
-fprintf(fid, 'Total Reduction in VaR via Diversification: \n');
-fprintf(fid, '|Portfolio VaR %s Diversification Effect| |%9.2f%%|\n',tmp_scen_set,(1 - mc_var_shock / total_var_undiversified)*100)
+  fprintf(fid, 'Total Reduction in VaR via Diversification: \n');
+  fprintf(fid, '|Portfolio VaR %s Diversification Effect| |%9.2f%%|\n',tmp_scen_set,(1 - mc_var_shock / total_var_undiversified)*100)
 
-fprintf(fid, '====================================================================');
-fprintf(fid, '\n');
-aggr = toc;
+  fprintf(fid, '====================================================================');
+  fprintf(fid, '\n');
+  aggr = toc;
 
-% --------------------------------------------------------------------------------------------------------------------
-% 8.  Plotting 
-tic
-if ( plotting == 1 )
-plot_vec = 1:1:mc;
-%graphics_toolkit gnuplot;
-idx_figure = idx_figure + 1;
-figure(idx_figure);
-clf;
+  % --------------------------------------------------------------------------------------------------------------------
+  % 8.  Plotting 
+  tic
+  if ( plotting == 1 )
+  plot_vec = 1:1:mc;
+  %graphics_toolkit gnuplot;
+  idx_figure = idx_figure + 1;
+  figure(idx_figure);
+  clf;
 
-subplot (2, 2, 1)
+  subplot (2, 2, 1)
     hist(endstaende_reldiff_shock,40)
     title_string = strcat('Portfolio PnL ',tmp_scen_set);
     title (title_string,'fontsize',12);
     xlabel('Relative Portfoliovalue');
-subplot (2, 2, 2)
+  subplot (2, 2, 2)
     plot ( plot_vec, p_l_absolut_shock,'linewidth',2);
     %area ( plot_vec, p_l_absolut_shock,'Facecolor','blue');
     hold on;
@@ -1056,18 +1057,18 @@ subplot (2, 2, 2)
     ylabel('Absolute PnL (in EUR)');
     title_string = strcat('Portfolio PnL ',tmp_scen_set);
     title (title_string,'fontsize',12);
-subplot (2, 2, 3)
+  subplot (2, 2, 3)
     pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock, plot_vec_pie);
     title_string = strcat('Position contribution to VaR',tmp_scen_set);
     title(title_string,'fontsize',12);
     axis ('tic', 'off');    
-subplot (2, 2, 4)
+  subplot (2, 2, 4)
     pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock, plot_vec_pie);
     title_string = strcat('Pie Chart of Riskiest Instruments (VaR',tmp_scen_set,')');
     title(title_string,'fontsize',12);
     axis ('tic', 'off');
-plottime = toc;
-end     % end plotting
+  plottime = toc; % end plotting
+end     % end MC reports
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    END  MC REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
 
 
@@ -1092,14 +1093,14 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
         new_value_vec_stress    = tmp_instr_object.getValue('stress');
 
         % Get FX rate:
-        if ( strcmp(tmp_currency,'EUR') == 1 )
-            tmp_fx_value_stress = ones(no_stresstests,1);
+        if ( strcmp(tmp_currency,base_currency) == 1 )
+            tmp_fx_value_stress = 1;
         else
             %disp( ' Conversion of currency: ');
-            tmp_fx_riskfactor   = strcat('RF_FX_', base_currency, tmp_currency);
-            tmp_fx_struct_obj   = get_sub_object(riskfactor_struct, tmp_fx_riskfactor);
+            tmp_fx_index   = strcat('FX_', base_currency, tmp_currency);
+            tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
             tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-            tmp_fx_value_stress = tmp_fx_struct_obj.getValue('stress','abs');                       
+            tmp_fx_value_stress = tmp_fx_struct_obj.getValue('stress');                       
         end
           
         % Store new Values in Position's struct

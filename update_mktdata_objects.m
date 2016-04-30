@@ -1,3 +1,20 @@
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
+
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {[@var{index_struct} @var{curve_struct} @var{id_failed_cell}] =} update_mktdata_objects(@var{mktdata_struct},@var{index_struct},@var{riskfactor_struct},@var{curve_struct})
+%# Update all market data objects with scenario dependent risk factor and curve shocks. Return index struct and curve struct with scenario dependent absolute values.
+%# @end deftypefn
+
 function [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct)
 
 id_failed_cell = {};
@@ -39,9 +56,10 @@ for ii = 1 : 1 : length(mktdata_struct)
         curve_nodes      = tmp_object.get('nodes');
         curve_rates_base = tmp_object.get('rates_base');
         tmp_ir_shock_matrix = [];
+        
         % get stress values of risk factor curve
         rf_shock_nodes    = tmp_rf_object.get('nodes');
-        rf_shock_rates    = tmp_rf_object.getValue('stress') ./ 10000;
+        rf_shock_rates    = tmp_rf_object.getValue('stress') ;
         rf_shifttype      = tmp_rf_object.get('rates_base');
         rf_shifttype      = rf_shifttype(:,1);   % get just first column of shifttype matrix ->  per stresstest one shifttype for all nodes (columns)
         % loop through all IR Curve nodes and get interpolated shock value from risk factor
@@ -54,10 +72,11 @@ for ii = 1 : 1 : length(mktdata_struct)
             tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock);
         end
         rf_shifttype_inv  = 1 - rf_shifttype;
-        curve_rates_stress = rf_shifttype_inv .* (curve_rates_base + (tmp_ir_shock_matrix )) + (rf_shifttype .* curve_rates_base .* tmp_ir_shock_matrix); %calculate abs and rel shocks and sum up (mutually exclusive)
+        curve_rates_stress = rf_shifttype_inv .* (curve_rates_base + (tmp_ir_shock_matrix ./ 10000)) + (rf_shifttype .* curve_rates_base .* (1 + tmp_ir_shock_matrix)); %calculate abs and rel shocks and sum up (mutually exclusive)
         clear tmp_ir_shock_matrix;
         tmp_object = tmp_object.set('rates_stress',curve_rates_stress);
-        % loop through all timestep_mc and stress values
+        
+        % loop through all timestep_mc 
         tmp_timestep_mc = tmp_rf_object.get('timestep_mc');
         
         tmp_shocktype_mc = tmp_rf_object.get('shocktype_mc');
