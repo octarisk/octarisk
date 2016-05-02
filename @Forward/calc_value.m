@@ -8,9 +8,9 @@ function obj = calc_value (forward,discount_curve_object,value_type,underlying_o
    end
    % get underlying price vector according to value_type
    value_type = lower(value_type);
-   if ( strcmp(value_type,'base'))
-       tmp_underlying_price = obj.underlying_price_base;
-   else
+  % if ( strcmp(value_type,'base'))
+   %    tmp_underlying_price = underlying_object.getValue(value_type);;
+  %else
         if ( nargin < 4 )
             error('No underlying_object set for value_type not being base.');
         else
@@ -22,7 +22,7 @@ function obj = calc_value (forward,discount_curve_object,value_type,underlying_o
                 tmp_underlying_price = underlying_object.getValue(value_type);
             end
         end
-   end   
+  % end   
     % Get Discount Curve nodes and rate
         discount_nodes  = discount_curve_object.get('nodes');
         discount_rates  = discount_curve_object.getValue(value_type);

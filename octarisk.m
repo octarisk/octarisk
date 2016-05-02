@@ -271,13 +271,10 @@ if ( mc < 1000 )
 end
 
 % a.) Load input correlation matrix
-%corr_matrix = load('rf_corr_2011_2015.dat'); 
 
-%cov_matrix = load('covmat_24.dat'); % path to covariance matrix
-%[std_vector corr_matrix] = cov2corr(cov_matrix);
 corr_matrix = load(input_filename_corr_matrix); % path to correlation matrix
 %corr_matrix = eye(length(riskfactor_struct));
-%std_vector'
+
 % b) Get distribution parameters: all four moments and return are taken directly from riskfactors, NOT from covariance matrix!
 rf_vola_vector = zeros(length(riskfactor_struct),1);
 for ii = 1 : 1 : length(riskfactor_struct)
@@ -304,11 +301,7 @@ end
     % kurt_act = kurtosis(R(:,ii))
 % end
 
-% Correlation breach analysis: calculating norm of target and actual correlation matrix of all risk factors
-norm_corr_250 = norm( corr(R_250) - corr_matrix)
-%norm_corr_1 = norm( corr(R_1) - corr_matrix)
-std_vector = rf_vola_vector;
-
+% Generate Structure with Risk factor scenario values: scale values according to timestep
 M_struct = struct();
 for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random matrix and derive all other timesteps from them
         % [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,mc_timestep_days(kk)); % uncomment, if new random numbers needed for each timestep
@@ -350,17 +343,17 @@ curve_gen_time = toc;
 persistent index_struct;
 index_struct=struct();
 [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct);   
- for kk = 1  : 1 : length(curve_struct)
-    curve_struct(kk).id
-    curve_struct(kk).object
- end
+% for kk = 1  : 1 : length(curve_struct)
+%    curve_struct(kk).id
+%    curve_struct(kk).object
+% end
 
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
 %   Total Loop over all Instruments and type dependent valuation
 fulvia = 0.0;
 fulvia_performance = {};
-instrument_valuation_failed_cell = {};
+instrument_valuation_failed_cell = {};  
 for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and other scenarios
   tmp_scenario  = scenario_set{ kk };    % get scenario from scenario_set
   tmp_ts        = scenario_ts_days(kk);  % get timestep days
@@ -416,7 +409,20 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
 
                 % store option object in struct:
                     instrument_struct( ii ).object = option;
-            
+                % Debug Mode:
+                if ( regexp(option.name,'DEBUG') )
+                    fprintf('DEBUG for Instrument name %s of type %s \n',option.name,tmp_type);
+                    fprintf('\t Underyling Instrument %s \n',tmp_underlying_obj.id);
+                    tmp_underlying_obj
+                    fprintf('\t Underyling Vola Surface %s \n',tmp_vola_surf_obj.id);
+                    tmp_vola_surf_obj
+                    fprintf('\t Discount Curve %s \n',tmp_rf_curve_obj.id);
+                    tmp_rf_curve_obj
+                    fprintf('\t Underyling Vola Risk factor %s \n',tmp_rf_vola_obj.id);
+                    tmp_rf_vola_obj
+                    fprintf('\t Option %s \n',option.id);
+                    option
+                end
             % European Swaption Valuation according to Back76 or Bachelier Model 
             elseif ( strfind(tmp_type,'swaption') > 0 )    
                 % Using Swaption class
@@ -446,7 +452,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     tmp_discount_curve          = forward.get('discount_curve');            
                     tmp_curve_object            = get_sub_object(curve_struct, tmp_discount_curve);	
 
-                %Calculate values of equity forward: assume geometric brownian motion for underlying price movement
+                %Calculate values of equity forward
                 if ( first_eval == 0)
                 % Base value
                     forward = forward.calc_value(tmp_curve_object,'base',tmp_underlying_object);
@@ -456,7 +462,16 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
 
                 % store bond object in struct:
                     instrument_struct( ii ).object = forward;
-                    
+                % Debug Mode:
+                if ( regexp(forward.name,'DEBUG') )
+                    fprintf('DEBUG for Instrument name %s of type %s \n',forward.name,tmp_type);
+                    fprintf('\t Underyling Instrument %s \n',tmp_underlying_object.id);
+                    tmp_underlying_object
+                    fprintf('\t Discount Curve %s \n',tmp_curve_object.id);
+                    tmp_curve_object
+                    fprintf('\t Forward %s \n',forward.id);
+                    forward
+                end    
             % Equity Valuation: Sensitivity based Approach       
             elseif ( strcmp(tmp_type,'sensitivity') == 1 )
             tmp_delta = 0;
@@ -618,7 +633,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
   first_eval = 1;
 end      % end eval mc timesteps and stress loops
  
- tic;
+tic;
+
 if ( saving == 1 )
     % loop via all objects in structs and convert
     tmp_instrument_struct_fv = instrument_struct;

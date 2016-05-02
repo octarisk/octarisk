@@ -23,11 +23,11 @@ function [A_scaled pos_sem_def_bool]= correct_correlation_matrix(M)
 fprintf('\n'); 
 pos_sem_def_bool = testpsd(M);
 if (pos_sem_def_bool == true)
-    disp ('Input matrix is positive semidefinite')
+    fprintf  ('Input matrix is positive semidefinite\n')
     A_scaled = M;
     return;
 else
-    disp ('Input matrix is not positive semidefinite. Starting correction.')
+    fprintf ('Input matrix is not positive semidefinite. Starting correction.\n')
 end
 A_scaled = M;
 limit = 0.0;
@@ -50,7 +50,7 @@ while ( pos_sem_def_bool == 0 )
     end
 end
 if ( break_bool == 1 )
-    disp('!!!! Warning: No positive semidefinite solution was reached !!!!');
+    fprintf ('!!!! Warning: No positive semidefinite solution was reached !!!!\n');
 end
 % Get final test statistics
     A_scaled_diff = A_scaled - M;
@@ -58,14 +58,16 @@ end
     Max_diff = max(max(abs(A_scaled_diff)));
     StdDev_diff = std(std(A_scaled_diff));
     Frobenius_Norm = norm(A_scaled_diff,'fro');
-fprintf('Test statistics: \n');    
-fprintf('Standard deviation of delta: \n %1.4f \n', StdDev_diff);
-fprintf('Maximum correlation deviation: \n %1.4f \n', Max_diff);    
-fprintf('Frobenius norm: \n %1.4f \n', Frobenius_Norm);
-fprintf('Algorithm converged after %d steps.\n', step);
+    Max_Singular_Value_Norm = norm(A_scaled_diff);
+%fprintf('Test statistics: \n');    
+%fprintf('Standard deviation of delta:  %1.4f \n', StdDev_diff);
+fprintf('Maximum correlation deviation: %1.4f \n', Max_diff);    
+fprintf('Frobenius norm: %1.4f \n', Frobenius_Norm);
+%fprintf(' Maximum singular value: %1.4f \n', Max_Singular_Value_Norm);
+%fprintf('Algorithm converged after %d steps.\n', step);
 pos_sem_def_bool =testpsd(A_scaled);
 if (pos_sem_def_bool == true)
-    disp ('Correction successful: Matrix is positive semidefinite.\n')
+    fprintf ('Correction successful: Matrix is positive semidefinite.\n')
 end
 end
 % %#%#%#%#%#%#%#%#%#%##    Helper Functions    %#%#%#%#%#%#%#%#%#%#

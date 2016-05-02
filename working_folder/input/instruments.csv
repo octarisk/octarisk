@@ -38,6 +38,6 @@ Item,Gold Future Call Option,GCFUTC20160126,1580,OPT_AM_C,Call Option Gold,USD,R
 HeaderSWAPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,tenorNMBR,no_paymentsNMBR,spotNMBR,strikeNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,modelCHAR
 Item,IR Payer Swaption,SWAPTIONC20151217,0.0010023,SWAPT_EUR_REC,IR Payer Swaption,EUR,RF_VOLA_IR_EUR,IR_EUR,IR_EUR,10,1,0.025,0.000001,disc,30/360,100,17-Oct-2016,Derivative,Black76
 HeaderFWD,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,underlying_idCHAR,underlying_sensitivityNMBR,discount_curveCHAR,strike_priceNMBR,spreadNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,dividend_yieldNMBR,convenience_yieldNMBR,storage_costNMBR
-Item,EQForward_test,EQFORW01,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,disc,act/365,0.1,17-Oct-2018,Derivative,0.00,0.00,0.00
+Item,EQForward_test,EQFORW01,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,17-Oct-2018,Derivative,0.00,0.00,0.00
 HeaderSYNTH,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,instrumentsCHAR,weightsCHAR,asset_classCHAR
 Item,Synthetic_test,SYNTH01,121.1,SYNTH,Synthetic test instrument,EUR,A0RM43|EQFORW01,0.4|0.6,Diversified
