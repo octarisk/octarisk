@@ -1056,46 +1056,46 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   % 8.  Plotting 
   tic
   if ( plotting == 1 )
-  plot_vec = 1:1:mc;
-  %graphics_toolkit gnuplot;
-  idx_figure = idx_figure + 1;
-  figure(idx_figure);
-  clf;
+	  plot_vec = 1:1:mc;
+	  %graphics_toolkit gnuplot;
+	  idx_figure = idx_figure + 1;
+	  figure(idx_figure);
+	  clf;
 
-  subplot (2, 2, 1)
-    hist(endstaende_reldiff_shock,40)
-    title_string = strcat('Portfolio PnL ',tmp_scen_set);
-    title (title_string,'fontsize',12);
-    xlabel('Relative Portfoliovalue');
-  subplot (2, 2, 2)
-    plot ( plot_vec, p_l_absolut_shock,'linewidth',2);
-    %area ( plot_vec, p_l_absolut_shock,'Facecolor','blue');
-    hold on;
-    plot ( [1, mc], [-mc_var_shock, -mc_var_shock], '-','linewidth',1);
-    hold on;
-    plot ( [1, mc], [0, 0], 'r','linewidth',1);
-    h=get (gcf, 'currentaxes');
-    xlabel('MonteCarlo Scenario');
-    set(h,'xtick',[1 mc])
-    set(h,'ytick',[min(p_l_absolut_shock) -20000 0 20000 max(p_l_absolut_shock)])
-    h=text(0.025*mc,(-1.45*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
-    h=text(0.025*mc,(-2.1*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
-    %set(h,'fontweight','bold'); %,'rotation',90)
-    ylabel('Absolute PnL (in EUR)');
-    title_string = strcat('Portfolio PnL ',tmp_scen_set);
-    title (title_string,'fontsize',12);
-  subplot (2, 2, 3)
-    pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock, plot_vec_pie);
-    title_string = strcat('Position contribution to VaR',tmp_scen_set);
-    title(title_string,'fontsize',12);
-    axis ('tic', 'off');    
-  subplot (2, 2, 4)
-    pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock, plot_vec_pie);
-    title_string = strcat('Pie Chart of Riskiest Instruments (VaR',tmp_scen_set,')');
-    title(title_string,'fontsize',12);
-    axis ('tic', 'off');
+	  subplot (2, 2, 1)
+		hist(endstaende_reldiff_shock,40)
+		title_string = strcat('Portfolio PnL ',tmp_scen_set);
+		title (title_string,'fontsize',12);
+		xlabel('Relative Portfoliovalue');
+	  subplot (2, 2, 2)
+		plot ( plot_vec, p_l_absolut_shock,'linewidth',2);
+		%area ( plot_vec, p_l_absolut_shock,'Facecolor','blue');
+		hold on;
+		plot ( [1, mc], [-mc_var_shock, -mc_var_shock], '-','linewidth',1);
+		hold on;
+		plot ( [1, mc], [0, 0], 'r','linewidth',1);
+		h=get (gcf, 'currentaxes');
+		xlabel('MonteCarlo Scenario');
+		set(h,'xtick',[1 mc])
+		set(h,'ytick',[min(p_l_absolut_shock) -20000 0 20000 max(p_l_absolut_shock)])
+		h=text(0.025*mc,(-1.45*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
+		h=text(0.025*mc,(-2.1*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
+		%set(h,'fontweight','bold'); %,'rotation',90)
+		ylabel('Absolute PnL (in EUR)');
+		title_string = strcat('Portfolio PnL ',tmp_scen_set);
+		title (title_string,'fontsize',12);
+	  subplot (2, 2, 3)
+		pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock, plot_vec_pie);
+		title_string = strcat('Position contribution to VaR',tmp_scen_set);
+		title(title_string,'fontsize',12);
+		axis ('tic', 'off');    
+	  subplot (2, 2, 4)
+		pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock, plot_vec_pie);
+		title_string = strcat('Pie Chart of Riskiest Instruments (VaR',tmp_scen_set,')');
+		title(title_string,'fontsize',12);
+		axis ('tic', 'off');
+  end     % end plotting
   plottime = toc; % end plotting
-end     % end MC reports
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    END  MC REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
 
 
