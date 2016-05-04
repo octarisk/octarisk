@@ -13,6 +13,8 @@ classdef Option < Instrument
         strike = 100;
         spot = 100;
         multiplier = 5;
+        timesteps_size = 5;      % size of one timestep in path dependent valuations
+        willowtree_nodes = 20;   % number of willowtree nodes per timestep
     end
    
     properties (SetAccess = private)
@@ -153,55 +155,6 @@ classdef Option < Instrument
          fprintf('compounding_type: %s\n',b.compounding_type);  
          fprintf('compounding_freq: %d\n',b.compounding_freq);    
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
-         %fprintf('base_value: %f\n',b.base_value);
-         % % display all mc values and cf values
-         % cf_stress_rows = min(rows(b.cf_values_stress),5);
-         % [mc_rows mc_cols mc_stack] = size(b.cf_values_mc);
-         % % looping via all cf_dates if defined
-         % if ( length(b.cf_dates) > 0 )
-            % fprintf('CF dates:\n[ ');
-            % for (ii = 1 : 1 : length(b.cf_dates))
-                % fprintf('%d,',b.cf_dates(ii));
-            % end
-            % fprintf(' ]\n');
-         % end
-         % % looping via all cf base values if defined
-         % if ( length(b.cf_values) > 0 )
-            % fprintf('CF Base values:\n[ ');
-            % for ( kk = 1 : 1 : min(columns(b.cf_values),10))
-                    % fprintf('%f,',b.cf_values(kk));
-                % end
-            % fprintf(' ]\n');
-         % end   
-          % % looping via all stress rates if defined
-         % if ( rows(b.cf_values_stress) > 0 )
-            % tmp_cf_values = b.getCF('stress');
-            % fprintf('CF Stress values:\n[ ');
-            % for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
-                % for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
-                    % fprintf('%f,',tmp_cf_values(jj,kk));
-                % end
-                % fprintf(' ]\n');
-            % end
-            % fprintf('\n');
-         % end    
-         % % looping via first 3 MC scenario values
-         % for ( ii = 1 : 1 : mc_stack)
-            % if ( length(b.timestep_mc_cf) >= ii )
-                % fprintf('MC timestep: %s\n',b.timestep_mc_cf{ii});
-                % tmp_cf_values = b.getCF(b.timestep_mc_cf{ii});
-                % fprintf('Scenariovalue:\n[ ')
-                % for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
-                    % for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
-                        % fprintf('%f,',tmp_cf_values(jj,kk));
-                    % end
-                    % fprintf(' ]\n');
-                % end
-                % fprintf('\n');
-            % else
-                % fprintf('MC timestep cf not defined\n');
-            % end
-         % end
 
       end
       % converting object <-> struct for saving / loading purposes

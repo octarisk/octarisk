@@ -11,11 +11,11 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_willowtree(@var{putcallflag},@var{americanflag},@var{S},@var{X},@var{T},@var{rf},@var{sigma},@var{divyield},@var{stepsize},@var{nodes},@var{multiplicator},@var{market_value})
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_willowtree(@var{putcallflag},@var{americanflag},@var{S},@var{X},@var{T},@var{rf},@var{sigma},@var{divyield},@var{stepsize},@var{nodes},@var{multiplicator},@var{market_value},@var{path_static})
 %# Calibrate the implied volatility spread for American options according to Willowtree valuation formula.
 %# @end deftypefn
 
-function vola_spread = calibrate_option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value)
+function vola_spread = calibrate_option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value,path_static)
 
 %option_value = option_bs(putcallflag,S,X,T,rf,sigma) .* multiplicator
 % Start parameter
@@ -24,7 +24,7 @@ x0 = -0.0001;
 %p0=[x0]'; % Guessed parameters.
 
 lb = -sigma + 0.0001;
-[x, obj, info, iter] = sqp (x0, @ (x) phi(x,putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value), [], [], lb, [], 300);	%, obj, info, iter, nf, lambda @g
+[x, obj, info, iter] = sqp (x0, @ (x) phi(x,putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value,path_static), [], [], lb, [], 300);	%, obj, info, iter, nf, lambda @g
 
 if (info == 101 )
 	%disp ('       +++ SUCCESS: Optimization converged in +++');
@@ -60,10 +60,10 @@ end
 
  
 % Definition Objective Function:	    
-	function obj = phi (x,putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value)
+	function obj = phi (x,putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value,path_static)
             % This is where we computer the sum of the square of the errors.
             % The parameters are in the vector p, which for us is a two by one.	
-			tmp_option_value = option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma+x,divyield,stepsize,nodes) .* multiplicator;
+			tmp_option_value = option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma+x,divyield,stepsize,nodes,path_static) .* multiplicator;
 			obj = abs( tmp_option_value  - market_value)^2;
 		%----------------------------------------------
 end

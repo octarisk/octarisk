@@ -142,6 +142,7 @@ path_output_mktdata     = strcat(path_output,'/mktdata');
 path_reports = strcat(path,'/output/reports');
 path_archive = strcat(path,'/archive');
 path_input = strcat(path,'/input');
+path_static = strcat(path,'/static');
 path_mktdata = strcat(path,'/mktdata');
 mkdir(path_output);
 mkdir(path_output_instruments);
@@ -153,6 +154,7 @@ mkdir(path_archive);
 mkdir(path_input);
 mkdir(path_mktdata);
 mkdir(path_reports);
+mkdir(path_static);
 % Set current working directory to path
 chdir(path);
 act_pwd = strrep(pwd,'\','/');
@@ -402,10 +404,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 tmp_vola_surf_obj        = get_sub_object(surface_struct, option.get('vola_surface'));
                 % Calibration of Option vola spread 
                 if ( option.get('vola_spread') == 0 )
-                    option = option.calc_vola_spread(tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date);
+                    option = option.calc_vola_spread(tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date,path_static);
                 end
                 % calculate value
-                option = option.calc_value(tmp_scenario,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date);
+                option = option.calc_value(tmp_scenario,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date,path_static);
 
                 % store option object in struct:
                     instrument_struct( ii ).object = option;
@@ -668,14 +670,23 @@ persistent aggr_key_struct;
 % before looping via all portfolio make one time Harrel Davis Vector:
 % HD VaR only if number of scenarios < hd_limit
 if ( mc < hd_limit )
-    minhd           = min(2*confi_scenario+1,mc);
-    hd_vec_min      = zeros(max(confi_scenario-500,0)-1,1);
-    hd_vec_max      = zeros(mc-min(confi_scenario+500,mc)-1,1);
-    hd_plot_x       = max(confi_scenario-500,0):1:min(confi_scenario+500,mc);
-    tt              = max(confi_scenario-500,0):1:min(confi_scenario+500,mc);
-    hd_vec_func     = harrell_davis_weight(mc,tt,confi)';
-    hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
-    size_hdvec = size(hd_vec);
+    % take values from file in static folder, if already calculated
+    tmp_filename = strcat(path_static,'/hd_vec_',num2str(mc),'.mat');
+    if ( exist(tmp_filename,'file'))
+        fprintf('Taking file >>%s<< with HD vector in static folder\n',tmp_filename);
+        tmp_load_struct = load(tmp_filename);
+        hd_vec= tmp_load_struct.hd_vec;
+    else % otherwise calculate HD vector and save it to static folder
+        fprintf('New HD vector is calculated for %d MC scenarios and saved in static foler\n',mc);
+        minhd           = min(2*confi_scenario+1,mc);
+        hd_vec_min      = zeros(max(confi_scenario-500,0)-1,1);
+        hd_vec_max      = zeros(mc-min(confi_scenario+500,mc)-1,1);
+        tt              = max(confi_scenario-500,0):1:min(confi_scenario+500,mc);
+        hd_vec_func     = harrell_davis_weight(mc,tt,confi)';
+        hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
+        save ('-v7',tmp_filename,'hd_vec');
+    end
+    %size_hdvec = size(hd_vec);
 end
 % a) loop over all portfolios (outer loop) and via all positions (inner loop)
 for mm = 1 : 1 : length( portfolio_struct )
@@ -1277,11 +1288,6 @@ function [VAR ES] = get_gpd_var(chi, sigma, u, q, n, nu)
     VAR = u + sigma/chi*(( n/nu *( 1- q ) )^(-chi) -1);
     ES = (VAR + sigma - chi * u) / ( 1 - chi );
 end
-% plot ( hd_plot_x, hd_vec_func, 'linewidth',1 );
-%    %axis( [ 0 min(2 * confi_scenario, mc) ] ); 
-%    xlabel('MC Scenario','fontsize',12);
-%    ylabel('H-D','fontsize',12); 
-%    title ('Harrell-Davis Estimator','fontsize',12);
 
 %plot (pp,cdf_var250, 'linewidth',1);
 %    set(gca,'xtick',[-1 -0.5 0 0.5 1]);

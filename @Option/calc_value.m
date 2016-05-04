@@ -1,4 +1,4 @@
-function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,valuation_date)
+function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,valuation_date,path_static)
     obj = option;
     if ( nargin < 5)
         error('Error: No  discount curve, vola surface or underlying set. Aborting.');
@@ -8,6 +8,9 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
     end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
+    end
+    if ( nargin < 7)
+        path_static = pwd;
     end
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
@@ -75,7 +78,7 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         if ( strfind(tmp_type,'OPT_EUR') > 0  )     % calling Black-Scholes option pricing model
             theo_value	            = max(option_bs(call_flag,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock) .* tmp_multiplier,0.001);
         elseif ( strfind(tmp_type,'OPT_AM') > 0 )   % calling Willow tree option pricing model
-            theo_value	            = max(option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,5,20) .* tmp_multiplier,0.001);
+            theo_value	            = max(option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,option.timesteps_size,option.willowtree_nodes,path_static) .* tmp_multiplier,0.001);
         end
     end   % close loop if tmp_dtm < 0
     

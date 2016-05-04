@@ -1,4 +1,4 @@
-function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,valuation_date)
+function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,valuation_date,path_static)
     obj = option;
     if ( nargin < 4)
         error('Error: No discount curve, vola surface or underlying set. Aborting.');
@@ -8,6 +8,9 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
     end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
+    end
+    if ( nargin < 6)
+        path_static = pwd;
     end
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
@@ -49,8 +52,8 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
             tmp_optionvalue_base        = option_bs(call_flag,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base) .* tmp_multiplier;
             tmp_impl_vola_spread        = calibrate_option_bs(call_flag,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,tmp_multiplier,tmp_value);
         elseif ( strfind(tmp_type,'OPT_AM') > 0 )
-            tmp_optionvalue_base        = option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,0.0,5,20) .* tmp_multiplier;
-            tmp_impl_vola_spread        = calibrate_option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,0.0,5,20,tmp_multiplier,tmp_value);
+            tmp_optionvalue_base        = option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,0.0,option.timesteps_size,option.willowtree_nodes,path_static) .* tmp_multiplier;
+            tmp_impl_vola_spread        = calibrate_option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base,0.0,option.timesteps_size,option.willowtree_nodes,tmp_multiplier,tmp_value,path_static);
         end
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 )
@@ -63,7 +66,7 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
             if ( strfind(tmp_type,'OPT_EUR') > 0  )
                 tmp_new_val             = option_bs(call_flag,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base + tmp_impl_vola_spread) .* tmp_multiplier;
             elseif ( strfind(tmp_type,'OPT_AM') > 0 )
-                tmp_new_val             = option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base + tmp_impl_vola_spread,0.0,5,20) .* tmp_multiplier;
+                tmp_new_val             = option_willowtree(call_flag,1,tmp_spot,tmp_strike,tmp_dtm,tmp_rf_rate_base,tmp_indexvol_base + tmp_impl_vola_spread,0.0,option.timesteps_size,option.willowtree_nodes,path_static) .* tmp_multiplier;
             end
             
             if ( abs(tmp_value - tmp_new_val) < 0.05 )

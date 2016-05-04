@@ -12,7 +12,7 @@
 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk})
-%# @deftypefnx {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk}, @var{nodes})
+%# @deftypefnx {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk}, @var{nodes},@var{path_static})
 %#
 %# Computes the price of european or american equity options according to the willow tree model.@*
 %# The willow tree approach provides a fast and accurate way of calculating option prices. Furthermore, massive parallelization due to litte memory consumption  is possible.
@@ -51,12 +51,12 @@
 %# @seealso{option_binomial, option_bs, option_exotic_mc}
 %# @end deftypefn
 
-function [option_willowtree delta] = option_willowtree(CallFlag,AmericanFlag,S0,K,T,rf,sigma,dividend,dk,nodes)
+function [option_willowtree delta] = option_willowtree(CallFlag,AmericanFlag,S0,K,T,rf,sigma,dividend,dk,nodes,path_static)
 
 %-------------------------------------------------------------------------
 %           Error Handling
 %-------------------------------------------------------------------------
- if nargin < 9 || nargin > 10
+ if nargin < 9 || nargin > 11
     print_usage ();
   end
 
@@ -89,7 +89,6 @@ elseif ( dk < 0)
     error ('stepsize in days (dk)  must be positive ')     
 end
  
- 
 % possible number of nodes:
 nodes_possible = [10,15,20,30,40,50];
 if nargin < 10
@@ -100,7 +99,13 @@ else
     end
     z_method = nodes_possible(lookup(nodes_possible,nodes));
 end 
- 
+% set load and save path for optimized willowtree
+willowtree_save_flag = 1;
+if nargin < 11
+   path_static = pwd;
+   willowtree_save_flag = 0;   
+end
+
 %-------------------------------------------------------------------------
 %           Setup of input parameters
 %-------------------------------------------------------------------------
@@ -226,10 +231,14 @@ dt=T/(N.*365);  % timestep between two valuation points in years
 %-------------------------------------------------------------------------
 %           Generation of the Willow Tree via Optimization
 %-------------------------------------------------------------------------
-% Iterating through the time nodes to optimize transition matrizes
-for ii = 1 : 1 : (N-1) 
-    %disp('Optimizing transition matrix per timestep:')
-    %ii
+% check whether there exists an optimized transition matrix for the set of timesteps, nodes and stepsize (N,n,dk)
+tmp_filename = strcat(path_static,'/wt_transition_',num2str(N),'_',num2str(n),'_',num2str(dk),'.mat');        
+if ( willowtree_save_flag == 1 && exist(tmp_filename,'file'))
+  %fprintf('Taking file >>%s<< with Willowtree transition matrix.\n',tmp_filename);
+  tmp_load_struct = load(tmp_filename);
+  Transition_matrix = tmp_load_struct.Transition_matrix;
+else % Iterating through the time nodes to optimize transition matrizes 
+  for ii = 1 : 1 : (N-1)    % loop through all timesteps and optimize transition probabilities
     h = dk;             % constant time steps only
     tk = ii .* h;
     alpha = h / tk;
@@ -295,7 +304,12 @@ for ii = 1 : 1 : (N-1)
         [xmin, fmin, errnum, extra] = glpk(c,A,b,lb,ub,ctype,vartype,s,param);  % final optimization
         Pmin = reshape(xmin,n,n);   % reshape output to have transition vectors for each node in one column
         Transition_matrix(:,:,ii) = Pmin'; % transpose and append, ready for vector multiplication 
-end
+  end   % end for loop for all steps of transition matrix
+  if ( willowtree_save_flag == 1 )    % save transition matrix only if desired
+    fprintf('Save Willowtree transition matrix to >>%s<< \n',tmp_filename);
+    save ('-v7',tmp_filename,'Transition_matrix');   % save newly generated transition matrix for later use
+  end
+end     % end if loop, whether transition matrix shall be generated
 
 %-------------------------------------------------------------------------
 %           Discounting values through the Willow Tree
