@@ -1,0 +1,1013 @@
+#Instrument Specifications
+HeaderCASH,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,asset_classCHAR
+Item,Cash Account EUR,CASH_EUR,1,CASH,EUR Cash Account,EUR,cash
+HeaderFRB,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,reference_curveCHAR,spread_curveCHAR,notionalNMBR,coupon_rateNMBR,termNMBR,last_reset_rateNMBR,enable_business_day_ruleBOOL,business_day_ruleNMBR,business_day_directionNMBR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,compounding_freqCHAR
+Item,BASF SE MTN v.2014(2018/2019),A1YC04,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC041,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC042,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC043,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC044,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC045,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC046,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC047,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC048,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC049,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0410,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0411,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0412,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0413,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0414,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0415,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0416,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0417,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0418,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0419,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0420,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0421,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0422,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0423,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0424,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0425,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0426,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0427,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0428,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0429,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0430,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0431,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0432,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0433,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0434,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0435,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0436,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0437,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0438,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0439,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0440,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0441,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0442,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0443,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0444,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0445,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0446,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0447,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0448,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0449,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0450,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0451,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0452,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0453,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0454,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0455,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0456,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0457,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0458,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0459,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0460,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0461,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0462,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0463,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0464,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0465,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0466,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0467,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0468,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0469,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0470,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0471,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0472,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0473,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0474,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0475,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0476,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0477,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0478,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0479,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0480,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0481,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0482,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0483,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+Item,BASF SE MTN v.2014(2018/2019),A1YC0484,1031.2,FRB,BASF Corporate Bond 1.375pct 2019,EUR,IR_EUR,,SPREAD_EUR_HY,1000,0.01375,12,0,0,1,1,,,Fixed Income,01/22/14,01/22/19,backward,disc,act/365,0,FALSE,daily
+HeaderZCB,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,notionalNMBR,termNMBR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,compounding_freqCHAR
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417184,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417185,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417186,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417187,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417188,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417189,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417190,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417191,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417192,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417193,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417194,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417195,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417196,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417197,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417198,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),11417199,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171100,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171101,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171102,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171103,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171104,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171105,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171106,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171107,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171108,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171109,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171110,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171111,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171112,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171113,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171114,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171115,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171116,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171117,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171118,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171119,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171120,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171121,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171122,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171123,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171124,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171125,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171126,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171127,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171128,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171129,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171130,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171131,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171132,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171133,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171134,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171135,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171136,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171137,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171138,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171139,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171140,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171141,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171142,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171143,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171144,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171145,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171146,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171147,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171148,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171149,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171150,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171151,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171152,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171153,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171154,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171155,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171156,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171157,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171158,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171159,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171160,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171161,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171162,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171163,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171164,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171165,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171166,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171167,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171168,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171169,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171170,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171171,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171172,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171173,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171174,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171175,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171176,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171177,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171178,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171179,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171180,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171181,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171182,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171183,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171184,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171185,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171186,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171187,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171188,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171189,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171190,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171191,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171192,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171193,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171194,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171195,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171196,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171197,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171198,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171199,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171200,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171201,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171202,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171203,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171204,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171205,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171206,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171207,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171208,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171209,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171210,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171211,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171212,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171213,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171214,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171215,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171216,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171217,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171218,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171219,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171220,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171221,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171222,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171223,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171224,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171225,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171226,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171227,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171228,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171229,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171230,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171231,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171232,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171233,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171234,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171235,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171236,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171237,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171238,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171239,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171240,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171241,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171242,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171243,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171244,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171245,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171246,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171247,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171248,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171249,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171250,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171251,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171252,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171253,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171254,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171255,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171256,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171257,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171258,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171259,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171260,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171261,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171262,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171263,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171264,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171265,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171266,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171267,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171268,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171269,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171270,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171271,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171272,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171273,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171274,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171275,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171276,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171277,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171278,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171279,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171280,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171281,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171282,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171283,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171284,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171285,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171286,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171287,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171288,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171289,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171290,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171291,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171292,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171293,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171294,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171295,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171296,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171297,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171298,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171299,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171300,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171301,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171302,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171303,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171304,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171305,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171306,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171307,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171308,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171309,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171310,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171311,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171312,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171313,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171314,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171315,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171316,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171317,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171318,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171319,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171320,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171321,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171322,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171323,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171324,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171325,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171326,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171327,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171328,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171329,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171330,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171331,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171332,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171333,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171334,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171335,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171336,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171337,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171338,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171339,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171340,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171341,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171342,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171343,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171344,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171345,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171346,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171347,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171348,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171349,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171350,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171351,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171352,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171353,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171354,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171355,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171356,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171357,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171358,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171359,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171360,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171361,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171362,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171363,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171364,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171365,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171366,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171367,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171368,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171369,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171370,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171371,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171372,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171373,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171374,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171375,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171376,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171377,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171378,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171379,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171380,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171381,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171382,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171383,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171384,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171385,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171386,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171387,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171388,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171389,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171390,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171391,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171392,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171393,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171394,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171395,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171396,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171397,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171398,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171399,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171400,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171401,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171402,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171403,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171404,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171405,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171406,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171407,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171408,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171409,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171410,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171411,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171412,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171413,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171414,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171415,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171416,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171417,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171418,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171419,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171420,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171421,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171422,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171423,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171424,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171425,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171426,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171427,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171428,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171429,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171430,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171431,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171432,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171433,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171434,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171435,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171436,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171437,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171438,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171439,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171440,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171441,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171442,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171443,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171444,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171445,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171446,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171447,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171448,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171449,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171450,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171451,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171452,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171453,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171454,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171455,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171456,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171457,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171458,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171459,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171460,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171461,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171462,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171463,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171464,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171465,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171466,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171467,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171468,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171469,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171470,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171471,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171472,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171473,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171474,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171475,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171476,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171477,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171478,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171479,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171480,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171481,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171482,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171483,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171484,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171485,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171486,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171487,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171488,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171489,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171490,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171491,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171492,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171493,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171494,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171495,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171496,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171497,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171498,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171499,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171500,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171501,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171502,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171503,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171504,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171505,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171506,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171507,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171508,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171509,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171510,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171511,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171512,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171513,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171514,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171515,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171516,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171517,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171518,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171519,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171520,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171521,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171522,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171523,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171524,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171525,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171526,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171527,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171528,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171529,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171530,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171531,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171532,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171533,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171534,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171535,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171536,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171537,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171538,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171539,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171540,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171541,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171542,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171543,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171544,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171545,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171546,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171547,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171548,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171549,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171550,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171551,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,04/21/15,04/21/20,backward,disc,act/365,0,FALSE,daily
+HeaderFRN,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,reference_curveCHAR,notionalNMBR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,last_reset_rateNMBR,termNMBR,compounding_freqCHAR
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC489,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC490,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC491,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC492,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC493,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC494,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC495,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC496,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC497,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC498,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC499,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4100,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4101,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4102,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4103,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4104,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4105,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4106,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4107,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4108,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4109,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4110,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4111,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4112,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4113,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4114,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4115,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4116,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4117,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4118,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4119,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4120,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4121,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4122,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4123,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4124,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4125,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4126,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4127,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4128,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4129,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4130,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4131,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4132,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4133,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4134,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4135,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4136,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4137,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4138,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4139,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4140,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4141,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4142,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4143,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4144,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4145,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4146,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4147,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4148,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4149,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4150,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4151,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4152,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4153,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4154,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4155,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4156,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4157,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4158,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4159,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4160,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4161,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,12/04/14,06/03/20,backward,disc,act/365,0,FALSE,0.001,12,daily
+HeaderCOM,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,asset_classCHAR
+Item,ComStage ETF Commerzbank Commodity EW Index,ETF090,90.9,COM,ComStage ETF Commerzbank Commodity EW Index,EUR,RF_COM_DIV,1,Commodity
+Item,Goldmuenze 1 Unze,GOLDPHYS,1050.18,COM,Goldmuenze 1 Unze,EUR,RF_COM_GOLD,1,Commodity
+Item,Silbermuenze 1 Unze,SILVERPHYS,14.04,COM,Silbermuenze 1 Unze,EUR,RF_COM_SILVER,1,Commodity
+HeaderDBT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,spread_curveCHAR,durationNMBR,convexityNMBR,asset_classCHAR
+Item,iShares Barclays Capital Emerging Market Local Govt Bond,A1JB4Q,60.5,DBT,iShares Barclays Capital Emerging Market Local Govt Bond,EUR,IR_USD,SPREAD_EUR_HY,4.5,0,Fixed Income
+Item,iShares Citigroup Global Government Bond,A0RM43,102.48,DBT,iShares Citigroup Global Government Bond,USD,IR_USD,,5.6,0,Fixed Income
+Item,iShares JPMorgan $ Emerging Markets Bond Fund,A0RFFT,99.93,DBT,iShares JPMorgan $ Emerging Markets Bond Fund,USD,IR_USD,SPREAD_EUR_HY,7.8,0,Fixed Income
+Item,iShares Global Corporate Bond,A1J7CK,95.98,DBT,iShares Global Corporate Bond,USD,IR_EUR,SPREAD_EUR_HY,12.1,0,Fixed Income
+HeaderSENSI,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,idio_volaNMBR,asset_classCHAR
+Item,ComStage ETF S&P 500,ETF012,199.94,EQU,ComStage ETF S&P 500,EUR,RF_EQ_NA,1,,Equity
+Item,db x-trackers Dow Jones Euro STOXX50,DBX1EU,35.28,EQU,db x-trackers Dow Jones Euro STOXX50,EUR,RF_EQ_EU,1,,Equity
+Item,ComStage ETF MSCI Pacific,ETF114,46.28,EQU,comstage EF MSCI Pacific,EUR,RF_EQ_AP,1,,Equity
+Item,iShares MSCI Japan,A0DPMW,11.63,EQU,iShares ETF MSCI Japan,EUR,RF_EQ_AP,1,,Equity
+Item,Comstage ETF MSCI Emerging Markets,ETF127,35.51,EQU,comstage ETF MSCI EM,EUR,RF_EQ_EM,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7177,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7178,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7179,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7180,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7181,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7182,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7183,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7184,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7185,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7186,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7187,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7188,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7189,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7190,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7191,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7192,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7193,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7194,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7195,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7196,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7197,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7198,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7199,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7200,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7201,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7202,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7203,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7204,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7205,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7206,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7207,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7208,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7209,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7210,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7211,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7212,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7213,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7214,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7215,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7216,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7217,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7218,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7219,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7220,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7221,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7222,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7223,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7224,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7225,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7226,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7227,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7228,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7229,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7230,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7231,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7232,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7233,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7234,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7235,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7236,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7237,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7238,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7239,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7240,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7241,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7242,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7243,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7244,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7245,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7246,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7247,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7248,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7249,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7250,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7251,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7252,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7253,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7254,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7255,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7256,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7257,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7258,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7259,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7260,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7261,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7262,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7263,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7264,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7265,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7266,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7267,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7268,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7269,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7270,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7271,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7272,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7273,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7274,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7275,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7276,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7277,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7278,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7279,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7280,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7281,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7282,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7283,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7284,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7285,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7286,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7287,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7288,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7289,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7290,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7291,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7292,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,db x-trackers DJ STOXX 600,DBX1A7293,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,Lyxor ETF MSCI Emerging Markets,LYX0BX,8.89,EQU,Lyxor ETF MSCI Emerging Markets,EUR,RF_EQ_EM,1,,Equity
+Item,ComStage ETF DJ STOXX 600,ETF060,72.82,EQU,comstage ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+Item,Lyxor ETF MSCI World,LYX0AG,157.32,EQU,Lyxor ETF MSCI World,EUR,RF_EQ_NA|RF_EQ_EU|RF_EQ_AP,0.5|0.3|0.2,,Equity
+Item,iShares FTSE EPRA/NAREIT Global Property,A0LGQL,23.85,RET,iShares FTSE EPRA/NAREIT Global Property Dividend Plus,USD,RF_RE_DM,1,,REIT
+Item,QSC AG,513700,1.79,STK,QSC AG,EUR,RF_EQ_DE|IDIO,1.2|0.25,0.35,Equity
+Item,BASF SE,BASF11,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF12,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF13,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF14,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF15,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF16,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF17,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF18,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF19,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF20,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF21,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF22,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF23,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,BASF SE,BASF24,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,Bitcoins,BTCOIN,246.92,ALT,BitCoins,EUR,RF_ALT_BC,1,,Alternative
+HeaderCASHFLOW,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,spread_curveCHAR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR
+Item,Cashflowinstrument,CFANLEIHE1,105,CASHFLOW,Cashflow instrument with cashflow vector,EUR,IR_EUR,SPREAD_EUR_HY,17-Jul-2015|16-Jul-2016|17-Jul-2017,3.0|3.0|103.00,Fixed Income
+HeaderOPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,vola_sensiNMBR,spotNMBR,strikeNMBR,spreadNMBR,multiplierNMBR,maturity_dateDATE,asset_classCHAR
+Item,DAX Call Option,ODAXC20160318,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318293,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318294,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318295,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318296,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318297,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318298,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318299,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318300,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318301,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318302,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318303,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318304,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318305,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318306,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318307,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318308,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318309,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318310,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318311,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318312,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318313,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318314,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318315,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318316,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318317,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318318,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318319,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318320,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318321,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318322,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318323,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318324,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318325,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318326,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318327,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318328,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318329,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318330,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318331,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318332,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318333,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318334,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318335,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318336,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318337,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318338,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318339,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318340,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318341,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318342,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,DAX Call Option,ODAXC20160318343,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,11/18/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126345,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126346,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126347,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126348,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126349,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126350,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126351,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126352,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126353,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126354,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126355,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126356,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126357,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126358,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126359,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126360,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126361,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126362,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126363,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126364,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126365,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126366,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126367,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126368,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126369,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126370,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126371,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126372,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126373,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126374,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126375,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126376,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126377,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126378,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126379,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126380,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126381,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126382,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126383,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126384,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126385,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126386,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126387,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126388,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126389,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126390,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126391,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126392,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126393,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126394,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126395,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126396,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126397,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126398,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126399,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126400,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126401,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126402,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126403,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126404,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126405,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126406,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126407,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126408,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126409,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126410,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126411,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126412,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126413,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126414,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126415,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126416,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126417,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126418,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126419,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126420,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126421,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126422,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126423,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126424,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126425,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126426,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126427,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126428,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126429,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126430,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126431,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126432,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126433,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126434,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126435,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126436,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126437,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126438,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126439,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126440,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126441,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126442,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126443,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126444,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126445,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126446,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126447,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126448,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126449,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126450,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126451,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126452,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126453,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126454,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126455,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126456,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126457,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126458,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126459,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126460,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126461,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126462,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+Item,Gold Future Call Option,GCFUTC20160126463,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,07/26/16,Derivative
+HeaderSWAPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,tenorNMBR,no_paymentsNMBR,spotNMBR,strikeNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,modelCHAR
+Item,IR Payer Swaption,SWAPTIONC20151217,0.0010023,SWAPT_EUR_REC,IR Payer Swaption,EUR,RF_VOLA_IR_EUR,IR_EUR,IR_EUR,10,1,0.025,0.000001,disc,30/360,100,10/17/16,Derivative,Black76
+HeaderFWD,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,underlying_idCHAR,underlying_sensitivityNMBR,discount_curveCHAR,strike_priceNMBR,spreadNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,dividend_yieldNMBR,convenience_yieldNMBR,storage_costNMBR
+Item,EQForward_test,EQFORW01,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01468,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01469,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01470,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01471,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01472,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01473,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01474,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01475,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01476,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01477,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01478,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01479,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01480,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01481,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01482,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01483,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01484,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01485,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01486,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01487,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01488,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01489,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01490,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01491,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01492,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01493,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01494,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01495,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01496,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01497,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01498,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01530,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01540,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01550,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01560,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01570,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01510,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01509,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01508,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01507,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01506,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01505,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01504,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01503,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+Item,EQForward_test,EQFORW01502,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,10/17/18,Derivative,0,0,0
+HeaderSYNTH,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,instrumentsCHAR,weightsCHAR,asset_classCHAR
+Item,Synthetic_test,SYNTH01,121.1,SYNTH,Synthetic test instrument,EUR,A0RM43|EQFORW01,0.4|0.6,Diversified

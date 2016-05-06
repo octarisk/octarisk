@@ -175,7 +175,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             i = i.set('valuation_date',datestr(valuation_date,1));
             % B.3b)  Loop through all instrument attributes
             tmp_cell = content{jj};
-            for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in row and set object attributes
+            for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in header row and set object attributes
                 tmp_columnname = lower(tmp_colname{mm-1});
                 tmp_cell_item = tmp_cell{mm};
                 tmp_cell_type = upper(tmp_header_type{mm-1});

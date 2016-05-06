@@ -65,7 +65,7 @@ if nargin < 1 || nargin > 5
  end
 if nargin < 4
     valuation_date = today;
-    method_interpolation = 'smith-wilson';
+    method_interpolation = 'monotone-convex';
 end
 if (nargin > 3)
     if (ischar(valuation_date))
@@ -73,7 +73,7 @@ if (nargin > 3)
     end
 end 
 if (nargin < 5)
-    method_interpolation = 'smith-wilson';
+    method_interpolation = 'monotone-convex';
 end
 % --- Checking object field items --- 
     compounding_type = bond.compounding_type;

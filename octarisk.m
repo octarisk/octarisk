@@ -667,6 +667,7 @@ idx_figure = 0;
 confi = 1 - confidence;
 confi_scenario = max(round(confi * mc),1);
 persistent aggr_key_struct;
+position_failed_cell = {};
 % before looping via all portfolio make one time Harrel Davis Vector:
 % HD VaR only if number of scenarios < hd_limit
 if ( mc < hd_limit )
@@ -701,21 +702,25 @@ for mm = 1 : 1 : length( portfolio_struct )
     for ii = 1 : 1 : length( position_struct  )
         tmp_id = position_struct( ii ).id;
         tmp_quantity = position_struct( ii ).quantity;
-        tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-        tmp_value = tmp_instr_object.getValue('base');
-        tmp_currency = tmp_instr_object.get('currency'); 
+        try	% trying to find position in valuated instruments
+			tmp_instr_object = get_sub_object(instrument_struct, tmp_id);		
+			tmp_value = tmp_instr_object.getValue('base');
+			tmp_currency = tmp_instr_object.get('currency'); 
 
-        % conversion of position to base_currency
-        if ( strcmp(tmp_currency,base_currency) == 1 )
-                tmp_fx_rate = 1;
-        else
-                tmp_fx_index = strcat('FX_',base_currency, tmp_currency);
-                tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
-                tmp_fx_rate = tmp_fx_struct_obj.getValue('base');
-        end        
-        position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate;
-        portfolio_value = portfolio_value + tmp_value .* tmp_quantity  ./ tmp_fx_rate;
-
+			% conversion of position to base_currency
+			if ( strcmp(tmp_currency,base_currency) == 1 )
+					tmp_fx_rate = 1;
+			else
+					tmp_fx_index = strcat('FX_',base_currency, tmp_currency);
+					tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
+					tmp_fx_rate = tmp_fx_struct_obj.getValue('base');
+			end        
+			position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate;
+			portfolio_value = portfolio_value + tmp_value .* tmp_quantity  ./ tmp_fx_rate;
+		catch	% if instrument not found raise warning and populate cell
+			fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+			position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+		end
     end
     
     base_value = portfolio_value
@@ -750,35 +755,38 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     portfolio_shock      = zeros(mc,1);
     %  Loop via all positions
         for ii = 1 : 1 : length( position_struct )
-
             tmp_id = position_struct( ii ).id;
             tmp_quantity = position_struct( ii ).quantity;
-
-            % get instrument data: get Position's Riskfactors and Sensitivities
-            tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-            tmp_value = tmp_instr_object.getValue('base');
-            tmp_currency = tmp_instr_object.get('currency');
-            % Get instrument Value from full valuation instrument_struct:
-            % absolute values from full valuation
-            new_value_vec_shock      = tmp_instr_object.getValue(tmp_scen_set);              
-           
-		
-            % Get FX rate:
-            if ( strcmp(base_currency,tmp_currency) == 1 )
-                tmp_fx_value_shock   = 1;
-            else
-                %disp( ' Conversion of currency: ');
-                tmp_fx_index   		= strcat('FX_', base_currency, tmp_currency);
-                tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
-                tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-                tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(tmp_scen_set);   
-            end
-              
-            % Store new Values in Position's struct
-	        pos_vec_shock 	= new_value_vec_shock .* sign(tmp_quantity) ./ tmp_fx_value_shock;
-	        octamat = [  pos_vec_shock ] ;
-            position_struct( ii ).mc_scenarios.octamat = octamat;
-            portfolio_shock = portfolio_shock +  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
+			try
+				% get instrument data: get Position's Riskfactors and Sensitivities
+				tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
+				tmp_value = tmp_instr_object.getValue('base');
+				tmp_currency = tmp_instr_object.get('currency');
+				% Get instrument Value from full valuation instrument_struct:
+				% absolute values from full valuation
+				new_value_vec_shock      = tmp_instr_object.getValue(tmp_scen_set);              
+			   
+			
+				% Get FX rate:
+				if ( strcmp(base_currency,tmp_currency) == 1 )
+					tmp_fx_value_shock   = 1;
+				else
+					%disp( ' Conversion of currency: ');
+					tmp_fx_index   		= strcat('FX_', base_currency, tmp_currency);
+					tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
+					tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
+					tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(tmp_scen_set);   
+				end
+				  
+				% Store new Values in Position's struct
+				pos_vec_shock 	= new_value_vec_shock .* sign(tmp_quantity) ./ tmp_fx_value_shock;
+				octamat = [  pos_vec_shock ] ;
+				position_struct( ii ).mc_scenarios.octamat = octamat;
+				portfolio_shock = portfolio_shock +  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
+            catch	% if instrument not found raise warning and populate cell
+				fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+				position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+			end
         end
 
 
@@ -879,71 +887,76 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   fprintf(fid, '\n');
   fprintf(fid, 'Sensitivities on Positional Level: \n');
   for ii = 1 : 1 : length( position_struct )
-    octamat = position_struct( ii ).mc_scenarios.octamat;
-    tmp_values_shock = sort(octamat);
     tmp_id = position_struct( ii ).id;
-    tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-    tmp_value = tmp_instr_object.getValue('base');
-    tmp_name = tmp_instr_object.get('name');
-    tmp_type = tmp_instr_object.get('type'); 
-    tmp_currency = tmp_instr_object.get('currency'); 
-       
-    tmp_quantity            = position_struct( ii ).quantity;
-    tmp_basevalue           = position_struct( ii ).basevalue;
-    tmp_decomp_var_shock     = -(octamat(confi_scenarionumber_shock) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 
-    % Get pos var
-    tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
-    
-    % Aggregate positional data according to aggregation keys:
-    for jj = 1 : 1 : length(aggregation_key)
-        if ( ii == 1)   % first use of struct
-            tmp_aggr_cell = {};
-            aggregation_mat = [];
-            aggregation_decomp_shock = 0;
-        else            % reading from struct from previous instrument
-            tmp_aggr_cell           = aggr_key_struct( jj ).key_values;
-            aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
-            aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
-        end
-        if (isProp(tmp_instr_object,aggregation_key{jj}) == 1)
-            tmp_aggr_key_value = getfield(tmp_instr_object,aggregation_key{jj});
-            if (ischar(tmp_aggr_key_value))
-                if ( strcmp(tmp_aggr_key_value,'') == 1 )
-                    tmp_aggr_key_value = 'Unknown';
-                end
-                % Assign P&L to aggregation key
-                % check, wether aggr key already exist in cell array
-                if (sum(strcmp(tmp_aggr_cell,tmp_aggr_key_value)) > 0)   % aggregation key found
-                    tmp_vec_xx = 1:1:length(tmp_aggr_cell);
-                    tmp_aggr_key_index = strcmp(tmp_aggr_cell,tmp_aggr_key_value)*tmp_vec_xx';
-                    aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) + (octamat .* tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);
-                    aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + tmp_decomp_var_shock;
-                else    % aggregation key not found -> set value for first time
-                    tmp_aggr_cell{end+1} = tmp_aggr_key_value;
-                    tmp_aggr_key_index = length(tmp_aggr_cell);
-                    aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  - tmp_basevalue);
-                    aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock;
-                end
-            else
-                disp('Aggregation key not valid');
-            end
-        else
-            disp('Aggregation key not found in instrument definition');
-        end
-        % storing updated values in struct
-        aggr_key_struct( jj ).key_name = aggregation_key{jj};
-        aggr_key_struct( jj ).key_values = tmp_aggr_cell;
-        aggr_key_struct( jj ).aggregation_mat = aggregation_mat;
-        aggr_key_struct( jj ).aggregation_decomp_shock = aggregation_decomp_shock;
-    end
-    
-   
-    total_var_undiversified = total_var_undiversified + tmp_pos_var;
-    % Store Values for piechart (Except CASH):
-    pie_chart_values_instr_shock(ii) = round((tmp_pos_var) / abs(tmp_quantity));
-    pie_chart_desc_instr_shock(ii) = cellstr( strcat(tmp_instr_object.id));
-    pie_chart_values_pos_shock(ii) = round((tmp_decomp_var_shock) );
-    pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
+    try
+        tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
+		tmp_values_shock = sort(octamat);
+		octamat = position_struct( ii ).mc_scenarios.octamat;
+		tmp_value = tmp_instr_object.getValue('base');
+		tmp_name = tmp_instr_object.get('name');
+		tmp_type = tmp_instr_object.get('type'); 
+		tmp_currency = tmp_instr_object.get('currency'); 
+		   
+		tmp_quantity            = position_struct( ii ).quantity;
+		tmp_basevalue           = position_struct( ii ).basevalue;
+		tmp_decomp_var_shock     = -(octamat(confi_scenarionumber_shock) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 
+		% Get pos var
+		tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
+		
+		% Aggregate positional data according to aggregation keys:
+		for jj = 1 : 1 : length(aggregation_key)
+			if ( ii == 1)   % first use of struct
+				tmp_aggr_cell = {};
+				aggregation_mat = [];
+				aggregation_decomp_shock = 0;
+			else            % reading from struct from previous instrument
+				tmp_aggr_cell           = aggr_key_struct( jj ).key_values;
+				aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
+				aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
+			end
+			if (isProp(tmp_instr_object,aggregation_key{jj}) == 1)
+				tmp_aggr_key_value = getfield(tmp_instr_object,aggregation_key{jj});
+				if (ischar(tmp_aggr_key_value))
+					if ( strcmp(tmp_aggr_key_value,'') == 1 )
+						tmp_aggr_key_value = 'Unknown';
+					end
+					% Assign P&L to aggregation key
+					% check, wether aggr key already exist in cell array
+					if (sum(strcmp(tmp_aggr_cell,tmp_aggr_key_value)) > 0)   % aggregation key found
+						tmp_vec_xx = 1:1:length(tmp_aggr_cell);
+						tmp_aggr_key_index = strcmp(tmp_aggr_cell,tmp_aggr_key_value)*tmp_vec_xx';
+						aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) + (octamat .* tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);
+						aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + tmp_decomp_var_shock;
+					else    % aggregation key not found -> set value for first time
+						tmp_aggr_cell{end+1} = tmp_aggr_key_value;
+						tmp_aggr_key_index = length(tmp_aggr_cell);
+						aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  - tmp_basevalue);
+						aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock;
+					end
+				else
+					disp('Aggregation key not valid');
+				end
+			else
+				disp('Aggregation key not found in instrument definition');
+			end
+			% storing updated values in struct
+			aggr_key_struct( jj ).key_name = aggregation_key{jj};
+			aggr_key_struct( jj ).key_values = tmp_aggr_cell;
+			aggr_key_struct( jj ).aggregation_mat = aggregation_mat;
+			aggr_key_struct( jj ).aggregation_decomp_shock = aggregation_decomp_shock;
+		end
+		
+	   
+		total_var_undiversified = total_var_undiversified + tmp_pos_var;
+		% Store Values for piechart (Except CASH):
+		pie_chart_values_instr_shock(ii) = round((tmp_pos_var) / abs(tmp_quantity));
+		pie_chart_desc_instr_shock(ii) = cellstr( strcat(tmp_instr_object.id));
+		pie_chart_values_pos_shock(ii) = round((tmp_decomp_var_shock) );
+		pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
+    catch	% if instrument not found raise warning and populate cell
+		fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+		position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+	end
   end  % end loop for all positions
   % prepare vector for piechart:
   [pie_chart_values_sorted_instr_shock sorted_numbers_instr_shock ] = sort(pie_chart_values_instr_shock);
@@ -1106,35 +1119,38 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
     portfolio_stress    = zeros(no_stresstests,1);
     %  Loop via all positions
     for ii = 1 : 1 : length( position_struct )
-
         tmp_id = position_struct( ii ).id;
         tmp_quantity = position_struct( ii ).quantity;
-        
-        % get instrument data: get Position's Riskfactors and Sensitivities
-        tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-        tmp_value = tmp_instr_object.getValue('base');
-        tmp_currency = tmp_instr_object.get('currency');
-        tmp_name = tmp_instr_object.get('name');
-        % Get instrument Value from full valuation instrument_struct:
-        % absolute values from full valuation
-        new_value_vec_stress    = tmp_instr_object.getValue('stress');
+        try
+			% get instrument data: get Position's Riskfactors and Sensitivities
+			tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
+			tmp_value = tmp_instr_object.getValue('base');
+			tmp_currency = tmp_instr_object.get('currency');
+			tmp_name = tmp_instr_object.get('name');
+			% Get instrument Value from full valuation instrument_struct:
+			% absolute values from full valuation
+			new_value_vec_stress    = tmp_instr_object.getValue('stress');
 
-        % Get FX rate:
-        if ( strcmp(tmp_currency,base_currency) == 1 )
-            tmp_fx_value_stress = 1;
-        else
-            %disp( ' Conversion of currency: ');
-            tmp_fx_index   = strcat('FX_', base_currency, tmp_currency);
-            tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
-            tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-            tmp_fx_value_stress = tmp_fx_struct_obj.getValue('stress');                       
-        end
-          
-        % Store new Values in Position's struct
-        pos_vec_stress  = new_value_vec_stress .*  sign(tmp_quantity) ./ tmp_fx_value_stress;
-        octamat = [  pos_vec_shock ] ;
-        position_struct( ii ).stresstests = pos_vec_stress;
-        portfolio_stress = portfolio_stress + new_value_vec_stress .*  tmp_quantity ./ tmp_fx_value_stress;
+			% Get FX rate:
+			if ( strcmp(tmp_currency,base_currency) == 1 )
+				tmp_fx_value_stress = 1;
+			else
+				%disp( ' Conversion of currency: ');
+				tmp_fx_index   = strcat('FX_', base_currency, tmp_currency);
+				tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
+				tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
+				tmp_fx_value_stress = tmp_fx_struct_obj.getValue('stress');                       
+			end
+			  
+			% Store new Values in Position's struct
+			pos_vec_stress  = new_value_vec_stress .*  sign(tmp_quantity) ./ tmp_fx_value_stress;
+			octamat = [  pos_vec_shock ] ;
+			position_struct( ii ).stresstests = pos_vec_stress;
+			portfolio_stress = portfolio_stress + new_value_vec_stress .*  tmp_quantity ./ tmp_fx_value_stress;
+		catch	% if instrument not found raise warning and populate cell
+			fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+			position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+		end	
     end
     % Calc absolute and relative stress values
     p_l_absolut_stress      = portfolio_stress - base_value;
@@ -1144,26 +1160,30 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
     fprintf(fid, '=====    STRESS RESULTS    ===== \n');
     fprintf(fid, '\n');
     fprintf(fid, 'Sensitivities on Positional Level: \n');
-    for ii = 1 : 1 : length( position_struct )
-        tmp_values_stress = [position_struct( ii ).stresstests];
+    for ii = 1 : 1 : length( position_struct )  
         tmp_id = position_struct( ii ).id;
-        
-        % get instrument data: get Position's Riskfactors and Sensitivities
-        tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-        % tmp_value = tmp_instr_object.getValue('base');
-        % tmp_currency = tmp_instr_object.get('currency');
-        tmp_name = tmp_instr_object.get('name');
+        try
+			% get instrument data: get Position's Riskfactors and Sensitivities
+			tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
+			tmp_values_stress = [position_struct( ii ).stresstests];
+			% tmp_value = tmp_instr_object.getValue('base');
+			% tmp_currency = tmp_instr_object.get('currency');
+			tmp_name = tmp_instr_object.get('name');
 
-        % Get instrument IR and Spread sensitivity from stresstests 1-4:
-        if ~( tmp_values_stress(end) == 0 ) % test for base values 0 (e.g. matured option )
-            tmp_values_stress_rel = 100.*(tmp_values_stress - tmp_values_stress(end)) ./ tmp_values_stress(end);
-        else
-            tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
-        end
-        tmp_ir_sensitivity = (abs(tmp_values_stress_rel(1)) + abs(tmp_values_stress_rel(2)))/2;
-        tmp_spread_sensitivity = (abs(tmp_values_stress_rel(3)) + abs(tmp_values_stress_rel(4)))/2;
-        fprintf(fid, '|Sensi ModDuration \t\t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_ir_sensitivity);
-        fprintf(fid, '|Sensi ModSpreadDur \t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_spread_sensitivity);
+			% Get instrument IR and Spread sensitivity from stresstests 1-4:
+			if ~( tmp_values_stress(end) == 0 ) % test for base values 0 (e.g. matured option )
+				tmp_values_stress_rel = 100.*(tmp_values_stress - tmp_values_stress(end)) ./ tmp_values_stress(end);
+			else
+				tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
+			end
+			tmp_ir_sensitivity = (abs(tmp_values_stress_rel(1)) + abs(tmp_values_stress_rel(2)))/2;
+			tmp_spread_sensitivity = (abs(tmp_values_stress_rel(3)) + abs(tmp_values_stress_rel(4)))/2;
+			fprintf(fid, '|Sensi ModDuration \t\t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_ir_sensitivity);
+			fprintf(fid, '|Sensi ModSpreadDur \t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_spread_sensitivity);
+        catch	% if instrument not found raise warning and populate cell
+			fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+			position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+		end	
     end 
  
     fprintf(fid, 'Stress test results:\n');
@@ -1193,7 +1213,13 @@ end     % close if loop MC / Stress scenarioset
 % #####################################    END  STRESS REPORTS    #####################################
 
 end % close kk loop: 
-
+position_failed_cell = unique(position_failed_cell);
+if ( length(position_failed_cell) >= 1 )
+    fprintf('\nWARNING: Failed aggregation for %d positions: \n',length(position_failed_cell));
+    position_failed_cell
+else
+    fprintf('\nSUCCESS: All positions aggregated.\n');
+end
 
 % Output to stdout:
 fprintf('\n');
