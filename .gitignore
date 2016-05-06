@@ -2,6 +2,8 @@
 *.tar
 *.tar.gz
 *.mat
+*.csv~
+*.dat~
 # exclude the following folders
 /working_folder/output/*
 /working_folder/archive/*
