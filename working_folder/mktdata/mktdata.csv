@@ -2,7 +2,9 @@ HeaderCURVE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,method_interpolationCHAR,no
 Curve,IR_EUR,IR_EUR,Discount Curve,EUR-SWAP Curve,monotone-convex,365|1095|1825|3650|7300|10950|21900,-0.00519251|-0.00508595|-0.00367762|0.00185694|0.00776253|0.00999986|0.00123
 Curve,IR_USD,IR_USD,Discount Curve,USD-SWAP Curve,monotone-convex,365|1095|1825|3650|7300|10950|21900,0.00119251|0.00208595|0.00367762|0.00385694|0.01276253|0.01399986|0.00163
 Curve,SPREAD_EUR_HY,SPREAD_EUR_HY,Spread Curve,SPREAD_EUR_High Yield Curve,linear,1825,0.02
+Curve,SPREAD_USD_HY,SPREAD_USD_HY,Spread Curve,SPREAD_USD_High Yield Curve,linear,1825,0.03
 HeaderINDEX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR
 Index,EQ_DE,DAX30,Equity Index,EUR,DAX Equity Index German Blue Chips,9820
 Index,COM_GOLD,Gold,Commodity Index,USD,Gold 1 Ounce USD,1073
 Index,FX_EURUSD,EUR_USD,Exchange Rate,EUR,EUR USD Exchange rate,1.08
+Index,FX_EURCAD,EUR_CAD,Exchange Rate,EUR,EUR CAD Exchange rate,1.25

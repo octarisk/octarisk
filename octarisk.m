@@ -344,11 +344,15 @@ curve_gen_time = toc;
 % c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
 index_struct=struct();
-[index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct);   
-% for kk = 1  : 1 : length(index_struct)
-   % index_struct(kk).id
-   % index_struct(kk).object
-% end
+[index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps);   
+for kk = 1  : 1 : length(index_struct)
+   index_struct(kk).id
+   index_struct(kk).object
+end
+for kk = 1  : 1 : length(curve_struct)
+   curve_struct(kk).id
+   curve_struct(kk).object
+end
 
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
