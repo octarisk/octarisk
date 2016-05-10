@@ -200,7 +200,7 @@ pkg load financial;		% load financial packages (needed throughout all scripts)
 mc = 50000              % number of MonteCarlo scenarios
 hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be used
 confidence = 0.999      % level of confidence vor MC VAR calculation
-copulatype = 't'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
+copulatype = 'Gaussian'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
 valuation_date = datenum('28-Apr-2016'); % valuation date
 base_currency  = 'EUR'  % base reporting currency
@@ -345,9 +345,9 @@ curve_gen_time = toc;
 persistent index_struct;
 index_struct=struct();
 [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct);   
-% for kk = 1  : 1 : length(curve_struct)
-%    curve_struct(kk).id
-%    curve_struct(kk).object
+% for kk = 1  : 1 : length(index_struct)
+   % index_struct(kk).id
+   % index_struct(kk).object
 % end
 
 % --------------------------------------------------------------------------------------------------------------------
@@ -694,6 +694,9 @@ for mm = 1 : 1 : length( portfolio_struct )
     %disp('Aggregation for Portfolio ');
     %mm
     tmp_port_id = portfolio_struct( mm ).id;
+    tmp_port_name = portfolio_struct( mm ).name;
+    tmp_port_description = portfolio_struct( mm ).description;
+    fund_currency = portfolio_struct( mm ).currency;    
     clear position_struct;
     position_struct = struct();
     position_struct = portfolio_struct( mm ).position;
@@ -707,11 +710,11 @@ for mm = 1 : 1 : length( portfolio_struct )
 			tmp_value = tmp_instr_object.getValue('base');
 			tmp_currency = tmp_instr_object.get('currency'); 
 
-			% conversion of position to base_currency
-			if ( strcmp(tmp_currency,base_currency) == 1 )
+			% conversion of position to fund_currency
+			if ( strcmp(tmp_currency,fund_currency) == 1 )
 					tmp_fx_rate = 1;
 			else
-					tmp_fx_index = strcat('FX_',base_currency, tmp_currency);
+					tmp_fx_index = strcat('FX_',fund_currency, tmp_currency);
 					tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
 					tmp_fx_rate = tmp_fx_struct_obj.getValue('base');
 			end        
@@ -731,13 +734,17 @@ for mm = 1 : 1 : length( portfolio_struct )
 
     fprintf('==================================================================== \n');
     fprintf('=== Risk measures report for Portfolio %s ===\n',tmp_port_id);
-
+    fprintf('Portfolio currency: %s \n',fund_currency);
+    
     fprintf(fid, '==================================================================== \n');
     fprintf(fid, '=== Risk measures report for Portfolio %s ===\n',tmp_port_id);
+    fprintf(fid, 'Portfolio name: %s \n',tmp_port_name);
+    fprintf(fid, 'Portfolio description: %s \n',tmp_port_description);
     fprintf(fid, 'VaR calculated at %2.1f%% confidence intervall: \n',confidence.*100);
     fprintf(fid, 'Number of Monte Carlo Scenarios: %i \n', mc);
     fprintf(fid, 'Valuation Date: %s \n',datestr(valuation_date));
-    fprintf(fid, 'Portfolio base value: %9.2f EUR \n',base_value);
+    fprintf(fid, 'Portfolio currency: %s \n',fund_currency);
+    fprintf(fid, 'Portfolio base value: %9.2f %s \n',base_value,fund_currency);   
     fprintf(fid, '\n');
     fprintf(fid, '=====    MC RESULTS    ===== \n');
 %   ========================================   Loop via all MC scenarios    ================================= 
@@ -746,7 +753,6 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
  
   % ##############################    BEGIN  MC REPORTS    ##############################
   if ~( strcmp(tmp_scen_set,'stress') )     % MC scenario
-    
     tmp_ts      = scenario_ts_days(kk);  % get timestep days 
     fprintf('Aggregation for time step: %d \n',tmp_ts);
     fprintf('Aggregation for scenario set: %s \n',tmp_scen_set);     
@@ -766,22 +772,22 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 				% absolute values from full valuation
 				new_value_vec_shock      = tmp_instr_object.getValue(tmp_scen_set);              
 			   
-			
+                
 				% Get FX rate:
-				if ( strcmp(base_currency,tmp_currency) == 1 )
+				if ( strcmp(fund_currency,tmp_currency) == 1 )
 					tmp_fx_value_shock   = 1;
 				else
 					%disp( ' Conversion of currency: ');
-					tmp_fx_index   		= strcat('FX_', base_currency, tmp_currency);
+					tmp_fx_index   		= strcat('FX_', fund_currency, tmp_currency);
 					tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
 					tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
 					tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(tmp_scen_set);   
 				end
 				  
 				% Store new Values in Position's struct
-				pos_vec_shock 	= new_value_vec_shock .* sign(tmp_quantity) ./ tmp_fx_value_shock;
+				pos_vec_shock 	= new_value_vec_shock .* sign(tmp_quantity) ./ tmp_fx_value_shock; % convert position PnL into fund currency
 				octamat = [  pos_vec_shock ] ;
-				position_struct( ii ).mc_scenarios.octamat = octamat;
+				position_struct( ii ).mc_scenarios.octamat = octamat; 
 				portfolio_shock = portfolio_shock +  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
             catch	% if instrument not found raise warning and populate cell
 				fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
@@ -889,9 +895,9 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   for ii = 1 : 1 : length( position_struct )
     tmp_id = position_struct( ii ).id;
     try
-        tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-		tmp_values_shock = sort(octamat);
+        tmp_instr_object = get_sub_object(instrument_struct, tmp_id);		
 		octamat = position_struct( ii ).mc_scenarios.octamat;
+        tmp_values_shock = sort(octamat);
 		tmp_value = tmp_instr_object.getValue('base');
 		tmp_name = tmp_instr_object.get('name');
 		tmp_type = tmp_instr_object.get('type'); 
@@ -963,8 +969,9 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   [pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock);
   idx = 1;
 
-  % plot only 6 highest values
-  for ii = length(pie_chart_values_instr_shock):-1:max(0,length(pie_chart_values_instr_shock)-5)
+  % plot only maximum 6 highest values
+  %for ii = length(pie_chart_values_instr_shock):-1:max(0,length(pie_chart_values_instr_shock)-5)
+  for ii = 1:1:min(length(pie_chart_values_instr_shock),6)
     pie_chart_values_plot_instr_shock(idx)   = pie_chart_values_sorted_instr_shock(ii) ;
     pie_chart_desc_plot_instr_shock(idx)     = pie_chart_desc_instr_shock(sorted_numbers_instr_shock(ii));
     pie_chart_values_plot_pos_shock(idx)     = pie_chart_values_sorted_pos_shock(ii) ;
@@ -983,7 +990,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   for jj = 1:1:length(aggr_key_struct)
     % load values from aggr_key_struct:
     tmp_aggr_cell               = aggr_key_struct( jj ).key_values;
-    tmp_aggr_key_name           =  aggr_key_struct( jj ).key_name;
+    tmp_aggr_key_name           = aggr_key_struct( jj ).key_name;
     tmp_aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
     tmp_aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
     fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
@@ -995,15 +1002,15 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
         tmp_sorted_aggr_mat			= sort(tmp_aggregation_mat(:,ii));
         tmp_standalone_aggr_key_var = abs(tmp_sorted_aggr_mat(confi_scenario));
         tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
-        fprintf('|VaR %s | %s \t |%9.2f EUR \t |%9.2f EUR|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,tmp_decomp_aggr_key_var);
-        fprintf(fid, '|VaR %s | %s \t |%9.2f EUR \t |%9.2f EUR|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,tmp_decomp_aggr_key_var);
+        fprintf('|VaR %s | %s \t |%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
+        fprintf(fid, '|VaR %s | %s \t |%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
     end
   end
 
   % Print Portfolio reports
   fprintf(fid, '\n');
   fprintf(fid, 'Total VaR undiversified: \n');
-  fprintf(fid, '|VaR %s undiversified| |%9.2f EUR|\n',tmp_scen_set,total_var_undiversified);
+  fprintf(fid, '|VaR %s undiversified| |%9.2f %s|\n',tmp_scen_set,total_var_undiversified,fund_currency);
   fprintf(fid, '\n');
   if ( mc < hd_limit )
     fprintf(fid, '=== Total Portfolio HD-VaR === \n');
@@ -1014,47 +1021,47 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   end
   % Output to file: 
   fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
-  fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,mc_var_shock);
+  fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
-  fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f EUR|\n\n',tmp_scen_set,confidence.*100,mc_es_shock);
-  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock);
-  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.9,VAR999_EVT_shock);
-  fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f EUR|\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock);
-  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,confidence.*100,ES995_EVT_shock);
-  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.9,ES999_EVT_shock);
-  fprintf(fid, '|Port EVT  ES  %s@%2.2f%%| \t |%9.2f EUR|\n',tmp_scen_set,99.99,ES9999_EVT_shock);
+  fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f %s|\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
+  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock,fund_currency);
+  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,99.9,VAR999_EVT_shock,fund_currency);
+  fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f %s|\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock,fund_currency);
+  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,ES995_EVT_shock,fund_currency);
+  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,99.9,ES999_EVT_shock,fund_currency);
+  fprintf(fid, '|Port EVT  ES  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,99.99,ES9999_EVT_shock,fund_currency);
 
   % Output to stdout:
   fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
-  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,mc_var_shock);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
   fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
-  fprintf('ES  %s@%2.1f%%: \t %9.2f EUR\n\n',tmp_scen_set,confidence.*100,mc_es_shock);
+  fprintf('ES  %s@%2.1f%%: \t %9.2f %s\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
   % Output of GPD calibrated VaR and ES:
   fprintf('GPD extreme value VAR and ES: \n');
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,VAR90_EVT_shock);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,VAR95_EVT_shock);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,VAR975_EVT_shock);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,VAR99_EVT_shock);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,VAR999_EVT_shock);
-  fprintf('VaR EVT %s@%2.2f%%: \t %9.2f EUR\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,90.0,VAR90_EVT_shock,fund_currency);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,95.0,VAR95_EVT_shock,fund_currency);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,97.5,VAR975_EVT_shock,fund_currency);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.0,VAR99_EVT_shock,fund_currency);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock,fund_currency);
+  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.9,VAR999_EVT_shock,fund_currency);
+  fprintf('VaR EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock,fund_currency);
 
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,ES90_EVT_shock);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,ES95_EVT_shock);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,97.5,ES975_EVT_shock);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.0,ES99_EVT_shock);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,confidence.*100,ES995_EVT_shock);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,99.9,ES999_EVT_shock);
-  fprintf('ES  EVT %s@%2.2f%%: \t %9.2f EUR\n\n',tmp_scen_set,99.99,ES9999_EVT_shock);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,90.0,ES90_EVT_shock,fund_currency);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,95.0,ES95_EVT_shock,fund_currency);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,97.5,ES975_EVT_shock,fund_currency);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.0,ES99_EVT_shock,fund_currency);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,ES995_EVT_shock,fund_currency);
+  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.9,ES999_EVT_shock,fund_currency);
+  fprintf('ES  EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,99.99,ES9999_EVT_shock,fund_currency);
   fprintf('Low tail VAR: \n');
-  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,50.0,-VAR50_shock);
-  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,70.0,-VAR70_shock);
-  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,90.0,-VAR90_shock);
-  fprintf('VaR %s@%2.1f%%: \t %9.2f EUR\n',tmp_scen_set,95.0,-VAR95_shock);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,50.0,-VAR50_shock,fund_currency);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,70.0,-VAR70_shock,fund_currency);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,90.0,-VAR90_shock,fund_currency);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,95.0,-VAR95_shock,fund_currency);
 
   if ( mc < hd_limit )
     fprintf(fid, '\n');
-    fprintf(fid, 'Difference to HD-VaR %s:  %9.2f EUR\n',tmp_scen_set,mc_var_shock_diff_hd);    
+    fprintf(fid, 'Difference to HD-VaR %s:  %9.2f %s\n',tmp_scen_set,mc_var_shock_diff_hd,fund_currency);    
   end
   fprintf(fid, '\n');
 
@@ -1077,7 +1084,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 
 	  subplot (2, 2, 1)
 		hist(endstaende_reldiff_shock,40)
-		title_string = strcat('Portfolio PnL ',tmp_scen_set);
+		title_string = {tmp_port_name; tmp_port_description; strcat('Portfolio PnL ',tmp_scen_set);};
 		title (title_string,'fontsize',12);
 		xlabel('Relative Portfoliovalue');
 	  subplot (2, 2, 2)
@@ -1094,7 +1101,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 		h=text(0.025*mc,(-1.45*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
 		h=text(0.025*mc,(-2.1*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
 		%set(h,'fontweight','bold'); %,'rotation',90)
-		ylabel('Absolute PnL (in EUR)');
+		ylabel(strcat('Absolute PnL (in ',fund_currency,')'));
 		title_string = strcat('Portfolio PnL ',tmp_scen_set);
 		title (title_string,'fontsize',12);
 	  subplot (2, 2, 3)
@@ -1132,11 +1139,11 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
 			new_value_vec_stress    = tmp_instr_object.getValue('stress');
 
 			% Get FX rate:
-			if ( strcmp(tmp_currency,base_currency) == 1 )
+			if ( strcmp(tmp_currency,fund_currency) == 1 )
 				tmp_fx_value_stress = 1;
 			else
 				%disp( ' Conversion of currency: ');
-				tmp_fx_index   = strcat('FX_', base_currency, tmp_currency);
+				tmp_fx_index   = strcat('FX_', fund_currency, tmp_currency);
 				tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
 				tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
 				tmp_fx_value_stress = tmp_fx_struct_obj.getValue('stress');                       

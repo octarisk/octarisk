@@ -12,19 +12,23 @@
 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{index_struct} @var{curve_struct} @var{id_failed_cell}] =} update_mktdata_objects(@var{mktdata_struct},@var{index_struct},@var{riskfactor_struct},@var{curve_struct})
-%# Update all market data objects with scenario dependent risk factor and curve shocks. Return index struct and curve struct with scenario dependent absolute values.
+%# Update all market data objects with scenario dependent risk factor and curve shocks. 
+%# Return index struct and curve struct with scenario dependent absolute values. @*
+%# Calculate reciprocal FX conversion factors for all market objects (e.g. FX_USDEUR = 1 ./ FX_USDEUR)
 %# @end deftypefn
 
 function [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct)
 
 id_failed_cell = {};
+index_curve_objects = 0;
 % loop through all mktdata objects
 for ii = 1 : 1 : length(mktdata_struct)
     % get class -> switch between curve, index
     tmp_object = mktdata_struct(ii).object;
     tmp_class = lower(class(tmp_object));
     if ( strcmp(tmp_class,'index'))
-        tmp_id = tmp_object.id;
+      tmp_id = tmp_object.id;
+      try
         tmp_rf_id = strcat('RF_',tmp_id);
         tmp_rf_object = get_sub_object(riskfactor_struct, tmp_rf_id);
         % get risk factor object values
@@ -47,8 +51,14 @@ for ii = 1 : 1 : length(mktdata_struct)
         index_struct( tmp_store_struct ).id      = tmp_object.id;
         index_struct( tmp_store_struct ).name    = tmp_object.name;
         index_struct( tmp_store_struct ).object  = tmp_object;
+        index_curve_objects = index_curve_objects + 1;
+      catch
+        fprintf('ERROR: There has been an error for new Index object: %s \n',tmp_id);
+        id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
+      end
     elseif ( strcmp(tmp_class,'curve'))
         tmp_id = tmp_object.id;
+      try
         tmp_rf_id = strcat('RF_',tmp_id);
         tmp_rf_object = get_sub_object(curve_struct, tmp_rf_id);
         interp_method = tmp_rf_object.get('method_interpolation');
@@ -110,12 +120,66 @@ for ii = 1 : 1 : length(mktdata_struct)
         curve_struct( tmp_store_struct ).id      = tmp_object.id;
         curve_struct( tmp_store_struct ).name    = tmp_object.name;
         curve_struct( tmp_store_struct ).object  = tmp_object;
+        index_curve_objects = index_curve_objects + 1;
+      catch
+        fprintf('ERROR: There has been an error for new Curve object: %s \n',tmp_id);
+        id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
+      end
     end % end class select
 end % end for loop through all mktdata objects
 
+fprintf('SUCCESS: generated >>%d<< index and curve objects from marketdata. \n',index_curve_objects);
+
+
+% Caculate reciprocal FX conversion factors
+new_fx_reciprocal_objects = 0;
+for ii = 1 : 1 : length(index_struct)
+    tmp_object = index_struct(ii).object;
+    tmp_class = lower(class(tmp_object));
+    if ( strcmp(tmp_class,'index')) % get class -> FX conversion factors are of class index
+        if ( strcmp(tmp_object.type,'Exchange Rate') )    % FX have type 'Exchange Rate'  
+            tmp_id = tmp_object.id;
+            tmp_base_cur = tmp_id(4:6);
+            tmp_foreign_cur = tmp_id(7:9);
+            tmp_reciproc_id = strcat('FX_',tmp_foreign_cur,tmp_base_cur);
+          try
+            % deriving new Exchange rate parameters
+                tmp_base_cur = tmp_id(4:6);
+                tmp_foreign_cur = tmp_id(7:9);
+                tmp_reciproc_id = strcat('FX_',tmp_foreign_cur,tmp_base_cur);
+                tmp_reciproc_name = strcat(tmp_foreign_cur,'_',tmp_base_cur);
+                tmp_description = strcat(tmp_foreign_cur,' ',tmp_base_cur,' Exchange Rate');
+                tmp_value_base = 1 ./ tmp_object.get('value_base');
+                tmp_scenario_stress = 1 ./ tmp_object.get('scenario_stress');
+                tmp_scenario_mc = 1 ./ tmp_object.get('scenario_mc');
+                tmp_timestep_mc = tmp_object.get('timestep_mc');
+            % invoke new object of class indes:
+            tmp_new_fx_object = Index();
+            tmp_new_fx_object = tmp_new_fx_object.set('name',tmp_object.name,'id',tmp_reciproc_id,'description',tmp_description, ...
+                                'type',tmp_object.type,'currency',tmp_foreign_cur,'value_base',tmp_value_base, ...
+                                'timestep_mc',tmp_timestep_mc,'scenario_mc',tmp_scenario_mc,'scenario_stress',tmp_scenario_stress);
+            tmp_len_indexstruct = length(index_struct) + 1;
+            index_struct( tmp_len_indexstruct ).id = tmp_reciproc_id;
+            index_struct( tmp_len_indexstruct ).object = tmp_new_fx_object;
+            new_fx_reciprocal_objects = new_fx_reciprocal_objects + 1;
+          catch
+            fprintf('ERROR: There has been an error for new FX object: %s \n',tmp_reciproc_id);
+            id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_reciproc_id;
+          end
+        end
+    end
+
+end % end for loop for FX conversion factors
+
+fprintf('SUCCESS: generated >>%d<< reciprocal FX index objects. \n',new_fx_reciprocal_objects);
+if (length(id_failed_cell) > 0 )
+    fprintf('WARNING: >>%d<< mktdata objects failed: \n',length(id_failed_cell));
+    id_failed_cell
+end
+
 end % end function
 
-% III) %#%#%%#         HELPER FUNCTIONS              %#%#
+% ########         HELPER FUNCTIONS              ########
 % function for extracting sub-structure object from struct object according to id
 function  match_obj = get_sub_object(input_struct, input_id)
  	matches = 0;	

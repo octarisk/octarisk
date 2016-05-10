@@ -1,6 +1,8 @@
-HeaderPORTFOLIO,idCHAR,nameCHAR,descriptionCHAR
-Item,FUND_AAA,Global Diversified,Global diversified test portfolio
-Item,FUND_BBB,Global Derivatives,Global derivatives test portfolio
+HeaderPORTFOLIO,idCHAR,nameCHAR,descriptionCHAR,currencyCHAR
+Item,FUND_AAA,Global Diversified,Global diversified test portfolio,EUR
+Item,FUND_BBB,Global Derivatives,Global derivatives test portfolio,EUR
+Item,FUND_CCC,Test USD,Global derivatives test portfolio,USD
+Item,FUND_DDD,Test EUR,Global derivatives test portfolio,EUR
 HeaderPOSITION,port_idCHAR,idCHAR,quantityNMBR
 Item,FUND_AAA,A0RFFT,65
 Item,FUND_AAA,A1JB4Q,179
@@ -34,3 +36,9 @@ Item,FUND_BBB,ODAXC20160318,-0.1
 Item,FUND_BBB,EQFORW01,1
 Item,FUND_BBB,SYNTH01,1
 Item,FUND_BBB,CASH_EUR,1000
+Item,FUND_CCC,A0RFFT,65
+Item,FUND_CCC,CASH_EUR,1000
+Item,FUND_CCC,BASF11,723
+Item,FUND_DDD,A0RFFT,65
+Item,FUND_DDD,CASH_EUR,1000
+Item,FUND_DDD,BASF11,723

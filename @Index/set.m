@@ -103,7 +103,7 @@ function s = set (obj, varargin)
         error ('set: expecting the value to be a real number');
       end    
     else
-      error ('set: invalid property of Index class');
+      error ('set: invalid property of Index class: >>%s<<\n',prop);
     end
   end
 end   
