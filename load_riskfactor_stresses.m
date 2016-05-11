@@ -47,7 +47,7 @@ for ii = 1 : 1 : length( stresstest_struct )
             riskfactor_struct( kk ).object = rf_object; 
             number_riskfactors = number_riskfactors + 1;
         catch
-            fprintf('WARNING: There has been an error for curve: >>%s<< in stresstest: >>%s<<. Aborting: >>%s<<\n',tmp_rf_id,stresstest_struct( ii ).id,lasterr);
+            fprintf('WARNING: There has been an error for curve: >>%s<< in stresstest: >>%s<<. Message: >>%s<<\n',tmp_rf_id,stresstest_struct( ii ).id,lasterr);
             rf_failed_cell{ length(rf_failed_cell) + 1 } =  tmp_rf_id;
         end %end try catch
     end     % end for loop through all risk factors

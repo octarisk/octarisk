@@ -19,7 +19,7 @@
 %# @seealso{pearsrnd_oct_z, mvnrnd, normcdf, mvtrnd ,tcdf}
 %# @end deftypefn
 
-function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,time_horizon)
+function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,time_horizon,path_static,stable_seed)
 % A) input data checks
 [rr_c cc_c] = size(corr_matrix);
 [pp_p cc_p] = size(P);
@@ -43,18 +43,28 @@ factor_time_horizon = 256 / time_horizon;
 disp('Testing correlation matrix for positive semi-definiteness');
 corr_matrix = correct_correlation_matrix(corr_matrix);
 
-% 4) set seed for random number generator (works only for mvnrnd, not for t-distribution)
-%s = [1,2,3,4,5,6,7,8,9,0];
+% B.1) Generating multivariate random variables if stable_seed is 0
+    tmp_filename = strcat(path_static,'/random_numbers_',num2str(mc),'_',copulatype,'.mat');
+    if ( exist(tmp_filename,'file') && (stable_seed == 1))
+        fprintf('Taking file >>%s<< with random numbers in static folder\n',tmp_filename);
+        Y_struct = load(tmp_filename);  % read in from stored file
+        Y = Y_struct.Y;
+    else % otherwise draw new random numbers and save to static folder for next run
+        fprintf('New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
+        if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
+            Y   = mvnrnd(0,corr_matrix,mc);      % draw random variables from multivariate normal distribution
+        elseif ( strcmp(copulatype, 't') == 1) % t-copula 
+            Y   = mvtrnd(corr_matrix,nu,mc);     % draw random variables from multivariate student-t distribution
+        end
+        if (stable_seed == 1)
+            save ('-v7',tmp_filename,'Y');
+        end
+    end
 
-% B) Generating multivariate random variables
-                       
+% B.2) Calculate cumulative distribution functions -> map t- or normdistributed random numbers to i ntervall [0,1]  
 if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
-    %randn('state',s);  % set seed for random number generator randn -> bug, not working, has to be set directly in function mvnrnd
-    Y   = mvnrnd(0,corr_matrix,mc);      % draw random variables from multivariate normal distribution
     Z   = normcdf(Y,0,1);                % generate bivariate normal copula
 elseif ( strcmp(copulatype, 't') == 1) % t-copula 
-    %randn('state',s); 
-    Y   = mvtrnd(corr_matrix,nu,mc);     % draw random variables from multivariate student-t distribution
     Z   = tcdf(Y,nu);                   % generate bivariate normal copula
 end
 

@@ -23,6 +23,10 @@ function s = getValue (riskfactor, property, abs_flag, sensitivity) % method get
       property = lower(property);
       if ( strcmp(property,'stress'))
         s = obj.scenario_stress;
+        if ( isempty(s) )
+            %printf ('get: No stress values found. Returning base value.\n')
+            s = obj.value_base; 
+        end
       elseif ( strcmp(property,'base'))
         s = obj.value_base;  
       else
@@ -32,10 +36,8 @@ function s = getValue (riskfactor, property, abs_flag, sensitivity) % method get
             tmp_col = tmp_vec * (1:length(tmp_vec))';
             s = obj.scenario_mc(:,tmp_col);    
         else
-            printf ('get: invalid property %s. Neither stress nor MC timestep found.\n', property);
-            printf ('get: Allowed mc time steps:\n')
-            obj.timestep_mc
-            s = [];
+            %printf ('get: invalid property %s. Neither stress nor MC timestep found. Returning base value.\n', property);
+            s = obj.value_base; 
         end
       end 
     else

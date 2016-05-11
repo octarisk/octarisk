@@ -116,7 +116,7 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
         curve_struct( ii ).object = curve_object;
         
     catch   % catch errors in generating curves from risk factor nodes
-        fprintf('WARNING: There has been an error for curve: >>%s<<. Aborting: >>%s<<\n',tmp_curve_id,lasterr);
+        fprintf('WARNING: There has been an error for curve: >>%s<<. Message: >>%s<<\n',tmp_curve_id,lasterr);
         curve_failed_cell{ length(curve_failed_cell) + 1 } =  tmp_curve_id;
     end % end try catch
 end    % close loop via all curves

@@ -14,7 +14,8 @@
 %# @deftypefn {Function File} {[@var{index_struct} @var{curve_struct} @var{id_failed_cell}] =} update_mktdata_objects(@var{mktdata_struct},@var{index_struct},@var{riskfactor_struct},@var{curve_struct})
 %# Update all market data objects with scenario dependent risk factor and curve shocks. 
 %# Return index struct and curve struct with scenario dependent absolute values. @*
-%# Calculate reciprocal FX conversion factors for all market objects (e.g. FX_USDEUR = 1 ./ FX_USDEUR)
+%# Calculate reciprocal FX conversion factors for all exchange rate market objects (e.g. FX_USDEUR = 1 ./ FX_USDEUR).
+%# During aggregation and instrument currency conversion the appropriate FX exchange rate is always chosen by FX_BasecurrencyForeigncurrency)
 %# @end deftypefn
 
 function [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,timesteps_mc)
@@ -47,27 +48,22 @@ for ii = 1 : 1 : length(mktdata_struct)
 			tmp_object = tmp_object.set('scenario_mc', tmp_scenario_values );
 			tmp_object = tmp_object.set('scenario_stress', tmp_stress_value );
 			tmp_object = tmp_object.set('timestep_mc', tmp_timesteps_mc );  
-		else				% no match found, market object has no attached risk factor
-			% fill objects scenario values with a row vector of length timesteps_mc
-			tmp_object = tmp_object.set('scenario_mc', tmp_object.getValue('base') .* ones(1,length(timesteps_mc)) );
-			tmp_object = tmp_object.set('scenario_stress', tmp_object.getValue('base') );	% here a scalar is enough
-			tmp_object = tmp_object.set('timestep_mc', timesteps_mc ); 
-	    end					% end match case
+	    end		% no match found, market object has no attached risk factor
 	    tmp_store_struct = length(index_struct) + 1;        
 		index_struct( tmp_store_struct ).id      = tmp_object.id;
 		index_struct( tmp_store_struct ).name    = tmp_object.name;
 		index_struct( tmp_store_struct ).object  = tmp_object;
 		index_curve_objects = index_curve_objects + 1;
       catch
-        fprintf('ERROR: There has been an error for new Index object: %s \n',tmp_id);
+        fprintf('ERROR: There has been an error for new Index object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
         id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
       end
     elseif ( strcmp(tmp_class,'curve'))
         tmp_id = tmp_object.id;
       try
-        tmp_rf_id = strcat('RF_',tmp_id);
+        tmp_rf_id = strcat('RF_',tmp_id); 
         [tmp_rf_object ret_code] = get_sub_object(curve_struct, tmp_rf_id);
-        if (ret_code == 1)	% match found -> market object has attached risk factor
+        if (ret_code == 1)	% match found -> market object has attached risk factor -> calculate appropriate scenario values
 			interp_method = tmp_rf_object.get('method_interpolation');
 			% get base values of mktdata curve
 			curve_nodes      = tmp_object.get('nodes');
@@ -121,15 +117,7 @@ for ii = 1 : 1 : length(mktdata_struct)
 				tmp_object = tmp_object.set('timestep_mc',tmp_value_type);
 				tmp_object = tmp_object.set('rates_mc',curve_rates_mc);
 			end
-		else				% no match found, market object has no attached risk factor
-			% fill objects scenario values with a row vector of length timesteps_mc
-			curve_rates_base = tmp_object.get('rates_base');
-			for kk = 1 : 1 : length(timesteps_mc)
-				tmp_object = tmp_object.set('timestep_mc',timesteps_mc{kk});
-				tmp_object = tmp_object.set('rates_mc',curve_rates_base);
-			end	
-			tmp_object = tmp_object.set('rates_stress',curve_rates_base);
-		end					% end match case	
+		end	% no match found, market object has no attached risk factor -> just store in curve struct
         % store everything in curve struct
         tmp_store_struct = length(curve_struct) + 1;
         curve_struct( tmp_store_struct ).id      = tmp_object.id;
@@ -137,7 +125,7 @@ for ii = 1 : 1 : length(mktdata_struct)
         curve_struct( tmp_store_struct ).object  = tmp_object;
         index_curve_objects = index_curve_objects + 1;
       catch
-        fprintf('ERROR: There has been an error for new Curve object: %s \n',tmp_id);
+        fprintf('ERROR: There has been an error for new Curve object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
         id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
       end
     end % end class select
@@ -146,7 +134,9 @@ end % end for loop through all mktdata objects
 fprintf('SUCCESS: generated >>%d<< index and curve objects from marketdata. \n',index_curve_objects);
 
 
-% Caculate reciprocal FX conversion factors
+% Caculate reciprocal FX conversion factors (it is only required to define one conversion factor for each currency.
+% regardless, whether there is an attached risk factor, the reciprocal base (and scenario) values are taken 
+% for the corresponding FX exchange rate
 new_fx_reciprocal_objects = 0;
 for ii = 1 : 1 : length(index_struct)
     tmp_object = index_struct(ii).object;
@@ -170,15 +160,19 @@ for ii = 1 : 1 : length(index_struct)
                 tmp_timestep_mc = tmp_object.get('timestep_mc');
             % invoke new object of class indes:
             tmp_new_fx_object = Index();
-            tmp_new_fx_object = tmp_new_fx_object.set('name',tmp_object.name,'id',tmp_reciproc_id,'description',tmp_description, ...
+            tmp_new_fx_object = tmp_new_fx_object.set('name',tmp_reciproc_name,'id',tmp_reciproc_id,'description',tmp_description, ...
                                 'type',tmp_object.type,'currency',tmp_foreign_cur,'value_base',tmp_value_base, ...
-                                'timestep_mc',tmp_timestep_mc,'scenario_mc',tmp_scenario_mc,'scenario_stress',tmp_scenario_stress);
+                                'scenario_stress',tmp_scenario_stress);
+            % store scenario_mc only, if scenario_mc vector contains values (if base Exchange rate has attached risk factor):
+            if ~(isempty(tmp_scenario_mc))
+                tmp_new_fx_object = tmp_new_fx_object.set('timestep_mc',tmp_timestep_mc,'scenario_mc',tmp_scenario_mc);
+            end
             tmp_len_indexstruct = length(index_struct) + 1;
             index_struct( tmp_len_indexstruct ).id = tmp_reciproc_id;
             index_struct( tmp_len_indexstruct ).object = tmp_new_fx_object;
             new_fx_reciprocal_objects = new_fx_reciprocal_objects + 1;
           catch
-            fprintf('ERROR: There has been an error for new FX object: %s \n',tmp_reciproc_id);
+            fprintf('ERROR: There has been an error for new FX object: >>%s<<. Message: >>%s<< \n',tmp_reciproc_id,lasterr);
             id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_reciproc_id;
           end
         end
@@ -219,7 +213,7 @@ function  [match_obj ret_code] = get_sub_object(input_struct, input_id)
 	    	ret_code = 1;
 		return;
 	else
-	    	fprintf(' No matches found for input_id: >>%s<<',input_id);
+	    	fprintf(' No matches found for input_id: >>%s<<\n',input_id);
 	    	match_obj = '';
 	    	ret_code = 0;
 		return;

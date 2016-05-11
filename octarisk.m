@@ -191,7 +191,7 @@ input_filename_vola_ir = 'vol_ir_';
 plotting = 1;           % switch for plotting data (0/1)
 saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
 archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
-
+stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
 % load packages
 pkg load statistics;	% load statistics package (needed in scenario_generation_MC)
 pkg load financial;		% load financial packages (needed throughout all scripts)
@@ -200,7 +200,7 @@ pkg load financial;		% load financial packages (needed throughout all scripts)
 mc = 50000              % number of MonteCarlo scenarios
 hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be used
 confidence = 0.999      % level of confidence vor MC VAR calculation
-copulatype = 'Gaussian'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
+copulatype = 't'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
 valuation_date = datenum('28-Apr-2016'); % valuation date
 base_currency  = 'EUR'  % base reporting currency
@@ -213,6 +213,13 @@ runcode = '2015Q4'; %substr(md5sum(num2str(time()),true),-6)
 timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
 
 first_eval      = 0;
+
+% set seed of random number generator (only used for idiosyncratic term for Sensi instruments)
+if ( stable_seed == 1)
+    % use runcode for seed
+    rand('state',toascii(runcode));
+    randn('state',toascii(runcode));
+end
 % I) #########            INPUT                 #########
 tic;
 % 0. Processing timestep values
@@ -289,7 +296,7 @@ for ii = 1 : 1 : length(riskfactor_struct)
 end
 % c) call MC scenario generation (Copula approach, Pearson distribution types 1-7 according four moments of distribution parameters)
 %    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
-[R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256);
+[R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,stable_seed);
 %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
 % for ii = 1 : 1 : length(riskfactor_struct)
     % disp('=== Distribution function for riskfactor ===')
@@ -315,7 +322,10 @@ end
 
 % 3.) Take Riskfactor Shiftvalues from Stressdefinition
 [riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
-
+% for kk = 1  : 1 : length(riskfactor_struct)
+   % riskfactor_struct(kk).id
+   % riskfactor_struct(kk).object
+% end
 scengen = toc;
 
 tic;
@@ -345,14 +355,14 @@ curve_gen_time = toc;
 persistent index_struct;
 index_struct=struct();
 [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps);   
-for kk = 1  : 1 : length(index_struct)
-   index_struct(kk).id
-   index_struct(kk).object
-end
-for kk = 1  : 1 : length(curve_struct)
-   curve_struct(kk).id
-   curve_struct(kk).object
-end
+% for kk = 1  : 1 : length(index_struct)
+   % index_struct(kk).id
+   % index_struct(kk).object
+% end
+% for kk = 1  : 1 : length(curve_struct)
+   % curve_struct(kk).id
+   % curve_struct(kk).object
+% end
 
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
@@ -631,7 +641,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
             else
                 scen_number = mc;
             end
-            cc = cc.calc_value(scenario_set{pp},scen_number);
+            cc = cc.calc_value(scenario_set{pp},scen_number);   % repeat base value in all MC timesteps and stress scenarios -> riskfree
         end
         instrument_struct( ii ).object = cc;
     end
@@ -1288,7 +1298,7 @@ function  match_struct = get_sub_struct(input_struct, input_id)
 	    	match_struct = input_struct(matches);
 		return;
 	else
-	    	error(' No matches found')
+	    	error(' No matches found for input_id: >>%s<<',input_id);
 		return;
 	end
 end
