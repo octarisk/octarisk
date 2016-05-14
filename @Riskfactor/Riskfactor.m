@@ -10,7 +10,7 @@ classdef Riskfactor
       std
       skew
       kurt
-      value_base = 1;
+      value_base = 0.0;
       mr_level
       mr_rate
       node
@@ -105,6 +105,8 @@ classdef Riskfactor
             fprintf('value_base: %f\n',a.value_base); 
             fprintf('mr_level: %f\n',a.mr_level); 
             fprintf('mr_rate: %f\n',a.mr_rate); 
+         else
+            fprintf('value_base: %f\n',a.value_base); 
          end
          if ( regexp('RF_IR',a.type) || regexp('RF_SPREAD',a.type) )
             fprintf('node: %d\n',a.node); 

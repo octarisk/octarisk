@@ -177,7 +177,7 @@ end
 
 % set filenames for input:
 input_filename_instruments  = 'instruments.csv';
-input_filename_corr_matrix  = strcat(path_mktdata,'/corr24.dat');
+input_filename_corr_matrix  = 'corr.csv';
 input_filename_stresstests  = 'stresstests.csv';
 input_filename_riskfactors  = 'riskfactors.csv';
 input_filename_positions    = 'positions.csv';
@@ -216,7 +216,7 @@ first_eval      = 0;
 
 % set seed of random number generator (only used for idiosyncratic term for Sensi instruments)
 if ( stable_seed == 1)
-    % use runcode for seed
+    % use ascii character codes of runcode for stable initial seed
     rand('state',toascii(runcode));
     randn('state',toascii(runcode));
 end
@@ -268,27 +268,30 @@ mktdata_struct=struct();
 parseinput = toc;
 
 
-% II) %#%#%%#            CALCULATION                %#%#
+% II) ##################            CALCULATION                ##################
 
  
 % 1.) Model Riskfactor Scenario Generation
 tic;
 %-----------------------------------------------------------------
 
+% special adjustment needed for HD vec if testing is performed with small MC numbers
 if ( mc < 1000 ) 
     hd_limit = mc - 1;
 end
 
 % a.) Load input correlation matrix
 
-corr_matrix = load(input_filename_corr_matrix); % path to correlation matrix
-%corr_matrix = eye(length(riskfactor_struct));
+%corr_matrix = load(input_filename_corr_matrix); % path to correlation matrix
 
-% b) Get distribution parameters: all four moments and return are taken directly from riskfactors, NOT from covariance matrix!
-rf_vola_vector = zeros(length(riskfactor_struct),1);
-for ii = 1 : 1 : length(riskfactor_struct)
-    rf_object = riskfactor_struct( ii ).object;
-    rf_vola_vector(ii)            = rf_object.std;
+[corr_matrix riskfactor_cell] = load_correlation_matrix(path_mktdata,input_filename_corr_matrix,path_archive,timestamp,archive_flag);
+%corr_matrix = eye(length(riskfactor_struct));  % for test cases
+
+% b) Get distribution parameters: all four moments and return for marginal distributions are taken directly from riskfactors
+%   in order of their appearance in correlation matrix
+for ii = 1 : 1 : length(riskfactor_cell)
+    rf_id = riskfactor_cell{ii};
+    rf_object = get_sub_object(riskfactor_struct, rf_id);
     rf_para_distributions(1,ii)   = rf_object.mean;  % mu
     rf_para_distributions(2,ii)   = rf_object.std;   % sigma
     rf_para_distributions(3,ii)   = rf_object.skew;  % skew
@@ -300,14 +303,16 @@ end
 %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
 % for ii = 1 : 1 : length(riskfactor_struct)
     % disp('=== Distribution function for riskfactor ===')
-    % riskfactor_struct( ii ).name
-    % distr_type(ii)
-    % sigma_soll = rf_para_distributions(2,ii)   % sigma
-    % sigma_act = std(R(:,ii))
-    % skew_soll = rf_para_distributions(3,ii)   % skew
-    % skew_act = skewness(R(:,ii))
-    % kurt_soll = rf_para_distributions(4,ii)   % kurt    
-    % kurt_act = kurtosis(R(:,ii))
+    % rf_id = riskfactor_cell{ii};
+    % rf_object = get_sub_object(riskfactor_struct, rf_id);
+    % rf_object.id
+    % Pearson_type = distr_type(ii)
+    % sigma_soll = rf_object.std   % sigma
+    % sigma_act = std(R_250(:,ii))
+    % skew_soll = rf_object.skew   % skew
+    % skew_act = skewness(R_250(:,ii))
+    % kurt_soll = rf_object.kurt   % kurt    
+    % kurt_act = kurtosis(R_250(:,ii))
 % end
 
 % Generate Structure with Risk factor scenario values: scale values according to timestep
@@ -318,14 +323,11 @@ for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random m
 end
 % --------------------------------------------------------------------------------------------------------------------
 % 2.) Monte Carlo Riskfactor Simulation for all timesteps
-[riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,mc_timesteps,mc_timestep_days);
+[riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
 
 % 3.) Take Riskfactor Shiftvalues from Stressdefinition
 [riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
-% for kk = 1  : 1 : length(riskfactor_struct)
-   % riskfactor_struct(kk).id
-   % riskfactor_struct(kk).object
-% end
+
 scengen = toc;
 
 tic;
@@ -339,11 +341,16 @@ saving_time = toc;
 
 % 4.) Process yield curves and vola surfaces: Generate object with riskfactor yield curves and surfaces 
 tic;
+
 % a) Processing yield curves
+
 persistent curve_struct;
 curve_struct=struct();
 [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving);
-
+% for kk = 1  : 1 : length(curve_struct)
+   % curve_struct(kk).id
+   % curve_struct(kk).object
+% end
 % b) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 persistent surface_struct;
 surface_struct=struct();
@@ -364,6 +371,12 @@ index_struct=struct();
    % curve_struct(kk).object
 % end
 
+% riskfactor_cell
+% for kk = 1  : 1 : length(riskfactor_struct)
+   % riskfactor_struct(kk).id
+   % riskfactor_struct(kk).object.getValue('250d')
+   % riskfactor_struct(kk).object.getValue('base')
+% end
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
 %   Total Loop over all Instruments and type dependent valuation
@@ -887,9 +900,9 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   % 7.0) Print Report for all Risk factor scenario values around confidence scenario
   fprintf(fid, 'Risk factor scenario values: \n');
   fprintf(fid, '|VaR %s scenario delta |RF_ID|Scen-2|Scen-1|Base|Scen+1|Scen+2|\n',tmp_scen_set);
-  for ii = 1 : 1 : length( riskfactor_struct)
-    tmp_id           = riskfactor_struct( ii ).object.id;
-    tmp_delta_shock   = riskfactor_struct( ii ).object.getValue(tmp_scen_set);
+  for ii = 1 : 1 : length( riskfactor_cell) % loop through all MC risk factors only
+    tmp_object      = get_sub_object(riskfactor_struct, riskfactor_cell{ii});
+    tmp_delta_shock   = tmp_object.getValue(tmp_scen_set);
     fprintf(fid, '|VaR %s scenario delta |%s|%1.3f|%1.3f|%1.3f|%1.3f|%1.3f|\n',tmp_scen_set,tmp_id,tmp_delta_shock(confi_scenarionumber_shock_m2),tmp_delta_shock(confi_scenarionumber_shock_m1),tmp_delta_shock(confi_scenarionumber_shock),tmp_delta_shock(confi_scenarionumber_shock_p1),tmp_delta_shock(confi_scenarionumber_shock_p2));
   end
   % 7.1) Print Report for all Positions:
@@ -1302,33 +1315,33 @@ function  match_struct = get_sub_struct(input_struct, input_id)
 		return;
 	end
 end
-% function for extracting sub-structure object from struct object according to id
-function  match_obj = get_sub_object(input_struct, input_id)
- 	matches = 0;	
-	a = {input_struct.id};
-	b = 1:1:length(a);
-	c = strcmp(a, input_id);	
-    % correct for multiple matches:
-    if ( sum(c) > 1 )
-        summe = 0;
-        for ii=1:1:length(c)
-            if ( c(ii) == 1)
-                match_struct = input_struct(ii);
-                ii;
-                return;
-            end            
-            summe = summe + 1;
-        end       
-    end
-    matches = b * c';
-	if (matches > 0)
-	    	match_obj = input_struct(matches).object;
-		return;
-	else
-	    	error(' No matches found for input_id: >>%s<<',input_id);
-		return;
-	end
-end
+% % function for extracting sub-structure object from struct object according to id
+% function  match_obj = get_sub_object(input_struct, input_id)
+ 	% matches = 0;	
+	% a = {input_struct.id};
+	% b = 1:1:length(a);
+	% c = strcmp(a, input_id);	
+    % % correct for multiple matches:
+    % if ( sum(c) > 1 )
+        % summe = 0;
+        % for ii=1:1:length(c)
+            % if ( c(ii) == 1)
+                % match_struct = input_struct(ii);
+                % ii;
+                % return;
+            % end            
+            % summe = summe + 1;
+        % end       
+    % end
+    % matches = b * c';
+	% if (matches > 0)
+	    	% match_obj = input_struct(matches).object;
+		% return;
+	% else
+	    	% error(' No matches found for input_id: >>%s<<',input_id);
+		% return;
+	% end
+% end
 % function for calculating VAR and ES from GPD calibrated parameters
 % chi and sigma are GPD shape parameters, u is offset level, q is quantile, n is number of total scenarios, nu is number of tail scenarios
 function [VAR ES] = get_gpd_var(chi, sigma, u, q, n, nu) 

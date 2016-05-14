@@ -68,6 +68,10 @@ for ii = 1 : 1 : length(mktdata_struct)
 			% get base values of mktdata curve
 			curve_nodes      = tmp_object.get('nodes');
 			curve_rates_base = tmp_object.get('rates_base');
+            % sort nodes and accordingly base rates:
+                [curve_nodes tmp_indizes] = sort(curve_nodes);
+                curve_rates_base = curve_rates_base(:,tmp_indizes);
+                
 			tmp_ir_shock_matrix = [];
 			
 			% get stress values of risk factor curve
@@ -116,7 +120,18 @@ for ii = 1 : 1 : length(mktdata_struct)
 				clear tmp_ir_shock_matrix;
 				tmp_object = tmp_object.set('timestep_mc',tmp_value_type);
 				tmp_object = tmp_object.set('rates_mc',curve_rates_mc);
+                tmp_object = tmp_object.set('rates_base',curve_rates_base); % restore rates base. Maybe they were unsorted.
+                tmp_object = tmp_object.set('nodes',curve_nodes); % restore nodes. Maybe they were unsorted.
 			end
+        else    % if no match found just sort nodes and rates base
+        % get base values of mktdata curve
+			curve_nodes      = tmp_object.get('nodes');
+			curve_rates_base = tmp_object.get('rates_base');
+            % sort nodes and accordingly base rates:
+            [curve_nodes tmp_indizes] = sort(curve_nodes);
+            curve_rates_base = curve_rates_base(:,tmp_indizes);
+            tmp_object = tmp_object.set('rates_base',curve_rates_base); % restore rates base. Maybe they were unsorted.
+            tmp_object = tmp_object.set('nodes',curve_nodes); % restore nodes. Maybe they were unsorted.
 		end	% no match found, market object has no attached risk factor -> just store in curve struct
         % store everything in curve struct
         tmp_store_struct = length(curve_struct) + 1;
@@ -187,35 +202,3 @@ if (length(id_failed_cell) > 0 )
 end
 
 end % end function
-
-% ########         HELPER FUNCTIONS              ########
-% function for extracting sub-structure object from struct object according to id
-function  [match_obj ret_code] = get_sub_object(input_struct, input_id)
- 	matches = 0;	
-	a = {input_struct.id};
-	b = 1:1:length(a);
-	c = strcmp(a, input_id);	
-    % correct for multiple matches:
-    if ( sum(c) > 1 )
-        summe = 0;
-        for ii=1:1:length(c)
-            if ( c(ii) == 1)
-                match_struct = input_struct(ii);
-                ii;
-                return;
-            end            
-            summe = summe + 1;
-        end       
-    end
-    matches = b * c';
-	if (matches > 0)
-	    	match_obj = input_struct(matches).object;
-	    	ret_code = 1;
-		return;
-	else
-	    	fprintf(' No matches found for input_id: >>%s<<\n',input_id);
-	    	match_obj = '';
-	    	ret_code = 0;
-		return;
-	end
-end

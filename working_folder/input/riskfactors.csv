@@ -1,13 +1,13 @@
 HeaderRISKFACTOR,nameCHAR,idCHAR,typeCHAR,descriptionCHAR,modelCHAR,meanNMBR,stdNMBR,skewNMBR,kurtNMBR,value_baseNMBR,mr_levelNMBR,mr_rateNMBR,nodeNMBR
-Item,RF_EQ_DE,RF_EQ_DE,RF_EQ,Riskfactor Equity Germany,GBM,0,0.18,-0.5,5,9820,,,
-Item,RF_EQ_EUR,RF_EQ_EUR,RF_EQ,Riskfactor Equity Euro,GBM,0,0.18,-0.5,5,,,,
-Item,RF_EQ_EU,RF_EQ_EU,RF_EQ,Riskfactor Equity Europe,GBM,0,0.144,-0.5,5,,,,
-Item,RF_EQ_NA,RF_EQ_NA,RF_EQ,Riskfactor Equity NorthAmerica,GBM,0,0.16,-0.5,4,,,,
-Item,RF_EQ_AP,RF_EQ_AP,RF_EQ,Riskfactor Equity AsiaPacific,GBM,0,0.16,-0.5,4,,,,
-Item,RF_EQ_EM,RF_EQ_EM,RF_EQ,Riskfactor Equity EmergingMarkets,GBM,0,0.2,-0.5,4,,,,
-Item,RF_COM_DIV,RF_COM_DIV,RF_COM,Riskfactor Commodity Diversified,GBM,0,0.13,-0.5,4,,,,
-Item,RF_RE_DM,RF_RE_DM,RF_RE,Riskfactor RealEstate World DM,GBM,0,0.15,-0.5,5.5,,,,
-Item,RF_COM_GOLD,RF_COM_GOLD,RF_COM,Riskfactor Physical Gold,GBM,0,0.12,-0.3,6.5,,,,
+Item,RF_EQ_DE,RF_EQ_DE,RF_EQ,Riskfactor Equity Germany,GBM,0,0.18,-0.5,5,0,,,
+Item,RF_EQ_EUR,RF_EQ_EUR,RF_EQ,Riskfactor Equity Euro,GBM,0,0.18,-0.5,5,0,,,
+Item,RF_EQ_EU,RF_EQ_EU,RF_EQ,Riskfactor Equity Europe,GBM,0,0.144,-0.5,5,0,,,
+Item,RF_EQ_NA,RF_EQ_NA,RF_EQ,Riskfactor Equity NorthAmerica,GBM,0,0.16,-0.5,4,0,,,
+Item,RF_EQ_AP,RF_EQ_AP,RF_EQ,Riskfactor Equity AsiaPacific,GBM,0,0.16,-0.5,4,0,,,
+Item,RF_EQ_EM,RF_EQ_EM,RF_EQ,Riskfactor Equity EmergingMarkets,GBM,0,0.2,-0.5,4,0,,,
+Item,RF_COM_DIV,RF_COM_DIV,RF_COM,Riskfactor Commodity Diversified,GBM,0,0.13,-0.5,4,0,,,
+Item,RF_RE_DM,RF_RE_DM,RF_RE,Riskfactor RealEstate World DM,GBM,0,0.15,-0.5,5.5,0,,,
+Item,RF_COM_GOLD,RF_COM_GOLD,RF_COM,Riskfactor Physical Gold,GBM,0,0.12,-0.3,6.5,0,,,
 Item,RF_COM_SILVER,RF_COM_SILVER,RF_COM,Riskfactor Physical Silver,GBM,0,0.2,-0.3,6.5,,,,
 Item,RF_ALT_BC,RF_ALT_BC,RF_ALT,Riskfactor Bitcin EUR,GBM,0,0.5,-0.3,4.5,,,,
 Item,RF_FX_EURUSD,RF_FX_EURUSD,RF_FX,Riskfactor Forex EUR USD,SRD,0,0.08,0,3,1.08,1.2,0.001,
@@ -16,7 +16,8 @@ Item,RF_IR_EUR_1Y,RF_IR_EUR_1Y,RF_IR,Riskfactor IR EUR 1year,BM,0,0.0011,0,3,0.0
 Item,RF_IR_EUR_10Y,RF_IR_EUR_10Y,RF_IR,Riskfactor IR EUR 10year,BM,0,0.0032,0,3,0.0026,,,3650
 Item,RF_IR_EUR_20Y,RF_IR_EUR_20Y,RF_IR,Riskfactor IR EUR 20year,BM,0,0.006,0,3,0.015,,,7300
 Item,RF_IR_USD_1Y,RF_IR_USD_1Y,RF_IR,Riskfactor IR USD 1year,BM,0,0.0023,0,3,0.0066,,,365
-Item,RF_IR_USD_5Y,RF_IR_USD_5Y,RF_IR,Riskfactor IR USD 5year,BM,0,0.006,0,3,0.0173,,,1825
-Item,RF_IR_USD_10Y,RF_IR_USD_10Y,RF_IR,Riskfactor IR USD 10year,BM,0,0.006,0,3,0.024,,,3650
+Item,RF_IR_USD_10Y,RF_IR_USD_10Y,RF_IR,Riskfactor IR USD 10year,BM,0,0.006,0,3,0.0173,,,3650
+Item,RF_IR_USD_20Y,RF_IR_USD_20Y,RF_IR,Riskfactor IR USD 20year,BM,0,0.006,0,3,0.024,,,7300
 Item,RF_VOLA_COM_GOLD,RF_VOLA_COM_GOLD,RF_VOLA,Riskfactor Impl Vola Gold,SRD,0,0.1,0,3,0.15,0.167,0.0389,
-Item,RF_SPREAD_USD_HY_5Y,RF_SPREAD_USD_HY_5Y,RF_SPREAD,Riskfactor Spread USD HY 5year,BM,0,0.0083,0.24,10,0.052,,,1825
+Item,RF_SPREAD_EUR_HY_5Y,RF_SPREAD_EUR_HY_5Y,RF_SPREAD,Riskfactor Spread USD HY 5year,BM,0,0.0083,0.24,10,0.052,,,1825
+Item,RF_EQ_BASF,RF_EQ_BASF,RF_EQ,Riskfactor Equity BASF,GBM,,,,,0,,,

@@ -24,7 +24,7 @@ function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,
 [rr_c cc_c] = size(corr_matrix);
 [pp_p cc_p] = size(P);
 if ( cc_c ~= cc_p )
-    error('Numbers of risk factors and parameters does not match!');
+    error('OCTARISK::scenario_generation_MC: Numbers of risk factors and parameters does not match!');
 end
 
 % 1) Input Arguments checks
@@ -40,13 +40,14 @@ end
 factor_time_horizon = 256 / time_horizon;
 
 % 3) Test for positive semi-definiteness
-disp('Testing correlation matrix for positive semi-definiteness');
+fprintf('Testing correlation matrix for positive semi-definiteness:\n');
 corr_matrix = correct_correlation_matrix(corr_matrix);
 
 % B.1) Generating multivariate random variables if stable_seed is 0
-    tmp_filename = strcat(path_static,'/random_numbers_',num2str(mc),'_',copulatype,'.mat');
+    tmp_number_rf = rows(corr_matrix);  % get number of risk factors
+    tmp_filename = strcat(path_static,'/random_numbers_',num2str(mc),'_',num2str(tmp_number_rf),'_',copulatype,'.mat');
     if ( exist(tmp_filename,'file') && (stable_seed == 1))
-        fprintf('Taking file >>%s<< with random numbers in static folder\n',tmp_filename);
+        fprintf('Taking file >>%s<< with random numbers from static folder\n',tmp_filename);
         Y_struct = load(tmp_filename);  % read in from stored file
         Y = Y_struct.Y;
     else % otherwise draw new random numbers and save to static folder for next run
@@ -61,7 +62,7 @@ corr_matrix = correct_correlation_matrix(corr_matrix);
         end
     end
 
-% B.2) Calculate cumulative distribution functions -> map t- or normdistributed random numbers to i ntervall [0,1]  
+% B.2) Calculate cumulative distribution functions -> map t- or normdistributed random numbers to intervall [0,1]  
 if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
     Z   = normcdf(Y,0,1);                % generate bivariate normal copula
 elseif ( strcmp(copulatype, 't') == 1) % t-copula 
@@ -78,7 +79,7 @@ end
 ret_vec = zeros(mc,1);
 R = zeros(mc,columns(corr_matrix));
 distr_type = [];
-% now loop via all columns of Z and apply individual distribution
+% now loop via all columns of Z and apply individual marginal distribution
 for ii = 1 : 1 : columns(Z);
     tmp_ucr = Z(:,ii);
     tmp_mu      = P(1,ii) .^(1/factor_time_horizon);          % mu needs geometric compounding adjustment (input provided for yearly time horizon)
