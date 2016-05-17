@@ -182,6 +182,7 @@ input_filename_stresstests  = 'stresstests.csv';
 input_filename_riskfactors  = 'riskfactors.csv';
 input_filename_positions    = 'positions.csv';
 input_filename_mktdata      = 'mktdata.csv';
+input_filename_seed			= 'random_seed.dat';
 
 % set filenames for vola surfaces
 input_filename_vola_index = 'vol_index_';
@@ -214,11 +215,14 @@ timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
 
 first_eval      = 0;
 
-% set seed of random number generator (only used for idiosyncratic term for Sensi instruments)
+% set seed of random number generator
 if ( stable_seed == 1)
-    % use ascii character codes of runcode for stable initial seed
-    rand('state',toascii(runcode));
-    randn('state',toascii(runcode));
+    % read binary seed file and convert it into integers
+    fid = fopen(strcat(path_static,'/',input_filename_seed)); % open file
+    random_seed = fread(fid,Inf,"uint8");		% convert binary file into integers
+    fclose(fid);								% close file 
+    rand('state',random_seed);					% set seed
+    randn('state',random_seed);
 end
 % I) #########            INPUT                 #########
 tic;
