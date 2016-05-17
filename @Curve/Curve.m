@@ -37,6 +37,7 @@ classdef Curve
       type = '';  
       method_interpolation = 'linear'; %'monotone-convex';  
       shocktype_mc = 'absolute';  
+      increments = '';
     end
    
     properties (SetAccess = protected )
@@ -80,6 +81,12 @@ classdef Curve
             a.name,a.id,a.description,a.type);
          fprintf('method_interpolation: %s\n',a.method_interpolation);
          fprintf('shocktype_mc: %s\n',a.shocktype_mc);
+         % looping via all riskfactors / sensitivities
+         if ( length(a.increments) > 0 )
+             for ( ii = 1 : 1 : length(a.increments))
+                fprintf('Increments: %s \n',a.increments{ii});            
+             end
+         end
          % looping via all nodes if defined
          if ( length(a.nodes) > 0 )
             fprintf('Nodes:\n[ ');
@@ -128,8 +135,8 @@ classdef Curve
       end % disp
       
       function obj = set.type(obj,type)
-         if ~(strcmpi(type,'Discount Curve') || strcmpi(type,'Spread Curve')  || strcmpi(type,'Dummy Curve')  )
-            error('Type must be either Discount Curve or Spread Curve or Dummy Curve')
+         if ~(strcmpi(type,'Discount Curve') || strcmpi(type,'Spread Curve')  || strcmpi(type,'Dummy Curve') || strcmpi(type,'Aggregated Curve') )
+            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve or Dummy Curve')
          end
          obj.type = type;
       end % Set.type

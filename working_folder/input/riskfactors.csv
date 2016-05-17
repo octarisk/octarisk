@@ -1,5 +1,5 @@
 HeaderRISKFACTOR,nameCHAR,idCHAR,typeCHAR,descriptionCHAR,modelCHAR,meanNMBR,stdNMBR,skewNMBR,kurtNMBR,value_baseNMBR,mr_levelNMBR,mr_rateNMBR,nodeNMBR
-Item,RF_EQ_DE,RF_EQ_DE,RF_EQ,Riskfactor Equity Germany,GBM,0,0.18,-0.5,5,0,,,
+Item,RF_EQ_DE,RF_EQ_DE,RF_EQ,Riskfactor Equity Germany,GBM,0,0.18,-0.4,5,0,,,
 Item,RF_EQ_EUR,RF_EQ_EUR,RF_EQ,Riskfactor Equity Euro,GBM,0,0.18,-0.5,5,0,,,
 Item,RF_EQ_EU,RF_EQ_EU,RF_EQ,Riskfactor Equity Europe,GBM,0,0.144,-0.5,5,0,,,
 Item,RF_EQ_NA,RF_EQ_NA,RF_EQ,Riskfactor Equity NorthAmerica,GBM,0,0.16,-0.5,4,0,,,

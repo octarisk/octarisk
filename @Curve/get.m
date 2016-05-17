@@ -25,6 +25,8 @@ function s = get (obj, property)
           s = obj.nodes; 
         case 'shocktype_mc'
           s = obj.shocktype_mc; 
+        case 'increments'
+          s = obj.increments;
         case 'method_interpolation'
           s = obj.method_interpolation;
         otherwise

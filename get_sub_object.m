@@ -39,7 +39,7 @@ function  [match_obj ret_code] = get_sub_object(input_struct, input_id)
 	    	ret_code = 1;
 		return;
 	else
-	    	fprintf(' No matches found for input_id: >>%s<<\n',input_id);
+	    	%fprintf(' No matches found for input_id: >>%s<<\n',input_id);
 	    	match_obj = '';
 	    	ret_code = 0;
 		return;

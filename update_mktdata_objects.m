@@ -18,11 +18,11 @@
 %# During aggregation and instrument currency conversion the appropriate FX exchange rate is always chosen by FX_BasecurrencyForeigncurrency)
 %# @end deftypefn
 
-function [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,timesteps_mc)
+function [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,timesteps_mc,mc,no_stresstests)
 
 id_failed_cell = {};
 index_curve_objects = 0;
-% loop through all mktdata objects
+% loop through all Index and Curve mktdata objects (except Aggregated Curves -> stacked in next step)
 for ii = 1 : 1 : length(mktdata_struct)
     % get class -> switch between curve, index
     tmp_object = mktdata_struct(ii).object;
@@ -58,7 +58,7 @@ for ii = 1 : 1 : length(mktdata_struct)
         fprintf('ERROR: There has been an error for new Index object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
         id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
       end
-    elseif ( strcmp(tmp_class,'curve'))
+    elseif ( strcmp(tmp_class,'curve') && ~strcmp(lower(tmp_object.type),'aggregated curve'))
         tmp_id = tmp_object.id;
       try
         tmp_rf_id = strcat('RF_',tmp_id); 
@@ -148,6 +148,103 @@ end % end for loop through all mktdata objects
 
 fprintf('SUCCESS: generated >>%d<< index and curve objects from marketdata. \n',index_curve_objects);
 
+% Curve Stacking:
+aggr_curve_objects = 0;
+for ii = 1 : 1 : length(mktdata_struct)
+    % get class -> switch between curve, index
+    tmp_object = mktdata_struct(ii).object;
+    tmp_class = lower(class(tmp_object));
+    if ( strcmp(tmp_class,'curve') && strcmp(lower(tmp_object.type),'aggregated curve'))
+        tmp_id = tmp_object.id;
+        try
+            %fprintf('New type aggregated object: %s \n',tmp_id);
+            % get nodes of aggr curve and set rates
+            %disp("make empty containers")
+            aggr_curve_nodes      = tmp_object.get('nodes');
+            aggr_curve_rates_base = zeros(1,length(aggr_curve_nodes));                      % make base rate curve
+            aggr_curve_rates_stress = zeros(no_stresstests,length(aggr_curve_nodes));                    % make two dimensional rates surface for stess rates
+            aggr_curve_rates_mc = zeros(mc,length(aggr_curve_nodes),length(timesteps_mc));   % make three dimensional cube with zero mc rates
+            % sort nodes and accordingly base rates:
+            [aggr_curve_nodes tmp_indizes] = sort(aggr_curve_nodes);
+                
+            % get increments of aggr curve
+            aggr_curve_increments = tmp_object.get('increments');
+            % loop through all increments
+            for kk = 1 : 1 : length(aggr_curve_increments)
+                tmp_incr_id = aggr_curve_increments{kk};
+                [tmp_incr_object ret_code] = get_sub_object(curve_struct, tmp_incr_id);
+                if (ret_code == 1)	% match found -> market object has underlying increment curve -> calculate appropriate scenario values
+                    interp_method = tmp_incr_object.get('method_interpolation');
+                    %fprintf('Actual increment:%s\n',tmp_incr_id);
+                    % get stress values of risk factor curve
+                    incr_shock_nodes    = tmp_incr_object.get('nodes');
+                    incr_stress_rates   = tmp_incr_object.getValue('stress');
+                    incr_base_rates     = tmp_incr_object.get('rates_base');
+                    
+                    % loop through all IR Curve nodes and get interpolated shock value from risk factor
+                    tmp_incr_stress_rate = [];  %zeros(no_stresstests,length(aggr_curve_nodes)); 
+                    tmp_incr_base_rate = [];
+                    for ii = 1 : 1 : length(aggr_curve_nodes)
+                        tmp_node = aggr_curve_nodes(ii);
+                        % get interpolated shock vector at node
+                        tmp_stress_rate = interpolate_curve(incr_shock_nodes,incr_stress_rates,tmp_node,interp_method);
+                        tmp_base_rate = interpolate_curve(incr_shock_nodes,incr_base_rates,tmp_node,interp_method);
+                        % generate total shock matrix
+                        tmp_incr_stress_rate = horzcat(tmp_incr_stress_rate,tmp_stress_rate);
+                        tmp_incr_base_rate = horzcat(tmp_incr_base_rate,tmp_base_rate);
+                    end
+                    % add increment to aggr curve stress rates
+                    aggr_curve_rates_stress = aggr_curve_rates_stress + tmp_incr_stress_rate;
+                    aggr_curve_rates_base = aggr_curve_rates_base + tmp_incr_base_rate;                
+                    % loop through all timesteps_mc 
+                    tmp_aggr_curve_rates_mc = [];
+                    
+                    for kk = 1 : 1 : length(timesteps_mc)
+                        tmp_value_type = timesteps_mc{kk};
+                        incr_shock_rates    = tmp_incr_object.getValue(tmp_value_type);
+                        % loop through all IR Curve nodes and get interpolated shock value from risk factor
+                        tmp_ir_shock_matrix = [];
+                        for ii = 1 : 1 : length(aggr_curve_nodes)
+                            tmp_node = aggr_curve_nodes(ii);
+                            % get interpolated shock vector at node
+                            tmp_shock = interpolate_curve(incr_shock_nodes,incr_shock_rates,tmp_node,interp_method);
+                            % generate total shock matrix
+                            tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock);
+                        end
+                        %disp("add mc rates to tmp aggre")
+                        %tmp_value_type
+                        %tmp_ir_shock_matrix(1:min(5,rows(tmp_ir_shock_matrix)),:)   
+                        tmp_aggr_curve_rates_mc = cat(3,tmp_aggr_curve_rates_mc,tmp_ir_shock_matrix);
+                        %tmp_aggr_curve_rates_mc(1:min(5,rows(tmp_aggr_curve_rates_mc)),:,:)
+                    end  
+                    %disp("calc mc rates")
+                    %aggr_curve_rates_mc(1:min(5,rows(aggr_curve_rates_mc)),:,:)
+                    aggr_curve_rates_mc =  aggr_curve_rates_mc + tmp_aggr_curve_rates_mc;
+
+                end % retcode 1
+                % loop throug all mc timesteps
+                
+            end   
+            % store rates in object
+            tmp_object = tmp_object.set('timestep_mc',timesteps_mc);
+            tmp_object = tmp_object.set('rates_mc',aggr_curve_rates_mc);
+            tmp_object = tmp_object.set('rates_stress',aggr_curve_rates_stress);
+            tmp_object = tmp_object.set('rates_base',aggr_curve_rates_base); % restore rates base. Maybe they were unsorted.
+            tmp_object = tmp_object.set('nodes',aggr_curve_nodes); % restore nodes. Maybe they were unsorted.
+            aggr_curve_objects = aggr_curve_objects + 1;
+            % store everything in curve struct
+            tmp_store_struct = length(curve_struct) + 1;
+            curve_struct( tmp_store_struct ).id      = tmp_object.id;
+            curve_struct( tmp_store_struct ).name    = tmp_object.name;
+            curve_struct( tmp_store_struct ).object  = tmp_object;
+            index_curve_objects = index_curve_objects + 1;  
+        catch
+            fprintf('WARNING: octarisk::update_mktdata_objects: There has been an error for new Curve object:  >>%s<<. Message: >>%s<< in line >>%d<< \n',tmp_id,lasterr,lasterror.stack.line);
+            id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
+        end
+    end
+end
+fprintf('SUCCESS: generated >>%d<< aggregated curve objects from marketdata. \n',aggr_curve_objects);
 
 % Caculate reciprocal FX conversion factors (it is only required to define one conversion factor for each currency.
 % regardless, whether there is an attached risk factor, the reciprocal base (and scenario) values are taken 

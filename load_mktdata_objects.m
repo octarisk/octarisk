@@ -125,7 +125,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             % B.3a) Generate object of appropriate class
             if ( sum(strcmp(tmp_mktdata_type,{'INDEX'})) > 0)        % store data in Class INDEX
                 i = Index(); 
-            elseif ( sum(strcmp(tmp_mktdata_type,{'CURVE'}))  > 0)        % store data in Class CURVE
+            elseif ( sum(strcmp(tmp_mktdata_type,{'CURVE','AGGREGATEDCURVE'}))  > 0)        % store data in Class CURVE
                 i = Curve();              
             end
             % B.3b)  Loop through all mktdata attributes
@@ -210,6 +210,13 @@ for ii = 1 : 1 : length(tmp_list_files)
                             end
                             i = i.set(tmp_columnname,tmp_entry);
                         end
+                    elseif ( strcmp(tmp_columnname,'increments'))  % split into cell
+                        try
+                            tmp_entry = strsplit( tmp_entry, '|');
+                        catch
+                            tmp_entry = {};
+                        end 
+                        i = i.set(tmp_columnname,tmp_entry);    
                     else    % set new attribute, no special treatment
                         if ( ischar(tmp_entry))
                             if (length(tmp_entry)>0)

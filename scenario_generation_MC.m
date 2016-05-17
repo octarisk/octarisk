@@ -24,7 +24,7 @@ function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,
 [rr_c cc_c] = size(corr_matrix);
 [pp_p cc_p] = size(P);
 if ( cc_c ~= cc_p )
-    error('OCTARISK::scenario_generation_MC: Numbers of risk factors and parameters does not match!');
+    error('octarisk::scenario_generation_MC: Numbers of risk factors and parameters does not match!');
 end
 
 % 1) Input Arguments checks

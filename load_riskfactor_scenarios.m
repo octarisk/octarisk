@@ -15,11 +15,19 @@
 %# Generate MC scenario shock values for risk factor curve objects. Store all MC scenario shock values in provided struct and return the final struct and a cell containing all failed risk factor ids.
 %# @end deftypefn
 
-function [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days)
+function [tmp_riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days)
+
+% reorder tmp_riskfactor_struct
+tmp_riskfactor_struct = struct();
+for ii = 1 : 1 : length( riskfactor_cell ) 
+    rf_id = riskfactor_cell{ii};              
+    rf_object = get_sub_object(riskfactor_struct, rf_id);
+    tmp_riskfactor_struct(ii).object = rf_object;
+    tmp_riskfactor_struct(ii).id = rf_id;
+end
 
 rf_failed_cell = {};
 number_riskfactors = 0;
-tmp_riskfactor_struct = riskfactor_struct;  % introduce temporary riskfactor struct
 tmp_id = 'Dummy';
 % loop via all mc_timesteps and riskfactors and calculate risk factor MC scenario value
 for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
@@ -28,8 +36,8 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
         ts      = mc_timestep_days(kk);  % get timestep days
         Y_tmp   = M_struct( kk ).matrix; % get matrix with correlated random numbers for all risk factors
         for ii = 1 : 1 : length( riskfactor_cell )    % loop via all risk factors in order of their appearance in corr_matrix: 
-            rf_id = riskfactor_cell{ii};               % calculate risk factor deltas in each MC scenario
-            rf_object = get_sub_object(tmp_riskfactor_struct, rf_id);
+            rf_id = riskfactor_cell{ii};              % calculate risk factor deltas in each MC scenario
+            rf_object = tmp_riskfactor_struct(ii).object;
             tmp_model = rf_object.model;
             tmp_drift = rf_object.mean / 250;
             tmp_sigma = rf_object.std;
@@ -68,8 +76,7 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
             % store increment for actual riskfactor and scenario number
             rf_object = rf_object.set('scenario_mc',tmp_delta,'timestep_mc',tmp_ts);
             % store risk factor object back into struct:
-            riskfactor_struct( ii ).object = rf_object;   
-            riskfactor_struct( ii ).id = rf_object.id; 
+            tmp_riskfactor_struct( ii ).object = rf_object;   
             number_riskfactors = number_riskfactors + 1;
         end  % close loop via all risk factors  
     catch
@@ -78,8 +85,7 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
     end
 end      % close loop via all mc_timesteps
 
-% clear temporary riskfactor_struct
-clear tmp_riskfactor_struct;       
+% clear temporary riskfactor_struct      
 rf_failed_cell = unique(rf_failed_cell); 
 % returning statistics
 fprintf('SUCCESS: generated MC scenario values for >>%d<< risk factors in %d MC timesets.\n',number_riskfactors/kk,kk);
@@ -87,6 +93,17 @@ if (length(rf_failed_cell) > 0 )
     fprintf('WARNING: OCTARISK::load_riskfactor_scenarios:  >>%d<< risk factors failed during MC scenario generation: \n',length(rf_failed_cell));
     rf_failed_cell
 end 
+
+% now append all riskfactors which are not in riskfactor_cell
+for ii = 1 : 1 : length( riskfactor_struct ) 
+    rf_id = riskfactor_struct(ii).id;
+    if (sum(strcmp(rf_id,riskfactor_cell)) == 0)   % rf_id not contained in MC riskfactor_cell -> append
+        rf_object = get_sub_object(riskfactor_struct, rf_id);
+        store_index = length(tmp_riskfactor_struct) + 1;
+        tmp_riskfactor_struct(store_index).object = rf_object;
+        tmp_riskfactor_struct(store_index).id = rf_id;
+    end
+end
 
 end
 

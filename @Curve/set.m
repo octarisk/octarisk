@@ -20,7 +20,12 @@ function s = set (obj, varargin)
                 error('set: expecting length of new input vector to equal length of already existing rate vector');
             end
         else    % setting vector
-            s.rates_mc(:,:,1) = val;
+            [val_rows val_cols val_stack] = size(val);
+            if val_stack == 1   % is matrix
+                s.rates_mc(:,:,1) = val;
+            else
+                s.rates_mc = val;
+            end
         end  
         
       else
@@ -68,6 +73,13 @@ function s = set (obj, varargin)
       else
         error ('set: expecting the value to be a real vector');
       end
+    % ====================== set increments   ======================
+    elseif (ischar (prop) && strcmp (prop, 'increments'))   
+      if (iscell (val))
+        s.increments = strtrim(val);
+      else
+        error ('set: expecting the value to be a cell');
+      end 
     % ====================== set method_interpolation ======================
     elseif (ischar (prop) && strcmp (prop, 'method_interpolation'))   
       if (ischar (val))

@@ -301,18 +301,25 @@ end
 %    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
 [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,stable_seed);
 %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
-% for ii = 1 : 1 : length(riskfactor_struct)
-    % disp('=== Distribution function for riskfactor ===')
+
+% % Perform statistical tests on MC risk factor distributions:
+% for ii = 1 : 1 : length(riskfactor_cell)  
     % rf_id = riskfactor_cell{ii};
-    % rf_object = get_sub_object(riskfactor_struct, rf_id);
-    % rf_object.id
-    % Pearson_type = distr_type(ii)
+    % rf_object = get_sub_object(riskfactor_struct, rf_id);    
+    % fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
+    % fprintf('Pearson_type: >>%d<<\n',distr_type(ii));
     % sigma_soll = rf_object.std   % sigma
     % sigma_act = std(R_250(:,ii))
     % skew_soll = rf_object.skew   % skew
     % skew_act = skewness(R_250(:,ii))
     % kurt_soll = rf_object.kurt   % kurt    
     % kurt_act = kurtosis(R_250(:,ii))
+    % % test for bimodality -> fit polynomial and calculate parabola opening parameter sign
+    % [xx yy] = hist(R_250(:,ii),80);
+    % p = polyfit(yy,xx,2);
+    % if ( p(1) > 0 )
+        % fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
+    % end
 % end
 
 % Generate Structure with Risk factor scenario values: scale values according to timestep
@@ -324,6 +331,10 @@ end
 % --------------------------------------------------------------------------------------------------------------------
 % 2.) Monte Carlo Riskfactor Simulation for all timesteps
 [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
+% for kk = 1  : 1 : length(riskfactor_struct)
+   % riskfactor_struct(kk).id
+   % riskfactor_struct(kk).object
+% end
 
 % 3.) Take Riskfactor Shiftvalues from Stressdefinition
 [riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
@@ -361,7 +372,7 @@ curve_gen_time = toc;
 % c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
 index_struct=struct();
-[index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps);   
+[index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps,mc,no_stresstests);   
 % for kk = 1  : 1 : length(index_struct)
    % index_struct(kk).id
    % index_struct(kk).object
