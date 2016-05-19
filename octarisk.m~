@@ -306,7 +306,6 @@ end
 [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,stable_seed);
 %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
 
-% TODO: variable for switching statistical analysis on and off
 % % Perform statistical tests on MC risk factor distributions:
 % for ii = 1 : 1 : length(riskfactor_cell)  
     % rf_id = riskfactor_cell{ii};
