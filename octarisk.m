@@ -217,9 +217,14 @@ first_eval      = 0;
 
 % set seed of random number generator
 if ( stable_seed == 1)
-    % read binary seed file and convert it into integers
+    % Read binary file and convert it to integers used as seed:
+    %    Octave / Matlab uses Mersenne-Twister
+    %    for pseudo random number generation. The seed vector is an arbitrary vector of length of 624.
+    %    A 2496 bit binary file can be initialized from /dev/urandom (head --byte=2496 /dev/urandom > random_seed.dat)
+    %    This file will be converted to a 32bit unsigned integer vector and used as seed.
+    %    This high entropy seed is required to avoid low entropy random numbers used during scenario generation.
     fid = fopen(strcat(path_static,'/',input_filename_seed)); % open file
-    random_seed = fread(fid,Inf,"uint8");		% convert binary file into integers
+    random_seed = fread(fid,Inf,'uint32');		% convert binary file into integers
     fclose(fid);								% close file 
     rand('state',random_seed);					% set seed
     randn('state',random_seed);
