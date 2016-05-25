@@ -95,7 +95,7 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
 			yield_total 	= yield_discount + yield_spread + spread_constant;            % combine with constant spread (e.g. spread over yield)
 			tmp_cf_date 	= valuation_date + tmp_dtm;
         % Get actual discount factor
-			tmp_df 			= discount_factor (valuation_date, tmp_cf_date, yield_total, comp_type, basis, comp_freq);            
+			tmp_df 			= discount_factor (valuation_date, tmp_cf_date, yield_total, comp_type, basis, comp_freq);           
 			tmp_tf          = timefactor(valuation_date,tmp_cf_date,basis);  
         %Calculate actual NPV of cash flows    
 			tmp_npv_cashflow = tmp_cf_value .* tmp_df;

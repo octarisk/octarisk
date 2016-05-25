@@ -36,6 +36,9 @@ classdef Curve
       description = '';
       type = '';  
       method_interpolation = 'linear'; %'monotone-convex';  
+      compounding_type = 'simple';
+      compounding_freq = 'daily';               
+      day_count_convention = 'act/365';
       shocktype_mc = 'absolute';  
       increments = '';
     end

@@ -203,7 +203,7 @@ hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be use
 confidence = 0.999      % level of confidence vor MC VAR calculation
 copulatype = 't'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
-valuation_date = datenum('28-Apr-2016'); % valuation date
+valuation_date = datenum('31-Dec-2015'); % valuation date
 base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
 mc_timesteps    = {'10d'}                % MC timesteps
@@ -398,6 +398,8 @@ index_struct=struct();
    % riskfactor_struct(kk).object.getValue('250d')
    % riskfactor_struct(kk).object.getValue('base')
 % end
+
+
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
 %   Total Loop over all Instruments and type dependent valuation
@@ -639,8 +641,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                             bond = bond.rollout(tmp_scenario,tmp_ref_object,valuation_date);         
                     end 
                     
-                % c) Get Spread over yield: 
-                    if ~( bond.get('soy') == 0 )
+                % c) Calculate spread over yield (if not already run...)
+                    if ( bond.get('calibration_flag') == 0 )
                         bond = bond.calc_spread_over_yield(tmp_curve_object,tmp_spread_object,valuation_date);
                     end
                     
@@ -664,7 +666,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
      fulvia_performance{end + 1} = strcat(tmp_id,'_',num2str(scen_number),'_',num2str(toc),' s');
      fulvia = fulvia + toc ;  
     catch   % catch error in instrument valuation
-        fprintf('Instrument valuation for %s failed. There was an error: %s\n',tmp_id,lasterr);
+        fprintf('octarisk:Instrument valuation for %s failed. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);
         instrument_valuation_failed_cell{ length(instrument_valuation_failed_cell) + 1 } =  tmp_id;
         % FALLBACK: store instrument as Cash instrument with fixed value_base for all scenarios
         cc = Cash();
@@ -682,7 +684,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
   end 
   first_eval = 1;
 end      % end eval mc timesteps and stress loops
- 
+
 tic;
 
 if ( saving == 1 )

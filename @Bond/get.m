@@ -52,7 +52,9 @@ function s = get (bond, property)
         case 'mac_duration'
           s = obj.mac_duration;  
         case 'mod_duration'
-          s = obj.mod_duration;   
+          s = obj.mod_duration; 
+        case 'calibration_flag'
+          s = obj.calibration_flag;    
         otherwise
           error ('get: invalid property %s', property);
       end
