@@ -52,10 +52,13 @@ function [tf dip dib] = timefactor (d1, d2, basis)
 if nargin < 2
    error('Needed at least date1 and date2')
 end
-if ischar(d1) || ischar(d2)
+if ischar(d1)
    d1 = datenum(d1);
+end
+if ischar(d2)
    d2 = datenum(d2);
 end
+
 if nargin < 3
    basis = 3.*ones(size(d1));
 end

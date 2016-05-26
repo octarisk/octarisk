@@ -36,9 +36,9 @@ classdef Curve
       description = '';
       type = '';  
       method_interpolation = 'linear'; %'monotone-convex';  
-      compounding_type = 'simple';
+      compounding_type = 'continuous';
       compounding_freq = 'daily';               
-      day_count_convention = 'act/365';
+      day_count_convention = 'act/365'; 
       shocktype_mc = 'absolute';  
       increments = '';
     end
@@ -49,6 +49,7 @@ classdef Curve
       rates_base = [];
       rates_mc  = [];
       rates_stress = [];
+      basis = 3;
     end
  
    % Class methods
@@ -150,6 +151,12 @@ classdef Curve
          end
          obj.method_interpolation = method_interpolation;
       end % Set.method_interpolation
+      
+      function obj = set.day_count_convention(obj,day_count_convention)
+         obj.day_count_convention = day_count_convention;
+         % Call superclass method to set basis
+         obj.basis = Curve.get_basis(obj.day_count_convention);
+      end % set.day_count_convention
       
     end
     methods (Static = true)

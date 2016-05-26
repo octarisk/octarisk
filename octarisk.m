@@ -193,6 +193,8 @@ plotting = 1;           % switch for plotting data (0/1)
 saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
 archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
 stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
+mc_scen_analysis = 0;   % switch for applying statistical tests on risk factor MC scenario values 
+                        %   (compare target statistic parameters with actual values)
 % load packages
 pkg load statistics;	% load statistics package (needed in scenario_generation_MC)
 pkg load financial;		% load financial packages (needed throughout all scripts)
@@ -311,27 +313,35 @@ end
 [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,stable_seed);
 %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
 
-% TODO: variable for switching statistical analysis on and off
-% % Perform statistical tests on MC risk factor distributions:
-% for ii = 1 : 1 : length(riskfactor_cell)  
-    % rf_id = riskfactor_cell{ii};
-    % rf_object = get_sub_object(riskfactor_struct, rf_id);    
-    % fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
-    % fprintf('Pearson_type: >>%d<<\n',distr_type(ii));
-    % sigma_soll = rf_object.std   % sigma
-    % sigma_act = std(R_250(:,ii))
-    % skew_soll = rf_object.skew   % skew
-    % skew_act = skewness(R_250(:,ii))
-    % kurt_soll = rf_object.kurt   % kurt    
-    % kurt_act = kurtosis(R_250(:,ii))
-    % % test for bimodality -> fit polynomial and calculate parabola opening parameter sign
-    % [xx yy] = hist(R_250(:,ii),80);
-    % p = polyfit(yy,xx,2);
-    % if ( p(1) > 0 )
-        % fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
-    % end
-% end
-
+% variable for switching statistical analysis on and off
+if ( mc_scen_analysis == 1 )
+    % Perform statistical tests on MC risk factor distributions:
+    for ii = 1 : 1 : length(riskfactor_cell)  
+        rf_id = riskfactor_cell{ii};
+        rf_object = get_sub_object(riskfactor_struct, rf_id);    
+        fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
+        fprintf('Pearson_type: >>%d<<\n',distr_type(ii));  
+        mean_target = rf_object.mean;   % mean
+        mean_act = mean(R_250(:,ii));
+        sigma_target = rf_object.std;   % sigma
+        sigma_act = std(R_250(:,ii));
+        skew_target = rf_object.skew;   % skew
+        skew_act = skewness(R_250(:,ii));
+        kurt_target = rf_object.kurt;   % kurt    
+        kurt_act = kurtosis(R_250(:,ii));
+        fprintf('Stat. parameter:  \t| Target | Actual \n');
+        fprintf('Mean comparision: \t| %0.4f |  %0.4f \n',mean_target,mean_act);
+        fprintf('Vola comparision: \t| %0.4f |  %0.4f \n',sigma_target,sigma_act);
+        fprintf('Skewness comparision: \t| %0.4f |  %0.4f \n',skew_target,skew_act);
+        fprintf('Kurtosis comparision: \t| %0.4f |  %0.4f \n',kurt_target,kurt_act);
+        % test for bimodality -> fit polynomial and calculate parabola opening parameter sign
+        [xx yy] = hist(R_250(:,ii),80);
+        p = polyfit(yy,xx,2);
+        if ( p(1) > 0 )
+            fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
+        end
+    end
+end
 % Generate Structure with Risk factor scenario values: scale values according to timestep
 M_struct = struct();
 for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random matrix and derive all other timesteps from them
@@ -376,13 +386,13 @@ curve_struct=struct();
 persistent surface_struct;
 surface_struct=struct();
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir);
-curve_gen_time = toc;
+
 
 
 % c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
 index_struct=struct();
-[index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps,mc,no_stresstests);   
+[index_struct curve_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps,mc,no_stresstests);   
 % for kk = 1  : 1 : length(index_struct)
    % index_struct(kk).id
    % index_struct(kk).object
@@ -398,7 +408,7 @@ index_struct=struct();
    % riskfactor_struct(kk).object.getValue('250d')
    % riskfactor_struct(kk).object.getValue('base')
 % end
-
+curve_gen_time = toc;
 
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors

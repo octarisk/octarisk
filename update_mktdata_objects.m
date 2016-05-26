@@ -18,7 +18,7 @@
 %# During aggregation and instrument currency conversion the appropriate FX exchange rate is always chosen by FX_BasecurrencyForeigncurrency)
 %# @end deftypefn
 
-function [index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,timesteps_mc,mc,no_stresstests)
+function [index_struct curve_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,timesteps_mc,mc,no_stresstests)
 
 id_failed_cell = {};
 index_curve_objects = 0;
@@ -149,6 +149,7 @@ end % end for loop through all mktdata objects
 fprintf('SUCCESS: generated >>%d<< index and curve objects from marketdata. \n',index_curve_objects);
 
 % Curve Stacking:
+% TODO: underlying curves and aggregated curves could have different compounding types and day count conventions
 aggr_curve_objects = 0;
 for ii = 1 : 1 : length(mktdata_struct)
     % get class -> switch between curve, index
@@ -162,11 +163,16 @@ for ii = 1 : 1 : length(mktdata_struct)
             %disp("make empty containers")
             aggr_curve_nodes      = tmp_object.get('nodes');
             aggr_curve_rates_base = zeros(1,length(aggr_curve_nodes));                      % make base rate curve
-            aggr_curve_rates_stress = zeros(no_stresstests,length(aggr_curve_nodes));                    % make two dimensional rates surface for stess rates
+            aggr_curve_rates_stress = zeros(no_stresstests,length(aggr_curve_nodes));       % make two dimensional rates surface for stess rates
             aggr_curve_rates_mc = zeros(mc,length(aggr_curve_nodes),length(timesteps_mc));   % make three dimensional cube with zero mc rates
             % sort nodes and accordingly base rates:
             [aggr_curve_nodes tmp_indizes] = sort(aggr_curve_nodes);
-                
+            
+            % get dcc, comp type and freq of aggregated curve (target values)
+            comp_type_target = tmp_object.get('compounding_type');
+            comp_freq_target = tmp_object.get('compounding_freq');
+            dcc_basis_target = tmp_object.get('basis');
+            
             % get increments of aggr curve
             aggr_curve_increments = tmp_object.get('increments');
             % loop through all increments
@@ -175,6 +181,12 @@ for ii = 1 : 1 : length(mktdata_struct)
                 [tmp_incr_object ret_code] = get_sub_object(curve_struct, tmp_incr_id);
                 if (ret_code == 1)	% match found -> market object has underlying increment curve -> calculate appropriate scenario values
                     interp_method = tmp_incr_object.get('method_interpolation');
+                    
+                    % get dcc, comp type and freq of increment curve (original values)
+                    comp_type_origin = tmp_incr_object.get('compounding_type');
+                    comp_freq_origin = tmp_incr_object.get('compounding_freq');
+                    dcc_basis_origin = tmp_incr_object.get('basis');
+            
                     %fprintf('Actual increment:%s\n',tmp_incr_id);
                     % get stress values of risk factor curve
                     incr_shock_nodes    = tmp_incr_object.get('nodes');
@@ -187,8 +199,13 @@ for ii = 1 : 1 : length(mktdata_struct)
                     for ii = 1 : 1 : length(aggr_curve_nodes)
                         tmp_node = aggr_curve_nodes(ii);
                         % get interpolated shock vector at node
-                        tmp_stress_rate = interpolate_curve(incr_shock_nodes,incr_stress_rates,tmp_node,interp_method);
-                        tmp_base_rate = interpolate_curve(incr_shock_nodes,incr_base_rates,tmp_node,interp_method);
+                        rate_stress_origin = interpolate_curve(incr_shock_nodes,incr_stress_rates,tmp_node,interp_method);
+                        rate_base_origin = interpolate_curve(incr_shock_nodes,incr_base_rates,tmp_node,interp_method);
+                        % convert from comp type / dcc of increment curve to comp type / dcc of aggregated curve 
+                        tmp_base_rate = convert_curve_rates(valuation_date,tmp_node,rate_base_origin,comp_type_origin,comp_freq_origin, ...
+                                                            dcc_basis_origin, comp_type_target,comp_freq_target,dcc_basis_target);
+                        tmp_stress_rate = convert_curve_rates(valuation_date,tmp_node,rate_stress_origin,comp_type_origin,comp_freq_origin, ...
+                                                            dcc_basis_origin, comp_type_target,comp_freq_target,dcc_basis_target);
                         % generate total shock matrix
                         tmp_incr_stress_rate = horzcat(tmp_incr_stress_rate,tmp_stress_rate);
                         tmp_incr_base_rate = horzcat(tmp_incr_base_rate,tmp_base_rate);
@@ -207,9 +224,12 @@ for ii = 1 : 1 : length(mktdata_struct)
                         for ii = 1 : 1 : length(aggr_curve_nodes)
                             tmp_node = aggr_curve_nodes(ii);
                             % get interpolated shock vector at node
-                            tmp_shock = interpolate_curve(incr_shock_nodes,incr_shock_rates,tmp_node,interp_method);
+                            rate_shock_origin = interpolate_curve(incr_shock_nodes,incr_shock_rates,tmp_node,interp_method);
+                            % convert from comp type / dcc of increment curve to comp type / dcc of aggregated curve 
+                            tmp_shock_rate = convert_curve_rates(valuation_date,tmp_node,rate_shock_origin,comp_type_origin,comp_freq_origin, ...
+                                                            dcc_basis_origin, comp_type_target,comp_freq_target,dcc_basis_target);
                             % generate total shock matrix
-                            tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock);
+                            tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock_rate);
                         end
                         %disp("add mc rates to tmp aggre")
                         %tmp_value_type

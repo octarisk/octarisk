@@ -29,6 +29,8 @@ function s = get (obj, property)
           s = obj.increments;
         case 'day_count_convention'
           s = obj.day_count_convention;
+        case 'basis'
+          s = obj.basis;
         case 'compounding_type'
           s = obj.compounding_type;
         case 'compounding_freq'

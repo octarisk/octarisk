@@ -50,7 +50,7 @@ function df = discount_factor (d1, d2, rate, comp_type, basis, comp_freq)
 if nargin < 3
    error('Needed at least date1 and date2 and rate')
 end
-if ! isnumeric(rate)
+if ~isnumeric(rate)
     error('Rate is not a valid number')
 end
 if ischar(d1) || ischar(d2)
