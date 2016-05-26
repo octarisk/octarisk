@@ -402,11 +402,10 @@ index_struct=struct();
    % curve_struct(kk).object
 % end
 
-% riskfactor_cell
 % for kk = 1  : 1 : length(riskfactor_struct)
-   % riskfactor_struct(kk).id
-   % riskfactor_struct(kk).object.getValue('250d')
-   % riskfactor_struct(kk).object.getValue('base')
+   % riskfactor_struct(kk).object
+   % %riskfactor_struct(kk).object.getValue('250d')
+   % %riskfactor_struct(kk).object.getValue('base')
 % end
 curve_gen_time = toc;
 
@@ -508,8 +507,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     forward = tmp_instr_obj;
                  % Get underlying Index / instrument    
                     tmp_underlying = forward.get('underlying_id');
-                    tmp_underlying_object       = get_sub_object(index_struct, tmp_underlying);
-
+                    [tmp_underlying_object object_ret_code]  = get_sub_object(index_struct, tmp_underlying);
+                    if ( object_ret_code == 0 )
+                        fprintf('octarisk: WARNING: No index_struct object found for id >>%s<<\n',tmp_underlying_object);
+                    end
                 % Get discount curve
                     tmp_discount_curve          = forward.get('discount_curve');            
                     tmp_curve_object            = get_sub_object(curve_struct, tmp_discount_curve);	
@@ -588,8 +589,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % summing values over all underlying instruments
                 for jj = 1 : 1 : length(tmp_weights)
                     % get underlying instrument:
-                    tmp_underlying      = tmp_instruments{jj};
-                    und_obj             = get_sub_object(instrument_struct, tmp_underlying);
+                    tmp_underlying              = tmp_instruments{jj};
+                    [und_obj  object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
+                    if ( object_ret_code == 0 )
+                        fprintf('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_underlying);
+                    end
                     % Get instrument Value from full valuation instrument_struct:
                     % absolute values from full valuation
                     underlying_value_base       = und_obj.getValue('base');                 
@@ -629,10 +633,16 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % a) Get curve parameters    
                   % get discount curve
                     tmp_discount_curve  = bond.get('discount_curve');
-                    tmp_curve_object    = get_sub_object(curve_struct, tmp_discount_curve); 
+                    [tmp_curve_object object_ret_code]    = get_sub_object(curve_struct, tmp_discount_curve); 
+                    if ( object_ret_code == 0 )
+                        fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
+                    end
                   % Get spread curve
                     tmp_spread_curve    = bond.get('spread_curve');
-                    tmp_spread_object 	= get_sub_object(curve_struct, tmp_spread_curve);  
+                    [tmp_spread_object object_ret_code] 	= get_sub_object(curve_struct, tmp_spread_curve);
+                    if ( object_ret_code == 0 )
+                        fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_spread_curve);
+                    end                    
                 % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
                     if( sum(strcmp(tmp_sub_type,{'FRB','SWAP_FIXED','ZCB','CASHFLOW'})) > 0 )       % Fixed Rate Bond instruments (incl. swap fixed leg)
                         % rollout cash flows for all scenarios
@@ -863,16 +873,26 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   [portfolio_shock_sort scen_order_shock] = sort(portfolio_shock');
   p_l_absolut_shock        = portfolio_shock_sort - base_value;
   % Preparing vector for extreme value theory VAR and ES
+  % only apply EVT if there is some risk in MC data
+  abs(std(mc))
+  if ( abs(std(mc)) > 0)
     confi_scenario_evt_95   = round(0.025 * mc);
-    evt_tail_shock           = p_l_absolut_shock(1:confi_scenario_evt_95)';
+    evt_tail_shock          = p_l_absolut_shock(1:confi_scenario_evt_95)';
     % Calculate VAR and ES from GPD:
     u = min(-evt_tail_shock);
+    [aa bb cc] = size(evt_tail_shock);
     [chi sigma] = calibrate_evt_gpd(-evt_tail_shock);
     nu = length(evt_tail_shock);
-    [VAR90_EVT_shock ES90_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.90, mc, nu);
-    [VAR95_EVT_shock ES95_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.95, mc, nu);
+   else %apply dummy values
+        u = 0;
+        sigma = 0;
+        chi = 1;
+        nu = 1;
+   end
+    [VAR90_EVT_shock ES90_EVT_shock]      = get_gpd_var(chi, sigma, u, 0.90, mc, nu);
+    [VAR95_EVT_shock ES95_EVT_shock]      = get_gpd_var(chi, sigma, u, 0.95, mc, nu);
     [VAR975_EVT_shock ES975_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.975, mc, nu);
-    [VAR99_EVT_shock ES99_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.99, mc, nu);
+    [VAR99_EVT_shock ES99_EVT_shock]      = get_gpd_var(chi, sigma, u, 0.99, mc, nu);
     [VAR9999_EVT_shock ES9999_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.9999, mc, nu);
     [VAR995_EVT_shock ES995_EVT_shock]    = get_gpd_var(chi, sigma, u, confidence, mc, nu);
     [VAR999_EVT_shock ES999_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.999, mc, nu);

@@ -68,10 +68,10 @@ function s = set (obj, varargin)
       end
     % ====================== set nodes ======================
     elseif (ischar (prop) && strcmp (prop, 'nodes'))   
-      if (isvector (val) && isreal (val))
+      if (isnumeric (val) && isreal (val))
         s.nodes = val;
       else
-        error ('set: expecting the value to be a real vector');
+        error ('set: expecting the value to be a real scalar');
       end
     % ====================== set increments   ======================
     elseif (ischar (prop) && strcmp (prop, 'increments'))   

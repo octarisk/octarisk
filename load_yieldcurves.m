@@ -38,6 +38,7 @@ for ii = 1 : 1 : length(riskfactor_struct)
     end
     rf_ir_cur_cell = unique(rf_ir_cur_cell);
 end
+
 % 2) generate RF_IR and RF_SPREAD objects from all nodes defined in riskfactor_struct
 % Loop via all entries in currency cell
 for ii = 1 : 1 : length(rf_ir_cur_cell)
@@ -69,7 +70,6 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
                 %tmp_shift_type_inv  = 1 - tmp_shift_type;
                 tmp_rate_original   = tmp_shift_type;   % set rate original according to shifttype: 0 absolute shift, 1 relative shift    %tmp_rf_struct_obj.get('rate');
                 tmp_rates_original  = cat(2,tmp_rates_original,tmp_rate_original); % final vector with shift types in decimals
-                %tmp_rf_rates_stress = tmp_shift_type_inv .* (tmp_rate_original + (tmp_delta_stress ./ 10000)) + (tmp_shift_type .* tmp_rate_original .* tmp_delta_stress); %calculate abs and rel shocks and sum up (mutually exclusive)
                 tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_delta_stress);
             end 
         end 
