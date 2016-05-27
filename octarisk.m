@@ -1309,6 +1309,33 @@ fprintf('Total Runtime:  %6.2f s\n',totaltime);
 fclose (fid);
 end % closing main portfolioloop mm
 
+% Plot correlation mismatches:
+if ( plotting == 1 && mc_scen_analysis == 1 )
+    M_diff = corr_matrix .- corr(R_250);
+    M_rs = reshape(M_diff,1,columns(M_diff)^2);
+    idx_figure = idx_figure + 1;
+    figure(idx_figure);
+    clf;
+    hist(M_rs,80);
+    xlabel('Correlation mismatch');
+    ylabel('Occurence');
+    title('Absolute correlation settings mismatches overview','fontsize',12);
+
+    idx_figure = idx_figure + 1;
+        figure(idx_figure);
+    clf;
+    x_values = [1 : 1 : columns(M_diff)];
+    y_values = [1 : 1 : columns(M_diff)];
+    contourf(x_values, y_values, rot90(M_diff));
+    xlabel('Risk factor');
+    ylabel('Risk factor');
+    title('Absolute correlation settings mismatches per risk factor','fontsize',12);
+    axis square;
+    colorbar;
+    xlim([1 columns(M_diff)]);
+    ylim([1 columns(M_diff)]);
+end
+
 fprintf('\n');
 fprintf('=======================================================\n');
 fprintf('===   Ended octarisk market risk measurement tool   ===\n');
