@@ -87,7 +87,7 @@ if ischar(comp_type)
     elseif ( strcmp(comp_type,'cont') == 1 || strcmp(comp_type,'Cont') == 1 || strcmp(comp_type,'continuous') == 1)
         compounding_type = 3;
     else
-        error('Need valid compounding_type type')
+        error('discount_factor: Need valid compounding_type. Unknown >>%s<<',comp_type)
     end
 end
 

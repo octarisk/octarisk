@@ -84,6 +84,10 @@ classdef Curve
          fprintf('name: %s\nid: %s\ndescription: %s\ntype: %s\n', ... 
             a.name,a.id,a.description,a.type);
          fprintf('method_interpolation: %s\n',a.method_interpolation);
+         fprintf('compounding_type: %s\n',a.compounding_type);
+         fprintf('compounding_freq: %s\n',a.compounding_freq);
+         fprintf('day_count_convention: %s\n',a.day_count_convention);
+         fprintf('dcc_basis: %d\n',a.basis);
          fprintf('shocktype_mc: %s\n',a.shocktype_mc);
          % looping via all riskfactors / sensitivities
          if ( length(a.increments) > 0 )
@@ -146,6 +150,7 @@ classdef Curve
       end % Set.type
       
       function obj = set.method_interpolation(obj,method_interpolation)
+         method_interpolation = tolower(method_interpolation);
          if ~(sum(strcmpi(method_interpolation,{'smith-wilson','spline','linear','mm','exponential','loglinear','monotone-convex'}))>0  )
             error('Interpolation method must be either smith-wilson,spline,linear,mm,exponential,monotone-convex or loglinear')
          end
@@ -153,16 +158,38 @@ classdef Curve
       end % Set.method_interpolation
       
       function obj = set.day_count_convention(obj,day_count_convention)
-         obj.day_count_convention = day_count_convention;
-         % Call superclass method to set basis
-         obj.basis = Curve.get_basis(obj.day_count_convention);
+        if ~(sum(strcmpi(day_count_convention,{'act/act','30/360 SIA','act/360','act/365','30/360 PSA','30/360 ISDA','30/360 European','act/365 Japanese','act/act ISMA','act/360 ISMA','act/365 ISMA','30/360E'}))>0  )
+            fprintf('Curve:set: for curve >>%s<<: day_count_convention >>%s<< must be either act/act,30/360 SIA,act/360,act/365,30/360 PSA,30/360 ISDA,30/360 European,act/365 Japanese,act/act ISMA,act/360 ISMA,act/365 ISMA,30/360E Setting to >>act/365<<\n',obj.id,day_count_convention);
+            day_count_convention = 'act/365';
+        end
+        obj.day_count_convention = day_count_convention;
+        % Call superclass method to set basis
+        obj.basis = Curve.get_basis(obj.day_count_convention);
       end % set.day_count_convention
+      
+      function obj = set.compounding_freq(obj,compounding_freq)
+        compounding_freq = tolower(compounding_freq);
+        if ~(sum(strcmpi(compounding_freq,{'day','daily','week','weekly','month','monthly','quarter','quarterly','semi-annual','annual'}))>0  )
+            fprintf('Curve:set: for curve >>%s<<: compounding_freq >>%s<< must be either day,daily,week,weekly,month,monthly,quarter,quarterly,semi-annual,annual. Setting to >>annual<<\n',obj.id,compounding_freq);
+            compounding_freq = 'annual';
+        end
+         obj.compounding_freq = compounding_freq;
+      end % set.compounding_freq
+      
+      function obj = set.compounding_type(obj,compounding_type)
+        compounding_type = tolower(compounding_type);
+        if ~(sum(strcmpi(compounding_type,{'simple','continuous','discrete'}))>0  )
+            fprintf('Curve:set: for curve >>%s<<: Compounding type >>%s<< must be either >>simple<<, >>continuous<<, or >>discrete<<. Setting to >>continuous<<\n',obj.id,compounding_type);
+            compounding_type = 'continuous';
+        end
+         obj.compounding_type = compounding_type;
+      end % set.compounding_type
       
     end
     methods (Static = true)
       function basis = get_basis(dcc_string)
             dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365';'30/360 PSA';'30/360 ISDA';'30/360 European';'act/365 Japanese';'act/act ISMA';'act/360 ISMA';'act/365 ISMA';'30/360E']);
-            findvec = strcmp(dcc_string,dcc_cell);
+            findvec = strcmpi(dcc_string,dcc_cell);
             tt = 1:1:length(dcc_cell);
             tt = (tt - 1)';
             basis = dot(single(findvec),tt);

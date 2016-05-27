@@ -96,6 +96,8 @@ elseif ( strcmp(toupper(comp_type_target),'CONT') )
     comp_type_target = 'CONTINUOUS';
 end
 
+
+
 conversion_type = '';
 % abbreviation: origin and target types and dcc are the same -> return input rate
 if ( strcmp(comp_type_origin,comp_type_target) && strcmp(num2str(comp_freq_origin),num2str(comp_freq_target)) && (dcc_basis_origin == dcc_basis_target))
@@ -128,7 +130,7 @@ if ischar(comp_freq_origin)
     elseif ( strcmp(comp_freq_origin,'annual') == 1 )
         comp_freq_origin = 1;       
     else
-        error('Need valid compounding frequency')
+        error('convert_curve_rates: Need valid compounding frequency')
     end
 end
 if ischar(comp_freq_target)

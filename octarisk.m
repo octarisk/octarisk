@@ -210,6 +210,7 @@ base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
 mc_timesteps    = {'10d'}                % MC timesteps
 scenario_set    = [mc_timesteps,'stress'];          % append stress scenarios
+gpd_confidence_levels = [0.9;0.95;0.975;0.99;0.995;0.999;0.9999];   % vector with confidence levels used in reporting of EVT VAR and ES
 
 % specify unique runcode and timestamp:
 runcode = '2015Q4'; %substr(md5sum(num2str(time()),true),-6)
@@ -397,10 +398,10 @@ index_struct=struct();
    % index_struct(kk).id
    % index_struct(kk).object
 % end
-% for kk = 1  : 1 : length(curve_struct)
-   % curve_struct(kk).id
-   % curve_struct(kk).object
-% end
+for kk = 1  : 1 : length(curve_struct)
+   curve_struct(kk).id
+   curve_struct(kk).object
+end
 
 % for kk = 1  : 1 : length(riskfactor_struct)
    % riskfactor_struct(kk).object
@@ -688,16 +689,16 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
     catch   % catch error in instrument valuation
         fprintf('octarisk:Instrument valuation for %s failed. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);
         instrument_valuation_failed_cell{ length(instrument_valuation_failed_cell) + 1 } =  tmp_id;
-        % FALLBACK: store instrument as Cash instrument with fixed value_base for all scenarios
+        % FALLBACK: store instrument as Cash instrument with fixed value_base for all scenarios (use different variable for scen_number to avoid collisions)
         cc = Cash();
         cc = cc.set('id',tmp_instr_obj.get('id'),'name',tmp_instr_obj.get('name'),'asset_class',tmp_instr_obj.get('asset_class'),'currency',tmp_instr_obj.get('currency'),'value_base',tmp_instr_obj.get('value_base'));
         for pp = 1 : 1 : length(scenario_set);
             if ( strcmp(scenario_set{pp},'stress'))
-                scen_number = no_stresstests;
+                scen_number_catch = no_stresstests;
             else
-                scen_number = mc;
+                scen_number_catch = mc;
             end
-            cc = cc.calc_value(scenario_set{pp},scen_number);   % repeat base value in all MC timesteps and stress scenarios -> riskfree
+            cc = cc.calc_value(scenario_set{pp},scen_number_catch);   % repeat base value in all MC timesteps and stress scenarios -> riskfree
         end
         instrument_struct( ii ).object = cc;
     end
@@ -873,30 +874,21 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   [portfolio_shock_sort scen_order_shock] = sort(portfolio_shock');
   p_l_absolut_shock        = portfolio_shock_sort - base_value;
   % Preparing vector for extreme value theory VAR and ES
+  
   % only apply EVT if there is some risk in MC data
-  abs(std(mc))
-  if ( abs(std(mc)) > 0)
+  if ( abs(std(p_l_absolut_shock)) > 0)
     confi_scenario_evt_95   = round(0.025 * mc);
     evt_tail_shock          = p_l_absolut_shock(1:confi_scenario_evt_95)';
     % Calculate VAR and ES from GPD:
     u = min(-evt_tail_shock);
     [aa bb cc] = size(evt_tail_shock);
     [chi sigma] = calibrate_evt_gpd(-evt_tail_shock);
-    nu = length(evt_tail_shock);
-   else %apply dummy values
-        u = 0;
-        sigma = 0;
-        chi = 1;
-        nu = 1;
+    nu = length(evt_tail_shock);   
+    [VAR_EVT_shock ES_EVT_shock]        = get_gpd_var(chi, sigma, u, gpd_confidence_levels, mc, nu);        
+   else % apply dummy values
+    [VAR_EVT_shock ES_EVT_shock]    = horzcat(zeros(length(gpd_confidence_levels),1), zeros(length(gpd_confidence_levels),1));
    end
-    [VAR90_EVT_shock ES90_EVT_shock]      = get_gpd_var(chi, sigma, u, 0.90, mc, nu);
-    [VAR95_EVT_shock ES95_EVT_shock]      = get_gpd_var(chi, sigma, u, 0.95, mc, nu);
-    [VAR975_EVT_shock ES975_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.975, mc, nu);
-    [VAR99_EVT_shock ES99_EVT_shock]      = get_gpd_var(chi, sigma, u, 0.99, mc, nu);
-    [VAR9999_EVT_shock ES9999_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.9999, mc, nu);
-    [VAR995_EVT_shock ES995_EVT_shock]    = get_gpd_var(chi, sigma, u, confidence, mc, nu);
-    [VAR999_EVT_shock ES999_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.999, mc, nu);
-    [VAR9999_EVT_shock ES9999_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.9999, mc, nu);
+
 
   % Preparing direct VAR measures:
     VAR50_shock      = p_l_absolut_shock(round(0.5*mc));
@@ -911,9 +903,12 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 
   % ii.) Get Value of confidence scenario
 
-  confi_scenarionumber_shock = scen_order_shock(confi_scenario)
-  skewness_shock           = skewness(endstaende_reldiff_shock)
-  kurtosis_shock           = kurtosis(endstaende_reldiff_shock)
+  confi_scenarionumber_shock = scen_order_shock(confi_scenario);
+  skewness_shock           = skewness(endstaende_reldiff_shock);
+  kurtosis_shock           = kurtosis(endstaende_reldiff_shock);
+  fprintf('Scenarionumber according to confidence intervall: %d\n',confi_scenarionumber_shock);
+  fprintf('MC scenarios portfolio skewness: %2.2f\n',skewness_shock);
+  fprintf('MC scenarios portfolio kurtosis: %2.2f\n',kurtosis_shock);
 
   % iii.) Extract confidence scenarionumbers around quantile scenario
   confi_scenarionumber_shock_p1 = scen_order_shock(confi_scenario + 1);
@@ -1104,35 +1099,24 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f %s|\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
-  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,99.9,VAR999_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f %s|\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,ES995_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,99.9,ES999_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT  ES  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,99.99,ES9999_EVT_shock,fund_currency);
-
+  
+  % print EVT VAR and ES to file
+  fprintf(fid, '= GPD extreme value VAR and ES: \n');
+  for jj = 1 : 1 : length( gpd_confidence_levels )
+    fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,VAR_EVT_shock(jj),fund_currency);
+  end
+  for jj = 1 : 1 : length( gpd_confidence_levels )
+    fprintf(fid, '|Port EVT ES  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,ES_EVT_shock(jj),fund_currency);
+  end
+  
   % Output to stdout:
   fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
   fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
   fprintf('ES  %s@%2.1f%%: \t %9.2f %s\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
-  % Output of GPD calibrated VaR and ES:
   fprintf('GPD extreme value VAR and ES: \n');
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,90.0,VAR90_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,95.0,VAR95_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,97.5,VAR975_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.0,VAR99_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.9,VAR999_EVT_shock,fund_currency);
-  fprintf('VaR EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock,fund_currency);
-
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,90.0,ES90_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,95.0,ES95_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,97.5,ES975_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.0,ES99_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,ES995_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.9,ES999_EVT_shock,fund_currency);
-  fprintf('ES  EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,99.99,ES9999_EVT_shock,fund_currency);
+  fprintf('VaR EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,VAR_EVT_shock(end),fund_currency);
+  fprintf('ES  EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,ES_EVT_shock(end),fund_currency);
   fprintf('Low tail VAR: \n');
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,50.0,-VAR50_shock,fund_currency);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,70.0,-VAR70_shock,fund_currency);
@@ -1368,42 +1352,3 @@ function  match_struct = get_sub_struct(input_struct, input_id)
 		return;
 	end
 end
-% % function for extracting sub-structure object from struct object according to id
-% function  match_obj = get_sub_object(input_struct, input_id)
- 	% matches = 0;	
-	% a = {input_struct.id};
-	% b = 1:1:length(a);
-	% c = strcmp(a, input_id);	
-    % % correct for multiple matches:
-    % if ( sum(c) > 1 )
-        % summe = 0;
-        % for ii=1:1:length(c)
-            % if ( c(ii) == 1)
-                % match_struct = input_struct(ii);
-                % ii;
-                % return;
-            % end            
-            % summe = summe + 1;
-        % end       
-    % end
-    % matches = b * c';
-	% if (matches > 0)
-	    	% match_obj = input_struct(matches).object;
-		% return;
-	% else
-	    	% error(' No matches found for input_id: >>%s<<',input_id);
-		% return;
-	% end
-% end
-% function for calculating VAR and ES from GPD calibrated parameters
-% chi and sigma are GPD shape parameters, u is offset level, q is quantile, n is number of total scenarios, nu is number of tail scenarios
-function [VAR ES] = get_gpd_var(chi, sigma, u, q, n, nu) 
-    VAR = u + sigma/chi*(( n/nu *( 1- q ) )^(-chi) -1);
-    ES = (VAR + sigma - chi * u) / ( 1 - chi );
-end
-
-%plot (pp,cdf_var250, 'linewidth',1);
-%    set(gca,'xtick',[-1 -0.5 0 0.5 1]);
-%    xlabel('x','fontsize',12);
-%    ylabel('CDF(x)','fontsize',12);
-%    title ('CDF for VaR250 Portfolio Value Distribution','fontsize',12);
