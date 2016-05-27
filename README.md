@@ -76,7 +76,7 @@ Write me an Email if you need assistance in porting the code basis to Matlab.
 
 The following commercial and proprietary solutions exist:
 - [IBM Algorithmics](http://www-03.ibm.com/software/products/en/algomarkrisk)
-- [Sungard / FIS Frontarena](https://www.sungard.com/solutions/trading-network-services/trade-order-management/front-arena/front-arena-position-risk-management), which are mainly
+- [Sungard / FIS Frontarena](https://www.sungard.com/solutions/trading-network-services/trade-order-management/front-arena/front-arena-position-risk-management)
 - [Numerix](http://www.numerix.com/product/market-risk)
 - [Quaternion](https://www.quaternion.com/software-solutions/) (which relies on Quantlib libraries, but is fully proprietary)
 - [QuantLib](http://quantlib.org/index.shtml) is an open source library for instrument pricing. The QuantLib repository could serve as a basis for Octave code adaptions
@@ -91,7 +91,7 @@ Contrasting the feature-rich proprietary solutions already used by the biggest i
 Nevertheless, Octarisk can be used for portfolios with several thousands instruments and risk factors. Therefore it is best suited to use it as an independent
 tool to validate the results of proprietary solutions or as a starting point for your own, in-house market risk measurement solution.
 
-The initial costs of trying Octarisk are low (just one workstation and several days for an IT affine person to set up Octarisk and providing input of a test portfolio). Since the licensing costs
+The initial costs of trying Octarisk are low (few days for an IT affine person and one desktop PC are required to set up Octarisk and to provide input of a particular test portfolio). Since the licensing costs
 are zero, the money can be spent on in-house or external support for bug-fixing and development of new features. As a result you do not face vendor lock-in and have full transparency - forever.
 
 
