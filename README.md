@@ -10,7 +10,7 @@ calculation shall be implemented with free software only.
 The code is written in Octave language and will be useable right out-of-the box with Octave version >= 4.0.0 
 and the Statistics and Financial packages.
 
-![Image](http://www.octarisk.com/images/OCTARISK_logo_standard.svg | width=90)
+<img src="http://www.octarisk.com/images/OCTARISK_logo_standard.svg" width="90" align="middle">
 
 ## Contributors
 Stefan Schloegl (schinzilord@octarisk.com)
