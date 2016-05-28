@@ -13,7 +13,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{value}] =} option_bs_barrier (@var{CallPutFlag}, @var{UpFlag},@var{S}, @var{X}, @var{H},@var{T}, @var{r}, @var{sigma}, @var{q})
+%# @deftypefn {Function File} {[@var{value}] =} option_bs_barrier (@var{CallPutFlag}, @var{UpFlag}, @var{S}, @var{X}, @var{H}, @var{T}, @var{r}, @var{sigma}, @var{q})
 %#
 %# Compute the prices of European call or put out or in barrier options according to Black-Scholes valuation formula.
 %# The code is written for out barrier options. The values for in barrier options are derived from the no arbitrage condition O = O_out + O_in.

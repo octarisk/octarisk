@@ -12,7 +12,7 @@
 
 %# -*- texinfo -*-
 %# @deftypefn  {Function File} { @var{object} =} Riskfactor ()
-%# @deftypefnx  {Function File} { @var{object} =} Riskfactor (@var{name},@var{id},@var{type},@var{description},@var{model},@var{parameters})
+%# @deftypefnx  {Function File} { @var{object} =} Riskfactor (@var{name}, @var{id}, @var{type}, @var{description}, @var{model}, @var{parameters})
 %# Construct risk factor object. Riskfactor Class Inputs:
 %# @itemize @bullet
 %# @item @var{name} (string): Name of object
@@ -46,7 +46,6 @@
 %# @item timestep_mc: MC timestep per column (cell string)
 %# @end itemize
 %# 
-%# @*
 %# @var{property_value} = Riskfactor.getValue ((@var{base,stress,mc_timestep}), 'abs')
 %# Riskfactor Method getValue 
 %# @*

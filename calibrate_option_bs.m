@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_bs(@var{putcallflag},@var{S},@var{X},@var{T},@var{rf},@var{sigma},@var{multiplicator},@var{market_value})
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_bs(@var{putcallflag}, @var{S}, @var{X}, @var{T}, @var{rf}, @var{sigma}, @var{multiplicator}, @var{market_value})
 %# Calibrate the implied volatility spread for Eeuropean options according to Black-Scholes valuation formula.
 %# @end deftypefn
 

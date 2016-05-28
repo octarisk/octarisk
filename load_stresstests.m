@@ -12,7 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{portfolio_struct} @var{id_failed_cell}] =} load_stresstests(@var{portfolio_struct}, @var{valuation_date},@var{path_stresstests},@var{file_stresstests},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
+%# @deftypefn {Function File} {[@var{portfolio_struct} @var{id_failed_cell}] =} load_stresstests(@var{portfolio_struct}, @var{valuation_date}, @var{path_stresstests}, @var{file_stresstests}, @var{path_output}, @var{path_archive}, @var{tmp_timestamp}, @var{archive_flag})
 %# Load data from stresstest specification file and generate a struct with parsed data. Store all stresstests in provided struct and return the final struct and a cell containing the failed position ids.
 %# @end deftypefn
 

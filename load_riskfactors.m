@@ -12,7 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{riskfactor_struct} @var{id_failed_cell}] =} load_riskfactors(@var{riskfactor_struct},@var{valuation_date},@var{path_riskfactors},@var{file_riskfactors},@var{path_output},@var{path_archive},@var{tmp_timestamp},@var{archive_flag})
+%# @deftypefn {Function File} {[@var{riskfactor_struct} @var{id_failed_cell}] =} load_riskfactors(@var{riskfactor_struct}, @var{valuation_date}, @var{path_riskfactors}, @var{file_riskfactors}, @var{path_output}, @var{path_archive}, @var{tmp_timestamp}, @var{archive_flag})
 %# Load data from riskfactor specification file and generate objects with parsed data. Store all objects in provided riskfactor struct and return the final struct and a cell containing the failed riskfactor ids.
 %# @end deftypefn
 
