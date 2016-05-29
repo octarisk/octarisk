@@ -398,10 +398,10 @@ index_struct=struct();
    % index_struct(kk).id
    % index_struct(kk).object
 % end
-% for kk = 1  : 1 : length(curve_struct)
-   % curve_struct(kk).id
-   % curve_struct(kk).object
-% end
+ for kk = 1  : 1 : length(curve_struct)
+    curve_struct(kk).id
+    curve_struct(kk).object
+ end
 
 % for kk = 1  : 1 : length(riskfactor_struct)
    % riskfactor_struct(kk).object

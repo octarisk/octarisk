@@ -31,6 +31,10 @@ function s = get (obj, property)
           s = obj.day_count_convention;
         case 'basis'
           s = obj.basis;
+        case 'floor'
+          s = obj.floor;  
+        case 'cap'
+          s = obj.cap;   
         case 'compounding_type'
           s = obj.compounding_type;
         case 'compounding_freq'

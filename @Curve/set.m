@@ -12,6 +12,13 @@ function s = set (obj, varargin)
     % ====================== set rates_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
     if (ischar (prop) && strcmp (prop, 'rates_mc'))   
       if (isreal (val))
+		% applying cap and floor rates before setting values
+		if ( isnumeric(s.floor) )
+			val = max(val,s.floor);
+		end
+		if ( isnumeric(s.cap) )
+			val = min(val,s.cap);
+		end
         [mc_rows mc_cols mc_stack] = size(s.rates_mc);
         if ( mc_cols > 0 || mc_rows > 0) % appending vector to existing vector
             if ( length(val) == length(s.rates_mc(:,:,mc_stack)))
@@ -55,6 +62,13 @@ function s = set (obj, varargin)
     % ====================== set rates_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'rates_stress'))   
       if (isreal (val))
+        % applying cap and floor rates before setting values
+		if ( isnumeric(s.floor) )
+			val = max(val,s.floor);
+		end
+		if ( isnumeric(s.cap) )
+			val = min(val,s.cap);
+		end
         s.rates_stress = val;
       else
         error ('set: expecting the stress value to be real ');
@@ -62,10 +76,35 @@ function s = set (obj, varargin)
     % ====================== set rates_base ======================
     elseif (ischar (prop) && strcmp (prop, 'rates_base'))   
       if (ismatrix (val) && isreal (val))
+        % applying cap and floor rates before setting values
+		if ( isnumeric(s.floor) )
+			val = max(val,s.floor);
+		end
+		if ( isnumeric(s.cap) )
+			val = min(val,s.cap);
+		end
         s.rates_base = val;
       else
         error ('set: expecting the base values to be a real vector');
       end
+    % ====================== set floor ======================
+    elseif (ischar (prop) && strcmp (prop, 'floor'))  
+      % set floor rate only if it is numeric and a scalar
+      if (isnumeric (val) && isscalar(val))
+        s.floor = val;
+      else
+        s.floor = '';
+      %  error ('set: expecting the floor rate to be a scalar');
+      end
+    % ====================== set cap ======================
+    elseif (ischar (prop) && strcmp (prop, 'cap')) 
+      % set cap rate only if it is numeric and a scalar  
+      if (isnumeric (val) && isscalar(val))
+        s.cap = val;
+      else
+        s.cap = '';
+      %  error ('set: expecting the cap rate to be a scalar');
+      end    
     % ====================== set nodes ======================
     elseif (ischar (prop) && strcmp (prop, 'nodes'))   
       if (isnumeric (val) && isreal (val))

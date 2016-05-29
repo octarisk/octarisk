@@ -50,6 +50,8 @@ classdef Curve
       rates_mc  = [];
       rates_stress = [];
       basis = 3;
+      floor = '';
+      cap = '';
     end
  
    % Class methods
@@ -89,6 +91,12 @@ classdef Curve
          fprintf('day_count_convention: %s\n',a.day_count_convention);
          fprintf('dcc_basis: %d\n',a.basis);
          fprintf('shocktype_mc: %s\n',a.shocktype_mc);
+         if ( isnumeric(a.floor))
+			fprintf('floor rate: %f\n',a.floor);
+         end
+         if ( isnumeric(a.cap))
+			fprintf('cap rate: %f\n',a.cap);
+         end
          % looping via all riskfactors / sensitivities
          if ( length(a.increments) > 0 )
              for ( ii = 1 : 1 : length(a.increments))
@@ -185,6 +193,28 @@ classdef Curve
          obj.compounding_type = compounding_type;
       end % set.compounding_type
       
+      function obj = set.floor(obj,floor)
+         obj.floor = floor;
+		 % applying floor rates to rates_base, rates_stress and rates_mc
+		 if ( isnumeric(floor))
+             obj.rates_base = max(obj.rates_base,floor);
+             obj.rates_stress = max(obj.rates_stress,floor);
+             obj.rates_mc = max(obj.rates_mc,floor);
+         end
+      end % set.floor
+      
+      function obj = set.cap(obj,cap)
+         obj.cap = cap;
+		 % applying cap rates to rates_base, rates_stress and rates_mc
+		 if ( isnumeric(cap))
+             obj.rates_base = min(obj.rates_base,cap);
+             obj.rates_stress = min(obj.rates_stress,cap);
+             obj.rates_mc = min(obj.rates_mc,cap);
+         end
+      end % set.cap
+      
+		
+		
     end
     methods (Static = true)
       function basis = get_basis(dcc_string)
