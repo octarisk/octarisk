@@ -398,10 +398,10 @@ index_struct=struct();
    % index_struct(kk).id
    % index_struct(kk).object
 % end
- for kk = 1  : 1 : length(curve_struct)
-    curve_struct(kk).id
-    curve_struct(kk).object
- end
+ % for kk = 1  : 1 : length(curve_struct)
+    % curve_struct(kk).id
+    % curve_struct(kk).object
+ % end
 
 % for kk = 1  : 1 : length(riskfactor_struct)
    % riskfactor_struct(kk).object
@@ -878,7 +878,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   % only apply EVT if there is some risk in MC data
   if ( abs(std(p_l_absolut_shock)) > 0)
     confi_scenario_evt_95   = round(0.025 * mc);
-    evt_tail_shock          = p_l_absolut_shock(1:confi_scenario_evt_95)';
+    evt_tail_shock          = p_l_absolut_shock(1:confi_scenario_evt_95)'
     % Calculate VAR and ES from GPD:
     u = min(-evt_tail_shock);
     [aa bb cc] = size(evt_tail_shock);

@@ -21,6 +21,9 @@ function vola_spread = calibrate_option_willowtree(putcallflag,americanflag,S,X,
 % Start parameter
 x0 = -0.0001;
 
+if nargin < 13
+    path_static = '';
+end
 %p0=[x0]'; % Guessed parameters.
 
 lb = -sigma + 0.0001;
@@ -68,3 +71,5 @@ end
 		%----------------------------------------------
 end
  
+%!assert(calibrate_option_willowtree(0,1,10000,11000,30,0.01,0.2,0.0,5,20,1,1000),-0.040560,0.000001) 
+

@@ -23,14 +23,6 @@
 %# @item 'Willow Power: Optimizing Derivative Pricing Trees', Michael Curran, ALGO RESEARCH QUARTERLY, Vol. 4, No. 4, December 2001
 %# @end itemize
 %#
-%# Efficient parallel computation for column vectors of S,X,r and sigma is possible (advantage: linear increase of calculation time in timesteps and nodes).@*
-%# Runtime of parallel computations incl. tree transition optimization (360 days maturity, 5 day stepsize, 20 willow tree nodes) are performed (at 46 GFlops machine, 4 Gb Ram) in:@*
-%# 50      | 0.5s @*
-%# 500      | 0.5s @*
-%# 5000     | 1.1s @*
-%# 50000    | 9.0s @*
-%# 200000   | 32s @*
-%#
 %# Example of an American Call Option with continuous dividends:@*
 %# (365 days to maturity, vector with different spot prices and volatilities, strike = 8, r = 0.06, dividend = 0.05, timestep 5 days, 20 nodes):
 %# @code{option_willowtree(1,1,[7;8;9;7;8;9],8,365,0.06,[0.2;0.2;0.2;0.3;0.3;0.3],0.05,5,20)}
@@ -101,7 +93,7 @@ else
 end 
 % set load and save path for optimized willowtree
 willowtree_save_flag = 1;
-if nargin < 11
+if (nargin < 11 || strcmp(path_static,'') )
    path_static = pwd;
    willowtree_save_flag = 0;   
 end
@@ -398,4 +390,6 @@ delta = reshape(delta,c,1,1);
 % option_willowtree = V_base;
 end
   
-% !assert(option_willowtree(1,1,9,10,365,0.06,0.3,0.05,5,20),0.69927,0.01)
+%!assert(option_willowtree(1,1,[7;8;9;7;8;9],8,365,0.06,[0.2;0.2;0.2;0.3;0.3;0.3],0.05,5,20),[0.23294;0.64440;1.29077;0.48106;0.94807;1.57312],0.0001)
+%!assert(option_willowtree(0,0,[7;8;9;7;8;9],10,90,0.06,[0.2;0.2;0.2;0.3;0.3;0.3],0.05,1,30),[2.9389;1.9512;1.0360;2.9389;1.9930;1.1649],0.0001)
+ 
