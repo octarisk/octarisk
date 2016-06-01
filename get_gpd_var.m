@@ -43,3 +43,7 @@ function [VAR ES] = get_gpd_var(chi, sigma, u, q, n, nu)
     VAR = u + sigma./chi.*(( n./nu .*( 1- q ) ).^(-chi) -1);
     ES = (VAR + sigma - chi .* u) ./ ( 1 - chi );
 end
+
+%!test
+%! aa = get_gpd_var(0.00001,1632.9,5930.8,[0.99;0.995;0.999],50000,1250);
+%! assert (aa - [7427.0179919;8558.8723169;11186.9869299],[0.000000;0.0000000;0.0000000],0.00001);

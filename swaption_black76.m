@@ -47,7 +47,7 @@ function SwaptionB76Value = swaption_black76(PayerReceiverFlag,F,X,T,r,sigma,m,t
 if ~isnumeric (PayerReceiverFlag)
     error ('PayerReceiverFlag must be either 1 or 0 ')
 elseif ~isnumeric (F)
-    error ('Underlying future price F must be numeric ')
+    error ('Underlying forward rate F must be numeric ')
 elseif ~isnumeric (X)
     error ('Strike X must be numeric ')
 elseif X < 0
@@ -97,4 +97,7 @@ SwaptionB76Value = value .* multi;
   
 end
 
-% !assert(swaption_black76('p',0.07,0.075,2,0.06,0.2,2,4),0.017964,0.001)
+%!test
+%! forward_rate = get_forward_rate([365,1825,3650],[0.06,0.06,0.06],1825,1095,'cont','linear');
+%! forward_rate_disc = convert_curve_rates(0,1825,forward_rate,'cont','annual',3,'disc','semi-annual',3);
+%! assert(swaption_black76(1,forward_rate_disc,0.062,1825,0.06,0.2,2,3) * 100,2.0709829,0.00001);
