@@ -375,6 +375,16 @@ function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,Inputsa
   %step 1: equation 14
   N = columns(Terms);
   ZZ = zeros(rows(Values),1);
+  
+  %Matlab adaption due to no automatic broadcasting
+  
+  %Termsorig=Terms; 
+  %clear Terms
+  %for ii = 1:1:size(Termsorig,2)
+   % Terms(:,ii)=ones(size(Values,1),1).*Termsorig(1,ii);
+  %end
+  Terms=[ones(size(Values,1),1).*Terms(1,1),ones(size(Values,1),1).*Terms(1,2),ones(size(Values,1),1).*Terms(1,3),ones(size(Values,1),1).*Terms(1,4)];
+  
   if InputsareForwards == 0
     fdiscrete = ( Terms(:,2:end) .* Values(:,2:end) - Terms(:,1:end-1) .* Values(:,1:end-1)  ) ./ ( Terms(:,2:end) - Terms(:,1:end-1)  );
     dInterpolantatNode = Values;
