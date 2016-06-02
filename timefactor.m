@@ -103,7 +103,7 @@ elseif ( basis == 0 || basis == 8 ) % actual/actual
         months2 = dvec2(:,2);
         years2 = dvec2(:,1);
         if  years1 == years2  %coupon period in between one year
-            dip = daysact(datestr(dvec1),datstr(dvec2));
+            dip = daysact(datestr(dvec1),datestr(dvec2));
             dib = yeardays(years1,basis);
         end 
         
