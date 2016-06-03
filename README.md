@@ -14,7 +14,7 @@ and the Statistics and Financial packages.
 
 ## Contributors
 Stefan Schloegl (schinzilord@octarisk.com)
-
+IRRer-Zins
 ## Installation
 
 You need Octave in Version >=4.0.0 with installed statistics and financial package.
