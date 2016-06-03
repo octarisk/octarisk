@@ -81,18 +81,18 @@ if ischar(valuation_date)
 end
 
 % convert SIMP -> SIMPLE etc.
-if ( strcmp(toupper(comp_type_origin),'SIMP') )
+if ( strcmp(upper(comp_type_origin),'SIMP') )
     comp_type_origin = 'SIMPLE';
-elseif ( strcmp(toupper(comp_type_origin),'DISC') )
+elseif ( strcmp(upper(comp_type_origin),'DISC') )
     comp_type_origin = 'DISCRETE';
-elseif ( strcmp(toupper(comp_type_origin),'CONT') )
+elseif ( strcmp(upper(comp_type_origin),'CONT') )
     comp_type_origin = 'CONTINUOUS';
 end
-if ( strcmp(toupper(comp_type_target),'SIMP') )
+if ( strcmp(upper(comp_type_target),'SIMP') )
     comp_type_target = 'SIMPLE';
-elseif ( strcmp(toupper(comp_type_target),'DISC') )
+elseif ( strcmp(upper(comp_type_target),'DISC') )
     comp_type_target = 'DISCRETE';
-elseif ( strcmp(toupper(comp_type_target),'CONT') )
+elseif ( strcmp(upper(comp_type_target),'CONT') )
     comp_type_target = 'CONTINUOUS';
 end
 
@@ -154,43 +154,43 @@ end
 % now  get one of the following cases:
 
 %#  from CONT ->   SMP:    exp(rate_origin * timefactor_origin)-1)/ timefactor_target
-if ( strcmp(toupper(comp_type_origin),'CONTINUOUS') && strcmp('SIMPLE',toupper(comp_type_target) )) 
+if ( strcmp(upper(comp_type_origin),'CONTINUOUS') && strcmp('SIMPLE',upper(comp_type_target) )) 
     rate_target = (exp(rate_origin .* timefactor_origin) -1) ./ timefactor_target;
     conversion_type = 'CONT -> SMP';
 %#  from SMP ->    CONT:   ln(1 + rate_origin * timefactor_origin) / timefactor_target
-elseif ( strcmp(toupper(comp_type_origin),'SIMPLE') && strcmp('CONTINUOUS',toupper(comp_type_target)) ) 
+elseif ( strcmp(upper(comp_type_origin),'SIMPLE') && strcmp('CONTINUOUS',upper(comp_type_target)) ) 
     rate_target =  log(1 + rate_origin .* timefactor_origin) ./ timefactor_target;
     conversion_type = 'SMP -> CONT';
 %#  from DISC ->   CONT:   ln(1 + rate_origin / comp_freq_origin) * (timefactor_origin * comp_freq_origin) ./ timefactor_target
-elseif ( strcmp(toupper(comp_type_origin),'DISCRETE') && strcmp('CONTINUOUS',toupper(comp_type_target) ) )
+elseif ( strcmp(upper(comp_type_origin),'DISCRETE') && strcmp('CONTINUOUS',upper(comp_type_target) ) )
     rate_target =  log(1 + rate_origin./ comp_freq_origin) .* (timefactor_origin .* comp_freq_origin) ./ timefactor_target;
     conversion_type = 'DISC -> CONT';
 %#  from CONT ->   DISC:   (exp(rate_origin .* timefactor_origin ./ (comp_freq_target .* timefactor_target)) - 1 ) * comp_freq_target
-elseif ( strcmp(toupper(comp_type_origin),'CONTINUOUS') && strcmp('DISCRETE',toupper(comp_type_target) ) )
+elseif ( strcmp(upper(comp_type_origin),'CONTINUOUS') && strcmp('DISCRETE',upper(comp_type_target) ) )
     rate_target =  (exp(rate_origin .* timefactor_origin ./ (comp_freq_target .* timefactor_target)) - 1 ) .* comp_freq_target;
     conversion_type = 'CONT -> SMP';
 %#  from SMP ->    DISC:   ( (1 + rate_origin * timefactor_origin)^(1/( comp_freq_target * timefactor_target)) ) * comp_freq_target
-elseif ( strcmp(toupper(comp_type_origin),'SIMPLE') && strcmp('DISCRETE',toupper(comp_type_target) ) )
+elseif ( strcmp(upper(comp_type_origin),'SIMPLE') && strcmp('DISCRETE',upper(comp_type_target) ) )
     rate_target =  ( (1 + rate_origin .* timefactor_origin).^(1./( comp_freq_target .* timefactor_target)) -1 ) .* comp_freq_target;
     conversion_type = 'SMP -> DISC';
 %#  from DISC ->   SMP:    ( (1 + rate_origin / comp_freq_origin )^(comp_freq_origin * timefactor_origin) -1 ) / timefactor_target 
-elseif ( strcmp(toupper(comp_type_origin),'DISCRETE') && strcmp('SIMPLE',toupper(comp_type_target) ) )
+elseif ( strcmp(upper(comp_type_origin),'DISCRETE') && strcmp('SIMPLE',upper(comp_type_target) ) )
     rate_target =   ( (1 + rate_origin ./ comp_freq_origin ).^(comp_freq_origin .* timefactor_origin) -1 ) ./ timefactor_target;
     conversion_type = 'DISC -> SMP';
 %#  from CONT ->   CONT:   rate_origin .* timefactor_origin ./ timefactor_target
-elseif ( strcmp(toupper(comp_type_origin),'CONTINUOUS') && strcmp('CONTINUOUS',toupper(comp_type_target) ) )
+elseif ( strcmp(upper(comp_type_origin),'CONTINUOUS') && strcmp('CONTINUOUS',upper(comp_type_target) ) )
     rate_target =   rate_origin .* timefactor_origin ./ timefactor_target;
     conversion_type = 'CONT -> CONT';
 %#  from SMP ->   SMP:   rate_origin .* timefactor_origin ./ timefactor_target
-elseif ( strcmp(toupper(comp_type_origin),'SIMPLE') && strcmp('SIMPLE',toupper(comp_type_target) ) )
+elseif ( strcmp(upper(comp_type_origin),'SIMPLE') && strcmp('SIMPLE',upper(comp_type_target) ) )
     rate_target =   rate_origin .* timefactor_origin ./ timefactor_target;
     conversion_type = 'SMP -> SMP';
 %#  from DISC ->   DISC:   rate_origin .* timefactor_origin ./ timefactor_target
-elseif ( strcmp(toupper(comp_type_origin),'DISCRETE') && strcmp('DISCRETE',toupper(comp_type_target) ) )
+elseif ( strcmp(upper(comp_type_origin),'DISCRETE') && strcmp('DISCRETE',upper(comp_type_target) ) )
     rate_target =   ( (1 + rate_origin ./ comp_freq_origin).^((comp_freq_origin .* timefactor_origin) ./ ( comp_freq_target .* timefactor_target)) -1 ) .* comp_freq_target;
     conversion_type = 'DISC -> DISC';    
 else
-    fprintf('Unknown compounding type origin >>%s<< or target >>%s<<. \n',comp_type_origin,toupper(comp_type_target));
+    fprintf('Unknown compounding type origin >>%s<< or target >>%s<<. \n',comp_type_origin,upper(comp_type_target));
     rate_target = rate_origin;
     conversion_type = 'No conversion';
 end
