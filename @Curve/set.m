@@ -12,6 +12,13 @@ function s = set (obj, varargin)
     % ====================== set rates_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
     if (ischar (prop) && strcmp (prop, 'rates_mc'))   
       if (isreal (val))
+		% applying cap and floor rates before setting values
+		if ( isnumeric(s.floor) )
+			val = max(val,s.floor);
+		end
+		if ( isnumeric(s.cap) )
+			val = min(val,s.cap);
+		end
         [mc_rows mc_cols mc_stack] = size(s.rates_mc);
         if ( mc_cols > 0 || mc_rows > 0) % appending vector to existing vector
             if ( length(val) == length(s.rates_mc(:,:,mc_stack)))
@@ -55,6 +62,13 @@ function s = set (obj, varargin)
     % ====================== set rates_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'rates_stress'))   
       if (isreal (val))
+        % applying cap and floor rates before setting values
+		if ( isnumeric(s.floor) )
+			val = max(val,s.floor);
+		end
+		if ( isnumeric(s.cap) )
+			val = min(val,s.cap);
+		end
         s.rates_stress = val;
       else
         error ('set: expecting the stress value to be real ');
@@ -62,16 +76,41 @@ function s = set (obj, varargin)
     % ====================== set rates_base ======================
     elseif (ischar (prop) && strcmp (prop, 'rates_base'))   
       if (ismatrix (val) && isreal (val))
+        % applying cap and floor rates before setting values
+		if ( isnumeric(s.floor) )
+			val = max(val,s.floor);
+		end
+		if ( isnumeric(s.cap) )
+			val = min(val,s.cap);
+		end
         s.rates_base = val;
       else
         error ('set: expecting the base values to be a real vector');
       end
+    % ====================== set floor ======================
+    elseif (ischar (prop) && strcmp (prop, 'floor'))  
+      % set floor rate only if it is numeric and a scalar
+      if (isnumeric (val) && isscalar(val))
+        s.floor = val;
+      else
+        s.floor = '';
+      %  error ('set: expecting the floor rate to be a scalar');
+      end
+    % ====================== set cap ======================
+    elseif (ischar (prop) && strcmp (prop, 'cap')) 
+      % set cap rate only if it is numeric and a scalar  
+      if (isnumeric (val) && isscalar(val))
+        s.cap = val;
+      else
+        s.cap = '';
+      %  error ('set: expecting the cap rate to be a scalar');
+      end    
     % ====================== set nodes ======================
     elseif (ischar (prop) && strcmp (prop, 'nodes'))   
-      if (isvector (val) && isreal (val))
+      if (isnumeric (val) && isreal (val))
         s.nodes = val;
       else
-        error ('set: expecting the value to be a real vector');
+        error ('set: expecting the value to be a real scalar');
       end
     % ====================== set increments   ======================
     elseif (ischar (prop) && strcmp (prop, 'increments'))   
@@ -86,7 +125,28 @@ function s = set (obj, varargin)
         s.method_interpolation = strtrim(val);
       else
         error ('set: expecting the value to be of type character');
+      end
+    % ====================== set compounding_freq ======================
+    elseif (ischar (prop) && strcmp (prop, 'compounding_freq'))   
+      if (ischar (val))
+        s.compounding_freq = strtrim(val);
+      else
+        error ('set: expecting the value to be of type character');
+      end
+    % ====================== set day_count_convention ======================
+    elseif (ischar (prop) && strcmp (prop, 'day_count_convention'))   
+      if (ischar (val))
+        s.day_count_convention = strtrim(val);
+      else
+        error ('set: expecting the value to be of type character');
       end 
+    % ====================== set compounding_type ======================
+    elseif (ischar (prop) && strcmp (prop, 'compounding_type'))   
+      if (ischar (val))
+        s.compounding_type = strtrim(val);
+      else
+        error ('set: expecting the value to be of type character');
+      end      
     % ====================== set name ======================
     elseif (ischar (prop) && strcmp (prop, 'name'))   
       if (ischar (val) )

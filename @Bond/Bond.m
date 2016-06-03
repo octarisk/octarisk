@@ -17,14 +17,21 @@ classdef Bond < Instrument
         long_first_period = 0;  
         long_last_period = 0;   
         last_reset_rate = 0.00001;
-        discount_curve = 'RF_IF_EUR';
-        reference_curve = 'RF_IF_EUR';
+        discount_curve = 'IR_EUR';
+        reference_curve = 'IR_EUR';
         spread_curve = 'RF_SPREAD_DUMMY';
-        base_value = 0.0;       
+        spot_value = 0.0;       
         in_arrears = 0;
         fixed_annuity = 0;      % property only needed for fixed amortizing bond -> fixed annuity annuity flag (annuity loan or amortizable loan) 
         notional_at_start = 0; 
-        notional_at_end = 1;             
+        notional_at_end = 1;
+        calibration_flag = 0;   % flag set to true, if calibration (mark to market) successful
+        % variables required for fixed amortizing bonds with prepayments
+        prepayment_type          = 'full';  % ['full','default']
+        prepayment_source        = 'curve'; % ['curve','rate']
+        prepayment_flag          = false;   % toggle prepayment on and off
+        prepayment_rate          = 0.00;    % constant prepayment rate in case no prepayment curve is specified
+        prepayment_curve         = 'PSA-BASE';  % specify prepayment curve
     end
    
     properties (SetAccess = private)
@@ -43,14 +50,14 @@ classdef Bond < Instrument
     end
    
    methods
-      function b = Bond(name,id,description,sub_type,currency,base_value,asset_class,valuation_date,riskfactors,sensitivities,special_num,special_str,tmp_cf_dates,tmp_cf_values)
+      function b = Bond(name,id,description,sub_type,currency,spot_value,asset_class,valuation_date,riskfactors,sensitivities,special_num,special_str,tmp_cf_dates,tmp_cf_values)
         if nargin < 12
            name = 'Dummy';
            id = 'Dummy';
            description = 'Test bond instrument for testing purposes';
            sub_type = 'FRB';
            currency = 'EUR';
-           base_value = 100;
+           spot_value = 100;
            asset_class = 'Fixed Income';
            riskfactors = {'RF_IR_DUMMY','RF_IR_DUMMY','RF_SPREAD_DUMMY'};
            sensitivities = [1,1,1];
@@ -68,7 +75,7 @@ classdef Bond < Instrument
             end
         end
         % use constructor inherited from Class Instrument
-        b = b@Instrument(name,id,description,'bond',currency,base_value,asset_class,valuation_date);
+        b = b@Instrument(name,id,description,'bond',currency,spot_value,asset_class,valuation_date);
         % setting property sub_type
         if ( strcmp(sub_type,'') )
             error('Error: No sub_type specified');
@@ -200,6 +207,7 @@ classdef Bond < Instrument
          end
          fprintf('term: %d\n',b.term);   
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
+         fprintf('basis: %d\n',b.basis); 
          fprintf('Notional: %f %s\n',b.notional,b.currency); 
          fprintf('coupon_rate: %f\n',b.coupon_rate);  
          fprintf('coupon_generation_method: %s\n',b.coupon_generation_method ); 
@@ -207,6 +215,7 @@ classdef Bond < Instrument
          fprintf('business_day_direction: %d\n',b.business_day_direction); 
          fprintf('enable_business_day_rule: %d\n',b.enable_business_day_rule); 
          fprintf('spread: %f\n',b.spread); 
+         fprintf('spread over yield: %f\n',b.soy); 
          fprintf('long_first_period: %d\n',b.long_first_period); 
          fprintf('long_last_period: %d\n',b.long_last_period);  
          fprintf('last_reset_rate: %f\n',b.last_reset_rate); 
@@ -215,7 +224,7 @@ classdef Bond < Instrument
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('reference_curve: %s\n',b.reference_curve); 
          fprintf('spread_curve: %s\n',b.spread_curve); 
-         %fprintf('base_value: %f\n',b.base_value);
+         %fprintf('spot_value: %f %s\n',b.spot_value,b.currency);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
          [mc_rows mc_cols mc_stack] = size(b.cf_values_mc);
@@ -272,6 +281,11 @@ classdef Bond < Instrument
          end
          obj.sub_type = sub_type;
       end % set.sub_type
+      function obj = set.day_count_convention(obj,day_count_convention)
+         obj.day_count_convention = day_count_convention;
+         % Call superclass method to set basis
+         obj.basis = Instrument.get_basis(obj.day_count_convention);
+      end % set.day_count_convention
    end 
    
    methods (Static = true)

@@ -13,9 +13,13 @@ function obj = calc_value(bond,valuation_date,discount_curve,spread_curve,value_
         spread_nodes = spread_curve.get('nodes');
         spread_rates = spread_curve.getValue(value_type);
     
-    % Get interpolation method
+    % Get interpolation method and other curve related attributes
         tmp_interp_discount = discount_curve.get('method_interpolation');
-        tmp_interp_spread = spread_curve.get('method_interpolation');
+        tmp_interp_spread   = spread_curve.get('method_interpolation');
+        tmp_curve_dcc       = discount_curve.get('day_count_convention');
+        tmp_curve_basis     = Instrument.get_basis(tmp_curve_dcc);
+        tmp_curve_comp_type = discount_curve.get('compounding_type');
+        tmp_curve_comp_freq = discount_curve.get('compounding_freq');
         
     % Get cf values and dates
     tmp_cashflow_dates  = obj.get('cf_dates');
@@ -24,7 +28,9 @@ function obj = calc_value(bond,valuation_date,discount_curve,spread_curve,value_
         error('No cash flow values set. CF rollout done?');    
     end
     % calculate value according to pricing formula
-    [theo_value MacDur] = pricing_npv(valuation_date,tmp_cashflow_dates, tmp_cashflow_values,bond.soy,tmp_nodes,tmp_rates,spread_nodes,spread_rates,bond.basis,bond.compounding_type,bond.compounding_freq,tmp_interp_discount,tmp_interp_spread);
+    [theo_value MacDur] = pricing_npv(valuation_date,tmp_cashflow_dates, tmp_cashflow_values,bond.soy, ...
+                                    tmp_nodes,tmp_rates,spread_nodes,spread_rates,tmp_curve_basis,tmp_curve_comp_type, ...
+                                    tmp_curve_comp_freq,tmp_interp_discount,tmp_interp_spread);
     % store theo_value vector in appropriate class property
     if ~isreal(theo_value)
         obj.id

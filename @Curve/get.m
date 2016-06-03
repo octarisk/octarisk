@@ -27,6 +27,18 @@ function s = get (obj, property)
           s = obj.shocktype_mc; 
         case 'increments'
           s = obj.increments;
+        case 'day_count_convention'
+          s = obj.day_count_convention;
+        case 'basis'
+          s = obj.basis;
+        case 'floor'
+          s = obj.floor;  
+        case 'cap'
+          s = obj.cap;   
+        case 'compounding_type'
+          s = obj.compounding_type;
+        case 'compounding_freq'
+          s = obj.compounding_freq;
         case 'method_interpolation'
           s = obj.method_interpolation;
         otherwise
