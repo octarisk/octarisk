@@ -47,6 +47,10 @@
 %#      @item bond_struct.last_reset_rate:	    Last reset rate used for determining fist cash flow of FRN
 %#      @item bond_struct.fixed_annuity         Boolean parameter: true = annuity loan (total annuity payment is fixed), false = amortizable loan (amortization rate is fixed, interest payments variable)
 %#      @item bond_struct.in_arrears            Boolean parameter: true = payments at end of period, false: payments at beginning of period (default)
+%#      @item bond_struct.prepayment_type       Prepayment type (either full or default prepayment). rates extracted according to source.
+%#      @item bond_struct.prepayment_source     Prepayment source: either 'curve' or 'rate'. For curve @var{tmp_nodes}, @var{tmp_rates} and @var{method_interpolation} are taken
+%#      @item bond_struct.prepayment_flag       Boolean parameter: true = use prepayment according to prepayment type  = true;
+%#      @item bond_struct.prepayment_rate       Constant prepayment rate: use if prepayment_source is set to 'rate'
 %#      @end itemize
 %# @item @var{tmp_nodes}: only relevant for type FRN: tmp_nodes is a 1xN vector with all timesteps of the given curve
 %# @item @var{tmp_rates}: only relevant for type FRN: tmp_rates is a MxN matrix with curve rates defined in columns. Each row contains a specific scenario with different curve structure
@@ -59,6 +63,9 @@
 %# @end deftypefn
 
 function [ret_dates ret_values] = rollout_cashflows_oop(bond,tmp_nodes,tmp_rates,valuation_date,method_interpolation)
+
+%TODO: introduce prepayment type 'default'
+
 % Parse bond struct
 if nargin < 1 || nargin > 5
     print_usage ();
@@ -359,13 +366,34 @@ elseif ( strcmp(type,'FAB') == 1 )
     if ( fixed_annuity_flag == 1)    
         number_payments = length(cf_dates) -1;
         m = compounding_freq;
-        total_term = number_payments / m ; % total term of annuity in years
+        total_term = number_payments / m ; % total term of annuity in years      
+        % Discrete compounding only
+        % TODO: implement simple and continuous compounding for annuity calculation
         if ( in_arrears_flag == 1)  % in arrears payments (at end of period)    
-            rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) / (( 1 + coupon_rate )^total_term - 1) ) / (m + coupon_rate / 2 * ( m + 1 ));            
+            rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) / (( 1 + coupon_rate  )^total_term - 1) ) ...
+                    / (m + coupon_rate / 2 * ( m + 1 ));            
         else                        % in advance payments
-            rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) / (( 1 + coupon_rate )^total_term - 1) ) / (m + coupon_rate / 2 * ( m - 1 ));   
-        end  
+            rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) / (( 1 + coupon_rate )^total_term - 1) ) ...
+                    / (m + coupon_rate / 2 * ( m - 1 ));   
+        end
         ret_values = ones(1,number_payments) .* rate;
+        
+        % TODO: incorporate prepayment rate
+        % calculate principal and interest cf
+        cf_datesnum = datenum(cf_dates);
+        d1 = cf_datesnum(1:length(cf_datesnum)-1);
+        d2 = cf_datesnum(2:length(cf_datesnum));
+        cf_interest = zeros(1,number_payments);
+        amount_outstanding_vec = zeros(1,number_payments);
+        amount_outstanding_vec(1) = notional;
+        % cashflows of first date
+        cf_interest(1) = notional.* ((1 ./ discount_factor (d1(1), d2(1), coupon_rate, compounding_type, dcc, compounding_freq)) - 1); 
+        % cashflows of remaining dates
+        for ii = 2 : 1 : number_payments
+            amount_outstanding_vec(ii) = amount_outstanding_vec(ii - 1) - ( rate -  cf_interest(ii-1) );
+            cf_interest(ii) = amount_outstanding_vec(ii) .* ((1 ./ discount_factor (d1(ii), d2(ii), coupon_rate, compounding_type, dcc, compounding_freq)) - 1);          
+        end
+        cf_principal = rate - cf_interest;
     % fixed amortization: only amortization is fixed, coupon payments are variable
     else                            
         number_payments = length(cf_dates) -1;
@@ -377,17 +405,65 @@ elseif ( strcmp(type,'FAB') == 1 )
         d2 = cf_datesnum(2:length(cf_datesnum));
         cf_values = zeros(1,number_payments);
         amount_outstanding = notional;
+        amount_outstanding_vec = zeros(number_payments,1);
         for ii = 1: 1 : number_payments
             cf_values(ii) = ((1 ./ discount_factor (d1(ii), d2(ii), coupon_rate, compounding_type, dcc, compounding_freq)) - 1) .* amount_outstanding;
             amount_outstanding = amount_outstanding - amortization_rate;
+            amount_outstanding_vec(ii) = amount_outstanding;
         end
         ret_values = cf_values + amortization_rate;
-    end    
+        cf_principal = amortization_rate;
+        cf_interest = cf_values;
+        %amount_outstanding_vec
+    end  
+    % prepayment: calculate modified cash flows while including prepayment
+    if ( bond.prepayment_flag == 1)
+        
+        % Implementation: use either constant prepayment rate or use prepayment curve for calculation of scaling factor
+        pp_type = bond.prepayment_type; % either full or default
+        % case 1: prepayment curve:   
+        if ( strcmpi(bond.prepayment_source,'curve'))
+            pp_curve_interp = method_interpolation;
+            pp_curve_nodes = tmp_nodes;
+            pp_curve_values = tmp_rates;
+        elseif ( strcmpi(bond.prepayment_source,'rate'))
+            pp_curve_interp = 'linear';
+            pp_curve_nodes = [0];
+            pp_curve_values = bond.prepayment_rate;
+        end
+        cf_principal_pp = zeros(rows(pp_curve_values),number_payments);
+        cf_interest_pp = zeros(rows(pp_curve_values),number_payments);
+        % set rate compounding and day count convention   
+        compounding_type = 'simple';
+        dcc = 'act/365';
+        compounding_freq = 'annual';
+        % case 1: full prepayment with rate from prepayment curve or constant rate
+        if ( strcmpi(pp_type,'full'))
+            Q_scaling = ones(rows(pp_curve_values),1);
+            for ii = 1 : 1 : number_payments 
+                tmp_timestep = d2(ii) - valuation_date;     % get prepayment rate at days to cashflow
+                prepayment_rate = interpolate_curve(pp_curve_nodes,pp_curve_values,tmp_timestep,pp_curve_interp); % prepayment_rate can be vector
+                % convert annualized prepayment rate
+                lambda = ((1 ./ discount_factor (d1(ii), d2(ii), prepayment_rate, compounding_type, dcc, compounding_freq)) - 1);   
+                % calculate new principal payment incl. prepayment (TODO: make lambda scenario dependent (cf_principal_pp will be matrix (:,ii)
+                cf_principal_pp(:,ii) = Q_scaling .* ( cf_principal(ii) + lambda .* ( amount_outstanding_vec(ii) -  cf_principal(ii ) ));
+                cf_interest_pp(:,ii) = cf_interest(ii) .* Q_scaling;
+                % calculate new scaling Factor
+                Q_scaling = Q_scaling .* (1 - lambda);
+            end
+        elseif ( strcmpi(pp_type,'default'))
+            cf_interest_pp = cf_interest;
+            cf_principal_pp = cf_principal;
+        end 
+        ret_values_pp = cf_interest_pp + cf_principal_pp;
+        % overwrite original values with values including prepayments
+        ret_values = ret_values_pp;
+        cf_principal = cf_principal_pp;
+        cf_interest = cf_interest_pp;
+    end % end prepayment procedure
 end
 %-------------------------------------------------------------------------------------------------------
 
-cf_dates;
-cf_business_dates;
 ret_dates_tmp = datenum(cf_business_dates);
 ret_dates = ret_dates_tmp(2:rows(cf_business_dates));
 if enable_business_day_rule == 1
@@ -427,6 +503,114 @@ function new_cf_day = check_day(cf_year,cf_month,cf_day)
         
 end
 
+%!test
+%! bond_struct=struct();
+%! bond_struct.sub_type                 = 'FRB';
+%! bond_struct.issue_date               = '21-Sep-2010';
+%! bond_struct.maturity_date            = '17-Sep-2022';
+%! bond_struct.compounding_type         = 'simple';
+%! bond_struct.compounding_freq         = 1  ;
+%! bond_struct.term                     = 12   ;
+%! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.notional                 = 100 ;
+%! bond_struct.coupon_rate              = 0.035; 
+%! bond_struct.coupon_generation_method = 'backward' ;
+%! bond_struct.business_day_rule        = 0 ;
+%! bond_struct.business_day_direction   = 1  ;
+%! bond_struct.enable_business_day_rule = 0;
+%! bond_struct.spread                   = 0.00 ;
+%! bond_struct.long_first_period        = false;
+%! bond_struct.long_last_period         = false;
+%! bond_struct.last_reset_rate          = 0.0000000;
+%! bond_struct.fixed_annuity            = 1;
+%! bond_struct.in_arrears               = 0;
+%! bond_struct.notional_at_start        = false;
+%! bond_struct.notional_at_end          = true;
+%! bond_struct.prepayment_flag          = false;
+%! [ret_dates ret_values] = rollout_cashflows_oop(bond_struct,[],[],'31-Mar-2016');
+%! assert(ret_dates,[170,535,900,1265,1631,1996,2361]);
 
-%check_busi_day = isbusday(datenum(cd_business_dates)),
-%diff_dates = diff( [datenum(issue_date) ; datenum(cf_dates)]);
+%!test
+%! bond_struct=struct();
+%! bond_struct.sub_type                 = 'FRB';
+%! bond_struct.issue_date               = '21-Sep-2010';
+%! bond_struct.maturity_date            = '17-Sep-2022';
+%! bond_struct.compounding_type         = 'simple';
+%! bond_struct.compounding_freq         = 1  ;
+%! bond_struct.term                     = 12   ;
+%! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.notional                 = 100 ;
+%! bond_struct.coupon_rate              = 0.035; 
+%! bond_struct.coupon_generation_method = 'backward' ;
+%! bond_struct.business_day_rule        = 0 ;
+%! bond_struct.business_day_direction   = 1  ;
+%! bond_struct.enable_business_day_rule = 0;
+%! bond_struct.spread                   = 0.00 ;
+%! bond_struct.long_first_period        = false;
+%! bond_struct.long_last_period         = false;
+%! bond_struct.last_reset_rate          = 0.0000000;
+%! bond_struct.fixed_annuity            = 1;
+%! bond_struct.in_arrears               = 0;
+%! bond_struct.notional_at_start        = false;
+%! bond_struct.notional_at_end          = true;
+%! bond_struct.prepayment_flag          = false;
+%! [ret_dates ret_values] = rollout_cashflows_oop(bond_struct,[],[],'31-Mar-2016');
+%! assert(ret_values,[3.5096,3.5000,3.5000,3.5000,3.5096,3.5000,103.5000],0.0001);
+
+%!test
+%! bond_struct=struct();
+%! bond_struct.sub_type                 = 'FAB';
+%! bond_struct.issue_date               = '01-Nov-2011';
+%! bond_struct.maturity_date            = '01-Nov-2021';
+%! bond_struct.compounding_type         = 'simple';
+%! bond_struct.compounding_freq         = 1  ;
+%! bond_struct.term                     = 12   ;
+%! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.notional                 = 100 ;
+%! bond_struct.coupon_rate              = 0.0333; 
+%! bond_struct.coupon_generation_method = 'backward' ;
+%! bond_struct.business_day_rule        = 0 ;
+%! bond_struct.business_day_direction   = 1  ;
+%! bond_struct.enable_business_day_rule = 0;
+%! bond_struct.spread                   = 0.00 ;
+%! bond_struct.long_first_period        = false;
+%! bond_struct.long_last_period         = false;
+%! bond_struct.last_reset_rate          = 0.0000000;
+%! bond_struct.fixed_annuity            = 1;
+%! bond_struct.in_arrears               = 0;
+%! bond_struct.notional_at_start        = false;
+%! bond_struct.notional_at_end          = true;
+%! bond_struct.prepayment_flag          = false;
+%! [ret_dates ret_values] = rollout_cashflows_oop(bond_struct,[],[],'01-Nov-2011');
+%! assert(ret_values,11.92133107 .* ones(1,10),0.00001);
+
+%!test
+%! bond_struct=struct();
+%! bond_struct.sub_type                 = 'FAB';
+%! bond_struct.issue_date               = '01-Nov-2011';
+%! bond_struct.maturity_date            = '01-Nov-2021';
+%! bond_struct.compounding_type         = 'simple';
+%! bond_struct.compounding_freq         = 1  ;
+%! bond_struct.term                     = 12   ;
+%! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.notional                 = 100 ;
+%! bond_struct.coupon_rate              = 0.0333; 
+%! bond_struct.coupon_generation_method = 'backward' ;
+%! bond_struct.business_day_rule        = 0 ;
+%! bond_struct.business_day_direction   = 1  ;
+%! bond_struct.enable_business_day_rule = 0;
+%! bond_struct.spread                   = 0.00 ;
+%! bond_struct.long_first_period        = false;
+%! bond_struct.long_last_period         = false;
+%! bond_struct.last_reset_rate          = 0.0000000;
+%! bond_struct.fixed_annuity            = 1;
+%! bond_struct.in_arrears               = 0;
+%! bond_struct.notional_at_start        = false;
+%! bond_struct.notional_at_end          = true;
+%! bond_struct.prepayment_type          = 'full';  % ['full','default']
+%! bond_struct.prepayment_source        = 'curve'; % ['curve','rate']
+%! bond_struct.prepayment_flag          = true;
+%! bond_struct.prepayment_rate          = 0.00; 
+%! [ret_dates ret_values] = rollout_cashflows_oop(bond_struct,[0,900],[0.0,0.06;0.0,0.08;0.01,0.10],'01-Nov-2011','linear');
+%! assert(ret_values(:,end),[7.17230242361319;6.01329445326744;4.98166208851809 ],0.0000001);   
+  

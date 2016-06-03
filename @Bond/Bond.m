@@ -26,6 +26,12 @@ classdef Bond < Instrument
         notional_at_start = 0; 
         notional_at_end = 1;
         calibration_flag = 0;   % flag set to true, if calibration (mark to market) successful
+        % variables required for fixed amortizing bonds with prepayments
+        prepayment_type          = 'full';  % ['full','default']
+        prepayment_source        = 'curve'; % ['curve','rate']
+        prepayment_flag          = false;   % toggle prepayment on and off
+        prepayment_rate          = 0.00;    % constant prepayment rate in case no prepayment curve is specified
+        prepayment_curve         = 'PSA-BASE';  % specify prepayment curve
     end
    
     properties (SetAccess = private)

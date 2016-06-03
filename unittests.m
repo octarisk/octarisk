@@ -19,7 +19,8 @@ function unittests()
 
 % 1) Specify all functions, which have embedded tests:
 function_cell= {'pricing_npv','option_bs','option_willowtree','calibrate_option_bs','calibrate_option_willowtree', ...
-                'calibrate_evt_gpd','get_gpd_var','calibrate_soy_sqp','swaption_black76','swaption_bachelier','get_forward_rate'};
+                'calibrate_evt_gpd','get_gpd_var','calibrate_soy_sqp','swaption_black76','swaption_bachelier','get_forward_rate', ...
+                'timefactor'};
  
 % 2) Run tests
 tests_total = 0;
