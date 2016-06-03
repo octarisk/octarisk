@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} get_documentation(@var{type},@var{path_documentation}))
+%# @deftypefn {Function File} {} get_documentation(@var{type}, @var{path_documentation}))
 %# Print documentation for all specified Octave functions. 
 %# This script allows you to choose functions, for which the documentation is extracted from the function headers
 %# and printed to a file 'functions.texi', 'functionname.html' or to standard output if a specific format (texinfo,  html, txt) is set.
@@ -39,6 +39,7 @@ c
 if ( strcmp('html',type) == 1)
     % Loop via all function names in cellstring, convert texinfo to html and print it to functionname.html
     for ii = 1:length(c)
+		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         [retval status] = __makeinfo__(get_help_text(c{ii}),'html');
         
         if ( status == 0 )
@@ -51,9 +52,9 @@ if ( strcmp('html',type) == 1)
             fprintf(fid, retval);
             fprintf(fid, '\n');
             fclose (fid);
-            fprintf('Documentation printed for: >>%s<<}n',c{ii}); 
+            fprintf('SUCCESS: Documentation printed for: >>%s<<\n',c{ii}); 
         else
-            fprintf('There was a problem for: >>%s<<}n',c{ii}); 
+            fprintf('ERROR: There was a problem for: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
         end
     end
 elseif  ( strcmp('txt',type) == 1)  
@@ -61,6 +62,7 @@ elseif  ( strcmp('txt',type) == 1)
     %filename = strcat(path,'documentation.txt');
     %fid = fopen (filename, 'w');
     for ii = 1:length(c)
+		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         [retval status] = __makeinfo__(get_help_text(c{ii}),'plain text');
         
         if ( status == 0 )
@@ -73,9 +75,9 @@ elseif  ( strcmp('txt',type) == 1)
             %fprintf(fid, sectionstring);
             fprintf(fid, retval); 
             fprintf(fid, '\n');
-            fprintf('Documentation printed for: >>%s<<}n',c{ii}); 
+            fprintf('SUCCESS: Documentation printed for: >>%s<<\n',c{ii}); 
         else
-            fprintf('There was a problem for: >>%s<<}n',c{ii}); 
+            fprintf('ERROR: There was a problem for: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
         end
     end
     fclose (fid);
@@ -90,6 +92,7 @@ elseif  ( strcmp('texinfo',type) == 1)
     end
     fprintf(fid,'\@end menu \n');
     for ii = 1:length(c)
+		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         [retval status] = __makeinfo__(get_help_text(c{ii}),'texinfo');
         
         if ( status == 0 )
@@ -106,9 +109,9 @@ elseif  ( strcmp('texinfo',type) == 1)
             fprintf(fid, indexstring);
             fprintf(fid, retval); 
             fprintf(fid, '\n');
-            fprintf('Documentation printed for: >>%s<<}n',c{ii}); 
+            fprintf('SUCCESS: Documentation printed for: >>%s<<\n',c{ii}); 
         else
-            fprintf('There was a problem for: >>%s<<}n',c{ii}); 
+            fprintf('ERROR: There was a problem for: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
         end
     end
     fclose (fid);    

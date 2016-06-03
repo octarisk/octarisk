@@ -193,6 +193,8 @@ plotting = 1;           % switch for plotting data (0/1)
 saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
 archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
 stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
+mc_scen_analysis = 0;   % switch for applying statistical tests on risk factor MC scenario values 
+                        %   (compare target statistic parameters with actual values)
 % load packages
 pkg load statistics;	% load statistics package (needed in scenario_generation_MC)
 pkg load financial;		% load financial packages (needed throughout all scripts)
@@ -203,11 +205,12 @@ hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be use
 confidence = 0.999      % level of confidence vor MC VAR calculation
 copulatype = 't'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
-valuation_date = datenum('28-Apr-2016'); % valuation date
+valuation_date = datenum('31-Dec-2015'); % valuation date
 base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
 mc_timesteps    = {'10d'}                % MC timesteps
 scenario_set    = [mc_timesteps,'stress'];          % append stress scenarios
+gpd_confidence_levels = [0.9;0.95;0.975;0.99;0.995;0.999;0.9999];   % vector with confidence levels used in reporting of EVT VAR and ES
 
 % specify unique runcode and timestamp:
 runcode = '2015Q4'; %substr(md5sum(num2str(time()),true),-6)
@@ -217,9 +220,14 @@ first_eval      = 0;
 
 % set seed of random number generator
 if ( stable_seed == 1)
-    % read binary seed file and convert it into integers
+    % Read binary file and convert it to integers used as seed:
+    %    Octave / Matlab uses Mersenne-Twister
+    %    for pseudo random number generation. The seed vector is an arbitrary vector of length of 624.
+    %    A 2496 bit binary file can be initialized from /dev/urandom (head --byte=2496 /dev/urandom > random_seed.dat)
+    %    This file will be converted to a 32bit unsigned integer vector and used as seed.
+    %    This high entropy seed is required to avoid low entropy random numbers used during scenario generation.
     fid = fopen(strcat(path_static,'/',input_filename_seed)); % open file
-    random_seed = fread(fid,Inf,"uint8");		% convert binary file into integers
+    random_seed = fread(fid,Inf,'uint32');		% convert binary file into integers
     fclose(fid);								% close file 
     rand('state',random_seed);					% set seed
     randn('state',random_seed);
@@ -306,27 +314,35 @@ end
 [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,stable_seed);
 %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
 
-% TODO: variable for switching statistical analysis on and off
-% % Perform statistical tests on MC risk factor distributions:
-% for ii = 1 : 1 : length(riskfactor_cell)  
-    % rf_id = riskfactor_cell{ii};
-    % rf_object = get_sub_object(riskfactor_struct, rf_id);    
-    % fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
-    % fprintf('Pearson_type: >>%d<<\n',distr_type(ii));
-    % sigma_soll = rf_object.std   % sigma
-    % sigma_act = std(R_250(:,ii))
-    % skew_soll = rf_object.skew   % skew
-    % skew_act = skewness(R_250(:,ii))
-    % kurt_soll = rf_object.kurt   % kurt    
-    % kurt_act = kurtosis(R_250(:,ii))
-    % % test for bimodality -> fit polynomial and calculate parabola opening parameter sign
-    % [xx yy] = hist(R_250(:,ii),80);
-    % p = polyfit(yy,xx,2);
-    % if ( p(1) > 0 )
-        % fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
-    % end
-% end
-
+% variable for switching statistical analysis on and off
+if ( mc_scen_analysis == 1 )
+    % Perform statistical tests on MC risk factor distributions:
+    for ii = 1 : 1 : length(riskfactor_cell)  
+        rf_id = riskfactor_cell{ii};
+        rf_object = get_sub_object(riskfactor_struct, rf_id);    
+        fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
+        fprintf('Pearson_type: >>%d<<\n',distr_type(ii));  
+        mean_target = rf_object.mean;   % mean
+        mean_act = mean(R_250(:,ii));
+        sigma_target = rf_object.std;   % sigma
+        sigma_act = std(R_250(:,ii));
+        skew_target = rf_object.skew;   % skew
+        skew_act = skewness(R_250(:,ii));
+        kurt_target = rf_object.kurt;   % kurt    
+        kurt_act = kurtosis(R_250(:,ii));
+        fprintf('Stat. parameter:  \t| Target | Actual \n');
+        fprintf('Mean comparision: \t| %0.4f |  %0.4f \n',mean_target,mean_act);
+        fprintf('Vola comparision: \t| %0.4f |  %0.4f \n',sigma_target,sigma_act);
+        fprintf('Skewness comparision: \t| %0.4f |  %0.4f \n',skew_target,skew_act);
+        fprintf('Kurtosis comparision: \t| %0.4f |  %0.4f \n',kurt_target,kurt_act);
+        % test for bimodality -> fit polynomial and calculate parabola opening parameter sign
+        [xx yy] = hist(R_250(:,ii),80);
+        p = polyfit(yy,xx,2);
+        if ( p(1) > 0 )
+            fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
+        end
+    end
+end
 % Generate Structure with Risk factor scenario values: scale values according to timestep
 M_struct = struct();
 for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random matrix and derive all other timesteps from them
@@ -371,28 +387,29 @@ curve_struct=struct();
 persistent surface_struct;
 surface_struct=struct();
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir);
-curve_gen_time = toc;
+
 
 
 % c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
 index_struct=struct();
-[index_struct curve_struct id_failed_cell] = update_mktdata_objects(mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps,mc,no_stresstests);   
+[index_struct curve_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps,mc,no_stresstests);   
 % for kk = 1  : 1 : length(index_struct)
    % index_struct(kk).id
    % index_struct(kk).object
 % end
-% for kk = 1  : 1 : length(curve_struct)
-   % curve_struct(kk).id
-   % curve_struct(kk).object
-% end
+ % for kk = 1  : 1 : length(curve_struct)
+    % curve_struct(kk).id
+    % curve_struct(kk).object
+ % end
 
-% riskfactor_cell
 % for kk = 1  : 1 : length(riskfactor_struct)
-   % riskfactor_struct(kk).id
-   % riskfactor_struct(kk).object.getValue('250d')
-   % riskfactor_struct(kk).object.getValue('base')
+   % riskfactor_struct(kk).object
+   % %riskfactor_struct(kk).object.getValue('250d')
+   % %riskfactor_struct(kk).object.getValue('base')
 % end
+curve_gen_time = toc;
+
 % --------------------------------------------------------------------------------------------------------------------
 % 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
 %   Total Loop over all Instruments and type dependent valuation
@@ -491,8 +508,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     forward = tmp_instr_obj;
                  % Get underlying Index / instrument    
                     tmp_underlying = forward.get('underlying_id');
-                    tmp_underlying_object       = get_sub_object(index_struct, tmp_underlying);
-
+                    [tmp_underlying_object object_ret_code]  = get_sub_object(index_struct, tmp_underlying);
+                    if ( object_ret_code == 0 )
+                        fprintf('octarisk: WARNING: No index_struct object found for id >>%s<<\n',tmp_underlying_object);
+                    end
                 % Get discount curve
                     tmp_discount_curve          = forward.get('discount_curve');            
                     tmp_curve_object            = get_sub_object(curve_struct, tmp_discount_curve);	
@@ -571,8 +590,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % summing values over all underlying instruments
                 for jj = 1 : 1 : length(tmp_weights)
                     % get underlying instrument:
-                    tmp_underlying      = tmp_instruments{jj};
-                    und_obj             = get_sub_object(instrument_struct, tmp_underlying);
+                    tmp_underlying              = tmp_instruments{jj};
+                    [und_obj  object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
+                    if ( object_ret_code == 0 )
+                        fprintf('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_underlying);
+                    end
                     % Get instrument Value from full valuation instrument_struct:
                     % absolute values from full valuation
                     underlying_value_base       = und_obj.getValue('base');                 
@@ -612,10 +634,16 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % a) Get curve parameters    
                   % get discount curve
                     tmp_discount_curve  = bond.get('discount_curve');
-                    tmp_curve_object    = get_sub_object(curve_struct, tmp_discount_curve); 
+                    [tmp_curve_object object_ret_code]    = get_sub_object(curve_struct, tmp_discount_curve); 
+                    if ( object_ret_code == 0 )
+                        fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
+                    end
                   % Get spread curve
                     tmp_spread_curve    = bond.get('spread_curve');
-                    tmp_spread_object 	= get_sub_object(curve_struct, tmp_spread_curve);  
+                    [tmp_spread_object object_ret_code] 	= get_sub_object(curve_struct, tmp_spread_curve);
+                    if ( object_ret_code == 0 )
+                        fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_spread_curve);
+                    end                    
                 % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
                     if( sum(strcmp(tmp_sub_type,{'FRB','SWAP_FIXED','ZCB','CASHFLOW'})) > 0 )       % Fixed Rate Bond instruments (incl. swap fixed leg)
                         % rollout cash flows for all scenarios
@@ -634,8 +662,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                             bond = bond.rollout(tmp_scenario,tmp_ref_object,valuation_date);         
                     end 
                     
-                % c) Get Spread over yield: 
-                    if ~( bond.get('soy') == 0 )
+                % c) Calculate spread over yield (if not already run...)
+                    if ( bond.get('calibration_flag') == 0 )
                         bond = bond.calc_spread_over_yield(tmp_curve_object,tmp_spread_object,valuation_date);
                     end
                     
@@ -659,25 +687,25 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
      fulvia_performance{end + 1} = strcat(tmp_id,'_',num2str(scen_number),'_',num2str(toc),' s');
      fulvia = fulvia + toc ;  
     catch   % catch error in instrument valuation
-        fprintf('Instrument valuation for %s failed. There was an error: %s\n',tmp_id,lasterr);
+        fprintf('octarisk:Instrument valuation for %s failed. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);
         instrument_valuation_failed_cell{ length(instrument_valuation_failed_cell) + 1 } =  tmp_id;
-        % FALLBACK: store instrument as Cash instrument with fixed value_base for all scenarios
+        % FALLBACK: store instrument as Cash instrument with fixed value_base for all scenarios (use different variable for scen_number to avoid collisions)
         cc = Cash();
         cc = cc.set('id',tmp_instr_obj.get('id'),'name',tmp_instr_obj.get('name'),'asset_class',tmp_instr_obj.get('asset_class'),'currency',tmp_instr_obj.get('currency'),'value_base',tmp_instr_obj.get('value_base'));
         for pp = 1 : 1 : length(scenario_set);
             if ( strcmp(scenario_set{pp},'stress'))
-                scen_number = no_stresstests;
+                scen_number_catch = no_stresstests;
             else
-                scen_number = mc;
+                scen_number_catch = mc;
             end
-            cc = cc.calc_value(scenario_set{pp},scen_number);   % repeat base value in all MC timesteps and stress scenarios -> riskfree
+            cc = cc.calc_value(scenario_set{pp},scen_number_catch);   % repeat base value in all MC timesteps and stress scenarios -> riskfree
         end
         instrument_struct( ii ).object = cc;
     end
   end 
   first_eval = 1;
 end      % end eval mc timesteps and stress loops
- 
+
 tic;
 
 if ( saving == 1 )
@@ -846,20 +874,21 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   [portfolio_shock_sort scen_order_shock] = sort(portfolio_shock');
   p_l_absolut_shock        = portfolio_shock_sort - base_value;
   % Preparing vector for extreme value theory VAR and ES
+  
+  % only apply EVT if there is some risk in MC data
+  if ( abs(std(p_l_absolut_shock)) > 0)
     confi_scenario_evt_95   = round(0.025 * mc);
-    evt_tail_shock           = p_l_absolut_shock(1:confi_scenario_evt_95)';
+    evt_tail_shock          = p_l_absolut_shock(1:confi_scenario_evt_95)';
     % Calculate VAR and ES from GPD:
     u = min(-evt_tail_shock);
+    [aa bb cc] = size(evt_tail_shock);
     [chi sigma] = calibrate_evt_gpd(-evt_tail_shock);
-    nu = length(evt_tail_shock);
-    [VAR90_EVT_shock ES90_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.90, mc, nu);
-    [VAR95_EVT_shock ES95_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.95, mc, nu);
-    [VAR975_EVT_shock ES975_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.975, mc, nu);
-    [VAR99_EVT_shock ES99_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.99, mc, nu);
-    [VAR9999_EVT_shock ES9999_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.9999, mc, nu);
-    [VAR995_EVT_shock ES995_EVT_shock]    = get_gpd_var(chi, sigma, u, confidence, mc, nu);
-    [VAR999_EVT_shock ES999_EVT_shock]    = get_gpd_var(chi, sigma, u, 0.999, mc, nu);
-    [VAR9999_EVT_shock ES9999_EVT_shock]  = get_gpd_var(chi, sigma, u, 0.9999, mc, nu);
+    nu = length(evt_tail_shock);   
+    [VAR_EVT_shock ES_EVT_shock]        = get_gpd_var(chi, sigma, u, gpd_confidence_levels, mc, nu);        
+   else % apply dummy values
+    [VAR_EVT_shock ES_EVT_shock]    = horzcat(zeros(length(gpd_confidence_levels),1), zeros(length(gpd_confidence_levels),1));
+   end
+
 
   % Preparing direct VAR measures:
     VAR50_shock      = p_l_absolut_shock(round(0.5*mc));
@@ -874,9 +903,12 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 
   % ii.) Get Value of confidence scenario
 
-  confi_scenarionumber_shock = scen_order_shock(confi_scenario)
-  skewness_shock           = skewness(endstaende_reldiff_shock)
-  kurtosis_shock           = kurtosis(endstaende_reldiff_shock)
+  confi_scenarionumber_shock = scen_order_shock(confi_scenario);
+  skewness_shock           = skewness(endstaende_reldiff_shock);
+  kurtosis_shock           = kurtosis(endstaende_reldiff_shock);
+  fprintf('Scenarionumber according to confidence intervall: %d\n',confi_scenarionumber_shock);
+  fprintf('MC scenarios portfolio skewness: %2.2f\n',skewness_shock);
+  fprintf('MC scenarios portfolio kurtosis: %2.2f\n',kurtosis_shock);
 
   % iii.) Extract confidence scenarionumbers around quantile scenario
   confi_scenarionumber_shock_p1 = scen_order_shock(confi_scenario + 1);
@@ -1067,35 +1099,24 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f %s|\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
-  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT VAR  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,99.9,VAR999_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f %s|\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,ES995_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT  ES  %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,99.9,ES999_EVT_shock,fund_currency);
-  fprintf(fid, '|Port EVT  ES  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,99.99,ES9999_EVT_shock,fund_currency);
-
+  
+  % print EVT VAR and ES to file
+  fprintf(fid, '= GPD extreme value VAR and ES: \n');
+  for jj = 1 : 1 : length( gpd_confidence_levels )
+    fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,VAR_EVT_shock(jj),fund_currency);
+  end
+  for jj = 1 : 1 : length( gpd_confidence_levels )
+    fprintf(fid, '|Port EVT ES  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,ES_EVT_shock(jj),fund_currency);
+  end
+  
   % Output to stdout:
   fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
   fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
   fprintf('ES  %s@%2.1f%%: \t %9.2f %s\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
-  % Output of GPD calibrated VaR and ES:
   fprintf('GPD extreme value VAR and ES: \n');
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,90.0,VAR90_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,95.0,VAR95_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,97.5,VAR975_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.0,VAR99_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,VAR995_EVT_shock,fund_currency);
-  fprintf(fid, 'VaR EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.9,VAR999_EVT_shock,fund_currency);
-  fprintf('VaR EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,99.99,VAR9999_EVT_shock,fund_currency);
-
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,90.0,ES90_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,95.0,ES95_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,97.5,ES975_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.0,ES99_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,ES995_EVT_shock,fund_currency);
-  fprintf(fid, 'ES  EVT %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,99.9,ES999_EVT_shock,fund_currency);
-  fprintf('ES  EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,99.99,ES9999_EVT_shock,fund_currency);
+  fprintf('VaR EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,VAR_EVT_shock(end),fund_currency);
+  fprintf('ES  EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,ES_EVT_shock(end),fund_currency);
   fprintf('Low tail VAR: \n');
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,50.0,-VAR50_shock,fund_currency);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,70.0,-VAR70_shock,fund_currency);
@@ -1288,6 +1309,33 @@ fprintf('Total Runtime:  %6.2f s\n',totaltime);
 fclose (fid);
 end % closing main portfolioloop mm
 
+% Plot correlation mismatches:
+if ( plotting == 1 && mc_scen_analysis == 1 )
+    M_diff = corr_matrix .- corr(R_250);
+    M_rs = reshape(M_diff,1,columns(M_diff)^2);
+    idx_figure = idx_figure + 1;
+    figure(idx_figure);
+    clf;
+    hist(M_rs,80);
+    xlabel('Correlation mismatch');
+    ylabel('Occurence');
+    title('Absolute correlation settings mismatches overview','fontsize',12);
+
+    idx_figure = idx_figure + 1;
+        figure(idx_figure);
+    clf;
+    x_values = [1 : 1 : columns(M_diff)];
+    y_values = [1 : 1 : columns(M_diff)];
+    contourf(x_values, y_values, rot90(M_diff));
+    xlabel('Risk factor');
+    ylabel('Risk factor');
+    title('Absolute correlation settings mismatches per risk factor','fontsize',12);
+    axis square;
+    colorbar;
+    xlim([1 columns(M_diff)]);
+    ylim([1 columns(M_diff)]);
+end
+
 fprintf('\n');
 fprintf('=======================================================\n');
 fprintf('===   Ended octarisk market risk measurement tool   ===\n');
@@ -1331,42 +1379,3 @@ function  match_struct = get_sub_struct(input_struct, input_id)
 		return;
 	end
 end
-% % function for extracting sub-structure object from struct object according to id
-% function  match_obj = get_sub_object(input_struct, input_id)
- 	% matches = 0;	
-	% a = {input_struct.id};
-	% b = 1:1:length(a);
-	% c = strcmp(a, input_id);	
-    % % correct for multiple matches:
-    % if ( sum(c) > 1 )
-        % summe = 0;
-        % for ii=1:1:length(c)
-            % if ( c(ii) == 1)
-                % match_struct = input_struct(ii);
-                % ii;
-                % return;
-            % end            
-            % summe = summe + 1;
-        % end       
-    % end
-    % matches = b * c';
-	% if (matches > 0)
-	    	% match_obj = input_struct(matches).object;
-		% return;
-	% else
-	    	% error(' No matches found for input_id: >>%s<<',input_id);
-		% return;
-	% end
-% end
-% function for calculating VAR and ES from GPD calibrated parameters
-% chi and sigma are GPD shape parameters, u is offset level, q is quantile, n is number of total scenarios, nu is number of tail scenarios
-function [VAR ES] = get_gpd_var(chi, sigma, u, q, n, nu) 
-    VAR = u + sigma/chi*(( n/nu *( 1- q ) )^(-chi) -1);
-    ES = (VAR + sigma - chi * u) / ( 1 - chi );
-end
-
-%plot (pp,cdf_var250, 'linewidth',1);
-%    set(gca,'xtick',[-1 -0.5 0 0.5 1]);
-%    xlabel('x','fontsize',12);
-%    ylabel('CDF(x)','fontsize',12);
-%    title ('CDF for VaR250 Portfolio Value Distribution','fontsize',12);

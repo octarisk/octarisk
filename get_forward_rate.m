@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{forward_rate}=} get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, @var{days_to_t2}, @var{comp_type}, @var{interp_method})
+%# @deftypefn {Function File} {@var{forward_rate}=} get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq})
 %# Compute the forward rate calculated from interpolated rates from a zero coupon yield curve. CAUTION: the forward rate is floored to 0.000001.
 %# Explanation of Input Parameters:
 %# @*
@@ -26,9 +26,9 @@
 %# @seealso{interpolate_curve}
 %# @end deftypefn
 
-function forward_rate = get_forward_rate(nodes,rates,days_to_t1,days_to_t2,comp_type,interp_method)
+function forward_rate = get_forward_rate(nodes,rates,days_to_t1,days_to_t2,comp_type,interp_method,comp_freq)
  
- if nargin < 4 || nargin > 6
+ if nargin < 4 || nargin > 7
     print_usage ();
  end
  
@@ -36,9 +36,14 @@ function forward_rate = get_forward_rate(nodes,rates,days_to_t1,days_to_t2,comp_
 if nargin < 5
    comp_type = 'cont';
    interp_method = 'linear';
+   comp_freq = 1;
 end
 if nargin < 6
    interp_method = 'linear';
+   comp_freq = 1;
+end
+if nargin < 7
+   comp_freq = 1;
 end
 
 % Checks:
@@ -85,7 +90,7 @@ d2 = (days_to_t2 + days_to_t1 ) ./ 365;
 if ( compounding_type == 1)      % simple
     tmp_rate = ( (( 1 + (r2 .* d2) ) ./ ( 1 + (r1 .* d1) ) ) - 1 )  ./ ( d2 - d1 );
 elseif ( compounding_type == 2)      % discrete
-    tmp_rate = (  ( 1 + r2 ).^d2 ./ ( 1 + r1 ).^d1  ).^(1 ./ (d2 - d1)) - 1;
+    tmp_rate = (  ( 1 + (r2 ./ comp_freq) ).^(comp_freq * d2) ./ ( 1 + (r1 ./ comp_freq) ).^(comp_freq * d1)  ).^(1 ./ (d2 - d1)) - 1;
 elseif ( compounding_type == 3)      % continuous
     tmp_rate = ( r2 .* d2 - r1 .* d1  ) ./ (  d2 - d1 );
 end
@@ -93,3 +98,5 @@ end
 % Return forward rate:	% flooring rate!!!
 forward_rate = max(tmp_rate,0.000001);
 end
+
+%!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2),0.0691669,0.00001)

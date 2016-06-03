@@ -11,11 +11,17 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_soy_sqp(@var{valuation_date},@var{tmp_cashflow_dates},@var{tmp_cashflow_values},@var{tmp_act_value},@var{tmp_nodes},@var{tmp_rates},@var{spread_nodes},@var{spread_rates},@var{basis},@var{comp_type},@var{comp_freq})
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_soy_sqp(@var{valuation_date}, ...
+%#                                  @var{tmp_cashflow_dates}, @var{tmp_cashflow_values}, ...
+%#                                  @var{tmp_act_value}, @var{tmp_nodes}, @var{tmp_rates}, ...
+%#                                  @var{spread_nodes}, @var{spread_rates}, @var{basis}, ...
+%#                                  @var{comp_type}, @var{comp_freq}, @var{,interp_discount}, @var{interp_spread})
 %# Calibrate the spread over yield according to given cashflows discounted on an appropriate yield curve.
 %# @end deftypefn
 
-function [spread_over_yield ] = calibrate_soy_sqp(valuation_date,tmp_cashflow_dates, tmp_cashflow_values,tmp_act_value,tmp_nodes,tmp_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq)
+function [spread_over_yield retcode] = calibrate_soy_sqp(valuation_date,tmp_cashflow_dates, ...
+                tmp_cashflow_values,tmp_act_value,tmp_nodes,tmp_rates,spread_nodes, ...
+                spread_rates,basis,comp_type,comp_freq,interp_discount,interp_spread)
 
 if ( nargin == 6 )
   spread_nodes = [365];
@@ -23,16 +29,29 @@ if ( nargin == 6 )
   basis = 3;  
   comp_type = 'disc';
   comp_freq = 1;
+  interp_discount = 'linear';
+  interp_spread = 'linear';
 elseif ( nargin == 8 )
   basis = 3;
   comp_type = 'disc';
   comp_freq = 1;
+  interp_discount = 'linear';
+  interp_spread = 'linear';
 elseif  ( nargin == 9 )
   comp_type = 'disc'
   comp_freq = 1
+  interp_discount = 'linear';
+  interp_spread = 'linear';
 elseif ( nargin == 10 )
   comp_freq = 1
-elseif ( nargin > 11)
+  interp_discount = 'linear';
+  interp_spread = 'linear'; 
+elseif ( nargin == 11 )
+  interp_discount = 'linear';
+  interp_spread = 'linear';  
+elseif ( nargin == 12 )
+  interp_spread = 'linear';     
+elseif ( nargin > 13)
     error('Too many arguments')
 end
 if ( rows(tmp_cashflow_values) > 1 )
@@ -40,6 +59,7 @@ if ( rows(tmp_cashflow_values) > 1 )
 	disp('WARNING: More than one cash flow value scenario provided. Taking only first scenario as base values')
 end
 % Start parameter
+retcode = 0;
 x0 = -0.0001;
 
 % Start time:
@@ -51,19 +71,23 @@ end
 %p0=[x0]'; % Guessed parameters.
 options(1) = 0;
 options(2) = 1e-5;
-[x, obj, info, iter] = sqp (x0, @ (x) phi_soy(x,valuation_date,tmp_cashflow_dates, tmp_cashflow_values,tmp_act_value,tmp_nodes,tmp_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq), [], [], -1, 1, 300);	%, obj, info, iter, nf, lambda @g
+[x, obj, info, iter] = sqp (x0, @ (x) phi_soy(x,valuation_date,tmp_cashflow_dates, tmp_cashflow_values, ...
+            tmp_act_value,tmp_nodes,tmp_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq,interp_discount,interp_spread), [], [], -1, 1, 300);	%, obj, info, iter, nf, lambda @g
 
 if (info == 101 )
 	%disp ('       +++ SUCCESS: Optimization converged in +++');
 	%steps = iter
 elseif (info == 102 )
 	disp ('       --- WARNING: The BFGS update failed. ---');
+    retcode = 255;
 elseif (info == 103 )
 	disp ('       --- WARNING: The maximum number of iterations was reached. ---');
+    retcode = 255;
 elseif (info == 104 )
     %disp ('       --- WARNING: The stepsize has become too small. ---');
 else
 	disp ('       --- WARNING: Optimization did not converge! ---');
+    retcode = 255;
 end
 % 
 % return spread over yield
@@ -75,23 +99,13 @@ end
 %------------------- Begin Subfunctions ---------------------------
  
 % Definition Objective Function for spread over yield:	    
-function obj = phi_soy (x,valuation_date,cashflow_dates, cashflow_values,act_value,discount_nodes,discount_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq)
-         tmp_npv = 0;
-         %tmp_npv = pricing_npv(valuation_date,cashflow_dates, cashflow_values,x,discount_nodes,discount_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq);
-         for zz = 1 : 1 : length(cashflow_values)   % loop via all cashflows  
-            tmp_dtm = cashflow_dates(zz);
-            tmp_cf_value = cashflow_values(zz);
-            if ( tmp_dtm > 0 )  % discount only future cashflows
-                yield_discount = interpolate_curve(discount_nodes,discount_rates,tmp_dtm);  % get discount rate from discount curve
-                yield_spread = interpolate_curve(spread_nodes,spread_rates,tmp_dtm);        % get spread rate from spread curve
-                yield_total = yield_discount + yield_spread + x;            % combine with constant spread (e.g. spread over yield)
-                tmp_cf_date = valuation_date + tmp_dtm;
-                tmp_df = discount_factor (valuation_date, tmp_cf_date, yield_total, comp_type, basis, comp_freq);      
-                %tmp_df = (1 + yield_total).^(-tmp_dtm./365);
-                tmp_npv_cashflow = tmp_cf_value .* tmp_df;
-                tmp_npv = tmp_npv+ tmp_npv_cashflow;
-            end
-        end 
+function obj = phi_soy (x,valuation_date,cashflow_dates, cashflow_values,act_value,discount_nodes, ...
+                discount_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq,interp_discount,interp_spread)
+        % Calling pricing function with actual spread
+        tmp_npv = pricing_npv(valuation_date,cashflow_dates, cashflow_values,x,discount_nodes, ...
+                discount_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq,interp_discount,interp_spread);
         obj = (act_value - tmp_npv).^2;
 end
 %------------------------------------------------------------------
+
+%!assert(calibrate_soy_sqp(datenum('31-Dec-2015'),[182,547,912],[3,3,103],99.9,[90,365,730,1095],[0.01,0.02,0.025,0.028],[0],[0.0],3,'discrete','annual','monotone-convex'),0.0102769,0.000001)                

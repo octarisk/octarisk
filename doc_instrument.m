@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { @var{object} =} Instrument (@var{name},@var{id},@var{description},@var{type},@var{currency},@var{base_value},@var{asset_class},@var{valuation_date})
+%# @deftypefn {Function File} { @var{object} =} Instrument (@var{name}, @var{id}, @var{description}, @var{type}, @var{currency}, @var{base_value}, @var{asset_class}, @var{valuation_date})
 %# Instrument Superclass Inputs:
 %# @itemize @bullet
 %# @item @var{name} (string): Name of object
@@ -39,7 +39,7 @@
 %# @item timestep_mc: MC timestep per column (cell string)
 %# @end itemize
 %# 
-%# @var{value} = Instrument.getValue (@var{base},@var{stress},@var{mc_timestep})
+%# @var{value} = Instrument.getValue (@var{base}, @var{stress}, @var{mc_timestep})
 %# Superclass Method getValue 
 %# @*
 %# Return the scenario (shock) value for an instrument object. Specify the desired return values with a property parameter.

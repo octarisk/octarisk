@@ -1,5 +1,16 @@
 # Version History 
 
+### 0.3.0-rc1, 2016/05/20
+Version v0.3.0-rc1 is the first release candidate for the upcoming release, where all API changes shall be accomplished.
+
+The Version improves again the file-based interaction: 
+- The file formats for correlation input files has changed to reflect a more user friendly input format. 
+The correlation matrix is now linearized, which means that one correlation pair is specified in each line. 
+Moreover, risk factor subsets for MC generation and stress testing are independent.
+- Introduced stable seed: a binary seed file for seeding the Mersenne-Twister PRNG is specified
+- Introduced Aggregated Curves: aggregated curves consist of sums of arbitrary other curves defined during mktdata object generation 
+for the chosen curve term structure. Aggregated curves can be assigned to discount curve or spread curve in instrument specifications. 
+
 ### 0.2.0, 2016/04/21: 
 minor release: bugfixes, change of file interface (new input structure of mktdata, instruments, riskfactors, positions and stresstests) allowing flexibel
 number of attributes per product type

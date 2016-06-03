@@ -42,7 +42,7 @@
 %# @item @var{dip}: 	OUTPUT: days in period (nominator of time factor) (scalar)
 %# @item @var{dib}: 	OUTPUT: days in base (denominator of time factor) (scalar)
 %# @end itemize
-%# @seealso{discount_factor, daysact, yeardays}
+%# @seealso{discount_factor, yeardays}
 %# @end deftypefn
 
 function [tf dip dib] = timefactor (d1, d2, basis)
@@ -52,10 +52,13 @@ function [tf dip dib] = timefactor (d1, d2, basis)
 if nargin < 2
    error('Needed at least date1 and date2')
 end
-if ischar(d1) || ischar(d2)
+if ischar(d1)
    d1 = datenum(d1);
+end
+if ischar(d2)
    d2 = datenum(d2);
 end
+
 if nargin < 3
    basis = 3.*ones(size(d1));
 end
@@ -103,19 +106,20 @@ elseif ( basis == 0 || basis == 8 ) % actual/actual
         months2 = dvec2(:,2);
         years2 = dvec2(:,1);
         if  years1 == years2  %coupon period in between one year
-            dip = daysact(dvec1,dvec2);
+            dip = datenum(dvec2) - datenum(dvec1);  
             dib = yeardays(years1,basis);
-        end 
-        
-        if  years2 > years1
+        elseif  years2 > years1
             end_of_year_period1 = [years1,12,31,0,0,0];
             yeardays(years1,basis);
             begin_of_year_period2 = [years2,01,01,0,0,0];
             yeardays(years2,basis);
-            days_period1 = daysact(dvec1,end_of_year_period1) ;
-            days_period2 = daysact(begin_of_year_period2,dvec2) + 1;
+            days_period1 = datenum(end_of_year_period1) - datenum(dvec1);
+            days_period2 = datenum(dvec2) - datenum(begin_of_year_period2) + 1;
             dib = 1;
-            dip = (days_period1 ./ yeardays(years1,basis)) + (days_period2 ./ yeardays(years2,basis)) + (years2 - years1 - 1);          
+            dip = (days_period1 ./ yeardays(years1,basis)) + (days_period2 ./ yeardays(years2,basis)) + (years2 - years1 - 1);
+        else    % no timefactor for negative time period
+            dip = 0;
+            dib = 1;
         end
         
 end
@@ -125,3 +129,6 @@ tf = dip ./ dib;
  
 end
  
+%!assert(timefactor('31-Dec-2015','29-Feb-2024',0),8.16393410,0.00001) 
+%!assert(timefactor('31-Dec-2015','29-Feb-2024',3),8.16986310,0.00001) 
+%!assert(timefactor('31-Dec-2015','29-Feb-2024',11),8.16388910,0.00001) 
