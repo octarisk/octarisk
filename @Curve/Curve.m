@@ -159,7 +159,7 @@ classdef Curve
       end % Set.type
       
       function obj = set.method_interpolation(obj,method_interpolation)
-         method_interpolation = tolower(method_interpolation);
+         method_interpolation = lower(method_interpolation);
          if ~(sum(strcmpi(method_interpolation,{'smith-wilson','spline','linear','mm','exponential','loglinear','monotone-convex'}))>0  )
             error('Interpolation method must be either smith-wilson,spline,linear,mm,exponential,monotone-convex or loglinear')
          end
@@ -177,7 +177,7 @@ classdef Curve
       end % set.day_count_convention
       
       function obj = set.compounding_freq(obj,compounding_freq)
-        compounding_freq = tolower(compounding_freq);
+        compounding_freq = lower(compounding_freq);
         if ~(sum(strcmpi(compounding_freq,{'day','daily','week','weekly','month','monthly','quarter','quarterly','semi-annual','annual'}))>0  )
             fprintf('Curve:set: for curve >>%s<<: compounding_freq >>%s<< must be either day,daily,week,weekly,month,monthly,quarter,quarterly,semi-annual,annual. Setting to >>annual<<\n',obj.id,compounding_freq);
             compounding_freq = 'annual';
@@ -186,7 +186,7 @@ classdef Curve
       end % set.compounding_freq
       
       function obj = set.compounding_type(obj,compounding_type)
-        compounding_type = tolower(compounding_type);
+        compounding_type = lower(compounding_type);
         if ~(sum(strcmpi(compounding_type,{'simple','continuous','discrete'}))>0  )
             fprintf('Curve:set: for curve >>%s<<: Compounding type >>%s<< must be either >>simple<<, >>continuous<<, or >>discrete<<. Setting to >>continuous<<\n',obj.id,compounding_type);
             compounding_type = 'continuous';
@@ -219,7 +219,7 @@ classdef Curve
     end
     methods (Static = true)
       function basis = get_basis(dcc_string)
-            dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365';'30/360 PSA';'30/360 ISDA';'30/360 European';'act/365 Japanese';'act/act ISMA';'act/360 ISMA';'act/365 ISMA';'30/360E']);
+            dcc_cell = {'act/act' '30/360 SIA' 'act/360' 'act/365' '30/360 PSA' '30/360 ISDA' '30/360 European' 'act/365 Japanese' 'act/act ISMA' 'act/360 ISMA' 'act/365 ISMA' '30/360E'};
             findvec = strcmpi(dcc_string,dcc_cell);
             tt = 1:1:length(dcc_cell);
             tt = (tt - 1)';
