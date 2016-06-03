@@ -151,8 +151,9 @@ classdef Curve
       end % disp
       
       function obj = set.type(obj,type)
-         if ~(strcmpi(type,'Discount Curve') || strcmpi(type,'Spread Curve')  || strcmpi(type,'Dummy Curve') || strcmpi(type,'Aggregated Curve') )
-            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve or Dummy Curve')
+         if ~(strcmpi(type,'Discount Curve') || strcmpi(type,'Spread Curve')  || strcmpi(type,'Dummy Curve') ...
+                    || strcmpi(type,'Aggregated Curve') || strcmpi(type,'Prepayment Curve'))
+            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve, Dummy Curve or Prepayment Curve')
          end
          obj.type = type;
       end % Set.type
