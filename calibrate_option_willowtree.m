@@ -11,13 +11,23 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_willowtree(@var{putcallflag}, @var{americanflag}, @var{S}, @var{X}, @var{T}, @var{rf}, @var{sigma}, @var{divyield}, @var{stepsize}, @var{nodes}, @var{multiplicator}, @var{market_value}, @var{path_static})
-%# Calibrate the implied volatility spread for American options according to Willowtree valuation formula.
+%# @deftypefn {Function File} { [@var{vola_spread}] =} 
+%#						calibrate_option_willowtree(@var{putcallflag},
+%#							@var{americanflag}, @var{S}, @var{X}, @var{T},
+%#							@var{rf}, @var{sigma}, @var{divyield},
+%#							@var{stepsize}, @var{nodes},
+%#							@var{multiplicator}, @var{market_value}, 
+%#							@var{path_static})
+%#
+%# Calibrate the implied volatility spread for American options according 
+%# to Willowtree valuation formula.
+%# @seealso{option_willowtree}
 %# @end deftypefn
 
-function vola_spread = calibrate_option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value,path_static)
+function vola_spread = calibrate_option_willowtree(putcallflag,americanflag, ...
+									S,X,T,rf,sigma,divyield,stepsize,nodes, ...
+									multiplicator,market_value,path_static)
 
-%option_value = option_bs(putcallflag,S,X,T,rf,sigma) .* multiplicator
 % Start parameter
 x0 = -0.0001;
 
@@ -27,22 +37,24 @@ end
 %p0=[x0]'; % Guessed parameters.
 
 lb = -sigma + 0.0001;
-[x, obj, info, iter] = sqp (x0, @ (x) phi(x,putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value,path_static), [], [], lb, [], 300);	%, obj, info, iter, nf, lambda @g
+[x, obj, info, iter] = sqp (x0, @ (x) phi(x,putcallflag,americanflag,S,X,T, ...
+							rf,sigma,divyield,stepsize,nodes,multiplicator, ...
+							market_value,path_static), [], [], lb, [], 300);	
 
 if (info == 101 )
-	%disp ('       +++ SUCCESS: Optimization converged in +++');
+	%disp ('  +++ SUCCESS: Optimization converged in +++');
 	%steps = iter
 elseif (info == 102 )
-	%disp ('       --- WARNING: The BFGS update failed. ---');
+	%disp ('  --- WARNING: The BFGS update failed. ---');
     x = -99;
 elseif (info == 103 )
-	%disp ('       --- WARNING: The maximum number of iterations was reached. ---');
+	%disp ('  --- WARNING: The maximum number of iterations was reached. ---');
     x = -99;
 elseif (info == 104 )
-    disp ('       --- WARNING: The stepsize has become too small. ---');
+    disp ('  --- WARNING: The stepsize has become too small. ---');
     %x = -99;
 else
-	%disp ('       --- WARNING: Optimization did not converge! ---');
+	%disp ('  --- WARNING: Optimization did not converge! ---');
     x = -99;
 end
 
@@ -63,13 +75,16 @@ end
 
  
 % Definition Objective Function:	    
-	function obj = phi (x,putcallflag,americanflag,S,X,T,rf,sigma,divyield,stepsize,nodes,multiplicator,market_value,path_static)
+	function obj = phi (x,putcallflag,americanflag,S,X,T,rf,sigma,divyield, ...
+						stepsize,nodes,multiplicator,market_value,path_static)
             % This is where we computer the sum of the square of the errors.
             % The parameters are in the vector p, which for us is a two by one.	
-			tmp_option_value = option_willowtree(putcallflag,americanflag,S,X,T,rf,sigma+x,divyield,stepsize,nodes,path_static) .* multiplicator;
+			tmp_option_value = option_willowtree(putcallflag,americanflag, ...
+							S,X,T,rf,sigma+x,divyield, ...
+							stepsize,nodes,path_static) .* multiplicator;
 			obj = abs( tmp_option_value  - market_value)^2;
 		%----------------------------------------------
 end
  
-%!assert(calibrate_option_willowtree(0,1,10000,11000,30,0.01,0.2,0.0,5,20,1,1000),-0.0405609,0.000002) 
+%!assert(calibrate_option_willowtree(0,1,10000,11000,30,0.01,0.2,0.0, 5,20,1,1000),-0.0405609,0.000002) 
 

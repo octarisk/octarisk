@@ -11,26 +11,37 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep})
-%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{ufr}, @var{alpha})
+%# @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, 
+%#													@var{timestep})
+%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, 
+%#										@var{timestep}, @var{ufr}, @var{alpha})
+%#
 %# Calculate an interpolated return on a curve for a given timestep
-%# Supported methods are: linear (default), moneymarket, exponential, loglinear, spline, smith-wilson or monotone-convex.
-%# A constant extrapolation is assumed, except for smith-wilson, where the ultimate forward rate will be reached proportional to reversion speed alpha.
-%# For all methods except splines a fast taylormade algorithm is used. For splines see Octave function interp1 for more details. 
+%# Supported methods are: linear (default), moneymarket, exponential, loglinear, 
+%# spline, smith-wilson or monotone-convex.
+%# 
+%# A constant extrapolation is assumed, except for smith-wilson, where the 
+%# ultimate forward rate will be reached proportional to reversion speed alpha.
+%# For all methods except splines a fast taylormade algorithm is used. For 
+%# splines see Octave function interp1 for more details. 
 %# Explanation of Input Parameters of the interpolation curve function:
 %# @*
 %# @itemize @bullet
 %# @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
-%# @item @var{rates}: is MxN matrix with curve rates per timestep defined in columns. Each row contains a specific scenario with different curve structure
-%# @item @var{timestep}: is a scalar, specifiying the interpolated timestep on vector nodes
-%# @item @var{ufr}:   OPTIONAL: (only used for smith-wilson): ultimate forward rate (default: last liquid point)
-%# @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed to ultimate forward rate (default: 0.1)
+%# @item @var{rates}: is MxN matrix with curve rates per timestep defined in
+%# 						columns. Each row contains a specific scenario with 
+%# 						different curve structure
+%# @item @var{timestep}: is a scalar, specifiying the interpolated timestep on 
+%# 						vector nodes
+%# @item @var{ufr}:   OPTIONAL: (only used for smith-wilson): ultimate forward 
+%# 								rate (default: last liquid point)
+%# @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed 
+%# 								to ultimate forward rate (default: 0.1)
 %# @end itemize
 %# @seealso{interp1, interp2, interp3, interpn}
 %# @end deftypefn
 
 function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
-% This function makes a interpolation of an interest rate at a given timestep between nodes
 
   if (nargin < 3 || nargin > 6)
     print_usage ();
@@ -39,7 +50,8 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
   if ( nargin < 4)
     method = 'linear';
   elseif (nargin >= 4)
-    method_cell = {'linear','mm','exponential','loglinear','spline','smith-wilson','monotone-convex'};
+    method_cell = {'linear','mm','exponential','loglinear','spline', ...
+					'smith-wilson','monotone-convex'};
     findvec = strcmp(method,method_cell);
     if ( findvec == 0)
          error('Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson or monotone-convex');
@@ -48,11 +60,12 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
   
   if (strcmp(method,'smith-wilson'))
     if (nargin == 4)
-        %disp('Warning: neither ufr nor reversion speed are specified. Setting ufr to last liquid rate and alpha = 0.1');
+        %disp('Warning: neither ufr nor reversion speed are specified. 
+        % Setting ufr to last liquid rate and alpha = 0.1');
         alpha = 0.19;
         ufr = 0.042; %rates(end);
     elseif (nargin == 5)
-        disp('Warning: no reversion speed to the ultimate forward rate is provided. Setting alpha = 0.1');
+        disp('Warning: no reversion speed provided. Setting alpha = 0.1');
         alpha = 0.19;
     elseif (nargin == 6)  
         if (alpha <= 0.0)
@@ -75,7 +88,8 @@ end
 
 dnodes = diff(nodes);
 
-if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant extrapolation only for methods except smith-wilson and monotone-convex
+if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant 
+		% extrapolation only for methods except smith-wilson and monotone-convex
     if ( timestep <= nodes(1) ) % constant extrapolation
         y = rates(:,1);
         return
@@ -87,32 +101,42 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant extrapolatio
         if (strcmp(method,'linear'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
-                     y = ((1 - abs(timestep - nodes(ii))./ dnodes(ii)).* rates(:,ii) +  (1 - abs(nodes(ii + 1) - timestep)./ dnodes(ii)).* rates(:,ii+1)) ;            
+                     y = ((1 - abs(timestep - nodes(ii)) ...
+							./ dnodes(ii)).* rates(:,ii)
+							+ (1 - abs(nodes(ii + 1) - timestep) ...
+							./ dnodes(ii)).* rates(:,ii+1)) ;            
                 end
             end
         elseif (strcmp(method,'mm'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
-                    alpha = (nodes(ii+1) - timestep) / ( nodes(ii+1 ) - nodes(ii) );
-                    y = (alpha .* nodes(ii) .* rates(:,ii) + (1 - alpha) .* nodes(ii+1) .* rates(:,ii+1)) ./ timestep;
+                    alpha = (nodes(ii+1) - timestep) / ...
+							( nodes(ii+1 ) - nodes(ii) );
+                    y = (alpha .* nodes(ii) .* rates(:,ii) ...
+					 + (1 - alpha) .* nodes(ii+1) .* rates(:,ii+1)) ./ timestep;
                 end
             end
         elseif (strcmp(method,'loglinear'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
-                    alpha = (timestep - nodes(ii) ) / ( nodes(ii+1 ) - nodes(ii) );
-                    y = rates(:,ii) .* exp(alpha .* log(rates(ii+1) ./ rates(ii)));
+                    alpha = (timestep - nodes(ii) ) ...
+							/ ( nodes(ii+1 ) - nodes(ii) );
+                    y = rates(:,ii) .* exp(alpha .* log(rates(ii+1) ...
+						./ rates(ii)));
                 end
             end    
         elseif (strcmp(method,'exponential'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
-                    alpha = (nodes(ii+1) - timestep) / ( nodes(ii+1 ) - nodes(ii) );
-                    y = log(exp(rates(:,ii)) .* alpha + exp(rates(ii+1)) .* (1 - alpha));
+                    alpha = (nodes(ii+1) - timestep) / ( nodes(ii+1 ) ...
+							- nodes(ii) );
+                    y = log(exp(rates(:,ii)) .* alpha + exp(rates(ii+1)) ...
+						.* (1 - alpha));
                 end
             end 
         elseif (strcmp(method,'spline'))
-            y = spline(nodes',rates',timestep); % use octave's built in function spline
+			% use octave's built in function spline
+            y = spline(nodes',rates',timestep); 
         end
     end
 elseif (strcmp(method,'smith-wilson'))   % smith-wilson method
@@ -127,7 +151,9 @@ elseif (strcmp(method,'monotone-convex'))
        y = rates(:,end);
        return
     else
-        % due to unknown reasons, monotone convex doesn't like nice numbers, e.g. 0.01 or 0.02. So we add a small number to all rates and subtract it from results
+        % due to unknown reasons, monotone convex doesn't like nice numbers, 
+        % e.g. 0.01 or 0.02. So we add a small number to all rates and 
+        % subtract it from results
         rates = rates + 0.000001;
         InputsareForwards = 0;
         Negative_Forwards_Allowed = 1;
@@ -136,7 +162,8 @@ elseif (strcmp(method,'monotone-convex'))
         ZZ = zeros(rows(rates),1);
         rates = [ZZ,rates];
         % 1. Call fi_estimates
-        [f, fdiscrete, dInterpolantatNode] = fi_estimates(nodes, rates,InputsareForwards,Negative_Forwards_Allowed);
+        [f, fdiscrete, dInterpolantatNode] = fi_estimates(nodes, rates, ...
+							InputsareForwards,Negative_Forwards_Allowed);
         
         % 2. Interpolate values
         y = CalcInterpolant(timestep,nodes,f,fdiscrete,dInterpolantatNode);
@@ -153,16 +180,22 @@ end % end of Main function
 % ----------------------------------------------------------------------
 %          Main functions for Monotone Convex Interpolation
 % ----------------------------------------------------------------------
-% This implementation refers to the Wilmott paper 'Methods for Constructing a Yield Curve' by P. Hagan and G. West, 2008 
-% and the proposed VBA Algorithm.
-% the basic non-vectorized code was taken from G. West's Excel Spreadsheet (www.finmod.co.za) and adapted to Octave
-% The example calculation in West's preadsheet could not be validated (e.g. Forward calculation), but this implementation looks promising
+% This implementation refers to the Wilmott paper 'Methods for Constructing 
+% a Yield Curve' by P. Hagan and G. West, 2008 and the proposed VBA Algorithm.
+% the basic non-vectorized code was taken from G. West's Excel Spreadsheet 
+% (www.finmod.co.za) and adapted to Octave.
+% The example calculation in West's spreadsheet could not be validated 
+% (e.g. Forward calculation), but this implementation looks promising
   
-function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolantatNode)
+function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete, ...
+												dInterpolantatNode)
   if Term <= 0 
     Interpolant_Value = f(:,1);
   elseif Term > max(Terms) 
-    Interpolant_Value = CalcInterpolant((max(Terms)),Terms,f,fdiscrete,dInterpolantatNode) * (max(Terms))  / Term + CalcForward(max(Terms),Terms,f,fdiscrete) * (1 - (max(Terms)) / Term);
+    Interpolant_Value = CalcInterpolant((max(Terms)),Terms,f,fdiscrete, ...
+						dInterpolantatNode) * (max(Terms))  / Term ...
+						+ CalcForward(max(Terms),Terms,f,fdiscrete) ...
+						* (1 - (max(Terms)) / Term);
   else
     if ( Term == max(Terms))
         i = length(Terms) -1;
@@ -191,7 +224,8 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
       % or the following three conditions have all to be fulfilled:
         V_g1seg0m05 = g1 <= (-0.5 .* g0);        % -0.5 .* g0 >= g1 &&
         V_g1geg0m2 = g1 >= (-2 .* g0);           % g1 >= -2 .* g0
-        V_zone1_b = V_g1seg0m05 + V_g1geg0m2 + V_g0gt0;   % g0 > 0 && -0.5 .* g0 >= g1 && g1 >= -2 .* g0
+        % g0 > 0 && -0.5 .* g0 >= g1 && g1 >= -2 .* g0
+        V_zone1_b = V_g1seg0m05 + V_g1geg0m2 + V_g0gt0;   
         V_zone1_b = V_zone1_b == 3;
         V_zone1 = V_zone1_a + V_zone1_b;
     % conditions for zone 2:
@@ -207,13 +241,14 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
         V_zone2 = V_zone2_a + V_zone2_b;
     % conditions for zone 3:   
         % a)
-        V_g1gtg0m05 = g1 > (-0.5 .* g0);        % g1 > -0.5 .* g0  &&  g0 > 0 &&  0 > g1
+        % g1 > -0.5 .* g0  &&  g0 > 0 &&  0 > g1
+        V_g1gtg0m05 = g1 > (-0.5 .* g0);        
         V_zone3_a = V_g0gt0 + V_g1st0 + V_g1gtg0m05;
         V_zone3_a = V_zone3_a == 3;
         % b)
         % V_g0st0                               % g0 < 0
         % V_g1gt0                               % 0 < g1
-        V_g1stg0m05 = g1 < (-0.5 .* g0);       % g1 < -0.5 .* g0 && g0 < 0 && 0 < g1
+        V_g1stg0m05 = g1 < (-0.5 .* g0);   % g1 < -0.5 .* g0 && g0 < 0 && 0 < g1
         V_zone3_b = V_g0st0 + V_g1gt0 + V_g1stg0m05;
         V_zone3_b = V_zone3_b == 3; 
         V_zone3 = V_zone3_a + V_zone3_b;
@@ -228,13 +263,15 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
           eta_2 = (g1 + 2 .* g0) ./ (g1 - g0);
           V_G_2 = eta_2  >= x;
             G_2_a = g0 .* x;
-            G_2_b = g0 .* x + (g1 - g0) .* (x - eta_2) .^ 3 ./ (1 - eta_2) .^ 2 ./ 3;
+            G_2_b = g0 .* x + (g1 - g0) .* (x - eta_2) .^ 3 ./ (1 - eta_2) ...
+					.^ 2 ./ 3;
           G_2 = V_G_2 .* G_2_a + ~V_G_2 .* G_2_b;         
 
       %zone (iii)
           eta_3 = 3 .* g1 ./ (g1 - g0);
           V_G_3 = eta_3  > x;
-            G_3_a = g1 .* x - 1 ./ 3 .* (g0 - g1) .* ((eta_3 - x) .^ 3 ./ eta_3 .^ 2 - eta_3);
+            G_3_a = g1 .* x - 1 ./ 3 .* (g0 - g1) .* ((eta_3 - x) .^ 3 ...
+					./ eta_3 .^ 2 - eta_3);
             G_3_b = (2 ./ 3 .* g1 + 1 ./ 3 .* g0) .* eta_3 + g1 .* (x - eta_3);
           G_3 = V_G_3 .* G_3_a + ~V_G_3 .* G_3_b;
 
@@ -242,8 +279,10 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
           eta_4 = g1 ./ (g1 + g0);
           A = -g0 .* g1 ./ (g0 + g1);
           V_G_4 = eta_4  >=  x;
-            G_4_a = A .* x - 1 ./ 3 .* (g0 - A) .* ((eta_4 - x) .^ 3 ./ eta_4 .^ 2 - eta_4);
-            G_4_b = (2 ./ 3 .* A + 1 ./ 3 .* g0) .* eta_4 + A .* (x - eta_4) + (g1 - A) ./ 3 .* (x - eta_4) .^ 3 ./ (1 - eta_4) .^ 2;
+            G_4_a = A .* x - 1 ./ 3 .* (g0 - A) .* ((eta_4 - x) .^ 3 ...
+					./ eta_4 .^ 2 - eta_4);
+            G_4_b = (2 ./ 3 .* A + 1 ./ 3 .* g0) .* eta_4 + A .* (x - eta_4) ...
+					+ (g1 - A) ./ 3 .* (x - eta_4) .^ 3 ./ (1 - eta_4) .^ 2;
           G_4 = V_G_4 .* G_4_a + ~V_G_4 .* G_4_b;
           G_4(isnan(G_4)) = 0; 
           
@@ -256,7 +295,9 @@ function Interpolant_Value = CalcInterpolant(Term,Terms,f,fdiscrete,dInterpolant
       G = 0;
     end
     %(12)
-    Interpolant_Value = 1 ./ Term .* (Terms(i) .* dInterpolantatNode(:,i) + (Term - Terms(i)) .* fdiscrete(:,i + 1) + (Terms(i + 1) - Terms(i)) .* G);
+    Interpolant_Value = 1 ./ Term .* (Terms(i) .* dInterpolantatNode(:,i) ...
+						+ (Term - Terms(i)) .* fdiscrete(:,i + 1) ...
+						+ (Terms(i + 1) - Terms(i)) .* G);
   end
 end
 
@@ -334,7 +375,7 @@ function Forward = CalcForward(Term,Terms,f,fdiscrete)
       G = g1;
     else
       %zone (i)
-            G_1 = g0 .* (1 - 4 .* x + 3 .* x .^ 2) + g1 .* (-2 .* x + 3 .* x .^ 2);
+         G_1 = g0 .* (1 - 4 .* x + 3 .* x .^ 2) + g1 .* (-2 .* x + 3 .* x .^ 2);
 
       %zone (ii)   
           eta_2 = (g1 + 2 .* g0) ./ (g1 - g0);
@@ -369,18 +410,21 @@ function Forward = CalcForward(Term,Terms,f,fdiscrete)
   end
 end
 
-function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,InputsareForwards,Negative_Forwards_Allowed)
+function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values, ...
+									InputsareForwards,Negative_Forwards_Allowed)
   %extend the curve to time 0, for the purpose of calculating forward at time 1
 
   %step 1: equation 14
   N = columns(Terms);
   ZZ = zeros(rows(Values),1);
   
-  % Prividing Matlab Compatibility ( no automatic broadcasting available in Matlab)
+  % Providing Matlab Compatibility (no automatic broadcasting in Matlab)
+  % uncomment the following line:
   % Terms = repmat(Terms,rows(Values),1);
   
   if InputsareForwards == 0
-    fdiscrete = ( Terms(:,2:end) .* Values(:,2:end) - Terms(:,1:end-1) .* Values(:,1:end-1)  ) ./ ( Terms(:,2:end) - Terms(:,1:end-1)  );
+    fdiscrete = ( Terms(:,2:end) .* Values(:,2:end) - Terms(:,1:end-1) ...
+				.* Values(:,1:end-1) ) ./ ( Terms(:,2:end) - Terms(:,1:end-1));
     dInterpolantatNode = Values;
     fdiscrete = [ZZ,fdiscrete];
   else
@@ -397,7 +441,10 @@ function [f, fdiscrete, dInterpolantatNode] = fi_estimates(Terms, Values,Inputsa
     %step 2
     %(22)
     for j = 2 : 1 :  columns(Terms) - 1
-        f(:,j) = (Terms(:,j) - Terms(:,j - 1)) ./ (Terms(:,j + 1) - Terms(:,j - 1)) .* fdiscrete(:,j + 1) + (Terms(:,j + 1) - Terms(:,j)) ./ (Terms(:,j + 1) - Terms(:,j - 1)) .* fdiscrete(:,j);
+        f(:,j) = (Terms(:,j) - Terms(:,j - 1)) ./ (Terms(:,j + 1) ...
+				- Terms(:,j - 1)) .* fdiscrete(:,j + 1) + (Terms(:,j + 1) ...
+				- Terms(:,j)) ./ (Terms(:,j + 1) - Terms(:,j - 1)) ...
+				.* fdiscrete(:,j);
     end
     %(23)
     f(:,1) = fdiscrete(:,2) - 0.5 .*( f(:,2) - fdiscrete(:,2));
@@ -428,21 +475,27 @@ end
 % ----------------------------------------------------------------------
 %          Main functions for Smith-Wilson Interpolation
 % ----------------------------------------------------------------------
-% This implementation is based on the explanations in the Paper: FINANSTILSYNET ,
-% 'A Technical Note on the Smith-Wilson Method' by 'The Financial Supervisory Authority of Norway', 2010 and
-% 'QIS 5 Risk-free interest rates – Extrapolation method', published by CEIOPS (now EIOPA)
-% Be aware of singularities in extreme events. Take into account of increasing alpha in that cases.
-% See http://staff.math.su.se/andreas/smith_wilson_final.pdf: 'Issues with the Smith-Wilson method' by Andreas Lager and Mathias Lindholm
+% This implementation is based on the explanations in the Paper: FINANSTILSYNET,
+% 'A Technical Note on the Smith-Wilson Method' by 'The Financial Supervisory 
+% Authority of Norway', 2010 and 'QIS 5 Risk-free interest rates – 
+% Extrapolation method', published by CEIOPS (now EIOPA).
+%
+% Be aware of singularities in extreme events. Take into account of increasing 
+% alpha in that cases.
+% See http://staff.math.su.se/andreas/smith_wilson_final.pdf: 
+% 'Issues with the Smith-Wilson method' by Andreas Lager and Mathias Lindholm
 
 % Wilson function
 function W = Wilson_function(t,u,ufrc,alpha)
     ma = max(t,u);
     mi = min(t,u);
-    W = exp(-ufrc .* (t + u)) .* ( alpha .* mi - 0.5 .* exp(-alpha.*ma) .* ( exp(alpha.*mi) - exp(-alpha.*mi) ) );
+    W = exp(-ufrc .* (t + u)) .* ( alpha .* mi - 0.5 .* exp(-alpha.*ma) ...
+		.* ( exp(alpha.*mi) - exp(-alpha.*mi) ) );
 end
 
 % function for calculating new discount rates 
-function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alpha)
+function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
+											ufrc,alpha)
     % transpose input vectors if necessary
         if rows(tt) < columns(tt)
             tt = tt';
@@ -450,11 +503,13 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
         if rows(nodes_input_y) < columns(nodes_input_y)
             nodes_input_y = nodes_input_y';
         end
-    % transpose rates input matrix (each vector rates(nodes) per scenario has to be in columns)
+    % transpose rates input matrix (each vector rates(nodes) per scenario has 
+    % to be in columns)
             rates_input = rates_input';        
     % checking for nodes_input to be in years instead of days
         if ( max(nodes_input_y) > 120)
-            %disp('WARNING: Nodes_input seems to be defined in days, converting to years...')
+            %disp('WARNING: Nodes_input seems to be defined in days, 
+            % converting to years...')
             nodes_input_y = nodes_input_y ./365;
             tt = tt ./ 365;
         end
@@ -473,17 +528,22 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y,ufrc,alp
             d_vec = (m - mu);
             chi = inv(W) * d_vec;
     % calculate discount rate and discount factor
-        [X,Y] = meshgrid(nodes_input_y,tt);     % set up meshgrid for using vectorized code
+        [X,Y] = meshgrid(nodes_input_y,tt);     % set up meshgrid
         WW = Wilson_function(X,Y,ufrc,alpha); 
         chi_mat = repmat( chi',rows(WW),1);
         M = chi_mat .* WW;
         S = sum(M,2);
     % Return discount factor and discount rates
     P = exp(-ufrc*tt) + S;
-    % set discount factors to positive values, anyway there will be singularities...
+    % set discount factors to positive values, 
+    % anyway there will be singularities...
     P(P<0) = 0.001;
     R =  log(1 ./P) ./tt;
     if ~(isreal(R))
        error('ERROR: R vector not real');    
     end
 end
+
+%!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'monotone-convex' ),[0.012116882;0.007318077],0.000001)
+%!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'smith-wilson',0.05,0.12),[0.012023083;0.0015458739299],0.000001)
+%!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'linear'),[0.01186301;0.00847945],0.000001)

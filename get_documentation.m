@@ -11,18 +11,17 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} get_documentation(@var{type}, @var{path_documentation}))
-%# Print documentation for all specified Octave functions. 
-%# This script allows you to choose functions, for which the documentation is extracted from the function headers
-%# and printed to a file 'functions.texi', 'functionname.html' or to standard output if a specific format (texinfo,  html, txt) is set.
+%# @deftypefn {Function File} {} get_documentation(@var{type}, 
+%#							@var{path_octarisk}, @var{path_documentation}))
+%# Print documentation for all Octave functions in specified path. 
+%# The documentation is extracted from the function headers and printed to a 
+%# file 'functions.texi', 'functionname.html' or to standard output if a  
+%# specific format (texinfo,  html, txt) is set.
+%#
 %# The path to all files has to be set in the variable path_documentation.
 %# @end deftypefn
 
 function get_documentation(type,path_octarisk,path_documentation)
-
-% Definition of Cellstring with all relevant scripts
-% scripts = ['octarisk'; 'option_bs'; 'option_willowtree'; 'interpolate_curve'; 'pricing_npv'; 'harrell_davis_weight'];
-% c = cellstr(scripts)
 
 % get names of all scripts
 cc = dir(path_octarisk);
@@ -37,7 +36,8 @@ c
 
 % printing functions:
 if ( strcmp('html',type) == 1)
-    % Loop via all function names in cellstring, convert texinfo to html and print it to functionname.html
+    % Loop via all function names in cellstring, convert texinfo to html and 
+    % print it to functionname.html
     for ii = 1:length(c)
 		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         [retval status] = __makeinfo__(get_help_text(c{ii}),'html');
@@ -54,11 +54,12 @@ if ( strcmp('html',type) == 1)
             fclose (fid);
             fprintf('SUCCESS: Documentation printed for: >>%s<<\n',c{ii}); 
         else
-            fprintf('ERROR: There was a problem for: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
+            fprintf('ERROR: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
         end
     end
 elseif  ( strcmp('txt',type) == 1)  
-    % Loop via all function names in cellstring, convert texinfo to plain text and print it to documentation.txt
+    % Loop via all function names in cellstring, convert texinfo to plain text 
+    % and print it to documentation.txt
     %filename = strcat(path,'documentation.txt');
     %fid = fopen (filename, 'w');
     for ii = 1:length(c)
@@ -77,12 +78,13 @@ elseif  ( strcmp('txt',type) == 1)
             fprintf(fid, '\n');
             fprintf('SUCCESS: Documentation printed for: >>%s<<\n',c{ii}); 
         else
-            fprintf('ERROR: There was a problem for: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
+            fprintf('ERROR: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
         end
     end
     fclose (fid);
 elseif  ( strcmp('texinfo',type) == 1)  
-    % Loop via all function names in cellstring, print texinfo directly to functions.texi
+    % Loop via all function names in cellstring, print texinfo directly to 
+    % functions.texi
     filename = strcat(path_documentation,'/functions.texi');
     fid = fopen (filename, 'w');
     fprintf(fid,'\@menu\n');
@@ -111,7 +113,7 @@ elseif  ( strcmp('texinfo',type) == 1)
             fprintf(fid, '\n');
             fprintf('SUCCESS: Documentation printed for: >>%s<<\n',c{ii}); 
         else
-            fprintf('ERROR: There was a problem for: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
+            fprintf('ERROR: >>%s<<. Message: >>%s<<\n',c{ii},lasterr); 
         end
     end
     fclose (fid);    

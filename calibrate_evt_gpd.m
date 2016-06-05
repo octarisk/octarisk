@@ -11,17 +11,22 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{chi} @var{sigma} @var{u}] =} calibrate_evt_gpd(@var{v})
+%# @deftypefn {Function File} { [@var{chi} @var{sigma} @var{u}] =} 
+%#													calibrate_evt_gpd(@var{v})
+%#
 %# Calibrate sorted losses of historic or MC portfolio values 
-%# to a generalized pareto distribution and returns chi, sigma and u as parameters for further VAR and ES calculation.
+%# to a generalized pareto distribution and returns chi, sigma and u as 
+%# parameters for further VAR and ES calculation.
 %# @*
-%# Implementation according to @i{Risk Management and Financial Institutions} by John C. Hull, 4th edition, Wiley 2015, 
-%#  section 13.6, page 292ff.
+%# Implementation according to @i{Risk Management and Financial Institutions} 
+%# by John C. Hull, 4th edition, Wiley 2015, section 13.6, page 292ff.
 %# @*
 %# Explanation of Parameters:
 %# @itemize @bullet
-%# @item @var{v}:       INPUT: sorted profit and loss distribution of all required tail events (1xN vector)
-%# @item @var{chi}:     OUTPUT: Generalized Pareto distribution: shape parameter (scalar)
+%# @item @var{v}:       INPUT: 	sorted profit and loss distribution of all 
+%#								required tail events (1xN vector)
+%# @item @var{chi}:     OUTPUT: Generalized Pareto distribution: shape 
+%#								parameter (scalar)
 %# @item @var{sigma}:   OUTPUT: scale parameter (scalar)
 %# @item @var{u}:       OUTPUT: location parameter(scalar)
 %# @end itemize
@@ -33,7 +38,8 @@ function [chi sigma u] = calibrate_evt_gpd(v)
 u = min(v);     % location parameter
 chi = 0.3;      % shape parameter
 beta = u/10;    % scale parameter
-y = v - u;     % substitution of loss distribution which is shifted by location parameter
+y = v - u;      % substitution of loss distribution which is shifted 
+				% by location parameter
 
 % Start parameter
 x0 = [chi;beta];
@@ -43,20 +49,21 @@ options(1) = 0;
 options(2) = 1e-5;
 
 % Calibrate chi and sigma
-[x, obj, info, iter] = sqp (x0, @ (x) min_GPD(x,y), [], [], [0.00001;0.00001], [], 300);	%, obj, info, iter, nf, lambda @g
+[x, obj, info, iter] = sqp (x0, @ (x) min_GPD(x,y), [], [], ...
+							[0.00001;0.00001], [], 300)
 
 
 if (info == 101 )
-	%disp ('       +++ SUCCESS: Optimization converged in +++');
+	%disp ('   +++ SUCCESS: Optimization converged in +++');
 	%steps = iter
 elseif (info == 102 )
-	disp ('       --- GPD Calibration WARNING: The BFGS update failed. ---');
+	disp ('--- GPD WARNING: The BFGS update failed. ---');
 elseif (info == 103 )
-	disp ('       --- GPD Calibration WARNING: The maximum number of iterations was reached. ---');
+	disp ('--- GPD WARNING: The maximum number of iterations was reached. ---');
 elseif (info == 104 )
-    %disp ('       --- WARNING: The stepsize has become too small. ---');
+    %disp ('--- WARNING: The stepsize has become too small. ---');
 else
-	disp ('       --- GPD Calibration WARNING: Optimization did not converge! ---');
+	disp ('--- GPD WARNING: Optimization did not converge! ---');
 end
 % 
 % return scale and shape parameter
@@ -68,7 +75,7 @@ end
 %------------------------------------------------------------------
 %------------------- Begin Subfunctions ---------------------------
 
-% Definition Objective Function for calibration of generalized pareto distribution:	       
+%  Objective Function for calibration of generalized pareto distribution:	       
 function obj = min_GPD (x,y)
 			chi = x(1);
             beta = x(2);
@@ -79,5 +86,5 @@ end
 
 %!test
 %! [aa,bb,cc] = calibrate_evt_gpd([-5500;-4880;-4600;-4500;-4450;-4400;-4390]);
-%! assert ([aa,bb,cc] - [20.3794119,0.0000109,-5500.00000],[0.000000,0.0000000,0.0000000],0.00001);
+%! assert ([aa,bb,cc] - [20.3794119,0.0000109,-5500.00000],[0.000000,0.0000000,0.0000000],0.00003);
   
