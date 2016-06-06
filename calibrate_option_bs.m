@@ -11,11 +11,15 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_bs(@var{putcallflag}, @var{S}, @var{X}, @var{T}, @var{rf}, @var{sigma}, @var{multiplicator}, @var{market_value})
-%# Calibrate the implied volatility spread for Eeuropean options according to Black-Scholes valuation formula.
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_bs(
+%# @var{putcallflag}, @var{S}, @var{X}, @var{T}, @var{rf}, @var{sigma}, 
+%# @var{multiplicator}, @var{market_value})
+%# Calibrate the implied volatility spread for Eeuropean options according to 
+%# Black-Scholes valuation formula.
 %# @end deftypefn
 
-function vola_spread = calibrate_option_bs(putcallflag,S,X,T,rf,sigma,multiplicator,market_value)
+function vola_spread = calibrate_option_bs(putcallflag,S,X,T,rf,sigma, ...
+                                            multiplicator,market_value)
 
 %option_value = option_bs(putcallflag,S,X,T,rf,sigma) .* multiplicator
 % Start parameter
@@ -24,22 +28,23 @@ x0 = -0.0001;
 %p0=[x0]'; % Guessed parameters.
 
 lb = -sigma + 0.0001;
-[x, obj, info, iter] = sqp (x0, @ (x) phi(x,putcallflag,S,X,T,rf,sigma,multiplicator,market_value), [], [], lb, [], 300);	%, obj, info, iter, nf, lambda @g
+[x, obj, info, iter] = sqp (x0, @ (x) phi(x,putcallflag,S,X,T,rf,sigma, ...
+                            multiplicator,market_value), [], [], lb, [], 300);
 
 if (info == 101 )
-	%disp ('       +++ SUCCESS: Optimization converged in +++');
+	%disp (' +++ SUCCESS: Optimization converged in +++');
 	%steps = iter
 elseif (info == 102 )
-	%disp ('       --- WARNING: The BFGS update failed. ---');
+	%disp (' --- WARNING: The BFGS update failed. ---');
     x = -99;
 elseif (info == 103 )
-	%disp ('       --- WARNING: The maximum number of iterations was reached. ---');
+	%disp (' --- WARNING: The maximum number of iterations was reached. ---');
     x = -99;
 elseif (info == 104 )
-    disp ('       --- WARNING: The stepsize has become too small. ---');
+    disp (' --- WARNING: The stepsize has become too small. ---');
     %x = -99;
 else
-	%disp ('       --- WARNING: Optimization did not converge! ---');
+	%disp (' --- WARNING: Optimization did not converge! ---');
     x = -99;
 end
 
@@ -54,18 +59,13 @@ end
 %------------------- Begin Subfunction ---------------------------
  
  
-%-----------------------------------------------------------------
-%------------------- Begin Subfunction ---------------------------
-%Subfunctions private:
-
- 
 % Definition Objective Function:	    
 	function obj = phi (x,putcallflag,S,X,T,rf,sigma,multiplicator,market_value)
-            % This is where we computer the sum of the square of the errors.
-            % The parameters are in the vector p, which for us is a two by one.	
-			tmp_option_value = option_bs(putcallflag,S,X,T,rf,sigma+x) .* multiplicator;
-			obj = abs( tmp_option_value  - market_value)^2;
-		%----------------------------------------------
+        % This is where we computer the sum of the square of the errors.
+        % The parameters are in the vector p, which for us is a two by one.	
+        tmp_option_value = option_bs(putcallflag,S,X,T,rf,sigma+x) ...
+                           .* multiplicator;
+        obj = abs( tmp_option_value  - market_value)^2;
 end
  
  

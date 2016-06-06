@@ -50,7 +50,7 @@ options(2) = 1e-5;
 
 % Calibrate chi and sigma
 [x, obj, info, iter] = sqp (x0, @ (x) min_GPD(x,y), [], [], ...
-							[0.00001;0.00001], [], 300)
+							[0.00001;0.00001], [], 300);
 
 
 if (info == 101 )

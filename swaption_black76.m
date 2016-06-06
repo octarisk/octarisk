@@ -11,9 +11,12 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{SwaptionB76Value}] =} swaption_black76 (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{m}, @var{tau})
+%# @deftypefn {Function File} {[@var{SwaptionB76Value}] =} 
+%# swaption_black76 (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, 
+%# @var{r}, @var{sigma}, @var{m}, @var{tau})
 %#
-%# Compute the price of european interest rate swaptions according to Black76 Pricing Functions.
+%# Compute the price of european interest rate swaptions according to Black76 
+%# pricing functions.
 %# Fast implementation, fully vectorized.@*
 %# @example
 %# @group
@@ -26,19 +29,24 @@
 %# @*
 %# Variables:
 %# @itemize @bullet
-%# @item @var{PayerReceiverFlag}: Call / Payer '1' (pay fixed) or Put / Receiver '0' (receive fixed, pay floating) swaption
-%# @item @var{F}: forward rate of underlying interest rate (forward in T years for tau years)
+%# @item @var{PayerReceiverFlag}: Call / Payer '1' (pay fixed) or Put / Receiver
+%#  '0' (receive fixed, pay floating) swaption
+%# @item @var{F}: forward rate of underlying interest rate (
+%# forward in T years for tau years)
 %# @item @var{X}: strike rate 
 %# @item @var{T}: time in days to maturity
 %# @item @var{r}: annual risk-free interest rate (continuously compounded)
-%# @item @var{sigma}: implied volatility of the interest rate measured as annual standard deviation
-%# @item @var{m}: Number of Payments per year (m = 2 -> semi-annual) (continuous compounding is assumed)
+%# @item @var{sigma}: implied volatility of the interest rate measured as annual 
+%# standard deviation
+%# @item @var{m}: Number of Payments per year (m = 2 -> semi-annual) (continuous 
+%# compounding is assumed)
 %# @item @var{tau}: Tenor of underlying swap in Years 
 %# @end itemize
 %# @seealso{swaption_bachelier}
 %# @end deftypefn
 
-function SwaptionB76Value = swaption_black76(PayerReceiverFlag,F,X,T,r,sigma,m,tau)
+function SwaptionB76Value = swaption_black76(PayerReceiverFlag,F,X,T,r, ...
+                                                sigma,m,tau)
 
  if nargin < 8 || nargin > 8
     print_usage ();

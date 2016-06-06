@@ -11,22 +11,29 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{forward_rate}=} get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq})
-%# Compute the forward rate calculated from interpolated rates from a zero coupon yield curve. CAUTION: the forward rate is floored to 0.000001.
+%# @deftypefn {Function File} {@var{forward_rate}=} 
+%# get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, 
+%# @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq})
+%# Compute the forward rate calculated from interpolated rates from a zero 
+%# coupon yield curve. CAUTION: the forward rate is floored to 0.000001.
 %# Explanation of Input Parameters:
 %# @*
 %# @itemize @bullet
 %# @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
-%# @item @var{rates}: is MxN matrix with curve rates defined in columns. Each row contains a specific scenario with different curve structure
+%# @item @var{rates}: is MxN matrix with curve rates defined in columns. Each 
+%# row contains a specific scenario with different curve structure
 %# @item @var{days_to_t1}: is a scalar, specifiying term1 in days
 %# @item @var{days_to_t2}: is a scalar, specifiying term2 in days after term1
-%# @item @var{comp_type}: (optional) specifies compounding rule (simple, discrete, continuous (defaults to 'cont')).
-%# @item @var{interp_method}: (optional) specifies interpolation method for retrieving interest rates (defaults to 'linear').
+%# @item @var{comp_type}: (optional) specifies compounding rule (simple, 
+%# discrete, continuous (defaults to 'cont')).
+%# @item @var{interp_method}: (optional) specifies interpolation method for 
+%# retrieving interest rates (defaults to 'linear').
 %# @end itemize
 %# @seealso{interpolate_curve}
 %# @end deftypefn
 
-function forward_rate = get_forward_rate(nodes,rates,days_to_t1,days_to_t2,comp_type,interp_method,comp_freq)
+function forward_rate = get_forward_rate(nodes,rates,days_to_t1,days_to_t2, ...
+                                            comp_type,interp_method,comp_freq)
  
  if nargin < 4 || nargin > 7
     print_usage ();
@@ -88,9 +95,11 @@ d2 = (days_to_t2 + days_to_t1 ) ./ 365;
 
 % 3 cases
 if ( compounding_type == 1)      % simple
-    tmp_rate = ( (( 1 + (r2 .* d2) ) ./ ( 1 + (r1 .* d1) ) ) - 1 )  ./ ( d2 - d1 );
+    tmp_rate = ((( 1 + (r2 .* d2)) ./ ( 1 + (r1 .* d1) ) ) - 1 ) ./ ( d2 - d1 );
 elseif ( compounding_type == 2)      % discrete
-    tmp_rate = (  ( 1 + (r2 ./ comp_freq) ).^(comp_freq * d2) ./ ( 1 + (r1 ./ comp_freq) ).^(comp_freq * d1)  ).^(1 ./ (d2 - d1)) - 1;
+    tmp_rate = (  ( 1 + (r2 ./ comp_freq) ).^(comp_freq * d2) ...
+                ./ ( 1 + (r1 ./ comp_freq) ).^(comp_freq * d1) ) ...
+                .^(1 ./ (d2 - d1)) - 1;
 elseif ( compounding_type == 3)      % continuous
     tmp_rate = ( r2 .* d2 - r1 .* d1  ) ./ (  d2 - d1 );
 end

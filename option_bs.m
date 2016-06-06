@@ -11,9 +11,12 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{value} @var{delta} @var{gamma} @var{vega} @var{theta} @var{rho} @var{omega}] =} option_bs (@var{CallPutFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
+%# @deftypefn {Function File} {[@var{value} @var{delta} @var{gamma} @var{vega} 
+%# @var{theta} @var{rho} @var{omega}] =} option_bs (@var{CallPutFlag}, 
+%# @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
 %#
-%# Compute the prices of european call or put options according to Black-Scholes valuation formula:@*
+%# Compute the prices of european call or put options according to Black-Scholes 
+%# valuation formula:@*
 %# @example
 %# @group
 %# C(S,T) = N(d_1)*S - N(d_2)*X*exp(-rT)
@@ -22,7 +25,8 @@
 %# d2 = d1 - sigma*sqrt(T)
 %# @end group
 %# @end example
-%# The Greeks are also computed (delta, gamma, vega, theta, rho, omega) by their closed form solution. @*
+%# The Greeks are also computed (delta, gamma, vega, theta, rho, omega) by 
+%# their closed form solution. @*
 %# Parallel computation for column vectors of S,X,r and sigma is possible. @*
 %# @*
 %# Variables:
@@ -32,13 +36,15 @@
 %# @item @var{X}: strike price 
 %# @item @var{T}: time to maturity in days 
 %# @item @var{r}: annual risk-free interest rate (continuously compounded)
-%# @item @var{sigma}: implied volatility of the stock price measured as annual standard deviation
+%# @item @var{sigma}: implied volatility of the stock price measured as annual 
+%# standard deviation
 %# @item @var{divrate}: dividend rate p.a., continously compounded
 %# @end itemize
 %# @seealso{option_willowtree, swaption_black76}
 %# @end deftypefn
 
-function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X,T,r,sigma,divrate)
+function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X, ...
+                                                              T,r,sigma,divrate)
  
  if nargin < 6 || nargin > 7
     print_usage ();
@@ -90,10 +96,13 @@ q = divrate;
 % normal density corresponding to N1 (needed for greeks)
     N1s = exp(-d1 .* d1 ./ 2) ./ sqrt(2 .* pi);   
 % Calculating value and greeks: 
-    value   = eta .* (exp(-q.*T) .* S.*normcdf_eta_d1- X.*exp(-r.*T).*normcdf_eta_d2); 
+    value   = eta .* (exp(-q.*T) .* S.*normcdf_eta_d1- X.*exp(-r.*T) ...
+                .*normcdf_eta_d2); 
     delta   = eta .* exp(-q.*T) .* normcdf_eta_d1;
     gamma   =  exp(-q .* T) .* N1s ./ S ./ sigma ./ sqrt(T);
-    theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) + q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) .* X .* normcdf_d2;
+    theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
+                + q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) ...
+                .* X .* normcdf_d2;
     vega    = S .* exp(-q.*T) .* N1s .* sqrt(T);
     rho     = eta .* T.* X .*exp(-r.*T).* normcdf_eta_d2;
     omega   = delta .* S ./ value;
