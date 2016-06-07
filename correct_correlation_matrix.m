@@ -11,10 +11,12 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{A_scaled} @var{pos_sem_def_bool}] =} correct_correlation_matrix(@var{M})
-%# Return a positive semi-definite matrix @var{A_scaled} to a given input matrix @var{M}.
-%# This function tests for indefiniteness of the input matrix and eventuallry adjusts 
-%# negative Eivenvalues to 0 or slightly positive values via some iteration steps.
+%# @deftypefn {Function File} {[@var{A_scaled} @var{pos_sem_def_bool}] =} 
+%# correct_correlation_matrix(@var{M})
+%# Return a positive semi-definite matrix @var{A_scaled} to a given input 
+%# matrix @var{M}. This function tests for indefiniteness of the input matrix 
+%# and eventuallry adjusts negative Eivenvalues to 0 or slightly positive values 
+%# via some iteration steps.
 %# @*
 %# Reference: 'Implementing Value at Risk', Best, Philip W., 1998.
 %# @end deftypefn
@@ -50,7 +52,7 @@ while ( pos_sem_def_bool == 0 )
     end
 end
 if ( break_bool == 1 )
-    fprintf ('!!!! Warning: No positive semidefinite solution was reached !!!!\n');
+    fprintf ('!! Warning: No positive semidefinite solution was reached !!\n');
 end
 % Get final test statistics
     A_scaled_diff = A_scaled - M;
@@ -77,7 +79,8 @@ function res = rescale ( A )
     % columnwise rescaling to diagonal elements == 1
     Balance = diag(1./sqrt(diag(A)));
     A_scaled = Balance * A * Balance';
-    % symmetrizing: taking lower triangular matrix and mirror values to upper triangular matrix
+    % symmetrizing: taking lower triangular matrix and mirror values to 
+    %               upper triangular matrix
     trilower = tril(A_scaled);
     D = diag(trilower);
     [nr,nc]=size(trilower);

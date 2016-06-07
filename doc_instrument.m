@@ -11,20 +11,25 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { @var{object} =} Instrument (@var{name}, @var{id}, @var{description}, @var{type}, @var{currency}, @var{base_value}, @var{asset_class}, @var{valuation_date})
+%# @deftypefn {Function File} { @var{object} =} Instrument (@var{name}, @var{id}, 
+%# @var{description}, @var{type}, @var{currency}, @var{base_value}, 
+%# @var{asset_class}, @var{valuation_date})
 %# Instrument Superclass Inputs:
 %# @itemize @bullet
 %# @item @var{name} (string): Name of object
 %# @item @var{id} (string): Id of object
 %# @item @var{description} (string): Description of object
-%# @item @var{type} (string): instrument type in list [cash, bond, debt, forward, option, sensitivity, synthetic]
+%# @item @var{type} (string): instrument type in list [cash, bond, debt, forward, 
+%# option, sensitivity, synthetic]
 %# @item @var{currency} (string): ISO code of currency
 %# @item @var{base_value} (float): Actual base (spot) value of object
 %# @item @var{asset_class} (sring): Instrument asset class
-%# @item @var{valuation_date} (datenum): serial day number from Jan 1, 0000 defined as day 1. 
+%# @item @var{valuation_date} (datenum): serial day number from Jan 1, 0000 
+%# defined as day 1. 
 %# @end itemize
 %# @*
-%# The constructor of the instrument class constructs an object with the following properties and inherits them to all sub classes: @*
+%# The constructor of the instrument class constructs an object with the 
+%# following properties and inherits them to all sub classes: @*
 %# @itemize @bullet
 %# @item name: Name of object
 %# @item id: Id of object
@@ -35,15 +40,18 @@
 %# @item type: Type of Instrument class (Bond,Forward,...) 
 %# @item valuation_date: date format DD-MMM-YYYY 
 %# @item value_stress: Vector with values under stress scenarios
-%# @item value_mc: Matrix with values under MC scenarios (values per timestep per column)
+%# @item value_mc: Matrix with values under MC scenarios (values per timestep 
+%# per column)
 %# @item timestep_mc: MC timestep per column (cell string)
 %# @end itemize
 %# 
 %# @var{value} = Instrument.getValue (@var{base}, @var{stress}, @var{mc_timestep})
 %# Superclass Method getValue 
 %# @*
-%# Return the scenario (shock) value for an instrument object. Specify the desired return values with a property parameter.
-%# If the second argument abs is set, the absolut scenario value is calculated from scenario shocks and the risk factor start value.
+%# Return the scenario (shock) value for an instrument object. Specify the 
+%# desired return values with a property parameter.
+%# If the second argument abs is set, the absolut scenario value is calculated 
+%# from scenario shocks and the risk factor start value.
 %# @*
 %# Timestep properties:
 %# @itemize @bullet
@@ -55,7 +63,8 @@
 %# @var{boolean} = Instrument.isProp (@var{property}) 
 %# Instrument Method isProp
 %# @*
-%# Query all properties from the Instrument Superclass and sub classes and returns 1 in case of a valid property.
+%# Query all properties from the Instrument Superclass and sub classes and 
+%# returns 1 in case of a valid property.
 %# @*
 %# @*
 %# @seealso{Instrument}

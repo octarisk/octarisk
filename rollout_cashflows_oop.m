@@ -208,6 +208,12 @@ while datenum(cf_date) >= datenum(issue_date)
         new_cf_year = cf_year - 1;
         new_cf_month = cf_month;
         new_cf_day = cf_day;
+    elseif ( term == 365)
+        new_cf_date = datenum(cf_date)-365;
+        new_cf_date = datevec(new_cf_date);
+        new_cf_year = new_cf_date(:,1);
+        new_cf_month = new_cf_date(:,2);
+        new_cf_day = new_cf_date(:,3);    
     % rollout for semi-annual (compounding frequency = 2 payments per year)
     elseif ( term == 6)
         new_cf_year = cf_year;
@@ -265,6 +271,12 @@ while datenum(cf_date) <= datenum(maturity_date)
         new_cf_year = cf_year + 1;
         new_cf_month = cf_month;
         new_cf_day = cf_day;
+    elseif ( term == 365)
+        new_cf_date = datenum(cf_date) + 365;
+        new_cf_date = datevec(new_cf_date);
+        new_cf_year = new_cf_date(:,1);
+        new_cf_month = new_cf_date(:,2);
+        new_cf_day = new_cf_date(:,3);     
     % rollout for semi-annual (compounding frequency = 2 payments per year)
     elseif ( term == 6)
         new_cf_year = cf_year;
@@ -366,6 +378,8 @@ if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
 %           spot rate defined 
 elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
+    % TODO: use dcc and comp type/freq of curve different from instrument 
+    %       and convert rates according to conventions
     cf_datesnum = datenum(cf_dates);
     %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
@@ -376,11 +390,11 @@ elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
     for ii = 1 : 1 : length(d1)
         % convert dates into years from tody
         [tf dip dib] = timefactor (d1(ii), d2(ii), dcc);
-        t1 = (d1(ii) - valuation_date) ./ dib;
-        t2 = (d2(ii) - valuation_date) ./ dib;
+        t1 = (d1(ii) - valuation_date);
+        t2 = (d2(ii) - valuation_date);
         if ( t1 > 0 && t2 > 0 )        % for future cash flows use forward rates
             forward_rate = (spread + get_forward_rate(tmp_nodes,tmp_rates, ...
-                        t1,t2-t1,compounding_type,method_interpolation)) .* tf;
+                        t1,t2-t1,compounding_type,method_interpolation,dcc)) .* tf;
         elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
                                         % next is in future, use last reset rate
             forward_rate = last_reset_rate .* tf;

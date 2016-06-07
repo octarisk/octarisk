@@ -54,9 +54,9 @@ classdef Surface
       function a = Surface(tmp_name,tmp_id,tmp_type,tmp_description)
          % Riskfactor Constructor method
         if nargin < 3
-            tmp_name            = 'RF_VOLA_INDEX_DUMMY';
-            tmp_id              = 'RF_VOLA_IR_EUR';
-            tmp_description     = 'Test Dummy surface';
+            tmp_name            = 'Index Test Surface';
+            tmp_id              = 'VOLA_INDEX_EUR';
+            tmp_description     = 'Test surface';
             tmp_type            = 'Index';
         end 
         if nargin < 4
@@ -69,7 +69,7 @@ classdef Surface
         a.id            = tmp_id;
         a.description   = tmp_description;
         a.type          = upper(tmp_type);
-                     
+                             
       end % Surface
       
       function disp(a)

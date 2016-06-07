@@ -11,11 +11,14 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} save_objects(@var{path_output}, @var{riskfactor_struct}, @var{instrument_struct}, @var{portfolio_struct}, @var{stresstest_struct})
+%# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} 
+%# save_objects(@var{path_output}, @var{riskfactor_struct}, 
+%# @var{instrument_struct}, @var{portfolio_struct}, @var{stresstest_struct})
 %# Save provided structs for riskfactors, instruments, positions and stresstests.
 %# @end deftypefn
 
-function [save_cell] = save_objects(path_output,riskfactor_struct,instrument_struct,portfolio_struct,stresstest_struct)
+function [save_cell] = save_objects(path_output,riskfactor_struct, ...
+                            instrument_struct,portfolio_struct,stresstest_struct)
 
 save_cell = {};
 number_saves = 0;

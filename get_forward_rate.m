@@ -13,9 +13,10 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{forward_rate}=} 
 %# get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, 
-%# @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq})
-%# Compute the forward rate calculated from interpolated rates from a zero 
-%# coupon yield curve. CAUTION: the forward rate is floored to 0.000001.
+%# @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq},
+%# , @var{basis}, @var{valuation_date})
+%# Compute the forward rate calculated from interpolated rates from a  
+%# yield curve. CAUTION: the forward rate is floored to 0.000001.
 %# Explanation of Input Parameters:
 %# @*
 %# @itemize @bullet
@@ -28,30 +29,58 @@
 %# discrete, continuous (defaults to 'cont')).
 %# @item @var{interp_method}: (optional) specifies interpolation method for 
 %# retrieving interest rates (defaults to 'linear').
+%# @item @var{comp_freq}: (optional) compounding frequency (default: annual)
+%# @item @var{basis}: (optional) day count basis of yield curve (default: act/365)
+%# @item @var{valuation_date}: (optional) valuation date (default: today)
 %# @end itemize
 %# @seealso{interpolate_curve}
 %# @end deftypefn
 
-function forward_rate = get_forward_rate(nodes,rates,days_to_t1,days_to_t2, ...
-                                            comp_type,interp_method,comp_freq)
+function forward_rate = get_forward_rate(nodes, rates, days_to_t1, days_to_t2, ...
+                       comp_type, interp_method, comp_freq, basis, valuation_date)
  
- if nargin < 4 || nargin > 7
+ if nargin < 4 || nargin > 9
     print_usage ();
  end
+
+
  
 % default continuous compounding and interpolation method
 if nargin < 5
    comp_type = 'cont';
    interp_method = 'linear';
    comp_freq = 1;
-end
-if nargin < 6
+   valuation_date = today;
+   basis = 3;   %act/365
+elseif nargin < 6
    interp_method = 'linear';
    comp_freq = 1;
-end
-if nargin < 7
+   valuation_date = today;
+   basis = 3;   %act/365
+elseif nargin < 7
    comp_freq = 1;
+   valuation_date = today;
+   basis = 3;   %act/365
+elseif nargin < 8
+   valuation_date = today;
+   basis = 3;   %act/365
+elseif nargin < 9
+   valuation_date = today;
 end
+
+% convert valuation date to datenum
+if ischar(valuation_date) || (length(valuation_date) > 1)
+   valuation_date = datenum(valuation_date);
+end
+
+if ischar(days_to_t1) || (length(days_to_t1) > 1)
+   days_to_t1 = datenum(days_to_t1) - valuation_date;
+end
+
+if ischar(days_to_t2) || (length(days_to_t2) > 1)
+   days_to_t2 = datenum(days_to_t2) - valuation_date;
+end
+
 
 % Checks:
 if ~isnumeric (days_to_t1)
@@ -89,9 +118,9 @@ end
 % Get rates at timesteps1 / 2
 r1 = interpolate_curve(nodes,rates,days_to_t1,interp_method);
 r2 = interpolate_curve(nodes,rates,(days_to_t2 + days_to_t1),interp_method);
-% Get time length between today and timesteps (in years)
-d1 = days_to_t1 ./ 365 ;
-d2 = (days_to_t2 + days_to_t1 ) ./ 365;
+% Get time length between valuation date and timesteps (in years)
+d1 = timefactor (valuation_date,(days_to_t1 + valuation_date),basis);
+d2 = timefactor (valuation_date,(days_to_t1 + days_to_t2 + valuation_date),basis);
 
 % 3 cases
 if ( compounding_type == 1)      % simple
@@ -109,3 +138,6 @@ forward_rate = max(tmp_rate,0.000001);
 end
 
 %!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2),0.0691669,0.00001)
+%!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2,3),0.0691669,0.00001)
+%!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2,0),0.0691636237,0.00001)
+%!assert(get_forward_rate([730,4380],[0.0023001034,0.0084599362],'31-Mar-2018','28-Mar-2028','disc','linear',1,3,'31-Mar-2016'),0.0094902,0.00001)
