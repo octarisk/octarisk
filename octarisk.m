@@ -1035,9 +1035,9 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 	end
   end  % end loop for all positions
   % prepare vector for piechart:
-  [pie_chart_values_sorted_instr_shock sorted_numbers_instr_shock ] = sort(pie_chart_values_instr_shock);
-  [pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock);
-  idx = 1;
+  [pie_chart_values_sorted_instr_shock sorted_numbers_instr_shock ] = sort(pie_chart_values_instr_shock,'descend');
+  [pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock,'descend');
+  idx = 1; 
 
   % plot only maximum 6 highest values
   %for ii = length(pie_chart_values_instr_shock):-1:max(0,length(pie_chart_values_instr_shock)-5)
