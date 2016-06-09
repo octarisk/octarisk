@@ -76,7 +76,7 @@
 %# 			@item @var{8} = act/act ISMA
 %# 			@item @var{9} = act/360 ISMA
 %# 			@item @var{10} = act/365 ISMA
-%# 			@item @var{11} = 30/360E (ISMA)
+%# 			@item @var{11} = 30/360E
 %#      @end itemize
 %# @item @var{comp_type_target}: compounding type of target rate: 
 %# [simple, simp, disc, discrete, cont, continuous] (string)
@@ -103,23 +103,23 @@ end
 if ~isnumeric(rate_origin)
     error('rate_origin is not a valid number')
 end
-if ischar(valuation_date) 
-   valuation_date = datenum(valuation_date);
-end
 
 % convert SIMP -> SIMPLE etc.
-if ( strcmp(upper(comp_type_origin),'SIMP') )
+comp_type_origin = upper(comp_type_origin);
+comp_type_target = upper(comp_type_target);
+
+if ( strcmpi(comp_type_origin,'SIMP') )
     comp_type_origin = 'SIMPLE';
-elseif ( strcmp(upper(comp_type_origin),'DISC') )
+elseif ( strcmpi(comp_type_origin,'DISC') )
     comp_type_origin = 'DISCRETE';
-elseif ( strcmp(upper(comp_type_origin),'CONT') )
+elseif ( strcmpi(comp_type_origin,'CONT') )
     comp_type_origin = 'CONTINUOUS';
 end
-if ( strcmp(upper(comp_type_target),'SIMP') )
+if ( strcmpi(comp_type_target,'SIMP') )
     comp_type_target = 'SIMPLE';
-elseif ( strcmp(upper(comp_type_target),'DISC') )
+elseif ( strcmpi(comp_type_target,'DISC') )
     comp_type_target = 'DISCRETE';
-elseif ( strcmp(upper(comp_type_target),'CONT') )
+elseif ( strcmpi(comp_type_target,'CONT') )
     comp_type_target = 'CONTINUOUS';
 end
 
@@ -146,42 +146,42 @@ timefactor_target = timefactor(valuation_date,term_datenum,dcc_basis_target);
 
 % error check compounding frequency
 if ischar(comp_freq_origin)
-    if ( strcmp(comp_freq_origin,'daily') == 1 
-                                || strcmp(comp_freq_origin,'day') == 1)
+    if ( strcmpi(comp_freq_origin,'daily') == 1 
+                                || strcmpi(comp_freq_origin,'day') == 1)
         comp_freq_origin = 365;
-    elseif ( strcmp(comp_freq_origin,'weekly') == 1 
-                                || strcmp(comp_freq_origin,'week') == 1)
+    elseif ( strcmpi(comp_freq_origin,'weekly') == 1 
+                                || strcmpi(comp_freq_origin,'week') == 1)
         comp_freq_origin = 52;
-    elseif ( strcmp(comp_freq_origin,'monthly') == 1 
-                                || strcmp(comp_freq_origin,'month') == 1)
+    elseif ( strcmpi(comp_freq_origin,'monthly') == 1 
+                                || strcmpi(comp_freq_origin,'month') == 1)
         comp_freq_origin = 12;
-    elseif ( strcmp(comp_freq_origin,'quarterly') == 1 
-                                ||  strcmp(comp_freq_origin,'quarter') == 1)
+    elseif ( strcmpi(comp_freq_origin,'quarterly') == 1 
+                                ||  strcmpi(comp_freq_origin,'quarter') == 1)
         comp_freq_origin = 4;
-    elseif ( strcmp(comp_freq_origin,'semi-annual') == 1)
+    elseif ( strcmpi(comp_freq_origin,'semi-annual') == 1)
         comp_freq_origin = 2;
-    elseif ( strcmp(comp_freq_origin,'annual') == 1 )
+    elseif ( strcmpi(comp_freq_origin,'annual') == 1 )
         comp_freq_origin = 1;       
     else
         error('convert_curve_rates: Need valid compounding frequency')
     end
 end
 if ischar(comp_freq_target)
-    if ( strcmp(comp_freq_target,'daily') == 1 
-                                || strcmp(comp_freq_target,'day') == 1)
+    if ( strcmpi(comp_freq_target,'daily') == 1 
+            || strcmpi(comp_freq_target,'day') == 1)
         comp_freq_target = 365;
-    elseif ( strcmp(comp_freq_target,'weekly') == 1 
-                                || strcmp(comp_freq_target,'week') == 1)
+    elseif ( strcmpi(comp_freq_target,'weekly') == 1 
+             || strcmpi(comp_freq_target,'week') == 1)
         comp_freq_target = 52;
-    elseif ( strcmp(comp_freq_target,'monthly') == 1 
-                                || strcmp(comp_freq_target,'month') == 1)
+    elseif ( strcmpi(comp_freq_target,'monthly') == 1 
+             || strcmpi(comp_freq_target,'month') == 1)
         comp_freq_target = 12;
-    elseif ( strcmp(comp_freq_target,'quarterly') == 1 
-                                ||  strcmp(comp_freq_target,'quarter') == 1)
+    elseif ( strcmpi(comp_freq_target,'quarterly') == 1 
+             || strcmpi(comp_freq_target,'quarter') == 1)
         comp_freq_target = 4;
-    elseif ( strcmp(comp_freq_target,'semi-annual') == 1)
+    elseif ( strcmpi(comp_freq_target,'semi-annual') == 1)
         comp_freq_target = 2;
-    elseif ( strcmp(comp_freq_target,'annual') == 1 )
+    elseif ( strcmpi(comp_freq_target,'annual') == 1 )
         comp_freq_target = 1;       
     else
         error('Need valid compounding frequency')
@@ -191,66 +191,66 @@ end
 % now  get one of the following cases:
 
 %#  from CONT ->   SMP:   
-if ( strcmp(upper(comp_type_origin),'CONTINUOUS') 
-                                && strcmp('SIMPLE',upper(comp_type_target) )) 
+if ( strcmpi(comp_type_origin,'CONTINUOUS') 
+                                && strcmpi('SIMPLE',comp_type_target )) 
     rate_target = (exp(rate_origin .* timefactor_origin) -1) ...
                     ./ timefactor_target;
     conversion_type = 'CONT -> SMP';
     
 %#  from SMP ->    CONT:  
-elseif ( strcmp(upper(comp_type_origin),'SIMPLE') 
-                                && strcmp('CONTINUOUS',upper(comp_type_target))) 
+elseif ( strcmpi(comp_type_origin,'SIMPLE') 
+                                && strcmpi('CONTINUOUS',comp_type_target)) 
     rate_target =  log(1 + rate_origin .* timefactor_origin) ...
                    ./ timefactor_target;
     conversion_type = 'SMP -> CONT';
     
 %#  from DISC ->   CONT:   
-elseif ( strcmp(upper(comp_type_origin),'DISCRETE') 
-                                && strcmp('CONTINUOUS',upper(comp_type_target)))
+elseif ( strcmpi(comp_type_origin,'DISCRETE') 
+                                && strcmpi('CONTINUOUS',comp_type_target))
     rate_target =  log(1 + rate_origin./ comp_freq_origin) ...
                     .* (timefactor_origin .* comp_freq_origin) ...
                     ./ timefactor_target;
     conversion_type = 'DISC -> CONT';
     
 %#  from CONT ->   DISC: 
-elseif ( strcmp(upper(comp_type_origin),'CONTINUOUS') 
-                                && strcmp('DISCRETE',upper(comp_type_target) ) )
+elseif ( strcmpi(comp_type_origin,'CONTINUOUS') 
+                                && strcmpi('DISCRETE',comp_type_target ) )
     rate_target =  (exp(rate_origin .* timefactor_origin ...
                     ./ (comp_freq_target .* timefactor_target)) - 1 ) ...
                     .* comp_freq_target;
     conversion_type = 'CONT -> SMP';
     
 %#  from SMP ->    DISC:   
-elseif ( strcmp(upper(comp_type_origin),'SIMPLE') 
-                                && strcmp('DISCRETE',upper(comp_type_target) ) )
+elseif ( strcmpi(comp_type_origin,'SIMPLE') 
+                                && strcmpi('DISCRETE',comp_type_target ) )
     rate_target =  ( (1 + rate_origin .* timefactor_origin) ...
                         .^(1./( comp_freq_target .* timefactor_target)) -1 ) ...
                         .* comp_freq_target;
     conversion_type = 'SMP -> DISC';
     
 %#  from DISC ->   SMP: 
-elseif ( strcmp(upper(comp_type_origin),'DISCRETE') 
-                                && strcmp('SIMPLE',upper(comp_type_target) ) )
+elseif ( strcmpi(comp_type_origin,'DISCRETE') 
+                                && strcmpi('SIMPLE',comp_type_target ) )
     rate_target =   ( (1 + rate_origin ./ comp_freq_origin ) ...
                         .^(comp_freq_origin .* timefactor_origin) -1 ) ...
                         ./ timefactor_target;
     conversion_type = 'DISC -> SMP';
     
 %#  from CONT ->   CONT:  
-elseif ( strcmp(upper(comp_type_origin),'CONTINUOUS') 
-                                && strcmp('CONTINUOUS',upper(comp_type_target) ) )
+elseif ( strcmpi(comp_type_origin,'CONTINUOUS') 
+                                && strcmpi('CONTINUOUS',comp_type_target ) )
     rate_target =   rate_origin .* timefactor_origin ./ timefactor_target;
     conversion_type = 'CONT -> CONT';
     
 %#  from SMP ->   SMP:  
-elseif ( strcmp(upper(comp_type_origin),'SIMPLE') 
-                                && strcmp('SIMPLE',upper(comp_type_target) ) )
+elseif ( strcmpi(comp_type_origin,'SIMPLE') 
+                                && strcmpi('SIMPLE',comp_type_target ) )
     rate_target =   rate_origin .* timefactor_origin ./ timefactor_target;
     conversion_type = 'SMP -> SMP';
     
 %#  from DISC ->   DISC: 
-elseif ( strcmp(upper(comp_type_origin),'DISCRETE') 
-                                && strcmp('DISCRETE',upper(comp_type_target) ) )
+elseif ( strcmpi(comp_type_origin,'DISCRETE') 
+                                && strcmpi('DISCRETE',comp_type_target ) )
     rate_target =   ( (1 + rate_origin ./ comp_freq_origin) ...
                         .^((comp_freq_origin .* timefactor_origin) ...
                         ./ ( comp_freq_target .* timefactor_target)) -1 ) ...
@@ -267,3 +267,7 @@ end
 end % end of function
 
 %!assert(convert_curve_rates(datenum('31-Dec-2015'),643,0.0060519888,'cont','daily',3,'simple','daily',3),0.006084365,0.0000001)
+%!assert(convert_curve_rates(datenum('31-Mar-2016'),2190,0.0003066350,'cont','daily',3,'disc','annual',11),0.0003066820,0.000000001)
+%!assert(convert_curve_rates(datenum('31-Mar-2016'),2190,0.0003066350,'cont','daily',3,'disc','daily',0),0.0003068805,0.000000001)
+%!assert(convert_curve_rates(datenum('31-Mar-2016'),2190,0.0003066350,'cont','daily',3,'simple','daily',0),0.0003071629,0.000000001)
+

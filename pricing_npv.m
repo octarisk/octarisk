@@ -11,67 +11,105 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{npv} @var{MacDur} ] =} pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values}, @var{spread_constant} ...
-%#										, @var{discount_nodes}, @var{discount_rates}, @var{spread_nodes}, @var{spread_rates}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{interp_discount}, @var{interp_spread})
+%# @deftypefn {Function File} {[@var{npv} @var{MacDur} ] =} 
+%# pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values}, 
+%# @var{spread_constant}, @var{discount_nodes}, @var{discount_rates}, @var{basis}, 
+%# @var{comp_type}, @var{comp_freq}, @var{interp_discount})
 %#
-%# Computes the net present value and Maccaulay Duration of a given cash flow pattern according to a given discount curve, spread curve and day count convention etc.@*
+%# Compute the net present value and Maccaulay Duration of a given cash flow 
+%# pattern according to a given discount curve and day count convention etc.@*
 %# Pre-requirements:@*
 %# @itemize @bullet
 %# @item installed octave finance package
-%# @item custom functions timefactor, discount_factor, interpolate_curve
+%# @item custom functions timefactor, discount_factor, interpolate_curve, 
+%# and convert_curve_rates
 %# @end itemize
 %#
 %# Input and output variables:
 %# @itemize @bullet
-%# @item @var{valuation_date}: 	Structure with relevant information for specification of the forward:@*
-%# @item @var{cashflow_dates}: 	cashflow_dates is a 1xN vector with all timesteps of the cash flow pattern
-%# @item @var{cashflow_values}: cashflow_values is a MxN matrix with cash flow pattern.
-%# @item @var{spread_constant}: a constant spread added to the total yield extracted from discount curve and spread curve (can be used to spread over yield)
-%# @item @var{discount_nodes}: 	tmp_nodes is a 1xN vector with all timesteps of the given curve
-%# @item @var{discount_rates}: 	tmp_rates is a MxN matrix with discount curve rates defined in columns. Each row contains a specific scenario with different curve structure
-%# @item @var{spread_nodes}: 	OPTIONAL: spread_nodes is a 1xN vector with all timesteps of the given spread curve
-%# @item @var{spread_rates}: 	OPTIONAL: spread_rates is a MxN matrix with spread curve rates defined in columns. Each row contains a specific scenario with different curve structure
-%# @item @var{basis}:			OPTIONAL: day-count convention (either basis number between 1 and 11, or specified as string (act/365 etc.)
-%# @item @var{comp_type}:		OPTIONAL: compounding type (disc, cont, simple)
-%# @item @var{comp_freq}:		OPTIONAL: compounding frequency (1,2,3,4,6,12 payments per year)
-%# @item @var{interp_discount}: OPTIONAL: interpolation method of discount curve  (default: linear)
-%# @item @var{interp_spread}:   OPTIONAL: interpolatoin method of spread curve (default: linear)
-%# @item @var{npv}: 			returs a 1xN vector with all net present values per scenario
-%# @item @var{MacDur}: 			returs a 1xN vector with all Maccaulay durations
+%# @item @var{valuation_date}:  Structure with relevant information for 
+%# specification of the forward:@*
+%# @item @var{cashflow_dates}:  cashflow_dates is a 1xN vector with all 
+%# timesteps of the cash flow pattern
+%# @item @var{cashflow_values}: cashflow_values is a MxN matrix with cash flow 
+%# pattern.
+%# @item @var{spread_constant}: a constant spread added to the total yield 
+%# extracted from discount curve and spread curve (can be used to spread over yield)
+%# @item @var{discount_nodes}:  tmp_nodes is a 1xN vector with all timesteps of 
+%# the given curve
+%# @item @var{discount_rates}:  tmp_rates is a MxN matrix with discount curve 
+%# rates defined in columns. Each row contains a specific scenario with different 
+%# curve structure
+%# @item @var{basis}:   OPTIONAL: day-count convention of instrument (either 
+%# basis number between 1 and 11, or specified as string (act/365 etc.)
+%# @item @var{comp_type}:   OPTIONAL: compounding type of instrument 
+%# (disc, cont, simple)
+%# @item @var{comp_freq}:   OPTIONAL: compounding frequency of instrument 
+%# (1,2,3,4,6,12 payments per year)
+%# @item @var{comp_type_curve}: OPTIONAL: compounding type of curve 
+%# @item @var{basis_curve}: OPTIONAL: day-count convention of curve 
+%# @item @var{comp_freq_curve}: OPTIONAL: compounding frequency of curve 
+%# @item @var{interp_discount}: OPTIONAL: interpolation method of discount curve  
+%# (default: linear)
+%# @item @var{npv}: returs a 1xN vector with all net present values per scenario
+%# @item @var{MacDur}:  returs a 1xN vector with all Maccaulay durations
 %# @end itemize
-%# @seealso{timefactor, discount_factor, interpolate_curve}
+%# @seealso{timefactor, discount_factor, interpolate_curve, convert_curve_rates}
 %# @end deftypefn
 
-function [npv MacDur] = pricing_npv(valuation_date,cashflow_dates, cashflow_values,spread_constant,discount_nodes,discount_rates,spread_nodes,spread_rates,basis,comp_type,comp_freq,interp_discount,interp_spread)
-% This function calculates the net present value, duration and convexity of a cash flows for a given discount and spread curve.
+function [npv MacDur] = pricing_npv(valuation_date,cashflow_dates, ...
+            cashflow_values, spread_constant,discount_nodes,discount_rates, ...
+            basis, comp_type, comp_freq, interp_discount, comp_type_curve, ...
+            basis_curve, comp_freq_curve)
+% This function calculates the net present value, duration and convexity of a 
+% cash flows for a given discount and spread curve.
+ if nargin < 7 || nargin > 13
+    print_usage ();
+ end
+ 
 if ( nargin < 7 )
-  spread_nodes = [365];
-  spread_rates = [0]; 
   basis = 3;  
   comp_type = 'disc';
   comp_freq = 1;
   interp_discount = 'linear';
-  interp_spread  = 'linear';
-elseif ( nargin < 9 )
-  basis = 3;
+  comp_type_curve  = comp_type;
+  basis_curve      = basis; 
+  comp_freq_curve  = comp_freq;
+elseif ( nargin == 7 )
   comp_type = 'disc';
   comp_freq = 1;
   interp_discount = 'linear';
   interp_spread  = 'linear';
-elseif ( nargin < 10 )
-  comp_type = 'disc';
+  comp_type_curve  = comp_type;
+  basis_curve      = basis; 
+  comp_freq_curve  = comp_freq;
+elseif ( nargin == 8 )
   comp_freq = 1;
   interp_discount = 'linear';
   interp_spread  = 'linear';
-elseif ( nargin < 11 )
-  comp_freq = 1;
+  comp_type_curve  = comp_type;
+  basis_curve      = basis; 
+  comp_freq_curve  = comp_freq;
+elseif ( nargin == 9 )
   interp_discount = 'linear';
+  interp_spread  = 'linear'; 
+  comp_type_curve  = comp_type;
+  basis_curve      = basis; 
+  comp_freq_curve  = comp_freq;
+elseif ( nargin == 10 )
   interp_spread  = 'linear';
-elseif ( nargin < 12 )
-  interp_discount = 'linear';
-  interp_spread  = 'linear'; 
-elseif ( nargin < 13 )
-  interp_spread  = 'linear'; 
+  comp_type_curve  = comp_type;
+  basis_curve      = basis; 
+  comp_freq_curve  = comp_freq;  
+elseif ( nargin == 11 )
+  comp_type_curve  = comp_type;
+  basis_curve      = basis; 
+  comp_freq_curve  = comp_freq;   
+elseif ( nargin == 12 )
+  basis_curve      = basis; 
+  comp_freq_curve  = comp_freq;  
+elseif ( nargin == 13 )
+  comp_freq_curve  = comp_freq;     
 end
 
 % Start time:
@@ -90,12 +128,19 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
     tmp_cf_value = cashflow_values(:,zz);
     if ( tmp_dtm > 0 )  % discount only future cashflows
         % Get yield at actual spot value
-			yield_discount 	= interpolate_curve(discount_nodes,discount_rates,tmp_dtm,interp_discount);  % get discount rate from discount curve
-			yield_spread 	= interpolate_curve(spread_nodes,spread_rates,tmp_dtm,interp_spread);        % get spread rate from spread curve
-			yield_total 	= yield_discount + yield_spread + spread_constant;            % combine with constant spread (e.g. spread over yield)
+            % get discount rate from discount curve
+			rate_curve = interpolate_curve(discount_nodes,discount_rates, ...
+                                            tmp_dtm,interp_discount);  
+            % convert curve rate convention into instrument convention
+            yield_discount = convert_curve_rates(valuation_date,tmp_dtm,rate_curve, ...
+                        comp_type_curve,comp_freq_curve,basis_curve, ...
+                        comp_type,comp_freq,basis);
+            % combine with constant spread (e.g. spread over yield)
+			yield_total 	= yield_discount  + spread_constant;            
 			tmp_cf_date 	= valuation_date + tmp_dtm;
         % Get actual discount factor
-			tmp_df 			= discount_factor (valuation_date, tmp_cf_date, yield_total, comp_type, basis, comp_freq);           
+			tmp_df 			= discount_factor (valuation_date, tmp_cf_date, ...
+                                    yield_total, comp_type, basis, comp_freq);           
 			tmp_tf          = timefactor(valuation_date,tmp_cf_date,basis);  
         %Calculate actual NPV of cash flows    
 			tmp_npv_cashflow = tmp_cf_value .* tmp_df;
@@ -114,8 +159,8 @@ MacDur = MacDur ./ npv;
 end
  
 
-%!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028;0.005,0.015,0.019,0.024;-0.04,0.03,-0.02,0.05],[0],[0.0],11,'cont','annual','monotone-convex'),[101.0136109;102.2586319;104.6563569],0.000002)
-%!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],[0],[0.0],0,'discrete','annual','smith-wilson'),101.1471149,0.000001)
-%!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],[0],[0.0],3,'discrete','annual','monotone-convex'),101.1365279,0.000001)
-%!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],[0],[0.0],3,'discrete','annual','linear'),101.1740699,0.000001)
+%!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028;0.005,0.015,0.019,0.024;-0.04,0.03,-0.02,0.05],11,'cont','annual','monotone-convex'),[101.0136109;102.2586319;104.6563569],0.000002)
+%!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],0,'discrete','annual','smith-wilson'),101.1471149,0.000001)
+%!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],3,'discrete','annual','monotone-convex'),101.1365279,0.000001)
+%!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],3,'discrete','annual','linear'),101.1740699,0.000001)
 

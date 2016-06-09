@@ -638,12 +638,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     if ( object_ret_code == 0 )
                         fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
                     end
-                  % Get spread curve
-                    tmp_spread_curve    = bond.get('spread_curve');
-                    [tmp_spread_object object_ret_code] 	= get_sub_object(curve_struct, tmp_spread_curve);
-                    if ( object_ret_code == 0 )
-                        fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_spread_curve);
-                    end                    
+                 
                 % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
                     if( sum(strcmp(tmp_sub_type,{'FRB','SWAP_FIXED','ZCB','CASHFLOW'})) > 0 )       % Fixed Rate Bond instruments (incl. swap fixed leg)
                         % rollout cash flows for all scenarios
@@ -664,14 +659,14 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                     
                 % c) Calculate spread over yield (if not already run...)
                     if ( bond.get('calibration_flag') == 0 )
-                        bond = bond.calc_spread_over_yield(tmp_curve_object,tmp_spread_object,valuation_date);
+                        bond = bond.calc_spread_over_yield(tmp_curve_object,valuation_date);
                     end
                     
                 % d) get net present value of all Cashflows (discounting of all cash flows)
 					if ( first_eval == 0)
-                        bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_spread_object,'base');
+                        bond = bond.calc_value (valuation_date,tmp_curve_object,'base');
                     end
-                    bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_spread_object,tmp_scenario);                                                                                  
+                    bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_scenario);                                                                                  
 
                     % store bond object in struct:
                     instrument_struct( ii ).object = bond;

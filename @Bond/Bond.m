@@ -22,15 +22,18 @@ classdef Bond < Instrument
         spread_curve = 'RF_SPREAD_DUMMY';
         spot_value = 0.0;       
         in_arrears = 0;
-        fixed_annuity = 0;      % property only needed for fixed amortizing bond -> fixed annuity annuity flag (annuity loan or amortizable loan) 
+        fixed_annuity = 0;      % property only needed for fixed amortizing bond 
+               % -> fixed annuity annuity flag (annuity loan or amortizable loan) 
         notional_at_start = 0; 
         notional_at_end = 1;
-        calibration_flag = 0;   % flag set to true, if calibration (mark to market) successful
+        calibration_flag = 0;   % flag set to true, if calibration 
+                                %(mark to market) successful
         % variables required for fixed amortizing bonds with prepayments
         prepayment_type          = 'full';  % ['full','default']
         prepayment_source        = 'curve'; % ['curve','rate']
         prepayment_flag          = false;   % toggle prepayment on and off
-        prepayment_rate          = 0.00;    % constant prepayment rate in case no prepayment curve is specified
+        prepayment_rate          = 0.00;    % constant prepayment rate in case
+                                            % no prepayment curve is specified
         prepayment_curve         = 'PSA-BASE';  % specify prepayment curve
     end
    
@@ -50,7 +53,9 @@ classdef Bond < Instrument
     end
    
    methods
-      function b = Bond(name,id,description,sub_type,currency,spot_value,asset_class,valuation_date,riskfactors,sensitivities,special_num,special_str,tmp_cf_dates,tmp_cf_values)
+      function b = Bond(name,id,description,sub_type,currency,spot_value, ...
+                        asset_class,valuation_date,riskfactors,sensitivities, ...
+                        special_num,special_str,tmp_cf_dates,tmp_cf_values)
         if nargin < 12
            name = 'Dummy';
            id = 'Dummy';
@@ -75,14 +80,15 @@ classdef Bond < Instrument
             end
         end
         % use constructor inherited from Class Instrument
-        b = b@Instrument(name,id,description,'bond',currency,spot_value,asset_class,valuation_date);
+        b = b@Instrument(name,id,description,'bond',currency,spot_value, ...
+                        asset_class,valuation_date);
         % setting property sub_type
         if ( strcmp(sub_type,'') )
             error('Error: No sub_type specified');
         else
             b.sub_type = sub_type;
         end
-        if ( strcmp(sub_type,'CASHFLOW') == 0 ) % special case CASHFLOW instrument -> no informatio needed
+        if ( strcmp(sub_type,'CASHFLOW') == 0 ) % special case CASHFLOW 
             % setting property issue_date
             if ( length(special_str) >= 1 )
                 if ( ~strcmp(special_str{1},'') )
@@ -276,7 +282,10 @@ classdef Bond < Instrument
 
       end
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FRN') || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') || strcmpi(sub_type,'ZCB'))
+         if ~(strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FRN') 
+                || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') 
+                || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') 
+                || strcmpi(sub_type,'ZCB'))
             error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED or SWAP_FLOATING: %s',sub_type)
          end
          obj.sub_type = sub_type;

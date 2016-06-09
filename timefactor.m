@@ -36,7 +36,7 @@
 %# 			@item @var{8} = act/act ISMA
 %# 			@item @var{9} = act/360 ISMA
 %# 			@item @var{10} = act/365 ISMA
-%# 			@item @var{11} = 30/360E (ISMA)
+%# 			@item @var{11} = 30/360E
 %#      @end itemize
 %# @item @var{df}: 		OUTPUT: discount factor (scalar)
 %# @item @var{dip}: 	OUTPUT: days in period (nominator of time factor) (scalar)
@@ -64,7 +64,7 @@ if nargin < 3
 end
 if ischar(basis)
     dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365';'30/360 PSA';'30/360 ISDA';'30/360 European';'act/365 Japanese';'act/act ISMA';'act/360 ISMA';'act/365 ISMA';'30/360E']);
-    findvec = strcmp(basis,dcc_cell);
+    findvec = strcmpi(basis,dcc_cell);
     tt = 1:1:length(dcc_cell);
     tt = (tt - 1)';
     basis = dot(single(findvec),tt);

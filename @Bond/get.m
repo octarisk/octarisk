@@ -49,6 +49,12 @@ function s = get (bond, property)
           s = obj.cf_values_mc;
         case 'soy'
           s = obj.soy;
+        case 'basis'
+          s = obj.basis;
+        case 'compounding_type'
+          s = obj.compounding_type; 
+        case 'compounding_freq'
+          s = obj.compounding_freq;   
         case 'mac_duration'
           s = obj.mac_duration;  
         case 'mod_duration'

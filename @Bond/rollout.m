@@ -18,11 +18,17 @@ function s = rollout (bond, value_type, arg1, arg2)
         reference_rates    = tmp_curve_object.getValue(value_type);
     % Get interpolation method
         tmp_interp_ref = tmp_curve_object.get('method_interpolation');
-        
-    [ret_dates ret_values ] = rollout_cashflows_oop(s,reference_nodes,reference_rates,valuation_date,tmp_interp_ref);
-  
+    % Get Curve conventions
+        tmp_cmp_type = tmp_curve_object.compounding_type;
+        tmp_cmp_freq = tmp_curve_object.compounding_freq;               
+        tmp_dcc = tmp_curve_object.day_count_convention; 
+    % call function for generating CF dates and values
+    [ret_dates ret_values ] = rollout_cashflows_oop(s,reference_nodes, ...
+                        reference_rates,valuation_date,tmp_interp_ref,...
+                        tmp_cmp_type,tmp_dcc,tmp_cmp_freq);
+
   % type CASHFLOW -> duplicate all base cashflows
-  elseif ( strcmp(s.sub_type,'CASHFLOW') )
+  elseif ( strcmpi(s.sub_type,'CASHFLOW') )
     ret_dates  = s.get('cf_dates');
     ret_values = s.get('cf_values');
     

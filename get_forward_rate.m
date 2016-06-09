@@ -14,7 +14,9 @@
 %# @deftypefn {Function File} {@var{forward_rate}=} 
 %# get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, 
 %# @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq},
-%# , @var{basis}, @var{valuation_date})
+%# , @var{basis}, @var{valuation_date}, @var{comp_type_curve},
+%# @var{basis_curve}, @var{comp_freq_curve} )
+%#
 %# Compute the forward rate calculated from interpolated rates from a  
 %# yield curve. CAUTION: the forward rate is floored to 0.000001.
 %# Explanation of Input Parameters:
@@ -30,16 +32,20 @@
 %# @item @var{interp_method}: (optional) specifies interpolation method for 
 %# retrieving interest rates (defaults to 'linear').
 %# @item @var{comp_freq}: (optional) compounding frequency (default: annual)
-%# @item @var{basis}: (optional) day count basis of yield curve (default: act/365)
+%# @item @var{basis}: (optional) day count convention of instrument (default: act/365)
 %# @item @var{valuation_date}: (optional) valuation date (default: today)
+%# @item @var{comp_type_curve}: (optional) compounding type of curve
+%# @item @var{basis_curve}: (optional) day count convention of curve
+%# @item @var{comp_freq_curve}: (optional) compounding frequency of curve
 %# @end itemize
-%# @seealso{interpolate_curve}
+%# @seealso{interpolate_curve, convert_curve_rates}
 %# @end deftypefn
 
 function forward_rate = get_forward_rate(nodes, rates, days_to_t1, days_to_t2, ...
-                       comp_type, interp_method, comp_freq, basis, valuation_date)
+                       comp_type, interp_method, comp_freq, basis, valuation_date, ...
+                       comp_type_curve, basis_curve, comp_freq_curve)
  
- if nargin < 4 || nargin > 9
+ if nargin < 4 || nargin > 12
     print_usage ();
  end
 
@@ -52,20 +58,44 @@ if nargin < 5
    comp_freq = 1;
    valuation_date = today;
    basis = 3;   %act/365
-elseif nargin < 6
+   comp_type_curve  = comp_type;
+   basis_curve      = basis; 
+   comp_freq_curve  = comp_freq;
+elseif nargin == 5
    interp_method = 'linear';
    comp_freq = 1;
    valuation_date = today;
    basis = 3;   %act/365
-elseif nargin < 7
+   comp_type_curve  = comp_type;
+   basis_curve      = basis; 
+   comp_freq_curve  = comp_freq;
+elseif nargin == 6
    comp_freq = 1;
    valuation_date = today;
    basis = 3;   %act/365
-elseif nargin < 8
+   comp_type_curve  = comp_type;
+   basis_curve      = basis; 
+   comp_freq_curve  = comp_freq;
+elseif nargin == 7
    valuation_date = today;
    basis = 3;   %act/365
-elseif nargin < 9
+   comp_type_curve  = comp_type;
+   basis_curve      = basis; 
+   comp_freq_curve  = comp_freq;
+elseif nargin == 8
    valuation_date = today;
+   comp_type_curve  = comp_type;
+   basis_curve      = basis; 
+   comp_freq_curve  = comp_freq;
+elseif nargin == 9
+   comp_type_curve  = comp_type;
+   basis_curve      = basis; 
+   comp_freq_curve  = comp_freq;
+elseif nargin == 10
+   basis_curve      = basis; 
+   comp_freq_curve  = comp_freq;
+elseif nargin == 11
+   comp_freq_curve  = comp_freq;   
 end
 
 % convert valuation date to datenum
@@ -104,21 +134,50 @@ end
 
 % Get compounding type:
 if ischar(comp_type)
-    if ( strcmp(lower(comp_type),'simple') == 1 )
+    if ( strcmp(lower(comp_type),'simple') == 1  )
         compounding_type = 1;
     elseif ( strcmp(lower(comp_type),'disc') == 1 )
         compounding_type = 2;
-    elseif ( strcmp(lower(comp_type),'cont') == 1 )
+    elseif ( strcmpi(comp_type,'cont')  || strcmpi(comp_type,'continuous') )
         compounding_type = 3;
     else
         error('Need valid comp_type type [disc, simple, cont]')
     end
 end
+
+% error check compounding frequency
+if ischar(comp_freq)
+    if ( strcmpi(comp_freq,'daily') == 1 || strcmpi(comp_freq,'day') == 1)
+        compounding = 365;
+    elseif ( strcmpi(comp_freq,'weekly') == 1 || strcmpi(comp_freq,'week') == 1)
+        compounding = 52;
+    elseif ( strcmpi(comp_freq,'monthly') == 1 || strcmpi(comp_freq,'month') == 1)
+        compounding = 12;
+    elseif ( strcmpi(comp_freq,'quarterly') == 1 ||  strcmpi(comp_freq,'quarter') == 1)
+        compounding = 4;
+    elseif ( strcmpi(comp_freq,'semi-annual') == 1)
+        compounding = 2;
+    elseif ( strcmpi(comp_freq,'annual') == 1 )
+        compounding = 1;       
+    else
+        error('Need valid compounding frequency')
+    end
+else
+    compounding = comp_freq;
+end
 % Start Calculation
 % Get rates at timesteps1 / 2
-r1 = interpolate_curve(nodes,rates,days_to_t1,interp_method);
-r2 = interpolate_curve(nodes,rates,(days_to_t2 + days_to_t1),interp_method);
+r1_curve = interpolate_curve(nodes,rates,days_to_t1,interp_method);
+r2_curve = interpolate_curve(nodes,rates,(days_to_t2 + days_to_t1),interp_method);
+% convert interpolated rates from curve convention to instrument convention
 % Get time length between valuation date and timesteps (in years)
+r1 = convert_curve_rates(valuation_date,days_to_t1,r1_curve, ...
+                        comp_type_curve,comp_freq_curve,basis_curve, ...
+                        comp_type,compounding,basis);
+r2 = convert_curve_rates(valuation_date,(days_to_t2 + days_to_t1),r2_curve, ...
+                        comp_type_curve,comp_freq_curve,basis_curve, ...
+                        comp_type,compounding,basis);                     
+% calculate timefactor   
 d1 = timefactor (valuation_date,(days_to_t1 + valuation_date),basis);
 d2 = timefactor (valuation_date,(days_to_t1 + days_to_t2 + valuation_date),basis);
 
@@ -126,8 +185,8 @@ d2 = timefactor (valuation_date,(days_to_t1 + days_to_t2 + valuation_date),basis
 if ( compounding_type == 1)      % simple
     tmp_rate = ((( 1 + (r2 .* d2)) ./ ( 1 + (r1 .* d1) ) ) - 1 ) ./ ( d2 - d1 );
 elseif ( compounding_type == 2)      % discrete
-    tmp_rate = (  ( 1 + (r2 ./ comp_freq) ).^(comp_freq * d2) ...
-                ./ ( 1 + (r1 ./ comp_freq) ).^(comp_freq * d1) ) ...
+    tmp_rate = (  ( 1 + (r2 ./ compounding) ).^(compounding * d2) ...
+                ./ ( 1 + (r1 ./ compounding) ).^(compounding * d1) ) ...
                 .^(1 ./ (d2 - d1)) - 1;
 elseif ( compounding_type == 3)      % continuous
     tmp_rate = ( r2 .* d2 - r1 .* d1  ) ./ (  d2 - d1 );
@@ -141,3 +200,4 @@ end
 %!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2,3),0.0691669,0.00001)
 %!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2,0),0.0691636237,0.00001)
 %!assert(get_forward_rate([730,4380],[0.0023001034,0.0084599362],'31-Mar-2018','28-Mar-2028','disc','linear',1,3,'31-Mar-2016'),0.0094902,0.00001)
+%!assert(get_forward_rate([365,1095,1825,3650,7300,10950,21900],[-0.0051925,-0.0050859,-0.0036776,0.0018569,0.0077625,0.0099999,0.0012300],155,365,'disc','monotone-convex', 'daily', 'act/365', 736329, 'cont', 'act/365', 'annual'),0.000001)

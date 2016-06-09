@@ -11,24 +11,21 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} 
-%#						calibrate_yield_to_maturity(@var{valuation_date}, ...
-%#						@var{tmp_cashflow_dates}, @var{tmp_cashflow_values}, ...
-%#						@var{act_value})
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_yield_to_maturity(
+%# @var{valuation_date}, @var{tmp_cashflow_dates}, @var{tmp_cashflow_values},
+%# @var{act_value}) 
+%#
 %# Calibrate the yield to maturity according to given cashflows.
 %# @end deftypefn
 
 function [yield_to_maturity] = calibrate_yield_to_maturity(valuation_date, ...
 							tmp_cashflow_dates,tmp_cashflow_values,act_value)
 
-if ( nargin < 7 )
-  spread_nodes = [365];
-  spread_rates = [0];  
-end
+
 if ( rows(tmp_cashflow_values) > 1 )
 	tmp_cashflow_values = tmp_cashflow_values(1,:);
-	disp('WARNING: More than one cash flow value scenario provided. ...
-							Taking only first scenario as base values')
+	fprintf('WARNING: More than one cash flow value scenario provided.')
+    fprintf('Taking only first scenario as base values')
 end
 % Start parameter
 x0 = 0.01;
@@ -59,8 +56,8 @@ yield_to_maturity = x;
 
 end 
 
-%-----------------------------------------------------------------
-%------------------- Begin Subfunction ---------------------------
+%-------------------------------------------------------------------------------
+%--------------------------- Begin Subfunction ---------------------------------
 
 % Definition Objective Function for yield to maturity:	       
 function obj = phi_ytm (x,valuation_date,cashflow_dates, ...
@@ -71,4 +68,4 @@ function obj = phi_ytm (x,valuation_date,cashflow_dates, ...
 								  cashflow_values,0,nodes,tmp_yield);
 			obj = (act_value - tmp_npv).^2;
 end
-%------------------------------------------------------------------
+%-------------------------------------------------------------------------------
