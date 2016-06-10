@@ -506,6 +506,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
             elseif (strcmp(tmp_type,'forward') )
                 % Using forward class
                     forward = tmp_instr_obj;
+                    forward.valuation_date
+                    forward = forward.set('valuation_date',datestr(valuation_date));
                  % Get underlying Index / instrument    
                     tmp_underlying = forward.get('underlying_id');
                     [tmp_underlying_object object_ret_code]  = get_sub_object(index_struct, tmp_underlying);

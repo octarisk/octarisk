@@ -1,4 +1,5 @@
 %# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2016 IRRer-Zins <IRRer-Zins@t-online.de>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
 %# the terms of the GNU General Public License as published by the Free Software
@@ -12,12 +13,15 @@
 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{vola_spread}] =} calibrate_swaption(@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{m}, @var{tau}, @var{multiplicator}, @var{market_value}, @var{model})
-%# Calibrate the implied volatility spread for European swaptions according to Black76 or Bachelier (default) valuation model.
-%# In extreme out-of-the-money scenarios there could be no solution in changing the volatility. But we dont care in this case at all,
+%# Calibrate the implied volatility spread for European swaptions according to 
+%# Black76 or Bachelier (default) valuation model.
+%# In extreme out-of-the-money scenarios there could be no solution in changing 
+%# the volatility. But we dont care in this case at all,
 %# since the influence of the volatility is neglectable in these extreme cases.
 %# @end deftypefn
 
-function vola_spread = calibrate_swaption(PayerReceiverFlag,F,X,T,r,sigma,m,tau,multiplicator,market_value,model)
+function vola_spread = calibrate_swaption(PayerReceiverFlag,F,X,T,r,sigma,m, ...
+                                            tau,multiplicator,market_value,model)
 
 if ~(nargin == 11)
     print_usage();
@@ -26,24 +30,29 @@ model = upper(model);
 % Start parameter
 x0 = 0.0001;
 
-%tol = 1e-11;
+% set lower boundary for volatility
 lb = -sigma + 0.0001;
-[x, obj, info, iter] = sqp (x0, @ (x) phi(x,PayerReceiverFlag,F,X,T,r,sigma,m,tau,multiplicator,market_value,model), [], [], lb, [], 300);	%, obj, info, iter, nf, lambda @g
 
-if (info == 101 )
-	%disp ('       +++ SUCCESS: Optimization converged in +++');
-	%steps = iter
-elseif (info == 102 )
-	%disp ('       --- WARNING: The BFGS update failed. ---');
+% call solver
+[x, obj, info, iter] = fmincon ( @(x) phi(x,PayerReceiverFlag,F,X,T,r,sigma, ...
+                                m,tau,multiplicator,market_value,model), ...
+                                x0, [], [], [], [], lb, []);	
+
+if (info == 1)
+	%fprintf ('+++ calibrate_swaption: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
+elseif (info == 0)
+	fprintf ('--- calibrate_swaption: WARNING: BS Number of iterations or function evaluations exceeded default values. ---\n');
     x = -99;
-elseif (info == 103 )
-	%disp ('       --- WARNING: The maximum number of iterations was reached. ---');
+elseif (info == -1)
+	fprintf ('--- calibrate_swaption: WARNING: BS Stopped by an output function or plot function. ---\n');
     x = -99;
-elseif (info == 104 )
-    disp ('       --- WARNING: The stepsize has become too small. ---');
-    %x = -99;
+elseif (info == -2)
+    fprintf ('--- calibrate_swaption: WARNING: BS No feasible point was found. ---\n');
+    x = -99;
+elseif (info == 2)
+	fprintf ('+++ calibrate_swaption: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
 else
-	%disp ('       --- WARNING: Optimization did not converge! ---');
+	fprintf ('--- calibrate_swaption: WARNING: BS Optimization did not converge! ---\n');
     x = -99;
 end
 

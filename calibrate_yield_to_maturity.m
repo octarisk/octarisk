@@ -1,4 +1,5 @@
 %# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2016 IRRer-Zins <IRRer-Zins@t-online.de>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
 %# the terms of the GNU General Public License as published by the Free Software
@@ -35,23 +36,29 @@ options(1) = 0;
 options(2) = 1e-5;
 
 % Calculate yield to maturity
-[x, obj, info, iter] = sqp (x0, @ (x) phi_ytm(x,valuation_date, ...
-		tmp_cashflow_dates, tmp_cashflow_values,act_value), [], [], -1, 1, 300);
+[x, obj, info, iter] = fmincon (@ (x) phi_ytm(x, valuation_date, ...
+                                tmp_cashflow_dates, tmp_cashflow_values, act_value), ...
+                                x0, [], [], [], [], -1, 1);
 
-if (info == 101 )
-	%disp ('       +++ SUCCESS: Optimization converged in +++');
-	%steps = iter
-elseif (info == 102 )
-	disp ('  --- WARNING: The BFGS update failed. ---');
-elseif (info == 103 )
-	disp ('  --- WARNING: The maximum number of iterations was reached. ---');
-elseif (info == 104 )
-    %disp ('  --- WARNING: The stepsize has become too small. ---');
+if (info == 1)
+	%fprintf ('+++ calibrate_yield_to_maturity: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
+elseif (info == 0)
+	fprintf ('--- calibrate_yield_to_maturity: WARNING: BS Number of iterations or function evaluations exceeded default values. ---\n');
+    x = -99;
+elseif (info == -1)
+	fprintf ('--- calibrate_yield_to_maturity: WARNING: BS Stopped by an output function or plot function. ---\n');
+    x = -99;
+elseif (info == -2)
+    fprintf ('--- calibrate_yield_to_maturity: WARNING: BS No feasible point was found. ---\n');
+    x = -99;
+elseif (info == 2)
+	fprintf ('+++ calibrate_yield_to_maturity: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
 else
-	disp ('  --- WARNING: Optimization did not converge! ---');
+	fprintf ('--- calibrate_yield_to_maturity: WARNING: BS Optimization did not converge! ---\n');
+    x = -99;
 end
-% 
-% return spread over yield
+
+% return yield_to_maturity
 yield_to_maturity = x;
 
 end 

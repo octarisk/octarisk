@@ -11,10 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{npv} @var{MacDur} ] =} 
-%# pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values}, 
-%# @var{spread_constant}, @var{discount_nodes}, @var{discount_rates}, @var{basis}, 
-%# @var{comp_type}, @var{comp_freq}, @var{interp_discount})
+%# @deftypefn {Function File} {[@var{npv} @var{MacDur} ] =} pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values}, @var{spread_constant}, @var{discount_nodes}, @var{discount_rates}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{interp_discount})
 %#
 %# Compute the net present value and Maccaulay Duration of a given cash flow 
 %# pattern according to a given discount curve and day count convention etc.@*
@@ -63,7 +60,7 @@ function [npv MacDur] = pricing_npv(valuation_date,cashflow_dates, ...
             basis_curve, comp_freq_curve)
 % This function calculates the net present value, duration and convexity of a 
 % cash flows for a given discount and spread curve.
- if nargin < 7 || nargin > 13
+ if nargin < 6 || nargin > 13
     print_usage ();
  end
  

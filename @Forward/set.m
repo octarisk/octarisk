@@ -240,7 +240,7 @@ function s = set (forward, varargin)
         error ('set: expecting the value to be a real number');
       end  
     else
-      error ('set: invalid property of forward class');
+      error ('set: invalid property of forward class: >>%s<<',prop);
     end
   end
 end

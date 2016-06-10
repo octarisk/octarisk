@@ -26,8 +26,20 @@ function obj = calc_value (forward,discount_curve_object,value_type,underlying_o
     % Get Discount Curve nodes and rate
         discount_nodes  = discount_curve_object.get('nodes');
         discount_rates  = discount_curve_object.getValue(value_type);
+        
+    % Get interpolation method and other curve related attributes
+        interp_discount = discount_curve_object.get('method_interpolation');
+        curve_dcc       = discount_curve_object.get('day_count_convention');
+        curve_basis     = discount_curve_object.get('basis');
+        curve_comp_type = discount_curve_object.get('compounding_type');
+        curve_comp_freq = discount_curve_object.get('compounding_freq');
+        
     % calculate value according to pricing formula
-    theo_value = pricing_forward_oop(obj,discount_nodes,discount_rates,tmp_underlying_price) .* obj.multiplier;
+    [theo_value theo_price] = pricing_forward_oop(obj,discount_nodes,discount_rates, ...
+                    tmp_underlying_price,curve_comp_type,curve_basis, ...
+                    curve_comp_freq);
+    theo_value  = theo_value .* obj.multiplier;
+    theo_price  = theo_price .* obj.multiplier;
     % store theo_value vector in appropriate class property
     if ( regexp(value_type,'stress'))
         obj = obj.set('value_stress',theo_value);

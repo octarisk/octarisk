@@ -1,5 +1,6 @@
 %# Copyright (C) 2016 Stefan Schlögl <schinzilord@octarisk.com>
-%# Copyright (C) 2013 Martin Becker and Stefan Kloessner: modified R package 'PearsonDS'
+%# Copyright (C) 2013 Martin Becker and Stefan Kloessner: 
+%# modified R package 'PearsonDS':
 %# http://CRAN.R-project.org/package=PearsonDS
 %#
 %# This program is free software; you can redistribute it and/or modify it under
@@ -18,13 +19,15 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{r} @var{type} ] =} get_marginal_distr_pearson (@var{mu}, @var{sigma}, @var{skew}, @var{kurt}, @var{Z})
 %#
-%# Compute a marginal distribution for given set of uniform random variables with given mean, standard deviation
-%# skewness and kurtosis. The mapping is done via the Pearson distribution family.
+%# Compute a marginal distribution for given set of uniform random variables 
+%# with given mean, standard deviation skewness and kurtosis. The mapping is 
+%# done via the Pearson distribution family.
 %# @*
-%# The implementation is based on the R package 'PearsonDS: Pearson Distribution System' and the function 'pearsonFitM' by @*
+%# The implementation is based on the R package 'PearsonDS: Pearson Distribution 
+%# System' and the function 'pearsonFitM' by @*
 %# Martin Becker and Stefan Kloessner (2013) @* 
 %# R package version 0.97. @*
-%# URL http://CRAN.R-project.org/package=PearsonDS @*
+%# URL: http://CRAN.R-project.org/package=PearsonDS @*
 %# licensed under the GPL >= 2.0 @*
 %# Input and output variables:
 %# @itemize @bullet
@@ -33,16 +36,19 @@
 %# @item @var{skew}: 	skewness of marginal distribution (scalar)
 %# @item @var{kurt}: 	kurtosis of marginal distribution (scalar)
 %# @item @var{Z}: 		uniform distributed random variables (Nx1 vector)
-%# @item @var{r}: 		OUTPUT: Nx1 vector with random variables distributed according to Pearson type (vector)
+%# @item @var{r}: 		OUTPUT: Nx1 vector with random variables distributed 
+%# according to Pearson type (vector)
 %# @item @var{type}: 	OUTPUT: Pearson distribution type (I - VII) (scalar)
 %# @end itemize
-%# The marginal distribution type is chosen according to the input parameters out of the Pearson Type I-VII distribution family: @*
+%# The marginal distribution type is chosen according to the input parameters 
+%# out of the Pearson Type I-VII distribution family: @*
 %# @itemize @bullet
 %# @item @var{Type 0}   = normal distribution
 %# @item @var{Type I}   = generalization of beta distribution
 %# @item @var{Type II}  = symmetric beta distribution
 %# @item @var{Type III} = gamma or chi-squared distribution
-%# @item @var{Type IV}  = special distribution, not related to any other distribution
+%# @item @var{Type IV}  = special distribution, not related to any other 
+%# distribution
 %# @item @var{Type V}   = inverse gamma distribution
 %# @item @var{Type VI}  = beta-prime or F distribution
 %# @item @var{Type VII} = Student's t distribution 
@@ -52,11 +58,13 @@
 
 function [r,type] = get_marginal_distr_pearson(mu,sigma,skew,kurt,Z)
 
-% Classify Pearson Distribution Type I - VII and calculate shape parameters (scale and location will be applied in the end)
+% Classify Pearson Distribution Type I - VII and calculate shape parameters 
+% (scale and location will be applied in the end)
 retvec = classify_pearson(mu,sigma,skew,kurt);
 type = retvec(1);
 
-% generate standard marginal distribution (zero mean, unit variance) values for given correlated random numbers
+% generate standard marginal distribution (zero mean, unit variance) values for 
+% given correlated random numbers
 if ( type == 0)
     % normal distribution
     r = norminv(Z,0,1);
@@ -85,7 +93,8 @@ elseif ( type == 4)
     a = retvec(4);
     lambda = retvec(5);
     r_uncorr = rpears4(m,nu,a,lambda,length(Z));
-    % uncorrelated distribution -> draw correlated univariate random numbers from 'empirical' pearson type IV distribution:
+    % uncorrelated distribution -> draw correlated univariate random numbers 
+    % from 'empirical' pearson type IV distribution:
     r =  empirical_inv (Z, r_uncorr);
 elseif ( type == 5)
     % inverse gamma distribution
@@ -125,7 +134,8 @@ end % end of Main function
 %%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%##
 
 function r = rpears4(m,nu,a,lam,len_vec)
-%   Implemention taken from 'Non-Uniform Random Variate Generation' by Luc Devroye (1986)
+%   Implemention taken from 'Non-Uniform Random Variate Generation' 
+%      by Luc Devroye (1986)
 %   http://www.eirene.de/Devroye.pdf
 
 %  === returns random Pearson IV deviate ===
@@ -136,10 +146,12 @@ function r = rpears4(m,nu,a,lam,len_vec)
 %   http://www-cdf.fnal.gov/physics/statistics/notes/cdf6820_pearson4.pdf
 
 
-% Calling implementation of the complex hypergeometric distribution of CDF/MEMO/STATISTICS/PUBLIC/6820
+% Calling implementation of the complex hypergeometric distribution of 
+% CDF/MEMO/STATISTICS/PUBLIC/6820
 gammar2_cs = -log(gammar2_c(m,nu/2));
 
-% Calling implementation of the function type4norm of CDF/MEMO/STATISTICS/PUBLIC/6820
+% Calling implementation of the function type4norm of 
+% CDF/MEMO/STATISTICS/PUBLIC/6820
 k = 0.5*(2/sqrt(pi))*gammar2_c(m,nu/2)*exp(gammaln(m)-gammaln(m-0.5))/a;
 logk = log(k);
 
@@ -174,7 +186,8 @@ end % end of rpears4 function
 
 %=======================
 % Implementation of the complex hypergeometric distribution from 
-% the C-Code example from http://www-cdf.fnal.gov/physics/statistics/notes/cdf6820_pearson4.pdf
+% the C-Code example from 
+% http://www-cdf.fnal.gov/physics/statistics/notes/cdf6820_pearson4.pdf
 % CDF/MEMO/STATISTICS/PUBLIC/6820:
 % 'A Guide to the Pearson Type IV Distribution'
 % by Joel Heinrich—University of Pennsylvania
@@ -207,7 +220,8 @@ end
 
 
 function retvec = classify_pearson(mean,stddev,skewness,kurtosis)
-% function for classification of pearson distribution system and calculation of scale and shape parameters
+% function for classification of pearson distribution system and calculation 
+% of scale and shape parameters
 % Modified and apapted from Function 'pearsonFitM':
 %   Martin Becker and Stefan Klößner (2013). 
 %   PearsonDS: Pearson Distribution System. 
@@ -247,9 +261,9 @@ end
 % get appropriate distribution type Pearson type I to VII
   if (sss == 0)
     if (kkk == 3)
-        type=0;                                        % type 0 (normal distribution)
+        type=0;                            % type 0 (normal distribution)
         retvec = [ type, 0, 1 ];
-    elseif (kkk<3)                                     % type II
+    elseif (kkk<3)                         % type II
       a1 = -1/2*(-sqrt(-16*kkk*(2*kkk-6))/(2*kkk-6));
       m = (c1 + a1) ./ (c2 .* 2*abs(a1));
       if ( m < -1)
@@ -257,9 +271,9 @@ end
         m = -0.999;
       end
       % return:
-          type = 2;                                      % type II -> scale*beta(a,a)+location
+         type = 2;                        % type II -> scale*beta(a,a)+location
          retvec = [type, m, a1 ];
-    elseif (kkk>3)                                       % type VII
+    elseif (kkk>3)                        % type VII
       r      = 6*(kkk-1)/(2*kkk-6);
       dof    = 1+r;
       type=7;                                            
@@ -267,7 +281,7 @@ end
     end  
   elseif ~(2*kkk-3*sss^2-6 == 0)
     kap = 0.25*sss^2*(kkk+3)^2/((4*kkk-3*sss^2)*(2*kkk-3*sss^2-6));
-    if (kap<0)                                                                 % type I
+    if (kap<0)                            % type I
       a1 = 1/2*((-sss*(kkk+3)-sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
       a2 = 1/2*((-sss*(kkk+3)+sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
       if (a1>0) 
@@ -285,10 +299,10 @@ end
        end
       type=1;
       retvec = [ type, m1, m2, a1, a2 ];
-    elseif (kap==1 )                                                             % type V
+    elseif (kap==1 )                      % type V
       C1 = c1/(2*c2);
       retvec = [ type, c1, c2, C1 ]
-    elseif (kap>1)                                                               %type VI
+    elseif (kap>1)                        % type VI
       a1 = 1/2*((-sss*(kkk+3)-sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
       a2 = 1/2*((-sss*(kkk+3)+sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
       if (a1>0) 
@@ -302,7 +316,7 @@ end
       type=6;
       retvec = [ type, a1, a2, m1, m2 ];
     end  
-    if ((kap>0)&&(kap<1))                                                     % type IV
+    if ((kap>0)&&(kap<1))                  % type IV
       r        = 6*(kkk-sss^2-1)/(2*kkk-3*sss^2-6);
       nu       = -r*(r-2)*sss/sqrt(16*(r-1)-sss^2*(r-2)^2);
       scale    = - sqrt(vvv*(16*(r-1)-sss^2*(r-2)^2))/4;
@@ -314,7 +328,7 @@ end
       scale = location.*nu ./ b; 
       retvec = [ type, m, nu, location, scale ];
     end
-  else                                                                       % type III
+  else                                      % type III
     m = (c0./c1 - c1) ./ c1;
     a1 = -c0 ./ c1;
     type=3;

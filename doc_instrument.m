@@ -74,3 +74,40 @@
 function a = doc_instrument()
     % this is only a dummy function for containing all the documentation.
 end
+
+%!test 
+%! fprintf('HOLD ON...\n');
+%! fprintf('\tdoc_instrument:\tPricing Fixed Rate Bond Object\n');
+%! b = Bond();
+%! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25);
+%! b = b.rollout('base');
+%! b = b.calc_yield_to_mat('31-Mar-2016');
+%! assert(b.ytm,0.0349760324228150,0.000001)
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[0.01,0.04],'method_interpolation','monotone-convex');
+%! c = c.set('rates_stress',[0.02,0.05;0.005,0.014]);
+%! b = b.calc_spread_over_yield(c,'31-Mar-2016');
+%! assert(b.soy,-0.00195601583956151,0.000000001);
+%! b = b.calc_value('31-Mar-2016',c,'base');
+%! assert(b.getValue('base'),101.249998584740,0.000000001);
+%! b = b.rollout('stress');
+%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! assert(b.getValue('stress'),[93.8990094561457;120.8670123921738],0.000000001); 
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,3650,7300],'rates_base',[0.0001002070,0.0045624391,0.009346842],'method_interpolation','linear');
+%! i = Index();
+%! i = i.set('value_base',326.900);
+%! f = Forward();
+%! f = f.set('name','EQ_Forward_Index_Test','maturity_date','26-Mar-2036','strike_price',0.00,'valuation_date','31-Mar-2016');
+%! f = f.calc_value(c,'base',i);
+%! assert(f.getValue('base'),326.9,0.1);
+%! f = f.set('strike_price',426.900);
+%! f = f.calc_value(c,'base',i);
+%! assert(f.getValue('base'),-27.2118960639903,0.00000001);
+%! i = i.set('scenario_stress',[350.00;300.00]);
+%! f = f.calc_value(c,'stress',i);
+%! assert(f.getValue('stress'),[-4.1118960639903;-54.1118960639903],0.00000001);
+

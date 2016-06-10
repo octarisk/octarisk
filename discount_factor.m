@@ -64,10 +64,10 @@ end
 if nargin < 4
    compounding_type = 1;
    comp_type = 1;
-   basis = ones(size(d1)).*3;
+   basis = 3;
 end
 if nargin < 5
-   basis = ones(size(d1)).*3;
+   basis = 3;
 end
 
 if ischar(basis)
@@ -81,7 +81,7 @@ if ischar(basis)
     basis = dot(single(findvec),tt);
 end
 if (isempty(find([0:1:11] == basis)))
-   error('no valid basis defined. ')
+   error('no valid basis defined. Unknown >>%s<<',basis)
 end
 if nargin < 6
     comp_freq = 1;
@@ -113,7 +113,7 @@ if ischar(comp_freq)
     elseif ( strcmpi(comp_freq,'annual') )
         compounding = 1;       
     else
-        error('Need valid compounding frequency')
+        error('Need valid compounding frequency. Unknown >>%s<<',comp_freq)
     end
 else
     compounding = comp_freq;
@@ -135,3 +135,4 @@ end
  
 end
  
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'disc', 'act/365', 'annual'),0.999499644219733,0.000001)

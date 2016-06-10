@@ -67,7 +67,7 @@ classdef Bond < Instrument
            riskfactors = {'RF_IR_DUMMY','RF_IR_DUMMY','RF_SPREAD_DUMMY'};
            sensitivities = [1,1,1];
            special_num = [100,0.00,12,0.0,0.0002,0];
-           special_str = {'01-Feb-2011','01-Feb-2025','forward','simple','30/360'};
+           special_str = {'01-Feb-2011','01-Feb-2025','forward','simple','act/365'};
            tmp_cf_dates = [];
            tmp_cf_values = [];
            valuation_date = today;

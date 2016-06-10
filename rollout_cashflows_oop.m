@@ -743,3 +743,35 @@ end
 %! [ret_dates ret_values] = rollout_cashflows_oop(bond_struct,discount_nodes, discount_rates,'31-Mar-2016','linear',comp_type_curve,basis_curve,comp_freq_curve);
 %! theo_value = pricing_npv('31-Mar-2016',ret_dates, ret_values,0.0,discount_nodes,discount_rates,bond_struct.day_count_convention,bond_struct.compounding_type,bond_struct.compounding_freq,'linear',comp_type_curve,basis_curve,comp_freq_curve);  
 %! assert(theo_value,7.21669392549073,0.00000001);
+
+%!test 
+%! bond_struct=struct();
+%! bond_struct.sub_type                 = 'ZCB';
+%! bond_struct.issue_date               = '31-Mar-2016';
+%! bond_struct.maturity_date            = '30-Mar-2021';
+%! bond_struct.compounding_type         = 'disc';
+%! bond_struct.compounding_freq         = 1;
+%! bond_struct.term                     = 365;
+%! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.notional                 = 1 ;
+%! bond_struct.coupon_rate              = 0.00; 
+%! bond_struct.coupon_generation_method = 'forward' ;
+%! bond_struct.business_day_rule        = 0 ;
+%! bond_struct.business_day_direction   = 1  ;
+%! bond_struct.enable_business_day_rule = 0;
+%! bond_struct.spread                   = 0.00 ;
+%! bond_struct.long_first_period        = false;
+%! bond_struct.long_last_period         = false;
+%! bond_struct.last_reset_rate          = 0.0000000;
+%! bond_struct.fixed_annuity            = 1;
+%! bond_struct.in_arrears               = 0;
+%! bond_struct.notional_at_start        = false;
+%! bond_struct.notional_at_end          = false;
+%! comp_type_curve                      = 'cont';
+%! basis_curve                          = 'actual/actual';
+%! comp_freq_curve                      = 'annual';
+%! discount_nodes = [1825];
+%! discount_rates = [0.0001000962];
+%! [ret_dates ret_values] = rollout_cashflows_oop(bond_struct,discount_nodes, discount_rates,'31-Mar-2016','linear',comp_type_curve,basis_curve,comp_freq_curve);
+%! theo_value = pricing_npv('31-Mar-2016',ret_dates, ret_values,0.0,discount_nodes,discount_rates,bond_struct.day_count_convention,bond_struct.compounding_type,bond_struct.compounding_freq,'linear',comp_type_curve,basis_curve,comp_freq_curve); 
+%! assert(theo_value,0.999500124267452,0.0000000001);

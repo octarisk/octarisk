@@ -1,4 +1,5 @@
 %# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2016 IRRer-Zins <IRRer-Zins@t-online.de>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
 %# the terms of the GNU General Public License as published by the Free Software
@@ -88,28 +89,30 @@ end
 
 %p0=[x0]'; % Guessed parameters.
 options(1) = 0;
-options(2) = 1e-5;
-[x, obj, info, iter] = sqp (x0, @ (x) phi_soy(x,valuation_date, ...
-            tmp_cashflow_dates, tmp_cashflow_values, tmp_act_value, ...
-            tmp_nodes,tmp_rates,basis,comp_type, comp_freq, interp_discount, ...
-            comp_type_curve, basis_curve, comp_freq_curve), [], [], -1, 1, 300);
+options(2) = 1e-5;          
+[x, obj, info, iter] = fmincon (@ (x) phi_soy(x,valuation_date, ...
+            tmp_cashflow_dates, tmp_cashflow_values,tmp_act_value, ...
+            tmp_nodes,tmp_rates,basis,comp_type, comp_freq,interp_discount, ...
+            comp_type_curve, basis_curve, comp_freq_curve), x0,[], [], [], [], -1, 1);
 
-if (info == 101 )
-	%disp ('  +++ SUCCESS: Optimization converged in +++');
-	%steps = iter
-elseif (info == 102 )
-	disp ('  --- WARNING: The BFGS update failed. ---');
+if (info == 1)
+	%fprintf ('+++ calibrate_soy_sqp: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
+elseif (info == 0)
+	fprintf ('--- calibrate_soy_sqp: WARNING: BS Number of iterations or function evaluations exceeded default values. ---\n');
     retcode = 255;
-elseif (info == 103 )
-	disp ('  --- WARNING: The maximum number of iterations was reached. ---');
+elseif (info == -1)
+	fprintf ('--- calibrate_soy_sqp: WARNING: BS Stopped by an output function or plot function. ---\n');
     retcode = 255;
-elseif (info == 104 )
-    %disp ('  --- WARNING: The stepsize has become too small. ---');
+elseif (info == -2)
+    fprintf ('--- calibrate_soy_sqp: WARNING: BS No feasible point was found. ---\n');
+    retcode = 255;
+elseif (info == 2)
+	fprintf ('+++ calibrate_soy_sqp: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
 else
-	disp ('  --- WARNING: Optimization did not converge! ---');
+	fprintf ('--- calibrate_soy_sqp: WARNING: BS Optimization did not converge! ---\n');
     retcode = 255;
 end
-% 
+
 % return spread over yield
 spread_over_yield = x;
 
