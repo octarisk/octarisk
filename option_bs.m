@@ -64,7 +64,7 @@ function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X, .
   elseif S < 0
     error ('Price S must be positive ')    
   elseif ~isnumeric (T)
-    error ('Time T in years must be numeric ')
+    error ('Time T in days must be numeric ')
   elseif ( T < 0)
     error ('Time T must be positive ')    
   elseif ~isnumeric (r)
