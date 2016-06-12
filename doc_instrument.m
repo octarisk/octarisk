@@ -82,17 +82,18 @@ end
 %! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25);
 %! b = b.rollout('base');
 %! b = b.calc_yield_to_mat('31-Mar-2016');
-%! assert(b.ytm,0.0349760,0.0001)
+%! assert(b.ytm,0.035,0.001)
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[0.01,0.04],'method_interpolation','monotone-convex');
 %! c = c.set('rates_stress',[0.02,0.05;0.005,0.014]);
 %! b = b.calc_spread_over_yield(c,'31-Mar-2016');
-%! assert(b.soy,-0.0019560,0.0001);
+%! assert(b.soy,-0.0019,0.0001);
+%! b = b.set('soy',0.00);
 %! b = b.calc_value('31-Mar-2016',c,'base');
-%! assert(b.getValue('base'),101.249998584740,0.1);
+%! assert(b.getValue('base'),100.178146843422,0.00001);
 %! b = b.rollout('stress');
 %! b = b.calc_value('31-Mar-2016',c,'stress');
-%! assert(b.getValue('stress'),[93.8990094561457;120.8670123921738],0.1); 
+%! assert(b.getValue('stress'),[92.9952370964446;119.2578934738462],0.00001); 
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');

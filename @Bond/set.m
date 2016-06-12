@@ -204,6 +204,13 @@ function s = set (bond, varargin)
       else
         error ('set: expecting the value to be a real number');
       end 
+    % ====================== set ytm ======================
+    elseif (ischar (prop) && strcmp (prop, 'ytm'))   
+      if (isnumeric (val) && isreal (val))
+        s.ytm = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end   
     % ====================== set compounding_freq  ======================
     elseif (ischar (prop) && strcmp (prop, 'compounding_freq'))   
       if (isnumeric (val) && isreal(val))
