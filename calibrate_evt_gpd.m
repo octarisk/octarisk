@@ -12,8 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{chi} @var{sigma} @var{u}] =} 
-%#													calibrate_evt_gpd(@var{v})
+%# @deftypefn {Function File} { [@var{chi} @var{sigma} @var{u}] =} calibrate_evt_gpd(@var{v})
 %#
 %# Calibrate sorted losses of historic or MC portfolio values 
 %# to a generalized pareto distribution and returns chi, sigma and u as 

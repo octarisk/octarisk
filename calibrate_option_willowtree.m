@@ -12,15 +12,8 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} 
-%#						calibrate_option_willowtree(@var{putcallflag},
-%#							@var{americanflag}, @var{S}, @var{X}, @var{T},
-%#							@var{rf}, @var{sigma}, @var{divyield},
-%#							@var{stepsize}, @var{nodes},
-%#							@var{multiplicator}, @var{market_value}, 
-%#							@var{path_static})
-%#
-%# Calibrate the implied volatility spread for American options according 
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_willowtree(@var{putcallflag},@var{americanflag}, @var{S}, @var{X}, @var{T}, @var{rf}, @var{sigma}, @var{divyield}, @var{stepsize}, @var{nodes}, @var{multiplicator}, @var{market_value}, @var{path_static})
+%# Calibrate implied volatility spread for American options according 
 %# to Willowtree valuation formula.
 %# @seealso{option_willowtree}
 %# @end deftypefn
