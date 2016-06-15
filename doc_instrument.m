@@ -80,20 +80,20 @@ end
 %! fprintf('\tdoc_instrument:\tPricing Fixed Rate Bond Object\n');
 %! b = Bond();
 %! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25);
-%! b = b.rollout('base');
+%! b = b.rollout('base','31-Mar-2016');
 %! b = b.calc_yield_to_mat('31-Mar-2016');
-%! assert(b.ytm,0.035,0.001)
+%! assert(b.ytm,0.0340800096184803,0.000001)
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[0.01,0.04],'method_interpolation','monotone-convex');
 %! c = c.set('rates_stress',[0.02,0.05;0.005,0.014]);
 %! b = b.calc_spread_over_yield(c,'31-Mar-2016');
-%! assert(b.soy,-0.0019,0.0001);
+%! assert(b.soy,-0.00368829585440858,0.00001);
 %! b = b.set('soy',0.00);
 %! b = b.calc_value('31-Mar-2016',c,'base');
-%! assert(b.getValue('base'),100.178146843422,0.00001);
-%! b = b.rollout('stress');
+%! assert(b.getValue('base'),99.1420775289364,0.00001);
+%! b = b.rollout('stress','31-Mar-2016');
 %! b = b.calc_value('31-Mar-2016',c,'stress');
-%! assert(b.getValue('stress'),[92.9952370964446;119.2578934738462],0.00001); 
+%! assert(b.getValue('stress'),[91.8547937772494;118.8336876898364],0.0000001); 
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');
@@ -112,3 +112,62 @@ end
 %! f = f.calc_value(c,'stress',i);
 %! assert(f.getValue('stress'),[-4.1118960639903;-54.1118960639903],0.00000001);
 
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Swaption Object\n');
+%! r = Riskfactor();
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[730,4380],'rates_base',[0.0001001034,0.0062559362],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',30,'axis_x_name','TENOR','axis_y',45,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.659802);
+%! v = v.set('type','IR');
+%! s = Swaption();
+%! s = s.set('maturity_date','31-Mar-2018');
+%! s = s.set('strike',0.0175,'multiplier',100);
+%! s = s.calc_value('base',r,c,v,'31-Mar-2016');
+%! assert(s.getValue('base'),0.89117199789300,0.0000001);
+%! s = s.set('value_base',0.9069751298);
+%! s = s.calc_vola_spread(r,c,v,'31-Mar-2016');
+%! s = s.calc_value('base',r,c,v,'31-Mar-2016');
+%! assert(s.getValue('base'),0.906975102470711,0.00001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing European Option Object\n');
+%! r = Riskfactor();
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',3650,'axis_x_name','TERM','axis_y',1.1,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.210360082233);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',326.9);
+%! o = Option();
+%! o = o.set('maturity_date','29-Mar-2026');
+%! o = o.set('strike',384.7481,'multiplier',1);
+%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),71.4875735979,0.0000001);
+%! o = o.set('value_base',70.00);
+%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),70.000,0.001);
+%! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing American Option Object\n');
+%! r = Riskfactor();
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',3650,'axis_x_name','TERM','axis_y',1.1,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.210360082233);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',286.867623322,'currency','USD');
+%! o = Option();
+%! o = o.set('maturity_date','29-Mar-2026','currency','USD','timesteps_size',5,'willowtree_nodes',30);
+%! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
+%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),123.043,0.001);
+%! o = o.set('value_base',100);
+%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),100.000,0.001);

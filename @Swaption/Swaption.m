@@ -42,7 +42,7 @@ classdef Swaption < Instrument
            riskfactors = {'RF_VOLA_IR_EUR','RF_IR_EUR','STRIKE','RF_IR_EUR','TENOR','NO_PAYMENTS'};
            sensitivities = [1,0.025,0.025,0.0,10,1];
            special_num = [100,1];
-           special_str = {'18-Mar-2018','disc','30/360','BLACK76'};
+           special_str = {'18-Mar-2018','disc','act/365','BLACK76'};
            tmp_cf_dates = [];
            tmp_cf_values = [];
            valuation_date = today;

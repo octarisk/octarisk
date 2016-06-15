@@ -180,6 +180,69 @@ function s = set (option, varargin)
       else
         error ('set: expecting the value to be a real number');
       end 
+    % ====================== set theo_delta ======================
+    elseif (ischar (prop) && strcmp (prop, 'theo_delta'))   
+      if (isnumeric (val) && isreal (val))
+        s.theo_delta = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end 
+    % ====================== set theo_delta ======================
+    elseif (ischar (prop) && strcmp (prop, 'theo_delta'))   
+      if (isnumeric (val) && isreal (val))
+        s.theo_delta = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end  
+    % ====================== set theo_gamma ======================
+    elseif (ischar (prop) && strcmp (prop, 'theo_gamma'))   
+      if (isnumeric (val) && isreal (val))
+        s.theo_gamma = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end
+    % ====================== set theo_vega ======================
+    elseif (ischar (prop) && strcmp (prop, 'theo_vega'))   
+      if (isnumeric (val) && isreal (val))
+        s.theo_vega = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end
+    % ====================== set theo_theta ======================
+    elseif (ischar (prop) && strcmp (prop, 'theo_theta'))   
+      if (isnumeric (val) && isreal (val))
+        s.theo_theta = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end
+    % ====================== set theo_rho ======================
+    elseif (ischar (prop) && strcmp (prop, 'theo_rho'))   
+      if (isnumeric (val) && isreal (val))
+        s.theo_rho = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end
+    % ====================== set theo_omega ======================
+    elseif (ischar (prop) && strcmp (prop, 'theo_omega'))   
+      if (isnumeric (val) && isreal (val))
+        s.theo_omega = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end     
+    % ====================== set timesteps_size ======================
+    elseif (ischar (prop) && strcmp (prop, 'timesteps_size'))   
+      if (isnumeric (val) && isreal (val))
+        s.timesteps_size = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end
+     % ====================== set willowtree_nodes ======================
+    elseif (ischar (prop) && strcmp (prop, 'willowtree_nodes'))   
+      if (isnumeric (val) && isreal (val))
+        s.willowtree_nodes = val;
+      else
+        error ('set: expecting the value to be a real number');
+      end  
     % ====================== set vola_sensi ======================
     elseif (ischar (prop) && strcmp (prop, 'vola_sensi'))   
       if (isnumeric (val) && isreal (val))
@@ -188,7 +251,7 @@ function s = set (option, varargin)
         error ('set: expecting the value to be a real number');
       end  
     else
-      error ('set: invalid property of option class');
+      error ('set: >>%s<< invalid property of option class',prop);
     end
   end
 end

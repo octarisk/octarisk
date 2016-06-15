@@ -103,8 +103,18 @@ q = divrate;
     theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
                 + q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) ...
                 .* X .* normcdf_d2;
-    vega    = S .* exp(-q.*T) .* N1s .* sqrt(T);
-    rho     = eta .* T.* X .*exp(-r.*T).* normcdf_eta_d2;
+    if ( CallPutFlag == 1 ) % Call
+        theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
+                + q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) ...
+                .* X .* normcdf_d2;
+    else   % Put   
+        theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
+                - q .* exp(-q .* T) .* S .* (1 - normcdf_d1) + r .* exp(-r .* T) ...
+                .* X .* (1 - normcdf_d2);
+    end   
+    theta = theta ./ 365;
+    vega    = S .* exp(-q.*T) .* N1s .* sqrt(T) ./ 100;
+    rho     = eta .* T.* X .*exp(-r.*T).* normcdf_eta_d2 ./ 100;
     omega   = delta .* S ./ value;
 end
 

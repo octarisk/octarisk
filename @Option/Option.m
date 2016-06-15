@@ -15,6 +15,12 @@ classdef Option < Instrument
         multiplier = 5;
         timesteps_size = 5;      % size of one timestep in path dependent valuations
         willowtree_nodes = 20;   % number of willowtree nodes per timestep
+        theo_delta = 0.0;
+        theo_gamma = 0.0;
+        theo_vega = 0.0;
+        theo_theta = 0.0;
+        theo_rho = 0.0;
+        theo_omega = 0.0;        
     end
    
     properties (SetAccess = private)
@@ -41,7 +47,7 @@ classdef Option < Instrument
            riskfactors = {'RF_VOLA_EQ_DE','RF_EQ_DE','STRIKE','RF_IR_EUR'};
            sensitivities = [1,9220,10200,0];
            special_num = [5,1];
-           special_str = {'18-Mar-2016','disc','30/360'};
+           special_str = {'18-Mar-2016','disc','act/365'};
            tmp_cf_dates = [];
            tmp_cf_values = [];
            valuation_date = today;
@@ -154,7 +160,15 @@ classdef Option < Instrument
          fprintf('vola_sensi: %f\n',b.vola_sensi); 
          fprintf('compounding_type: %s\n',b.compounding_type);  
          fprintf('compounding_freq: %d\n',b.compounding_freq);    
-         fprintf('day_count_convention: %s\n',b.day_count_convention); 
+         fprintf('day_count_convention: %s\n',b.day_count_convention);
+         if ( b.theo_delta ~= 0 )
+            fprintf('theo_delta:\t%8.4f\n',b.theo_delta);  
+            fprintf('theo_gamma:\t%8.4f\n',b.theo_gamma);  
+            fprintf('theo_vega:\t%8.4f\n',b.theo_vega);  
+            fprintf('theo_theta:\t%8.4f\n',b.theo_theta);  
+            fprintf('theo_rho:\t%8.4f\n',b.theo_rho);  
+            fprintf('theo_omega:\t%8.4f\n',b.theo_omega);  
+         end    
 
       end
       % converting object <-> struct for saving / loading purposes
