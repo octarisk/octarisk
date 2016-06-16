@@ -71,21 +71,21 @@ fclose (file_comments); % close comments file
 tmp_list_files = dir(path); % load all files of directory path into cell
 
 % B.i) Sort tmp_list_files in the following order: last three instrument types are SWAPTION, OPTION and SYNTHETIC
-%       then it is for sure, that all instruments, which serve as underlyings for these three types, already are valuated before calculating derivatives
-  % 1. move OPTION to last entry in tmp_filelist
+%       then it is assured that all instruments, which serve as underlyings for these three types, already are valuated before calculating derivatives
+  % 1. move SWAPTION to last entry in tmp_filelist
     for ii = 1 : 1 : length(tmp_list_files)
         tmp_filename = tmp_list_files( ii ).name;
         if (strcmp(upper(tmp_filename(1:end-4)),'SWAPT'))
-            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append OPT entry behind last entry of struct
-            tmp_list_files(ii) = [];                            % remove OPT entry           
+            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append SWAPT entry behind last entry of struct
+            tmp_list_files(ii) = [];                            % remove SWAPT entry           
         end
     end
-  % 2. move SWAPTION to last entry in tmp_filelist
+  % 2. move OPTION to last entry in tmp_filelist
     for ii = 1 : 1 : length(tmp_list_files)
         tmp_filename = tmp_list_files( ii ).name;
         if (strcmp(upper(tmp_filename(1:end-4)),'OPT'))
-            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append SWAPT entry behind last entry of struct
-            tmp_list_files(ii) = [];                            % remove SWAPT entry           
+            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append OPT entry behind last entry of struct
+            tmp_list_files(ii) = [];                            % remove OPT entry           
         end
     end
   % 3. move SYNTHETICs to last entry in tmp_filelist

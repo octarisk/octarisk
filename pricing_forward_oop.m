@@ -126,21 +126,21 @@ discount_rate_instr = convert_curve_rates(valuation_date,days_to_maturity, ...
                         curve_basis, comp_type,comp_freq,basis);
                         
 % Calculate forward value for equity and bond forwards
-if ( strcmp(type,'Equity') == 1 || strcmp(type,'EQFWD') == 1)
+if ( sum(strcmpi(type,{'Equity','EQFWD'})) > 0 )
     df_forward      = discount_factor (valuation_date, maturity_date, ...
                             cost_of_carry_instr , comp_type, basis, comp_freq);
     df_discount     = discount_factor (valuation_date, maturity_date, ...
                             discount_rate_instr, comp_type, basis, comp_freq);
     forward_price   = underlying_price ./ df_forward;
     payoff          = (forward_price - strike ) .* df_discount;
-elseif ( strcmp(type,'Bond') == 1 || strcmp(type,'BONDFWD') == 1)
+elseif ( sum(strcmpi(type,{'Bond','BONDFWD'})) > 0 )
     df_discount     = discount_factor (forward.valuation_date, ...
                                 forward.maturity_date, discount_rate_instr, ...
                                 comp_type, basis, comp_freq);
     forward_price   = underlying_price ./ df_discount;                           
     payoff          = underlying_price - (strike .* df_discount);
 else
-    error('Not a valid type: >>%s<<',type)
+    error('pricing_forward_oop: not a valid type: >>%s<<',type)
 end
 
 theo_value = payoff;

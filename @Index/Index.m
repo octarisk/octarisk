@@ -22,28 +22,25 @@ classdef Index
    % Class methods
    methods
         
-      function a = Index(tmp_name,tmp_id,tmp_type,tmp_currency,tmp_description,tmp_value_base)
+      function a = Index(tmp_name)
          % Index Constructor method
-        if nargin < 6
+        if nargin < 1
             tmp_name            = 'Test Index';
             tmp_id              = 'EUR-INDEX-TEST';
-            tmp_currency        = 'EUR';
-            tmp_description     = 'Test index for multi purpose use';
-            tmp_type            = 'Equity Index';
-            tmp_value_base      = 10321.45;
+        else 
+            tmp_id = tmp_name;
         end 
-        if ( strcmp(tmp_id,''))
-            error('Error: Index requires a valid ID')
-        end
+        tmp_currency    = 'EUR';
+        tmp_description = 'Test index for multi purpose use';
+        tmp_type        = 'Equity Index';
+        tmp_value_base  = 10321.45;
+
         a.name          = tmp_name;
         a.id            = tmp_id;
         a.description   = tmp_description;
         a.type          = upper(tmp_type);
         a.currency      = tmp_currency;
-        if (isnumeric (tmp_value_base) && isreal(tmp_value_base) )
-            a.value_base    = tmp_value_base;
-        end
-               
+        a.value_base    = tmp_value_base;           
       end % Index
       
       function disp(a)

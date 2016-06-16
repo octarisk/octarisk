@@ -521,10 +521,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 %Calculate values of equity forward
                 if ( first_eval == 0)
                 % Base value
-                    forward = forward.calc_value(tmp_curve_object,'base',tmp_underlying_object);
+                    forward = forward.calc_value('base',tmp_curve_object,tmp_underlying_object);
                 end
                 % calculation of value for scenario               
-                    forward = forward.calc_value(tmp_curve_object,tmp_scenario,tmp_underlying_object);
+                    forward = forward.calc_value(tmp_scenario,tmp_curve_object,tmp_underlying_object);
 
                 % store bond object in struct:
                     instrument_struct( ii ).object = forward;

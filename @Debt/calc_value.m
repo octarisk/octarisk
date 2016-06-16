@@ -19,13 +19,11 @@ function obj = calc_value (debt,discount_curve_object,spread_object,value_type)
         spread_nodes 		    = spread_object.get('nodes');
         spread_rates_orig 	    = spread_object.getValue('base');
         spread_rates_shifted 	= spread_object.getValue(value_type);
-
     % Get Yields and spreads at instrument duration 
         yield_original  = interpolate_curve(discount_nodes,discount_rates_orig,tmp_dur*365,discount_curve_object.get('method_interpolation'));
         yield_shifted   = interpolate_curve(discount_nodes,discount_rates_shifted,tmp_dur*365,discount_curve_object.get('method_interpolation'));       
         spread_original	= interpolate_curve(spread_nodes,spread_rates_orig,tmp_dur*365,spread_object.get('method_interpolation'));
         spread_shifted  = interpolate_curve(spread_nodes,spread_rates_shifted,tmp_dur*365,spread_object.get('method_interpolation'));
-        
 
     % Calculate Shiftvalue
         tmp_ir_abs_diff = ( yield_shifted - yield_original + spread_shifted - spread_original);

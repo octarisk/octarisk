@@ -61,8 +61,8 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
         end
         curve_struct( ii ).name     = tmp_curve_id;
         curve_struct( ii ).id       = tmp_curve_id;
-        curve_object = Curve(tmp_curve_id,tmp_curve_id,tmp_curve_type,'');
-
+        curve_object = Curve(tmp_curve_id);
+        curve_object = curve_object.set('type',tmp_curve_type);
         % loop via all base and stress scenarios:
         tmp_nodes = [];
         tmp_rates_original = [];
@@ -149,11 +149,26 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
     end % end try catch
 end    % close loop via all curves
 
-% append Dummy Spread Curve (used for all instruments without 
+% append RF Dummy Spread Curve (used for all instruments without 
 % defined spread curve): 
 curve_struct( length(rf_ir_cur_cell) + 1  ).id = 'RF_SPREAD_DUMMY';    
-curve_object = Curve('RF_SPREAD_DUMMY','RF_SPREAD_DUMMY','Spread Curve', ...
-                    'Dummy Spread curve with zero rates');
+curve_object = Curve('RF_SPREAD_DUMMY');
+curve_object = curve_object.set('type','Spread Curve','description', ...
+                                        'Dummy Spread curve with zero rates');
+curve_object = curve_object.set('nodes',[365]);
+curve_object = curve_object.set('rates_base',[0]);
+curve_object = curve_object.set('rates_stress',[0]);
+for kk = 1:1:length(mc_timesteps)    % append dummy curves for all mc_timesteps
+    curve_object = curve_object.set('rates_mc',[0], ...
+                                    'timestep_mc',mc_timesteps{kk});
+end    
+curve_struct( length(rf_ir_cur_cell) + 1  ).object = curve_object;  
+% append Dummy Spread Curve (used for all instruments without 
+% defined spread curve): 
+curve_struct( length(rf_ir_cur_cell) + 1  ).id = 'SPREAD_DUMMY';    
+curve_object = Curve('SPREAD_DUMMY');
+curve_object = curve_object.set('type','Spread Curve','description', ...
+                                        'Dummy Spread curve with zero rates');
 curve_object = curve_object.set('nodes',[365]);
 curve_object = curve_object.set('rates_base',[0]);
 curve_object = curve_object.set('rates_stress',[0]);

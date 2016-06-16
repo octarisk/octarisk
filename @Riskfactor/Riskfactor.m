@@ -26,70 +26,27 @@ classdef Riskfactor
       timestep_mc = {};
     end
  
-% model	mean	standard_deviation	skewness	kurtosis	
-% GBM	    x	    x	                x	        x	    IR node	        IR value			
-% BM	    x	    x	                x	        x	    IR node	        IR value			
-% SRD	    x	    x	                x	        x	    start value	    mr level	mr rate	    IR node	  IR value
-% OU	    x	    x	                x	        x	    start value	    mr level	mr rate	    IR node	  IR value
-
- 
    % Class methods
    methods
         
-      function a = Riskfactor(tmp_name,tmp_id,tmp_type,tmp_description,tmp_model,tmp_parameters)
-         % Riskfactor Constructor method
-        if nargin < 6
+      function a = Riskfactor(tmp_name)
+      % Riskfactor Constructor method
+        if nargin < 1
             tmp_name            = 'Test Risk Factor';
-            tmp_id              = 'RF_IR_TEST';
-            tmp_description     = 'Test risk factor for multi purpose use';
-            tmp_type            = 'RF_IR';
-            tmp_model           = 'SRD';
-            tmp_parameters      = [0.0,0.16,-0.5,4.0,0.034,0.05,0.00001,365,0.024567];
-        end 
-        if ( strcmp(tmp_id,''))
-            error('Error: Risk factor requires a valid ID')
-        end
-        if ( length(tmp_parameters) < 4)
-            error('Error: Risk factor requires a at least mean,std,skew,kurt')
+            tmp_id              = 'RF_EUR-INDEX-TEST';
+        else 
+            tmp_id = tmp_name;
         end
         a.name          = tmp_name;
         a.id            = tmp_id;
-        a.description   = tmp_description;
-        a.type          = upper(tmp_type);
-        a.model         = tmp_model;
-        a.mean          = tmp_parameters(1);
-        a.std           = tmp_parameters(2);
-        a.skew          = tmp_parameters(3);
-        a.kurt          = tmp_parameters(4);
-        % Get model dependent parameters
-        if ( sum(strcmp(a.model,{'GBM','BM'})) > 0) 
-            if ( strcmp('RF_IR',a.type(1:5)) || strcmp('RF_SP',a.type(1:5)) )
-                if ( length(tmp_parameters) > 4 )
-                    a.node  = tmp_parameters(5);          
-                    a.value_base  = tmp_parameters(6);
-                else
-                    error('Error: Risk factor type RF_IR has no defined IR node or value')
-                end
-            else
-                if ( length(tmp_parameters) > 4 )
-                    a.value_base  = tmp_parameters(5);
-                end    
-            end
-        else    % Mean reversion models (OE,SRD,BKM)
-            a.value_base  = tmp_parameters(5);
-            a.mr_level  = tmp_parameters(6);
-            a.mr_rate  = tmp_parameters(7);
-            if ( strcmp('RF_IR',a.type(1:5)) || strcmp('RF_SP',a.type(1:5)) )
-                if ( length(tmp_parameters) > 7 )
-                    a.node  = tmp_parameters(8);         
-                    a.value_base  = tmp_parameters(9);
-                else
-                    error('Error: Risk factor type RF_IR has no defined IR node or value')    
-                end   
-            end
-        end
-               
-      end % Riskfactor
+        a.description   = 'Test risk factor for multi purpose use';
+        a.type          = 'RF_EQ';
+        a.model         = 'GBM';
+        a.mean          = 0.0;
+        a.std           = 0.25;
+        a.skew          = 0.0;
+        a.kurt          = 3.0;
+      end % Riskfactor constructor
       
       function disp(a)
          % Display a Riskfactor object
@@ -102,11 +59,8 @@ classdef Riskfactor
          fprintf('mean: %f\nstandard deviation: %f\nskewness: %f\nkurtosis: %f\n', ... 
             a.mean,a.std,a.skew,a.kurt);
          if ( sum(strcmp(a.model,{'OU','BKM','SRD'})) > 0) 
-            fprintf('value_base: %f\n',a.value_base); 
             fprintf('mr_level: %f\n',a.mr_level); 
             fprintf('mr_rate: %f\n',a.mr_rate); 
-         else
-            fprintf('value_base: %f\n',a.value_base); 
          end
          if ( regexp('RF_IR',a.type) || regexp('RF_SPREAD',a.type) )
             fprintf('node: %d\n',a.node); 
@@ -180,7 +134,7 @@ classdef Riskfactor
                 error('Insufficient path: %s \n',path);
             end
         end
-        % printing documentation for Class Riskfactor (ousourced to dummy function to use documentation behaviour)
+        % printing documentation for Class Riskfactor (outsourced to dummy function to use documentation behaviour)
         scripts = ['doc_riskfactor'];
         c = cellstr(scripts);
         for ii = 1:length(c)

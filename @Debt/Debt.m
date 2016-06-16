@@ -1,72 +1,35 @@
 classdef Debt < Instrument
    
     properties   % All properties of Class Debt with default values
-        discount_curve  = 'RF_IF_EUR';
-        spread_curve    = 'RF_SPREAD_DUMMY';           
+        discount_curve  = 'IF_EUR';
+        spread_curve    = 'SPREAD_DUMMY';           
     end
    
     properties (SetAccess = private)
-        sub_type        = 'DBT';
-        cf_dates = [];
-        cf_values = [];
-        duration        = 0.0;       
-        convexity       = 0.0; 
+        sub_type    = 'DBT';
+        cf_dates    = [];
+        cf_values   = [];
+        duration    = 0.0;       
+        convexity   = 0.0; 
     end
    
    methods
-      function b = Debt(name,id,description,sub_type,currency,base_value,asset_class,valuation_date,riskfactors,sensitivities,special_num,special_str,tmp_cf_dates,tmp_cf_values)
-        if nargin < 12
-           name = 'Dummy';
-           id = 'Dummy';
-           description = 'Test debt instrument for testing purposes';
-           sub_type = 'DBT';
-           currency = 'EUR';
-           base_value = 100;
-           asset_class = 'Fixed Income';
-           riskfactors = {'RF_IR_DUMMY','RF_SPREAD_DUMMY'};
-           sensitivities = [7.8,-15.8];
-           special_num = [];
-           special_str = {};
-           tmp_cf_dates = [];
-           tmp_cf_values = [];
-           valuation_date = today;
-        elseif( nargin == 12)
-           tmp_cf_dates = [];
-           tmp_cf_values = [];
-        elseif ( nargin == 14)
-            if ( length(tmp_cf_dates) > 0 )
-                tmp_cf_dates = (tmp_cf_dates)' - today;
-            end
+      function b = Debt(tmp_name)
+        if nargin < 1
+            name  = 'DEBT_TEST';
+            id    = 'DEBT_TEST';           
+        else
+            name  = tmp_name;
+            id    = name;
         end
+        description = 'Debt test instrument';
+        value_base = 100.00;      
+        currency = 'EUR';
+        asset_class = 'debt';   
+        valuation_date = today; 
         % use constructor inherited from Class Instrument
-        b = b@Instrument(name,id,description,'debt',currency,base_value,asset_class,valuation_date);
-        % setting property sub_type
-        if ( strcmp(sub_type,'') )
-            error('Error: No sub_type specified');
-        else
-            b.sub_type = sub_type;
-        end     
-        % setting property duration
-        if ( length(sensitivities) >= 1  )
-            b.duration = sensitivities(1);
-        end
-        % setting property convexity
-        if ( length(sensitivities) >= 2  )
-            b.convexity = sensitivities(2);
-        end
-        % setting property discount_curve
-        if ( length(riskfactors) < 1  )
-            error('Error: No discount_curve specified');
-        else
-            b.discount_curve = riskfactors{1};
-        end
-        % setting property spread_curve
-        if ( length(riskfactors) >= 2 )
-            b.spread_curve = riskfactors{2};
-        end
-        b.cf_dates = tmp_cf_dates;
-        b.cf_values = tmp_cf_values;
-        
+        b = b@Instrument(name,id,description,'debt',currency,value_base, ...
+                        asset_class,valuation_date); 
       end 
       
       function disp(b)
@@ -85,10 +48,4 @@ classdef Debt < Instrument
       end % set.sub_type
    end 
    
-   methods (Static = true)
-      function market_value = calc_value_tmp(notional,coupon_rate)
-            market_value = notional .* coupon_rate;
-      end 
-      
-   end
 end 

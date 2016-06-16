@@ -19,7 +19,7 @@ classdef Bond < Instrument
         last_reset_rate = 0.00001;
         discount_curve = 'IR_EUR';
         reference_curve = 'IR_EUR';
-        spread_curve = 'RF_SPREAD_DUMMY';
+        spread_curve = 'SPREAD_DUMMY';
         spot_value = 0.0;       
         in_arrears = 0;
         fixed_annuity = 0;      % property only needed for fixed amortizing bond 
@@ -53,153 +53,24 @@ classdef Bond < Instrument
     end
    
    methods
-      function b = Bond(name,id,description,sub_type,currency,spot_value, ...
-                        asset_class,valuation_date,riskfactors,sensitivities, ...
-                        special_num,special_str,tmp_cf_dates,tmp_cf_values)
-        if nargin < 12
-           name = 'Dummy';
-           id = 'Dummy';
-           description = 'Test bond instrument for testing purposes';
-           sub_type = 'FRB';
-           currency = 'EUR';
-           spot_value = 100;
-           asset_class = 'Fixed Income';
-           riskfactors = {'RF_IR_DUMMY','RF_IR_DUMMY','RF_SPREAD_DUMMY'};
-           sensitivities = [1,1,1];
-           special_num = [100,0.00,12,0.0,0.0002,0];
-           special_str = {'01-Feb-2011','01-Feb-2025','forward','simple','act/365'};
-           tmp_cf_dates = [];
-           tmp_cf_values = [];
-           valuation_date = today;
-        elseif( nargin == 12)
-           tmp_cf_dates = [];
-           tmp_cf_values = [];
-        elseif ( nargin == 14)
-            if ( length(tmp_cf_dates) > 0 )
-                tmp_cf_dates = (tmp_cf_dates)' - valuation_date;
-            end
+      function b = Bond(tmp_name)
+        if nargin < 1
+            name  = 'BOND_TEST';
+            id    = 'BOND_TEST';           
+        else
+            name  = tmp_name;
+            id    = name;
         end
+        description = 'Bond test instrument';
+        value_base = 100.00;      
+        currency = 'EUR';
+        asset_class = 'Bond';   
+        valuation_date = today; 
         % use constructor inherited from Class Instrument
-        b = b@Instrument(name,id,description,'bond',currency,spot_value, ...
-                        asset_class,valuation_date);
-        % setting property sub_type
-        if ( strcmp(sub_type,'') )
-            error('Error: No sub_type specified');
-        else
-            b.sub_type = sub_type;
-        end
-        if ( strcmp(sub_type,'CASHFLOW') == 0 ) % special case CASHFLOW 
-            % setting property issue_date
-            if ( length(special_str) >= 1 )
-                if ( ~strcmp(special_str{1},'') )
-                    b.issue_date =  datestr(special_str{1});
-                end
-            end
-            % setting property maturity_date
-            if ( length(special_str) < 2 )
-                error('Error: No maturity date specified');
-            else
-                b.maturity_date = datestr(special_str{2});
-            end  
-            % setting property compounding_type
-            if ( length(special_str) >= 4  )
-                b.compounding_type = lower(special_str{4});
-            end
-            % setting property term and compounding_freq
-            if ( length(special_num) < 3  )
-                error('Error: No term specified');
-            else
-                b.term = special_num(3);
-                b.compounding_freq = 12 / b.term;
-            end
-            % setting property day_count_convention
-            if ( length(special_str) >= 5  )
-                b.day_count_convention = special_str{5};
-            end
-            % setting property coupon_generation_method 
-            if ( length(special_str) >= 3  )
-                b.coupon_generation_method  = lower(special_str{3});
-            end      
-            % setting property notional
-            if ( length(special_num) < 1  )
-                error('Error: No notional specified');
-            else
-                b.notional = special_num(1);  
-            end
-            % setting property coupon_rate
-            if ( length(special_num) < 2  )
-                error('Error: No coupon_rate specified');
-            else
-                b.coupon_rate = special_num(2);  
-            end 
-            % setting property enable_business_day_rule
-            if ( length(special_num) >= 6  )
-                b.enable_business_day_rule = special_num(6);
-            end
-            % setting property business_day_rule
-            if ( length(special_num) >= 7  )
-                b.business_day_rule = special_num(7);
-            end
-            % setting property business_day_direction
-            if ( length(special_num) >= 8  )
-                b.business_day_direction = special_num(8);
-            end
-            % setting property notional_at_start
-            if ( length(special_num) >= 8  )
-                b.notional_at_start= special_num(8);
-            end
-            % setting property notional_at_end
-            if ( length(special_num) >= 9  )
-                b.notional_at_end = special_num(9);
-            end
-            % setting property in_arrears_flag
-            if ( length(special_num) >= 10  )
-                b.in_arrears = special_num(10);
-            end
-            % setting property fixed_annuity
-            if ( length(special_num) >= 11  )
-                b.fixed_annuity = special_num(11);
-            end
-            % setting property spread
-            if ( length(special_num) >= 4  )
-                b.spread = special_num(4);
-            end
-            % setting property long_first_period
-            if ( length(special_str) >= 6  )
-                b.long_first_period = special_str{6};
-            end    
-            % setting property long_last_period
-            if ( length(special_str) >= 7  )
-                b.long_last_period = special_str{7};
-            end 
-            % setting property last_reset_rate
-            if ( length(special_num) >= 5 )
-                b.last_reset_rate = special_num(5);
-            end
-        end
-        % setting property discount_curve
-        if ( length(riskfactors) < 1  )
-            error('Error: No discount_curve specified');
-        else
-            b.discount_curve = riskfactors{1};
-        end
-        % setting property reference_curve
-        if ( length(riskfactors) >= 2  )
-            b.reference_curve = riskfactors{2};
-        end
-        % setting property spread_curve
-        if ( length(riskfactors) >= 3 )
-            b.spread_curve = riskfactors{3};
-        end
-        b.cf_dates = tmp_cf_dates;
-        b.cf_values = tmp_cf_values;
-        
-        % Call static methods
-        %b.base_value = Bond.calc_value(b.notional,b.coupon_rate);
-        % Call superclass method to set basis
-        b.basis = Instrument.get_basis(b.day_count_convention);
+        b = b@Instrument(name,id,description,'bond',currency,value_base, ...
+                        asset_class,valuation_date);      
       end 
-      
+      % method display properties
       function disp(b)
          disp@Instrument(b)
          fprintf('sub_type: %s\n',b.sub_type);              
@@ -297,10 +168,4 @@ classdef Bond < Instrument
       end % set.day_count_convention
    end 
    
-   methods (Static = true)
-      function market_value = calc_value_tmp(notional,coupon_rate)
-            market_value = notional .* coupon_rate;
-      end 
-      
-   end
 end 

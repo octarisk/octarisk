@@ -70,7 +70,7 @@ function y = getValue (surface, xx,yy,zz)
             % WORKAROUND:
             % interpolating the implied vola for more than 50000 MC scenarios is too memory extensive.
                 % therefore one needs to reduce the complexity:
-                % since for all MC scenarios the tenor and term is fixed, we make first a nearest neightbor matching of tenor and term
+                % since for all MC scenarios the tenor and term is fixed, we make first a nearest neighbour matching of tenor and term
                 % and afterwards a linear intepolation of the moneyness. So to say we extract the moneyness dimension from the cube.
                 xx_nearest = interp1(xx_structure,xx_structure,xx(1),'nearest');
                 yy_nearest = interp1(yy_structure,yy_structure,yy(1),'nearest');

@@ -46,14 +46,14 @@ classdef Instrument
    
    % Class methods
    methods
-      function a = Instrument(tmp_name,tmp_id,tmp_description,tmp_type,tmp_currency,tmp_spot_value,tmp_asset_class,tmp_valuation_date)
+      function a = Instrument(tmp_name,tmp_id,tmp_description,tmp_type,tmp_currency,value_base,tmp_asset_class,tmp_valuation_date)
          % Instrument Constructor function
          if nargin > 0
             a.name = tmp_name;
             a.id = tmp_id;
             a.description = tmp_description;
             a.type = lower(tmp_type);
-            a.value_base = tmp_spot_value;
+            a.value_base = value_base;
             a.currency = tmp_currency;
             a.asset_class = tmp_asset_class;
             a.valuation_date = tmp_valuation_date;

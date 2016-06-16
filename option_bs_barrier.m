@@ -1,5 +1,6 @@
 %# Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
-%# Copyright (C) 2006 User vanna at http://www.quantcode.com (it is stated:
+%# Copyright (C) 2006 User vanna at http://www.quantcode.com 
+%# although no explicit license statement is given, the following is given:
 %#      "This is a free for everyone site, and all source code created here is freely downloadable."
 %#
 %# This program is free software; you can redistribute it and/or modify it under

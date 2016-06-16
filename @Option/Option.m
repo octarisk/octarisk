@@ -6,9 +6,9 @@ classdef Option < Instrument
         compounding_freq = 1;               
         day_count_convention = 'act/365';
         spread = 0.0;             
-        discount_curve = 'RF_IF_EUR';
-        underlying = 'RF_EQ_DE';
-        vola_surface = 'vol_index_RF_EQ_DE';
+        discount_curve = 'EUR_IR';
+        underlying = 'DAX30';
+        vola_surface = 'vol_index_DAX30';
         vola_sensi = 1;
         strike = 100;
         spot = 100;
@@ -35,122 +35,28 @@ classdef Option < Instrument
     end
 
    methods
-      function b = Option(name,id,description,sub_type,currency,base_value,asset_class,valuation_date,riskfactors,sensitivities,special_num,special_str,tmp_cf_dates,tmp_cf_values)
-        if nargin < 12
-           name = 'ODAXC20160318';
-           id = 'ODAXC20160318';
-           description = 'Call Option DAX for testing purposes';
-           sub_type = 'OPT_EUR_C';
-           currency = 'EUR';
-           base_value = 125;
-           asset_class = 'Derivative';
-           riskfactors = {'RF_VOLA_EQ_DE','RF_EQ_DE','STRIKE','RF_IR_EUR'};
-           sensitivities = [1,9220,10200,0];
-           special_num = [5,1];
-           special_str = {'18-Mar-2016','disc','act/365'};
-           tmp_cf_dates = [];
-           tmp_cf_values = [];
-           valuation_date = today;
-        elseif( nargin == 12)
-           tmp_cf_dates = [];
-           tmp_cf_values = [];
-        elseif ( nargin == 14)
-            if ( length(tmp_cf_dates) > 0 )
-                tmp_cf_dates = (tmp_cf_dates)' - today;
-            end
-        end
-        % use constructor inherited from Class Instrument
-        b = b@Instrument(name,id,description,'option',currency,base_value,asset_class,valuation_date);
-        % setting property sub_type
-        if ( strcmp(sub_type,'') )
-            error('Error: No sub_type specified');
+      function b = Option(tmp_name)
+        if nargin < 1
+            name  = 'OPTION_TEST';
+            id    = 'OPTION_TEST';           
         else
-            b.sub_type = sub_type;
+            name  = tmp_name;
+            id    = name;
         end
-
-        % setting property issue_date
-        if ( length(special_str) >= 1 )
-            if ( ~strcmp(special_str{1},'') )
-                b.maturity_date =  datestr(special_str{1});
-            end
-        end
-
-        % parsing attribute special_str
-            % setting property compounding_type
-            if ( length(special_str) >= 2  )
-                b.compounding_type = lower(special_str{2});
-            end
-
-            % setting property day_count_convention
-            if ( length(special_str) >= 3  )
-                b.day_count_convention = special_str{3};
-            end
- 
-        % parsing attribute special_num
-            % setting property multiplier
-            if ( length(special_num) >= 1  )
-                b.multiplier = special_num(1);  
-            end
-            % setting property compounding_freq
-            if ( length(special_num) >= 2  )
-                b.compounding_freq = special_num(2);  
-            end 
-
-        % parsing attribute sensitivities
-            % setting property vola_sensi
-            if ( length(sensitivities) < 1  )
-                error('Error: No vola_sensi specified');
-            else
-                b.vola_sensi = sensitivities(1);
-            end        
-            % setting property spot
-            if ( length(sensitivities) < 2  )
-                error('Error: No spot specified');
-            else
-                b.spot = sensitivities(2);
-            end       
-            % setting property strike
-            if ( length(sensitivities) < 3  )
-                error('Error: No strike specified');
-            else
-                b.strike = sensitivities(3);
-            end
-            % setting property spread
-            if ( length(sensitivities) >= 3  )
-                b.spread = sensitivities(4);
-            end
-
-        % parsing attribute riskfactors
-            % setting property vola surface
-            if ( length(riskfactors) < 1  )
-                error('Error: No vola_surface specified');
-            else
-                b.vola_surface = riskfactors{1};
-            end
-             % setting property underlying
-            if ( length(riskfactors) < 2  )
-                error('Error: No underlying specified');
-            else
-                b.underlying = riskfactors{2};
-            end
-             % setting property discount_curve
-            if ( length(riskfactors) < 4  )
-                error('Error: No discount_curve specified');
-            else
-                b.discount_curve = riskfactors{4};
-            end
-        b.cf_dates = tmp_cf_dates;
-        b.cf_values = tmp_cf_values;
-        
-        % Call static superclass method to set basis
-        b.basis = Instrument.get_basis(b.day_count_convention);
+        description = 'Option test instrument';
+        value_base = 1.00;      
+        currency = 'EUR';
+        asset_class = 'Derivative';   
+        valuation_date = today; 
+        % use constructor inherited from Class Instrument
+        b = b@Instrument(name,id,description,'option',currency,value_base, ...
+                        asset_class,valuation_date); 
       end 
       
       function disp(b)
          disp@Instrument(b)
          fprintf('sub_type: %s\n',b.sub_type);                   
          fprintf('maturity_date: %s\n',b.maturity_date);      
-         fprintf('spot: %f \n',b.spot); 
          fprintf('strike: %f \n',b.strike);
          fprintf('multiplier: %f \n',b.multiplier);         
          fprintf('underlying: %s\n',b.underlying);  
@@ -211,11 +117,11 @@ classdef Option < Instrument
          end
          obj.sub_type = sub_type;
       end % set.sub_type
+      function obj = set.day_count_convention(obj,day_count_convention)
+         obj.day_count_convention = day_count_convention;
+         % Call superclass method to set basis
+         obj.basis = Instrument.get_basis(obj.day_count_convention);
+      end % set.day_count_convention
    end 
-   
-   methods (Static = true)
-      function market_value = calc_value_tmp(notional,coupon_rate)
-            market_value = notional .* coupon_rate;
-      end       
-   end
+
 end 

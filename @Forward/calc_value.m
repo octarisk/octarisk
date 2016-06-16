@@ -1,9 +1,9 @@
-function obj = calc_value (forward,discount_curve_object,value_type,underlying_object)
+function obj = calc_value (forward,value_type,discount_curve_object,underlying_object)
   obj = forward;
-   if ( nargin < 2)
+   if ( nargin < 3)
         error('Error: No  discount curve set. Aborting.');
    end
-   if ( nargin == 2)
+   if ( nargin == 1)
         error('No value_type set. [stress,1d,10d,...]');
    end
    % get underlying price vector according to value_type

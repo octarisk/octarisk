@@ -107,10 +107,17 @@ function s = set (obj, varargin)
         s.type = val;
       else
         error ('set: expecting the value to be of type character');
-      end   
+      end 
+    % ====================== set description ======================
+    elseif (ischar (prop) && strcmp (prop, 'description'))   
+      if (ischar (val))
+        s.description = val;
+      else
+        error ('set: expecting the value to be of type character');
+      end
     % case else
     else
-      error ('set: invalid property of surface class');
+      error ('set: invalid property of surface class: >>%s<<',prop);
     end
   end
 end

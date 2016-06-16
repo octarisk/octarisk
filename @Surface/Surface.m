@@ -1,33 +1,3 @@
-%# -*- texinfo -*-
-%# @deftypefn  {Function File} {} Surface ()
-%# @deftypefnx {Function File} {} Surface (@var{a})
-%# Surface Superclass 
-%#
-%# @*
-%# Superclass properties:
-%# @itemize @bullet
-%# @item name: Name of object
-%# @item id: Id of object
-%# @item description: Description of object
-%# @item type: Actual spot value of object
-%# @item model
-%# @item mean 
-%# @item std
-%# @item skew 
-%# @item start_value 
-%# @item mr_level
-%# @item mr_rate 
-%# @item node
-%# @item rate 
-%# @item scenario_stress: Vector with values of stress scenarios
-%# @item scenario_mc: Matrix with risk factor scenario values (values per timestep per column)
-%# @item timestep_mc: MC timestep per column (cell string)
-%# @end itemize
-%# @*
-%#
-%# @seealso{Instrument}
-%# @end deftypefn
-
 classdef Surface
    % file: @Surface/Surface.m
     properties
@@ -51,25 +21,21 @@ classdef Surface
  
    % Class methods
    methods
-      function a = Surface(tmp_name,tmp_id,tmp_type,tmp_description)
-         % Riskfactor Constructor method
-        if nargin < 3
-            tmp_name            = 'Index Test Surface';
-            tmp_id              = 'VOLA_INDEX_EUR';
-            tmp_description     = 'Test surface';
-            tmp_type            = 'Index';
-        end 
-        if nargin < 4
-            tmp_description     = 'Dummy Description';
+      function a = Surface(tmp_name)
+       % Surface Constructor method
+        if nargin < 1
+            name        = 'Index Test Vola Surface';
+            tmp_id      = 'VOLA_INDEX_EUR';
+        else
+            name        = tmp_name;
+            tmp_id      = tmp_name;
         end
-        if ( strcmp(tmp_id,''))
-            error('Error: Surface requires a valid ID')
-        end
-        a.name          = tmp_name;
+        tmp_description = 'Test Dummy Surface';
+        tmp_type        = 'INDEX';
+        a.name          = name;
         a.id            = tmp_id;
         a.description   = tmp_description;
-        a.type          = upper(tmp_type);
-                             
+        a.type          = upper(tmp_type);                             
       end % Surface
       
       function disp(a)

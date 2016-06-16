@@ -79,7 +79,8 @@ end
 %! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing Fixed Rate Bond Object\n');
 %! b = Bond();
-%! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25);
+%! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25,'coupon_generation_method','forward');
+%! b = b.set('maturity_date','01-Feb-2025','notional',100,'compounding_type','simple','issue_date','01-Feb-2011');
 %! b = b.rollout('base','31-Mar-2016');
 %! b = b.calc_yield_to_mat('31-Mar-2016');
 %! assert(b.ytm,0.0340800096184803,0.000001)
@@ -103,13 +104,14 @@ end
 %! i = i.set('value_base',326.900);
 %! f = Forward();
 %! f = f.set('name','EQ_Forward_Index_Test','maturity_date','26-Mar-2036','strike_price',0.00,'valuation_date','31-Mar-2016');
-%! f = f.calc_value(c,'base',i);
+%! f = f.set('compounding_freq','annual');
+%! f = f.calc_value('base',c,i);
 %! assert(f.getValue('base'),326.9,0.1);
 %! f = f.set('strike_price',426.900);
-%! f = f.calc_value(c,'base',i);
+%! f = f.calc_value('base',c,i);
 %! assert(f.getValue('base'),-27.2118960639903,0.00000001);
 %! i = i.set('scenario_stress',[350.00;300.00]);
-%! f = f.calc_value(c,'stress',i);
+%! f = f.calc_value('stress',c,i);
 %! assert(f.getValue('stress'),[-4.1118960639903;-54.1118960639903],0.00000001);
 
 %!test

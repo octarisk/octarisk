@@ -26,21 +26,18 @@ classdef Curve
  
    % Class methods
    methods
-      function a = Curve(tmp_name,tmp_id,tmp_type,tmp_description)
+      function a = Curve(tmp_name)
          % Riskfactor Constructor method
-        if nargin < 3
-            tmp_name            = 'Test Curve';
-            tmp_id              = 'RF_IR_EUR';
-            tmp_description     = 'Test Dummy Curve';
-            tmp_type            = 'Discount Curve';
-        end 
-        if nargin < 4
-            tmp_description     = 'Dummy Description';
+        if nargin < 1
+            name        = 'Test Curve';
+            tmp_id      = 'IR_EUR_TEST';
+        else
+            name        = tmp_name;
+            tmp_id      = tmp_name;
         end
-        if ( strcmp(tmp_id,''))
-            error('Error: Curve requires a valid ID')
-        end
-        a.name          = tmp_name;
+        tmp_description = 'Test Dummy Curve';
+        tmp_type        = 'Discount Curve';
+        a.name          = name;
         a.id            = tmp_id;
         a.description   = tmp_description;
         a.type          = upper(tmp_type);

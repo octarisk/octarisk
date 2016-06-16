@@ -1,7 +1,7 @@
 classdef Synthetic < Instrument
    
     properties   % All properties of Class Debt with default values
-        instruments  = {'BASF11'};
+        instruments  = {'TEST_INSTRUMENT'};
         weights    = [1]; 
     end
    
@@ -12,49 +12,22 @@ classdef Synthetic < Instrument
     end
    
    methods
-      function b = Synthetic(name,id,description,sub_type,currency,base_value,asset_class,valuation_date,riskfactors,sensitivities,special_num,special_str,tmp_cf_dates,tmp_cf_values)
-        if nargin < 12
-           name = 'DummySynthetic';
-           id = 'DummySynthetic';
-           description = 'Synthetic instrument for testing purposes';
-           sub_type = 'SYNTH';
-           currency = 'EUR';
-           base_value = 100;
-           asset_class = 'Diversified';
-           riskfactors = {'BASF11','114171'};
-           sensitivities = [0.6,0.4];
-           special_num = [0.3];
-           special_str = {};
-           tmp_cf_dates = [];
-           tmp_cf_values = [];
-           valuation_date = today;
-        elseif( nargin == 12)
-           tmp_cf_dates = [];
-           tmp_cf_values = [];
-        elseif ( nargin == 14)
-            if ( length(tmp_cf_dates) > 0 )
-                tmp_cf_dates = (tmp_cf_dates)' - today;
-            end
-        end
-        % use constructor inherited from Class Instrument
-        b = b@Instrument(name,id,description,'synthetic',currency,base_value,asset_class,valuation_date);
-        % setting property sub_type
-        if ( strcmp(sub_type,'') )
-            error('Error: No sub_type specified');
+      function b = Synthetic(tmp_name)
+        if nargin < 1
+            name  = 'SYNTH_TEST';
+            id    = 'SYNTH_TEST';           
         else
-            b.sub_type = sub_type;
-        end     
-        % setting property weights
-        if ( length(sensitivities) >= 1  )
-            b.weights = sensitivities;
+            name  = tmp_name;
+            id    = name;
         end
-        % setting property instruments
-        if ( length(riskfactors) >= 1  )
-            b.instruments = riskfactors;
-        end
-        b.cf_dates = tmp_cf_dates;
-        b.cf_values = tmp_cf_values;
-        
+        description = 'Synthetic test instrument';
+        value_base = 100.00;      
+        currency = 'EUR';
+        asset_class = 'Synthetic';   
+        valuation_date = today; 
+        % use constructor inherited from Class Instrument
+        b = b@Instrument(name,id,description,'synthetic',currency,value_base, ...
+                        asset_class,valuation_date); 
       end 
       
       function disp(b)
@@ -72,11 +45,4 @@ classdef Synthetic < Instrument
          obj.sub_type = sub_type;
       end % set.sub_type
    end 
-
-   methods (Static = true)
-      function market_value = calc_value_tmp(notional,coupon_rate)
-            market_value = notional .* coupon_rate;
-      end 
-      
-   end
 end 
