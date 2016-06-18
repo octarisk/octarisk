@@ -4,13 +4,14 @@ classdef Forward < Instrument
         issue_date = datestr(today);
         maturity_date = '';
         compounding_type = 'disc';
-        compounding_freq = 'daily';  
+        compounding_freq = 'annual';  
         strike_price = 0.0;               
         day_count_convention = 'act/365';         
         underlying_price_base = 0.0;
-        underlying_id = 'RF_EQ_DE';
+        underlying_id = 'INDEX_EQ_DE';
         underlying_sensitivity = 1;
-        discount_curve = 'RF_IR_EUR';
+        discount_curve = 'IR_EUR';
+        foreign_curve = 'IR_USD';
         multiplier = 1;
         dividend_yield = 0.0; 
         convenience_yield = 0.0;
@@ -65,8 +66,9 @@ classdef Forward < Instrument
          fprintf('discount_curve: %s\n',b.discount_curve); 
       end
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') || strcmpi(sub_type,'EQFWD') )
-            error('Forward sub_type must be either Equity, EQFWD or Bond')
+         if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') 
+                || strcmpi(sub_type,'EQFWD') || strcmpi(sub_type,'FX') )
+            error('Forward sub_type must be either Equity, EQFWD, Bond or FX')
          end
          obj.sub_type = sub_type;
       end % set.sub_type

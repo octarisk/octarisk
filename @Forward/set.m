@@ -176,6 +176,13 @@ function s = set (forward, varargin)
       else
         error ('set: expecting the value to be a char');
       end 
+    % ====================== set foreign_curve  ======================
+    elseif (ischar (prop) && strcmp (prop, 'foreign_curve'))   
+      if (ischar (val))
+        s.foreign_curve = strtrim(val);
+      else
+        error ('set: expecting the value to be a char');
+      end  
     % ====================== set maturity_date ======================
     elseif (ischar (prop) && strcmp (prop, 'maturity_date'))   
       if (ischar (val))

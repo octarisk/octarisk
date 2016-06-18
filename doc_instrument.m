@@ -115,6 +115,23 @@ end
 %! assert(f.getValue('stress'),[-4.1118960639903;-54.1118960639903],0.00000001);
 
 %!test
+%! fprintf('\tdoc_instrument:\tPricing FX Forward Object\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,3650,7300],'rates_base',[0.0001002070,0.0045624391,0.009346842],'method_interpolation','linear');
+%! fc = Curve();
+%! fc = fc.set('id','IR_USD','nodes',[365,3650],'rates_base',[0.0063995279,0.01557504],'method_interpolation','linear');
+%! i = Index();
+%! i = i.set('value_base',1.139549999,'name','FX_USDEUR','id','FX_USDEUR');
+%! f = Forward();
+%! f = f.set('name','FX_Forward_Domestic_EUR_Foreign_USD','maturity_date','29-Mar-2026','strike_price',0.00,'valuation_date','31-Mar-2016','sub_type','FX');
+%! f = f.set('compounding_freq','annual');
+%! f = f.calc_value('base',c,i,fc);
+%! assert(f.getValue('base'),0.8384017838301,0.00001);
+%! f = f.set('strike_price',0.9);
+%! f = f.calc_value('base',c,i,fc);
+%! assert(f.getValue('base'),-0.021458892902570,0.000001);
+
+%!test
 %! fprintf('\tdoc_instrument:\tPricing Swaption Object\n');
 %! r = Riskfactor();
 %! c = Curve();
