@@ -19,6 +19,8 @@ function s = get (bond, property)
           s = obj.currency;
         case 'valuation_date'
           s = obj.valuation_date;
+        case 'pricing_function_american'
+          s = obj.pricing_function_american;
         case 'value_mc'
           s = obj.value_mc; 
         case 'value_base'

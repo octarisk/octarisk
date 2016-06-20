@@ -126,10 +126,10 @@ end
 %! f = f.set('name','FX_Forward_Domestic_EUR_Foreign_USD','maturity_date','29-Mar-2026','strike_price',0.00,'valuation_date','31-Mar-2016','sub_type','FX');
 %! f = f.set('compounding_freq','annual');
 %! f = f.calc_value('base',c,i,fc);
-%! assert(f.getValue('base'),0.8384017838301,0.00001);
+%! assert(f.getValue('base'),0.7509742754,0.00001);
 %! f = f.set('strike_price',0.9);
 %! f = f.calc_value('base',c,i,fc);
-%! assert(f.getValue('base'),-0.021458892902570,0.000001);
+%! assert(f.getValue('base'),-0.1088864014,0.000001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Swaption Object\n');
@@ -190,3 +190,12 @@ end
 %! o = o.set('value_base',100);
 %! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
 %! assert(o.getValue('base'),100.000,0.001);
+%! o = Option();
+%! o = o.set('maturity_date','29-Mar-2026','currency','USD');
+%! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
+%! o = o.set('pricing_function_american','bjsten');
+%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),122.2909543913,0.0000001);
+%! o = o.set('value_base',100);
+%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),100.000,0.0001);

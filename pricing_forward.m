@@ -192,7 +192,7 @@ elseif ( sum(strcmpi(type,{'FX'})) > 0 )
     df_discount     = discount_factor (valuation_date, maturity_date, ...
                             discount_rate_instr, comp_type, basis, comp_freq);
     % pricing reverse engineered
-    forward_price   = 1 ./ underlying_price;  
+    forward_price   = (1 ./ underlying_price) .* df_foreign ./ df_discount;  
     payoff          = (forward_price - strike ) .* df_discount;    
 else
     error('pricing_forward_oop: not a valid type: >>%s<<',type)

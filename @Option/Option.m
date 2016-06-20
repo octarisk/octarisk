@@ -20,7 +20,9 @@ classdef Option < Instrument
         theo_vega = 0.0;
         theo_theta = 0.0;
         theo_rho = 0.0;
-        theo_omega = 0.0;        
+        theo_omega = 0.0; 
+        pricing_function_american = 'Willowtree'; 
+        div_yield = 0.0;         % dividend yield (continuous, act/365)
     end
    
     properties (SetAccess = private)

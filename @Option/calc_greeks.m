@@ -62,7 +62,7 @@ function obj = calc_greeks(option,value_type,underlying,vola_riskfactor,discount
             elseif ( strcmp(value_type,'base'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_indexvol_base);
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)  .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
             end
         else        % Normal Model
             if ( strcmp(value_type,'stress'))
@@ -78,7 +78,13 @@ function obj = calc_greeks(option,value_type,underlying,vola_riskfactor,discount
         if ( strfind(tmp_type,'OPT_EUR') > 0  )     % calling Black-Scholes option pricing model
             [theo_value theo_delta theo_gamma theo_vega theo_theta theo_rho theo_omega] = option_bs(call_flag,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock);
         elseif ( strfind(tmp_type,'OPT_AM') > 0 )   % calling Willow tree option pricing model
-            theo_value	            = option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,option.timesteps_size,option.willowtree_nodes,path_static);
+            %theo_value	            = option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,option.timesteps_size,option.willowtree_nodes,path_static);
+            theo_delta  = 0.0;
+            theo_gamma  = 0.0;
+            theo_vega   = 0.0;
+            theo_theta  = 0.0;
+            theo_rho    = 0.0;
+            theo_omega  = 0.0; 
         end
     end   % close loop if tmp_dtm < 0
     

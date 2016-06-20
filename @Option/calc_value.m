@@ -36,7 +36,8 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
     % Get underlying absolute scenario value 
     if ( strfind(underlying.get('id'),'RF_') )   % underlying instrument is a risk factor
         tmp_underlying_value_delta      = underlying.getValue(value_type); 
-        tmp_underlying_value            = Riskfactor.get_abs_values('GBM', tmp_underlying_value_delta, obj.spot);
+        tmp_underlying_value            = Riskfactor.get_abs_values('GBM', ...
+                                        tmp_underlying_value_delta, obj.spot);
         tmp_underlying_value_base       = underlying.getValue('base'); 
     else    % underlying is a Index
         tmp_underlying_value            = underlying.getValue(value_type); 
@@ -51,8 +52,10 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         tmp_strike              = obj.strike;
         tmp_value               = obj.value_base;
         tmp_multiplier          = obj.multiplier;
-        tmp_moneyness_base      = ( tmp_underlying_value_base ./ tmp_strike).^moneyness_exponent;
-        tmp_moneyness           = (tmp_underlying_value ./ tmp_strike).^moneyness_exponent;
+        tmp_moneyness_base      = ( tmp_underlying_value_base ./ tmp_strike).^ ...
+                                                            moneyness_exponent;
+        tmp_moneyness           = (tmp_underlying_value ./ tmp_strike).^ ...
+                                                            moneyness_exponent;
                 
         % get implied volatility spread (choose offset to vola, that tmp_value == option_bs with input of appropriate vol):
         tmp_indexvol_base       = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness_base);
@@ -63,28 +66,46 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         tmp_model = vola_riskfactor.model;
         if ( strcmp(tmp_model,'GBM') == 1 || strcmp(tmp_model,'BKM') ) % Log-normal Motion
             if ( strcmp(value_type,'stress'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* exp(vola_riskfactor.getValue(value_type));
+                tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
+                            tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) ...
+                            .* exp(vola_riskfactor.getValue(value_type));
             elseif ( strcmp(value_type,'base'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness));
+                tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
+                            tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness));
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)  .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)  .* ...
+                                    exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
             end
         else        % Normal Model
             if ( strcmp(value_type,'stress'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* (vola_riskfactor.getValue(value_type) + 1);
+                tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
+                          tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* ...
+                          (vola_riskfactor.getValue(value_type) + 1);
             elseif ( strcmp(value_type,'base'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness));
+                tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
+                           tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness));
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) + tmp_impl_vola_atm + tmp_impl_vola_spread;  
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) + ...
+                                    tmp_impl_vola_atm + tmp_impl_vola_spread;  
             end
         end
     
       % Valuation for: Black-Scholes Modell (EU) or Willowtreemodel (AM):
         if ( strfind(tmp_type,'OPT_EUR') > 0  )     % calling Black-Scholes option pricing model
-            theo_value	            = max(option_bs(call_flag,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock) .* tmp_multiplier,0.001);
+            theo_value	            = option_bs(call_flag,tmp_underlying_value, ...
+                                            tmp_strike,tmp_dtm,tmp_rf_rate, ...
+                                            tmp_imp_vola_shock) .* tmp_multiplier;
         elseif ( strfind(tmp_type,'OPT_AM') > 0 )   % calling Willow tree option pricing model
-            theo_value	            = max(option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,option.timesteps_size,option.willowtree_nodes,path_static) .* tmp_multiplier,0.001);
-        end
+            if ( strcmpi(obj.pricing_function_american,'Willowtree') )
+                theo_value	= option_willowtree(call_flag,1,tmp_underlying_value, ...
+                                    tmp_strike,tmp_dtm,tmp_rf_rate, ...
+                                    tmp_imp_vola_shock,0.0,option.timesteps_size, ...
+                                    option.willowtree_nodes,path_static) .* tmp_multiplier;
+            else
+                theo_value  = option_bjsten(call_flag, tmp_underlying_value, ...
+                                    tmp_strike, tmp_dtm, tmp_rf_rate, ...
+                                    tmp_imp_vola_shock, obj.div_yield) .* tmp_multiplier;
+            end
     end   % close loop if tmp_dtm < 0
     
       

@@ -151,7 +151,14 @@ function s = set (option, varargin)
         s.asset_class = strtrim(val);
       else
         error ('set: expecting the value to be a char');
-      end   
+      end 
+    % ====================== set pricing_function_american =========
+    elseif (ischar (prop) && strcmp (prop, 'pricing_function_american'))   
+      if (ischar (val))
+        s.pricing_function_american = strtrim(val);
+      else
+        error ('set: expecting the value to be a char');
+      end  
     % ====================== set multiplier ======================
     elseif (ischar (prop) && strcmp (prop, 'multiplier'))   
       if (isnumeric (val) && isreal (val))
