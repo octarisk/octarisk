@@ -41,7 +41,7 @@ for ii = 1 : 1 : length(riskfactor_struct)
         for jj = 2 : 1 : length(tmp_rf_parts) -1    
             tmp_rf_curve = strcat(tmp_rf_curve,'_',tmp_rf_parts{jj});
         end
-        rf_ir_cur_cell = cat(2,rf_ir_cur_cell,tmp_rf_curve);
+        rf_ir_cur_cell = horzcat(rf_ir_cur_cell,tmp_rf_curve);
     end
     rf_ir_cur_cell = unique(rf_ir_cur_cell);
 end

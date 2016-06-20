@@ -65,10 +65,10 @@ if nargin < 3
    basis = 3.*ones(size(d1));
 end
 if ischar(basis)
-    dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365'; ...
-                        '30/360 PSA';'30/360 ISDA';'30/360 European'; ...
-                        'act/365 Japanese';'act/act ISMA';'act/360 ISMA'; ...
-                        'act/365 ISMA';'30/360E']);
+    dcc_cell = {'act/act' '30/360 SIA' 'act/360' 'act/365' ...
+                        '30/360 PSA' '30/360 ISDA' '30/360 European' ...
+                        'act/365 Japanese' 'act/act ISMA' 'act/360 ISMA' ...
+                        'act/365 ISMA' '30/360E'};
     findvec = strcmpi(basis,dcc_cell);
     tt = 1:1:length(dcc_cell);
     tt = (tt - 1)';
@@ -78,7 +78,7 @@ elseif (isempty(find([0:1:11] == basis)))
 end
 
 % calculate nominator: days in period (dip)
-if ( basis == 0 || basis == 2 || basis == 3 || basis == 7 || basis == 8 
+if ( basis == 0 || basis == 2 || basis == 3 || basis == 7 || basis == 8 ...
     || basis == 9 || basis == 10)   %actual days in period
     dip = d2 - d1;
     
@@ -100,7 +100,7 @@ elseif ( basis == 1 || basis == 4 || basis == 5 || basis == 6 || basis == 11 )
 end
 
 % calculate days in base (dib)
-if ( basis == 1 || basis == 2 || basis == 4 || basis == 5 || basis == 6 
+if ( basis == 1 || basis == 2 || basis == 4 || basis == 5 || basis == 6 ...
     || basis == 9 || basis == 11)
     dib = 360;
 elseif ( basis == 3 || basis == 7 || basis == 10 )

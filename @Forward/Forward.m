@@ -66,7 +66,7 @@ classdef Forward < Instrument
          fprintf('discount_curve: %s\n',b.discount_curve); 
       end
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') 
+         if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') ...
                 || strcmpi(sub_type,'EQFWD') || strcmpi(sub_type,'FX') )
             error('Forward sub_type must be either Equity, EQFWD, Bond or FX')
          end

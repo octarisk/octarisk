@@ -87,14 +87,14 @@ if nargin < 4 || nargin > 7
     % convert valuation_date
 if (ischar(valuation_date))
     valuation_date = datenum(valuation_date);
-endif
+end
 days_to_maturity    = maturity_date - valuation_date; 
 if ( days_to_maturity < 1)
     disp('Maturity Date is equal or before valuation date. Return value 0.')
     theo_value = zeros(length(underlying_price),1);
     return
 end
-if ( rows(discount_rates) > 1 && rows(underlying_price) > 1 
+if ( rows(discount_rates) > 1 && rows(underlying_price) > 1 ...
     && (rows(underlying_price) ~= rows(discount_rates)))
     error('Rows of underlying price not equal to 1 or to number of rows of discount_rats. Aborting.')  
 end
