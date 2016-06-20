@@ -127,8 +127,8 @@ end
 
 conversion_type = '';
 %abbreviation: origin and target types and dcc are the same -> return input rate
-if ( strcmp(comp_type_origin,comp_type_target) 
-                && strcmp(num2str(comp_freq_origin),num2str(comp_freq_target)) 
+if ( strcmp(comp_type_origin,comp_type_target) ...
+                && strcmp(num2str(comp_freq_origin),num2str(comp_freq_target)) ...
                 && (dcc_basis_origin == dcc_basis_target))
     rate_target = rate_origin;
     conversion_type = 'No conversion';  
@@ -146,16 +146,16 @@ timefactor_target = timefactor(valuation_date,term_datenum,dcc_basis_target);
 
 % error check compounding frequency
 if ischar(comp_freq_origin)
-    if ( strcmpi(comp_freq_origin,'daily') == 1 
+    if ( strcmpi(comp_freq_origin,'daily') == 1 ...
                                 || strcmpi(comp_freq_origin,'day') == 1)
         comp_freq_origin = 365;
-    elseif ( strcmpi(comp_freq_origin,'weekly') == 1 
+    elseif ( strcmpi(comp_freq_origin,'weekly') == 1 ...
                                 || strcmpi(comp_freq_origin,'week') == 1)
         comp_freq_origin = 52;
-    elseif ( strcmpi(comp_freq_origin,'monthly') == 1 
+    elseif ( strcmpi(comp_freq_origin,'monthly') == 1 ...
                                 || strcmpi(comp_freq_origin,'month') == 1)
         comp_freq_origin = 12;
-    elseif ( strcmpi(comp_freq_origin,'quarterly') == 1 
+    elseif ( strcmpi(comp_freq_origin,'quarterly') == 1 ...
                                 ||  strcmpi(comp_freq_origin,'quarter') == 1)
         comp_freq_origin = 4;
     elseif ( strcmpi(comp_freq_origin,'semi-annual') == 1)
@@ -167,16 +167,16 @@ if ischar(comp_freq_origin)
     end
 end
 if ischar(comp_freq_target)
-    if ( strcmpi(comp_freq_target,'daily') == 1 
+    if ( strcmpi(comp_freq_target,'daily') == 1 ...
             || strcmpi(comp_freq_target,'day') == 1)
         comp_freq_target = 365;
-    elseif ( strcmpi(comp_freq_target,'weekly') == 1 
+    elseif ( strcmpi(comp_freq_target,'weekly') == 1 ...
              || strcmpi(comp_freq_target,'week') == 1)
         comp_freq_target = 52;
-    elseif ( strcmpi(comp_freq_target,'monthly') == 1 
+    elseif ( strcmpi(comp_freq_target,'monthly') == 1 ...
              || strcmpi(comp_freq_target,'month') == 1)
         comp_freq_target = 12;
-    elseif ( strcmpi(comp_freq_target,'quarterly') == 1 
+    elseif ( strcmpi(comp_freq_target,'quarterly') == 1 ...
              || strcmpi(comp_freq_target,'quarter') == 1)
         comp_freq_target = 4;
     elseif ( strcmpi(comp_freq_target,'semi-annual') == 1)
@@ -191,21 +191,21 @@ end
 % now  get one of the following cases:
 
 %#  from CONT ->   SMP:   
-if ( strcmpi(comp_type_origin,'CONTINUOUS') 
+if ( strcmpi(comp_type_origin,'CONTINUOUS') ...
                                 && strcmpi('SIMPLE',comp_type_target )) 
     rate_target = (exp(rate_origin .* timefactor_origin) -1) ...
                     ./ timefactor_target;
     conversion_type = 'CONT -> SMP';
     
 %#  from SMP ->    CONT:  
-elseif ( strcmpi(comp_type_origin,'SIMPLE') 
+elseif ( strcmpi(comp_type_origin,'SIMPLE') ...
                                 && strcmpi('CONTINUOUS',comp_type_target)) 
     rate_target =  log(1 + rate_origin .* timefactor_origin) ...
                    ./ timefactor_target;
     conversion_type = 'SMP -> CONT';
     
 %#  from DISC ->   CONT:   
-elseif ( strcmpi(comp_type_origin,'DISCRETE') 
+elseif ( strcmpi(comp_type_origin,'DISCRETE') ...
                                 && strcmpi('CONTINUOUS',comp_type_target))
     rate_target =  log(1 + rate_origin./ comp_freq_origin) ...
                     .* (timefactor_origin .* comp_freq_origin) ...
@@ -213,7 +213,7 @@ elseif ( strcmpi(comp_type_origin,'DISCRETE')
     conversion_type = 'DISC -> CONT';
     
 %#  from CONT ->   DISC: 
-elseif ( strcmpi(comp_type_origin,'CONTINUOUS') 
+elseif ( strcmpi(comp_type_origin,'CONTINUOUS') ...
                                 && strcmpi('DISCRETE',comp_type_target ) )
     rate_target =  (exp(rate_origin .* timefactor_origin ...
                     ./ (comp_freq_target .* timefactor_target)) - 1 ) ...
@@ -221,7 +221,7 @@ elseif ( strcmpi(comp_type_origin,'CONTINUOUS')
     conversion_type = 'CONT -> SMP';
     
 %#  from SMP ->    DISC:   
-elseif ( strcmpi(comp_type_origin,'SIMPLE') 
+elseif ( strcmpi(comp_type_origin,'SIMPLE') ...
                                 && strcmpi('DISCRETE',comp_type_target ) )
     rate_target =  ( (1 + rate_origin .* timefactor_origin) ...
                         .^(1./( comp_freq_target .* timefactor_target)) -1 ) ...
@@ -229,7 +229,7 @@ elseif ( strcmpi(comp_type_origin,'SIMPLE')
     conversion_type = 'SMP -> DISC';
     
 %#  from DISC ->   SMP: 
-elseif ( strcmpi(comp_type_origin,'DISCRETE') 
+elseif ( strcmpi(comp_type_origin,'DISCRETE') ...
                                 && strcmpi('SIMPLE',comp_type_target ) )
     rate_target =   ( (1 + rate_origin ./ comp_freq_origin ) ...
                         .^(comp_freq_origin .* timefactor_origin) -1 ) ...
@@ -237,19 +237,19 @@ elseif ( strcmpi(comp_type_origin,'DISCRETE')
     conversion_type = 'DISC -> SMP';
     
 %#  from CONT ->   CONT:  
-elseif ( strcmpi(comp_type_origin,'CONTINUOUS') 
+elseif ( strcmpi(comp_type_origin,'CONTINUOUS') ...
                                 && strcmpi('CONTINUOUS',comp_type_target ) )
     rate_target =   rate_origin .* timefactor_origin ./ timefactor_target;
     conversion_type = 'CONT -> CONT';
     
 %#  from SMP ->   SMP:  
-elseif ( strcmpi(comp_type_origin,'SIMPLE') 
+elseif ( strcmpi(comp_type_origin,'SIMPLE') ...
                                 && strcmpi('SIMPLE',comp_type_target ) )
     rate_target =   rate_origin .* timefactor_origin ./ timefactor_target;
     conversion_type = 'SMP -> SMP';
     
 %#  from DISC ->   DISC: 
-elseif ( strcmpi(comp_type_origin,'DISCRETE') 
+elseif ( strcmpi(comp_type_origin,'DISCRETE') ...
                                 && strcmpi('DISCRETE',comp_type_target ) )
     rate_target =   ( (1 + rate_origin ./ comp_freq_origin) ...
                         .^((comp_freq_origin .* timefactor_origin) ...
