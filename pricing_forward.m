@@ -128,7 +128,7 @@ if ( days_to_maturity < 1)
     theo_value = zeros(length(underlying_price),1);
     return
 end
-if ( rows(discount_rates) > 1 && rows(underlying_price) > 1 
+if ( rows(discount_rates) > 1 && rows(underlying_price) > 1 ...
     && (rows(underlying_price) ~= rows(discount_rates)))
     error('Rows of underlying price not equal to 1 or to number of rows of discount_rats. Aborting.')  
 end
