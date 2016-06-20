@@ -153,9 +153,9 @@ classdef Bond < Instrument
 
       end
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FRN') 
-                || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') 
-                || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') 
+         if ~(strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FRN') ...
+                || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') ...
+                || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') ...
                 || strcmpi(sub_type,'ZCB'))
             error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED or SWAP_FLOATING: %s',sub_type)
          end
