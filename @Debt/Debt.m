@@ -1,8 +1,7 @@
 classdef Debt < Instrument
    
     properties   % All properties of Class Debt with default values
-        discount_curve  = 'IF_EUR';
-        spread_curve    = 'SPREAD_DUMMY';           
+        discount_curve  = 'IR_EUR';        
     end
    
     properties (SetAccess = private)
@@ -38,7 +37,6 @@ classdef Debt < Instrument
          fprintf('duration: %f\n',b.duration); 
          fprintf('convexity: %f\n',b.convexity); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
-         fprintf('spread_curve: %s\n',b.spread_curve); 
       end
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'DBT') )

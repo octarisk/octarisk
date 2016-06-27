@@ -17,9 +17,10 @@
 %# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, 
 %#										@var{timestep}, @var{ufr}, @var{alpha})
 %#
-%# Calculate an interpolated return on a curve for a given timestep
+%# Calculate an interpolated rate on a curve for a given timestep.@*
 %# Supported methods are: linear (default), moneymarket, exponential, loglinear, 
-%# spline, smith-wilson or monotone-convex.
+%# spline, smith-wilson, monotone-convex, constant (mapped to previous),
+%# previous and next.
 %# 
 %# A constant extrapolation is assumed, except for smith-wilson, where the 
 %# ultimate forward rate will be reached proportional to reversion speed alpha.
@@ -52,10 +53,10 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
     method = 'linear';
   elseif (nargin >= 4)
     method_cell = {'linear','mm','exponential','loglinear','spline', ...
-					'smith-wilson','monotone-convex'};
+					'smith-wilson','monotone-convex','constant','next','previous'};
     findvec = strcmp(method,method_cell);
     if ( findvec == 0)
-         error('Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson or monotone-convex');
+         error('Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson, monotone-convex or constant, next or previous');
     end
   end
   
@@ -99,7 +100,7 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant
         return
     else
         % linear interpolation
-        if (strcmp(method,'linear'))
+        if (strcmp(method,'linear'))          % linear interpolation
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                      y = ((1 - abs(timestep - nodes(ii)) ...
@@ -108,7 +109,8 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant
 							./ dnodes(ii)).* rates(:,ii+1)) ;            
                 end
             end
-        elseif (strcmp(method,'mm'))
+            
+        elseif (strcmp(method,'mm'))          % money market interpolation
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                     alpha = (nodes(ii+1) - timestep) / ...
@@ -117,6 +119,18 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant
 					 + (1 - alpha) .* nodes(ii+1) .* rates(:,ii+1)) ./ timestep;
                 end
             end
+            
+        elseif (strcmp(method,'constant'))          % constant interpolation 
+            % take octaves built-in interpolation 
+            % -> previous neighbourfor compatiblity reasons
+            y = interp1(nodes',rates',timestep,'previous')';
+            
+        elseif (strcmp(method,'previous'))      % mapping to previous neighbour 
+            y = interp1(nodes',rates',timestep,'previous')';
+            
+        elseif (strcmp(method,'next'))          % mapping to next neighbour 
+            y = interp1(nodes',rates',timestep,'next')';    
+            
         elseif (strcmp(method,'loglinear'))
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
@@ -126,7 +140,8 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant
 						./ rates(ii)));
                 end
             end    
-        elseif (strcmp(method,'exponential'))
+            
+        elseif (strcmp(method,'exponential'))        % exponential interpolation
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
                     alpha = (nodes(ii+1) - timestep) / ( nodes(ii+1 ) ...
@@ -135,12 +150,13 @@ if ~(strcmp(method,{'smith-wilson','monotone-convex'}))  % constant
 						.* (1 - alpha));
                 end
             end 
-        elseif (strcmp(method,'spline'))
+            
+        elseif (strcmp(method,'spline'))             % spline interpolation
 			% use octave's built in function spline
-            y = spline(nodes',rates',timestep); 
+            y = spline(nodes',rates',timestep);
         end
     end
-elseif (strcmp(method,'smith-wilson'))   % smith-wilson method
+elseif (strcmp(method,'smith-wilson'))               % smith-wilson method
     ufrc = log(1+ufr);
     [P, y] = interpolate_smith_wilson(timestep,rates,nodes,ufrc,alpha);
     
@@ -548,3 +564,11 @@ end
 %!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'monotone-convex' ),[0.012116882;0.007318077],0.000001)
 %!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'smith-wilson',0.05,0.12),[0.012023083;0.0015458739299],0.000001)
 %!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'linear'),[0.01186301;0.00847945],0.000001)
+%!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'linear'),0.004927301319,0.0000000001)
+%!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'mm'),0.00494794483,0.0000000001)
+%!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'exponential'),0.004927396730,0.0000000001)
+%!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'constant'),0.0045624391,0.0000000001)
+%!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'previous'),0.0045624391,0.0000000001)
+%!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'next'),0.0054502705,0.0000000001)
+
+

@@ -72,7 +72,8 @@
 
 
 function a = doc_instrument()
-    % this is only a dummy function for containing all the documentation.
+    % this is only a dummy function for containing all the documentation
+    % and unittests for instrument classes.
 end
 
 %!test 
@@ -199,3 +200,13 @@ end
 %! o = o.set('value_base',100);
 %! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
 %! assert(o.getValue('base'),100.000,0.0001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Debt Object\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');
+%! c = c.set('rates_stress',[0.0101001034,0.0145624391,0.0162559362;0.0201001034,0.0245624391,0.0262559362],'method_interpolation','linear');
+%! d = Debt();
+%! d = d.set('duration',8.35,'convexity',18);
+%! d = d.calc_value(c,'stress');
+%! assert(d.getValue('stress'),[91.83;84.02],0.01);

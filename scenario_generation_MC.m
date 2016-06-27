@@ -36,6 +36,15 @@ if nargin < 6
     time_horizon = 256; % assuming provided volatility and return are on yearly time horizon, will be scaled to time_horizon
 end
 
+if nargin < 7
+    path_static = pwd;
+    stable_seed = 0;
+end
+
+if nargin < 8
+    stable_seed = 0;
+end
+
 % 2) Time horizon check
 factor_time_horizon = 256 / time_horizon;
 
@@ -92,3 +101,28 @@ for ii = 1 : 1 : columns(Z);
 end
 
 end
+
+%!test 
+%! fprintf('HOLD ON...\n');
+%! fprintf('\tscenario_generation_MC:\tGenerating MC scenarios\n');
+%! pkg load statistics;
+%! corr_matrix = [1,0.2,-0.3;0.2,1,0;-0.3,0.0,1];
+%! P = [0,0,0;0.2,0.5,0.4;-0.3,0,0.3;3,1.5,4.5];
+%! mc = 100000;
+%! copulatype = 't';
+%! nu = 4;
+%! [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,256);
+%! assert(distr_type,[1,2,4])
+%! mean_target = P(1,1);   % mean
+%! mean_act = mean(R(:,1));
+%! assert(mean_act,mean_target,0.01)
+%! sigma_target = P(2,2);   % sigma
+%! sigma_act = std(R(:,2));
+%! assert(sigma_act,sigma_target,0.1)
+%! skew_target = P(3,1);   % skew
+%! skew_act = skewness(R(:,1));
+%! assert(skew_act,skew_target,0.1)
+%! kurt_target = P(4,3);   % kurt    
+%! kurt_act = kurtosis(R(:,3));
+%! assert(kurt_act,kurt_target,0.5)
+%! pkg unload statistics;

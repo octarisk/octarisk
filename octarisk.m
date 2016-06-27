@@ -441,12 +441,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 tmp_discount_curve  = debt.get('discount_curve');
                 tmp_discount_object = get_sub_object(curve_struct, tmp_discount_curve);
 
-				% Get spread curve
-                tmp_spread_curve    = debt.get('spread_curve');
-                tmp_spread_object 	= get_sub_object(curve_struct, tmp_spread_curve);
-
 				% Calc value
-				debt = debt.calc_value(tmp_discount_object,tmp_spread_object,tmp_scenario);
+				debt = debt.calc_value(tmp_discount_object,tmp_scenario);
 
                 % store debt object in struct:
                 instrument_struct( ii ).object = debt;

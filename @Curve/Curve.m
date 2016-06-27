@@ -127,8 +127,8 @@ classdef Curve
       
       function obj = set.method_interpolation(obj,method_interpolation)
          method_interpolation = lower(method_interpolation);
-         if ~(sum(strcmpi(method_interpolation,{'smith-wilson','spline','linear','mm','exponential','loglinear','monotone-convex'}))>0  )
-            error('Interpolation method must be either smith-wilson,spline,linear,mm,exponential,monotone-convex or loglinear')
+         if ~(sum(strcmpi(method_interpolation,{'smith-wilson','spline','linear','mm','exponential','loglinear','monotone-convex','constant','next','previous'}))>0  )
+            error('Interpolation method must be either smith-wilson,spline,linear,mm,exponential,monotone-convex,loglinear,constant,next or previous')
          end
          obj.method_interpolation = method_interpolation;
       end % Set.method_interpolation
