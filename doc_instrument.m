@@ -173,7 +173,7 @@ end
 %! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
 
 %!test
-%! fprintf('\tdoc_instrument:\tPricing American Option Object\n');
+%! fprintf('\tdoc_instrument:\tPricing American Option Object (Bjerksund and Stensland)\n');
 %! r = Riskfactor();
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');
@@ -194,7 +194,7 @@ end
 %! o = Option();
 %! o = o.set('maturity_date','29-Mar-2026','currency','USD');
 %! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
-%! o = o.set('pricing_function_american','bjsten');
+%! o = o.set('pricing_function_american','Bjsten');
 %! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
 %! assert(o.getValue('base'),122.2909543913,0.0000001);
 %! o = o.set('value_base',100);

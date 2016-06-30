@@ -1,5 +1,12 @@
 # Version History 
 
+### 0.3.0, 2016/06/30
+Version v0.3.0 is a major version with greatly improved features and validated pricing functions.
+
+- independent validation of all pricing functions
+- unittests for more convenient refactoring and instrument examples
+- several bugfixes
+
 ### 0.3.0-rc1, 2016/05/20
 Version v0.3.0-rc1 is the first release candidate for the upcoming release, where all API changes shall be accomplished.
 

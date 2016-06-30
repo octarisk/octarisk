@@ -94,6 +94,7 @@ Write me an Email if you need assistance in porting the code basis to Matlab.
 
 ## Version history
 
+- Version 0.3.0  independent validation of all pricing functions, unittests, bug fixes
 - Version 0.3.0-rc1 further enhanced file interface, aggregated curves introduced, bug fixes
 - Version 0.2.0   enhanced file interface and bug fixes
 - Version 0.1.0   first public release
