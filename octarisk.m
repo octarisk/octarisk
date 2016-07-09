@@ -1085,7 +1085,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     fprintf('=== Total Portfolio HD-VaR === \n');
   else
     fprintf(fid, '=== Total Portfolio VaR === \n');
-    fprintf('=== Total Portfolio VaR === \n')
+    fprintf('=== Total Portfolio VaR === \n');
   end
   % Output to file: 
   fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
@@ -1123,7 +1123,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   fprintf(fid, '\n');
 
   fprintf(fid, 'Total Reduction in VaR via Diversification: \n');
-  fprintf(fid, '|Portfolio VaR %s Diversification Effect| |%9.2f%%|\n',tmp_scen_set,(1 - mc_var_shock / total_var_undiversified)*100)
+  fprintf(fid, '|Portfolio VaR %s Diversification Effect| |%9.2f%%|\n',tmp_scen_set,(1 - mc_var_shock / total_var_undiversified)*100);
 
   fprintf(fid, '====================================================================');
   fprintf(fid, '\n');
