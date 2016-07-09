@@ -1,0 +1,3 @@
+ZCB,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,notionalNMBR,termNMBR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,compounding_freqCHAR
+Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,21-Apr-2015,21-Apr-2020,backward,disc,act/365,0,FALSE,daily
+

@@ -1,0 +1,6 @@
+DBT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,durationNMBR,convexityNMBR,asset_classCHAR
+Item,iShares Barclays Capital Emerging Market Local Govt Bond,A1JB4Q,60.5,DBT,iShares Barclays Capital Emerging Market Local Govt Bond,EUR,IR_USD,4.5,11.0,Fixed Income
+Item,iShares Citigroup Global Government Bond,A0RM43,102.48,DBT,iShares Citigroup Global Government Bond,USD,IR_USD,5.6,0.0,Fixed Income
+Item,iShares JPMorgan $ Emerging Markets Bond Fund,A0RFFT,99.93,DBT,iShares JPMorgan $ Emerging Markets Bond Fund,USD,IR_USD,7.8,0.0,Fixed Income
+Item,iShares Global Corporate Bond,A1J7CK,95.98,DBT,iShares Global Corporate Bond,USD,IR_EUR,12.1,0.0,Fixed Income
+

@@ -11,23 +11,19 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} unittests()
-%# Call unittests of specified functions and return test statistics.
+%# @deftypefn {Function File} {} integrationtests(@var{path_folder})
+%# Call integrationtests of specified functions and return test statistics. @*
+%# Input parameter: path to folder with testdata
 %# @end deftypefn
 
-function unittests()
+function integrationtests(path_folder)
 
 % 1) Specify all functions, which have embedded tests:
-function_cell= {'pricing_npv','option_bs','option_willowtree', ...
-                'calibrate_option_bs','calibrate_option_willowtree', ...
-                'calibrate_evt_gpd','get_gpd_var','calibrate_soy_sqp', ...
-                'swaption_black76','swaption_bachelier','get_forward_rate', ...
-                'timefactor','convert_curve_rates', 'discount_factor', ...
-                'option_bjsten','calibrate_option_bjsten', ...
-                'rollout_cashflows_oop', 'interpolate_curve', ...
-                'scenario_generation_MC', 'option_barrier'};
-fprintf('=== Running unit tests === \n'); 
-% 2) Run tests
+function_cell = {'doc_instrument'};
+path_testing_folder = path_folder;
+
+fprintf('=== Running integration tests === \n'); 
+% 2) Run tests of unit test framework
 tests_total = 0;
 tests_fail = 0; 
 for ii = 1 : 1 : length(function_cell)
@@ -48,7 +44,22 @@ for ii = 1 : 1 : length(function_cell)
     
 end
 
-% 3) Print statistics
+% 3) Run custom integration tests
+% 3.1) Test of input and output behaviour
+	function_cell(end + 1) = 'test_io';
+	[tmp_success,tmp_tests] = test_io(path_testing_folder);
+	tmp_failed_tests = tmp_tests - tmp_success;
+    M(end + 1,1) = tmp_success;
+    M(end,2) = tmp_failed_tests;
+    tests_fail = tests_fail + tmp_failed_tests;
+    tests_total = tests_total + tmp_tests;
+    if ( tmp_failed_tests > 0)
+        fprintf('WARNING: %d failed tests for function >>test_io<< \n',tmp_failed_tests);
+    else
+        fprintf('SUCCESS: >>test_io<< \n');
+    end
+
+% 4) Print statistics
 fprintf('\nVisualization:\n');
 for ii = 1 : 1 : rows(M)
     success_string = '';

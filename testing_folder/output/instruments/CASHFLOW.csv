@@ -1,0 +1,3 @@
+CASHFLOW,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,spread_curveCHAR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR
+Item,Cashflowinstrument,CFANLEIHE1,105,CASHFLOW,Cashflow instrument with cashflow vector,EUR,IR_EUR,SPREAD_EUR_HY,17-Jul-2015|16-Jul-2016|17-Jul-2017,3.0|3.0|103.00,Fixed Income
+

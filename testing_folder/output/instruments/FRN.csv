@@ -1,0 +1,3 @@
+FRN,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,reference_curveCHAR,notionalNMBR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,last_reset_rateNMBR,termNMBR,compounding_freqCHAR,spreadNMBR
+Item,AUSTRIA 14/20 FLR MTN,A1ZKC4,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,04-Dec-2014,03-Jun-2020,backward,disc,act/365,0,FALSE,0.001,12,daily,0.03
+
