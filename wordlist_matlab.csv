@@ -1,0 +1,26 @@
+\.-;-;all files
+\.\+;+;all files
+mkdir;%mkdir;octarisk.m
+pkg load;%pkg load;octarisk.m
+rand('state',random_seed);%rand('state',random_seed);octarisk.m
+randn('state',random_seed);%randn('state',random_seed);octarisk.m
+[retval status] = __makeinfo__(get_help_text(c{ii}),format);% Placeholder __makeinfo__;index.m instrument.m cash.m
+%curve_rates_base_temp=repmat(curve_rates_base,size(rf_shifttype,1),1);curve_rates_base_temp=repmat(curve_rates_base,size(rf_shifttype,1),1);update_market_objects.m
+%rf_shifttype_inv=repmat(rf_shifttype_inv,1,size(tmp_ir_shock_matrix,2));rf_shifttype_inv=repmat(rf_shifttype_inv,1,size(tmp_ir_shock_matrix,2));update_market_objects.m
+%rf_shifttype=repmat(rf_shifttype,1,size(tmp_ir_shock_matrix,2));rf_shifttype=repmat(rf_shifttype,1,size(tmp_ir_shock_matrix,2));update_market_objects.m
+%curve_rates_base_temp=repmat(curve_rates_base,size(tmp_ir_shock_matrix,1),1);curve_rates_base_temp=repmat(curve_rates_base,size(tmp_ir_shock_matrix,1),1);update_market_objects.m
+%curve_rates_mc = curve_rates_base_temp + tmp_ir_shock_matrix;curve_rates_mc = curve_rates_base_temp + tmp_ir_shock_matrix;update_market_objects.m
+%curve_rates_stress = rf_shifttype_inv .* (curve_rates_base_temp + (tmp_ir_shock_matrix ./ 10000)) + (rf_shifttype .* curve_rates_base_temp .* (1 + tmp_ir_shock_matrix));curve_rates_stress = rf_shifttype_inv .* (curve_rates_base_temp + (tmp_ir_shock_matrix ./ 10000)) + (rf_shifttype .* curve_rates_base_temp .* (1 + tmp_ir_shock_matrix));update_market_objects.m
+curve_rates_stress = rf_shifttype_inv .* (curve_rates_base + (tmp_ir_shock_matrix ./ 10000)) + (rf_shifttype .* curve_rates_base .* (1 + tmp_ir_shock_matrix));%curve_rates_stress = rf_shifttype_inv .* (curve_rates_base + (tmp_ir_shock_matrix ./ 10000)) + (rf_shifttype .* curve_rates_base .* (1 + tmp_ir_shock_matrix));update_market_objects.m
+curve_rates_mc = curve_rates_base + tmp_ir_shock_matrix;%curve_rates_mc = curve_rates_base + tmp_ir_shock_matrix;update_market_objects.m
+%if size(aggr_curve_rates_stress,1) ~= size(tmp_incr_stress_rate,1);if size(aggr_curve_rates_stress,1) ~= size(tmp_incr_stress_rate,1);update_market_objects.m
+%tmp_incr_stress_rate=repmat(tmp_incr_stress_rate,size(aggr_curve_rates_stress,1),1);tmp_incr_stress_rate=repmat(tmp_incr_stress_rate,size(aggr_curve_rates_stress,1),1);update_market_objects.m
+%end;end;update_market_objects.m
+%if size(aggr_curve_rates_mc,1) ~= size(tmp_aggr_curve_rates_mc,1);if size(aggr_curve_rates_mc,1) ~= size(tmp_aggr_curve_rates_mc,1);update_market_objects.m
+%tmp_aggr_curve_rates_mc=repmat(tmp_aggr_curve_rates_mc,size(aggr_curve_rates_mc,1),1);%tmp_aggr_curve_rates_mc=repmat(tmp_aggr_curve_rates_mc,size(aggr_curve_rates_mc,1),1);update_market_objects.m
+% Terms = repmat(Terms,rows(Values),1);Terms = repmat(Terms,rows(Values),1);update_market_objects.m
+set(h,'ytick',[min(p_l_absolut_shock) -20000 0 20000 max(p_l_absolut_shock)]);%set(h,'ytick',[min(p_l_absolut_shock) -20000 0 20000 max(p_l_absolut_shock)]);octarisk.m
+axis ('tic', 'off');%axis ('tic', 'off');octarisk.m
+pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock, plot_vec_pie);pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock);octarisk.m
+pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock, plot_vec_pie);pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock);octarisk.m
+pricing_function_american = 'Willowtree';pricing_function_american = 'BjSten';Option.m
