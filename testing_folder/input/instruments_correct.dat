@@ -761,7 +761,7 @@ CFANLEIHE1
 # type: sq_string
 # elements: 1
 # length: 11
-09-Jul-2016
+01-Jan-1900
 
 
 # name: last_reset_rate
@@ -2834,7 +2834,7 @@ EQFORW01
 # type: sq_string
 # elements: 1
 # length: 11
-09-Jul-2016
+01-Jan-1900
 
 
 # name: maturity_date

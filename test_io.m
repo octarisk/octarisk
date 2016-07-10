@@ -96,7 +96,7 @@ fprintf('\n');
 	% A.8) set seed of random number generator
 	if ( stable_seed == 1)
 		fid = fopen(strcat(path_static,'/',input_filename_seed)); % open file
-		random_seed = fread(fid,Inf,'uint32');		% convert binary file into integers
+		random_seed = fread(fid,Inf,'uint32');      % convert binary file into integers
 		fclose(fid);								% close file 
 		rand('state',random_seed);					% set seed
 		randn('state',random_seed);
@@ -104,12 +104,13 @@ fprintf('\n');
 
 % B) Perform tests
 
-% B.1) Test correlation matrix parsing
+% B.1) ===   Test correlation matrix parsing   ===
 total_tests_start = total_tests;
 fprintf('Testing function load_correlation_matrix ...\n');
 try
 	
-	[corr_matrix riskfactor_cell] = load_correlation_matrix(path_mktdata,input_filename_corr_matrix,path_archive,timestamp,archive_flag);
+	[corr_matrix riskfactor_cell] = load_correlation_matrix(path_mktdata, ...
+            input_filename_corr_matrix,path_archive,timestamp,archive_flag);
 	% load correct data
 	filename_corr_correct 				= strcat(path_mktdata,'/corr_correct.dat');
 	filename_riskfactor_cell_correct 	= strcat(path_mktdata,'/riskfactor_cell_correct.dat');
@@ -147,12 +148,14 @@ catch
 	total_tests = total_tests_start + 2;
 end      
 
-% B.2) Test instrument objects parsing
+% B.2) ===   Test instrument objects parsing   ===
 total_tests_start = total_tests;
 fprintf('Testing function load_instruments ...\n');
 try
 	instrument_struct=struct();
-	[instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_input,input_filename_instruments,path_output_instruments,path_archive,timestamp,archive_flag);
+	[instrument_struct id_failed_cell] = load_instruments(instrument_struct, ...
+                    valuation_date,path_input,input_filename_instruments, ...
+                    path_output_instruments,path_archive,timestamp,archive_flag);
 
 	% Converting classdef objects to ordinary structure in order to compare data
     tmp_instrument_struct = instrument_struct;
@@ -169,9 +172,9 @@ try
 		total_tests = total_tests + 1;
 		fprintf('SUCESS load_instruments: Parsing of instruments is correct.\n');
 	else
-		fprintf('WARNING: load_instruments: Parsing rof instruments not successful. Structs differ:\n');
-		tmp_instrument_struct
-		instrument_struct_correct
+		fprintf('WARNING: load_instruments: Parsing of instruments not successful. Structs differ:\n');	
+        % in order to see which instrument failed, make detailed comparison test of all key - value pairs
+        retcode = compare_struct(instrument_struct_correct,tmp_instrument_struct)
 		total_tests = total_tests + 1;
 	end
 catch
@@ -179,4 +182,33 @@ catch
 	total_tests = total_tests_start + 2;
 end   
 
+end
+
+% ------------------------------------------------------------------------------
+%                               Helper Function
+% ------------------------------------------------------------------------------
+function retcode = compare_struct(a,b)
+    % Compare all elements of two structures.
+    % a needs to be the validated structure. 
+    % Returns retcode > 0 -> number of fails
+    retcode = 0;
+    % loop through all objects
+    for ii = 1 : 1 : length(a)
+        tmp_id = a(ii).id;
+        b_obj = get_sub_object(b, tmp_id);
+        %fprintf('Comparing object >>%s<< with >>%s<<\n',tmp_id,b_obj.id);
+        for [ a_val, key ] = a(ii).object
+            b_val = getfield(b_obj, key);
+            if ( isequal(a_val,b_val) )
+                %fprintf('Values are identical for key >>%s<<.\n',key);
+            else
+                fprintf('Values are not identical for instrument >>%s<< and key >>%s<<.\n',b_obj.id,key);
+                fprintf('Correct value:\n');
+                a_val
+                fprintf('Actual value:\n');
+                b_val
+                retcode = retcode + 1;
+            end
+        end
+    end
 end
