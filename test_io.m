@@ -13,7 +13,8 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{success_tests} @var{total_tests}] =} test_io()
 %# Perform integration tests for all functions which rely on input and output 
-%# data.
+%# data. The functions have to be hard coded in this script and rely on validated
+%# output data.
 %# @end deftypefn
 
 function [success_tests,total_tests] = test_io(path_testing_folder);
@@ -84,8 +85,8 @@ fprintf('\n');
 	input_filename_vola_ir = 'vol_ir_';
 
 	% A.6) set global parameter
-	archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
-	stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
+	archive_flag = 0;       % switch for archiving input files to the archive
+	stable_seed = 1;        % switch for using stored or drawing new random 
 
 	% A.7) specify unique runcode and timestamp:
 	runcode = 'INTEGRATION_TEST';
