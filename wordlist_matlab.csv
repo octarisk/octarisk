@@ -24,3 +24,4 @@ axis ('tic', 'off');%axis ('tic', 'off');octarisk.m
 pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock, plot_vec_pie);pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock);octarisk.m
 pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock, plot_vec_pie);pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock);octarisk.m
 pricing_function_american = 'Willowtree';pricing_function_american = 'BjSten';Option.m
+lookup(;lookupfn(;all files
