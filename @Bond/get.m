@@ -60,7 +60,11 @@ function s = get (bond, property)
         case 'mod_duration'
           s = obj.mod_duration; 
         case 'calibration_flag'
-          s = obj.calibration_flag;    
+          s = obj.calibration_flag; 
+        case 'accrued_interest'
+          s = obj.accrued_interest;
+        case 'clean_value_base'
+          s = obj.clean_value_base;
         otherwise
           error ('get: invalid property %s', property);
       end

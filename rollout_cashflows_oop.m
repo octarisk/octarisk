@@ -11,15 +11,12 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values}] =} 
-%#                    rollout_cashflows_oop (@var{bond_struct})
-%# @deftypefnx  {Function File} {[@var{ret_dates} @var{ret_values}] =} 
-%#                    rollout_cashflows_oop (@var{bond_struct}, 
-%#                             @var{tmp_nodes}, @var{tmp_rates}, 
-%#                             @var{valuation_date}, @var{method_interpolation})
+%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_cashflows_oop (@var{bond_struct})
+%# @deftypefnx  {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_cashflows_oop (@var{bond_struct}, @var{tmp_nodes}, @var{tmp_rates}, @var{valuation_date}, @var{method_interpolation})
 %#
-%# Compute the dates and values of cash flows given definitions for fixed rate 
-%# bonds, floating rate notes and zero coupon bonds.@*
+%# Compute the dates and values of cash flows given definitions and 
+%# accrued interests for fixed rate bonds, floating rate notes, 
+%# amoritizing bonds and zero coupon bonds.@*
 %# In the 'oop' version no input data checks are performed. @* 
 %# Pre-requirements:@*
 %# @itemize @bullet
@@ -94,9 +91,10 @@
 %# @seealso{timefactor, discount_factor, get_forward_rate, interpolate_curve}
 %# @end deftypefn
 
-function [ret_dates ret_values] = rollout_cashflows_oop(bond,tmp_nodes, ...
-                               tmp_rates,valuation_date,method_interpolation, ...
-                               comp_type_curve,basis_curve,comp_freq_curve)
+function [ret_dates ret_values accrued_interest] = rollout_cashflows_oop(bond, ...
+                                tmp_nodes, tmp_rates,valuation_date, ...
+                                method_interpolation, comp_type_curve, ...
+                                basis_curve,comp_freq_curve)
 
 %TODO: introduce prepayment type 'default'
 
@@ -133,7 +131,11 @@ elseif nargin < 8
 end
 % --- Checking object field items --- 
     compounding_type = bond.compounding_type;
-    issue_date = bond.issue_date;
+    if (strcmp(bond.issue_date,'01-Jan-1900'))
+        issue_date = datestr(valuation_date);
+    else
+        issue_date = bond.issue_date;
+    end
     day_count_convention = bond.day_count_convention;
     coupon_rate  = bond.coupon_rate;
     coupon_generation_method = bond.coupon_generation_method; 
@@ -362,7 +364,6 @@ else
 end
 cf_business_dates = datevec(busdate(datenum(cf_dates)-1 + business_day_rule, ...
                                     business_day_direction));
-cf_dates = cf_dates;
 %-------------------------------------------------------------------------------
 
 
@@ -381,6 +382,7 @@ if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )
                                             compounding_freq)) - 1) .* notional;
     end
     ret_values = cf_values;
+    cf_interest = cf_values;
     % Add notional payments
     if ( notional_at_start == 1)    % At notional payment at start
         ret_values(:,1) = ret_values(:,1) - notional;     
@@ -423,6 +425,7 @@ elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
         cf_values(:,ii) = forward_rate;
     end
     ret_values = cf_values .* notional;
+    cf_interest = ret_values .* 0.0;
     % Add notional payments
     if ( notional_at_start == true)    % At notional payment at start
         ret_values(:,1) = ret_values(:,1) - notional;     
@@ -433,6 +436,7 @@ elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
 % Type ZCB: Zero Coupon Bond has notional cash flow at maturity date
 elseif ( strcmp(type,'ZCB') == 1 )   
     ret_values = notional;
+    cf_interest = 0;
     
 % Type FAB: Calculate CF Values for all CF Periods for fixed amortizing bonds 
 %           (annuity loans and amortizable loans)
@@ -564,8 +568,44 @@ else
 end
 pay_dates(1,:)=[];
 ret_dates = datenum(pay_dates)' - valuation_date;
+ret_dates_tmp = ret_dates;              % store all cf dates for later use
 ret_dates = ret_dates(ret_dates>0);
+
 ret_values = ret_values(:,(end-length(ret_dates)+1):end);
+ret_interest_values = cf_interest(:,(end-length(ret_dates)+1):end);
+
+%-------------------------------------------------------------------------------
+% #################   Calculation of accrued interests   #######################   
+%
+% calculate time in days from last coupon date
+ret_date_last_coupon = ret_dates_tmp(ret_dates_tmp<0);
+% distinguish three different cases:
+% issue_date.......first_cf_date....valuation_date......2nd_cf_date.....mat_date
+% valuation_date...issue_date......frist_cf_date........2nd_cf_date.....mat_date
+% issue_date.......valuation_date..frist_cf_date........2nd_cf_date.....mat_date
+if length(ret_date_last_coupon) > 0
+    ret_date_last_coupon = -ret_date_last_coupon(end);
+    [tf dip dib] = timefactor (valuation_date - ret_date_last_coupon, ...
+                            valuation_date, dcc);
+else
+    % if valuation date before issue date -> tf = 0
+    if ( valuation_date <= datenum(issue_date) )
+        tf = 0;
+    % valuation date after issue date, but before first cf payment date
+    else
+        [tf dip dib] = timefactor (issue_date, valuation_date, dcc);
+    end
+end
+% value of next coupon -> accrued interest is pro-rata share of next coupon
+ret_value_next_coupon = ret_interest_values(:,1);
+
+% scale tf according to term:
+if ~( term == 365)
+    tf = tf * 12 / term;
+end
+accrued_interest = ret_value_next_coupon .* tf;
+
+%-------------------------------------------------------------------------------
 
 end
 
@@ -775,3 +815,62 @@ end
 %! [ret_dates ret_values] = rollout_cashflows_oop(bond_struct,discount_nodes, discount_rates,'31-Mar-2016','linear',comp_type_curve,basis_curve,comp_freq_curve);
 %! theo_value = pricing_npv('31-Mar-2016',ret_dates, ret_values,0.0,discount_nodes,discount_rates,bond_struct.day_count_convention,bond_struct.compounding_type,bond_struct.compounding_freq,'linear',comp_type_curve,basis_curve,comp_freq_curve); 
 %! assert(theo_value,0.999500124267452,0.0000000001);
+
+
+%!test
+%! bond_struct=struct();
+%! bond_struct.sub_type                 = 'FRB';
+%! bond_struct.issue_date               = '22-Nov-2011';
+%! bond_struct.maturity_date            = '09-Nov-2026';
+%! bond_struct.compounding_type         = 'simple';
+%! bond_struct.compounding_freq         = 1  ;
+%! bond_struct.term                     = 12   ;
+%! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.notional                 = 100 ;
+%! bond_struct.coupon_rate              = 0.015; 
+%! bond_struct.coupon_generation_method = 'backward' ;
+%! bond_struct.business_day_rule        = 0 ;
+%! bond_struct.business_day_direction   = 1  ;
+%! bond_struct.enable_business_day_rule = 0;
+%! bond_struct.spread                   = 0.00 ;
+%! bond_struct.long_first_period        = false;
+%! bond_struct.long_last_period         = false;
+%! bond_struct.last_reset_rate          = 0.0000000;
+%! bond_struct.fixed_annuity            = 1;
+%! bond_struct.in_arrears               = 0;
+%! bond_struct.notional_at_start        = false;
+%! bond_struct.notional_at_end          = true;
+%! bond_struct.prepayment_flag          = false;
+%! [ret_dates ret_values accrued_interest] = rollout_cashflows_oop(bond_struct,[],[],'31-Dec-2015');
+%! assert(ret_dates,[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],0.000000001);
+%! assert(ret_values,[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5],0.000000001);
+%! assert(accrued_interest,0.214284106,0.0000001);
+
+%!test
+%! bond_struct=struct();
+%! bond_struct.sub_type                 = 'FRB';
+%! bond_struct.issue_date               = '22-Nov-2011';
+%! bond_struct.maturity_date            = '30-Sep-2021';
+%! bond_struct.compounding_type         = 'simple';
+%! bond_struct.compounding_freq         = 1;
+%! bond_struct.term                     = 6;
+%! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.notional                 = 100 ;
+%! bond_struct.coupon_rate              = 0.02125; 
+%! bond_struct.coupon_generation_method = 'backward' ;
+%! bond_struct.business_day_rule        = 0 ;
+%! bond_struct.business_day_direction   = 1  ;
+%! bond_struct.enable_business_day_rule = 0;
+%! bond_struct.spread                   = 0.00 ;
+%! bond_struct.long_first_period        = false;
+%! bond_struct.long_last_period         = false;
+%! bond_struct.last_reset_rate          = 0.0000000;
+%! bond_struct.fixed_annuity            = 1;
+%! bond_struct.in_arrears               = 0;
+%! bond_struct.notional_at_start        = false;
+%! bond_struct.notional_at_end          = true;
+%! bond_struct.prepayment_flag          = false;
+%! [ret_dates ret_values accrued_interest] = rollout_cashflows_oop(bond_struct,[],[],'31-Dec-2015');
+%! assert(ret_dates,[90,274,455,639,820,1004,1185,1369,1551,1735,1916,2100],0.000000001);
+%! assert(ret_values,[1.0595890411,1.0712328767,1.0537671233,1.0712328767,1.0537671233,1.0712328767,1.0537671233,1.0712328767,1.0595890411,1.0712328767,1.0537671233,101.0712328767],0.000000001);
+%! assert(accrued_interest,0.534148996,0.0000001);

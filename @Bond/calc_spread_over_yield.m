@@ -28,8 +28,15 @@ function s = calc_spread_over_yield (bond,discount_curve,valuation_date)
         disp('Warning: No cash flows defined for bond. setting SoY = 0.0')
         s.soy = 0.0;
   else
+    % get dirty value
+    if s.clean_value_base == 1
+        value_dirty = s.value_base + s.accrued_interest;
+    else
+        value_dirty = s.value_base;
+    end
+    
     [spread_over_yield retcode] = calibrate_soy_sqp(valuation_date, s.cf_dates, ...
-                            s.cf_values(1,:), s.value_base, ...
+                            s.cf_values(1,:), value_dirty , ...
                             tmp_nodes, tmp_rates, basis, comp_type, comp_freq, ...
                             tmp_interp_discount, tmp_curve_comp_type, ...
                             tmp_curve_basis, tmp_curve_comp_freq);
