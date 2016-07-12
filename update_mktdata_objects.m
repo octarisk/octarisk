@@ -225,7 +225,7 @@ for ii = 1 : 1 : length(mktdata_struct)
                     % Matlab Adaption
                     %if size(aggr_curve_rates_stress,1) ~= size(tmp_incr_stress_rate,1)
                     %tmp_incr_stress_rate=repmat(tmp_incr_stress_rate,size(aggr_curve_rates_stress,1),1);
-                    %end
+                    %end Matlab adaption
                     
                     aggr_curve_rates_stress = aggr_curve_rates_stress + tmp_incr_stress_rate;
                     aggr_curve_rates_base = aggr_curve_rates_base + tmp_incr_base_rate;
@@ -258,7 +258,7 @@ for ii = 1 : 1 : length(mktdata_struct)
                     % Matlab Adaption
                     %if size(aggr_curve_rates_mc,1) ~= size(tmp_aggr_curve_rates_mc,1)
                     %tmp_aggr_curve_rates_mc=repmat(tmp_aggr_curve_rates_mc,size(aggr_curve_rates_mc,1),1);
-                    %end
+                    %end Matlab adaption
                     
                     aggr_curve_rates_mc =  aggr_curve_rates_mc + tmp_aggr_curve_rates_mc;
                     

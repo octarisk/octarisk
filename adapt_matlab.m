@@ -20,7 +20,7 @@
 %# Output data:
 %# Rewritten m.files
 
-function adapt_matlab(path)
+function adapt_matlab
 
 % Delete unneccessary wrapper scripts
 delete('fmincon.m');
@@ -35,21 +35,16 @@ main_dir=cd;
 addpath(main_dir);
 
 for i=1:size(directorylist,2)
-    if isunix==1
         pathchange=strcat(main_dir,'/',directorylist(i));
-    else
-        pathchange=strcat(main_dir,'\',directorylist(i));
-    end
+
     cd(pathchange{1});
     replacement_script('wordlist_matlab.csv');
 end
 
 % Copying neccessary files and functions
 cd(main_dir);
-
-%to be coded
-%path=strcat(path,'/source directory');
-%copyfile(path incl. source,main_dir{1});
+function_dir=strcat(main_dir,'/matlab_functions/*');
+copyfile(function_dir,main_dir);
 
 rmpath(main_dir);
 clear all;
