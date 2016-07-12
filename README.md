@@ -1,5 +1,8 @@
 # octarisk
-Market Risk Measurement in Octave
+<p align="center">
+  <img src="http://www.octarisk.com/images/OCTARISK_logo_standard.svg" width="150" >
+</p>
+## Market Risk Measurement in Octave
 
 This project aims to provide a framework for quantifying and analysing
 the market risk of financial portfolios.
@@ -17,11 +20,11 @@ with Octave version >= 4.0.0 and the Statistics and Financial packages. The code
 is licensed under the GNU GPL.
 
 Further information:
-[website](http://www.octarisk.com).
-[documentation (PDF)](http://www.octarisk.com/documentation/doc_octarisk.pdf)
-[documentation (online)](http://www.octarisk.com/documentation/index.html)
+[website](http://www.octarisk.com)
 
-<img src="http://www.octarisk.com/images/OCTARISK_logo_standard.svg" width="150" >
+[documentation (PDF)](http://www.octarisk.com/documentation/doc_octarisk.pdf)
+
+[documentation (online)](http://www.octarisk.com/documentation/index.html)
 
 ## Contributors
 Stefan Schloegl (schinzilord@octarisk.com)

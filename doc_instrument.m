@@ -173,7 +173,7 @@ end
 %! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
 
 %!test
-%! fprintf('\tdoc_instrument:\tPricing American Option Object (Bjerksund and Stensland)\n');
+%! fprintf('\tdoc_instrument:\tPricing American Option Object (Willowtree and Bjerksund and Stensland)\n');
 %! r = Riskfactor();
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');

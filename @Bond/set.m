@@ -8,17 +8,26 @@ function s = set (bond, varargin)
     prop = lower(prop);
     val = varargin{2};
     varargin(1:2) = [];
+    % ====================== set spread over yield ======================
     if (ischar (prop) && strcmp (prop, 'soy'))
       if (isvector (val) && isreal (val))
         s.soy = val;
       else
         error ('set: expecting the value to be a real vector');
       end
+    % ====================== set accrued_interest ======================  
+     elseif (ischar (prop) && strcmp (prop, 'accrued_interest'))   
+      if (isreal (val))
+        s.accrued_interest = val;
+      else
+        error ('set: expecting accrued_interest to be a real number');
+      end  
+    % ====================== set convexity ======================
     elseif (ischar (prop) && strcmp (prop, 'convexity'))   
       if (isreal (val))
         s.convexity = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting convexity to be a real number');
       end
     % ====================== set rates_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'cf_values_mc'))   
@@ -56,7 +65,7 @@ function s = set (bond, varargin)
       if (isvector (val) && isreal (val))
         s.cf_dates = val;
       else
-        error ('set: expecting the value to be a real vector');
+        error ('set: expecting cf_dates to be a real vector');
       end 
     % ====================== set timestep_mc_cf: appending or setting timestep vector ======================
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc_cf'))   
@@ -130,7 +139,7 @@ function s = set (bond, varargin)
         if ( isempty(val))
             s.value_stress = [];
         else
-            error ('set: expecting the value to be a real vector');
+            error ('set: expecting value_stress to be a real vector');
         end
       end
     % ====================== set value_base ======================
@@ -138,42 +147,42 @@ function s = set (bond, varargin)
       if (isreal (val) && isnumeric(val))
         s.value_base = val;
       else
-        error ('set: expecting the value to be a real numeric vector');
+        error ('set: expecting value_base to be a real numeric vector');
       end 
     % ====================== set name ======================
     elseif (ischar (prop) && strcmp (prop, 'name'))   
       if (ischar (val) )
         s.name = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting name to be a char');
       end
     % ====================== set id ======================
     elseif (ischar (prop) && strcmp (prop, 'id'))   
       if (ischar(val))
         s.id = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting id to be a char');
       end
     % ====================== set maturity_date ======================
     elseif (ischar (prop) && strcmp (prop, 'maturity_date'))   
       if (ischar (val))
         s.maturity_date = datestr(strtrim(val),1);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting maturity_date to be a char');
       end
     % ====================== set issue_date ======================
     elseif (ischar (prop) && strcmp (prop, 'issue_date'))   
       if (ischar (val))
         s.issue_date = datestr(strtrim(val),1);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting issue_date to be a char');
       end  
     % ====================== set spread_curve  ======================
     elseif (ischar (prop) && strcmp (prop, 'spread_curve'))   
       if (ischar (val))
         s.spread_curve = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting spread_curve to be a char');
       end 
       
     % ====================== set reference_curve  ======================
@@ -181,35 +190,35 @@ function s = set (bond, varargin)
       if (ischar (val))
         s.reference_curve = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting reference_curve to be a char');
       end  
     % ====================== set discount_curve  ======================
     elseif (ischar (prop) && strcmp (prop, 'discount_curve'))   
       if (ischar (val))
         s.discount_curve = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting discount_curve to be a char');
       end 
-    % ====================== set coupon_generation_method  ======================
+    % ====================== set coupon_generation_method  ====================
     elseif (ischar (prop) && strcmp (prop, 'coupon_generation_method'))   
       if (ischar (val))
         s.coupon_generation_method = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting coupon_generation_method to be a char');
       end 
     % ====================== set term ======================
     elseif (ischar (prop) && strcmp (prop, 'term'))   
       if (isnumeric (val) && isreal (val))
         s.term = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting term to be a real number');
       end 
     % ====================== set ytm ======================
     elseif (ischar (prop) && strcmp (prop, 'ytm'))   
       if (isnumeric (val) && isreal (val))
         s.ytm = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting ytm to be a real number');
       end   
     % ====================== set compounding_freq  ======================
     elseif (ischar (prop) && strcmp (prop, 'compounding_freq'))   
@@ -218,84 +227,84 @@ function s = set (bond, varargin)
       elseif (ischar(val))
         s.compounding_freq  = val;
       else
-        error ('set: expecting the value to be a real number or char');
+        error ('set: expecting compounding_freq to be a real number or char');
       end       
     % ====================== set day_count_convention ======================
     elseif (ischar (prop) && strcmp (prop, 'day_count_convention'))   
       if (ischar (val))
         s.day_count_convention = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting day_count_convention to be a char');
       end 
     % ====================== set compounding_type ======================
     elseif (ischar (prop) && strcmp (prop, 'compounding_type'))   
       if (ischar (val))
         s.compounding_type = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting compounding_type to be a char');
       end 
     % ====================== set sub_type ======================
     elseif (ischar (prop) && strcmp (prop, 'sub_type'))   
       if (ischar (val))
         s.sub_type = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting sub_type to be a char');
       end   
     % ====================== set valuation_date ======================
     elseif (ischar (prop) && strcmp (prop, 'valuation_date'))   
       if (ischar (val))
         s.valuation_date = datestr(strtrim(val),1);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting valuation_date to be a char');
       end 
     % ====================== set asset_class ======================
     elseif (ischar (prop) && strcmp (prop, 'asset_class'))   
       if (ischar (val))
         s.asset_class = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting asset_class to be a char');
       end 
     % ====================== set currency ======================
     elseif (ischar (prop) && strcmp (prop, 'currency'))   
       if (ischar (val))
         s.currency = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting currency to be a char');
       end 
     % ====================== set description ======================
     elseif (ischar (prop) && strcmp (prop, 'description'))   
       if (ischar (val))
         s.description = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting description to be a char');
       end 
     % ====================== set notional ======================
     elseif (ischar (prop) && strcmp (prop, 'notional'))   
       if (isnumeric (val) && isreal (val))
         s.notional = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting notional to be a real number');
       end 
     % ====================== set coupon_rate ======================
     elseif (ischar (prop) && strcmp (prop, 'coupon_rate'))   
       if (isnumeric (val) && isreal (val))
         s.coupon_rate = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting coupon_rate to be a real number');
       end 
     % ====================== set business_day_rule ======================
     elseif (ischar (prop) && strcmp (prop, 'business_day_rule'))   
       if (isnumeric (val) && isreal (val))
         s.business_day_rule = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting business_day_rule to be a real number');
       end 
     % ====================== set business_day_direction ======================
     elseif (ischar (prop) && strcmp (prop, 'business_day_direction'))   
       if (isnumeric (val) && isreal (val))
         s.business_day_direction = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting business_day_direction to be a real number');
       end 
     % ====================== set enable_business_day_rule ======================
     elseif (ischar (prop) && strcmp (prop, 'enable_business_day_rule'))   
@@ -311,14 +320,30 @@ function s = set (bond, varargin)
             s.enable_business_day_rule = logical(0);
         end
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting enable_business_day_rule to be a real number or true/false');
       end 
+    % ====================== set clean_value_base ======================
+    elseif (ischar (prop) && strcmp (prop, 'clean_value_base'))   
+      if (isnumeric (val) && isreal (val))
+        s.clean_value_base = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',lower(val)))
+            s.clean_value_base = logical(0);
+        elseif ( strcmp('true',lower(val)))
+            s.clean_value_base = logical(1);
+        else
+            printf('WARNING: Unknown val: >>%s<<. Setting clean_value_base to false.',val);
+            s.clean_value_base = logical(0);
+        end
+      else
+        error ('set: expecting clean_value_base to be a real number or true/false');
+      end   
     % ====================== set spread ======================
     elseif (ischar (prop) && strcmp (prop, 'spread'))   
       if (isnumeric (val) && isreal (val))
         s.spread = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting spread to be a real number');
       end 
     % ====================== set long_first_period ======================
     elseif (ischar (prop) && strcmp (prop, 'long_first_period'))   
@@ -334,7 +359,7 @@ function s = set (bond, varargin)
             s.long_first_period = logical(0);
         end
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting long_first_period to be a real number');
       end 
     % ====================== set long_last_period ======================
     elseif (ischar (prop) && strcmp (prop, 'long_last_period'))   
@@ -350,14 +375,14 @@ function s = set (bond, varargin)
             s.long_last_period = logical(0);
         end
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting long_last_period to be a real number');
       end 
     % ====================== set last_reset_rate ======================
     elseif (ischar (prop) && strcmp (prop, 'last_reset_rate'))   
       if (isnumeric (val) && isreal (val))
         s.last_reset_rate = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting last_reset_rate to be a real number');
       end 
     % ====================== set in_arrears ======================
     elseif (ischar (prop) && strcmp (prop, 'in_arrears'))   
@@ -373,7 +398,7 @@ function s = set (bond, varargin)
             s.in_arrears = logical(0);
         end
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting in_arrears to be a real number');
       end 
     % ====================== set fixed_annuity ======================
     elseif (ischar (prop) && strcmp (prop, 'fixed_annuity'))   
@@ -389,7 +414,7 @@ function s = set (bond, varargin)
             s.fixed_annuity = logical(0);
         end
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting fixed_annuity to be a real number');
       end 
     % ====================== set notional_at_start ======================
     elseif (ischar (prop) && strcmp (prop, 'notional_at_start'))   
@@ -405,7 +430,7 @@ function s = set (bond, varargin)
             s.notional_at_start = logical(0);
         end
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting notional_at_start to be a real number');
       end 
     % ====================== set notional_at_end  ======================
     elseif (ischar (prop) && strcmp (prop, 'notional_at_end '))   
@@ -421,7 +446,7 @@ function s = set (bond, varargin)
             s.notional_at_end = logical(0);
         end
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting notional_at_end to be a real number');
       end       
     else
       error ('set: invalid property of bond class: %s',prop);

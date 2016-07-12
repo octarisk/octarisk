@@ -1,7 +1,7 @@
 classdef Forward < Instrument
   
     properties   % All properties of Class Forward with default values
-        issue_date = datestr(today);
+        issue_date = '01-Jan-1900';
         maturity_date = '';
         compounding_type = 'disc';
         compounding_freq = 'annual';  

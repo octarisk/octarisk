@@ -1,7 +1,7 @@
 classdef Bond < Instrument
    
     properties   % All properties of Class Bond with default values
-        issue_date = datestr(today);
+        issue_date = '01-Jan-1900';
         maturity_date = '';
         compounding_type = 'disc';
         compounding_freq = 1;  
@@ -35,6 +35,7 @@ classdef Bond < Instrument
         prepayment_rate          = 0.00;    % constant prepayment rate in case
                                             % no prepayment curve is specified
         prepayment_curve         = 'PSA-BASE';  % specify prepayment curve
+        clean_value_base = 0; % BOOL: value_base is clean without accr interest
     end
    
     properties (SetAccess = private)
@@ -50,6 +51,7 @@ classdef Bond < Instrument
         timestep_mc_cf = {};
         mac_duration = 0.0;
         mod_duration = 0.0;
+        accrued_interest = 0.0;
     end
    
    methods
@@ -101,6 +103,7 @@ classdef Bond < Instrument
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('reference_curve: %s\n',b.reference_curve); 
          fprintf('spread_curve: %s\n',b.spread_curve); 
+         fprintf('accrued_interest: %d\n',b.accrued_interest); 
          %fprintf('spot_value: %f %s\n',b.spot_value,b.currency);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
