@@ -1,0 +1,5781 @@
+# Created by Octave 4.0.0, Tue Jul 12 18:24:56 2016 W. Europe Daylight Time <unknown@T43NB067>
+# name: tmp_instrument_struct
+# type: struct
+# ndims: 2
+ 1 31
+# length: 3
+# name: id
+# type: cell
+# rows: 1
+# columns: 31
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+CASH_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+CFANLEIHE1
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF090
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+GOLDPHYS
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+SILVERPHYS
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1JB4Q
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0RM43
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0RFFT
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1J7CK
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+836791
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1YC04
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1ZKC4
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF012
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+DBX1EU
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF114
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0DPMW
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF127
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+DBX1A7
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+LYX0BX
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF060
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+LYX0AG
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0LGQL
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+513700
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+BASF11
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+BTCOIN
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+114171
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 17
+SWAPTIONC20180317
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+ODAXC20160318
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+GCFUTC20160126
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+SYNTH01
+
+
+
+
+
+# name: name
+# type: cell
+# rows: 1
+# columns: 31
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+CASH_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+CFANLEIHE1
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF090
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+GOLDPHYS
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+SILVERPHYS
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1JB4Q
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0RM43
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0RFFT
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1J7CK
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+836791
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1YC04
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1ZKC4
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF012
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+DBX1EU
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF114
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0DPMW
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF127
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+DBX1A7
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+LYX0BX
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF060
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+LYX0AG
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0LGQL
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+513700
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+BASF11
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+BTCOIN
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+114171
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 17
+SWAPTIONC20180317
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+ODAXC20160318
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+GCFUTC20160126
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+SYNTH01
+
+
+
+
+
+# name: object
+# type: cell
+# rows: 1
+# columns: 31
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 15
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 4
+cash
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 16
+EUR Cash Account
+
+
+# name: discount_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+CASH_EUR
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 16
+Cash Account EUR
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 4
+CASH
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+cash
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+1
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 54
+# name: accrued_interest
+# type: scalar
+0
+
+
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: basis
+# type: scalar
+3
+
+
+# name: business_day_direction
+# type: scalar
+1
+
+
+# name: business_day_rule
+# type: scalar
+0
+
+
+# name: calibration_flag
+# type: scalar
+0
+
+
+# name: cf_dates
+# type: matrix
+# rows: 1
+# columns: 3
+ -164 200 565
+
+
+# name: cf_values
+# type: matrix
+# rows: 1
+# columns: 3
+ 3 3 103
+
+
+# name: cf_values_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: scalar
+1
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: convexity
+# type: scalar
+0
+
+
+# name: coupon_generation_method
+# type: sq_string
+# elements: 1
+# length: 8
+backward
+
+
+# name: coupon_rate
+# type: scalar
+0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 40
+Cashflow instrument with cashflow vector
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: enable_business_day_rule
+# type: scalar
+0
+
+
+# name: fixed_annuity
+# type: scalar
+0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 10
+CFANLEIHE1
+
+
+# name: in_arrears
+# type: scalar
+0
+
+
+# name: issue_date
+# type: sq_string
+# elements: 1
+# length: 11
+01-Jan-1900
+
+
+# name: last_reset_rate
+# type: scalar
+1e-005
+
+
+# name: long_first_period
+# type: scalar
+0
+
+
+# name: long_last_period
+# type: scalar
+0
+
+
+# name: mac_duration
+# type: scalar
+0
+
+
+# name: maturity_date
+# type: null_sq_string
+# elements: 0
+
+
+# name: mod_duration
+# type: scalar
+0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 18
+Cashflowinstrument
+
+
+# name: notional
+# type: scalar
+0
+
+
+# name: notional_at_end
+# type: scalar
+1
+
+
+# name: notional_at_start
+# type: scalar
+0
+
+
+# name: prepayment_curve
+# type: sq_string
+# elements: 1
+# length: 8
+PSA-BASE
+
+
+# name: prepayment_flag
+# type: bool
+0
+
+
+# name: prepayment_rate
+# type: scalar
+0
+
+
+# name: prepayment_source
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: prepayment_type
+# type: sq_string
+# elements: 1
+# length: 4
+full
+
+
+# name: reference_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: soy
+# type: scalar
+0
+
+
+# name: spot_value
+# type: scalar
+0
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: spread_curve
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_EUR_HY
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 8
+CASHFLOW
+
+
+# name: term
+# type: scalar
+12
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc_cf
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+bond
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+105
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: ytm
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 9
+Commodity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 43
+ComStage ETF Commerzbank Commodity EW Index
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+ETF090
+
+
+# name: idio_vola
+# type: scalar
+0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 43
+ComStage ETF Commerzbank Commodity EW Index
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_COM_DIV
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+COM
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+90.90000000000001
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 9
+Commodity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 17
+Goldmuenze 1 Unze
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+GOLDPHYS
+
+
+# name: idio_vola
+# type: scalar
+0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 17
+Goldmuenze 1 Unze
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+RF_COM_GOLD
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+COM
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+1050.18
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 9
+Commodity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 19
+Silbermuenze 1 Unze
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 10
+SILVERPHYS
+
+
+# name: idio_vola
+# type: scalar
+0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 19
+Silbermuenze 1 Unze
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_COM_SILVER
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+COM
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+14.04
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: convexity
+# type: scalar
+11
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 56
+iShares Barclays Capital Emerging Market Local Govt Bond
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+# name: duration
+# type: scalar
+4.5
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+A1JB4Q
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 56
+iShares Barclays Capital Emerging Market Local Govt Bond
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+DBT
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+debt
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+60.5
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: convexity
+# type: scalar
+0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+USD
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 40
+iShares Citigroup Global Government Bond
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+# name: duration
+# type: scalar
+5.6
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+A0RM43
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 40
+iShares Citigroup Global Government Bond
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+DBT
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+debt
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+102.48
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: convexity
+# type: scalar
+0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+USD
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 45
+iShares JPMorgan $ Emerging Markets Bond Fund
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+# name: duration
+# type: scalar
+7.8
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+A0RFFT
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 45
+iShares JPMorgan $ Emerging Markets Bond Fund
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+DBT
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+debt
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+99.93000000000001
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: convexity
+# type: scalar
+0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+USD
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 29
+iShares Global Corporate Bond
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: duration
+# type: scalar
+12.1
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+A1J7CK
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 29
+iShares Global Corporate Bond
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+DBT
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+debt
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+95.98
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 54
+# name: accrued_interest
+# type: scalar
+0
+
+
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: basis
+# type: float scalar
+3
+
+
+# name: business_day_direction
+# type: scalar
+1
+
+
+# name: business_day_rule
+# type: scalar
+1
+
+
+# name: calibration_flag
+# type: scalar
+0
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 6
+simple
+
+
+# name: convexity
+# type: scalar
+0
+
+
+# name: coupon_generation_method
+# type: sq_string
+# elements: 1
+# length: 8
+backward
+
+
+# name: coupon_rate
+# type: scalar
+0.05757
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 16
+Medium Term Note
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 16
+AGGR_EUR_FIN_BBB
+
+
+# name: enable_business_day_rule
+# type: bool
+0
+
+
+# name: fixed_annuity
+# type: scalar
+0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+836791
+
+
+# name: in_arrears
+# type: scalar
+0
+
+
+# name: issue_date
+# type: sq_string
+# elements: 1
+# length: 11
+22-Nov-2011
+
+
+# name: last_reset_rate
+# type: scalar
+0
+
+
+# name: long_first_period
+# type: bool
+0
+
+
+# name: long_last_period
+# type: bool
+0
+
+
+# name: mac_duration
+# type: scalar
+0
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+04-Oct-2017
+
+
+# name: mod_duration
+# type: scalar
+0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 48
+BNP Paribas Fortis SA EMTN Fix 5.757% 04.10.2017
+
+
+# name: notional
+# type: scalar
+100
+
+
+# name: notional_at_end
+# type: scalar
+1
+
+
+# name: notional_at_start
+# type: scalar
+0
+
+
+# name: prepayment_curve
+# type: sq_string
+# elements: 1
+# length: 8
+PSA-BASE
+
+
+# name: prepayment_flag
+# type: bool
+0
+
+
+# name: prepayment_rate
+# type: scalar
+0
+
+
+# name: prepayment_source
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: prepayment_type
+# type: sq_string
+# elements: 1
+# length: 4
+full
+
+
+# name: reference_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: soy
+# type: scalar
+0
+
+
+# name: spot_value
+# type: scalar
+0
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: spread_curve
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD_DUMMY
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+FRB
+
+
+# name: term
+# type: scalar
+12
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc_cf
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+bond
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+108.681
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: ytm
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 54
+# name: accrued_interest
+# type: scalar
+0
+
+
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: basis
+# type: float scalar
+3
+
+
+# name: business_day_direction
+# type: scalar
+1
+
+
+# name: business_day_rule
+# type: scalar
+1
+
+
+# name: calibration_flag
+# type: scalar
+0
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 5
+daily
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: convexity
+# type: scalar
+0
+
+
+# name: coupon_generation_method
+# type: sq_string
+# elements: 1
+# length: 8
+backward
+
+
+# name: coupon_rate
+# type: scalar
+0.01375
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 33
+BASF Corporate Bond 1.375pct 2019
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: enable_business_day_rule
+# type: bool
+0
+
+
+# name: fixed_annuity
+# type: scalar
+0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+A1YC04
+
+
+# name: in_arrears
+# type: scalar
+0
+
+
+# name: issue_date
+# type: sq_string
+# elements: 1
+# length: 11
+22-Jan-2014
+
+
+# name: last_reset_rate
+# type: scalar
+0
+
+
+# name: long_first_period
+# type: bool
+0
+
+
+# name: long_last_period
+# type: bool
+0
+
+
+# name: mac_duration
+# type: scalar
+0
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+22-Jan-2019
+
+
+# name: mod_duration
+# type: scalar
+0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 29
+BASF SE MTN v.2014(2018/2019)
+
+
+# name: notional
+# type: scalar
+1000
+
+
+# name: notional_at_end
+# type: scalar
+1
+
+
+# name: notional_at_start
+# type: scalar
+0
+
+
+# name: prepayment_curve
+# type: sq_string
+# elements: 1
+# length: 8
+PSA-BASE
+
+
+# name: prepayment_flag
+# type: bool
+0
+
+
+# name: prepayment_rate
+# type: scalar
+0
+
+
+# name: prepayment_source
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: prepayment_type
+# type: sq_string
+# elements: 1
+# length: 4
+full
+
+
+# name: reference_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: soy
+# type: scalar
+0
+
+
+# name: spot_value
+# type: scalar
+0
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: spread_curve
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_EUR_HY
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+FRB
+
+
+# name: term
+# type: scalar
+12
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc_cf
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+bond
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+1031.2
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: ytm
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 54
+# name: accrued_interest
+# type: scalar
+0
+
+
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: basis
+# type: float scalar
+3
+
+
+# name: business_day_direction
+# type: scalar
+1
+
+
+# name: business_day_rule
+# type: scalar
+0
+
+
+# name: calibration_flag
+# type: scalar
+0
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 5
+daily
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: convexity
+# type: scalar
+0
+
+
+# name: coupon_generation_method
+# type: sq_string
+# elements: 1
+# length: 8
+backward
+
+
+# name: coupon_rate
+# type: scalar
+0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 21
+AUSTRIA 14/20 FLR MTN
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: enable_business_day_rule
+# type: scalar
+0
+
+
+# name: fixed_annuity
+# type: scalar
+0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+A1ZKC4
+
+
+# name: in_arrears
+# type: scalar
+0
+
+
+# name: issue_date
+# type: sq_string
+# elements: 1
+# length: 11
+04-Dec-2014
+
+
+# name: last_reset_rate
+# type: scalar
+0.001
+
+
+# name: long_first_period
+# type: bool
+0
+
+
+# name: long_last_period
+# type: bool
+0
+
+
+# name: mac_duration
+# type: scalar
+0
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+03-Jun-2020
+
+
+# name: mod_duration
+# type: scalar
+0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 21
+AUSTRIA 14/20 FLR MTN
+
+
+# name: notional
+# type: scalar
+100
+
+
+# name: notional_at_end
+# type: scalar
+1
+
+
+# name: notional_at_start
+# type: scalar
+0
+
+
+# name: prepayment_curve
+# type: sq_string
+# elements: 1
+# length: 8
+PSA-BASE
+
+
+# name: prepayment_flag
+# type: bool
+0
+
+
+# name: prepayment_rate
+# type: scalar
+0
+
+
+# name: prepayment_source
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: prepayment_type
+# type: sq_string
+# elements: 1
+# length: 4
+full
+
+
+# name: reference_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: soy
+# type: scalar
+0
+
+
+# name: spot_value
+# type: scalar
+0
+
+
+# name: spread
+# type: scalar
+0.03
+
+
+# name: spread_curve
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD_DUMMY
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+FRN
+
+
+# name: term
+# type: scalar
+12
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc_cf
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+bond
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+100
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: ytm
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 31
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 10
+Derivative
+
+
+# name: basis
+# type: float scalar
+3
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: convenience_yield
+# type: scalar
+0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 25
+EQForward test instrument
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: dividend_yield
+# type: scalar
+0
+
+
+# name: foreign_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
+
+
+# name: issue_date
+# type: sq_string
+# elements: 1
+# length: 11
+01-Jan-1900
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+17-Oct-2018
+
+
+# name: multiplier
+# type: scalar
+0.1
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 14
+EQForward_test
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: storage_cost
+# type: scalar
+0
+
+
+# name: strike_price
+# type: scalar
+9800
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 5
+EQFWD
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 7
+forward
+
+
+# name: underlying_id
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: underlying_price_base
+# type: scalar
+0
+
+
+# name: underlying_sensitivity
+# type: scalar
+1
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+2
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 20
+ComStage ETF S&P 500
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+ETF012
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 20
+ComStage ETF S&P 500
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_NA
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+199.94
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 36
+db x-trackers Dow Jones Euro STOXX50
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+DBX1EU
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 36
+db x-trackers Dow Jones Euro STOXX50
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+35.28
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 24
+comstage EF MSCI Pacific
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+ETF114
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 25
+ComStage ETF MSCI Pacific
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_AP
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+46.28
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 22
+iShares ETF MSCI Japan
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+A0DPMW
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 18
+iShares MSCI Japan
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_AP
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+11.63
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 20
+comstage ETF MSCI EM
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+ETF127
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 34
+Comstage ETF MSCI Emerging Markets
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EM
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+35.51
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 36
+db x-trackers ETF Dow Jones STOXX600
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+DBX1A7
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 26
+db x-trackers DJ STOXX 600
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+72.67
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 31
+Lyxor ETF MSCI Emerging Markets
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+LYX0BX
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 31
+Lyxor ETF MSCI Emerging Markets
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EM
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+8.890000000000001
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 31
+comstage ETF Dow Jones STOXX600
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+ETF060
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 25
+ComStage ETF DJ STOXX 600
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+72.81999999999999
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 20
+Lyxor ETF MSCI World
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+LYX0AG
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 20
+Lyxor ETF MSCI World
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_NA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_AP
+
+
+
+
+
+# name: sensitivities
+# type: matrix
+# rows: 1
+# columns: 3
+ 0.5 0.3 0.2
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+EQU
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+157.32
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 4
+REIT
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+USD
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 54
+iShares FTSE EPRA/NAREIT Global Property Dividend Plus
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+A0LGQL
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 40
+iShares FTSE EPRA/NAREIT Global Property
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_RE_DM
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+RET
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+23.85
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 6
+QSC AG
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+513700
+
+
+# name: idio_vola
+# type: scalar
+0.35
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 6
+QSC AG
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 4
+IDIO
+
+
+
+
+
+# name: sensitivities
+# type: matrix
+# rows: 1
+# columns: 2
+ 1.2 0.25
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+STK
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+1.79
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 6
+Equity
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 7
+BASF SE
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+BASF11
+
+
+# name: idio_vola
+# type: scalar
+0.35
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 7
+BASF SE
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 4
+IDIO
+
+
+
+
+
+# name: sensitivities
+# type: matrix
+# rows: 1
+# columns: 2
+ 1.15 0.25
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+STK
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+78.34
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 11
+Alternative
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 8
+BitCoins
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+BTCOIN
+
+
+# name: idio_vola
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 8
+Bitcoins
+
+
+# name: riskfactors
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_ALT_BC
+
+
+
+
+
+# name: sensitivities
+# type: scalar
+1
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+ALT
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 11
+sensitivity
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+246.92
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 54
+# name: accrued_interest
+# type: scalar
+0
+
+
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 12
+Fixed Income
+
+
+# name: basis
+# type: float scalar
+3
+
+
+# name: business_day_direction
+# type: scalar
+1
+
+
+# name: business_day_rule
+# type: scalar
+0
+
+
+# name: calibration_flag
+# type: scalar
+0
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 5
+daily
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: convexity
+# type: scalar
+0
+
+
+# name: coupon_generation_method
+# type: sq_string
+# elements: 1
+# length: 8
+backward
+
+
+# name: coupon_rate
+# type: scalar
+0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 50
+Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: enable_business_day_rule
+# type: scalar
+0
+
+
+# name: fixed_annuity
+# type: scalar
+0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+114171
+
+
+# name: in_arrears
+# type: scalar
+0
+
+
+# name: issue_date
+# type: sq_string
+# elements: 1
+# length: 11
+21-Apr-2015
+
+
+# name: last_reset_rate
+# type: scalar
+1e-005
+
+
+# name: long_first_period
+# type: bool
+0
+
+
+# name: long_last_period
+# type: bool
+0
+
+
+# name: mac_duration
+# type: scalar
+0
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+21-Apr-2020
+
+
+# name: mod_duration
+# type: scalar
+0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 50
+Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)
+
+
+# name: notional
+# type: scalar
+100
+
+
+# name: notional_at_end
+# type: scalar
+1
+
+
+# name: notional_at_start
+# type: scalar
+0
+
+
+# name: prepayment_curve
+# type: sq_string
+# elements: 1
+# length: 8
+PSA-BASE
+
+
+# name: prepayment_flag
+# type: bool
+0
+
+
+# name: prepayment_rate
+# type: scalar
+0
+
+
+# name: prepayment_source
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: prepayment_type
+# type: sq_string
+# elements: 1
+# length: 4
+full
+
+
+# name: reference_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: soy
+# type: scalar
+0
+
+
+# name: spot_value
+# type: scalar
+0
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: spread_curve
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD_DUMMY
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 3
+ZCB
+
+
+# name: term
+# type: scalar
+12
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc_cf
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 4
+bond
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+101.119
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: ytm
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 34
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 10
+Derivative
+
+
+# name: basis
+# type: float scalar
+3
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: scalar
+1
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 17
+IR Payer Swaption
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 17
+SWAPTIONC20180317
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+17-Mar-2018
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 7
+Black76
+
+
+# name: multiplier
+# type: scalar
+100
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 17
+IR Payer Swaption
+
+
+# name: no_payments
+# type: scalar
+1
+
+
+# name: spot
+# type: scalar
+0.025
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: strike
+# type: scalar
+0.0175
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 13
+SWAPT_EUR_PAY
+
+
+# name: tenor
+# type: scalar
+10
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 8
+swaption
+
+
+# name: underlying
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+0.9
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_sensi
+# type: scalar
+1
+
+
+# name: vola_spread
+# type: scalar
+0
+
+
+# name: vola_surf
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surf_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surf_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surface
+# type: sq_string
+# elements: 1
+# length: 14
+RF_VOLA_IR_EUR
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 41
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 10
+Derivative
+
+
+# name: basis
+# type: scalar
+3
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: scalar
+1
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 15
+Call Option DAX
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: div_yield
+# type: scalar
+0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+ODAXC20160318
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+18-Nov-2016
+
+
+# name: multiplier
+# type: scalar
+5
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 15
+DAX Call Option
+
+
+# name: pricing_function_american
+# type: sq_string
+# elements: 1
+# length: 10
+Willowtree
+
+
+# name: spot
+# type: scalar
+9220
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: strike
+# type: scalar
+10200
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 9
+OPT_EUR_C
+
+
+# name: theo_delta
+# type: scalar
+0
+
+
+# name: theo_gamma
+# type: scalar
+0
+
+
+# name: theo_omega
+# type: scalar
+0
+
+
+# name: theo_rho
+# type: scalar
+0
+
+
+# name: theo_theta
+# type: scalar
+0
+
+
+# name: theo_vega
+# type: scalar
+0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timesteps_size
+# type: scalar
+5
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 6
+option
+
+
+# name: underlying
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+1500
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_sensi
+# type: scalar
+1
+
+
+# name: vola_spread
+# type: scalar
+0
+
+
+# name: vola_surf
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surf_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surf_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surface
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+# name: willowtree_nodes
+# type: scalar
+20
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 41
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 10
+Derivative
+
+
+# name: basis
+# type: scalar
+3
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: scalar
+1
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+USD
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 16
+Call Option Gold
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: div_yield
+# type: scalar
+0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 14
+GCFUTC20160126
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+26-Jul-2016
+
+
+# name: multiplier
+# type: scalar
+100
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 23
+Gold Future Call Option
+
+
+# name: pricing_function_american
+# type: sq_string
+# elements: 1
+# length: 10
+Willowtree
+
+
+# name: spot
+# type: scalar
+1073
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: strike
+# type: scalar
+1160
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 8
+OPT_AM_C
+
+
+# name: theo_delta
+# type: scalar
+0
+
+
+# name: theo_gamma
+# type: scalar
+0
+
+
+# name: theo_omega
+# type: scalar
+0
+
+
+# name: theo_rho
+# type: scalar
+0
+
+
+# name: theo_theta
+# type: scalar
+0
+
+
+# name: theo_vega
+# type: scalar
+0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timesteps_size
+# type: scalar
+5
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 6
+option
+
+
+# name: underlying
+# type: sq_string
+# elements: 1
+# length: 8
+COM_GOLD
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+1580
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_sensi
+# type: scalar
+1
+
+
+# name: vola_spread
+# type: scalar
+0
+
+
+# name: vola_surf
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surf_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surf_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surface
+# type: sq_string
+# elements: 1
+# length: 16
+RF_VOLA_COM_GOLD
+
+
+# name: willowtree_nodes
+# type: scalar
+20
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 16
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 11
+Diversified
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 25
+Synthetic test instrument
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 7
+SYNTH01
+
+
+# name: instruments
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0RM43
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
+
+
+
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 14
+Synthetic_test
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 5
+SYNTH
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 9
+synthetic
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+121.1
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: weights
+# type: matrix
+# rows: 1
+# columns: 2
+ 0.4 0.6
+
+
+
+
+
+
+
+
+

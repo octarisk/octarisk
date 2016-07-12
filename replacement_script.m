@@ -37,7 +37,7 @@ filelist=filelist(~cellfun(@isempty, filelist));
 
 % Reading wordlist for phrases
 fin = fopen(replacement_list,'rt');
-wordlist=textscan(fin,'%s','delimiter',{'\n',';'});
+wordlist=textscan(fin,'%s','delimiter',{'\n','§'});
 fclose(fin);
 wordlist=wordlist{1};
 wordlist=reshape(wordlist,3,[]);

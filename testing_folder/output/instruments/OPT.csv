@@ -1,0 +1,4 @@
+OPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,vola_sensiNMBR,spotNMBR,strikeNMBR,spreadNMBR,multiplierNMBR,maturity_dateDATE,asset_classCHAR
+Item,DAX Call Option,ODAXC20160318,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,18-Nov-2016,Derivative
+Item,Gold Future Call Option,GCFUTC20160126,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,26-Jul-2016,Derivative
+

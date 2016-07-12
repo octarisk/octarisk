@@ -1,0 +1,3 @@
+FWD,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,underlying_idCHAR,underlying_sensitivityNMBR,discount_curveCHAR,strike_priceNMBR,spreadNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,dividend_yieldNMBR,convenience_yieldNMBR,storage_costNMBR
+Item,EQForward_test,EQFORW01,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.1,17-Oct-2018,Derivative,0.00,0.00,0.00
+

@@ -1,0 +1,175 @@
+# Created by Octave 4.0.2, Sat Jul 09 23:57:58 2016 CEST <schinzilord@workstation>
+# name: riskfactor_cell
+# type: cell
+# rows: 1
+# columns: 21
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_ALT_BC
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_COM_DIV
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+RF_COM_GOLD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_COM_SILVER
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_AP
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_EQ_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_NA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_FX_EURUSD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_EUR_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_20Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_USD_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_20Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_RE_DM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 19
+RF_SPREAD_EUR_HY_5Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+RF_VOLA_COM_GOLD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+
+
+
