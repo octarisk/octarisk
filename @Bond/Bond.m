@@ -40,6 +40,7 @@ classdef Bond < Instrument
    
     properties (SetAccess = private)
         convexity = 0.0;
+        eff_convexity = 0.0;
         basis = 3;
         cf_dates = [];
         cf_values = [];
@@ -51,6 +52,9 @@ classdef Bond < Instrument
         timestep_mc_cf = {};
         mac_duration = 0.0;
         mod_duration = 0.0;
+        eff_duration = 0.0;
+        dollar_duration = 0.0;
+        dv01 = 0.0;
         accrued_interest = 0.0;
     end
    

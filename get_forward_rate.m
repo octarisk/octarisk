@@ -38,7 +38,7 @@
 %# @item @var{basis_curve}: (optional) day count convention of curve
 %# @item @var{comp_freq_curve}: (optional) compounding frequency of curve
 %# @end itemize
-%# @seealso{interpolate_curve, convert_curve_rates}
+%# @seealso{interpolate_curve, convert_curve_rates,timefactor}
 %# @end deftypefn
 
 function forward_rate = get_forward_rate(nodes, rates, days_to_t1, days_to_t2, ...
@@ -197,6 +197,7 @@ forward_rate = max(tmp_rate,0.000001);
 end
 
 %!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2),0.0691669,0.00001)
+%!assert(get_forward_rate([365,1825,3650],[0.06,0.06,0.06],1825,1095,'cont','linear'),0.060000,0.00001)
 %!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2,3),0.0691669,0.00001)
 %!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2,0),0.0691636237,0.00001)
 %!assert(get_forward_rate([730,4380],[0.0023001034,0.0084599362],'31-Mar-2018','28-Mar-2028','disc','linear',1,3,'31-Mar-2016'),0.0094902,0.00001)

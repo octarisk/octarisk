@@ -78,13 +78,13 @@ end
 
 %!test 
 %! fprintf('HOLD ON...\n');
-%! fprintf('\tdoc_instrument:\tPricing Fixed Rate Bond Object\n');
+%! fprintf('\tdoc_instrument:\tPricing 1st Fixed Rate Bond Object\n');
 %! b = Bond();
 %! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25,'coupon_generation_method','forward');
 %! b = b.set('maturity_date','01-Feb-2025','notional',100,'compounding_type','simple','issue_date','01-Feb-2011');
 %! b = b.rollout('base','31-Mar-2016');
 %! b = b.calc_yield_to_mat('31-Mar-2016');
-%! assert(b.ytm,0.0340800096184803,0.000001)
+%! assert(b.ytm,0.0340800096184803,0.000001);
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[0.01,0.04],'method_interpolation','monotone-convex');
 %! c = c.set('rates_stress',[0.02,0.05;0.005,0.014]);
@@ -93,9 +93,30 @@ end
 %! b = b.set('soy',0.00);
 %! b = b.calc_value('31-Mar-2016',c,'base');
 %! assert(b.getValue('base'),99.1420775289364,0.00001);
+%! assert(b.get('convexity'),68.8468337813343,0.00001);
+%! assert(b.get('mod_duration'),0.0740312725350376,0.00001);
+%! assert(b.get('mac_duration'),7.66223670737639,0.00001);
 %! b = b.rollout('stress','31-Mar-2016');
 %! b = b.calc_value('31-Mar-2016',c,'stress');
 %! assert(b.getValue('stress'),[91.8547937772494;118.8336876898364],0.0000001); 
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing 2nd Fixed Rate Bond Object\n');
+%! b = Bond();
+%! b = b.set('Name','Test_FRB','coupon_rate',0.015,'value_base',101.25,'coupon_generation_method','backward');
+%! b = b.set('maturity_date','09-Nov-2026','notional',100,'compounding_type','simple','issue_date','22-Nov-2011');
+%! b = b.rollout('base','31-Dec-2015');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015],'rates_base',[0.00010026,0.00010027,0.00010027,0.00010014,0.00010009,0.00096236,0.00231387,0.00376975,0.005217,0.00660956,0.00791501,0.00910955,0.01018287],'method_interpolation','linear');
+%! b = b.calc_value('31-Dec-2015',c,'base');
+%! assert(b.getValue('base'),105.619895060083,0.0000001)
+%! assert(b.get('convexity'),115.616375050013,0.0000001)
+%! assert(b.get('mod_duration'),0.0994417648384716,0.0000001)
+%! assert(b.get('mac_duration'),10.0933391311049,0.0000001)
+%! assert(b.get('eff_duration'),9.17981338892828,0.0000001)
+%! assert(b.get('dollar_duration'),10.6605741983312,0.0000001)
+%! assert(b.get('eff_convexity'),174.205420287148,0.0000001)
+%! assert(b.get('dv01'),0.096073195268687,0.0000001)
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');
@@ -186,6 +207,7 @@ end
 %! o = Option();
 %! o = o.set('maturity_date','29-Mar-2026','currency','USD','timesteps_size',5,'willowtree_nodes',30);
 %! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
+%! o = o.set('pricing_function_american','Willowtree');
 %! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
 %! assert(o.getValue('base'),123.043,0.001);
 %! o = o.set('value_base',100);

@@ -59,6 +59,14 @@ function s = get (bond, property)
           s = obj.mac_duration;  
         case 'mod_duration'
           s = obj.mod_duration; 
+        case 'eff_duration'
+          s = obj.eff_duration; 
+        case 'eff_convexity'
+          s = obj.eff_convexity; 
+        case 'dv01'
+          s = obj.dv01; 
+        case 'dollar_duration'
+          s = obj.dollar_duration;   
         case 'calibration_flag'
           s = obj.calibration_flag; 
         case 'accrued_interest'

@@ -99,7 +99,5 @@ SwaptionBachelierValue = value .* multi;
   
 end
 
-%!test
-%! forward_rate = get_forward_rate([365,1825,3650],[0.06,0.06,0.06],1825,1095,'cont','linear');
-%! forward_rate_disc = convert_curve_rates(0,1825,forward_rate,'cont','annual',3,'disc','semi-annual',3);
-%! assert(swaption_bachelier(1,forward_rate_disc,0.062,1825,0.06,0.01219,2,3) * 100,2.0711739,0.00001);
+%!assert(swaption_bachelier(1,0.0609090679070339,0.062,1825,0.06,0.01219,2,3) * 100, 2.07117344171174,0.00001);
+%!assert(swaption_bachelier(0,0.0609090679070339,0.062,1825,0.06,0.01219,2,3) * 100, 2.06419541383222,0.00001);

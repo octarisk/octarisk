@@ -5248,8 +5248,8 @@ DAX Call Option
 # name: pricing_function_american
 # type: sq_string
 # elements: 1
-# length: 10
-Willowtree
+# length: 6
+BjSten
 
 
 # name: spot
@@ -5499,8 +5499,8 @@ Gold Future Call Option
 # name: pricing_function_american
 # type: sq_string
 # elements: 1
-# length: 10
-Willowtree
+# length: 6
+BjSten
 
 
 # name: spot

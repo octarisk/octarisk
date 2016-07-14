@@ -54,7 +54,7 @@
 %# @seealso{timefactor, discount_factor, interpolate_curve, convert_curve_rates}
 %# @end deftypefn
 
-function [npv MacDur] = pricing_npv(valuation_date,cashflow_dates, ...
+function [npv MacDur Convexity] = pricing_npv(valuation_date,cashflow_dates, ...
             cashflow_values, spread_constant,discount_nodes,discount_rates, ...
             basis, comp_type, comp_freq, interp_discount, comp_type_curve, ...
             basis_curve, comp_freq_curve)
@@ -120,6 +120,7 @@ tmp_npv = 0;
 tmp_npv_duration_minus100bp = 0;
 tmp_npvduration_plus100bp = 0;
 MacDur = 0;
+Convexity = 0;
 for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows  
     tmp_dtm = cashflow_dates(zz);
     tmp_cf_value = cashflow_values(:,zz);
@@ -127,7 +128,7 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
         % Get yield at actual spot value
             % get discount rate from discount curve
 			rate_curve = interpolate_curve(discount_nodes,discount_rates, ...
-                                            tmp_dtm,interp_discount);  
+                                            tmp_dtm,interp_discount); 
             % convert curve rate convention into instrument convention
             yield_discount = convert_curve_rates(valuation_date,tmp_dtm,rate_curve, ...
                         comp_type_curve,comp_freq_curve,basis_curve, ...
@@ -142,6 +143,8 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
         %Calculate actual NPV of cash flows    
 			tmp_npv_cashflow = tmp_cf_value .* tmp_df;
 			MacDur = MacDur + tmp_tf .* tmp_npv_cashflow;
+            Convexity = Convexity + tmp_npv_cashflow .* (tmp_tf.^2 + tmp_tf) ...
+                        ./ ( 1 + yield_total);
         % Add actual cash flow npv to total npv
 			tmp_npv 		= tmp_npv+ tmp_npv_cashflow;
     end
@@ -151,7 +154,7 @@ end
 % Return NPV and MacDur
 npv = tmp_npv;
 MacDur = MacDur ./ npv;
-            
+Convexity = Convexity ./ npv;            
             
 end
  
@@ -160,4 +163,22 @@ end
 %!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],0,'discrete','annual','smith-wilson'),101.1471149,0.000001)
 %!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],3,'discrete','annual','monotone-convex'),101.1365279,0.000001)
 %!assert(pricing_npv(datenum('31-Dec-2015'),[182,547,912],[3,3,103],0.005,[90,365,730,1095],[0.01,0.02,0.025,0.028],3,'discrete','annual','linear'),101.1740699,0.000001)
+
+%!assert(pricing_npv(datenum('31-Dec-2015'),[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5], 0.0,[314],[0.01],3, 'simple', 'annual', 'linear', 'simple', 3, 'annual'),105.8111126221,0.00000001)            
+%!assert(pricing_npv(datenum('31-Dec-2015'),[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5], 0.0,[314],[0.01],3, 'simple', 'annual', 'linear', 'cont', 3, 'annual'),105.283752847214,0.00000001)            
+%!assert(pricing_npv(datenum('31-Dec-2015'),[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5], 0.0,[314],[0.01],3, 'simple', 'annual', 'linear', 'cont', 0, 'annual'),105.291914185406,0.00000001)            
+%!assert(pricing_npv(datenum('31-Dec-2015'),[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5], 0.0,[314],[0.01],3, 'simple', 'annual', 'linear', 'disc', 0, 'annual'),105.344763058056,0.00000001)            
+
+%!test
+%! [npv MacDur Convexity]=pricing_npv(datenum('31-Dec-2015'),[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5], 0.0,[365,3650],[0.01,0.02],3, 'simple', 'annual', 'linear', 'disc', 0, 'annual');
+%! assert(npv,95.635627963,0.00000001)
+%! assert(MacDur,10.048878578835,0.00000001)
+%! assert(Convexity,113.685786524531,0.00000001)
+
+%!test
+%! [npv MacDur Convexity] = pricing_npv(datenum('31-Dec-2015'),[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5], 0.0,[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015],[0.00010026,0.00010027,0.00010027,0.00010014,0.00010009,0.00096236,0.00231387,0.00376975,0.005217,0.00660956,0.00791501,0.00910955,0.01018287],3, 'simple', 'annual', 'linear', 'cont', 3, 'annual');
+%! assert(npv,105.61989506,0.0000001)
+%! assert(MacDur,10.0933391311109,0.0000001)
+%! assert(Convexity,115.616375050101,0.0000001)
+
 

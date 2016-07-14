@@ -105,7 +105,5 @@ SwaptionB76Value = value .* multi;
   
 end
 
-%!test
-%! forward_rate = get_forward_rate([365,1825,3650],[0.06,0.06,0.06],1825,1095,'cont','linear');
-%! forward_rate_disc = convert_curve_rates(0,1825,forward_rate,'cont','annual',3,'disc','semi-annual',3);
-%! assert(swaption_black76(1,forward_rate_disc,0.062,1825,0.06,0.2,2,3) * 100,2.0709829,0.00001);
+%!assert(swaption_black76(1,0.0609090679070339,0.062,1825,0.06,0.2,2,3) * 100,2.07098170368683,0.00000001);
+%!assert(swaption_black76(0,0.0609090679070339,0.062,1825,0.06,0.2,2,3) * 100,2.28955623758578,0.00000001);
