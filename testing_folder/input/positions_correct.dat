@@ -1,0 +1,919 @@
+# Created by Octave 4.0.0, Fri Jul 15 15:14:07 2016 W. Europe Daylight Time <unknown@T43NB067>
+# name: tmp_portfolio_struct
+# type: struct
+# ndims: 2
+ 2 1
+# length: 5
+# name: id
+# type: cell
+# rows: 2
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+
+
+# name: name
+# type: cell
+# rows: 2
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+Global Diversified
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+Global Derivatives
+
+
+
+
+
+# name: description
+# type: cell
+# rows: 2
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 33
+Global diversified test portfolio
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 33
+Global derivatives test portfolio
+
+
+
+
+
+# name: currency
+# type: cell
+# rows: 2
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+
+
+
+# name: position
+# type: cell
+# rows: 2
+# columns: 1
+# name: <cell-element>
+# type: struct
+# ndims: 2
+ 1 26
+# length: 3
+# name: port_id
+# type: cell
+# rows: 1
+# columns: 26
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_AAA
+
+
+
+
+
+# name: id
+# type: cell
+# rows: 1
+# columns: 26
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0RFFT
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1JB4Q
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1J7CK
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1YC04
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0RM43
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF127
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+DBX1A7
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+513700
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+DBX1EU
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF060
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF114
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+LYX0BX
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+LYX0AG
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF012
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0DPMW
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+BASF11
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0LGQL
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF090
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+GOLDPHYS
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+BTCOIN
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+ODAXC20160318
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+SYNTH01
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+CASH_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+114171
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+836791
+
+
+
+
+
+# name: quantity
+# type: cell
+# rows: 1
+# columns: 26
+# name: <cell-element>
+# type: scalar
+65
+
+
+
+# name: <cell-element>
+# type: scalar
+179
+
+
+
+# name: <cell-element>
+# type: scalar
+135
+
+
+
+# name: <cell-element>
+# type: scalar
+20
+
+
+
+# name: <cell-element>
+# type: scalar
+14
+
+
+
+# name: <cell-element>
+# type: scalar
+543
+
+
+
+# name: <cell-element>
+# type: scalar
+24
+
+
+
+# name: <cell-element>
+# type: scalar
+44
+
+
+
+# name: <cell-element>
+# type: scalar
+33.35
+
+
+
+# name: <cell-element>
+# type: scalar
+107
+
+
+
+# name: <cell-element>
+# type: scalar
+159
+
+
+
+# name: <cell-element>
+# type: scalar
+129.8
+
+
+
+# name: <cell-element>
+# type: scalar
+20.18
+
+
+
+# name: <cell-element>
+# type: scalar
+71
+
+
+
+# name: <cell-element>
+# type: scalar
+63.52
+
+
+
+# name: <cell-element>
+# type: scalar
+39
+
+
+
+# name: <cell-element>
+# type: scalar
+723
+
+
+
+# name: <cell-element>
+# type: scalar
+53
+
+
+
+# name: <cell-element>
+# type: scalar
+10.31
+
+
+
+# name: <cell-element>
+# type: scalar
+1.98
+
+
+
+# name: <cell-element>
+# type: scalar
+-0.01
+
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+
+# name: <cell-element>
+# type: scalar
+0.1
+
+
+
+# name: <cell-element>
+# type: scalar
+1000
+
+
+
+# name: <cell-element>
+# type: scalar
+10
+
+
+
+# name: <cell-element>
+# type: scalar
+10
+
+
+
+
+
+
+
+# name: <cell-element>
+# type: struct
+# ndims: 2
+ 1 9
+# length: 3
+# name: port_id
+# type: cell
+# rows: 1
+# columns: 9
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+FUND_BBB
+
+
+
+
+
+# name: id
+# type: cell
+# rows: 1
+# columns: 9
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A0LGQL
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+A1ZKC4
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+ETF090
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+GOLDPHYS
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+BTCOIN
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+ODAXC20160318
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+SYNTH01
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+CASH_EUR
+
+
+
+
+
+# name: quantity
+# type: cell
+# rows: 1
+# columns: 9
+# name: <cell-element>
+# type: scalar
+723
+
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+
+# name: <cell-element>
+# type: scalar
+53
+
+
+
+# name: <cell-element>
+# type: scalar
+10.31
+
+
+
+# name: <cell-element>
+# type: scalar
+1.98
+
+
+
+# name: <cell-element>
+# type: scalar
+-0.1
+
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+
+# name: <cell-element>
+# type: scalar
+1000
+
+
+
+
+
+
+
+
+
+
+
+

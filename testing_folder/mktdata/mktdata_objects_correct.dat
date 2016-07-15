@@ -1,0 +1,2501 @@
+# Created by Octave 4.0.0, Fri Jul 15 15:42:26 2016 W. Europe Daylight Time <unknown@T43NB067>
+# name: tmp_mktdata_struct
+# type: struct
+# ndims: 2
+ 1 19
+# length: 3
+# name: id
+# type: cell
+# rows: 1
+# columns: 19
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 19
+AGGR_SPREAD_USD_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+AGGR_IR_USD_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+AGGR_EUR_FIN_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_EUR_HY
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_HY
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_AA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD_USD_A
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+PSA_CURVE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+IR_SWAP_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+SPREAD_EUR_FIN_A
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+SPREAD_EUR_FIN_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+COM_GOLD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+FX_EURUSD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+FX_EURCAD
+
+
+
+
+
+# name: name
+# type: cell
+# rows: 1
+# columns: 19
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 19
+AGGR_SPREAD_USD_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+AGGR_IR_USD_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+AGGR_EUR_FIN_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_EUR_HY
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_HY
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_AA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD_USD_A
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+PSA_CURVE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+IR-EUR-SWAP
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+SPREAD_EUR_FIN_A
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+SPREAD_EUR_FIN_BBB
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+DAX30
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 4
+Gold
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+EUR_USD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+EUR_CAD
+
+
+
+
+
+# name: object
+# type: cell
+# rows: 1
+# columns: 19
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 31
+Aggregated Spread Curve USD BBB
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 19
+AGGR_SPREAD_USD_BBB
+
+
+# name: increments
+# type: cell
+# rows: 1
+# columns: 4
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_AAA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_AA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD_USD_A
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_BBB
+
+
+
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 19
+AGGR_SPREAD_USD_BBB
+
+
+# name: nodes
+# type: scalar
+1825
+
+
+# name: rates_base
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 16
+Aggregated Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 31
+Aggregated Spread Curve EUR USD
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 15
+AGGR_IR_USD_EUR
+
+
+# name: increments
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 15
+AGGR_IR_USD_EUR
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 2
+ 1825 3650
+
+
+# name: rates_base
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 16
+Aggregated Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: float scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 6
+simple
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 31
+Aggregated Spread Curve EUR USD
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 16
+AGGR_EUR_FIN_BBB
+
+
+# name: increments
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+IR_SWAP_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+SPREAD_EUR_FIN_BBB
+
+
+
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 15
+monotone-convex
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 16
+AGGR_EUR_FIN_BBB
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 5
+ 30 91 365 730 1095
+
+
+# name: rates_base
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 16
+Aggregated Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 14
+EUR-SWAP Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 15
+monotone-convex
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 7
+ 365 1095 1825 3650 7300 10950 21900
+
+
+# name: rates_base
+# type: matrix
+# rows: 1
+# columns: 7
+ -0.00519251 -0.00508595 -0.00367762 0.00185694 0.00776253 0.009999859999999999 0.00123
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 14
+Discount Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 14
+USD-SWAP Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 15
+monotone-convex
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 7
+ 365 1095 1825 3650 7300 10950 21900
+
+
+# name: rates_base
+# type: matrix
+# rows: 1
+# columns: 7
+ 0.00119251 0.00208595 0.00127762 0.00385694 0.01276253 0.01399986 0.00163
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 14
+Discount Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 27
+SPREAD_EUR_High Yield Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_EUR_HY
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_EUR_HY
+
+
+# name: nodes
+# type: scalar
+1825
+
+
+# name: rates_base
+# type: scalar
+0.02
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Spread Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 27
+SPREAD_USD_High Yield Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_HY
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_HY
+
+
+# name: nodes
+# type: scalar
+1825
+
+
+# name: rates_base
+# type: scalar
+0.03
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Spread Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: scalar
+0.09
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 20
+SPREAD_USD_AAA Curve
+
+
+# name: floor
+# type: scalar
+0.005
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_AAA
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_AAA
+
+
+# name: nodes
+# type: scalar
+1825
+
+
+# name: rates_base
+# type: scalar
+0.01
+
+
+# name: rates_mc
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Spread Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: scalar
+0.05
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 19
+SPREAD_USD_AA Curve
+
+
+# name: floor
+# type: scalar
+0.02
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_AA
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+SPREAD_USD_AA
+
+
+# name: nodes
+# type: scalar
+1825
+
+
+# name: rates_base
+# type: scalar
+0.02
+
+
+# name: rates_mc
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Spread Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 18
+SPREAD_USD_A Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD_USD_A
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD_USD_A
+
+
+# name: nodes
+# type: scalar
+1825
+
+
+# name: rates_base
+# type: scalar
+0.01
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Spread Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 20
+SPREAD_USD_BBB Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_BBB
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_USD_BBB
+
+
+# name: nodes
+# type: scalar
+1825
+
+
+# name: rates_base
+# type: scalar
+0.01
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Spread Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 18
+Standard PSA Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 9
+PSA_CURVE
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 9
+PSA_CURVE
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 2
+ 0 900
+
+
+# name: rates_base
+# type: matrix
+# rows: 1
+# columns: 2
+ 0 0.06
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 16
+Prepayment Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 25
+Validation EUR-SWAP Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 11
+IR_SWAP_EUR
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 11
+IR-EUR-SWAP
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 22
+ 30 91 365 730 1095 1460 1825 2190 2555 2920 3285 3650 4015 4380 4745 5110 5475 5840 6205 6570 6935 7300
+
+
+# name: rates_base
+# type: matrix
+# rows: 1
+# columns: 22
+ 0.000100265 0.000100271 0.000100273 0.000100137 0.000100091 0.0009623639999999999 0.002313871 0.003769748 0.005216999 0.006609556 0.007915012000000001 0.009109549999999999 0.010182873 0.011154924 0.012037775 0.012791527 0.013386507 0.013820413 0.014163828 0.014477441 0.014810935 0.015199508
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 14
+Discount Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 33
+Validation EUR-SPREAD-FIN-A Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 16
+SPREAD_EUR_FIN_A
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 16
+SPREAD_EUR_FIN_A
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 22
+ 30 91 365 730 1095 1460 1825 2190 2555 2920 3285 3650 4015 4380 4745 5110 5475 5840 6205 6570 6935 7300
+
+
+# name: rates_base
+# type: matrix
+# rows: 1
+# columns: 22
+ 0.000889985 0.001190459 0.002461124 0.003969898 0.005296868 0.006466348 0.007500884 0.00841577 0.009227928999999999 0.009950715000000001 0.010597138 0.011174018 0.011173183 0.011172487 0.011174222 0.011173581 0.011172997 0.011172487 0.011173809 0.011173338 0.01117289 0.011172487
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Spread Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 18
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: null_sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 35
+Validation EUR-SPREAD-FIN-BBB Curve
+
+
+# name: floor
+# type: null_sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 18
+SPREAD_EUR_FIN_BBB
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 18
+SPREAD_EUR_FIN_BBB
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 22
+ 30 91 365 730 1095 1460 1825 2190 2555 2920 3285 3650 4015 4380 4745 5110 5475 5840 6205 6570 6935 7300
+
+
+# name: rates_base
+# type: matrix
+# rows: 1
+# columns: 22
+ 0.002209249 0.002633764 0.004428764 0.006558808 0.00843289 0.010084713 0.011546514 0.012838739 0.013985893 0.015006829 0.015920199 0.016735032 0.016733781 0.016732738 0.016735337 0.016734377 0.016733503 0.016732738 0.016734718 0.016734012 0.016733342 0.016732738
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Spread Curve
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 10
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 34
+DAX Equity Index German Blue Chips
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 5
+DAX30
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Equity Index
+
+
+# name: value_base
+# type: scalar
+9820
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 10
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+USD
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 16
+Gold 1 Ounce USD
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+COM_GOLD
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 4
+Gold
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 15
+Commodity Index
+
+
+# name: value_base
+# type: scalar
+1073
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 10
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 21
+EUR USD Exchange rate
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 9
+FX_EURUSD
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 7
+EUR_USD
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 13
+Exchange Rate
+
+
+# name: value_base
+# type: scalar
+1.08
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 10
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 21
+EUR CAD Exchange rate
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 9
+FX_EURCAD
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 7
+EUR_CAD
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 13
+Exchange Rate
+
+
+# name: value_base
+# type: scalar
+1.25
+
+
+
+
+
+
+
+
+

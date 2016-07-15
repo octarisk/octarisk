@@ -1,0 +1,2920 @@
+# Created by Octave 4.0.0, Fri Jul 15 14:58:24 2016 W. Europe Daylight Time <unknown@T43NB067>
+# name: tmp_riskfactor_struct
+# type: struct
+# ndims: 2
+ 1 23
+# length: 3
+# name: id
+# type: cell
+# rows: 1
+# columns: 23
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_EQ_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_NA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_AP
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_COM_DIV
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_RE_DM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+RF_COM_GOLD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_COM_SILVER
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_ALT_BC
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_FX_EURUSD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_EUR_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_20Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_USD_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_20Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+RF_VOLA_COM_GOLD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 19
+RF_SPREAD_EUR_HY_5Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_EQ_BASF
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 20
+RF_IR_SWAP_EUR_CONST
+
+
+
+
+
+# name: name
+# type: cell
+# rows: 1
+# columns: 23
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_EQ_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_NA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_AP
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_COM_DIV
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_RE_DM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+RF_COM_GOLD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_COM_SILVER
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_ALT_BC
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_FX_EURUSD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_EUR_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_20Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_USD_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_20Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+RF_VOLA_COM_GOLD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 19
+RF_SPREAD_EUR_HY_5Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_EQ_BASF
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 20
+RF_IR_SWAP_EUR_CONST
+
+
+
+
+
+# name: object
+# type: cell
+# rows: 1
+# columns: 23
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 25
+Riskfactor Equity Germany
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_DE
+
+
+# name: kurt
+# type: scalar
+5
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_DE
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.4
+
+
+# name: std
+# type: scalar
+0.18
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 22
+Riskfactor Equity Euro
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 9
+RF_EQ_EUR
+
+
+# name: kurt
+# type: scalar
+5
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 9
+RF_EQ_EUR
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.5
+
+
+# name: std
+# type: scalar
+0.18
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 24
+Riskfactor Equity Europe
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+# name: kurt
+# type: scalar
+5
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EU
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.5
+
+
+# name: std
+# type: scalar
+0.144
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 30
+Riskfactor Equity NorthAmerica
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_NA
+
+
+# name: kurt
+# type: scalar
+4
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_NA
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.5
+
+
+# name: std
+# type: scalar
+0.16
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 29
+Riskfactor Equity AsiaPacific
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_AP
+
+
+# name: kurt
+# type: scalar
+4
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_AP
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.5
+
+
+# name: std
+# type: scalar
+0.16
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 33
+Riskfactor Equity EmergingMarkets
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EM
+
+
+# name: kurt
+# type: scalar
+4
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EM
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.5
+
+
+# name: std
+# type: scalar
+0.2
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 32
+Riskfactor Commodity Diversified
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 10
+RF_COM_DIV
+
+
+# name: kurt
+# type: scalar
+4
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 10
+RF_COM_DIV
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.5
+
+
+# name: std
+# type: scalar
+0.13
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 6
+RF_COM
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 30
+Riskfactor RealEstate World DM
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+RF_RE_DM
+
+
+# name: kurt
+# type: scalar
+5.5
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 8
+RF_RE_DM
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.5
+
+
+# name: std
+# type: scalar
+0.15
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_RE
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 24
+Riskfactor Physical Gold
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 11
+RF_COM_GOLD
+
+
+# name: kurt
+# type: scalar
+6.5
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 11
+RF_COM_GOLD
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.3
+
+
+# name: std
+# type: scalar
+0.12
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 6
+RF_COM
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 26
+Riskfactor Physical Silver
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+RF_COM_SILVER
+
+
+# name: kurt
+# type: scalar
+6.5
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+RF_COM_SILVER
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.3
+
+
+# name: std
+# type: scalar
+0.2
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 6
+RF_COM
+
+
+# name: value_base
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 21
+Riskfactor Bitcin EUR
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 9
+RF_ALT_BC
+
+
+# name: kurt
+# type: scalar
+4.5
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 9
+RF_ALT_BC
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+-0.3
+
+
+# name: std
+# type: scalar
+0.5
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 6
+RF_ALT
+
+
+# name: value_base
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 24
+Riskfactor Forex EUR USD
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 12
+RF_FX_EURUSD
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+SRD
+
+
+# name: mr_level
+# type: scalar
+1.2
+
+
+# name: mr_rate
+# type: scalar
+0.001
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 12
+RF_FX_EURUSD
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.08
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_FX
+
+
+# name: value_base
+# type: scalar
+1.08
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 28
+Riskfactor Impl Vola Germany
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+SRD
+
+
+# name: mr_level
+# type: scalar
+0.21
+
+
+# name: mr_rate
+# type: scalar
+0.0275
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.1
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 7
+RF_VOLA
+
+
+# name: value_base
+# type: scalar
+0.31
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 23
+Riskfactor IR EUR 1year
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_EUR_1Y
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 2
+BM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_EUR_1Y
+
+
+# name: node
+# type: scalar
+365
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.0011
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+# name: value_base
+# type: scalar
+0.0008
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 24
+Riskfactor IR EUR 10year
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_10Y
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 2
+BM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_10Y
+
+
+# name: node
+# type: scalar
+3650
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.0032
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+# name: value_base
+# type: scalar
+0.0026
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 24
+Riskfactor IR EUR 20year
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_20Y
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 2
+BM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_20Y
+
+
+# name: node
+# type: scalar
+7300
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.006
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+# name: value_base
+# type: scalar
+0.015
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 23
+Riskfactor IR USD 1year
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_USD_1Y
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 2
+BM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_USD_1Y
+
+
+# name: node
+# type: scalar
+365
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.0023
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+# name: value_base
+# type: scalar
+0.0066
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 24
+Riskfactor IR USD 10year
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_10Y
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 2
+BM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_10Y
+
+
+# name: node
+# type: scalar
+3650
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.006
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+# name: value_base
+# type: scalar
+0.0173
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 24
+Riskfactor IR USD 20year
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_20Y
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 2
+BM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_20Y
+
+
+# name: node
+# type: scalar
+7300
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.006
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+# name: value_base
+# type: scalar
+0.024
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 25
+Riskfactor Impl Vola Gold
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 16
+RF_VOLA_COM_GOLD
+
+
+# name: kurt
+# type: scalar
+3
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+SRD
+
+
+# name: mr_level
+# type: scalar
+0.167
+
+
+# name: mr_rate
+# type: scalar
+0.0389
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 16
+RF_VOLA_COM_GOLD
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0
+
+
+# name: std
+# type: scalar
+0.1
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 7
+RF_VOLA
+
+
+# name: value_base
+# type: scalar
+0.15
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 30
+Riskfactor Spread USD HY 5year
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 19
+RF_SPREAD_EUR_HY_5Y
+
+
+# name: kurt
+# type: scalar
+10
+
+
+# name: mean
+# type: scalar
+0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 2
+BM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 19
+RF_SPREAD_EUR_HY_5Y
+
+
+# name: node
+# type: scalar
+1825
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: scalar
+0.24
+
+
+# name: std
+# type: scalar
+0.0083
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 9
+RF_SPREAD
+
+
+# name: value_base
+# type: scalar
+0.052
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 22
+Riskfactor Equity BASF
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 10
+RF_EQ_BASF
+
+
+# name: kurt
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mean
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 10
+RF_EQ_BASF
+
+
+# name: node
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: std
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 17
+# name: description
+# type: sq_string
+# elements: 1
+# length: 25
+Riskfactor RF_IR_EUR_SWAP
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 20
+RF_IR_SWAP_EUR_CONST
+
+
+# name: kurt
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mean
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
+
+
+# name: mr_level
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: mr_rate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 20
+RF_IR_SWAP_EUR_CONST
+
+
+# name: node
+# type: scalar
+0
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: skew
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: std
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+# name: value_base
+# type: scalar
+0
+
+
+
+
+
+
+
+
+

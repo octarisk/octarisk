@@ -379,16 +379,15 @@ tic;
 persistent curve_struct;
 curve_struct=struct();
 [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving);
-% for kk = 1  : 1 : length(curve_struct)
-   % curve_struct(kk).id
-   % curve_struct(kk).object
-% end
+for kk = 1  : 1 : length(curve_struct)
+   curve_struct(kk).id
+   curve_struct(kk).object
+end
+
 % b) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 persistent surface_struct;
 surface_struct=struct();
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir);
-
-
 
 % c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
@@ -398,10 +397,10 @@ index_struct=struct();
    % index_struct(kk).id
    % index_struct(kk).object
 % end
- % for kk = 1  : 1 : length(curve_struct)
-    % curve_struct(kk).id
-    % curve_struct(kk).object
- % end
+ for kk = 1  : 1 : length(curve_struct)
+    curve_struct(kk).id
+    curve_struct(kk).object
+ end
 
 % for kk = 1  : 1 : length(riskfactor_struct)
    % riskfactor_struct(kk).object

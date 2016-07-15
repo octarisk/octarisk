@@ -1,0 +1,4 @@
+PORTFOLIO,idCHAR,nameCHAR,descriptionCHAR,currencyCHAR
+Item,FUND_AAA,Global Diversified,Global diversified test portfolio,EUR
+Item,FUND_BBB,Global Derivatives,Global derivatives test portfolio,EUR
+

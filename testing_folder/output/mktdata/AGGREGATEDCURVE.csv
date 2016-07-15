@@ -1,0 +1,5 @@
+AGGREGATEDCURVE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,method_interpolationCHAR,nodesCHAR,incrementsCHAR,compounding_typeCHAR,compounding_freqCHAR,day_count_conventionCHAR,floorNMBR,capNMBR
+Curve,AGGR_SPREAD_USD_BBB,AGGR_SPREAD_USD_BBB,Aggregated Curve,Aggregated Spread Curve USD BBB,linear,1825,SPREAD_USD_AAA|SPREAD_USD_AA|SPREAD_USD_A|SPREAD_USD_BBB,,,,,
+Curve,AGGR_IR_USD_EUR,AGGR_IR_USD_EUR,Aggregated Curve,Aggregated Spread Curve EUR USD,linear,1825|3650,IR_EUR|IR_USD,,,,,
+Curve,AGGR_EUR_FIN_BBB,AGGR_EUR_FIN_BBB,Aggregated Curve,Aggregated Spread Curve EUR USD,monotone-convex,30|91|365|730|1095,IR_SWAP_EUR|SPREAD_EUR_FIN_BBB,simple,annual,act/365,,
+

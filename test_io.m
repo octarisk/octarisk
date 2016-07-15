@@ -18,10 +18,18 @@
 %# @end deftypefn
 
 function [success_tests,total_tests] = test_io(path_testing_folder);
-
+if nargin == 0
+    error('Please provide the path to the testing folder! Aborting.');
+end
 success_tests = 0;
 total_tests = 0;
 
+% Disabling warnings for converting class def objects to structs:
+if ( exist('OCTAVE_VERSION') > 0 )  % variable returns 5 for Octave, 0 for Matlab
+    warning('off', 'Octave:load-file-in-path');
+    warning('off', 'Octave:classdef-to-struct');
+end
+% starting main functions
 fprintf('\n');
 fprintf('=== Perform integration tests on input-output functions === \n');
 fprintf('\n');
@@ -103,11 +111,11 @@ fprintf('\n');
 		randn('state',random_seed);
 	end
 
-% B) Perform tests
+% B) ####################     Perform tests     ################################
 
 % B.1) ===   Test correlation matrix parsing   ===
 total_tests_start = total_tests;
-fprintf('Testing function load_correlation_matrix ...\n');
+fprintf('\n### Testing function load_correlation_matrix ...\n');
 try
 	
 	[corr_matrix riskfactor_cell] = load_correlation_matrix(path_mktdata, ...
@@ -126,7 +134,7 @@ try
 	if (isequal(riskfactor_cell_correct,riskfactor_cell))
 		success_tests = success_tests + 1;
 		total_tests = total_tests + 1;
-		fprintf('SUCESS load_correlation_matrix: Parsing riskfactor cell is correct.\n');
+		fprintf('SUCCESS: load_correlation_matrix: Parsing riskfactor cell is correct.\n');
 	else
 		fprintf('WARNING: load_correlation_matrix: Parsing riskfactor cell not successful. Cells differ:\n');
 		riskfactor_cell_correct
@@ -137,7 +145,7 @@ try
 	if (corr_matrix == corr_correct)
 		success_tests = success_tests + 1;
 		total_tests = total_tests + 1;
-		fprintf('SUCESS load_correlation_matrix: Parsing correlations is correct.\n');
+		fprintf('SUCCESS: load_correlation_matrix: Parsing correlations is correct.\n');
 	else
 		fprintf('WARNING: load_correlation_matrix: Parsing correlations not successful. Matrizes differ:\n');
 		corr_matrix
@@ -151,7 +159,7 @@ end
 
 % B.2) ===   Test instrument objects parsing   ===
 total_tests_start = total_tests;
-fprintf('Testing function load_instruments ...\n');
+fprintf('\n### Testing function load_instruments ...\n');
 try
 	instrument_struct=struct();
 	[instrument_struct id_failed_cell] = load_instruments(instrument_struct, ...
@@ -174,7 +182,7 @@ try
 	if (isequal(tmp_instrument_struct,instrument_struct_correct))
 		success_tests = success_tests + 1;
 		total_tests = total_tests + 1;
-		fprintf('SUCESS load_instruments: Parsing of instruments is correct.\n');
+		fprintf('SUCCESS: load_instruments: Parsing of instruments is correct.\n');
 	else
         % in order to see which instrument failed, make detailed comparison test of all key - value pairs
         % sometimes there is also a false positive -> catch with retcode
@@ -190,7 +198,7 @@ try
             fprintf('INFO: Comparison of both structs gave a false positive. Element by element comparison yielded no differences.\n');
             success_tests = success_tests + 1;
             total_tests = total_tests + 1;
-            fprintf('SUCESS load_instruments: Parsing of instruments is correct.\n');
+            fprintf('SUCCESS: load_instruments: Parsing of instruments is correct.\n');
         end	
 	end
 catch
@@ -198,7 +206,179 @@ catch
 	total_tests = total_tests_start + 2;
 end   
 
+% B.3) ===   Test riskfactor objects parsing   ===
+total_tests_start = total_tests;
+fprintf('\n### Testing function load_riskfactors ...\n');
+try
+	riskfactor_struct=struct();
+    [riskfactor_struct id_failed_cell] = load_riskfactors(riskfactor_struct, ...
+                path_input,input_filename_riskfactors,path_output_riskfactors, ...
+                path_archive,timestamp,archive_flag);
+
+	% Converting classdef objects to ordinary structure in order to compare data
+    tmp_riskfactor_struct = riskfactor_struct;
+    for ii = 1 : 1 : length( tmp_riskfactor_struct )
+        tmp_riskfactor_struct(ii).object = struct(tmp_riskfactor_struct(ii).object);
+    end 
+    tmp_filename = strcat(path_input,'/riskfactors_correct.dat');
+    % in case of changed objects or input data, save new struct:
+    %    save ('-text', tmp_filename, 'tmp_riskfactor_struct');
+        
+    % Load correct verified data from file
+	riskfactor_struct_correct = load(tmp_filename);
+	riskfactor_struct_correct = riskfactor_struct_correct.tmp_riskfactor_struct;
+	% Compare data
+	if (isequal(tmp_riskfactor_struct,riskfactor_struct_correct))
+		success_tests = success_tests + 1;
+		total_tests = total_tests + 1;
+		fprintf('SUCCESS: load_riskfactors: Parsing of risk factors is correct.\n');
+	else
+        % in order to see which object attribute failed, make detailed comparison test of all key - value pairs
+        % sometimes there is also a false positive -> catch with retcode
+        % compare, if information is stored which is not contained in struct
+        retcode = compare_struct(riskfactor_struct_correct,tmp_riskfactor_struct);
+        % also compare other case (information contained in struct which is not stored
+        %retcode2 = compare_struct(tmp_riskfactor_struct,riskfactor_struct_correct);
+        %retcode = retcode + retcode2;
+        if retcode > 0
+            fprintf('WARNING: load_riskfactors: Parsing of risk factors not successful. Structs differ:\n');	
+            total_tests = total_tests + 1;
+        else
+            fprintf('INFO: Comparison of both structs gave a false positive. Element by element comparison yielded no differences.\n');
+            success_tests = success_tests + 1;
+            total_tests = total_tests + 1;
+            fprintf('SUCCESS: load_riskfactors: Parsing of risk factors is correct.\n');
+        end	
+	end
+catch
+	fprintf('ERROR: load_riskfactors integration tests failed. Aborting: >>%s<< \n',lasterr);
+	total_tests = total_tests_start + 2;
 end
+
+
+% B.4) ===   Test positions objects parsing   ===
+total_tests_start = total_tests;
+fprintf('\n### Testing function load_positions ...\n');
+try
+	portfolio_struct=struct();
+    [portfolio_struct id_failed_cell] = load_positions(portfolio_struct, ...
+                path_input,input_filename_positions,path_output_positions, ...
+                path_archive,timestamp,archive_flag);
+
+
+    tmp_portfolio_struct = portfolio_struct;
+
+    tmp_filename = strcat(path_input,'/positions_correct.dat');
+    % in case of changed objects or input data, save new struct:
+    %    save ('-text', tmp_filename, 'tmp_portfolio_struct');
+        
+    % Load correct verified data from file
+	portfolio_struct_correct = load(tmp_filename);
+	portfolio_struct_correct = portfolio_struct_correct.tmp_portfolio_struct;
+	% Compare data
+	if (isequal(tmp_portfolio_struct,portfolio_struct_correct))
+		success_tests = success_tests + 1;
+		total_tests = total_tests + 1;
+		fprintf('SUCCESS: load_positions: Parsing of portfolios is correct.\n');
+	else
+        fprintf('WARNING: load_positions: Parsing of portfolios not successful. Structs differ:\n');	
+        total_tests = total_tests + 1;
+	end
+catch
+	fprintf('ERROR: load_positions integration tests failed. Aborting: >>%s<< \n',lasterr);
+	total_tests = total_tests_start + 2;
+end
+
+
+% B.5) ===   Test stresstests objects parsing   ===
+total_tests_start = total_tests;
+fprintf('\n### Testing function load_stresstests ...\n');
+try
+    stresstest_struct=struct();
+    [stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, ...
+                    path_input,input_filename_stresstests, ...
+                    path_output_stresstests,path_archive,timestamp,archive_flag);
+
+    tmp_stresstest_struct = stresstest_struct;
+
+    tmp_filename = strcat(path_input,'/stresstests_correct.dat');
+    % in case of changed objects or input data, save new struct:
+    %    save ('-text', tmp_filename, 'tmp_stresstest_struct');
+        
+    % Load correct verified data from file
+	stresstest_struct_correct = load(tmp_filename);
+	stresstest_struct_correct = stresstest_struct_correct.tmp_stresstest_struct;
+	% Compare data
+	if (isequal(tmp_stresstest_struct,stresstest_struct_correct))
+		success_tests = success_tests + 1;
+		total_tests = total_tests + 1;
+		fprintf('SUCCESS: load_stresstests: Parsing of stresstests is correct.\n');
+	else
+        fprintf('WARNING: load_stresstests: Parsing of stresstests not successful. Structs differ:\n');	
+        total_tests = total_tests + 1;
+	end
+catch
+	fprintf('ERROR: load_stresstests integration tests failed. Aborting: >>%s<< \n',lasterr);
+	total_tests = total_tests_start + 2;
+end
+
+
+% B.6) ===   Test marketdata objects parsing   ===
+total_tests_start = total_tests;
+fprintf('\n### Testing function load_mktdata_objects ...\n');
+try
+	mktdata_struct=struct();
+    [mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct, ...
+                    path_mktdata,input_filename_mktdata,path_output_mktdata, ...
+                    path_archive,timestamp,archive_flag);
+
+	% Converting classdef objects to ordinary structure in order to compare data
+    tmp_mktdata_struct = mktdata_struct;
+    for ii = 1 : 1 : length( tmp_mktdata_struct )
+        tmp_mktdata_struct(ii).object = struct(tmp_mktdata_struct(ii).object);
+    end 
+    tmp_filename = strcat(path_mktdata,'/mktdata_objects_correct.dat');
+    % in case of changed objects or input data, save new struct:
+    %    save ('-text', tmp_filename, 'tmp_mktdata_struct');
+        
+    % Load correct verified data from file
+	mktdata_struct_correct = load(tmp_filename);
+	mktdata_struct_correct = mktdata_struct_correct.tmp_mktdata_struct;
+	% Compare data
+	if (isequal(tmp_mktdata_struct,mktdata_struct_correct))
+		success_tests = success_tests + 1;
+		total_tests = total_tests + 1;
+		fprintf('SUCCESS: load_mktdata_objects: Parsing of marketdata objects is correct.\n');
+	else
+        % in order to see which object attribute failed, make detailed comparison test of all key - value pairs
+        % sometimes there is also a false positive -> catch with retcode
+        % compare, if information is stored which is not contained in struct
+        retcode = compare_struct(mktdata_struct_correct,tmp_mktdata_struct);
+        % also compare other case (information contained in struct which is not stored
+        %retcode2 = compare_struct(tmp_mktdata_struct,mktdata_struct_correct);
+        %retcode = retcode + retcode2;
+        if retcode > 0
+            fprintf('WARNING: load_mktdata_objects: Parsing of marketdata objects not successful. Structs differ:\n');	
+            total_tests = total_tests + 1;
+        else
+            fprintf('INFO: Comparison of both structs gave a false positive. Element by element comparison yielded no differences.\n');
+            success_tests = success_tests + 1;
+            total_tests = total_tests + 1;
+            fprintf('SUCCESS: load_mktdata_objects: Parsing of marketdata objects is correct.\n');
+        end	
+	end
+catch
+	fprintf('ERROR: load_mktdata_objects integration tests failed. Aborting: >>%s<< \n',lasterr);
+	total_tests = total_tests_start + 2;
+end
+fprintf('\n'); 
+% Enabling warnings again
+if ( exist('OCTAVE_VERSION') > 0 )  % variable returns 5 for Octave, 0 for Matlab
+    warning('on', 'Octave:load-file-in-path');
+    warning('on', 'Octave:classdef-to-struct');
+end
+
+end % end function
 
 % ------------------------------------------------------------------------------
 %                               Helper Function
@@ -218,7 +398,7 @@ function retcode = compare_struct(a,b)
             if ( isequal(a_val,b_val) )
                 %fprintf('Values are identical for key >>%s<<.\n',key);
             else
-                fprintf('Values are not identical for instrument >>%s<< and key >>%s<<.\n',b_obj.id,key);
+                fprintf('Values are not identical for object >>%s<< and key >>%s<<.\n',b_obj.id,key);
                 fprintf('Correct value:\n');
                 a_val
                 fprintf('Actual value:\n');

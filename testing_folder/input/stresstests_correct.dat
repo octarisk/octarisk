@@ -1,0 +1,1087 @@
+# Created by Octave 4.0.0, Fri Jul 15 15:14:07 2016 W. Europe Daylight Time <unknown@T43NB067>
+# name: tmp_stresstest_struct
+# type: struct
+# ndims: 2
+ 22 1
+# length: 5
+# name: id
+# type: cell
+# rows: 22
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+IR_100bpDOWN
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+IR_100bpUP
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+SPREAD_100bpDOWN
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+SPREAD_100bpUP
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+EQ_30DOWN
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+EQ_30UP
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+VOLA_100UP
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RE_30DOWN
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+RE_30UP
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+COM_30DOWN
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+COM_30UP
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 17
+EUR_USD_FX_30DOWN
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+EUR_USD_FX_30UP
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+IR_EURTwistPos
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+IR_EURTwistNeg
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+IR_EURButterfly
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+BlackMonday1987
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+Terror2001-9-11
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+DotCom2000
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 23
+AsianCurrencyCrisis1997
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 19
+FinancialCrisis2008
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+Basescenario
+
+
+
+
+
+# name: name
+# type: cell
+# rows: 22
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+IR - 100bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+IR + 100bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+Spread - 100bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+Spread + 100bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+Equity - 3000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+Equity + 3000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+VOLA + 10000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 20
+Real Estate - 3000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 20
+Real Estate + 3000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+Commodity - 3000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+Commodity + 3000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+FX - 3000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+FX + 3000bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 24
+IR 1Y - 200bp 10Y +200bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 24
+IR 1Y + 200bp 10Y -200bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 35
+IR 1Y +200bp 10Y -100bp 200Y +200bp
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 17
+Black Monday 1987
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+Terror 2001-9-11
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 24
+DotCom bubble burst 2000
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 26
+Asian Currency Crisis 1997
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 21
+Financial Crisis 2008
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+Basescenario
+
+
+
+
+
+# name: risktype
+# type: cell
+# rows: 22
+# columns: 1
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_SPREAD
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_SPREAD
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+RF_VOLA
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_RE
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_RE
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+RF_COM
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+RF_COM
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_FX
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_FX
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_EUR_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_20Y
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_EUR_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_20Y
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_EUR_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_EUR_20Y
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 7
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_VOLA_EQ
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+RF_IR_USD_1Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_IR_USD_10Y
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+RF_COM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_FX
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_RE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_VOLA_EQ
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 10
+RF_VOLA_EQ
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 9
+RF_SPREAD
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+RF_EQ_EM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_FX
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 6
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_EQ
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+RF_COM
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_RE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+RF_VOLA
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 15
+RF_SPREAD_.*_HY
+
+
+
+
+
+# name: <cell-element>
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+RF_IR
+
+
+
+
+
+
+
+
+# name: shiftvalue
+# type: cell
+# rows: 22
+# columns: 1
+# name: <cell-element>
+# type: scalar
+-100
+
+
+# name: <cell-element>
+# type: scalar
+100
+
+
+# name: <cell-element>
+# type: scalar
+-100
+
+
+# name: <cell-element>
+# type: scalar
+100
+
+
+# name: <cell-element>
+# type: scalar
+-0.3
+
+
+# name: <cell-element>
+# type: scalar
+0.3
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+-0.3
+
+
+# name: <cell-element>
+# type: scalar
+0.3
+
+
+# name: <cell-element>
+# type: scalar
+-0.3
+
+
+# name: <cell-element>
+# type: scalar
+0.3
+
+
+# name: <cell-element>
+# type: scalar
+-0.3
+
+
+# name: <cell-element>
+# type: scalar
+0.3
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ -200 50 200
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 200 50 -200
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 200 -100 200
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 7
+ -0.33 5 -200 -100 -100 0.1 0.1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ -0.15 -0.15 0.3
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ -0.35 0.5 150
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ -0.5 -0.1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 6
+ -200 -0.4 -0.5 -0.5 1.5 300
+
+
+# name: <cell-element>
+# type: scalar
+0
+
+
+
+
+
+# name: shifttype
+# type: cell
+# rows: 22
+# columns: 1
+# name: <cell-element>
+# type: scalar
+0
+
+
+# name: <cell-element>
+# type: scalar
+0
+
+
+# name: <cell-element>
+# type: scalar
+0
+
+
+# name: <cell-element>
+# type: scalar
+0
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 0 0 0
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 0 0 0
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 0 0 0
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 7
+ 1 1 0 0 0 1 1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 1 1 1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 1 1 0
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 1 1
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 6
+ 0 1 1 1 1 0
+
+
+# name: <cell-element>
+# type: scalar
+0
+
+
+
+
+
+
+
