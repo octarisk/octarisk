@@ -11,8 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{A_scaled} @var{pos_sem_def_bool}] =} 
-%# correct_correlation_matrix(@var{M})
+%# @deftypefn {Function File} {[@var{A_scaled} @var{pos_sem_def_bool}] =} correct_correlation_matrix(@var{M})
 %# Return a positive semi-definite matrix @var{A_scaled} to a given input 
 %# matrix @var{M}. This function tests for indefiniteness of the input matrix 
 %# and eventuallry adjusts negative Eivenvalues to 0 or slightly positive values 

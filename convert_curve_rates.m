@@ -15,12 +15,9 @@
 %# this program; if not, see <http://www.gnu.org/licenses/>.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{rate_target} @var{conversion_type}] =} 
-%# convert_curve_rates (@var{valuation_date}, @var{node}, @var{rate_origin}, 
-%# @var{comp_type_origin}, @var{comp_freq_origin}, @var{dcc_basis_origin}, 
-%# @var{comp_type_target}, @var{comp_freq_target}, @var{dcc_basis_target})
-%# Convert a given interest rate from one compounding type, frequency and day c
-%# ount convention (dcc) into another type, frequency and dcc. @*
+%# @deftypefn {Function File} {[@var{rate_target} @var{conversion_type}] =} convert_curve_rates (@var{valuation_date}, @var{node}, @var{rate_origin}, @var{comp_type_origin}, @var{comp_freq_origin}, @var{dcc_basis_origin}, @var{comp_type_target}, @var{comp_freq_target}, @var{dcc_basis_target})
+%# Convert a given interest rate from one compounding type, frequency and day
+%# count convention (dcc) into another type, frequency and dcc. @*
 %#
 %#  The following conversion formulas are applied:  (the timefactor is 
 %#  depending on day count convention and days between valuation_date and 

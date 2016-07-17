@@ -11,9 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{value} @var{delta} @var{gamma} @var{vega} 
-%# @var{theta} @var{rho} @var{omega}] =} option_bs (@var{CallPutFlag}, 
-%# @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
+%# @deftypefn {Function File} {[@var{value} @var{delta} @var{gamma} @var{vega} @var{theta} @var{rho} @var{omega}] =} option_bs (@var{CallPutFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
 %#
 %# Compute the prices of european call or put options according to Black-Scholes 
 %# valuation formula:@*

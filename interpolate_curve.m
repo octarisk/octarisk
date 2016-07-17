@@ -12,10 +12,8 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, 
-%#													@var{timestep})
-%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, 
-%#										@var{timestep}, @var{ufr}, @var{alpha})
+%# @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep})
+%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{ufr}, @var{alpha})
 %#
 %# Calculate an interpolated rate on a curve for a given timestep.@*
 %# Supported methods are: linear (default), moneymarket, exponential, loglinear, 

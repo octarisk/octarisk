@@ -11,8 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} get_documentation(@var{type}, 
-%#							@var{path_octarisk}, @var{path_documentation}))
+%# @deftypefn {Function File} {} get_documentation(@var{type}, @var{path_octarisk}, @var{path_documentation})
 %# Print documentation for all Octave functions in specified path. 
 %# The documentation is extracted from the function headers and printed to a 
 %# file 'functions.texi', 'functionname.html' or to standard output if a  

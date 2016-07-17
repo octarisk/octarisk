@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{success_tests} @var{total_tests}] =} test_io()
+%# @deftypefn {Function File} {[@var{success_tests} @var{total_tests}] =} test_io(@var{path_testing_folder})
 %# Perform integration tests for all functions which rely on input and output 
 %# data. The functions have to be hard coded in this script and rely on validated
 %# output data.

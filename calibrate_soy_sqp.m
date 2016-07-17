@@ -12,11 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_soy_sqp(@var{valuation_date},
-%# @var{tmp_cashflow_dates}, @var{tmp_cashflow_values},
-%# @var{tmp_act_value}, @var{tmp_nodes}, @var{tmp_rates},
-%# @var{spread_nodes}, @var{spread_rates}, @var{basis},
-%# @var{comp_type}, @var{comp_freq}, @var{,interp_discount}, @var{interp_spread})
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_soy_sqp(@var{valuation_date}, @var{tmp_cashflow_dates}, @var{tmp_cashflow_values}, @var{tmp_act_value}, @var{tmp_nodes}, @var{tmp_rates}, @var{spread_nodes}, @var{spread_rates}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{,interp_discount}, @var{interp_spread})
 %#
 %# Calibrate the spread over yield according to given cashflows discounted on an 
 %# appropriate yield curve.

@@ -14,8 +14,7 @@
 %# this program; if not, see <http://www.gnu.org/licenses/>.
  
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{tf} @var{dip} @var{dib}] =} timefactor 
-%# (@var{d1}, @var{d2}, @var{basis})
+%# @deftypefn {Function File} {[@var{tf} @var{dip} @var{dib}] =} timefactor(@var{d1}, @var{d2}, @var{basis})
 %#
 %# Compute the time factor for a specific time period and day count basis.@*
 %# Depending on day count basis, the time factor is evaluated as 

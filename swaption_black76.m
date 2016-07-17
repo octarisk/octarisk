@@ -11,9 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{SwaptionB76Value}] =} 
-%# swaption_black76 (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, 
-%# @var{r}, @var{sigma}, @var{m}, @var{tau})
+%# @deftypefn {Function File} {[@var{SwaptionB76Value}] =} swaption_black76 (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{m}, @var{tau})
 %#
 %# Compute the price of european interest rate swaptions according to Black76 
 %# pricing functions.

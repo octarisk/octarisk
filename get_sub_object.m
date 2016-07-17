@@ -12,7 +12,8 @@
 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{match_obj} @var{ret_code}] =} get_sub_object(@var{input_struct}, @var{input_id})
-%# Return the objectcontained in a structure  matching a given ID. Return code 1 (success) and 0 (fail).
+%# Return the object contained in a structure  matching a given ID. 
+%# Return code 1 (success) and 0 (fail).
 %# @end deftypefn
 
 % function for extracting sub-structure object from struct object according to id

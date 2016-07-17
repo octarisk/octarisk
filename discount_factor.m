@@ -14,8 +14,7 @@
 %# this program; if not, see <http://www.gnu.org/licenses/>.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{df} =} discount_factor (@var{d1}, @var{d2}, 
-%# @var{rate}, @var{comp_type}, @var{basis}, @var{comp_freq})
+%# @deftypefn {Function File} {@var{df} =} discount_factor (@var{d1}, @var{d2}, @var{rate}, @var{comp_type}, @var{basis}, @var{comp_freq})
 %#
 %# Compute the discount factor for a specific time period, compounding type, 
 %# day count basis and compounding frequency.@*
