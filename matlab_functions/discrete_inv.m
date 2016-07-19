@@ -93,20 +93,3 @@ end
 %!error discrete_inv (1, ones (2,1), [1 NaN])
 %!error discrete_inv (1, ones (2,1), [1 -1])
 %!error discrete_inv (1, ones (2,1), [0  0])
-
-function idx = lookup(vector, val)
-
-[aa bb ] = size(vector);
-[va vb] = size(val);
-
-if ( bb > aa)
-    vector = vector';
-end
-
-if ( vb > va)
-    val = val';
-end
-
-idx = knnsearch(vector,val);
-
-end
