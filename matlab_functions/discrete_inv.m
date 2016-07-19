@@ -49,7 +49,7 @@ function inv = discrete_inv (x, v, p)
     inv = NaN (size (x));
   end
 
-  %# FIXME: This isn't elegant.  But cumsum and lookup together produce
+  %# FIXME: This isn't elegant.  But cumsum and lookupfn together produce
   %# different results when called with a single or a double.
   if (isa (p, 'single'));
     p = double (p);
@@ -66,7 +66,7 @@ function inv = discrete_inv (x, v, p)
   inv(k) = v(end);
 
   k = (x > 0) & (x < 1);
-  inv(k) = v(length (p) - lookup(sort (p, 'descend'), x(k)) + 1);
+  inv(k) = v(length (p) - lookupfn(sort (p, 'descend'), x(k)) + 1);
 
 end
 
@@ -93,20 +93,3 @@ end
 %!error discrete_inv (1, ones (2,1), [1 NaN])
 %!error discrete_inv (1, ones (2,1), [1 -1])
 %!error discrete_inv (1, ones (2,1), [0  0])
-
-function idx = lookup(vector, val)
-
-[aa bb ] = size(vector);
-[va vb] = size(val);
-
-if ( bb > aa)
-    vector = vector';
-end
-
-if ( vb > va)
-    val = val';
-end
-
-idx = knnsearch(vector,val);
-
-end
