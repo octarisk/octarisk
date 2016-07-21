@@ -72,7 +72,7 @@ if ischar(basis)
     tt = 1:1:length(dcc_cell);
     tt = (tt - 1)';
     basis = dot(single(findvec),tt);
-elseif (isempty(find([0:1:11] == basis)))
+elseif (isempty(find([0:1:11] == basis, 1)))
    error('no valid basis defined. ')
 end
 

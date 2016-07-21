@@ -59,7 +59,7 @@ for ii = 1 : 1 : length(mktdata_struct)
             fprintf('ERROR: There has been an error for new Index object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
             id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
         end
-    elseif ( strcmp(tmp_class,'curve') && ~strcmp(lower(tmp_object.type),'aggregated curve'))
+    elseif ( strcmpi(tmp_class,'curve') && ~strcmpi(tmp_object.type,'aggregated curve'))
         tmp_id = tmp_object.id;
         try
             tmp_rf_id = strcat('RF_',tmp_id);
@@ -166,7 +166,7 @@ for ii = 1 : 1 : length(mktdata_struct)
     % get class -> switch between curve, index
     tmp_object = mktdata_struct(ii).object;
     tmp_class = lower(class(tmp_object));
-    if ( strcmp(tmp_class,'curve') && strcmp(lower(tmp_object.type),'aggregated curve'))
+    if ( strcmpi(tmp_class,'curve') && strcmpi(tmp_object.type,'aggregated curve'))
         tmp_id = tmp_object.id;
         try
             %fprintf('New type aggregated object: %s \n',tmp_id);
@@ -294,7 +294,7 @@ new_fx_reciprocal_objects = 0;
 for ii = 1 : 1 : length(index_struct)
     tmp_object = index_struct(ii).object;
     tmp_class = lower(class(tmp_object));
-    if ( strcmp(tmp_class,'index')) % get class -> FX conversion factors are of class index
+    if ( strcmpi(tmp_class,'index')) % get class -> FX conversion factors are of class index
         if ( strcmp(tmp_object.type,'Exchange Rate') )    % FX have type 'Exchange Rate'
             tmp_id = tmp_object.id;
             tmp_base_cur = tmp_id(4:6);

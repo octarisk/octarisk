@@ -57,9 +57,9 @@ end
     A_scaled_diff = A_scaled - M;
     %max(abs(A_scaled_diff));
     Max_diff = max(max(abs(A_scaled_diff)));
-    StdDev_diff = std(std(A_scaled_diff));
+    %StdDev_diff = std(std(A_scaled_diff));
     Frobenius_Norm = norm(A_scaled_diff,'fro');
-    Max_Singular_Value_Norm = norm(A_scaled_diff);
+    %Max_Singular_Value_Norm = norm(A_scaled_diff);
 %fprintf('Test statistics: \n');    
 %fprintf('Standard deviation of delta:  %1.4f \n', StdDev_diff);
 fprintf('Maximum correlation deviation: %1.4f \n', Max_diff);    
@@ -81,7 +81,7 @@ function res = rescale ( A )
     % symmetrizing: taking lower triangular matrix and mirror values to 
     %               upper triangular matrix
     trilower = tril(A_scaled);
-    D = diag(trilower);
+    %D = diag(trilower);
     [nr,nc]=size(trilower);
     triupper = trilower';
     res = trilower + triupper - eye(nc);

@@ -121,8 +121,6 @@ elseif ( strcmpi(comp_type_target,'CONT') )
 end
 
 
-
-conversion_type = '';
 %abbreviation: origin and target types and dcc are the same -> return input rate
 if ( strcmp(comp_type_origin,comp_type_target) ...
                 && strcmp(num2str(comp_freq_origin),num2str(comp_freq_target)) ...

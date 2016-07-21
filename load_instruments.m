@@ -75,7 +75,7 @@ tmp_list_files = dir(path); % load all files of directory path into cell
   % 1. move SWAPTION to last entry in tmp_filelist
     for ii = 1 : 1 : length(tmp_list_files)
         tmp_filename = tmp_list_files( ii ).name;
-        if (strcmp(upper(tmp_filename(1:end-4)),'SWAPT'))
+        if (strcmpi(tmp_filename(1:end-4),'SWAPT'))
             tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append SWAPT entry behind last entry of struct
             tmp_list_files(ii) = [];                            % remove SWAPT entry           
         end
@@ -83,7 +83,7 @@ tmp_list_files = dir(path); % load all files of directory path into cell
   % 2. move OPTION to last entry in tmp_filelist
     for ii = 1 : 1 : length(tmp_list_files)
         tmp_filename = tmp_list_files( ii ).name;
-        if (strcmp(upper(tmp_filename(1:end-4)),'OPT'))
+        if (strcmpi(tmp_filename(1:end-4),'OPT'))
             tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append OPT entry behind last entry of struct
             tmp_list_files(ii) = [];                            % remove OPT entry           
         end
@@ -91,7 +91,7 @@ tmp_list_files = dir(path); % load all files of directory path into cell
   % 3. move SYNTHETICs to last entry in tmp_filelist
     for ii = 1 : 1 : length(tmp_list_files)
         tmp_filename = tmp_list_files( ii ).name;
-        if (strcmp(upper(tmp_filename(1:end-4)),'SYNTH'))
+        if (strcmpi(tmp_filename(1:end-4),'SYNTH'))
             tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append SYNTH entry behind last entry of struct
             tmp_list_files(ii) = [];                            % remove SYNTH entry           
         end
@@ -202,9 +202,9 @@ for ii = 1 : 1 : length(tmp_list_files)
                         if (isnumeric (tmp_cell_item))
                             tmp_entry = logical(tmp_cell_item);
                         elseif ( ischar(tmp_cell_item))
-                            if ( strcmp('false',lower(tmp_cell_item)) || strcmp('0',tmp_cell_item))
+                            if ( strcmpi('false',tmp_cell_item) || strcmp('0',tmp_cell_item))
                                 tmp_entry = 0;
-                            elseif ( strcmp('true',lower(tmp_cell_item)) || strcmp('1',tmp_cell_item) )
+                            elseif ( strcmpi('true',tmp_cell_item) || strcmp('1',tmp_cell_item) )
                                 tmp_entry = 1;
                             end
                         end  

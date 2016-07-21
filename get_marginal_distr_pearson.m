@@ -148,7 +148,7 @@ function r = rpears4(m,nu,a,lam,len_vec)
 
 % Calling implementation of the complex hypergeometric distribution of 
 % CDF/MEMO/STATISTICS/PUBLIC/6820
-gammar2_cs = -log(gammar2_c(m,nu/2));
+% gammar2_cs = -log(gammar2_c(m,nu/2));
 
 % Calling implementation of the function type4norm of 
 % CDF/MEMO/STATISTICS/PUBLIC/6820

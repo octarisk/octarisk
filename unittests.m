@@ -26,11 +26,12 @@ function_cell= {'pricing_npv','option_bs','option_willowtree', ...
                 'option_bjsten','calibrate_option_bjsten', ...
                 'rollout_cashflows_oop', 'interpolate_curve', ...
                 'scenario_generation_MC', 'option_barrier', ...
-                'calibrate_yield_to_maturity'};
+                'calibrate_yield_to_maturity', 'get_sub_object'};
 fprintf('=== Running unit tests for %d functions=== \n',length(function_cell)); 
 % 2) Run tests
 tests_total = 0;
 tests_fail = 0; 
+M = zeros(length(function_cell),2);
 for ii = 1 : 1 : length(function_cell)
     tmp_func = function_cell{ii};
     [tmp_success,tmp_tests] = test(tmp_func,'normal');

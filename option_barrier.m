@@ -39,7 +39,7 @@ function [optionValue] = option_barrier(PutOrCall,UpOrDown,OutorIn,S0,X,H,T,r,si
     print_usage ();
   end
   if nargin == 9
-    divrate = 0.00;
+    q = 0.00;
     Rebate = 0.0;
   end 
   if nargin == 10

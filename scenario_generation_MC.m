@@ -16,10 +16,11 @@
 %# Compute correlated random numbers according to Gaussian or Student-t copulas and
 %# arbitrary marginal distributions within the Pearson distribution system.@*
 %#
-%# @seealso{pearsrnd_oct_z, mvnrnd, normcdf, mvtrnd ,tcdf}
+%# @seealso{get_marginal_distr_pearson, mvnrnd, normcdf, mvtrnd ,tcdf}
 %# @end deftypefn
 
-function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,time_horizon,path_static,stable_seed)
+function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc, ...
+                            copulatype,nu,time_horizon,path_static,stable_seed)
 % A) input data checks
 [rr_c cc_c] = size(corr_matrix);
 [pp_p cc_p] = size(P);
@@ -33,7 +34,9 @@ if nargin < 5
     time_horizon = 256;
 end
 if nargin < 6
-    time_horizon = 256; % assuming provided volatility and return are on yearly time horizon, will be scaled to time_horizon
+    % assuming provided volatility and return are on yearly time horizon, 
+    % will be scaled to time_horizon
+    time_horizon = 256; 
 end
 
 if nargin < 7
@@ -54,24 +57,30 @@ corr_matrix = correct_correlation_matrix(corr_matrix);
 
 % B.1) Generating multivariate random variables if stable_seed is 0
     tmp_number_rf = rows(corr_matrix);  % get number of risk factors
-    tmp_filename = strcat(path_static,'/random_numbers_',num2str(mc),'_',num2str(tmp_number_rf),'_',copulatype,'.mat');
+    tmp_filename = strcat(path_static,'/random_numbers_',num2str(mc),'_', ...
+                            num2str(tmp_number_rf),'_',copulatype,'.mat');
+    % use existing random numbers                        
     if ( exist(tmp_filename,'file') && (stable_seed == 1))
         fprintf('Taking file >>%s<< with random numbers from static folder\n',tmp_filename);
         Y_struct = load(tmp_filename);  % read in from stored file
         Y = Y_struct.Y;
-    else % otherwise draw new random numbers and save to static folder for next run
+    % otherwise draw new random numbers and save to static folder for next run
+    else 
         fprintf('New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
         if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
-            Y   = mvnrnd(0,corr_matrix,mc);      % draw random variables from multivariate normal distribution
+            % draw random variables from multivariate normal distribution
+            Y   = mvnrnd(0,corr_matrix,mc);      
         elseif ( strcmp(copulatype, 't') == 1) % t-copula 
-            Y   = mvtrnd(corr_matrix,nu,mc);     % draw random variables from multivariate student-t distribution
+            % draw random variables from multivariate student-t distribution
+            Y   = mvtrnd(corr_matrix,nu,mc);     
         end
         if (stable_seed == 1)
             save ('-v7',tmp_filename,'Y');
         end
     end
 
-% B.2) Calculate cumulative distribution functions -> map t- or normdistributed random numbers to intervall [0,1]  
+% B.2) Calculate cumulative distribution functions 
+%      -> map t- or normdistributed random numbers to intervall [0,1]  
 if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
     Z   = normcdf(Y,0,1);                % generate bivariate normal copula
 elseif ( strcmp(copulatype, 't') == 1) % t-copula 
@@ -84,18 +93,22 @@ end
 % norm(abs(corr_Y - corr_matrix))
 
 
-% C) Generate custom distributed random variables from correlated univariate randon numbers
-ret_vec = zeros(mc,1);
+% C) Generate custom distributed random variables from 
+%    correlated univariate randon numbers
 R = zeros(mc,columns(corr_matrix));
-distr_type = [];
+distr_type = zeros(1,columns(Z));
 % now loop via all columns of Z and apply individual marginal distribution
 for ii = 1 : 1 : columns(Z);
     tmp_ucr = Z(:,ii);
-    tmp_mu      = P(1,ii) .^(1/factor_time_horizon);          % mu needs geometric compounding adjustment (input provided for yearly time horizon)
-    tmp_sigma   = P(2,ii) ./ sqrt(factor_time_horizon);       % volatility needs adjustment with sqr(t)-rule (input provided for yearly time horizon)
+    % mu needs geometric compounding adjustment
+    tmp_mu      = P(1,ii) .^(1/factor_time_horizon); 
+    % volatility needs adjustment with sqr(t)-rule 
+    tmp_sigma   = P(2,ii) ./ sqrt(factor_time_horizon); 
     tmp_skew    = P(3,ii);
     tmp_kurt    = P(4,ii);
-    [ret_vec type]= get_marginal_distr_pearson(tmp_mu,tmp_sigma,tmp_skew,tmp_kurt,tmp_ucr); %generate distribution based on Pearson System (Type 1-7)
+    %generate distribution based on Pearson System (Type 1-7)
+    [ret_vec type]= get_marginal_distr_pearson(tmp_mu,tmp_sigma, ...
+                                                tmp_skew,tmp_kurt,tmp_ucr); 
     distr_type(ii) = type;
     R(:,ii) = ret_vec;
 end

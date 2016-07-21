@@ -39,14 +39,14 @@ elseif ( nargin == 7 )
   basis_curve      = basis; 
   comp_freq_curve  = comp_freq;
 elseif  ( nargin == 8 )
-  comp_type = 'disc'
-  comp_freq = 1
+  comp_type = 'disc';
+  comp_freq = 1;
   interp_discount = 'linear';
   comp_type_curve  = comp_type;
   basis_curve      = basis; 
   comp_freq_curve  = comp_freq;
 elseif ( nargin == 9 )
-  comp_freq = 1
+  comp_freq = 1;
   interp_discount = 'linear';
   comp_type_curve  = comp_type;
   basis_curve      = basis; 

@@ -79,7 +79,7 @@ if ischar(basis)
     tt = (tt - 1)';
     basis = dot(single(findvec),tt);
 end
-if (isempty(find([0:1:11] == basis)))
+if (isempty(find([0:1:11] == basis, 1)))
    error('no valid basis defined. Unknown >>%s<<',basis)
 end
 if nargin < 6
