@@ -24,26 +24,12 @@
 %# @itemize @bullet
 %# @item @var{d1}: 			number of days until first date (scalar)
 %# @item @var{d2}: 			number of days until second date (scalar)
-%# @item @var{basis}: 		day-count basis (scalar)
-%#		@itemize @bullet
-%# 			@item @var{0} = actual/actual 
-%# 			@item @var{1} = 30/360 SIA (default)
-%# 			@item @var{2} = act/360
-%# 			@item @var{3} = act/365
-%# 			@item @var{4} = 30/360 PSA
-%# 			@item @var{5} = 30/360 ISDA
-%# 			@item @var{6} = 30/360 European
-%# 			@item @var{7} = act/365 Japanese
-%# 			@item @var{8} = act/act ISMA
-%# 			@item @var{9} = act/360 ISMA
-%# 			@item @var{10} = act/365 ISMA
-%# 			@item @var{11} = 30/360E
-%#      @end itemize
+%# @item @var{basis}: 		day-count basis (scalar or string)
 %# @item @var{df}: 		OUTPUT: discount factor (scalar)
 %# @item @var{dip}: 	OUTPUT: days in period (nominator of time factor) (scalar)
 %# @item @var{dib}: 	OUTPUT: days in base (denominator of time factor) (scalar)
 %# @end itemize
-%# @seealso{discount_factor, yeardays}
+%# @seealso{discount_factor, yeardays, get_basis}
 %# @end deftypefn
 
 function [tf dip dib] = timefactor (d1, d2, basis)
@@ -63,17 +49,12 @@ end
 if nargin < 3
    basis = 3;   % defaulting to act/365
 end
+% convert basis string into basis value in [0...11]
 if ischar(basis)
-    dcc_cell = {'act/act' '30/360 SIA' 'act/360' 'act/365' ...
-                        '30/360 PSA' '30/360 ISDA' '30/360 European' ...
-                        'act/365 Japanese' 'act/act ISMA' 'act/360 ISMA' ...
-                        'act/365 ISMA' '30/360E'};
-    findvec = strcmpi(basis,dcc_cell);
-    tt = 1:1:length(dcc_cell);
-    tt = (tt - 1)';
-    basis = dot(single(findvec),tt);
+    basis = get_basis(basis);
 elseif ~(any(basis == [0:1:11]))
-   error('timefactor:no valid basis defined. Unknown >>%s<<',basis)
+   fprintf('timefactor:no valid basis defined. >>%d<< has to be between 0 and 11. Setting to default value act/365. \n',basis)
+   basis = 3;
 end
 
 % no negative timefactor
@@ -148,12 +129,13 @@ end
  
 %!assert(timefactor('31-Dec-2015','29-Feb-2024',0),8.16393410,0.000001) 
 %!assert(timefactor('31-Dec-2015','29-Feb-2024',3),8.16986310,0.000001) 
+%!assert(timefactor('31-Dec-2015','29-Feb-2024',12),8.16986310,0.000001) 
 %!assert(timefactor('31-Dec-2015','29-Feb-2024'),8.16986310,0.000001) 
 %!assert(timefactor('31-Dec-2015','29-Feb-2024',11),8.16388910,0.000001) 
 %!assert(timefactor('31-Dec-2015','29-Feb-2024','act/act'),8.16393410,0.000001) 
 %!assert(timefactor('31-Dec-2015','29-Feb-2024','act/365'),8.16986310,0.000001) 
 %!assert(timefactor('31-Dec-2015','29-Feb-2024','30/360E'),8.16388910,0.000001) 
-%!assert(timefactor('31-Dec-2015','29-Feb-2024','nonsensedefaultsto0'),8.16393410,0.00001) 
+%!assert(timefactor('31-Dec-2015','29-Feb-2024','nonsensedefaultsto3'),8.16986310,0.00001) 
 %!assert(timefactor('31-Dec-2015',736329 .+ [95;245;365;730;3650],0),[0.259562841530055;0.669398907103825;0.997267759562842;1.997260273972603;9.991780821917809],0.00000001)
 %!assert(timefactor('31-Dec-2015',736329 .+ [95;245;365;730;3650],1),[0.258333333333333;0.666666666666667;0.997222222222222;1.997222222222222;9.991666666666667],0.00000001)
 %!assert(timefactor('31-Dec-2015',736329 .+ [95;245;365;730;3650],2),[0.263888888888889;0.680555555555556;1.013888888888889;2.027777777777778;10.138888888888889],0.00000001)
@@ -168,7 +150,5 @@ end
 %!assert(timefactor('31-Dec-2015',736329 .+ [95;245;365;730;3650],10),[0.260273972602740;0.671232876712329;1.000000000000000;2.000000000000000;10.000000000000000],0.00000001)
 %!assert(timefactor(736329 .+ [95;245;365;730;3650],736329 .+ [95;245;365;730;3650],8),[0;0;0;0;0])
 %!assert(timefactor(736329 .+ [94;243;362;731;3651],736329 .+ [95;245;365;730;3650],0),[0.00273224043715847;0.00546448087431694;0.00819672131147541;-0.00273972602739726;-0.00273972602739726],0.00000001)
-%!error(timefactor('31-Dec-2015','29-Feb-2024',12))
-%!error(timefactor('31-Dec-2015','29-Feb-2024',12))
 %!error(timefactor('31-Dec-2025','29-Feb-2000',8)) 
 %!error(timefactor('31-Dec-2025','29-Feb-2024',3)) 

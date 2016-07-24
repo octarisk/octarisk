@@ -26,21 +26,7 @@
 %# @item @var{rate}: 		interest rate between first and second date (scalar)
 %# @item @var{comp_type}: 	compounding type: [simple, simp, disc, discrete, 
 %# cont, continuous] (string)
-%# @item @var{basis}: 		day-count basis (scalar)
-%#		@itemize @bullet
-%# 			@item @var{0} = actual/actual 
-%# 			@item @var{1} = 30/360 SIA (default)
-%# 			@item @var{2} = act/360
-%# 			@item @var{3} = act/365
-%# 			@item @var{4} = 30/360 PSA
-%# 			@item @var{5} = 30/360 ISDA
-%# 			@item @var{6} = 30/360 European
-%# 			@item @var{7} = act/365 Japanese
-%# 			@item @var{8} = act/act ISMA
-%# 			@item @var{9} = act/360 ISMA
-%# 			@item @var{10} = act/365 ISMA
-%# 			@item @var{11} = 30/360E (ISMA)
-%#      @end itemize
+%# @item @var{basis}: 		day-count basis (scalar or string)
 %# @item @var{comp_freq}: 	1,2,4,12,52,365 or [daily,weekly,monthly,
 %# quarter,semi-annual,annual] (scalar or string)
 %# @item @var{df}: 			OUTPUT: discount factor (scalar)
@@ -72,18 +58,6 @@ if nargin < 6
     comp_freq = 1;
 end
 
-if ischar(basis)
-    dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365'; ...
-                        '30/360 PSA';'30/360 ISDA';'30/360 European'; ...
-                        'act/365 Japanese';'act/act ISMA';'act/360 ISMA'; ...
-                        'act/365 ISMA';'30/360E']);
-    findvec = strcmp(basis,dcc_cell);
-    tt = 1:1:length(dcc_cell);
-    tt = (tt - 1)';
-    basis = dot(single(findvec),tt);
-elseif ~(any(basis == [0:1:11]))
-   error('timefactor:no valid basis defined [0:11]. Unknown >>%s<<',basis)
-end
 
 if ischar(comp_type)
     if ( regexpi(comp_type,'simp'))

@@ -117,13 +117,15 @@ end
 
 %!test 
 %! fprintf('HOLD ON...\n');
-%! fprintf('\tscenario_generation_MC:\tGenerating MC scenarios\n');
+%! fprintf('\tscenario_generation_MC:\tGenerating MC scenarios with stable Seed and Gaussian Copula\n');
 %! pkg load statistics;
 %! corr_matrix = [1,0.2,-0.3;0.2,1,0;-0.3,0.0,1];
 %! P = [0,0,0;0.2,0.5,0.4;-0.3,0,0.3;3,1.5,4.5];
 %! mc = 100000;
-%! copulatype = 't';
+%! copulatype = 'Gaussian';
 %! nu = 4;
+%! rand('state',666 .*ones(625,1));	% set seed
+%! randn('state',666 .*ones(625,1));	% set seed
 %! [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,256);
 %! assert(distr_type,[1,2,4])
 %! mean_target = P(1,1);   % mean
@@ -131,11 +133,11 @@ end
 %! assert(mean_act,mean_target,0.01)
 %! sigma_target = P(2,2);   % sigma
 %! sigma_act = std(R(:,2));
-%! assert(sigma_act,sigma_target,0.1)
+%! assert(sigma_act,sigma_target,0.01)
 %! skew_target = P(3,1);   % skew
 %! skew_act = skewness(R(:,1));
-%! assert(skew_act,skew_target,0.1)
-%! kurt_target = P(4,3);   % kurt    
+%! assert(skew_act,skew_target,0.06)
+%! kurt_target = P(4,3);  % kurt    
 %! kurt_act = kurtosis(R(:,3));
-%! assert(kurt_act,kurt_target,0.5)
+%! assert(kurt_act,kurt_target,0.03)
 %! pkg unload statistics;

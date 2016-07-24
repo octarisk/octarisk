@@ -15,6 +15,9 @@ function obj = calc_greeks(option,value_type,underlying,vola_riskfactor,discount
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates_base   = discount_curve.getValue('base');
+        comp_type_curve = discount_curve.get('compounding_type');
+        comp_freq_curve = discount_curve.get('compounding_freq');
+        basis_curve     = discount_curve.get('basis');
     tmp_type = obj.sub_type;
     % Get Call or Putflag
     %fprintf('==============================\n');
@@ -50,35 +53,50 @@ function obj = calc_greeks(option,value_type,underlying,vola_riskfactor,discount
         tmp_moneyness      = ( tmp_underlying_value ./ tmp_strike).^moneyness_exponent;
                 
         % get implied volatility spread (choose offset to vola, that tmp_value == option_bs with input of appropriate vol):
-        tmp_indexvol_base       = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness);
-        tmp_impl_vola_atm       = max(vola_riskfactor.getValue(value_type),-tmp_indexvol_base);
+        tmp_indexvol_base  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness);
+        tmp_impl_vola_atm  = max(vola_riskfactor.getValue(value_type),-tmp_indexvol_base);
         
       % Get Volatility according to volatility smile given by vola surface
         % Calculate Volatility depending on model
         tmp_model = vola_riskfactor.model;
-        if ( strcmp(tmp_model,'GBM') == 1 || strcmp(tmp_model,'BKM') ) % Log-normal Motion
-            if ( strcmp(value_type,'stress'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* exp(vola_riskfactor.getValue(value_type));
-            elseif ( strcmp(value_type,'base'))
+        if ( strcmpi(tmp_model,'GBM') || strcmpi(tmp_model,'BKM') ) % Log-normal Motion
+            if ( strcmpi(value_type,'stress'))
+                tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
+                            tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) ...
+                            .* exp(vola_riskfactor.getValue(value_type));
+            elseif ( strcmpi(value_type,'base'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_indexvol_base);
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) ...
+                                .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
             end
         else        % Normal Model
-            if ( strcmp(value_type,'stress'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* (vola_riskfactor.getValue(value_type) + 1);
-            elseif ( strcmp(value_type,'base'))
+            if ( strcmpi(value_type,'stress'))
+                tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
+                            tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) ...
+                            .* (vola_riskfactor.getValue(value_type) + 1);
+            elseif ( strcmpi(value_type,'base'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_indexvol_base);
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) + tmp_impl_vola_atm + tmp_impl_vola_spread;  
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) ...
+                                    + tmp_impl_vola_atm + tmp_impl_vola_spread;  
             end
         end
-    
+       % Convert divyield and interest rates into act/365 continuous (used by pricing)
+        
+        tmp_rf_rate_conv = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate, ...
+                        comp_type_curve,comp_freq_curve,basis_curve, ...
+                        'cont','annual',3);
+        divyield = obj.get('div_yield');
+        
       % Valuation for: Black-Scholes Modell (EU) or Willowtreemodel (AM):
-        if ( strfind(tmp_type,'OPT_EUR') > 0  )     % calling Black-Scholes option pricing model
-            [theo_value theo_delta theo_gamma theo_vega theo_theta theo_rho theo_omega] = option_bs(call_flag,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock);
-        elseif ( strfind(tmp_type,'OPT_AM') > 0 )   % calling Willow tree option pricing model
-            %theo_value	            = option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,option.timesteps_size,option.willowtree_nodes,path_static);
+        if ( regexpi(tmp_type,'OPT_EUR') )     % calling Black-Scholes option pricing model
+            [theo_value theo_delta theo_gamma theo_vega theo_theta theo_rho ...
+                                    theo_omega] = option_bs(call_flag, ...
+                                    tmp_underlying_value, tmp_strike, tmp_dtm, ...
+                                    tmp_rf_rate, tmp_imp_vola_shock, divyield);
+        elseif ( regexpi(tmp_type,'OPT_AM'))   % calling Willow tree option pricing model
+            %theo_value	= option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,option.timesteps_size,option.willowtree_nodes,path_static);
             theo_delta  = 0.0;
             theo_gamma  = 0.0;
             theo_vega   = 0.0;
@@ -90,9 +108,9 @@ function obj = calc_greeks(option,value_type,underlying,vola_riskfactor,discount
     
       
     % store theo_value vector in appropriate class property   
-    if ( regexp(value_type,'stress'))
+    if ( strcmpi(value_type,'stress'))
         %obj = obj.set('value_stress',theo_value);  
-    elseif ( regexp(value_type,'base'))
+    elseif ( strcmpi(value_type,'base'))
         obj = obj.set('theo_delta',theo_delta .* tmp_multiplier);
         obj = obj.set('theo_gamma',theo_gamma .* tmp_multiplier);
         obj = obj.set('theo_vega',theo_vega .* tmp_multiplier);
