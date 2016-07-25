@@ -531,6 +531,9 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
     % Calculate chi via solving linear equations  
         % 1. calculate vector mu
         mu = exp(- ufrc .* nodes_input_y);
+        % Matlab adaption
+        %nodesinput_y_tmp = repmat(nodes_input_y,1,columns(rates_input));
+        %rates_x_nodes = rates_input .*nodesinput_y_tmp;
         rates_x_nodes = rates_input .*nodes_input_y;
         m  = 1 ./ exp(rates_x_nodes);
         
@@ -540,12 +543,16 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
 
         % 3. calculate vector chi: solving set of linear equaitons: 
         % m = mu + W*chi
-            d_vec = (m - mu);
-            chi = inv(W) * d_vec;
+        % Matlab adaption
+        %mu=repmat(mu,1,columns(m));
+        d_vec = (m - mu);
+        chi = inv(W) * d_vec;
     % calculate discount rate and discount factor
         [X,Y] = meshgrid(nodes_input_y,tt);     % set up meshgrid
         WW = Wilson_function(X,Y,ufrc,alpha); 
         chi_mat = repmat( chi',rows(WW),1);
+        % Matlab adaption
+        %WW=repmat(WW,rows(chi_mat),1);
         M = chi_mat .* WW;
         S = sum(M,2);
     % Return discount factor and discount rates
