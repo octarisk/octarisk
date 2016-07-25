@@ -230,3 +230,20 @@ end
 %! d = d.set('duration',8.35,'convexity',18);
 %! d = d.calc_value(c,'stress');
 %! assert(d.getValue('stress'),[91.83;84.02],0.01);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
+%! b = Bond();
+%! r = Riskfactor();
+%! s(1).object = b;
+%! s(1).id = b.id;
+%! s(2).object = r;
+%! s(2).id = r.id;
+%! [retstruct retcode] = get_sub_object(s,'BOND_TEST');
+%! assert(isequal(retstruct,b),true);
+%! assert(retcode,1);
+%! s(3).object = b;
+%! s(3).id = b.id;
+%! [retstruct retcode] = get_sub_object(s,'BOND_TEST');
+%! assert(isequal(retstruct,b),true);
+%! assert(retcode,1);

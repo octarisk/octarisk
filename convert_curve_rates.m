@@ -121,8 +121,6 @@ elseif ( strcmpi(comp_type_target,'CONT') )
 end
 
 
-
-conversion_type = '';
 %abbreviation: origin and target types and dcc are the same -> return input rate
 if ( strcmp(comp_type_origin,comp_type_target) ...
                 && strcmp(num2str(comp_freq_origin),num2str(comp_freq_target)) ...
@@ -143,45 +141,37 @@ timefactor_target = timefactor(valuation_date,term_datenum,dcc_basis_target);
 
 % error check compounding frequency
 if ischar(comp_freq_origin)
-    if ( strcmpi(comp_freq_origin,'daily') == 1 ...
-                                || strcmpi(comp_freq_origin,'day') == 1)
+    if ( regexpi(comp_freq_origin,'^da'))
         comp_freq_origin = 365;
-    elseif ( strcmpi(comp_freq_origin,'weekly') == 1 ...
-                                || strcmpi(comp_freq_origin,'week') == 1)
+    elseif ( regexpi(comp_freq_origin,'^week'))
         comp_freq_origin = 52;
-    elseif ( strcmpi(comp_freq_origin,'monthly') == 1 ...
-                                || strcmpi(comp_freq_origin,'month') == 1)
+    elseif ( regexpi(comp_freq_origin,'^month'))
         comp_freq_origin = 12;
-    elseif ( strcmpi(comp_freq_origin,'quarterly') == 1 ...
-                                ||  strcmpi(comp_freq_origin,'quarter') == 1)
+    elseif ( regexpi(comp_freq_origin,'^quarter'))
         comp_freq_origin = 4;
-    elseif ( strcmpi(comp_freq_origin,'semi-annual') == 1)
+    elseif ( regexpi(comp_freq_origin,'^semi-annual'))
         comp_freq_origin = 2;
-    elseif ( strcmpi(comp_freq_origin,'annual') == 1 )
+    elseif ( regexpi(comp_freq_origin,'^annual'))
         comp_freq_origin = 1;       
     else
-        error('convert_curve_rates: Need valid compounding frequency')
+        error('convert_curve_rates:Need valid compounding frequency. Unknown >>%s<<',comp_freq_origin)
     end
 end
 if ischar(comp_freq_target)
-    if ( strcmpi(comp_freq_target,'daily') == 1 ...
-            || strcmpi(comp_freq_target,'day') == 1)
+    if ( regexpi(comp_freq_target,'^da'))
         comp_freq_target = 365;
-    elseif ( strcmpi(comp_freq_target,'weekly') == 1 ...
-             || strcmpi(comp_freq_target,'week') == 1)
+    elseif ( regexpi(comp_freq_target,'^week'))
         comp_freq_target = 52;
-    elseif ( strcmpi(comp_freq_target,'monthly') == 1 ...
-             || strcmpi(comp_freq_target,'month') == 1)
+    elseif ( regexpi(comp_freq_target,'^month'))
         comp_freq_target = 12;
-    elseif ( strcmpi(comp_freq_target,'quarterly') == 1 ...
-             || strcmpi(comp_freq_target,'quarter') == 1)
+    elseif ( regexpi(comp_freq_target,'^quarter'))
         comp_freq_target = 4;
-    elseif ( strcmpi(comp_freq_target,'semi-annual') == 1)
+    elseif ( regexpi(comp_freq_target,'^semi-annual'))
         comp_freq_target = 2;
-    elseif ( strcmpi(comp_freq_target,'annual') == 1 )
+    elseif ( regexpi(comp_freq_target,'^annual'))
         comp_freq_target = 1;       
     else
-        error('Need valid compounding frequency')
+        error('convert_curve_rates:Need valid compounding frequency. Unknown >>%s<<',comp_freq_target)
     end
 end
 
@@ -258,9 +248,7 @@ else
     rate_target = rate_origin;
     conversion_type = 'No conversion';
 end
-% rate_origin(1:min(10,rows(rate_origin)))
-% rate_target(1:min(10,rows(rate_target))) 
-% conversion_type                  
+                
 end % end of function
 
 %!assert(convert_curve_rates(datenum('31-Dec-2015'),643,0.0060519888,'cont','daily',3,'simple','daily',3),0.006084365,0.0000001)
@@ -278,3 +266,5 @@ end % end of function
 %!assert(convert_curve_rates(datenum('31-Dec-2015'),643,0.0060,'disc','annual',3,'simple','semi-annual',0),0.00602307020434994,0.000000001)
 %!assert(convert_curve_rates(datenum('31-Dec-2015'),643,0.0060,'disc','annual',3,'cont','semi-annual',0),0.00599138954620409,0.000000001)
 %!assert(convert_curve_rates(datenum('31-Dec-2015'),643,0.0060,'disc','semi-annual',3,'disc','semi-annual',0),0.00600935982092210,0.000000001)
+%!error(convert_curve_rates(datenum('31-Dec-2015'),643,0.0060,'disc','semi-annual',3,'disc'))
+%!error(convert_curve_rates(datenum('31-Dec-2015'),643,0.0060,'disc','semi-annual',3,'semi-annual',0))

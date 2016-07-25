@@ -42,7 +42,21 @@ function s = get (bond, property)
         case 'cf_dates'
           s = obj.cf_dates; 
         case 'cf_values'
-          s = obj.cf_values;  
+          s = obj.cf_values; 
+        case 'div_yield'
+          s = obj.div_yield;  
+        case 'theo_delta'
+          s = obj.theo_delta; 
+        case 'theo_gamma'
+          s = obj.theo_gamma; 
+        case 'theo_vega'
+          s = obj.theo_vega; 
+        case 'theo_theta'
+          s = obj.theo_theta; 
+        case 'theo_rho'
+          s = obj.theo_rho; 
+        case 'theo_omega'
+          s = obj.theo_omega; 
         otherwise
           error ('get: invalid property %s', property);
       end

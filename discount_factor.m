@@ -26,21 +26,7 @@
 %# @item @var{rate}: 		interest rate between first and second date (scalar)
 %# @item @var{comp_type}: 	compounding type: [simple, simp, disc, discrete, 
 %# cont, continuous] (string)
-%# @item @var{basis}: 		day-count basis (scalar)
-%#		@itemize @bullet
-%# 			@item @var{0} = actual/actual 
-%# 			@item @var{1} = 30/360 SIA (default)
-%# 			@item @var{2} = act/360
-%# 			@item @var{3} = act/365
-%# 			@item @var{4} = 30/360 PSA
-%# 			@item @var{5} = 30/360 ISDA
-%# 			@item @var{6} = 30/360 European
-%# 			@item @var{7} = act/365 Japanese
-%# 			@item @var{8} = act/act ISMA
-%# 			@item @var{9} = act/360 ISMA
-%# 			@item @var{10} = act/365 ISMA
-%# 			@item @var{11} = 30/360E (ISMA)
-%#      @end itemize
+%# @item @var{basis}: 		day-count basis (scalar or string)
 %# @item @var{comp_freq}: 	1,2,4,12,52,365 or [daily,weekly,monthly,
 %# quarter,semi-annual,annual] (scalar or string)
 %# @item @var{df}: 			OUTPUT: discount factor (scalar)
@@ -68,29 +54,17 @@ end
 if nargin < 5
    basis = 3;
 end
-
-if ischar(basis)
-    dcc_cell = cellstr( ['act/act';'30/360 SIA';'act/360';'act/365'; ...
-                        '30/360 PSA';'30/360 ISDA';'30/360 European'; ...
-                        'act/365 Japanese';'act/act ISMA';'act/360 ISMA'; ...
-                        'act/365 ISMA';'30/360E']);
-    findvec = strcmp(basis,dcc_cell);
-    tt = 1:1:length(dcc_cell);
-    tt = (tt - 1)';
-    basis = dot(single(findvec),tt);
-end
-if (isempty(find([0:1:11] == basis)))
-   error('no valid basis defined. Unknown >>%s<<',basis)
-end
 if nargin < 6
     comp_freq = 1;
 end
+
+
 if ischar(comp_type)
-    if ( strcmpi(comp_type,'simple') || strcmpi(comp_type,'simp'))
+    if ( regexpi(comp_type,'simp'))
         compounding_type = 1;
-    elseif ( strcmpi(comp_type,'disc') || strcmpi(comp_type,'discrete'))
+    elseif ( regexpi(comp_type,'disc') )
         compounding_type = 2;
-    elseif ( strcmpi(comp_type,'cont') || strcmpi(comp_type,'continuous'))
+    elseif ( regexpi(comp_type,'cont') )
         compounding_type = 3;
     else
         error('discount_factor: Need valid compounding_type. Unknown >>%s<<',comp_type)
@@ -99,20 +73,20 @@ end
 
 % error check compounding frequency
 if ischar(comp_freq)
-    if ( strcmpi(comp_freq,'daily') || strcmpi(comp_freq,'day') )
+    if ( regexpi(comp_freq,'^da') )
         compounding = 365;
-    elseif ( strcmpi(comp_freq,'weekly') || strcmpi(comp_freq,'week') )
+    elseif ( regexpi(comp_freq,'^week') )
         compounding = 52;
-    elseif ( strcmpi(comp_freq,'monthly') || strcmpi(comp_freq,'month') )
+    elseif ( regexpi(comp_freq,'^month') )
         compounding = 12;
-    elseif ( strcmpi(comp_freq,'quarterly') ||  strcmpi(comp_freq,'quarter') )
+    elseif ( regexpi(comp_freq,'^quarter') )
         compounding = 4;
-    elseif ( strcmpi(comp_freq,'semi-annual') )
+    elseif ( regexpi(comp_freq,'^semi-annual') )
         compounding = 2;
-    elseif ( strcmpi(comp_freq,'annual') )
+    elseif ( regexpi(comp_freq,'^annual') )
         compounding = 1;       
     else
-        error('Need valid compounding frequency. Unknown >>%s<<',comp_freq)
+        error('discount_factor: Need valid compounding frequency. Unknown >>%s<<',comp_freq)
     end
 else
     compounding = comp_freq;
@@ -134,4 +108,15 @@ end
  
 end
  
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'discrete', 'act/365', 'annual'),0.999499644219733,0.000001)
 %!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'disc', 'act/365', 'annual'),0.999499644219733,0.000001)
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'simple', 'act/365', 'annual'),0.999499744332038,0.000001)
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'simp', 'act/365', 'annual'),0.999499744332038,0.000001)
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'cont', 'act/365', 'annual'),0.999499619183308,0.000001)
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'continuous', 'act/365', 'annual'),0.999499619183308,0.000001)
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'disc', 'act/365', 'weekly'),0.999499619664798,0.000001)
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'disc', 'act/365', 'monthly'),0.999499621269802,0.000001)
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'disc', 'act/365', 'quarter'),0.999499625442730,0.000001)
+%!assert(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'disc', 'act/365', 'semi-annual'),0.999499631701938,0.000001)
+%!error(discount_factor ('31-Mar-2016', '30-Mar-2021', 0.00010010120979, 'disc', 'act/365', 'montly'))
+%!error(discount_factor ('31-Mar-2025', '30-Mar-2021', 0.00010010120979, 'disc', 'act/365', 'montly'))

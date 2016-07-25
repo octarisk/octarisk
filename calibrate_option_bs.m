@@ -17,8 +17,8 @@
 %# Black-Scholes valuation formula.
 %# @end deftypefn
 
-function vola_spread = calibrate_option_bs(putcallflag,S,X,T,rf,sigma, ...
-                                            multiplicator,market_value)
+function vola_spread = calibrate_option_bs(putcallflag, S, X, T, rf, sigma, ...
+                                         divyield, multiplicator, market_value)
 
 
 % Start parameter
@@ -28,8 +28,8 @@ x0 = -0.0001;
 lb = -sigma + 0.0001;
 
 % Calling non-linear solver
-[x, obj, info, iter] = fmincon (@ (x) phi(x,putcallflag,S,X,T,rf,sigma, ...
-                                multiplicator,market_value), x0, [], [], [], [], lb, []);
+[x, obj, info, iter] = fmincon (@ (x) phi(x,putcallflag, S, X, T, rf, sigma, ...
+                             divyield, multiplicator, market_value), x0, [], [], [], [], lb, []);
 
 
 if (info == 1)
@@ -60,12 +60,12 @@ end
  
  
 % Definition Objective Function:	    
-function obj = phi (x,putcallflag,S,X,T,rf,sigma,multiplicator,market_value)
+function obj = phi (x,putcallflag,S,X,T,rf,sigma,divyield,multiplicator,market_value)
         % This is where we computer the sum of the square of the errors.
         % The parameters are in the vector p, which for us is a two by one.	
-        tmp_option_value = option_bs(putcallflag,S,X,T,rf,sigma+x) ...
+        tmp_option_value = option_bs(putcallflag,S,X,T,rf,sigma+x,divyield) ...
                            .* multiplicator;
         obj = abs( tmp_option_value  - market_value)^2;
 end
                            
-%!assert(calibrate_option_bs(0,10000,11000,365,0.01,0.2,2,2600),-0.0137199,0.000002) 
+%!assert(calibrate_option_bs(0,10000,11000,365,0.01,0.2,0.0,2,2600),-0.0137199,0.000002) 

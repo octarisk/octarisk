@@ -238,7 +238,7 @@ tic;
 mc_timestep_days = zeros(length(mc_timesteps),1);
 for kk = 1:1:length(mc_timesteps)
     tmp_ts = mc_timesteps{kk};
-    if ( strcmp(lower(tmp_ts(end)),'d') )
+    if ( strcmpi(tmp_ts(end),'d') )
         mc_timestep_days(kk) = str2num(tmp_ts(1:end-1));  % get timestep days
     elseif ( strcmp(to_lower(tmp_ts(end)),'y'))
         mc_timestep_days(kk) = 365 * str2num(tmp_ts(1:end-1));  % get timestep days
@@ -379,10 +379,10 @@ tic;
 persistent curve_struct;
 curve_struct=struct();
 [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving);
-for kk = 1  : 1 : length(curve_struct)
-   curve_struct(kk).id
-   curve_struct(kk).object
-end
+% for kk = 1  : 1 : length(curve_struct)
+   % curve_struct(kk).id
+   % curve_struct(kk).object
+% end
 
 % b) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 persistent surface_struct;
@@ -397,10 +397,10 @@ index_struct=struct();
    % index_struct(kk).id
    % index_struct(kk).object
 % end
- for kk = 1  : 1 : length(curve_struct)
-    curve_struct(kk).id
-    curve_struct(kk).object
- end
+ % for kk = 1  : 1 : length(curve_struct)
+    % curve_struct(kk).id
+    % curve_struct(kk).object
+ % end
 
 % for kk = 1  : 1 : length(riskfactor_struct)
    % riskfactor_struct(kk).object

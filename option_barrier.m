@@ -39,7 +39,7 @@ function [optionValue] = option_barrier(PutOrCall,UpOrDown,OutorIn,S0,X,H,T,r,si
     print_usage ();
   end
   if nargin == 9
-    divrate = 0.00;
+    q = 0.00;
     Rebate = 0.0;
   end 
   if nargin == 10
@@ -51,7 +51,7 @@ function [optionValue] = option_barrier(PutOrCall,UpOrDown,OutorIn,S0,X,H,T,r,si
   elseif ~ischar (UpOrDown)
     error ('UpOrDown must be either D or U ')
   elseif ~ischar (OutorIn)
-    error ('UpOrDown must be either out or in ')
+    error ('OutorIn must be either out or in ')
   elseif ~isnumeric (S0)
     error ('Underlying price S0 must be numeric ')
   elseif ~isnumeric (X)
@@ -78,6 +78,19 @@ function [optionValue] = option_barrier(PutOrCall,UpOrDown,OutorIn,S0,X,H,T,r,si
     error ('Rebate must be numeric ')      
   end
   
+% error checking
+if ~( any([0,1] == PutOrCall ))
+    error ('PutOrCall must be either 1 or 0 ')
+end
+if ~( any(strcmpi({'D','U'},UpOrDown)))
+    error ('UpOrDown must be either D or U ')
+end
+if ~( any(strcmpi({'out','in'},OutorIn)))
+    error ('OutorIn must be either out or in ')
+end
+OutorIn = lower(OutorIn);
+UpOrDown = upper(UpOrDown);
+ 
 T = T ./ 365;
 
 b = r - q;
@@ -348,6 +361,16 @@ end
 optionValue(isnan(optionValue)) = 0; 
 
 end %end function
+
+% Parsing tests
+%!error(option_barrier(1,'R','in',100,90,95,365*0.5,0.08,[0.25;0.3],0.04,3))
+%!error(option_barrier(3,'D','in',100,90,95,365*0.5,0.08,[0.25;0.3],0.04,3))
+%!error(option_barrier('put','D','in',100,90,95,365*0.5,0.08,[0.25;0.3],0.04,3))
+%!error(option_barrier(1,'D','bla',100,90,95,365*0.5,0.08,[0.25;0.3],0.04,3))
+%!error(option_barrier(1,'r','blup',100,90,95,365*0.5,0.08,[0.25;0.3],0.04,3))
+%!error(option_barrier(1,'D','in','aa',90,95,365*0.5,0.08,[0.25;0.3],0.04,3))
+%!error(option_barrier(1,'D',100,90,95,365*0.5,0.08,[0.25;0.3],0.04,3))
+%!assert(option_barrier(1,'d','In',100,90,95,365*0.5,0.08,[0.25;0.3],0.04,3) , [7.762670;9.009344],0.000001)
 
 % Tests taken from Haug, Table 4-13 "Value of Standard Barrier Options", Page 154
 % Tests down in call

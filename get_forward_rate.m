@@ -130,9 +130,9 @@ end
 
 % Get compounding type:
 if ischar(comp_type)
-    if ( strcmp(lower(comp_type),'simple') == 1  )
+    if ( strcmpi(comp_type,'simple') )
         compounding_type = 1;
-    elseif ( strcmp(lower(comp_type),'disc') == 1 )
+    elseif ( strcmpi(comp_type,'disc'))
         compounding_type = 2;
     elseif ( strcmpi(comp_type,'cont')  || strcmpi(comp_type,'continuous') )
         compounding_type = 3;
@@ -143,17 +143,17 @@ end
 
 % error check compounding frequency
 if ischar(comp_freq)
-    if ( strcmpi(comp_freq,'daily') == 1 || strcmpi(comp_freq,'day') == 1)
+    if ( strcmpi(comp_freq,'daily') || strcmpi(comp_freq,'day'))
         compounding = 365;
-    elseif ( strcmpi(comp_freq,'weekly') == 1 || strcmpi(comp_freq,'week') == 1)
+    elseif ( strcmpi(comp_freq,'weekly') || strcmpi(comp_freq,'week'))
         compounding = 52;
-    elseif ( strcmpi(comp_freq,'monthly') == 1 || strcmpi(comp_freq,'month') == 1)
+    elseif ( strcmpi(comp_freq,'monthly') || strcmpi(comp_freq,'month'))
         compounding = 12;
-    elseif ( strcmpi(comp_freq,'quarterly') == 1 ||  strcmpi(comp_freq,'quarter') == 1)
+    elseif ( strcmpi(comp_freq,'quarterly')  ||  strcmpi(comp_freq,'quarter'))
         compounding = 4;
-    elseif ( strcmpi(comp_freq,'semi-annual') == 1)
+    elseif ( strcmpi(comp_freq,'semi-annual'))
         compounding = 2;
-    elseif ( strcmpi(comp_freq,'annual') == 1 )
+    elseif ( strcmpi(comp_freq,'annual') )
         compounding = 1;       
     else
         error('Need valid compounding frequency')

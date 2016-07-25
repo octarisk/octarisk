@@ -24,11 +24,13 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
     end
      
     % Get input variables
-    tmp_effdate      = (datenum(obj.maturity_date) - valuation_date);
-    tmp_dtm          = tmp_effdate + 365 * obj.tenor;
-    if (tmp_effdate < 1)
-        tmp_effdate = 1;
-    end
+    % Convert tmp_effdate timefactor from Instrument basis to pricing basis (act/365)
+    tmp_effdate  = timefactor (valuation_date, ...
+                                datenum(obj.maturity_date), obj.basis) .* 365;
+    % calculating swaption maturity date: effdate + tenor
+    tmp_dtm          = tmp_effdate + 365 * obj.tenor; % unit years is assumed
+    tmp_effdate = max(tmp_effdate,1);
+    
     tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base, ...
                                                 tmp_effdate ) + obj.spread;
     
@@ -68,6 +70,11 @@ function obj = calc_vola_spread(swaption,vola_riskfactor,discount_curve,tmp_vola
         tmp_indexvol_base           = tmp_vola_surf_obj.getValue(tmp_swap_tenor, ...
                                         tmp_dtm,tmp_moneyness_base);
 
+        % Convert interest rates into act/365 continuous (used by pricing)
+        tmp_rf_rate_base = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate_base, ...
+                        comp_type_curve,comp_freq_curve,basis_curve, ...
+                        'cont','annual',3);
+                        
         % Calculate Swaption base value and implied spread
         if ( strcmp(upper(tmp_model),'BLACK76'))
             tmp_swaptionvalue_base  = swaption_black76(call_flag,tmp_forward_base, ...

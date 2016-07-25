@@ -16,10 +16,13 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates        = discount_curve.getValue(value_type);
         tmp_rates_base   = discount_curve.getValue('base');
+        comp_type_curve = discount_curve.get('compounding_type');
+        comp_freq_curve = discount_curve.get('compounding_freq');
+        basis_curve     = discount_curve.get('basis');
     tmp_type = obj.sub_type;
     % Get Call or Putflag
     %fprintf('==============================\n');
-    if ( strcmp(tmp_type,'OPT_EUR_C') == 1 || strcmp(tmp_type,'OPT_AM_C') == 1)
+    if ( strcmpi(tmp_type,'OPT_EUR_C') || strcmpi(tmp_type,'OPT_AM_C'))
         call_flag = 1;
         moneyness_exponent = 1;
     else
@@ -31,7 +34,7 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
     % Get input variables
     tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date); 
     tmp_rf_rate              = interpolate_curve(tmp_nodes,tmp_rates,tmp_dtm ) + obj.spread;
-    tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
+    %tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
     tmp_impl_vola_spread     = obj.vola_spread;
     % Get underlying absolute scenario value 
     if ( strfind(underlying.get('id'),'RF_') )   % underlying instrument is a risk factor
@@ -64,12 +67,12 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
       % Get Volatility according to volatility smile given by vola surface
         % Calculate Volatility depending on model
         tmp_model = vola_riskfactor.model;
-        if ( strcmp(tmp_model,'GBM') == 1 || strcmp(tmp_model,'BKM') ) % Log-normal Motion
-            if ( strcmp(value_type,'stress'))
+        if ( strcmpi(tmp_model,'GBM') || strcmpi(tmp_model,'BKM') ) % Log-normal Motion
+            if ( strcmpi(value_type,'stress'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
                             tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) ...
                             .* exp(vola_riskfactor.getValue(value_type));
-            elseif ( strcmp(value_type,'base'))
+            elseif ( strcmpi(value_type,'base'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
                             tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness));
             else
@@ -77,11 +80,11 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
                                     exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
             end
         else        % Normal Model
-            if ( strcmp(value_type,'stress'))
+            if ( strcmpi(value_type,'stress'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
                           tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) .* ...
                           (vola_riskfactor.getValue(value_type) + 1);
-            elseif ( strcmp(value_type,'base'))
+            elseif ( strcmpi(value_type,'base'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
                            tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness));
             else
@@ -90,29 +93,40 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
             end
         end
     
+      % Convert divyield and interest rates into act/365 continuous (used by pricing)
+        
+        tmp_rf_rate_conv = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate, ...
+                        comp_type_curve,comp_freq_curve,basis_curve, ...
+                        'cont','annual',3);
+        divyield = obj.get('div_yield');
+        
+      % Convert timefactor from Instrument basis to pricing basis (act/365)
+      tmp_dtm_pricing  = timefactor (valuation_date, ...
+                                valuation_date + tmp_dtm, obj.basis) .* 365;
+      
       % Valuation for: Black-Scholes Modell (EU) or Willowtreemodel (AM):
-        if ( strfind(tmp_type,'OPT_EUR') > 0  )     % calling Black-Scholes option pricing model
+        if ( regexpi(tmp_type,'OPT_EUR')  )     % calling Black-Scholes option pricing model
             theo_value	            = option_bs(call_flag,tmp_underlying_value, ...
-                                            tmp_strike,tmp_dtm,tmp_rf_rate, ...
-                                            tmp_imp_vola_shock) .* tmp_multiplier;
-        elseif ( strfind(tmp_type,'OPT_AM') > 0 )   % calling Willow tree option pricing model
+                                            tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
+                                            tmp_imp_vola_shock,divyield) .* tmp_multiplier;
+        elseif ( regexpi(tmp_type,'OPT_AM'))   % calling Willow tree option pricing model
             if ( strcmpi(obj.pricing_function_american,'Willowtree') )
                 theo_value	= option_willowtree(call_flag,1,tmp_underlying_value, ...
-                                    tmp_strike,tmp_dtm,tmp_rf_rate, ...
+                                    tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
                                     tmp_imp_vola_shock,0.0,option.timesteps_size, ...
                                     option.willowtree_nodes,path_static) .* tmp_multiplier;
             else
                 theo_value  = option_bjsten(call_flag, tmp_underlying_value, ...
-                                    tmp_strike, tmp_dtm, tmp_rf_rate, ...
-                                    tmp_imp_vola_shock, obj.div_yield) .* tmp_multiplier;
+                                    tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv, ...
+                                    tmp_imp_vola_shock, divyield) .* tmp_multiplier;
             end
     end   % close loop if tmp_dtm < 0
     
       
     % store theo_value vector in appropriate class property   
-    if ( regexp(value_type,'stress'))
+    if ( strcmpi(value_type,'stress'))
         obj = obj.set('value_stress',theo_value);  
-    elseif ( regexp(value_type,'base'))
+    elseif ( strcmpi(value_type,'base'))
         obj = obj.set('value_base',theo_value);  
     else  
         obj = obj.set('timestep_mc',value_type);

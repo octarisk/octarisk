@@ -136,18 +136,19 @@ end
     else
         issue_date = bond.issue_date;
     end
-    day_count_convention = bond.day_count_convention;
-    coupon_rate  = bond.coupon_rate;
+    day_count_convention    = bond.day_count_convention;
+    dcc                     = bond.basis;
+    coupon_rate             = bond.coupon_rate;
     coupon_generation_method = bond.coupon_generation_method; 
-    notional_at_start = bond.notional_at_start; 
-    notional_at_end = bond.notional_at_end; 
-    business_day_rule = bond.business_day_rule;
-    business_day_direction = bond.business_day_direction;
+    notional_at_start       = bond.notional_at_start; 
+    notional_at_end         = bond.notional_at_end; 
+    business_day_rule       = bond.business_day_rule;
+    business_day_direction  = bond.business_day_direction;
     enable_business_day_rule = bond.enable_business_day_rule;
-    long_first_period = bond.long_first_period;
-    long_last_period = bond.long_last_period;
-    spread = bond.spread;
-    in_arrears_flag = bond.in_arrears;
+    long_first_period       = bond.long_first_period;
+    long_last_period        = bond.long_last_period;
+    spread                  = bond.spread;
+    in_arrears_flag         = bond.in_arrears;
 
 % --- Checking mandatory structure field items --- 
 
@@ -184,27 +185,6 @@ issuevec = datevec(issue_date);
 todayvec = datevec(valuation_date);
 matvec = datevec(maturity_date);
 
-%      Valid Basis are:
-%            0 = act/act (default)
-%            1 = 30/360 SIA
-%            2 = act/360
-%            3 = act/365
-%            4 = 30/360 PSA
-%            5 = 30/360 ISDA
-%            6 = 30/360 European
-%            7 = act/365 Japanese
-%            8 = act/act ISMA
-%            9 = act/360 ISMA
-%           10 = act/365 ISMA
-%           11 = 30/360E (ISMA)
-dcc_cell = {'act/act','30/360 SIA','act/360','act/365','30/360 PSA', ...
-            '30/360 ISDA','30/360 European','act/365 Japanese', ...
-            'act/act ISMA', 'act/360 ISMA','act/365 ISMA','30/360E'};
-findvec = strcmp(day_count_convention,dcc_cell);
-tt = 1:1:length(dcc_cell);
-tt = (tt - 1)';
-dcc = dot(single(findvec),tt);
-%-------------------------------------------------------------------------------
 % cashflow rollout: method backwards
 if ( strcmp(coupon_generation_method,'backward') == 1 )
 cf_date = matvec;
@@ -643,6 +623,7 @@ end
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
 %! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
 %! bond_struct.coupon_rate              = 0.035; 
 %! bond_struct.coupon_generation_method = 'backward' ;
@@ -670,6 +651,7 @@ end
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
 %! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
 %! bond_struct.coupon_rate              = 0.035; 
 %! bond_struct.coupon_generation_method = 'backward' ;
@@ -697,6 +679,7 @@ end
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
 %! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
 %! bond_struct.coupon_rate              = 0.0333; 
 %! bond_struct.coupon_generation_method = 'backward' ;
@@ -724,6 +707,7 @@ end
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
 %! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
 %! bond_struct.coupon_rate              = 0.0333; 
 %! bond_struct.coupon_generation_method = 'backward' ;
@@ -757,6 +741,7 @@ end
 %! bond_struct.compounding_freq         = 1;
 %! bond_struct.term                     = 365;
 %! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
 %! bond_struct.coupon_rate              = 0.00; 
 %! bond_struct.coupon_generation_method = 'forward' ;
@@ -793,6 +778,7 @@ end
 %! bond_struct.compounding_freq         = 1;
 %! bond_struct.term                     = 365;
 %! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 1 ;
 %! bond_struct.coupon_rate              = 0.00; 
 %! bond_struct.coupon_generation_method = 'forward' ;
@@ -808,7 +794,7 @@ end
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = false;
 %! comp_type_curve                      = 'cont';
-%! basis_curve                          = 'actual/actual';
+%! basis_curve                          = 'act/act';
 %! comp_freq_curve                      = 'annual';
 %! discount_nodes = [1825];
 %! discount_rates = [0.0001000962];
@@ -826,6 +812,7 @@ end
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
 %! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
 %! bond_struct.coupon_rate              = 0.015; 
 %! bond_struct.coupon_generation_method = 'backward' ;
@@ -855,6 +842,7 @@ end
 %! bond_struct.compounding_freq         = 1;
 %! bond_struct.term                     = 6;
 %! bond_struct.day_count_convention     = 'act/365';
+%! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
 %! bond_struct.coupon_rate              = 0.02125; 
 %! bond_struct.coupon_generation_method = 'backward' ;

@@ -33,7 +33,7 @@
 %# @item @var{S}: stock price at time 0
 %# @item @var{X}: strike price 
 %# @item @var{T}: time to maturity in days 
-%# @item @var{r}: annual risk-free interest rate (continuously compounded)
+%# @item @var{r}: annual risk-free interest rate (continuously compounded, act/365)
 %# @item @var{sigma}: implied volatility of the stock price measured as annual 
 %# standard deviation
 %# @item @var{divrate}: dividend rate p.a., continously compounded
@@ -81,8 +81,8 @@ if ( CallPutFlag == 1 ) % Call
 else   % Put   
     eta = -1;
 end
-T = T ./ 365;
-q = divrate;
+T = T ./ 365;   % assuming act/365 day count convention (Option class converts)
+q = divrate;    % assuming act/365 continuous compounding
 
     d1 = (log(S./X) + (r - q + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
     d2 = d1 - sigma.*sqrt(T);

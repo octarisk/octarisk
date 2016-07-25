@@ -117,8 +117,6 @@ end
 % ------------------------------------------------------------------
 % Calculate net present value
 tmp_npv = 0;
-tmp_npv_duration_minus100bp = 0;
-tmp_npvduration_plus100bp = 0;
 MacDur = 0;
 Convexity = 0;
 for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows  

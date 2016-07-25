@@ -17,18 +17,18 @@
 %# @end deftypefn
 
 % function for extracting sub-structure object from struct object according to id
-function  [match_obj ret_code] = get_sub_object(input_struct, input_id)
- 	matches = 0;	
+function  [match_obj ret_code] = get_sub_object(input_struct, input_id)	
 	a = {input_struct.id};
 	b = 1:1:length(a);
 	c = strcmp(a, input_id);	
     % correct for multiple matches:
     if ( sum(c) > 1 )
+        printf('WARNING: %d ids matching in struct. Returning first object.\n',sum(c));
         summe = 0;
         for ii=1:1:length(c)
             if ( c(ii) == 1)
-                match_struct = input_struct(ii);
-                ii;
+                match_obj = input_struct(ii).object;        
+                ret_code = 1;
                 return;
             end            
             summe = summe + 1;
@@ -46,3 +46,29 @@ function  [match_obj ret_code] = get_sub_object(input_struct, input_id)
 		return;
 	end
 end
+
+
+%!shared s,r,c
+%! s = struct();
+%! r = struct();
+%! r.id = 'R-TEST';
+%! r.aa = 'aa';
+%! r.bb = 3;
+%! c = struct();
+%! c.id = 'C-TEST';
+%! c.cc = 'bb';
+%! c.dd = 55;
+%! s(1).object = r;
+%! s(1).id = r.id;
+%! s(2).object = c;
+%! s(2).id = c.id;
+%!test
+%! [retstruct retcode] = get_sub_object(s,'C-TEST');
+%! assert(isequal(retstruct,c),true);
+%! assert(retcode,1);
+%!test
+%! s(3).object = c;
+%! s(3).id = c.id;
+%! [retstruct retcode] = get_sub_object(s,'C-TEST');
+%! assert(isequal(retstruct,c),true);
+%! assert(retcode,1);

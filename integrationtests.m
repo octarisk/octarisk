@@ -27,6 +27,7 @@ fprintf('=== Running integration tests === \n');
 % 2) Run tests of unit test framework
 tests_total = 0;
 tests_fail = 0; 
+M = zeros(length(function_cell),2);
 for ii = 1 : 1 : length(function_cell)
     tmp_func = function_cell{ii};
     [tmp_success,tmp_tests] = test(tmp_func,'normal');

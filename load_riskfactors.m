@@ -157,9 +157,9 @@ for ii = 1 : 1 : length(tmp_list_files)
                         if (isnumeric (tmp_cell_item))
                             tmp_entry = logical(tmp_cell_item);
                         elseif ( ischar(tmp_cell_item))
-                            if ( strcmp('false',lower(tmp_cell_item)) || strcmp('0',tmp_cell_item))
+                            if ( strcmpi('false',tmp_cell_item) || strcmpi('0',tmp_cell_item))
                                 tmp_entry = 0;
-                            elseif ( strcmp('true',lower(tmp_cell_item)) || strcmp('1',tmp_cell_item) )
+                            elseif ( strcmpi('true',tmp_cell_item) || strcmpi('1',tmp_cell_item) )
                                 tmp_entry = 1;
                             end
                         end  
