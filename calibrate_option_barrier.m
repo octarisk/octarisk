@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_barrier(@var{putcallflag}, @var{S}, @var{X}, @var{T}, @var{rf}, @var{sigma}, @var{q}, @{rebate}, @var{multiplicator}, @var{market_value})
+%# @deftypefn {Function File} { [@var{vola_spread}] =} calibrate_option_barrier(@var{putcallflag}, @var{S}, @var{X}, @var{T}, @var{rf}, @var{sigma}, @var{q}, @var{rebate}, @var{multiplicator}, @var{market_value})
 %# Calibrate the implied volatility spread for European Barrier options.
 %# @end deftypefn
 
