@@ -20,23 +20,20 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
         basis_curve     = discount_curve.get('basis');
         
     tmp_type = obj.sub_type;
-    % Get Call or Putflag
-    %fprintf('==============================\n');
-    if ( strcmp(tmp_type,'OPT_EUR_C') == 1 || strcmp(tmp_type,'OPT_AM_C') == 1)
-        call_flag = 1;
+    option_type = obj.option_type;
+    call_flag = obj.call_flag;
+    if ( call_flag == 1 )
         moneyness_exponent = 1;
     else
-        call_flag = 0;
         moneyness_exponent = -1;
     end
-     
+
     % Get input variables
     tmp_dtm           = (datenum(obj.maturity_date) - valuation_date); 
     tmp_rf_rate_base  = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + ...
                                                                     obj.spread;
-    
-    
-    if ( tmp_dtm < 0 )
+        
+    if ( tmp_dtm < 0 )          % option already expired
         tmp_impl_vola_spread    = 0;
         theo_value_base         = 0;
     else
@@ -64,7 +61,8 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
         tmp_dtm_pricing  = timefactor (valuation_date, ...
                                 valuation_date + tmp_dtm, obj.basis) .* 365;
                                 
-        if ( regexpi(tmp_type,'OPT_EUR'))
+        % Valuation for European plain vanilla options
+        if ( strcmpi(option_type,'European'))
             tmp_optionvalue_base        = option_bs(call_flag, ...
                                             tmp_underlying_value_base, ...
                                             tmp_strike,tmp_dtm_pricing,tmp_rf_rate_base, ...
@@ -74,7 +72,8 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
                                             tmp_dtm_pricing,tmp_rf_rate_base, ...
                                             tmp_indexvol_base, divyield,tmp_multiplier, ...
                                             tmp_value);
-        elseif ( regexpi(tmp_type,'OPT_AM'))
+        % Valuation for American plain vanilla options
+        elseif ( strcmpi(option_type,'American'))
             if ( strcmpi(obj.pricing_function_american,'Willowtree') )
                 tmp_optionvalue_base        = option_willowtree(call_flag,1, ...
                                                 tmp_underlying_value_base, ...
@@ -102,6 +101,23 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
                                         tmp_indexvol_base, divyield, ...
                                         tmp_multiplier,tmp_value);
             end
+ 
+        % Valuation for European Barrier Options:
+        elseif ( strcmpi(option_type,'Barrier'))   % calling Barrier option pricing model
+            tmp_optionvalue_base	= option_barrier(call_flag,obj.upordown,obj.outorin,...
+                                        tmp_underlying_value_base, tmp_strike, ...
+                                        obj.barrierlevel, tmp_dtm_pricing, ...
+                                        tmp_rf_rate_base, tmp_indexvol_base, ...
+                                        divyield, obj.rebate) .* tmp_multiplier;
+            tmp_impl_vola_spread    = calibrate_option_barrier(call_flag, ...
+                                        obj.upordown,obj.outorin, ...
+                                        tmp_underlying_value_base, tmp_strike, ...
+                                        obj.barrierlevel, tmp_dtm_pricing, ...
+                                        tmp_rf_rate_base, tmp_indexvol_base, ...
+                                        divyield, obj.rebate, ...
+                                        tmp_multiplier,tmp_value);                                          
+            else
+            tmp_impl_vola_spread = 0.0;
         end
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 )
@@ -111,12 +127,12 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
         else
             %disp('Calibration seems to be successful.. checking');
             %tmp_value
-            if ( regexpi(tmp_type,'OPT_EUR'))
+            if (  strcmpi(option_type,'European'))
                 tmp_new_val     = option_bs(call_flag,tmp_underlying_value_base, ...
                                 tmp_strike,tmp_dtm_pricing,tmp_rf_rate_base, ...
                                 tmp_indexvol_base + tmp_impl_vola_spread) .* ...
                                 tmp_multiplier;
-            elseif ( regexpi(tmp_type,'OPT_AM'))   
+            elseif (  strcmpi(option_type,'American'))   
                 if ( strcmpi(obj.pricing_function_american,'Willowtree') )
                     tmp_new_val = option_willowtree(call_flag,1, ...
                                 tmp_underlying_value_base,tmp_strike,tmp_dtm_pricing, ...
@@ -128,9 +144,14 @@ function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve
                                 tmp_underlying_value_base, tmp_strike, tmp_dtm_pricing, ...
                                 tmp_rf_rate_base, tmp_indexvol_base + tmp_impl_vola_spread, ...
                                 obj.div_yield) .* tmp_multiplier;
-                end        
+                end
+            elseif ( strcmpi(option_type,'Barrier'))   % calling Barrier option pricing model
+                    tmp_new_val = option_barrier(call_flag,obj.upordown,obj.outorin,...
+                                    tmp_underlying_value_base, tmp_strike, ...
+                                    obj.barrierlevel, tmp_dtm_pricing, ...
+                                    tmp_rf_rate_base, tmp_indexvol_base + tmp_impl_vola_spread, ...
+                                    divyield, obj.rebate) .* tmp_multiplier;
             end
-            
             if ( abs(tmp_value - tmp_new_val) < 0.05 )
                 %disp('Calibration successful.');
                 theo_value_base = tmp_value;

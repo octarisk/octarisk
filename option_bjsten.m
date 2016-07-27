@@ -102,7 +102,7 @@ function result = BSAmericanCallApprox(S, X, Time, r, b, sigma)
     
 if(b >= r)  
     % Never optimal to exersice before maturity -> return BS price
-    result = option_bs(1,S,X,Time,r,sigma,r+b);
+    result = option_bs(1,S,X,Time*365,r,sigma,r-b);
 else 
     Beta = (1/2 - b./sigma.^2) + sqrt((b./sigma.^2 - 1/2).^2 + 2.*r./sigma.^2);
     BInfinity = Beta./(Beta-1) .* X;
@@ -143,3 +143,4 @@ end
 
 %!assert(option_bjsten(1,42,40,0.75*365,0.04,0.35,0.08),5.27040387879757,0.00000001);
 %!assert(option_bjsten(0,286.867623322,368.7362,3650,0.0045624391,0.210360082233,0.00),122.290954391343,0.00000001); 
+%!assert(option_bjsten(1,1073,1160,208,-0.005192510,0.2168,0.0),36.4214536741132,0.00000001); 

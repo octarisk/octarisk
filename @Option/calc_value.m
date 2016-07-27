@@ -19,18 +19,17 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         comp_type_curve = discount_curve.get('compounding_type');
         comp_freq_curve = discount_curve.get('compounding_freq');
         basis_curve     = discount_curve.get('basis');
+        
+    % get further option attributes
     tmp_type = obj.sub_type;
-    % Get Call or Putflag
-    %fprintf('==============================\n');
-    if ( strcmpi(tmp_type,'OPT_EUR_C') || strcmpi(tmp_type,'OPT_AM_C'))
-        call_flag = 1;
+    option_type = obj.option_type;
+    call_flag = obj.call_flag;
+    if ( call_flag == 1 )
         moneyness_exponent = 1;
     else
-        call_flag = 0;
         moneyness_exponent = -1;
     end
-    
-    
+     
     % Get input variables
     tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date); 
     tmp_rf_rate              = interpolate_curve(tmp_nodes,tmp_rates,tmp_dtm ) + obj.spread;
@@ -93,8 +92,7 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
             end
         end
     
-      % Convert divyield and interest rates into act/365 continuous (used by pricing)
-        
+      % Convert interest rates into act/365 continuous (used by pricing)     
         tmp_rf_rate_conv = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate, ...
                         comp_type_curve,comp_freq_curve,basis_curve, ...
                         'cont','annual',3);
@@ -104,12 +102,14 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
       tmp_dtm_pricing  = timefactor (valuation_date, ...
                                 valuation_date + tmp_dtm, obj.basis) .* 365;
       
-      % Valuation for: Black-Scholes Modell (EU) or Willowtreemodel (AM):
-        if ( regexpi(tmp_type,'OPT_EUR')  )     % calling Black-Scholes option pricing model
-            theo_value	            = option_bs(call_flag,tmp_underlying_value, ...
-                                            tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
-                                            tmp_imp_vola_shock,divyield) .* tmp_multiplier;
-        elseif ( regexpi(tmp_type,'OPT_AM'))   % calling Willow tree option pricing model
+      % Valuation for: European plain vanilla options
+        if ( strcmpi(option_type,'European')  )     % calling Black-Scholes option pricing model
+            theo_value	= option_bs(call_flag,tmp_underlying_value, ...
+                                tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock,divyield) .* tmp_multiplier;
+          
+      % Valuation for: American plain vanilla options
+        elseif ( strcmpi(option_type,'American'))   % calling Willow tree option pricing model
             if ( strcmpi(obj.pricing_function_american,'Willowtree') )
                 theo_value	= option_willowtree(call_flag,1,tmp_underlying_value, ...
                                     tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
@@ -120,6 +120,14 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
                                     tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv, ...
                                     tmp_imp_vola_shock, divyield) .* tmp_multiplier;
             end
+                     
+       % Valuation for: European Barrier Options:
+        elseif ( strcmpi(option_type,'Barrier'))   % calling Barrier option pricing model
+            theo_value	= option_barrier(call_flag,obj.upordown,obj.outorin,...
+                                tmp_underlying_value, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing, ...
+                                tmp_rf_rate_conv, tmp_imp_vola_shock, ...
+                                divyield, obj.rebate) .* tmp_multiplier;   
     end   % close loop if tmp_dtm < 0
     
       
@@ -132,7 +140,7 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);
     end
-   
+    
 end
 
 

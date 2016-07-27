@@ -87,7 +87,7 @@ function y = getValue (surface, xx,yy,zz)
           end
         end
     % type index
-    elseif ( strcmp(upper(s.type),'INDEX'))
+    elseif ( strcmpi(s.type,'INDEX'))
         if (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0  )         %second case: object is surface
           if ( strcmp(upper(s.axis_x_name),'TERM') && strcmp(upper(s.axis_y_name),'MONEYNESS')  )
             xx_structure = s.axis_x;    % first row equals structure of axis xx
@@ -98,10 +98,10 @@ function y = getValue (surface, xx,yy,zz)
             % expand vectors and matrizes for constant extrapolation (add additional time steps and moneynesses, duplicate rows and cols)
             xx_structure = [0,xx_structure,21900];
             yy_structure = [0,yy_structure,1000000];
-            vola_matrix = cat(2,vola_matrix,vola_matrix(:,end));
-            vola_matrix = cat(2,vola_matrix(:,1),vola_matrix);
-            vola_matrix = cat(1,vola_matrix,vola_matrix(end,:));
-            vola_matrix = cat(1,vola_matrix(1,:),vola_matrix);                  
+            vola_matrix = horzcat(vola_matrix,vola_matrix(:,end));
+            vola_matrix = horzcat(vola_matrix(:,1),vola_matrix);
+            vola_matrix = vertcat(vola_matrix,vola_matrix(end,:));
+            vola_matrix = vertcat(vola_matrix(1,:),vola_matrix);                 
             % interpolate on surface term / moneyness
             y = interp2(xx_structure,yy_structure,vola_matrix,xx,yy,s.method_interpolation);
            else

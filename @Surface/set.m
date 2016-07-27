@@ -16,16 +16,24 @@ function s = set (obj, varargin)
         if (cc > 1 )        % is cube
             s.values_base = val;
         else                % is surface
-            [mc_rows mc_cols mc_stack] = size(s.values_base);
-            if ( mc_cols > 0 || mc_rows > 0) % appending vector to existing vector
-                if ( columns(val) == columns(s.values_base(:,:,mc_stack)))
-                    s.values_base(:,:,mc_stack + 1) = val;
-                else
-                    error('set: expecting length of new input vector to equal length of already existing matrix');
-                end
-            else    % setting vector
-                s.values_base(:,:,1) = val;
-            end  
+        % TODO: Rework. values_base are subsequently added to existing values -> 
+        %       no information about about x and y positions -> as workaround
+        %       use vola cubes, which overwrite existing values
+            %if ( strcmpi(s.type,'INDEX'))   % INDEX type -> term/moneyness/value cube
+            %    [mc_rows mc_cols mc_stack] = size(s.values_base);
+            %    s.values_base = horzcat(s.values_base,val);  
+            %else
+                [mc_rows mc_cols mc_stack] = size(s.values_base);
+                if ( mc_cols > 0 || mc_rows > 0) % appending vector to existing vector
+                    if ( columns(val) == columns(s.values_base(:,:,mc_stack)))
+                        s.values_base(:,:,mc_stack + 1) = val;
+                    else
+                        error('set: expecting length of new input vector to equal length of already existing matrix');
+                    end
+                else    % setting vector
+                    s.values_base(:,:,1) = val;
+                end 
+            %end
         end
       else
         error ('set: expecting the values to be real ');

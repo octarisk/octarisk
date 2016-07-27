@@ -1,13 +1,13 @@
-# Created by Octave 4.0.0, Tue Jul 12 18:24:56 2016 W. Europe Daylight Time <unknown@T43NB067>
+# Created by Octave 4.0.0, Wed Jul 27 18:30:06 2016 W. Europe Daylight Time <unknown@T43NB067>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
- 1 31
+ 1 32
 # length: 3
 # name: id
 # type: cell
 # rows: 1
-# columns: 31
+# columns: 32
 # name: <cell-element>
 # type: sq_string
 # elements: 1
@@ -237,6 +237,14 @@ SWAPTIONC20180317
 # elements: 1
 # length: 13
 ODAXC20160318
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+BDACC20160929
 
 
 
@@ -261,7 +269,7 @@ SYNTH01
 # name: name
 # type: cell
 # rows: 1
-# columns: 31
+# columns: 32
 # name: <cell-element>
 # type: sq_string
 # elements: 1
@@ -497,6 +505,14 @@ ODAXC20160318
 # name: <cell-element>
 # type: sq_string
 # elements: 1
+# length: 13
+BDACC20160929
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
 # length: 14
 GCFUTC20160126
 
@@ -515,7 +531,7 @@ SYNTH01
 # name: object
 # type: cell
 # rows: 1
-# columns: 31
+# columns: 32
 # name: <cell-element>
 # type: scalar struct
 # ndims: 2
@@ -624,7 +640,7 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 54
+# length: 59
 # name: accrued_interest
 # type: scalar
 0
@@ -683,6 +699,11 @@ Fixed Income
 # columns: 0
 
 
+# name: clean_value_base
+# type: scalar
+0
+
+
 # name: compounding_freq
 # type: scalar
 1
@@ -738,6 +759,26 @@ Cashflow instrument with cashflow vector
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: dollar_duration
+# type: scalar
+0
+
+
+# name: dv01
+# type: scalar
+0
+
+
+# name: eff_convexity
+# type: scalar
+0
+
+
+# name: eff_duration
+# type: scalar
+0
 
 
 # name: enable_business_day_rule
@@ -1781,7 +1822,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 54
+# length: 59
 # name: accrued_interest
 # type: scalar
 0
@@ -1795,7 +1836,7 @@ Fixed Income
 
 
 # name: basis
-# type: float scalar
+# type: scalar
 3
 
 
@@ -1836,6 +1877,11 @@ Fixed Income
 # type: null_matrix
 # rows: 0
 # columns: 0
+
+
+# name: clean_value_base
+# type: scalar
+0
 
 
 # name: compounding_freq
@@ -1895,6 +1941,26 @@ Medium Term Note
 # elements: 1
 # length: 16
 AGGR_EUR_FIN_BBB
+
+
+# name: dollar_duration
+# type: scalar
+0
+
+
+# name: dv01
+# type: scalar
+0
+
+
+# name: eff_convexity
+# type: scalar
+0
+
+
+# name: eff_duration
+# type: scalar
+0
 
 
 # name: enable_business_day_rule
@@ -2107,7 +2173,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 54
+# length: 59
 # name: accrued_interest
 # type: scalar
 0
@@ -2121,7 +2187,7 @@ Fixed Income
 
 
 # name: basis
-# type: float scalar
+# type: scalar
 3
 
 
@@ -2162,6 +2228,11 @@ Fixed Income
 # type: null_matrix
 # rows: 0
 # columns: 0
+
+
+# name: clean_value_base
+# type: scalar
+0
 
 
 # name: compounding_freq
@@ -2221,6 +2292,26 @@ BASF Corporate Bond 1.375pct 2019
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: dollar_duration
+# type: scalar
+0
+
+
+# name: dv01
+# type: scalar
+0
+
+
+# name: eff_convexity
+# type: scalar
+0
+
+
+# name: eff_duration
+# type: scalar
+0
 
 
 # name: enable_business_day_rule
@@ -2433,7 +2524,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 54
+# length: 59
 # name: accrued_interest
 # type: scalar
 0
@@ -2447,7 +2538,7 @@ Fixed Income
 
 
 # name: basis
-# type: float scalar
+# type: scalar
 3
 
 
@@ -2488,6 +2579,11 @@ Fixed Income
 # type: null_matrix
 # rows: 0
 # columns: 0
+
+
+# name: clean_value_base
+# type: scalar
+0
 
 
 # name: compounding_freq
@@ -2547,6 +2643,26 @@ AUSTRIA 14/20 FLR MTN
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: dollar_duration
+# type: scalar
+0
+
+
+# name: dv01
+# type: scalar
+0
+
+
+# name: eff_convexity
+# type: scalar
+0
+
+
+# name: eff_duration
+# type: scalar
+0
 
 
 # name: enable_business_day_rule
@@ -2768,7 +2884,7 @@ Derivative
 
 
 # name: basis
-# type: float scalar
+# type: scalar
 3
 
 
@@ -4607,7 +4723,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 54
+# length: 59
 # name: accrued_interest
 # type: scalar
 0
@@ -4621,7 +4737,7 @@ Fixed Income
 
 
 # name: basis
-# type: float scalar
+# type: scalar
 3
 
 
@@ -4662,6 +4778,11 @@ Fixed Income
 # type: null_matrix
 # rows: 0
 # columns: 0
+
+
+# name: clean_value_base
+# type: scalar
+0
 
 
 # name: compounding_freq
@@ -4721,6 +4842,26 @@ Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: dollar_duration
+# type: scalar
+0
+
+
+# name: dv01
+# type: scalar
+0
+
+
+# name: eff_convexity
+# type: scalar
+0
+
+
+# name: eff_duration
+# type: scalar
+0
 
 
 # name: enable_business_day_rule
@@ -4942,7 +5083,7 @@ Derivative
 
 
 # name: basis
-# type: float scalar
+# type: scalar
 3
 
 
@@ -5149,7 +5290,7 @@ RF_VOLA_IR_EUR
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 41
+# length: 47
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5157,9 +5298,20 @@ RF_VOLA_IR_EUR
 Derivative
 
 
+# name: barrierlevel
+# type: matrix
+# rows: 0
+# columns: 0
+
+
 # name: basis
 # type: scalar
 3
+
+
+# name: call_flag
+# type: scalar
+1
 
 
 # name: cf_dates
@@ -5245,11 +5397,31 @@ ODAXC20160318
 DAX Call Option
 
 
+# name: option_type
+# type: sq_string
+# elements: 1
+# length: 8
+European
+
+
+# name: outorin
+# type: sq_string
+# elements: 1
+# length: 3
+out
+
+
 # name: pricing_function_american
 # type: sq_string
 # elements: 1
 # length: 6
 BjSten
+
+
+# name: rebate
+# type: matrix
+# rows: 0
+# columns: 0
 
 
 # name: spot
@@ -5329,6 +5501,13 @@ option
 EQ_DE
 
 
+# name: upordown
+# type: sq_string
+# elements: 1
+# length: 1
+U
+
+
 # name: valuation_date
 # type: sq_string
 # elements: 1
@@ -5400,7 +5579,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 41
+# length: 47
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5408,9 +5587,307 @@ RF_VOLA_EQ_DE
 Derivative
 
 
+# name: barrierlevel
+# type: scalar
+9500
+
+
 # name: basis
 # type: scalar
 3
+
+
+# name: call_flag
+# type: scalar
+1
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: scalar
+1
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 19
+Call Barrier Option
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: div_yield
+# type: scalar
+0.04
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+BDACC20160929
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+29-Sep-2016
+
+
+# name: multiplier
+# type: scalar
+1
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 18
+DAX Barrier Option
+
+
+# name: option_type
+# type: sq_string
+# elements: 1
+# length: 7
+Barrier
+
+
+# name: outorin
+# type: sq_string
+# elements: 1
+# length: 2
+in
+
+
+# name: pricing_function_american
+# type: sq_string
+# elements: 1
+# length: 6
+BjSten
+
+
+# name: rebate
+# type: scalar
+100
+
+
+# name: spot
+# type: scalar
+9820
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: strike
+# type: scalar
+9800
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 9
+OPT_BAR_C
+
+
+# name: theo_delta
+# type: scalar
+0
+
+
+# name: theo_gamma
+# type: scalar
+0
+
+
+# name: theo_omega
+# type: scalar
+0
+
+
+# name: theo_rho
+# type: scalar
+0
+
+
+# name: theo_theta
+# type: scalar
+0
+
+
+# name: theo_vega
+# type: scalar
+0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timesteps_size
+# type: scalar
+5
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 6
+option
+
+
+# name: underlying
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: upordown
+# type: sq_string
+# elements: 1
+# length: 1
+D
+
+
+# name: valuation_date
+# type: sq_string
+# elements: 1
+# length: 11
+31-Dec-2015
+
+
+# name: value_base
+# type: scalar
+580
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_sensi
+# type: scalar
+1
+
+
+# name: vola_spread
+# type: scalar
+0
+
+
+# name: vola_surf
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surf_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surf_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_surface
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+# name: willowtree_nodes
+# type: scalar
+20
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 47
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 10
+Derivative
+
+
+# name: barrierlevel
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: basis
+# type: scalar
+3
+
+
+# name: call_flag
+# type: scalar
+1
 
 
 # name: cf_dates
@@ -5496,11 +5973,31 @@ GCFUTC20160126
 Gold Future Call Option
 
 
+# name: option_type
+# type: sq_string
+# elements: 1
+# length: 8
+American
+
+
+# name: outorin
+# type: sq_string
+# elements: 1
+# length: 3
+out
+
+
 # name: pricing_function_american
 # type: sq_string
 # elements: 1
 # length: 6
 BjSten
+
+
+# name: rebate
+# type: matrix
+# rows: 0
+# columns: 0
 
 
 # name: spot
@@ -5578,6 +6075,13 @@ option
 # elements: 1
 # length: 8
 COM_GOLD
+
+
+# name: upordown
+# type: sq_string
+# elements: 1
+# length: 1
+U
 
 
 # name: valuation_date

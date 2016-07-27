@@ -15,18 +15,18 @@ classdef Option < Instrument
         multiplier = 5;
         timesteps_size = 5;      % size of one timestep in path dependent valuations
         willowtree_nodes = 20;   % number of willowtree nodes per timestep
-        theo_delta = 0.0;
-        theo_gamma = 0.0;
-        theo_vega = 0.0;
-        theo_theta = 0.0;
-        theo_rho = 0.0;
-        theo_omega = 0.0; 
         pricing_function_american = 'BjSten'; % [Willowtree,BjSten] 
         div_yield = 0.0;         % dividend yield (continuous, act/365)
+        % special attributes required for barrier option only:
+        upordown = 'U';          % Up or Down Barrier Option {'U','D'}
+        outorin  = 'out';        % out or in Barrier Option {'out','in'}
+        barrierlevel = 0.0;      % barrier level triggers barrier event 
+        rebate   = 0.0;          % Rebate: payoff in case of a barrier event
     end
-   
+ 
     properties (SetAccess = private)
         basis = 3;
+        call_flag = 1;           % set by sub type -> 1: call, 0: put
         cf_dates = [];
         cf_values = [];
         vola_surf = [];
@@ -34,6 +34,13 @@ classdef Option < Instrument
         vola_surf_stress = [];
         vola_spread = 0.0;
         sub_type = 'OPT_EUR_C';
+        option_type = 'European'; % set by sub_type [European, American, Barrier]
+        theo_delta = 0.0;
+        theo_gamma = 0.0;
+        theo_vega = 0.0;
+        theo_theta = 0.0;
+        theo_rho = 0.0;
+        theo_omega = 0.0;
     end
 
    methods
@@ -57,7 +64,15 @@ classdef Option < Instrument
       
       function disp(b)
          disp@Instrument(b)
-         fprintf('sub_type: %s\n',b.sub_type);                   
+         fprintf('sub_type: %s\n',b.sub_type); 
+         fprintf('option_type: %s\n',b.option_type); 
+         fprintf('call_flag: %d\n',b.call_flag);
+         if ( strcmpi(b.option_type,'Barrier') )
+            fprintf('Barrier Level: %f\n',b.barrierlevel);
+            fprintf('Rebate: %f\n',b.rebate);
+            fprintf('UporDown: %s\n',b.upordown);
+            fprintf('OutorIn: %s\n',b.outorin);
+         end
          fprintf('maturity_date: %s\n',b.maturity_date);      
          fprintf('strike: %f \n',b.strike);
          fprintf('multiplier: %f \n',b.multiplier);         
@@ -65,6 +80,7 @@ classdef Option < Instrument
          fprintf('vola_surface: %s\n',b.vola_surface ); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('spread: %f\n',b.spread); 
+         fprintf('div_yield (cont, act/365): %f \n',b.div_yield);
          fprintf('vola_sensi: %f\n',b.vola_sensi); 
          fprintf('compounding_type: %s\n',b.compounding_type);  
          fprintf('compounding_freq: %d\n',b.compounding_freq);    
@@ -114,11 +130,37 @@ classdef Option < Instrument
           b.sub_type        = a.sub_type;
       end  
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,'OPT_EUR_C') || strcmpi(sub_type,'OPT_EUR_P') || strcmpi(sub_type,'OPT_AM_C') || strcmpi(sub_type,'OPT_AM_P') )
-            error('Option sub_type must be either OPT_EUR_C, OPT_EUR_P, OPT_AM_C, OPT_AM_P ')
+         if ~(any(strcmpi(sub_type,{'OPT_EUR_C','OPT_EUR_P','OPT_AM_C','OPT_AM_P','OPT_BAR_P','OPT_BAR_C'})))
+            error('Option sub_type must be either OPT_EUR_C, OPT_EUR_P, OPT_AM_C, OPT_AM_P, OPT_BAR_P or OPT_BAR_C')
          end
          obj.sub_type = sub_type;
+         % set call_flag
+         if ( regexpi(sub_type,'_P$'))  % put option
+            obj.call_flag = 0;
+         else                           % call option
+            obj.call_flag = 1;
+         end
+         % set option type
+         if ( regexpi(sub_type,'_EUR_'))        % European (plain vanilla) option
+            obj.option_type = 'European';
+         elseif ( regexpi(sub_type,'_AM_'))     % American (plain vanilla) option
+            obj.option_type = 'American';
+         elseif ( regexpi(sub_type,'_BAR_'))    % (European) Barrier option
+            obj.option_type = 'Barrier';
+         end
       end % set.sub_type
+      function obj = set.upordown(obj,upordown)
+         if ~(any(strcmpi(upordown,{'U','D'})))
+            error('Option upordown must be either U or D')
+         end
+         obj.upordown = upper(upordown);
+      end % set.upordown
+      function obj = set.outorin(obj,outorin)
+         if ~(any(strcmpi(outorin,{'out','in'})))
+            error('Option outorin must be either out or in')
+         end
+         obj.outorin = lower(outorin);
+      end % set.outorin
       function obj = set.day_count_convention(obj,day_count_convention)
          obj.day_count_convention = day_count_convention;
          % Call superclass method to set basis

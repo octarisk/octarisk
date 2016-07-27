@@ -19,13 +19,11 @@ function obj = calc_greeks(option,value_type,underlying,vola_riskfactor,discount
         comp_freq_curve = discount_curve.get('compounding_freq');
         basis_curve     = discount_curve.get('basis');
     tmp_type = obj.sub_type;
-    % Get Call or Putflag
-    %fprintf('==============================\n');
-    if ( strcmp(tmp_type,'OPT_EUR_C') == 1 || strcmp(tmp_type,'OPT_AM_C') == 1)
-        call_flag = 1;
+    option_type = obj.option_type;
+    call_flag = obj.call_flag;
+    if ( call_flag == 1 )
         moneyness_exponent = 1;
     else
-        call_flag = 0;
         moneyness_exponent = -1;
     end
     
@@ -35,7 +33,7 @@ function obj = calc_greeks(option,value_type,underlying,vola_riskfactor,discount
     tmp_rf_rate              = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
     tmp_impl_vola_spread     = obj.vola_spread;
     % Get underlying absolute scenario value 
-    tmp_underlying_value       = underlying.getValue('base');
+    tmp_underlying_value     = underlying.getValue('base');
    
     if ( tmp_dtm < 0 )
         theo_value  = 0.0;
@@ -82,27 +80,84 @@ function obj = calc_greeks(option,value_type,underlying,vola_riskfactor,discount
                                     + tmp_impl_vola_atm + tmp_impl_vola_spread;  
             end
         end
-       % Convert divyield and interest rates into act/365 continuous (used by pricing)
-        
+       % Convert timefactor from Instrument basis to pricing basis (act/365)
+        tmp_dtm_pricing  = timefactor (valuation_date, ...
+                                valuation_date + tmp_dtm, obj.basis) .* 365;
+       
+       % Convert divyield and interest rates into act/365 continuous (used by pricing)        
         tmp_rf_rate_conv = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate, ...
                         comp_type_curve,comp_freq_curve,basis_curve, ...
                         'cont','annual',3);
         divyield = obj.get('div_yield');
         
       % Valuation for: Black-Scholes Modell (EU) or Willowtreemodel (AM):
-        if ( regexpi(tmp_type,'OPT_EUR') )     % calling Black-Scholes option pricing model
+        if ( strcmpi(option_type,'European')  )     % calling Black-Scholes option pricing model
             [theo_value theo_delta theo_gamma theo_vega theo_theta theo_rho ...
                                     theo_omega] = option_bs(call_flag, ...
-                                    tmp_underlying_value, tmp_strike, tmp_dtm, ...
-                                    tmp_rf_rate, tmp_imp_vola_shock, divyield);
-        elseif ( regexpi(tmp_type,'OPT_AM'))   % calling Willow tree option pricing model
-            %theo_value	= option_willowtree(call_flag,1,tmp_underlying_value,tmp_strike,tmp_dtm,tmp_rf_rate,tmp_imp_vola_shock,0.0,option.timesteps_size,option.willowtree_nodes,path_static);
-            theo_delta  = 0.0;
-            theo_gamma  = 0.0;
-            theo_vega   = 0.0;
-            theo_theta  = 0.0;
-            theo_rho    = 0.0;
-            theo_omega  = 0.0; 
+                                    tmp_underlying_value, tmp_strike, tmp_dtm_pricing, ...
+                                    tmp_rf_rate_conv, tmp_imp_vola_shock, divyield);            
+        elseif ( strcmpi(option_type,'American') )   
+            % because of performance reasons calculate greeks with Berksund-Stensland model
+            % calculating effective greeks -> imply from derivatives
+            theo_value_base	= option_bjsten(call_flag, tmp_underlying_value, ...
+                                tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock, divyield);
+            undvalue_down	= option_bjsten(call_flag, tmp_underlying_value - 1, ...
+                                tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock, divyield);
+            undvalue_up	    = option_bjsten(call_flag, tmp_underlying_value + 1, ...
+                                tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock, divyield);
+            rfrate_down     = option_bjsten(call_flag, tmp_underlying_value, ...
+                                tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv - 0.01, ...
+                                tmp_imp_vola_shock, divyield);
+            rfrate_up	    = option_bjsten(call_flag, tmp_underlying_value, ...
+                                tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv + 0.01, ...
+                                tmp_imp_vola_shock, divyield);                       
+            vola_down	    = option_bjsten(call_flag, tmp_underlying_value, ...
+                                tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock - 0.01, divyield);                           
+            vola_up	        = option_bjsten(call_flag, tmp_underlying_value, ...
+                                tmp_strike, tmp_dtm_pricing, tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock + 0.01, divyield);
+            time_down	    = option_bjsten(call_flag, tmp_underlying_value, ...
+                                tmp_strike, tmp_dtm_pricing - 1, tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock, divyield);
+            time_up	        = option_bjsten(call_flag, tmp_underlying_value, ...
+                                tmp_strike, tmp_dtm_pricing + 1, tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock, divyield);
+            theo_delta  = (undvalue_up - undvalue_down) / 2;
+            theo_gamma  = (undvalue_up + undvalue_down - 2 * theo_value_base);
+            theo_vega   = (vola_up - vola_down) / 2;
+            theo_theta  = -(time_up - time_down) / 2;
+            theo_rho    = -(rfrate_up - rfrate_down) / 2;
+            theo_omega  = theo_delta .* tmp_underlying_value ./ theo_value_base;
+        elseif ( strcmpi(option_type,'Barrier') ) 
+            % calculating effective greeks -> imply from derivatives
+            theo_value_base	= option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing, tmp_rf_rate_conv, tmp_imp_vola_shock, divyield, obj.rebate);
+            undvalue_down	= option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value - 1, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing, tmp_rf_rate_conv, tmp_imp_vola_shock, divyield, obj.rebate);
+            undvalue_up	    = option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value + 1, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing, tmp_rf_rate_conv, tmp_imp_vola_shock, divyield, obj.rebate);
+            rfrate_down     = option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing, tmp_rf_rate_conv - 0.01, tmp_imp_vola_shock, divyield, obj.rebate);                                
+            rfrate_up	    = option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing, tmp_rf_rate_conv + 0.01, tmp_imp_vola_shock, divyield, obj.rebate);                                
+            vola_down	    = option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing, tmp_rf_rate_conv, tmp_imp_vola_shock - 0.01, divyield, obj.rebate);                                
+            vola_up	        = option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing, tmp_rf_rate_conv, tmp_imp_vola_shock + 0.01, divyield, obj.rebate);                                    
+            time_down	    = option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing - 1, tmp_rf_rate_conv, tmp_imp_vola_shock, divyield, obj.rebate);
+            time_up	        = option_barrier(call_flag,obj.upordown,obj.outorin, tmp_underlying_value, tmp_strike, ...
+                                obj.barrierlevel, tmp_dtm_pricing + 1, tmp_rf_rate_conv, tmp_imp_vola_shock, divyield, obj.rebate);                 
+            theo_delta  = (undvalue_up - undvalue_down) / 2;
+            theo_gamma  = (undvalue_up + undvalue_down - 2 * theo_value_base);
+            theo_vega   = (vola_up - vola_down) / 2;
+            theo_theta  = -(time_up - time_down) / 2;
+            theo_rho    = -(rfrate_up - rfrate_down) / 2;
+            theo_omega  = theo_delta .* tmp_underlying_value ./ theo_value_base;
         end
     end   % close loop if tmp_dtm < 0
     

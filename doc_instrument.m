@@ -192,6 +192,31 @@ end
 %! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
 
 %!test
+%! fprintf('\tdoc_instrument:\tPricing European Barrier Option Object\n');
+%! r = Riskfactor();
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[180],'rates_base',[0.08],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.2500);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',100);
+%! o = Option();
+%! o = o.set('maturity_date','30-Sep-2016','sub_Type','OPT_BAR_C');
+%! o = o.set('strike',90,'multiplier',1,'div_yield',0.04,'upordown','D','outorin','in');
+%! o = o.set('barrierlevel',95,'rebate',3);
+%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),7.77203592837206,0.0000001);
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.2200);
+%! v = v.set('type','INDEX');
+%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! assert(o.get('vola_spread'),0.030000,0.00001);
+%! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
+
+%!test
 %! fprintf('\tdoc_instrument:\tPricing American Option Object (Willowtree and Bjerksund and Stensland)\n');
 %! r = Riskfactor();
 %! c = Curve();
@@ -220,6 +245,7 @@ end
 %! o = o.set('value_base',100);
 %! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
 %! assert(o.getValue('base'),100.000,0.0001);
+%! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Debt Object\n');

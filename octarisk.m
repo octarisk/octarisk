@@ -388,7 +388,10 @@ curve_struct=struct();
 persistent surface_struct;
 surface_struct=struct();
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir);
-
+% for kk = 1  : 1 : length(surface_struct)
+   % surface_struct(kk).id
+   % surface_struct(kk).object
+% end
 % c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
 index_struct=struct();

@@ -43,7 +43,7 @@
 %# @seealso{option_binomial, option_bs, option_exotic_mc}
 %# @end deftypefn
 
-function [option_willowtree delta] = option_willowtree(CallFlag,AmericanFlag,S0,K,T,rf,sigma,dividend,dk,nodes,path_static)
+function [option_willowtree V_eur_option] = option_willowtree(CallFlag,AmericanFlag,S0,K,T,rf,sigma,dividend,dk,nodes,path_static)
 
 %-------------------------------------------------------------------------
 %           Error Handling
@@ -102,24 +102,6 @@ end
 %           Setup of input parameters
 %-------------------------------------------------------------------------
 
-% For calculation of greeks add additional values to input vectors: (todo: adjust for different length of input vectors)
-    % % % calculate change in S, r, sigma, T
-    % length_input = length(S0);
-    % S_greeks = cat(1,S0,S0 + 1);
-    % S_greeks = cat(1,S_greeks,S0);
-    % S_greeks = cat(1,S_greeks,S0);
-    % S_greeks = cat(1,S_greeks,S0);
-     
-    % rf_greeks       = [rf;rf;rf + 0.01;rf;rf];
-    % sigma_greeks    = [sigma;sigma;sigma;sigma + 0.1;sigma];
-    % % %T_greeks        = [T;T;T;T;T-1];
-
-    % S0 = S_greeks; 
-    % %rf = rf_greeks;
-    % sigma = sigma_greeks;
-    % % %T = T_greeks
- 
- 
 divyield = dividend;
 if AmericanFlag==1,
     AmericanOptionFlag = 1; 
@@ -322,13 +304,11 @@ discount_factor = exp(-rf_input'.*dt);
 discount_factor_mat = exp(-rf_input'.*dt);
 discount_factor_mat = repmat(discount_factor_mat,n,1);
 present_value = V_T;
-% discounting from node k=T to k=1
-%tic;
+
 
 tmp_drift = rf  - divyield;
 
-% %#%#%#%#%#  iterating through timesteps and discounting expected values  %#%#%#%#%#%#%#%#%#
-
+% ######## iterating through timesteps and discounting expected values  ########
 for ii = (N-1) : -1 : 1  
     timestep_value  = (Transition_matrix(:,:,ii) * present_value) .* discount_factor_mat ;
     timestep_value  = reshape(timestep_value,n,1,c);
@@ -336,58 +316,17 @@ for ii = (N-1) : -1 : 1
     S_act           = S0 .* exp( ((tmp_drift - (sigma.^2 ./ 2)) .* dt .* ii) + sigma .* sqrt(dt .* ii) .* z);
     immediate_val   = callputflag.*(S_act - K);
     present_value   = max(timestep_value,AmericanOptionFlag.*immediate_val) ;
-    % Saving present values for greeks
-    if ( ii == 2)
-        V_t2 = present_value;
-    elseif ( ii == 1)
-        V_t1 = present_value;
-    end
 end
 
-% discounting from node k=+1 to k=0 
 immediate_val   = callputflag.*(S0 - K);
 present_value   = q' * (present_value) .* discount_factor;
 present_value   = reshape(present_value,1,1,c);
 V_option        =  max(present_value,AmericanOptionFlag.*immediate_val) ;
 V_option        = reshape(V_option,c,1,1);
-%V_eur_option    = (q' * ( exp(-rf*T_years) .* V_T))';
-%iterate_time = toc
-%total_time = iterate_time + optim_time;
+V_eur_option    = (q' * ( exp(-rf*T_years) .* V_T))';
+
 option_willowtree = V_option;
 
-% Calculation of Greeks:
-S_t0 = S0;
-S_t1 = S0 .* exp( (tmp_drift - ((sigma).^2 ./ 2)) .* dt .* 1 + sigma .* sqrt(dt .* 1) .* z);
-S_t2 = S0 .* exp( (tmp_drift - ((sigma).^2 ./ 2)) .* dt .* 2 + sigma .* sqrt(dt .* 2) .* z);
-%disp('Value per t');
-V_t0(1,1,:) = V_option;
-
-% Calculating delta:
-delta = callputflag .*( sum(abs(V_t1 - V_t0))) ./ ( sum(abs(S_t1 - S_t0)) );
-delta = reshape(delta,c,1,1);
-%delta = delta(1:length_input);
-% Calculating gamma: not working reliably  -> wrong?
-% gamma = (abs(mean(V_t2) - mean(V_t1) ) +  abs( mean(V_t1) - V_t0  ))./2;
-% gamma = reshape(gamma,c,1,1);
-% % Calculating Theta: averaging of change in option value at nodes at origin (n/2 and 1+n/2) -> wrong?
-% theta1 = (V_t2(n/2,:,:) - V_t1(n/2,:,:)) ./ dt;
-% theta2 = (V_t2(1+n/2,:,:) - V_t1(1+n/2,:,:)) ./ dt;
-% theta = 0.5 .*(theta1 + theta2);
-% theta = reshape(theta,c,1,1);
-
-% reshape for greeks
-% V_matrix = reshape(V_option,length_input,5);
-% V_base = V_matrix(:,1);
-% V_delta = V_matrix(:,2);
-% V_rho = V_matrix(:,3);
-% V_sigma = V_matrix(:,4);
-% %V_tau = V_matrix(:,5);
-
-% delta   = callputflag .* abs(V_delta - V_base);
-% rho     = V_rho - V_base;
-% vega    = (V_sigma - V_base ) ./ 10;
-% %theta   = V_tau - V_base
-% option_willowtree = V_base;
 end
   
   

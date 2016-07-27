@@ -24,7 +24,9 @@ function s = get (bond, property)
         case 'value_mc'
           s = obj.value_mc; 
         case 'value_base'
-          s = obj.value_base;   
+          s = obj.value_base; 
+        case 'div_yield'
+          s = obj.div_yield;
         case 'value_stress'
           s = obj.value_stress;
         case 'sub_type'
@@ -56,7 +58,15 @@ function s = get (bond, property)
         case 'theo_rho'
           s = obj.theo_rho; 
         case 'theo_omega'
-          s = obj.theo_omega; 
+          s = obj.theo_omega;
+        case 'upordown'
+          s = obj.upordown;
+        case 'outorin'
+          s = obj.outorin;
+        case 'rebate'
+          s = obj.rebate;
+        case 'barrierlevel'
+          s = obj.barrierlevel;       
         otherwise
           error ('get: invalid property %s', property);
       end

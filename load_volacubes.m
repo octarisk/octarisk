@@ -43,8 +43,8 @@ vola_failed_cell = {};
 for ii = 1 : 1 : length(tmp_list_files)
     tmp_filename = tmp_list_files( ii ).name;
     try % try to find a match between file in mktdata folder and provided string 
-        % for INDEX and IR volatilities
-        % vola for index found  
+      % for INDEX and IR volatilities
+      % vola for index found  
         if ( regexp(tmp_filename,input_filename_vola_index) == 1)      
             tmp_len_struct = length(surface_struct);
             M = load(strcat(path_mktdata,'/',tmp_filename));
@@ -72,7 +72,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                                 'axis_y',yy_structure,'values_base',vola_matrix);
             surface_struct( tmp_len_struct + 1).id = tmp_id;
             surface_struct( tmp_len_struct + 1).object = tmp_surface_object;
-            % vola for ir found  
+      % vola for ir found  
         elseif ( regexp(tmp_filename,input_filename_vola_ir) == 1)       
             tmp_len_struct = length(surface_struct);
             M = load(strcat(path_mktdata,'/',tmp_filename));

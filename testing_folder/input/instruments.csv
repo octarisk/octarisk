@@ -33,9 +33,10 @@ Item,BASF SE,BASF11,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
 Item,Bitcoins,BTCOIN,246.92,ALT,BitCoins,EUR,RF_ALT_BC,1,,Alternative
 HeaderCASHFLOW,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,spread_curveCHAR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR
 Item,Cashflowinstrument,CFANLEIHE1,105,CASHFLOW,Cashflow instrument with cashflow vector,EUR,IR_EUR,SPREAD_EUR_HY,17-Jul-2015|16-Jul-2016|17-Jul-2017,3.0|3.0|103.00,Fixed Income
-HeaderOPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,vola_sensiNMBR,spotNMBR,strikeNMBR,spreadNMBR,multiplierNMBR,maturity_dateDATE,asset_classCHAR
-Item,DAX Call Option,ODAXC20160318,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,18-Nov-2016,Derivative
-Item,Gold Future Call Option,GCFUTC20160126,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,26-Jul-2016,Derivative
+HeaderOPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,vola_sensiNMBR,spotNMBR,strikeNMBR,spreadNMBR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,upordownCHAR,outorinCHAR,rebateNMBR,barrierlevelNMBR,div_yieldNMBR
+Item,DAX Call Option,ODAXC20160318,1500,OPT_EUR_C,Call Option DAX,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9220,10200,0,5,18-Nov-2016,Derivative,,,,,0.0
+Item,DAX Barrier Option,BDACC20160929,580,OPT_BAR_C,Call Barrier Option,EUR,RF_VOLA_EQ_DE,EQ_DE,IR_EUR,1,9820,9800,0,1,29-Sep-2016,Derivative,D,in,100,9500,0.04
+Item,Gold Future Call Option,GCFUTC20160126,1580,OPT_AM_C,Call Option Gold,USD,RF_VOLA_COM_GOLD,COM_GOLD,IR_EUR,1,1073,1160,0,100,26-Jul-2016,Derivative,,,,,0.0
 HeaderSWAPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,tenorNMBR,no_paymentsNMBR,spotNMBR,strikeNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,modelCHAR
 Item,IR Payer Swaption,SWAPTIONC20180317,0.90,SWAPT_EUR_PAY,IR Payer Swaption,EUR,RF_VOLA_IR_EUR,IR_EUR,IR_EUR,10,1,0.025,0.0175,disc,act/365,100,17-Mar-2018,Derivative,Black76
 HeaderFWD,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,underlying_idCHAR,underlying_sensitivityNMBR,discount_curveCHAR,strike_priceNMBR,spreadNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,dividend_yieldNMBR,convenience_yieldNMBR,storage_costNMBR
