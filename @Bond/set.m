@@ -167,15 +167,19 @@ function s = set (bond, varargin)
     elseif (ischar (prop) && strcmp (prop, 'maturity_date'))   
       if (ischar (val))
         s.maturity_date = datestr(strtrim(val),1);
+      elseif ( isnumeric(val))
+        s.valuation_date = datestr(val);
       else
-        error ('set: expecting maturity_date to be a char');
+        error ('set: expecting maturity_date to be a char or integer');
       end
     % ====================== set issue_date ======================
     elseif (ischar (prop) && strcmp (prop, 'issue_date'))   
       if (ischar (val))
         s.issue_date = datestr(strtrim(val),1);
+      elseif ( isnumeric(val))
+        s.valuation_date = datestr(val);
       else
-        error ('set: expecting issue_date to be a char');
+        error ('set: expecting issue_date to be a char or integer');
       end  
     % ====================== set spread_curve  ======================
     elseif (ischar (prop) && strcmp (prop, 'spread_curve'))   
@@ -254,8 +258,10 @@ function s = set (bond, varargin)
     elseif (ischar (prop) && strcmp (prop, 'valuation_date'))   
       if (ischar (val))
         s.valuation_date = datestr(strtrim(val),1);
+      elseif ( isnumeric(val))
+        s.valuation_date = datestr(val);
       else
-        error ('set: expecting valuation_date to be a char');
+        error ('set: expecting valuation_date to be a char or integer');
       end 
     % ====================== set asset_class ======================
     elseif (ischar (prop) && strcmp (prop, 'asset_class'))   
@@ -319,6 +325,8 @@ function s = set (bond, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting enable_business_day_rule to false.',val);
             s.enable_business_day_rule = logical(0);
         end
+      elseif ( islogical(val))
+        s.long_first_period = val;
       else
         error ('set: expecting enable_business_day_rule to be a real number or true/false');
       end 
@@ -358,6 +366,8 @@ function s = set (bond, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting long_first_period to false.',val);
             s.long_first_period = logical(0);
         end
+      elseif ( islogical(val))
+        s.long_first_period = val;    
       else
         error ('set: expecting long_first_period to be a real number');
       end 
@@ -374,6 +384,8 @@ function s = set (bond, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting long_last_period to false.',val);
             s.long_last_period = logical(0);
         end
+      elseif ( islogical(val))
+        s.long_first_period = val; 
       else
         error ('set: expecting long_last_period to be a real number');
       end 
@@ -384,6 +396,48 @@ function s = set (bond, varargin)
       else
         error ('set: expecting last_reset_rate to be a real number');
       end 
+    % ====================== set mod_duration ======================
+    elseif (ischar (prop) && strcmp (prop, 'mod_duration'))   
+      if (isnumeric (val) && isreal (val))
+        s.mod_duration = val;
+      else
+        error ('set: expecting mod_duration to be a real number');
+      end
+    % ====================== set mac_duration ======================
+    elseif (ischar (prop) && strcmp (prop, 'mac_duration'))   
+      if (isnumeric (val) && isreal (val))
+        s.mac_duration = val;
+      else
+        error ('set: expecting mac_duration to be a real number');
+      end      
+    % ====================== set eff_duration ======================
+    elseif (ischar (prop) && strcmp (prop, 'eff_duration'))   
+      if (isnumeric (val) && isreal (val))
+        s.eff_duration = val;
+      else
+        error ('set: expecting eff_duration to be a real number');
+      end      
+    % ====================== set eff_convexity ======================
+    elseif (ischar (prop) && strcmp (prop, 'eff_convexity'))   
+      if (isnumeric (val) && isreal (val))
+        s.eff_convexity = val;
+      else
+        error ('set: expecting eff_convexity to be a real number');
+      end      
+    % ====================== set dv01 ======================
+    elseif (ischar (prop) && strcmp (prop, 'dv01'))   
+      if (isnumeric (val) && isreal (val))
+        s.dv01 = val;
+      else
+        error ('set: expecting dv01 to be a real number');
+      end      
+    % ====================== set dollar_duration ======================
+    elseif (ischar (prop) && strcmp (prop, 'dollar_duration'))   
+      if (isnumeric (val) && isreal (val))
+        s.dollar_duration = val;
+      else
+        error ('set: expecting dollar_duration to be a real number');
+      end
     % ====================== set in_arrears ======================
     elseif (ischar (prop) && strcmp (prop, 'in_arrears'))   
       if (isnumeric (val) && isreal (val))
@@ -433,7 +487,7 @@ function s = set (bond, varargin)
         error ('set: expecting notional_at_start to be a real number');
       end 
     % ====================== set notional_at_end  ======================
-    elseif (ischar (prop) && strcmp (prop, 'notional_at_end '))   
+    elseif (ischar (prop) && strcmp (prop, 'notional_at_end'))   
       if (isnumeric (val) && isreal (val))
         s.notional_at_end = logical(val);
       elseif ( ischar(val))
@@ -453,3 +507,7 @@ function s = set (bond, varargin)
     end
   end
 end
+
+     
+
+      

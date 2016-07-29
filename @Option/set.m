@@ -55,7 +55,7 @@ function s = set (option, varargin)
             s.timestep_mc = cellstr(val);
         end 
       else
-        error ('set: expecting the cell value to be a cell vector');
+        error ('set: expecting the timestep_mc cell value to be a cell vector');
       end  
     % ====================== set value_stress ======================
     elseif (ischar (prop) && strcmpi (prop, 'value_stress'))   
@@ -65,7 +65,7 @@ function s = set (option, varargin)
         if ( isempty(val))
             s.value_stress = [];
         else
-            error ('set: expecting the value to be a real vector');
+            error ('set: expecting the value_stress to be a real vector');
         end
       end
     % ====================== set value_base ======================
@@ -73,91 +73,95 @@ function s = set (option, varargin)
       if (isvector (val) && isreal (val))
         s.value_base = val;
       else
-        error ('set: expecting the value to be a real vector');
+        error ('set: expecting the value_base to be a real vector');
       end 
     % ====================== set id ======================
     elseif (ischar (prop) && strcmpi (prop, 'id'))   
       if (ischar(val))
         s.id = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the id to be a char');
       end
     % ====================== set name ======================
     elseif (ischar (prop) && strcmpi (prop, 'name'))   
       if (ischar(val))
         s.name = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting name to be a char');
       end
     % ====================== set currency ======================
     elseif (ischar (prop) && strcmpi (prop, 'currency'))   
       if (ischar (val))
         s.currency = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the currency to be a char');
       end  
     % ====================== set valuation_date ======================
     elseif (ischar (prop) && strcmpi (prop, 'valuation_date'))   
       if (ischar (val))
         s.valuation_date = datestr(strtrim(val),1);
+      elseif ( isnumeric(val))
+        s.valuation_date = datestr(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting valuation_date to be a char or integer');
       end  
     % ====================== set maturity_date ======================
     elseif (ischar (prop) && strcmpi (prop, 'maturity_date'))   
       if (ischar (val))
         s.maturity_date = datestr(strtrim(val),1);
+      elseif ( isnumeric(val))
+        s.valuation_date = datestr(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting maturity_date to be a char or integer');
       end
     % ====================== set discount_curve  ======================
     elseif (ischar (prop) && strcmpi (prop, 'discount_curve'))   
       if (ischar (val))
         s.discount_curve = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the discount_curve to be a char');
       end 
     % ====================== set sub_type ======================
     elseif (ischar (prop) && strcmpi (prop, 'sub_type'))   
       if (ischar (val))
         s.sub_type = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the sub_type to be a char');
       end 
     % ====================== set underlying ======================
     elseif (ischar (prop) && strcmpi (prop, 'underlying'))   
       if (ischar (val))
         s.underlying = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the underlying to be a char');
       end
     % ====================== set vola_surface ======================
     elseif (ischar (prop) && strcmpi (prop, 'vola_surface'))   
       if (ischar (val))
         s.vola_surface = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the vola_surface to be a char');
       end
     % ====================== set description ======================
     elseif (ischar (prop) && strcmpi (prop, 'description'))   
       if (ischar (val))
         s.description = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the description to be a char');
       end   
     % ====================== set asset_class ======================
     elseif (ischar (prop) && strcmpi (prop, 'asset_class'))   
       if (ischar (val))
         s.asset_class = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the asset_class to be a char');
       end 
     % ====================== set pricing_function_american =========
     elseif (ischar (prop) && strcmpi (prop, 'pricing_function_american'))   
       if (ischar (val))
         s.pricing_function_american = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the pricing_function_american to be a char');
       end 
     % ====================== set UporDown =========
     elseif (ischar (prop) && strcmpi (prop, 'upordown'))   
@@ -178,14 +182,14 @@ function s = set (option, varargin)
       if (isnumeric (val) && isreal (val))
         s.multiplier = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the multiplier to be a real number');
       end  
     % ====================== set spread ======================
     elseif (ischar (prop) && strcmpi (prop, 'spread'))   
       if (isnumeric (val) && isreal (val))
         s.spread = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the spread to be a real number');
       end
      % ====================== set div_yield ======================
     elseif (ischar (prop) && strcmpi (prop, 'div_yield'))   
@@ -199,86 +203,109 @@ function s = set (option, varargin)
       if (isnumeric (val) && isreal (val))
         s.strike = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the strike to be a real number');
       end
     % ====================== set spot ======================
     elseif (ischar (prop) && strcmpi (prop, 'spot'))   
       if (isnumeric (val) && isreal (val))
         s.spot = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the spot to be a real number');
       end 
     % ====================== set theo_delta ======================
     elseif (ischar (prop) && strcmpi (prop, 'theo_delta'))   
       if (isnumeric (val) && isreal (val))
         s.theo_delta = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the theo_delta to be a real number');
       end 
     % ====================== set theo_delta ======================
     elseif (ischar (prop) && strcmpi (prop, 'theo_delta'))   
       if (isnumeric (val) && isreal (val))
         s.theo_delta = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the theo_delta to be a real number');
       end  
     % ====================== set theo_gamma ======================
     elseif (ischar (prop) && strcmpi (prop, 'theo_gamma'))   
       if (isnumeric (val) && isreal (val))
         s.theo_gamma = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the theo_gamma to be a real number');
       end
     % ====================== set theo_vega ======================
     elseif (ischar (prop) && strcmpi (prop, 'theo_vega'))   
       if (isnumeric (val) && isreal (val))
         s.theo_vega = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the theo_vega to be a real number');
       end
     % ====================== set theo_theta ======================
     elseif (ischar (prop) && strcmpi (prop, 'theo_theta'))   
       if (isnumeric (val) && isreal (val))
         s.theo_theta = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the theo_theta to be a real number');
       end
     % ====================== set theo_rho ======================
     elseif (ischar (prop) && strcmpi (prop, 'theo_rho'))   
       if (isnumeric (val) && isreal (val))
         s.theo_rho = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the theo_rho to be a real number');
       end
     % ====================== set theo_omega ======================
     elseif (ischar (prop) && strcmpi (prop, 'theo_omega'))   
       if (isnumeric (val) && isreal (val))
         s.theo_omega = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the theo_omega to be a real number');
       end     
     % ====================== set timesteps_size ======================
     elseif (ischar (prop) && strcmpi (prop, 'timesteps_size'))   
       if (isnumeric (val) && isreal (val))
         s.timesteps_size = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the timesteps_size to be a real number');
       end
      % ====================== set willowtree_nodes ======================
     elseif (ischar (prop) && strcmpi (prop, 'willowtree_nodes'))   
       if (isnumeric (val) && isreal (val))
         s.willowtree_nodes = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the willowtree_nodes to be a real number');
       end
-    % ====================== set Rebate ======================
+    % ====================== set rebate ======================
     elseif (ischar (prop) && strcmpi (prop, 'rebate'))   
       if (isnumeric (val) && isreal (val))
         s.rebate = val;
       else
         error ('set: expecting rebate to be a real number');
       end
-    % ====================== set BarrierLevel ======================
+    % ====================== set compounding_freq  ======================
+    elseif (ischar (prop) && strcmp (prop, 'compounding_freq'))   
+      if (isnumeric (val) && isreal(val))
+        s.compounding_freq  = val;
+      elseif (ischar(val))
+        s.compounding_freq  = val;
+      else
+        error ('set: expecting compounding_freq to be a real number or char');
+      end 
+    % ====================== set compounding_type ======================
+    elseif (ischar (prop) && strcmp (prop, 'compounding_type'))   
+      if (ischar (val))
+        s.compounding_type = strtrim(val);
+      else
+        error ('set: expecting compounding_type to be a char');
+      end       
+    % ====================== set day_count_convention ======================
+    elseif (ischar (prop) && strcmp (prop, 'day_count_convention'))   
+      if (ischar (val))
+        s.day_count_convention = strtrim(val);
+      else
+        error ('set: expecting day_count_convention to be a char');
+      end 
+    % ====================== set barrierLevel ======================
     elseif (ischar (prop) && strcmpi (prop, 'barrierlevel'))   
       if (isnumeric (val) && isreal (val))
         s.barrierlevel = val;
@@ -290,7 +317,7 @@ function s = set (option, varargin)
       if (isnumeric (val) && isreal (val))
         s.vola_sensi = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the vola_sensi to be a real number');
       end  
     else
       error ('set: >>%s<< invalid property of option class',prop);

@@ -24,8 +24,8 @@
 %# @end deftypefn
 
 classdef Instrument
-   % file: @Instrument/Instrument.m
-   properties
+    % file: @Instrument/Instrument.m
+    properties
       name = '';
       id = '';
       description = '';
@@ -34,13 +34,11 @@ classdef Instrument
       asset_class = 'Unknown';   
       type = 'Unknown';   
       valuation_date = today;     
-   end
+    end
    
-    properties (Access = protected )
+    properties (SetAccess = protected )
       value_stress = [];
       value_mc = [];
-    end
-    properties (SetAccess = protected )
       timestep_mc = {};
     end
    
@@ -56,7 +54,7 @@ classdef Instrument
             a.value_base = value_base;
             a.currency = tmp_currency;
             a.asset_class = tmp_asset_class;
-            a.valuation_date = tmp_valuation_date;
+            a.valuation_date = datestr(tmp_valuation_date);
          end
       end % Instrument
       

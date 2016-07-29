@@ -14,7 +14,11 @@
 %# @deftypefn {Function File} {[@var{success_tests} @var{total_tests}] =} test_io(@var{path_testing_folder})
 %# Perform integration tests for all functions which rely on input and output 
 %# data. The functions have to be hard coded in this script and rely on validated
-%# output data.
+%# output data. The storage and parsing process of objects is a little bit tricky.
+%# At first, all objects have to converted into structed and stored to a file.
+%# After the structs from the file have been parsed, all structe have to
+%# converted back again into objects using constructor and set methods.
+%# See section B.2 for an example.
 %# @end deftypefn
 
 function [success_tests,total_tests] = test_io(path_testing_folder);
@@ -178,7 +182,7 @@ try
     % Load correct verified data from file
 	instrument_struct_correct = load(tmp_filename);
 	instrument_struct_correct = instrument_struct_correct.tmp_instrument_struct;
-	% Compare data
+	% Compare struct data
 	if (isequal(tmp_instrument_struct,instrument_struct_correct))
 		success_tests = success_tests + 1;
 		total_tests = total_tests + 1;
@@ -201,6 +205,38 @@ try
             fprintf('SUCCESS: load_instruments: Parsing of instruments is correct.\n');
         end	
 	end
+    % convert struct data into object data and compare
+    object_struct = struct();
+    total_objects = length( tmp_instrument_struct );
+    equal_objects = 0;
+    for ii = 1 : 1 : length( tmp_instrument_struct )
+        fprintf('=== Processing object >>%s<< \n',tmp_instrument_struct(ii).id);
+        object_struct(ii).id     = tmp_instrument_struct(ii).id;
+        object_struct(ii).name   = tmp_instrument_struct(ii).name;
+        tmp_obj = struct2obj(tmp_instrument_struct(ii).object);
+        object_struct(ii).object = tmp_obj;
+        % compare new object with original object
+        if (isequal(tmp_obj,instrument_struct(ii).object))
+            fprintf('SUCCESS: Objects are equal.\n');
+            equal_objects = equal_objects + 1;
+        else
+            error('ERROR: Objects are not equal:');
+            tmp_obj
+            instrument_struct(ii).object
+        end
+    end
+    % compare number of equal objects
+    if ( equal_objects == total_objects )
+        fprintf('SUCCESS: All >>%d<< Objects are equal.\n',equal_objects);
+    else
+        error('ERROR: >>%d<< Objects are not equal. \n',total_objects - equal_objects);
+    end
+    % compare new struct with original struct
+    if (isequal(object_struct,instrument_struct))
+        fprintf('SUCCESS: Structs are equal.\n');
+    else
+        error('ERROR: Structs are not equal.');
+    end
 catch
 	fprintf('ERROR: load_instruments integration tests failed. Aborting: >>%s<< \n',lasterr);
 	total_tests = total_tests_start + 2;
