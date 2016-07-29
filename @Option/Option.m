@@ -56,10 +56,9 @@ classdef Option < Instrument
         value_base = 1.00;      
         currency = 'EUR';
         asset_class = 'Derivative';   
-        valuation_date = today; 
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'option',currency,value_base, ...
-                        asset_class,valuation_date); 
+                        asset_class); 
       end 
       
       function disp(b)

@@ -97,13 +97,6 @@ function s = set (forward, varargin)
       else
         error ('set: expecting the value to be a char');
       end   
-    % ====================== set valuation_date ======================
-    elseif (ischar (prop) && strcmp (prop, 'valuation_date'))   
-      if (ischar (val))
-        s.valuation_date = datestr(strtrim(val),1);
-      else
-        error ('set: expecting the value to be a char');
-      end 
     % ====================== set asset_class ======================
     elseif (ischar (prop) && strcmp (prop, 'asset_class'))   
       if (ischar (val))

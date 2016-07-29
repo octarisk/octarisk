@@ -14,11 +14,13 @@ function s = get (bond, property)
         case 'type'
           s = obj.type; 
         case 'asset_class'
-          s = obj.asset_class;   
+          s = obj.asset_class; 
+        case 'maturity_date'
+          s = obj.maturity_date; 
+        case 'issue_date'
+          s = obj.issue_date; 
         case 'currency'
           s = obj.currency;
-        case 'valuation_date'
-          s = obj.valuation_date;
         case 'value_mc'
           s = obj.value_mc; 
         case 'value_base'

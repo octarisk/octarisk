@@ -177,8 +177,8 @@ try
     end 
     tmp_filename = strcat(path_input,'/instruments_correct.dat');
     % in case of changed objects or input data, save new struct:
-        %save ('-text', tmp_filename, 'tmp_instrument_struct');
-        
+        save ('-text', tmp_filename, 'tmp_instrument_struct');
+ 
     % Load correct verified data from file
 	instrument_struct_correct = load(tmp_filename);
 	instrument_struct_correct = instrument_struct_correct.tmp_instrument_struct;

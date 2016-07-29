@@ -19,8 +19,6 @@ function s = get (bond, property)
           s = obj.asset_class;   
         case 'currency'
           s = obj.currency;
-        case 'valuation_date'
-          s = obj.valuation_date;
         case 'value_mc'
           s = obj.value_mc; 
         case 'value_base'

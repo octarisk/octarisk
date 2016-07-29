@@ -53,7 +53,7 @@ end
 if ischar(basis)
     basis = get_basis(basis);
 elseif ~(any(basis == [0:1:15]))
-   fprintf('timefactor:no valid basis defined. >>%d<< has to be between 0 and 11. Setting to default value 3 -> act/365. \n',basis)
+   fprintf('timefactor:no valid basis defined. >>%d<< has to be between 0 and 15. Setting to default value 3 -> act/365. \n',basis)
    basis = 3;
 end
 

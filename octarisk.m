@@ -504,8 +504,6 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
             elseif (strcmp(tmp_type,'forward') )
                 % Using forward class
                     forward = tmp_instr_obj;
-                    forward.valuation_date
-                    forward = forward.set('valuation_date',datestr(valuation_date));
                  % Get underlying Index / instrument    
                     tmp_underlying = forward.get('underlying_id');
                     [tmp_underlying_object object_ret_code]  = get_sub_object(index_struct, tmp_underlying);
@@ -519,10 +517,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 %Calculate values of equity forward
                 if ( first_eval == 0)
                 % Base value
-                    forward = forward.calc_value('base',tmp_curve_object,tmp_underlying_object);
+                    forward = forward.calc_value(valuation_date,'base',tmp_curve_object,tmp_underlying_object);
                 end
                 % calculation of value for scenario               
-                    forward = forward.calc_value(tmp_scenario,tmp_curve_object,tmp_underlying_object);
+                    forward = forward.calc_value(valuation_date,tmp_scenario,tmp_curve_object,tmp_underlying_object);
 
                 % store bond object in struct:
                     instrument_struct( ii ).object = forward;

@@ -13,7 +13,6 @@
 %# @item currency
 %# @item asset_class 
 %# @item type: Type of Instrument class (Bond,Forward,...) 
-%# @item valuation_date 
 %# @item value_stress: Vector with values under stress scenarios
 %# @item value_mc: Matrix with values under MC scenarios (values per timestep per column)
 %# @item timestep_mc: MC timestep per column (cell string)
@@ -32,8 +31,7 @@ classdef Instrument
       value_base = 0;      
       currency = 'EUR';
       asset_class = 'Unknown';   
-      type = 'Unknown';   
-      valuation_date = today;     
+      type = 'Unknown';     
     end
    
     properties (SetAccess = protected )
@@ -44,7 +42,7 @@ classdef Instrument
    
    % Class methods
    methods
-      function a = Instrument(tmp_name,tmp_id,tmp_description,tmp_type,tmp_currency,value_base,tmp_asset_class,tmp_valuation_date)
+      function a = Instrument(tmp_name,tmp_id,tmp_description,tmp_type,tmp_currency,value_base,tmp_asset_class)
          % Instrument Constructor function
          if nargin > 0
             a.name = tmp_name;
@@ -54,7 +52,6 @@ classdef Instrument
             a.value_base = value_base;
             a.currency = tmp_currency;
             a.asset_class = tmp_asset_class;
-            a.valuation_date = datestr(tmp_valuation_date);
          end
       end % Instrument
       

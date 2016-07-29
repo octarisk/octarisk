@@ -163,24 +163,24 @@ function s = set (bond, varargin)
       else
         error ('set: expecting id to be a char');
       end
-    % ====================== set maturity_date ======================
-    elseif (ischar (prop) && strcmp (prop, 'maturity_date'))   
-      if (ischar (val))
-        s.maturity_date = datestr(strtrim(val),1);
-      elseif ( isnumeric(val))
-        s.valuation_date = datestr(val);
-      else
-        error ('set: expecting maturity_date to be a char or integer');
-      end
     % ====================== set issue_date ======================
     elseif (ischar (prop) && strcmp (prop, 'issue_date'))   
       if (ischar (val))
         s.issue_date = datestr(strtrim(val),1);
       elseif ( isnumeric(val))
-        s.valuation_date = datestr(val);
+        s.issue_date = datestr(val);
       else
         error ('set: expecting issue_date to be a char or integer');
       end  
+    % ====================== set maturity_date ======================
+    elseif (ischar (prop) && strcmp (prop, 'maturity_date'))   
+      if (ischar (val))
+        s.maturity_date = datestr(strtrim(val),1);
+      elseif ( isnumeric(val))
+        s.maturity_date = datestr(val);
+      else
+        error ('set: expecting maturity_date to be a char or integer');
+      end 
     % ====================== set spread_curve  ======================
     elseif (ischar (prop) && strcmp (prop, 'spread_curve'))   
       if (ischar (val))

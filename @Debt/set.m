@@ -102,13 +102,6 @@ function s = set (debt, varargin)
       else
         error ('set: expecting the value to be a char');
       end   
-    % ====================== set valuation_date ======================
-    elseif (ischar (prop) && strcmp (prop, 'valuation_date'))   
-      if (ischar (val))
-        s.valuation_date = datestr(strtrim(val),1);
-      else
-        error ('set: expecting the value to be a char');
-      end 
     % ====================== set asset_class ======================
     elseif (ischar (prop) && strcmp (prop, 'asset_class'))   
       if (ischar (val))
@@ -159,7 +152,7 @@ function s = set (debt, varargin)
         error ('set: expecting the value to be a real number');
       end    
     else
-      error ('set: invalid property of bond class');
+      error ('set: invalid property of debt class: >>%s<<',prop);
     end
   end
 end

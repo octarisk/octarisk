@@ -1,27 +1,27 @@
-function obj = calc_value (forward,value_type,discount_curve_object,underlying_object,foreign_curve_object)
+function obj = calc_value (forward,valuation_date,value_type,discount_curve_object,underlying_object,foreign_curve_object)
   obj = forward;
-   if ( nargin < 3)
+   if ( nargin < 4)
         error('Error: No  discount curve set. Aborting.');
    end
-   if ( nargin == 1)
+   if ( nargin == 2)
         error('No value_type set. [stress,1d,10d,...]');
    end
    % get underlying price vector according to value_type
    value_type = lower(value_type);
 
-    if ( nargin < 4 )
+    if ( nargin < 5 )
         error('No underlying_object set for value_type not being base.');
     end
  
     % calculate value according to pricing formula
     if ( sum(strcmpi(obj.sub_type,{'Equity','EQFWD','Bond'})) > 0 )
-        [theo_value theo_price] = pricing_forward(value_type,obj, ...
+        [theo_value theo_price] = pricing_forward(valuation_date,value_type,obj, ...
                                     discount_curve_object, underlying_object);
     elseif ( sum(strcmpi(obj.sub_type,{'FX'})) > 0 )
         if nargin < 5
             error('No foreign discount curve object set for FX forward.');
         end
-        [theo_value theo_price] = pricing_forward(value_type,obj, ...
+        [theo_value theo_price] = pricing_forward(valuation_date,value_type,obj, ...
                 discount_curve_object, underlying_object, foreign_curve_object);
     end
     

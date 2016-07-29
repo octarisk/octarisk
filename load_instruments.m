@@ -171,8 +171,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             elseif ( sum(strcmp(tmp_instrument_type,{'CASH'})) > 0)  % store data in Class Cash
                 i = Cash();                     
             end
-            % always store valuation date for all instruments
-            i = i.set('valuation_date',datestr(valuation_date,1));
+
             % B.3b)  Loop through all instrument attributes
             tmp_cell = content{jj};
             for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in header row and set object attributes

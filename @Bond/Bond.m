@@ -71,10 +71,9 @@ classdef Bond < Instrument
         value_base = 100.00;      
         currency = 'EUR';
         asset_class = 'Bond';   
-        valuation_date = today; 
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'bond',currency,value_base, ...
-                        asset_class,valuation_date);      
+                        asset_class);      
       end 
       % method display properties
       function disp(b)

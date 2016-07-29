@@ -12,7 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{forward}, @var{discount_curve}, @var{underlying})
+%# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{valuation_date}, @var{forward}, @var{discount_curve}, @var{underlying})
 %#
 %# Compute the theoretical value of equity and bond forwards.@*
 %# In the 'oop' version no input data checks are performed. @*
@@ -30,8 +30,6 @@
 %#      @item forward.type                   Equity, Bond
 %#      @item forward.currency               [optional] Currency (string, ISO code)
 %#      @item forward.maturity_date          Maturity date of forward
-%#      @item forward.valuation_date         [optional] Valuation date
-%# (default today)
 %#      @item forward.strike_price           strike price (float).
 %# Can be a 1xN vector.
 %#      @item forward.underlying_price       market price of underlying (float),
@@ -60,10 +58,10 @@
 %# @seealso{timefactor, discount_factor, interpolate_curve}
 %# @end deftypefn
 
-function [theo_value theo_price] = pricing_forward(value_type, forward, ...
+function [theo_value theo_price] = pricing_forward(valuation_date,value_type, forward, ...
     discount_curve_object, underlying_object, foreign_curve_object )
 
-if nargin < 4 || nargin > 5
+if nargin < 5 || nargin > 6
     print_usage ();
 end
 
@@ -71,7 +69,6 @@ end
 comp_type = forward.compounding_type;
 comp_freq = forward.compounding_freq;
 basis = forward.basis;
-valuation_date = forward.valuation_date;
 currency = forward.currency;
 type = forward.sub_type;
 storage_cost = forward.storage_cost; % continuous storage cost p.a.
@@ -171,7 +168,7 @@ if ( sum(strcmpi(type,{'Equity','EQFWD'})) > 0 )
     
     % #####  Calculate forward value for bond forwards  #####
 elseif ( sum(strcmpi(type,{'Bond','BONDFWD'})) > 0 )
-    df_discount     = discount_factor (forward.valuation_date, ...
+    df_discount     = discount_factor (valuation_date, ...
         forward.maturity_date, discount_rate_instr, ...
         comp_type, basis, comp_freq);
     forward_price   = underlying_price ./ df_discount;
@@ -196,7 +193,7 @@ elseif ( sum(strcmpi(type,{'FX'})) > 0 )
     forward_price   = (1 ./ underlying_price) .* df_foreign ./ df_discount;
     payoff          = (forward_price - strike ) .* df_discount;
 else
-    error('pricing_forward_oop: not a valid type: >>%s<<',type)
+    error('pricing_forward: not a valid type: >>%s<<',type)
 end
 
 theo_value = payoff;

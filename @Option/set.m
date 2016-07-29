@@ -96,21 +96,12 @@ function s = set (option, varargin)
       else
         error ('set: expecting the currency to be a char');
       end  
-    % ====================== set valuation_date ======================
-    elseif (ischar (prop) && strcmpi (prop, 'valuation_date'))   
-      if (ischar (val))
-        s.valuation_date = datestr(strtrim(val),1);
-      elseif ( isnumeric(val))
-        s.valuation_date = datestr(val);
-      else
-        error ('set: expecting valuation_date to be a char or integer');
-      end  
     % ====================== set maturity_date ======================
     elseif (ischar (prop) && strcmpi (prop, 'maturity_date'))   
       if (ischar (val))
         s.maturity_date = datestr(strtrim(val),1);
       elseif ( isnumeric(val))
-        s.valuation_date = datestr(val);
+        s.maturity_date = datestr(val);
       else
         error ('set: expecting maturity_date to be a char or integer');
       end

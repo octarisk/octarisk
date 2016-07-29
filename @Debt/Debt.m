@@ -25,10 +25,9 @@ classdef Debt < Instrument
         value_base = 100.00;      
         currency = 'EUR';
         asset_class = 'debt';   
-        valuation_date = today; 
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'debt',currency,value_base, ...
-                        asset_class,valuation_date); 
+                        asset_class); 
       end 
       
       function disp(b)

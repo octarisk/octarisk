@@ -123,15 +123,15 @@ end
 %! i = Index();
 %! i = i.set('value_base',326.900);
 %! f = Forward();
-%! f = f.set('name','EQ_Forward_Index_Test','maturity_date','26-Mar-2036','strike_price',0.00,'valuation_date','31-Mar-2016');
+%! f = f.set('name','EQ_Forward_Index_Test','maturity_date','26-Mar-2036','strike_price',0.00);
 %! f = f.set('compounding_freq','annual');
-%! f = f.calc_value('base',c,i);
+%! f = f.calc_value('31-Mar-2016','base',c,i);
 %! assert(f.getValue('base'),326.9,0.1);
 %! f = f.set('strike_price',426.900);
-%! f = f.calc_value('base',c,i);
+%! f = f.calc_value('31-Mar-2016','base',c,i);
 %! assert(f.getValue('base'),-27.2118960639903,0.00000001);
 %! i = i.set('scenario_stress',[350.00;300.00]);
-%! f = f.calc_value('stress',c,i);
+%! f = f.calc_value('31-Mar-2016','stress',c,i);
 %! assert(f.getValue('stress'),[-4.1118960639903;-54.1118960639903],0.00000001);
 
 %!test
@@ -143,12 +143,12 @@ end
 %! i = Index();
 %! i = i.set('value_base',1.139549999,'name','FX_USDEUR','id','FX_USDEUR');
 %! f = Forward();
-%! f = f.set('name','FX_Forward_Domestic_EUR_Foreign_USD','maturity_date','29-Mar-2026','strike_price',0.00,'valuation_date','31-Mar-2016','sub_type','FX');
+%! f = f.set('name','FX_Forward_Domestic_EUR_Foreign_USD','maturity_date','29-Mar-2026','strike_price',0.00,'sub_type','FX');
 %! f = f.set('compounding_freq','annual');
-%! f = f.calc_value('base',c,i,fc);
+%! f = f.calc_value('31-Mar-2016','base',c,i,fc);
 %! assert(f.getValue('base'),0.7509742754,0.00001);
 %! f = f.set('strike_price',0.9);
-%! f = f.calc_value('base',c,i,fc);
+%! f = f.calc_value('31-Mar-2016','base',c,i,fc);
 %! assert(f.getValue('base'),-0.1088864014,0.000001);
 
 %!test

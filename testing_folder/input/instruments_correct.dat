@@ -1,4 +1,4 @@
-# Created by Octave 4.0.0, Wed Jul 27 18:30:06 2016 W. Europe Daylight Time <unknown@T43NB067>
+# Created by Octave 4.0.0, Fri Jul 29 13:57:45 2016 W. Europe Daylight Time <unknown@T43NB067>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
@@ -536,7 +536,7 @@ SYNTH01
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 15
+# length: 14
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -609,13 +609,6 @@ CASH
 cash
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 1
@@ -640,7 +633,7 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 59
+# length: 58
 # name: accrued_interest
 # type: scalar
 0
@@ -953,13 +946,6 @@ CASHFLOW
 bond
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 105
@@ -989,7 +975,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1081,13 +1067,6 @@ COM
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 90.90000000000001
@@ -1112,7 +1091,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1204,13 +1183,6 @@ COM
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 1050.18
@@ -1235,7 +1207,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1327,13 +1299,6 @@ COM
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 14.04
@@ -1358,7 +1323,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1443,13 +1408,6 @@ DBT
 debt
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 60.5
@@ -1474,7 +1432,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1559,13 +1517,6 @@ DBT
 debt
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 102.48
@@ -1590,7 +1541,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1675,13 +1626,6 @@ DBT
 debt
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 99.93000000000001
@@ -1706,7 +1650,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1791,13 +1735,6 @@ DBT
 debt
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 95.98
@@ -1822,7 +1759,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 59
+# length: 58
 # name: accrued_interest
 # type: scalar
 0
@@ -2137,13 +2074,6 @@ FRB
 bond
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 108.681
@@ -2173,7 +2103,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 59
+# length: 58
 # name: accrued_interest
 # type: scalar
 0
@@ -2488,13 +2418,6 @@ FRB
 bond
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 1031.2
@@ -2524,7 +2447,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 59
+# length: 58
 # name: accrued_interest
 # type: scalar
 0
@@ -2839,13 +2762,6 @@ FRN
 bond
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 100
@@ -2875,7 +2791,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 31
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3044,13 +2960,6 @@ EQ_DE
 1
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 2
@@ -3075,7 +2984,7 @@ EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3168,13 +3077,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 199.94
@@ -3199,7 +3101,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3292,13 +3194,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 35.28
@@ -3323,7 +3218,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3416,13 +3311,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 46.28
@@ -3447,7 +3335,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3540,13 +3428,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 11.63
@@ -3571,7 +3452,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3664,13 +3545,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 35.51
@@ -3695,7 +3569,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3788,13 +3662,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 72.67
@@ -3819,7 +3686,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3912,13 +3779,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 8.890000000000001
@@ -3943,7 +3803,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4036,13 +3896,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 72.81999999999999
@@ -4067,7 +3920,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4178,13 +4031,6 @@ EQU
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 157.32
@@ -4209,7 +4055,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4302,13 +4148,6 @@ RET
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 23.85
@@ -4333,7 +4172,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4435,13 +4274,6 @@ STK
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 1.79
@@ -4466,7 +4298,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4568,13 +4400,6 @@ STK
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 78.34
@@ -4599,7 +4424,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 16
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4692,13 +4517,6 @@ ALT
 sensitivity
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 246.92
@@ -4723,7 +4541,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 59
+# length: 58
 # name: accrued_interest
 # type: scalar
 0
@@ -5038,13 +4856,6 @@ ZCB
 bond
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 101.119
@@ -5074,7 +4885,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 34
+# length: 33
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5224,13 +5035,6 @@ swaption
 IR_EUR
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 0.9
@@ -5290,7 +5094,7 @@ RF_VOLA_IR_EUR
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 47
+# length: 46
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5508,13 +5312,6 @@ EQ_DE
 U
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 1500
@@ -5579,7 +5376,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 47
+# length: 46
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5795,13 +5592,6 @@ EQ_DE
 D
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 580
@@ -5866,7 +5656,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 47
+# length: 46
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6084,13 +5874,6 @@ COM_GOLD
 U
 
 
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
-
-
 # name: value_base
 # type: scalar
 1580
@@ -6155,7 +5938,7 @@ RF_VOLA_COM_GOLD
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 15
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6243,13 +6026,6 @@ SYNTH
 # elements: 1
 # length: 9
 synthetic
-
-
-# name: valuation_date
-# type: sq_string
-# elements: 1
-# length: 11
-31-Dec-2015
 
 
 # name: value_base
