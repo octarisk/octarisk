@@ -116,6 +116,29 @@ end
 %! assert(b.get('eff_convexity'),174.205420287148,0.0000001)
 %! assert(b.get('dv01'),0.096073195268687,0.0000001)
 
+%!test 
+%! fprintf('HOLD ON...\n');
+%! fprintf('\tdoc_instrument:\tPricing Floating Rate Bond Object\n');
+%! b = Bond();
+%! b = b.set('Name','Test_FRN','coupon_rate',0.00,'value_base',99.7527,'coupon_generation_method','backward','compounding_type','simple');
+%! b = b.set('maturity_date','30-Mar-2017','notional',100,'compounding_type','simple','issue_date','21-Apr-2011');
+%! b = b.set('term',3,'last_reset_rate',-0.0024,'sub_Type','FRN','spread',0.003);
+%! r = Curve();
+%! r = r.set('id','REF_IR_EUR','nodes',[30,91,365,730],'rates_base',[0.0001002740,0.0001002740,0.0001001390,0.0001000690],'method_interpolation','linear');
+%! b = b.rollout('base',r,'30-Jun-2016');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,90,180,365,730],'rates_base',[0.0019002740,0.0019002740,0.0019002301,0.0019001390,0.001900069],'method_interpolation','linear');
+%! b = b.set('clean_value_base',99.7527,'spread',0.003);
+%! b = b.calc_spread_over_yield(c,'30-Jun-2016');
+%! assert(b.get('soy'),0.00452588743538773,0.0000001); 
+%! b = b.calc_value('30-Jun-2016',c,'base');
+%! assert(b.getValue('base'),99.7527005528256,0.0000001);
+%! assert(b.get('convexity'),1.29782154229647,0.0000001);
+%! assert(b.get('eff_convexity'),1.10698734959888,0.0000001);
+%! assert(b.get('eff_duration'),0.743833676389663,0.0000001);
+%! assert(b.get('mac_duration'),0.747366922375284,0.0000001);
+
+
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');
 %! c = Curve();

@@ -20,7 +20,8 @@ classdef Bond < Instrument
         discount_curve = 'IR_EUR';
         reference_curve = 'IR_EUR';
         spread_curve = 'SPREAD_DUMMY';
-        spot_value = 0.0;       
+        spot_value = 0.0;
+        ir_shock   = 0.01;      % shock used for calculation of effective duration
         in_arrears = 0;
         fixed_annuity = 0;      % property only needed for fixed amortizing bond 
                % -> fixed annuity annuity flag (annuity loan or amortizable loan) 
@@ -41,6 +42,7 @@ classdef Bond < Instrument
     properties (SetAccess = private)
         convexity = 0.0;
         eff_convexity = 0.0;
+        dollar_convexity = 0.0;
         basis = 3;
         cf_dates = [];
         cf_values = [];
@@ -172,6 +174,35 @@ classdef Bond < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
-   end 
+      
+      % setting compounding frequency to numeric value
+      function obj = set.compounding_freq(obj,comp_freq)
+        if ischar(comp_freq)
+            if ( strcmpi(comp_freq,'daily') || strcmpi(comp_freq,'day'))
+                compounding = 365;
+            elseif ( strcmpi(comp_freq,'weekly') || strcmpi(comp_freq,'week'))
+                compounding = 52;
+            elseif ( strcmpi(comp_freq,'monthly') || strcmpi(comp_freq,'month'))
+                compounding = 12;
+            elseif ( strcmpi(comp_freq,'quarterly')  ||  strcmpi(comp_freq,'quarter'))
+                compounding = 4;
+            elseif ( strcmpi(comp_freq,'semi-annual'))
+                compounding = 2;
+            elseif ( strcmpi(comp_freq,'annual') )
+                compounding = 1;       
+            else
+                fprintf('Need valid compounding frequency. Setting to default value 1.\n');
+                compounding = 1;
+            end
+        elseif isnumeric(comp_freq)
+            compounding = comp_freq;
+        else
+            compounding = 1;
+            fprintf('Need valid compounding frequency. Setting to default value 1.\n');
+        end 
+        obj.compounding_freq = compounding;
+      end % set.compounding_freq
+    
+   end % end static methods
    
 end 

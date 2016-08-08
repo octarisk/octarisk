@@ -21,13 +21,27 @@ function s = set (bond, varargin)
         s.accrued_interest = val;
       else
         error ('set: expecting accrued_interest to be a real number');
-      end  
+      end   
+    % ====================== set ir_shock ======================
+    elseif (ischar (prop) && strcmp (prop, 'ir_shock'))   
+      if (isreal (val))
+        s.ir_shock = val;
+      else
+        error ('set: expecting ir_shock to be a real number');
+      end
     % ====================== set convexity ======================
     elseif (ischar (prop) && strcmp (prop, 'convexity'))   
       if (isreal (val))
         s.convexity = val;
       else
         error ('set: expecting convexity to be a real number');
+      end
+    % ====================== set dollar_convexity ======================
+    elseif (ischar (prop) && strcmp (prop, 'dollar_convexity'))   
+      if (isreal (val))
+        s.dollar_convexity = val;
+      else
+        error ('set: expecting dollar_convexity to be a real number');
       end
     % ====================== set rates_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'cf_values_mc'))   
