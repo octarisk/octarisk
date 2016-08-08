@@ -139,6 +139,13 @@ term_datenum = valuation_date + node;
 timefactor_origin = timefactor(valuation_date,term_datenum,dcc_basis_origin);
 timefactor_target = timefactor(valuation_date,term_datenum,dcc_basis_target);
 
+% Error handling: timefactor is zero -> any conversion yields zero rate (RW compatibility)
+if ( timefactor_target == 0.0)
+    rate_target = rate_origin;
+    conversion_type = 'Timefactor is zero.';  
+    return
+end
+
 % error check compounding frequency
 if ischar(comp_freq_origin)
     if ( regexpi(comp_freq_origin,'^da'))

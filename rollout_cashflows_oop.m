@@ -185,6 +185,8 @@ issuevec = datevec(issue_date);
 todayvec = datevec(valuation_date);
 matvec = datevec(maturity_date);
 
+% floor forward rate at 0.000001:
+floor_flag = true;
 % cashflow rollout: method backwards
 if ( strcmp(coupon_generation_method,'backward') == 1 )
 cf_date = matvec;
@@ -388,12 +390,12 @@ elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
         [tf dip dib] = timefactor (d1(ii), d2(ii), dcc);
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
-        if ( t1 > 0 && t2 > 0 )        % for future cash flows use forward rates
+        if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rates
             % get forward rate from provided curve
             forward_rate_curve = get_forward_rate(tmp_nodes,tmp_rates, ...
                         t1,t2-t1,compounding_type,method_interpolation, ...
                         compounding_freq, day_count_convention, valuation_date, ...
-                        comp_type_curve, basis_curve, comp_freq_curve);
+                        comp_type_curve, basis_curve, comp_freq_curve,floor_flag);
             % calculate final floating cash flows
             forward_rate = (spread + forward_rate_curve) .* tf;
         elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while

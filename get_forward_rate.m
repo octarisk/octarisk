@@ -39,9 +39,9 @@
 
 function forward_rate = get_forward_rate(nodes, rates, days_to_t1, days_to_t2, ...
                        comp_type, interp_method, comp_freq, basis, valuation_date, ...
-                       comp_type_curve, basis_curve, comp_freq_curve)
+                       comp_type_curve, basis_curve, comp_freq_curve,floor_flag)
  
- if nargin < 4 || nargin > 12
+ if nargin < 4 || nargin > 13
     print_usage ();
  end
 
@@ -57,6 +57,7 @@ if nargin < 5
    comp_type_curve  = comp_type;
    basis_curve      = basis; 
    comp_freq_curve  = comp_freq;
+   floor_flag = true;
 elseif nargin == 5
    interp_method = 'linear';
    comp_freq = 1;
@@ -65,6 +66,7 @@ elseif nargin == 5
    comp_type_curve  = comp_type;
    basis_curve      = basis; 
    comp_freq_curve  = comp_freq;
+   floor_flag = true;
 elseif nargin == 6
    comp_freq = 1;
    valuation_date = today;
@@ -72,26 +74,34 @@ elseif nargin == 6
    comp_type_curve  = comp_type;
    basis_curve      = basis; 
    comp_freq_curve  = comp_freq;
+   floor_flag = true;
 elseif nargin == 7
    valuation_date = today;
    basis = 3;   %act/365
    comp_type_curve  = comp_type;
    basis_curve      = basis; 
    comp_freq_curve  = comp_freq;
+   floor_flag = true;
 elseif nargin == 8
    valuation_date = today;
    comp_type_curve  = comp_type;
    basis_curve      = basis; 
    comp_freq_curve  = comp_freq;
+   floor_flag = true;
 elseif nargin == 9
    comp_type_curve  = comp_type;
    basis_curve      = basis; 
    comp_freq_curve  = comp_freq;
+   floor_flag = true;
 elseif nargin == 10
    basis_curve      = basis; 
    comp_freq_curve  = comp_freq;
+   floor_flag = true;
 elseif nargin == 11
-   comp_freq_curve  = comp_freq;   
+   comp_freq_curve  = comp_freq;  
+   floor_flag = true;
+elseif nargin == 12
+   floor_flag = true;
 end
 
 % convert valuation date to datenum
@@ -113,10 +123,10 @@ if ~isnumeric (days_to_t1)
     error ('days_to_t1 must be numeric ')
 elseif ~isnumeric (days_to_t2)
     error ('days_to_t2 must be numeric ')
-elseif days_to_t1 <= 0
-    error ('days_to_t1 must be positive ')
-elseif days_to_t2 <= 0
-    error ('days_to_t2 must be positive ')        
+elseif days_to_t1 < 0
+    error ('days_to_t1 must be zero or positive ')
+elseif days_to_t2 < 0
+    error ('days_to_t2 must be zero or positive ')        
 end
 no_scen_nodes = columns(nodes);
 no_scen_rates = columns(rates); 
@@ -188,8 +198,12 @@ elseif ( compounding_type == 3)      % continuous
     tmp_rate = ( r2 .* d2 - r1 .* d1  ) ./ (  d2 - d1 );
 end
 
-% Return forward rate:	% flooring rate!!!
-forward_rate = max(tmp_rate,0.000001);
+if ( floor_flag == true )
+    forward_rate = max(tmp_rate,0.000001);
+else
+    forward_rate = tmp_rate;
+end
+
 end
 
 %!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2),0.0691669,0.00001)
@@ -198,3 +212,4 @@ end
 %!assert(get_forward_rate([365,1825,3650],[0.05,0.06,0.065],1825,1095,'disc','linear',2,0),0.0691636237,0.00001)
 %!assert(get_forward_rate([730,4380],[0.0023001034,0.0084599362],'31-Mar-2018','28-Mar-2028','disc','linear',1,3,'31-Mar-2016'),0.0094902,0.00001)
 %!assert(get_forward_rate([365,1095,1825,3650,7300,10950,21900],[-0.0051925,-0.0050859,-0.0036776,0.0018569,0.0077625,0.0099999,0.0012300],155,365,'disc','monotone-convex', 'daily', 'act/365', 736329, 'cont', 'act/365', 'annual'),0.000001)
+%!assert(get_forward_rate([365,1825,3650],[0.005,-0.0001,-0.001],1825,1095,'disc','linear',2,'act/365', 736329, 'cont', 'act/365', 'annual',false),-0.00153881480847640,0.000000001)

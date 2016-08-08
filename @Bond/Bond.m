@@ -13,7 +13,7 @@ classdef Bond < Instrument
         business_day_rule = 0; 
         business_day_direction = 1;
         enable_business_day_rule = 0;
-        spread = 0.0;             
+        spread = 0.0;           % spread value only be used for floater        
         long_first_period = 0;  
         long_last_period = 0;   
         last_reset_rate = 0.00001;
