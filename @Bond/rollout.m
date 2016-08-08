@@ -15,7 +15,6 @@ function s = rollout (bond, value_type, arg1, arg2)
     if ischar(valuation_date)
         valuation_date = datenum(valuation_date);
     end
-
     % call function for rolling out cashflows
     
     % Get reference curve nodes and rate

@@ -48,7 +48,7 @@ function obj = calc_value(bond,valuation_date,discount_curve,value_type)
                                           ./ obj.compounding_freq)) ./100;
         obj.dollar_duration = MacDur(1) * theo_value / 100;
         obj.convexity = Convex;
-        
+
         % calculate and set effective duration based on 100bp down / upshift:
         theo_value_100bpdown = pricing_npv(valuation_date, tmp_cashflow_dates, ...
                                     tmp_cashflow_values, bond.soy - 0.01, ...

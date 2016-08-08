@@ -75,14 +75,12 @@ classdef Index
       end % Set.type
       
     end
+    
     methods (Static = true)
     
       function basis = get_basis(dcc_string)
-            dcc_cell =  {'act/act' '30/360 SIA' 'act/360' 'act/365' '30/360 PSA' '30/360 ISDA' '30/360 European' 'act/365 Japanese' 'act/act ISMA' 'act/360 ISMA' 'act/365 ISMA' '30/360E' };
-            findvec = strcmp(dcc_string,dcc_cell);
-            tt = 1:1:length(dcc_cell);
-            tt = (tt - 1)';
-            basis = dot(single(findvec),tt);
+            % provide static method for converting dcc string into basis value
+            basis = get_basis(dcc_string);
       end %get_basis
       
       function retval = get_doc(format,path)
