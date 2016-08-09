@@ -444,6 +444,13 @@ function s = set (bond, varargin)
         s.dv01 = val;
       else
         error ('set: expecting dv01 to be a real number');
+      end   
+    % ====================== set pv01 ======================
+    elseif (ischar (prop) && strcmp (prop, 'pv01'))   
+      if (isnumeric (val) && isreal (val))
+        s.pv01 = val;
+      else
+        error ('set: expecting pv01 to be a real number');
       end      
     % ====================== set dollar_duration ======================
     elseif (ischar (prop) && strcmp (prop, 'dollar_duration'))   
@@ -451,6 +458,13 @@ function s = set (bond, varargin)
         s.dollar_duration = val;
       else
         error ('set: expecting dollar_duration to be a real number');
+      end
+    % ====================== set spread_duration ======================
+    elseif (ischar (prop) && strcmp (prop, 'spread_duration'))   
+      if (isnumeric (val) && isreal (val))
+        s.spread_duration = val;
+      else
+        error ('set: expecting spread_duration to be a real number');
       end
     % ====================== set in_arrears ======================
     elseif (ischar (prop) && strcmp (prop, 'in_arrears'))   

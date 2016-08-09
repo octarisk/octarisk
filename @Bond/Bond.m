@@ -55,8 +55,10 @@ classdef Bond < Instrument
         mac_duration = 0.0;
         mod_duration = 0.0;
         eff_duration = 0.0;
+        spread_duration = 0.0;
         dollar_duration = 0.0;
         dv01 = 0.0;
+        pv01 = 0.0;
         accrued_interest = 0.0;
     end
    

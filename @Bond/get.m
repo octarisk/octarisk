@@ -75,8 +75,12 @@ function s = get (bond, property)
           s = obj.dollar_convexity; 
         case 'dv01'
           s = obj.dv01; 
+        case 'pv01'
+          s = obj.pv01;   
         case 'dollar_duration'
-          s = obj.dollar_duration;   
+          s = obj.dollar_duration; 
+        case 'spread_duration'
+          s = obj.spread_duration;  
         case 'calibration_flag'
           s = obj.calibration_flag; 
         case 'accrued_interest'

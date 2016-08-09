@@ -134,17 +134,17 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
             % combine with constant spread (e.g. spread over yield)
 			yield_total 	= yield_discount  + spread_constant;            
 			tmp_cf_date 	= valuation_date + tmp_dtm;
-        % Get actual discount factor
+        % Get actual discount factor and time factor
 			tmp_df 			= discount_factor (valuation_date, tmp_cf_date, ...
                                     yield_total, comp_type, basis, comp_freq);           
 			tmp_tf          = timefactor(valuation_date,tmp_cf_date,basis);  
-        %Calculate actual NPV of cash flows    
+        % Calculate actual NPV of cash flows    
 			tmp_npv_cashflow = tmp_cf_value .* tmp_df;
 			MacDur = MacDur + tmp_tf .* tmp_npv_cashflow;
             Convexity = Convexity + tmp_npv_cashflow .* (tmp_tf.^2 + tmp_tf) ...
                         ./ ( 1 + yield_total);
         % Add actual cash flow npv to total npv
-			tmp_npv 		= tmp_npv+ tmp_npv_cashflow;
+			tmp_npv 		= tmp_npv + tmp_npv_cashflow;
     end
 end 
 % ------------------------------------------------------------------  

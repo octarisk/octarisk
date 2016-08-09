@@ -90,9 +90,10 @@ end
 %! assert(b.soy,-0.00368829585440858,0.00001);
 %! b = b.set('soy',0.00);
 %! b = b.calc_value('31-Mar-2016',c,'base');
+%! b = b.calc_sensitivities('31-Mar-2016',c);
 %! assert(b.getValue('base'),99.1420775289364,0.00001);
-%! assert(b.get('convexity'),68.8468337813343,0.00001);
-%! assert(b.get('mod_duration'),0.0740312725350376,0.00001);
+%! assert(b.get('convexity'),68.2561813237084,0.00001);
+%! assert(b.get('mod_duration'),7.66223670737639,0.00001);
 %! assert(b.get('mac_duration'),7.66223670737639,0.00001);
 %! b = b.rollout('stress','31-Mar-2016');
 %! b = b.calc_value('31-Mar-2016',c,'stress');
@@ -108,13 +109,15 @@ end
 %! c = c.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015],'rates_base',[0.00010026,0.00010027,0.00010027,0.00010014,0.00010009,0.00096236,0.00231387,0.00376975,0.005217,0.00660956,0.00791501,0.00910955,0.01018287],'method_interpolation','linear');
 %! b = b.calc_value('31-Dec-2015',c,'base');
 %! assert(b.getValue('base'),105.619895060083,0.0000001)
-%! assert(b.get('convexity'),115.616375050013,0.0000001)
-%! assert(b.get('mod_duration'),0.0994417648384716,0.0000001)
+%! b = b.calc_sensitivities('31-Mar-2016',c);
+%! assert(b.get('convexity'),122.113894000095,0.0000001)
+%! assert(b.get('mod_duration'),10.0933391311049,0.0000001)
 %! assert(b.get('mac_duration'),10.0933391311049,0.0000001)
 %! assert(b.get('eff_duration'),9.17981338892828,0.0000001)
-%! assert(b.get('dollar_duration'),10.6605741983312,0.0000001)
+%! assert(b.get('dollar_duration'),1066.05741983312,0.0000001)
 %! assert(b.get('eff_convexity'),174.205420287148,0.0000001)
 %! assert(b.get('dv01'),0.096073195268687,0.0000001)
+%! assert(b.get('pv01'),-0.0959820513046878,0.0000001)
 
 %!test 
 %! fprintf('HOLD ON...\n');
@@ -133,11 +136,16 @@ end
 %! assert(b.get('soy'),0.00452588743538773,0.0000001); 
 %! b = b.calc_value('30-Jun-2016',c,'base');
 %! assert(b.getValue('base'),99.7527005528256,0.0000001);
-%! assert(b.get('convexity'),1.29782154229647,0.0000001);
-%! assert(b.get('eff_convexity'),1.10698734959888,0.0000001);
-%! assert(b.get('eff_duration'),0.743833676389663,0.0000001);
+%! b = b.calc_sensitivities('30-Jun-2016',c,r);
+%! assert(b.get('convexity'),1.29461203679706,0.0000001);
+%! assert(b.get('eff_convexity'),0.551095948832067,0.0000001);
+%! assert(b.get('eff_duration'),-0.00360801591397864,0.0000001);
 %! assert(b.get('mac_duration'),0.747366922375284,0.0000001);
-
+%! r = r.set('floor',0.0);
+%! b = b.calc_sensitivities('30-Jun-2016',c,r);
+%! assert(b.get('eff_convexity'),74.8206792667530,0.0000001);
+%! assert(b.get('eff_duration'),0.367739900675619,0.0000001);
+%! assert(b.get('mac_duration'),0.747366922375284,0.0000001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');

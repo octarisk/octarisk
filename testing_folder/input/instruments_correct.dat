@@ -1,4 +1,4 @@
-# Created by Octave 4.0.0, Mon Aug 08 10:31:47 2016 W. Europe Daylight Time <unknown@T43NB067>
+# Created by Octave 4.0.0, Tue Aug 09 14:01:16 2016 W. Europe Daylight Time <unknown@T43NB067>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
@@ -633,7 +633,7 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 58
+# length: 61
 # name: accrued_interest
 # type: scalar
 0
@@ -754,6 +754,11 @@ Cashflow instrument with cashflow vector
 IR_EUR
 
 
+# name: dollar_convexity
+# type: scalar
+0
+
+
 # name: dollar_duration
 # type: scalar
 0
@@ -794,6 +799,11 @@ CFANLEIHE1
 # name: in_arrears
 # type: scalar
 0
+
+
+# name: ir_shock
+# type: scalar
+0.01
 
 
 # name: issue_date
@@ -884,6 +894,11 @@ curve
 # elements: 1
 # length: 4
 full
+
+
+# name: pv01
+# type: scalar
+0
 
 
 # name: reference_curve
@@ -1759,7 +1774,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 58
+# length: 61
 # name: accrued_interest
 # type: scalar
 0
@@ -1822,10 +1837,8 @@ Fixed Income
 
 
 # name: compounding_freq
-# type: sq_string
-# elements: 1
-# length: 6
-annual
+# type: scalar
+1
 
 
 # name: compounding_type
@@ -1880,6 +1893,11 @@ Medium Term Note
 AGGR_EUR_FIN_BBB
 
 
+# name: dollar_convexity
+# type: scalar
+0
+
+
 # name: dollar_duration
 # type: scalar
 0
@@ -1920,6 +1938,11 @@ AGGR_EUR_FIN_BBB
 # name: in_arrears
 # type: scalar
 0
+
+
+# name: ir_shock
+# type: scalar
+0.01
 
 
 # name: issue_date
@@ -2014,6 +2037,11 @@ curve
 full
 
 
+# name: pv01
+# type: scalar
+0
+
+
 # name: reference_curve
 # type: sq_string
 # elements: 1
@@ -2103,7 +2131,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 58
+# length: 61
 # name: accrued_interest
 # type: scalar
 0
@@ -2166,10 +2194,8 @@ Fixed Income
 
 
 # name: compounding_freq
-# type: sq_string
-# elements: 1
-# length: 5
-daily
+# type: scalar
+365
 
 
 # name: compounding_type
@@ -2224,6 +2250,11 @@ BASF Corporate Bond 1.375pct 2019
 IR_EUR
 
 
+# name: dollar_convexity
+# type: scalar
+0
+
+
 # name: dollar_duration
 # type: scalar
 0
@@ -2264,6 +2295,11 @@ A1YC04
 # name: in_arrears
 # type: scalar
 0
+
+
+# name: ir_shock
+# type: scalar
+0.01
 
 
 # name: issue_date
@@ -2358,6 +2394,11 @@ curve
 full
 
 
+# name: pv01
+# type: scalar
+0
+
+
 # name: reference_curve
 # type: sq_string
 # elements: 1
@@ -2447,7 +2488,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 58
+# length: 61
 # name: accrued_interest
 # type: scalar
 0
@@ -2510,10 +2551,8 @@ Fixed Income
 
 
 # name: compounding_freq
-# type: sq_string
-# elements: 1
-# length: 5
-daily
+# type: scalar
+365
 
 
 # name: compounding_type
@@ -2568,6 +2607,11 @@ AUSTRIA 14/20 FLR MTN
 IR_EUR
 
 
+# name: dollar_convexity
+# type: scalar
+0
+
+
 # name: dollar_duration
 # type: scalar
 0
@@ -2608,6 +2652,11 @@ A1ZKC4
 # name: in_arrears
 # type: scalar
 0
+
+
+# name: ir_shock
+# type: scalar
+0.01
 
 
 # name: issue_date
@@ -2700,6 +2749,11 @@ curve
 # elements: 1
 # length: 4
 full
+
+
+# name: pv01
+# type: scalar
+0
 
 
 # name: reference_curve
@@ -4541,7 +4595,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 58
+# length: 61
 # name: accrued_interest
 # type: scalar
 0
@@ -4604,10 +4658,8 @@ Fixed Income
 
 
 # name: compounding_freq
-# type: sq_string
-# elements: 1
-# length: 5
-daily
+# type: scalar
+365
 
 
 # name: compounding_type
@@ -4662,6 +4714,11 @@ Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)
 IR_EUR
 
 
+# name: dollar_convexity
+# type: scalar
+0
+
+
 # name: dollar_duration
 # type: scalar
 0
@@ -4702,6 +4759,11 @@ IR_EUR
 # name: in_arrears
 # type: scalar
 0
+
+
+# name: ir_shock
+# type: scalar
+0.01
 
 
 # name: issue_date
@@ -4794,6 +4856,11 @@ curve
 # elements: 1
 # length: 4
 full
+
+
+# name: pv01
+# type: scalar
+0
 
 
 # name: reference_curve

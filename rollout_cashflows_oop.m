@@ -186,7 +186,7 @@ todayvec = datevec(valuation_date);
 matvec = datevec(maturity_date);
 
 % floor forward rate at 0.000001:
-floor_flag = true;
+floor_flag = false;
 % cashflow rollout: method backwards
 if ( strcmp(coupon_generation_method,'backward') == 1 )
 cf_date = matvec;

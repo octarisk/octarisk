@@ -644,7 +644,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                             bond = bond.rollout('base',valuation_date);
                         end
                         bond = bond.rollout(tmp_scenario,valuation_date);
-                    elseif( strcmp(tmp_sub_type,'FRN') == 1 || strcmp(tmp_sub_type,'SWAP_FLOAT') == 1)       % Floating Rate Notes (incl. swap floating leg)
+                    elseif( strcmp(tmp_sub_type,'FRN') || strcmp(tmp_sub_type,'SWAP_FLOAT'))       % Floating Rate Notes (incl. swap floating leg)
                          %get reference curve object used for calculating floating rates:
                             tmp_ref_curve   = bond.get('reference_curve');
                             tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
@@ -663,6 +663,12 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 % d) get net present value of all Cashflows (discounting of all cash flows)
 					if ( first_eval == 0)
                         bond = bond.calc_value (valuation_date,tmp_curve_object,'base');
+                        % calculate sensitivities
+                        if( strcmp(tmp_sub_type,'FRN') || strcmp(tmp_sub_type,'SWAP_FLOAT'))
+                            bond = bond.calc_sensitivities(valuation_date,tmp_curve_object,tmp_ref_object);
+                        else
+                            bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);
+                        end                       
                     end
                     bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_scenario);                                                                                  
 
