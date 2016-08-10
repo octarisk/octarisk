@@ -27,25 +27,25 @@ end
     comp_freq_discount = discount_curve.get('compounding_freq');
  
 % B) Calculate analytic sensitivities where no new CF rollout is required     
-    [theo_value MacDur Convex] = pricing_npv(valuation_date, cashflow_dates, ...
+    [theo_value MacDur Convex MonDur] = pricing_npv(valuation_date, cashflow_dates, ...
                                 cashflow_values, bond.soy, ...
                                 nodes_discount, rates_discount, basis_bond, ...
                                 comp_type_bond, comp_freq_bond, interp_discount, ...
                                 comp_type_discount, basis_discount, ...
                                 comp_freq_discount);
     obj.mac_duration = MacDur(1);
-    obj.dollar_duration = MacDur(1) * theo_value(1);
+    obj.dollar_duration = MonDur(1);
     % calculating modified (adjusted) duration depending on compounding freq
-    if ( strcmpi(comp_type_bond,'disc'))
+    if ( regexpi(comp_type_bond,'disc'))
         obj.mod_duration = (MacDur(1) ./ (1 + obj.coupon_rate  ...
                                       ./ obj.compounding_freq));
-    elseif ( strcmpi(comp_type_bond,'cont')) 
+    elseif ( regexpi(comp_type_bond,'cont')) 
         obj.mod_duration = MacDur(1);
     else    % in case of simple compounding
-        obj.mod_duration = MacDur(1);
+        obj.mod_duration = MonDur(1) / theo_value;
     end
 
-    obj.convexity = Convex * theo_value(1) / 100;
+    obj.convexity = Convex;
     obj.dollar_convexity = Convex * theo_value(1);
     
 % C.1) Effective Dur/Convex: CF rollout required special case FRN or SWAP_FLOAT

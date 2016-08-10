@@ -92,8 +92,9 @@ end
 %! b = b.calc_value('31-Mar-2016',c,'base');
 %! b = b.calc_sensitivities('31-Mar-2016',c);
 %! assert(b.getValue('base'),99.1420775289364,0.00001);
-%! assert(b.get('convexity'),68.2561813237084,0.00001);
-%! assert(b.get('mod_duration'),7.66223670737639,0.00001);
+%! assert(b.get('convexity'),67.9346351630012,0.00001);
+%! assert(b.get('mod_duration'),5.63642375918384,0.00001);
+%! assert(b.get('eff_duration'),5.65744733575198,0.00001);
 %! assert(b.get('mac_duration'),7.66223670737639,0.00001);
 %! b = b.rollout('stress','31-Mar-2016');
 %! b = b.calc_value('31-Mar-2016',c,'stress');
@@ -110,15 +111,15 @@ end
 %! b = b.calc_value('31-Dec-2015',c,'base');
 %! assert(b.getValue('base'),105.619895060083,0.0000001)
 %! b = b.calc_sensitivities('31-Mar-2016',c);
-%! assert(b.get('convexity'),122.113894000095,0.0000001)
-%! assert(b.get('mod_duration'),10.0933391311049,0.0000001)
+%! assert(b.get('convexity'),172.588468050282,0.0000001)
+%! assert(b.get('mod_duration'),9.09611845785009,0.0000001)
 %! assert(b.get('mac_duration'),10.0933391311049,0.0000001)
 %! assert(b.get('eff_duration'),9.17981338892828,0.0000001)
-%! assert(b.get('dollar_duration'),1066.05741983312,0.0000001)
+%! assert(b.get('dollar_duration'),960.731076972209,0.0000001)
 %! assert(b.get('eff_convexity'),174.205420287148,0.0000001)
 %! assert(b.get('dv01'),0.096073195268687,0.0000001)
 %! assert(b.get('pv01'),-0.0959820513046878,0.0000001)
-
+%! assert(b.get('spread_duration'),9.17981338892828,0.0000001)
 %!test 
 %! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing Floating Rate Bond Object\n');
@@ -137,7 +138,7 @@ end
 %! b = b.calc_value('30-Jun-2016',c,'base');
 %! assert(b.getValue('base'),99.7527005528256,0.0000001);
 %! b = b.calc_sensitivities('30-Jun-2016',c,r);
-%! assert(b.get('convexity'),1.29461203679706,0.0000001);
+%! assert(b.get('convexity'),1.10692603003620,0.0000001);
 %! assert(b.get('eff_convexity'),0.551095948832067,0.0000001);
 %! assert(b.get('eff_duration'),-0.00360801591397864,0.0000001);
 %! assert(b.get('mac_duration'),0.747366922375284,0.0000001);
@@ -146,7 +147,7 @@ end
 %! assert(b.get('eff_convexity'),74.8206792667530,0.0000001);
 %! assert(b.get('eff_duration'),0.367739900675619,0.0000001);
 %! assert(b.get('mac_duration'),0.747366922375284,0.0000001);
-
+%! assert(b.get('spread_duration'),0.743833676389663,0.0000001)
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');
 %! c = Curve();
