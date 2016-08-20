@@ -15,21 +15,9 @@ function s = rollout (bond, value_type, arg1, arg2)
     if ischar(valuation_date)
         valuation_date = datenum(valuation_date);
     end
-    % call function for rolling out cashflows
-    
-    % Get reference curve nodes and rate
-        reference_nodes    = tmp_curve_object.get('nodes');
-        reference_rates    = tmp_curve_object.getValue(value_type);
-    % Get interpolation method
-        tmp_interp_ref = tmp_curve_object.get('method_interpolation');
-    % Get Curve conventions
-        tmp_cmp_type = tmp_curve_object.compounding_type;
-        tmp_cmp_freq = tmp_curve_object.compounding_freq;               
-        tmp_dcc = tmp_curve_object.day_count_convention; 
+
     % call function for generating CF dates and values and accrued_interest
-    [ret_dates ret_values accr_int ] = rollout_cashflows_oop(s,reference_nodes, ...
-                        reference_rates,valuation_date,tmp_interp_ref,...
-                        tmp_cmp_type,tmp_dcc,tmp_cmp_freq);
+    [ret_dates ret_values accr_int ] = rollout_structured_cashflows(valuation_date,value_type,s,tmp_curve_object);
 
   % type CASHFLOW -> duplicate all base cashflows
   elseif ( strcmpi(s.sub_type,'CASHFLOW') )
@@ -44,7 +32,7 @@ function s = rollout (bond, value_type, arg1, arg2)
         valuation_date = datestr(arg1);
     end
     % call function for rolling out cashflows
-    [ret_dates ret_values accr_int] = rollout_cashflows_oop(s,[],[],valuation_date);
+    [ret_dates ret_values accr_int] = rollout_structured_cashflows(valuation_date,value_type,s);
   end
   
   % set property value pairs to object

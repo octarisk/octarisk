@@ -97,6 +97,9 @@ function [ret_dates ret_values accrued_interest] = rollout_cashflows_oop(bond, .
                                 basis_curve,comp_freq_curve)
 
 %TODO: introduce prepayment type 'default'
+% TODO: rollout_structured_cashflows
+%       - use objects as input variables: valuation_date, instrument (bond, cap etc.), reference_curve, vola_surface)
+%       - include structured cash flows like caps and floor rates
 
 % Parse bond struct
 if nargin < 1 || nargin > 8
@@ -306,6 +309,8 @@ while datenum(cf_date) <= datenum(maturity_date)
         end
         % error checking for end of month
         new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
+    else
+        error('rollout_cashflows_oop: unknown term >>%s<<',any2str(term));
     end
         
     cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
@@ -375,9 +380,7 @@ if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )
     
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
 %           spot rate defined 
-elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
-    % TODO: use dcc and comp type/freq of curve different from instrument 
-    %       and convert rates according to conventions
+elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
     cf_datesnum = datenum(cf_dates);
     %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
@@ -394,13 +397,13 @@ elseif ( strcmp(type,'FRN') == 1 || strcmp(type,'SWAP_FLOAT') == 1 )
             % get forward rate from provided curve
             forward_rate_curve = get_forward_rate(tmp_nodes,tmp_rates, ...
                         t1,t2-t1,compounding_type,method_interpolation, ...
-                        compounding_freq, day_count_convention, valuation_date, ...
+                        compounding_freq, dcc, valuation_date, ...
                         comp_type_curve, basis_curve, comp_freq_curve,floor_flag);
             % calculate final floating cash flows
             forward_rate = (spread + forward_rate_curve) .* tf;
         elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
                                         % next is in future, use last reset rate                       
-            forward_rate = last_reset_rate .* tf;
+                forward_rate = last_reset_rate .* tf;
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
             forward_rate = 0.0;
         end
@@ -803,7 +806,6 @@ end
 %! [ret_dates ret_values] = rollout_cashflows_oop(bond_struct,discount_nodes, discount_rates,'31-Mar-2016','linear',comp_type_curve,basis_curve,comp_freq_curve);
 %! theo_value = pricing_npv('31-Mar-2016',ret_dates, ret_values,0.0,discount_nodes,discount_rates,bond_struct.day_count_convention,bond_struct.compounding_type,bond_struct.compounding_freq,'linear',comp_type_curve,basis_curve,comp_freq_curve); 
 %! assert(theo_value,0.999500124267452,0.0000000001);
-
 
 %!test
 %! bond_struct=struct();

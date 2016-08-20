@@ -15,7 +15,6 @@
 %#
 %# Compute the price of european interest rate swaptions according to Black76 
 %# pricing functions.
-%# Fast implementation, fully vectorized.@*
 %# @example
 %# @group
 %# C = (F*N( d1) - X*N( d2))*exp(-rT) * multiplicator(m,tau)

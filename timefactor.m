@@ -59,7 +59,7 @@ end
 
 % no negative timefactor
 if d1 > d2
-    error('timefactor: d2 is greater than d1.')
+    error('timefactor: d1 >>%s<< is greater than d2 >>%s<<.',any2str(d1),any2str(d2))
 end
 
 % calculate nominator: days in period (dip)
