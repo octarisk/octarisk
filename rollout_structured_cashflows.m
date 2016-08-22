@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_structured_cashflows (@var{valuation_date},  @var{value_type}, @var{instrument}, @var{ref_curve}, @var{vola_surface})
+%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_structured_cashflows (@var{valuation_date},  @var{value_type}, @var{instrument}, @var{ref_curve}, @var{vola_surface}, @var{vola_riskfactor})
 %#
 %# Compute the dates and values of cash flows and 
 %# accrued interests for fixed rate bonds, floating rate notes, 
@@ -21,7 +21,7 @@
 %# @end deftypefn
 
 function [ret_dates ret_values accrued_interest] = rollout_structured_cashflows(valuation_date, value_type, ...
-                                instrument, ref_curve, vola_surface)
+                                instrument, ref_curve, vola_surface,vola_riskfactor)
 
 %TODO: introduce prepayment type 'default'
 % TODO: rollout_structured_cashflows
@@ -29,7 +29,7 @@ function [ret_dates ret_values accrued_interest] = rollout_structured_cashflows(
 %       - include structured cash flows like caps and floor rates
 
 % Parse bond struct
-if nargin < 3 || nargin > 5
+if nargin < 3 || nargin > 6
     print_usage ();
  end
 
@@ -332,10 +332,14 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP'
                 % get volatility according to moneyness and term
                 tenor   = t1; % days until foward start date
                 term    = t2 - t1; % days of caplet / floorlet
-                sigma   = vola_surface.getValue(tenor,term,moneyness);
+                sigma = calcVolaShock(value_type,instrument,vola_surface, ...
+                            vola_riskfactor,tenor,term,moneyness);
+                % add convexity adjustment to forward rate
+                adj_rate = calcConvexityAdjustment(valuation_date, ...
+                            forward_rate_curve,sigma,t1,t2,dcc,compounding_type);
                 % calculate forward rate according to CAP/FLOOR model
                 forward_rate = getCapFloorRate(instrument.CapFlag, ...
-                        forward_rate_curve, X, tf_fsd, sigma, instrument.model);
+                        adj_rate, X, tf_fsd, sigma, instrument.model);
                 % adjust forward rate to term of caplet / floorlet
                 forward_rate = forward_rate .* tf;
             else % all other floating swap legs and floater
@@ -748,6 +752,7 @@ end
 %! cap_struct.strike                   = 0.08;
 %! cap_struct.CapFlag                  = true;
 %! cap_struct.model                    = 'Black';
+%! cap_struct.vola_spread              = 0.0;
 %! ref_nodes = [365,730];
 %! ref_rates = [0.07,0.07];
 %! c = Curve();
@@ -756,9 +761,133 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.2);
 %! v = v.set('type','IR');
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Mar-2016','base',cap_struct,c,v);
+%! r = Riskfactor();
+%! [ret_dates ret_values] = rollout_structured_cashflows('31-Mar-2016','base',cap_struct,c,v,r);
 %! assert(ret_dates,456,0.000000001);
-%! assert(ret_values,5.61391904975907,0.000000001);
+%! assert(ret_values,5.63130599411650,0.000000001);
+
+%!test 
+%! cap_struct=struct();
+%! cap_struct.sub_type                 = 'FLOOR';
+%! cap_struct.issue_date               = '30-Dec-2018';
+%! cap_struct.maturity_date            = '29-Dec-2020';
+%! cap_struct.compounding_type         = 'simple';
+%! cap_struct.compounding_freq         = 1;
+%! cap_struct.term                     = 365;
+%! cap_struct.day_count_convention     = 'act/365';
+%! cap_struct.basis                    = 3;
+%! cap_struct.notional                 = 10000;
+%! cap_struct.coupon_rate              = 0.00; 
+%! cap_struct.coupon_generation_method = 'forward' ;
+%! cap_struct.business_day_rule        = 0 ;
+%! cap_struct.business_day_direction   = 1  ;
+%! cap_struct.enable_business_day_rule = 0;
+%! cap_struct.spread                   = 0.00 ;
+%! cap_struct.long_first_period        = false;
+%! cap_struct.long_last_period         = false;
+%! cap_struct.last_reset_rate          = 0.0000000;
+%! cap_struct.notional_at_start        = false;
+%! cap_struct.notional_at_end          = false;
+%! cap_struct.strike                   = 0.005;
+%! cap_struct.in_arrears               = 0;
+%! cap_struct.CapFlag                  = true;
+%! cap_struct.model                    = 'Black';
+%! cap_struct.vola_spread              = 0.0;
+%! ref_nodes = [30,1095,1460];
+%! ref_rates = [0.01,0.01,0.01];
+%! sigma                               = 0.8000;
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',ref_nodes,'rates_base',ref_rates,'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',sigma);
+%! v = v.set('type','IR');
+%! r = Riskfactor();
+%! [ret_dates ret_values] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! assert(ret_dates,[1460,1825]);
+%! assert(ret_values,[69.3193486314239,74.0148444015558],0.000000001);
+
+%!test 
+%! cap_struct=struct();
+%! cap_struct.sub_type                 = 'CAP';
+%! cap_struct.issue_date               = '30-Dec-2018';
+%! cap_struct.maturity_date            = '29-Dec-2020';
+%! cap_struct.compounding_type         = 'simple';
+%! cap_struct.compounding_freq         = 1;
+%! cap_struct.term                     = 365;
+%! cap_struct.day_count_convention     = 'act/365';
+%! cap_struct.basis                    = 3;
+%! cap_struct.notional                 = 10000;
+%! cap_struct.coupon_rate              = 0.00; 
+%! cap_struct.coupon_generation_method = 'forward' ;
+%! cap_struct.business_day_rule        = 0 ;
+%! cap_struct.business_day_direction   = 1  ;
+%! cap_struct.enable_business_day_rule = 0;
+%! cap_struct.spread                   = 0.00 ;
+%! cap_struct.long_first_period        = false;
+%! cap_struct.long_last_period         = false;
+%! cap_struct.last_reset_rate          = 0.0000000;
+%! cap_struct.notional_at_start        = false;
+%! cap_struct.notional_at_end          = false;
+%! cap_struct.strike                   = 0.005;
+%! cap_struct.in_arrears               = 0;
+%! cap_struct.CapFlag                  = true;
+%! cap_struct.model                    = 'Normal';
+%! cap_struct.vola_spread              = 0.0;
+%! ref_nodes = [30,1095,1460];
+%! ref_rates = [0.01,0.01,0.01];
+%! sigma                               = 0.00555;
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',ref_nodes,'rates_base',ref_rates,'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',sigma);
+%! v = v.set('type','IR');
+%! r = Riskfactor();
+%! [ret_dates ret_values] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! assert(ret_dates,[1460,1825]);
+%! assert(ret_values,[68.7745301630657,74.0392568621242],0.000000001);
+
+%!test 
+%! cap_struct=struct();
+%! cap_struct.sub_type                 = 'FLOOR';
+%! cap_struct.issue_date               = '30-Dec-2018';
+%! cap_struct.maturity_date            = '29-Dec-2020';
+%! cap_struct.compounding_type         = 'simple';
+%! cap_struct.compounding_freq         = 1;
+%! cap_struct.term                     = 365;
+%! cap_struct.day_count_convention     = 'act/365';
+%! cap_struct.basis                    = 3;
+%! cap_struct.notional                 = 10000;
+%! cap_struct.coupon_rate              = 0.00; 
+%! cap_struct.coupon_generation_method = 'forward' ;
+%! cap_struct.business_day_rule        = 0 ;
+%! cap_struct.business_day_direction   = 1  ;
+%! cap_struct.enable_business_day_rule = 0;
+%! cap_struct.spread                   = 0.00 ;
+%! cap_struct.long_first_period        = false;
+%! cap_struct.long_last_period         = false;
+%! cap_struct.last_reset_rate          = 0.0000000;
+%! cap_struct.notional_at_start        = false;
+%! cap_struct.notional_at_end          = false;
+%! cap_struct.strike                   = 0.005;
+%! cap_struct.in_arrears               = 0;
+%! cap_struct.CapFlag                  = false;
+%! cap_struct.model                    = 'Normal';
+%! cap_struct.vola_spread              = 0.0;
+%! ref_nodes = [30,1095,1460];
+%! ref_rates = [0.01,0.01,0.01];
+%! sigma                               = 0.00555;
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',ref_nodes,'rates_base',ref_rates,'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',sigma);
+%! v = v.set('type','IR');
+%! r = Riskfactor();
+%! [ret_dates ret_values] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! assert(ret_dates,[1460,1825]);
+%! assert(ret_values,[18.2727669131161,23.5374628094158],0.000000001);
 
 %!test 
 %! bond_struct=struct();

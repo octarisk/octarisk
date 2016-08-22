@@ -79,8 +79,8 @@ classdef Instrument
       end % disp
       
       function obj = set.type(obj,type)
-         if ~(strcmpi(type,'cash') || strcmpi(type,'bond') || strcmpi(type,'debt') || strcmpi(type,'swaption') ||  strcmpi(type,'option') || strcmpi(type,'forward') || strcmpi(type,'sensitivity') || strcmpi(type,'synthetic') )
-            error('Type must be either cash, bond, debt, option, swaption, forward, sensitivity or synthetic')
+         if ~(strcmpi(type,'cash') || strcmpi(type,'bond') || strcmpi(type,'debt') || strcmpi(type,'swaption') ||  strcmpi(type,'option') ||  strcmpi(type,'capfloor') || strcmpi(type,'forward') || strcmpi(type,'sensitivity') || strcmpi(type,'synthetic') )
+            error('Type must be either cash, bond, debt, option, swaption, forward, sensitivity, capfloor or synthetic')
          end
          obj.type = type;
       end % Set.type

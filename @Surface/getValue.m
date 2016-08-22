@@ -27,7 +27,7 @@ function y = getValue (surface, xx,yy,zz)
     end
     
     % type ir
-    if ( strcmp(upper(s.type),'IR'))           
+    if ( strcmpi(s.type,'IR'))           
         if (len == 1 && length(s.axis_x) > 0 && length(s.axis_y) == 0 && length(s.axis_z) == 0 )                    %first case: object is curve
           if ( strcmp(upper(s.axis_x_name),'TERM') )
             y = interpolate_curve(s.axix_x,s.values_base,xx,s.method_interpolation);

@@ -289,6 +289,45 @@ end
 %! d = d.calc_value(c,'stress');
 %! assert(d.getValue('stress'),[91.83;84.02],0.01);
 
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Cap Object with Black Model\n');
+%! cap = CapFloor();
+%! cap = cap.set('id','TEST_CAP','name','TEST_CAP','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
+%! cap = cap.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! cap = cap.set('strike',0.005,'model','Black','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','CAP');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,1095,1460],'rates_base',[0.01,0.01,0.01],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.8);
+%! v = v.set('type','IR');
+%! r = Riskfactor();
+%! cap = cap.rollout('31-Dec-2015','base',c,v,r);
+%! cap = cap.calc_value('31-Dec-2015','base',c);
+%! assert(cap.getValue('base'),137.0063959386,0.0000001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Floor Object with Normal Model\n');
+%! floor = CapFloor();
+%! floor = floor.set('id','TEST_FLOOR','name','TEST_FLOOR','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
+%! floor = floor.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! floor = floor.set('strike',0.005,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,1095,1460,1825],'rates_base',[0.01,0.01,0.01,0.01],'method_interpolation','linear');
+%! c = c.set('id','IR_EUR','nodes',[30,1095,1460,1825],'rates_stress',[-0.02,-0.02,-0.01,-0.005;0.02,0.02,0.02,0.02;0.03,0.03,0.03,0.03]);
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.00555);
+%! v = v.set('type','IR');
+%! r = Riskfactor();
+%! floor = floor.rollout('31-Dec-2015','base',c,v,r);
+%! floor = floor.calc_value('31-Dec-2015','base',c);
+%! assert(floor.getValue('base'),39.9458086766,0.0000001);
+%! floor = floor.rollout('31-Dec-2015','stress',c,v,r);
+%! floor = floor.calc_value('31-Dec-2015','stress',c);
+%! stress_values = floor.getValue('stress');
+%! assert(stress_values,[13.6292010625;6.0922055608;0.4638643559],0.0000001);
+    
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
 %! b = Bond();
