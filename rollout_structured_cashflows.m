@@ -335,7 +335,7 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP'
                 sigma = calcVolaShock(value_type,instrument,vola_surface, ...
                             vola_riskfactor,tenor,term,moneyness);
                 % add convexity adjustment to forward rate
-                adj_rate = calcConvexityAdjustment(valuation_date, ...
+                adj_rate = calcConvexityAdjustment(valuation_date, instrument.model, ...
                             forward_rate_curve,sigma,t1,t2,dcc,compounding_type);
                 % calculate forward rate according to CAP/FLOOR model
                 forward_rate = getCapFloorRate(instrument.CapFlag, ...
@@ -354,7 +354,7 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP'
                     forward_rate = max(instrument.strike - last_reset_rate,0) .* tf;
                 end
             else
-                forward_rate = last_reset_rate .* tf;
+                forward_rate = (spread + last_reset_rate) .* tf;
             end
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
             forward_rate = 0.0;
@@ -362,7 +362,7 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP'
         cf_values(:,ii) = forward_rate;
     end
     ret_values = cf_values .* notional;
-    cf_interest = ret_values .* 0.0;
+    cf_interest = ret_values; % .* 0.0; ????
     % Add notional payments
     if ( notional_at_start == true)    % At notional payment at start
         ret_values(:,1) = ret_values(:,1) - notional;     
@@ -517,20 +517,48 @@ ret_interest_values = cf_interest(:,(end-length(ret_dates)+1):end);
 % calculate time in days from last coupon date
 ret_date_last_coupon = ret_dates_tmp(ret_dates_tmp<0);
 % distinguish three different cases:
-% issue_date.......first_cf_date....valuation_date......2nd_cf_date.....mat_date
-% valuation_date...issue_date......frist_cf_date........2nd_cf_date.....mat_date
-% issue_date.......valuation_date..frist_cf_date........2nd_cf_date.....mat_date
-if length(ret_date_last_coupon) > 0
+% A) issue_date.......first_cf_date....valuation_date...2nd_cf_date.....mat_date
+% B) valuation_date...issue_date......frist_cf_date.....2nd_cf_date.....mat_date
+% C) issue_date.......valuation_date..frist_cf_date.....2nd_cf_date.....mat_date
+
+% adjustment to accrued interest required if calculated
+% from next cashflow (background: next cashflow is adjusted for
+% for actual days in period (in e.g. act/365 dcc), so the
+% CF has to be adjusted back by 355/366 in leap year to prevent
+% double counting of one day
+% therefore a generic approach was chosen where the time factor is always 
+% adjusted by actual days in year / days in leap year
+
+if length(ret_date_last_coupon) > 0                 % CASE A
     ret_date_last_coupon = -ret_date_last_coupon(end);
     [tf dip dib] = timefactor (valuation_date - ret_date_last_coupon, ...
                             valuation_date, dcc);
+    % correct next coupon payment if leap year
+    % adjustment from 1 to 365 days in base for act/act
+    if dib == 1
+        dib = 365;
+    end    
+    days_from_last_coupon = ret_date_last_coupon;
+    days_to_next_coupon = ret_dates(1);  
+    adj_factor = dib / (days_from_last_coupon + days_to_next_coupon);
+    if ~( term == 365)
+    adj_factor = adj_factor * term / 12;
+    end
+    tf = tf * adj_factor;
 else
     % if valuation date before issue date -> tf = 0
-    if ( valuation_date <= datenum(issue_date) )
+    if ( valuation_date <= datenum(issue_date) )    % CASE B
         tf = 0;
     % valuation date after issue date, but before first cf payment date
-    else
+    else                                            % CASE C
         [tf dip dib] = timefactor (issue_date, valuation_date, dcc);
+        days_from_last_coupon = valuation_date - issue_date;
+        days_to_next_coupon = ret_dates(1);  
+        adj_factor = dib / (days_from_last_coupon + days_to_next_coupon);
+        if ~( term == 365)
+        adj_factor = adj_factor * term / 12;
+        end
+        tf = tf * adj_factor;
     end
 end
 % value of next coupon -> accrued interest is pro-rata share of next coupon
@@ -846,8 +874,8 @@ end
 %! r = Riskfactor();
 %! [ret_dates ret_values] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
 %! assert(ret_dates,[1460,1825]);
-%! assert(ret_values,[68.7745301630657,74.0392568621242],0.000000001);
-
+%! assert(ret_values,[68.7744654466300,74.03917364111012],0.000000001);
+   
 %!test 
 %! cap_struct=struct();
 %! cap_struct.sub_type                 = 'FLOOR';
@@ -887,8 +915,8 @@ end
 %! r = Riskfactor();
 %! [ret_dates ret_values] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
 %! assert(ret_dates,[1460,1825]);
-%! assert(ret_values,[18.2727669131161,23.5374628094158],0.000000001);
-
+%! assert(ret_values,[18.2727946049505,23.5375027994284],0.000000001);
+   
 %!test 
 %! bond_struct=struct();
 %! bond_struct.sub_type                 = 'ZCB';
@@ -950,7 +978,7 @@ end
 %! [ret_dates ret_values accrued_interest] = rollout_structured_cashflows('31-Dec-2015','base',bond_struct);
 %! assert(ret_dates,[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],0.000000001);
 %! assert(ret_values,[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5],0.000000001);
-%! assert(accrued_interest,0.214284106,0.0000001);
+%! assert(accrued_interest,0.213698630136987,0.0000001);
 
 %!test
 %! bond_struct=struct();
@@ -980,4 +1008,4 @@ end
 %! [ret_dates ret_values accrued_interest] = rollout_structured_cashflows('31-Dec-2015','base',bond_struct);
 %! assert(ret_dates,[90,274,455,639,820,1004,1185,1369,1551,1735,1916,2100],0.000000001);
 %! assert(ret_values,[1.0595890411,1.0712328767,1.0537671233,1.0712328767,1.0537671233,1.0712328767,1.0537671233,1.0712328767,1.0595890411,1.0712328767,1.0537671233,101.0712328767],0.000000001);
-%! assert(accrued_interest,0.534148996,0.0000001);
+%! assert(accrued_interest,0.535616438356163,0.0000001);

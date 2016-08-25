@@ -58,7 +58,6 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
                                                             moneyness_exponent;
         tmp_moneyness           = (tmp_underlying_value ./ tmp_strike).^ ...
                                                             moneyness_exponent;
-                
         tmp_imp_vola_shock = calcVolaShock(value_type,obj,tmp_vola_surf_obj, ...
                             vola_riskfactor,tmp_dtm,tmp_moneyness);
     

@@ -25,7 +25,6 @@ function y = getValue (surface, xx,yy,zz)
             yy = ones(rows(zz),1) .* yy;
         end         
     end
-    
     % type ir
     if ( strcmpi(s.type,'IR'))           
         if (len == 1 && length(s.axis_x) > 0 && length(s.axis_y) == 0 && length(s.axis_z) == 0 )                    %first case: object is curve
@@ -60,13 +59,13 @@ function y = getValue (surface, xx,yy,zz)
             % expand vectors and matrizes for constant extrapolation (add additional time steps and moneynesses, duplicate rows and cols)
             xx_structure = [0,xx_structure,21900];
             yy_structure = [0,yy_structure,21900];
-            zz_structure = [0,zz_structure,1000000];
+            zz_structure = [-100000000,zz_structure,100000000];
             vola_cube = cat(2,vola_cube,vola_cube(:,end,:));
             vola_cube = cat(2,vola_cube(:,1,:),vola_cube);
             vola_cube = cat(1,vola_cube,vola_cube(end,:,:));
             vola_cube = cat(1,vola_cube(1,:,:),vola_cube); 
             vola_cube = cat(3,vola_cube,vola_cube(:,:,end));
-            vola_cube = cat(3,vola_cube(:,:,1),vola_cube); 
+            vola_cube = cat(3,vola_cube(:,:,1),vola_cube);
             % WORKAROUND:
             % interpolating the implied vola for more than 50000 MC scenarios is too memory extensive.
                 % therefore one needs to reduce the complexity:
@@ -79,7 +78,7 @@ function y = getValue (surface, xx,yy,zz)
             % extract moneyness vector
             moneyness_vec = vola_cube(index_xx,index_yy,:);
             [aa bb cc] = size(moneyness_vec);
-            moneyness_vec = reshape(moneyness_vec,cc,1,1);       
+            moneyness_vec = reshape(moneyness_vec,cc,1,1);      
             % interpolate on moneyness dimension, hold tenor and term fix (map to nearest)
             y = interp1(zz_structure,moneyness_vec,zz,s.method_interpolation);
           else

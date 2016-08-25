@@ -81,3 +81,20 @@ end
 %! r = Riskfactor();
 %! imp_vola_shock = calcVolaShock('base',instrument,v,r,365,90,1);
 %! assert(imp_vola_shock,0.2)
+%! imp_vola_shock = calcVolaShock('base',instrument,v,r,365,90,-0.5);
+%! assert(imp_vola_shock,0.2)
+
+%!test 
+%! r = Riskfactor();
+%! r = r.set('scenario_stress',0.1,'model','BM');
+%! v = Surface();
+%! v = v.set('axis_x',730,'axis_x_name','TERM','axis_y',1.1,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.1798665419);
+%! v = v.set('type','INDEX');
+%! o = Option();
+%! o = o.set('maturity_date','31-Mar-2018','compounding_type','cont','sub_type','OPT_EUR_P');
+%! o = o.set('strike',136.9847,'multiplier',1);
+%! tmp_imp_vola_shock_base = calcVolaShock('base',o,v,r,730,1.2);
+%! assert(tmp_imp_vola_shock_base,0.179866541900000,0.00000001);
+%! tmp_imp_vola_shock_stress = calcVolaShock('stress',o,v,r,730,1.5);
+%! assert(tmp_imp_vola_shock_stress,0.19785319609,0.00000001);

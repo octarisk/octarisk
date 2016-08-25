@@ -134,20 +134,21 @@ end
 %! c = c.set('id','IR_EUR','nodes',[30,90,180,365,730],'rates_base',[0.0019002740,0.0019002740,0.0019002301,0.0019001390,0.001900069],'method_interpolation','linear');
 %! b = b.set('clean_value_base',99.7527,'spread',0.003);
 %! b = b.calc_spread_over_yield(c,'30-Jun-2016');
-%! assert(b.get('soy'),0.00452588743538773,0.0000001); 
+%! assert(b.get('soy'), 0.00399948418269946,0.0000001); 
 %! b = b.calc_value('30-Jun-2016',c,'base');
-%! assert(b.getValue('base'),99.7527005528256,0.0000001);
+%! assert(b.getValue('base'),99.7917725092950,0.0000001);
 %! b = b.calc_sensitivities('30-Jun-2016',c,r);
-%! assert(b.get('convexity'),1.10692603003620,0.0000001);
-%! assert(b.get('eff_convexity'),0.551095948832067,0.0000001);
-%! assert(b.get('eff_duration'),-0.00360801591397864,0.0000001);
-%! assert(b.get('mac_duration'),0.747366922375284,0.0000001);
+%! assert(b.get('convexity'),1.10779411816050,0.0000001);
+%! assert(b.get('eff_convexity'),0.551778553743564,0.0000001);
+%! assert(b.get('eff_duration'),-0.00321909293737049,0.0000001);
+%! assert(b.get('mac_duration'),0.747367047335932,0.0000001);
 %! r = r.set('floor',0.0);
 %! b = b.calc_sensitivities('30-Jun-2016',c,r);
-%! assert(b.get('eff_convexity'),74.8206792667530,0.0000001);
-%! assert(b.get('eff_duration'),0.367739900675619,0.0000001);
-%! assert(b.get('mac_duration'),0.747366922375284,0.0000001);
-%! assert(b.get('spread_duration'),0.743833676389663,0.0000001)
+%! assert(b.get('eff_convexity'),74.8118222412937,0.0000001);
+%! assert(b.get('eff_duration'),0.368081125500380,0.0000001);
+%! assert(b.get('mac_duration'),0.747367047335932,0.0000001);
+%! assert(b.get('spread_duration'),0.744125307965525,0.0000001)
+
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');
 %! c = Curve();
@@ -322,12 +323,12 @@ end
 %! r = Riskfactor();
 %! floor = floor.rollout('31-Dec-2015','base',c,v,r);
 %! floor = floor.calc_value('31-Dec-2015','base',c);
-%! assert(floor.getValue('base'),39.9458086766,0.0000001);
+%! assert(floor.getValue('base'),39.9458733223202,0.0000001);
 %! floor = floor.rollout('31-Dec-2015','stress',c,v,r);
 %! floor = floor.calc_value('31-Dec-2015','stress',c);
 %! stress_values = floor.getValue('stress');
-%! assert(stress_values,[13.6292010625;6.0922055608;0.4638643559],0.0000001);
-    
+%! assert(stress_values,[13.629274436848439;6.092263070602667;0.463877763957439],0.0000001);
+
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
 %! b = Bond();
