@@ -10,15 +10,14 @@
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
 %#
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {} adapt_matlab()
 %# Matlab Adaption of Octarisk Code
-%#
-%# Input files phrases to replace:
-%# wordlist.csv
-%# Input files for replacement:
-%# Automatical detection of all m.files in all directories for replacement
-%# 
-%# Output data:
-%# Rewritten m.files
+%# Input files phrases to replace: wordlist_matlab.csv
+%# Input files for replacement: Automatical detection of all m.files in all directories for replacement
+%# Output data: Rewritten m.files
+%# @seealso{replacement_script}
+%# @end deftypefn
 
 function adapt_matlab
 
@@ -35,8 +34,8 @@ main_dir=cd;
 addpath(main_dir);
 
 for i=1:size(directorylist,2)
-        pathchange=strcat(main_dir,'/',directorylist(i));
-
+    pathchange=strcat(main_dir,'/',directorylist(i));
+    
     cd(pathchange{1});
     replacement_script('wordlist_matlab.csv');
 end
