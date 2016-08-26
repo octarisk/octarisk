@@ -10,16 +10,15 @@
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
 %#
-%# Replacement Script
-%# Main Purpose: Octave code to Matlab executable code conversion 
-%#
-%# Input files phrases to replace:
-%# wordlist.csv Format:(String;Replacement String;File)
-%# Input files for replacement:
-%# Automatical detection of all m.files in directory for replacement
-%# 
-%# Output data:
-%# Rewritten m.files
+%# -*- texinfo -*-
+%# @deftypefn {Function File} replacement_script(@var{replacement_list})
+%# Matlab Adaption of Octarisk Code 
+%# Input files phrases to replace: wordlist_matlab.csv 
+%# Format:(String;Replacement String;File)
+%# Input files for replacement: Automatical detection of all m.files in directory for replacement
+%# Output data: Rewritten m.files
+%# @seealso{adapt_matlab}
+%# @end deftypefn
 
 function replacement_script(replacement_list)
 
