@@ -334,9 +334,14 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP'
                 term    = t2 - t1; % days of caplet / floorlet
                 sigma = calcVolaShock(value_type,instrument,vola_surface, ...
                             vola_riskfactor,tenor,term,moneyness);
+                            
                 % add convexity adjustment to forward rate
-                adj_rate = calcConvexityAdjustment(valuation_date, instrument.model, ...
-                            forward_rate_curve,sigma,t1,t2,dcc,compounding_type);
+                if ( instrument.convex_adj == true )
+                    adj_rate = calcConvexityAdjustment(valuation_date, ...
+                            instrument, forward_rate_curve,sigma,t1,t2);
+                else
+                    adj_rate = forward_rate_curve;
+                end
                 % calculate forward rate according to CAP/FLOOR model
                 forward_rate = getCapFloorRate(instrument.CapFlag, ...
                         adj_rate, X, tf_fsd, sigma, instrument.model);
@@ -780,6 +785,7 @@ end
 %! cap_struct.strike                   = 0.08;
 %! cap_struct.CapFlag                  = true;
 %! cap_struct.model                    = 'Black';
+%! cap_struct.convex_adj               = true;
 %! cap_struct.vola_spread              = 0.0;
 %! ref_nodes = [365,730];
 %! ref_rates = [0.07,0.07];
@@ -820,6 +826,7 @@ end
 %! cap_struct.in_arrears               = 0;
 %! cap_struct.CapFlag                  = true;
 %! cap_struct.model                    = 'Black';
+%! cap_struct.convex_adj               = true;
 %! cap_struct.vola_spread              = 0.0;
 %! ref_nodes = [30,1095,1460];
 %! ref_rates = [0.01,0.01,0.01];
@@ -861,6 +868,7 @@ end
 %! cap_struct.in_arrears               = 0;
 %! cap_struct.CapFlag                  = true;
 %! cap_struct.model                    = 'Normal';
+%! cap_struct.convex_adj               = false;
 %! cap_struct.vola_spread              = 0.0;
 %! ref_nodes = [30,1095,1460];
 %! ref_rates = [0.01,0.01,0.01];
@@ -902,6 +910,7 @@ end
 %! cap_struct.in_arrears               = 0;
 %! cap_struct.CapFlag                  = false;
 %! cap_struct.model                    = 'Normal';
+%! cap_struct.convex_adj               = false;
 %! cap_struct.vola_spread              = 0.0;
 %! ref_nodes = [30,1095,1460];
 %! ref_rates = [0.01,0.01,0.01];

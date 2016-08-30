@@ -1,5 +1,14 @@
 # Version History 
 
+### next versions
+Possible new Features:
+- calculation of key rate durations for Bonds
+- Asian Options (geometric and arithmetic averaging), closed form solutions only
+- callable bonds (construct Willowtree for IR, incorporate call/put schedules)
+
+### 0.3.1, 2016/08/21
+Version v0.3.1 is a minor version with new testing features, more validated pricing functions and several minor bugfixes.
+
 ### 0.3.0, 2016/06/30
 Version v0.3.0 is a major version with greatly improved features and validated pricing functions.
 

@@ -278,11 +278,29 @@ function s = set (capfloor, varargin)
             s.enable_business_day_rule = logical(0);
         end
       elseif ( islogical(val))
-        s.long_first_period = val;
+        s.enable_business_day_rule = val;
       else
         error ('set: expecting enable_business_day_rule to be a real number or true/false');
       end
-     % ====================== set long_first_period ======================
+    % ====================== set convex_adj ======================
+    elseif (ischar (prop) && strcmp (prop, 'convex_adj'))   
+      if (isnumeric (val) && isreal (val))
+        s.convex_adj = logical(val);
+      elseif ( ischar(val))
+        if ( strcmpi('false',lower(val)))
+            s.convex_adj = logical(0);
+        elseif ( strcmpi('true',lower(val)))
+            s.convex_adj = logical(1);
+        else
+            printf('WARNING: Unknown val: >>%s<<. Setting convex_adj to false.',val);
+            s.convex_adj = logical(0);
+        end
+      elseif ( islogical(val))
+        s.convex_adj = val;
+      else
+        error ('set: expecting convex_adj to be a real number or true/false');
+      end
+    % ====================== set long_first_period ======================
     elseif (ischar (prop) && strcmp (prop, 'long_first_period'))   
       if (isnumeric (val) && isreal (val))
         s.long_first_period = logical(val);
@@ -314,7 +332,7 @@ function s = set (capfloor, varargin)
             s.long_last_period = logical(0);
         end
       elseif ( islogical(val))
-        s.long_first_period = val; 
+        s.long_last_period = val; 
       else
         error ('set: expecting long_last_period to be a real number');
       end 
@@ -394,6 +412,8 @@ function s = set (capfloor, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting in_arrears to false.',val);
             s.in_arrears = logical(0);
         end
+      elseif ( islogical(val))
+        s.in_arrears = val;
       else
         error ('set: expecting in_arrears to be a real number');
       end 
@@ -410,6 +430,8 @@ function s = set (capfloor, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting notional_at_start to false.',val);
             s.notional_at_start = logical(0);
         end
+      elseif ( islogical(val))
+        s.notional_at_start = val;
       else
         error ('set: expecting notional_at_start to be a real number');
       end 
@@ -426,6 +448,8 @@ function s = set (capfloor, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting notional_at_end to false.',val);
             s.notional_at_end = logical(0);
         end
+      elseif ( islogical(val))
+        s.notional_at_end = val;
       else
         error ('set: expecting notional_at_end to be a real number');
       end

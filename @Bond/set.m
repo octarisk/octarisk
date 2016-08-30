@@ -399,7 +399,7 @@ function s = set (bond, varargin)
             s.long_last_period = logical(0);
         end
       elseif ( islogical(val))
-        s.long_first_period = val; 
+        s.long_last_period = val; 
       else
         error ('set: expecting long_last_period to be a real number');
       end 
@@ -479,9 +479,11 @@ function s = set (bond, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting in_arrears to false.',val);
             s.in_arrears = logical(0);
         end
+      elseif ( islogical(val))
+        s.in_arrears = val;
       else
         error ('set: expecting in_arrears to be a real number');
-      end 
+      end  
     % ====================== set fixed_annuity ======================
     elseif (ischar (prop) && strcmp (prop, 'fixed_annuity'))   
       if (isnumeric (val) && isreal (val))
@@ -495,6 +497,8 @@ function s = set (bond, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting fixed_annuity to false.',val);
             s.fixed_annuity = logical(0);
         end
+      elseif ( islogical(val))
+        s.fixed_annuity = val;
       else
         error ('set: expecting fixed_annuity to be a real number');
       end 
@@ -511,6 +515,8 @@ function s = set (bond, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting notional_at_start to false.',val);
             s.notional_at_start = logical(0);
         end
+      elseif ( islogical(val))
+        s.notional_at_start = val;
       else
         error ('set: expecting notional_at_start to be a real number');
       end 
@@ -527,6 +533,8 @@ function s = set (bond, varargin)
             printf('WARNING: Unknown val: >>%s<<. Setting notional_at_end to false.',val);
             s.notional_at_end = logical(0);
         end
+      elseif ( islogical(val))
+        s.notional_at_end = val;
       else
         error ('set: expecting notional_at_end to be a real number');
       end       

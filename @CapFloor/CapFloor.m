@@ -27,6 +27,7 @@ classdef CapFloor < Instrument
                                 %(mark to market) successful            
         vola_surface = 'RF_VOLA_IR_EUR';
         strike = 0.005;
+        convex_adj = true;      % flag for using convex adj. for forward rates
     end
    
     properties (SetAccess = private)
@@ -93,6 +94,7 @@ classdef CapFloor < Instrument
          fprintf('compounding_freq: %d\n',b.compounding_freq);    
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('model: %s\n',b.model); 
+         fprintf('convex_adj: %s\n',any2str(b.convex_adj)); 
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
          [mc_rows mc_cols mc_stack] = size(b.cf_values_mc);

@@ -312,7 +312,7 @@ end
 %! floor = CapFloor();
 %! floor = floor.set('id','TEST_FLOOR','name','TEST_FLOOR','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
 %! floor = floor.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
-%! floor = floor.set('strike',0.005,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR');
+%! floor = floor.set('strike',0.005,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR','convex_adj',false);
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[30,1095,1460,1825],'rates_base',[0.01,0.01,0.01,0.01],'method_interpolation','linear');
 %! c = c.set('id','IR_EUR','nodes',[30,1095,1460,1825],'rates_stress',[-0.02,-0.02,-0.01,-0.005;0.02,0.02,0.02,0.02;0.03,0.03,0.03,0.03]);

@@ -51,6 +51,8 @@ function s = get (bond, property)
           s = obj.cf_values_mc;
         case 'soy'
           s = obj.soy;
+        case 'convex_adj'
+          s = obj.convex_adj;
         case 'basis'
           s = obj.basis;
         case 'compounding_type'

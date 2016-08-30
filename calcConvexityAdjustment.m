@@ -21,13 +21,11 @@
 %# Input and output variables:
 %# @itemize @bullet
 %# @item @var{valuation_date}: valuation date [required] 
-%# @item @var{model}: model (Black, Normal) [required] 
+%# @item @var{instrument}: instrument struct or object (with model, basis) [required] 
 %# @item @var{r}: forward rate [required] 
 %# @item @var{sigma}: forward volatility (act/365 continuous) [required] 
 %# @item @var{t1}: forward start date [required] 
 %# @item @var{t2}: forward end date [required] 
-%# @item @var{basis}: day count convention of instrument [optional]
-%# @item @var{comp_type}: compounding type: [simple, disc, cont] (string) [optional]
 %# @item @var{adj_rate}: OUTPUT: adjusted forward rate
 %# @item @var{adj}: OUTPUT: adjustment only
 %# @end itemize
@@ -35,20 +33,13 @@
 %# @seealso{timefactor}
 %# @end deftypefn
 
-function [adj_rate adj] = calcConvexityAdjustment(valuation_date,model,r,sigma,t1,t2,basis,comp_type)
+function [adj_rate adj] = calcConvexityAdjustment(valuation_date,instrument,r,sigma,t1,t2)
 
 % Error and input checks
- if nargin < 6 || nargin > 8
+ if nargin < 6 || nargin > 6
     print_usage ();
  end
- 
-if nargin < 7
-   basis = 3;
-   comp_type = 'cont';
-end
-if nargin < 8
-   comp_type = 'cont';
-end
+
 
 if ~isnumeric(r)
     error('calcConvexityAdjustment: Rate r is not a valid number')
@@ -60,22 +51,53 @@ if ~isnumeric(sigma) || sigma < 0
     error('calcConvexityAdjustment: Volatility sigma is not a valid number')
 end
 
+% get instrument related attributes for all models
+basis       = instrument.basis;
+comp_type   = instrument.compounding_type;
+model       = instrument.model;
+% calculate timefactors
+tau = timefactor(valuation_date + t1, valuation_date + t2, basis);
+Tminust = timefactor(valuation_date, valuation_date + t1, basis);
+    
 % calculate convexity adjustment according to model
-if (strcmpi(model,'Black')) 
-    % calculate timefactors
-    tau = timefactor(valuation_date + t1, valuation_date + t2, basis);
-    Tminust = timefactor(valuation_date, valuation_date + t1, basis);
-
+if (strcmpi(model,'Black'))            % Log-Normal model 
     % calculate convexity adjustment according to compounding type
     if regexpi(comp_type,'cont')
-        adj = 0.5 .* r.^2 * sigma.^2 .* Tminust .* tau;
+        adj = 0.5 .* r.^2 .* sigma.^2 .* Tminust .* tau;
     elseif regexpi(comp_type,'disc')
-        adj = 0.5 .* r.^2 * sigma.^2 .* Tminust .* tau .* (tau + 1) ./ (1 + r);
+        adj = 0.5 .* r.^2 .* sigma.^2 .* Tminust .* tau .* (tau + 1) ./ (1 + r);
     elseif  regexpi(comp_type,'simp') || regexpi(comp_type,'smp')
         adj = r.^2 .* sigma.^2 .* Tminust .* tau  ./ (1 + tau .* r);
     else  % e.g. linear compounding -> interest rate equals tradeable 
           % linear combination of money and ZCB -> no adjustment required
         adj = 0;
+    end
+elseif (strcmpi(model,'Normal'))            % Normal model
+    % calculate convexity adjustment for Caps / Floors
+    if (strcmpi(instrument.sub_type,'CAP') || strcmpi(instrument.sub_type,'FLOOR'))
+        K = instrument.strike;
+        if (instrument.CapFlag == true)
+            psi = 1;
+        else
+            psi = -1;
+        end
+        % calculate adjustment according to Hagan 2003 Eq. 3.6c,d(preprint) 
+        adj = psi .* sigma.^2 .* tau .*  normcdf( psi .* ( r - K ) ./ ...
+                                                    ( sigma .* sqrt(tau)));
+    
+    % calculate convexity adjustment for other instruments (e.g. CMS swaps)
+    else
+       % calculate convexity adjustment according to compounding type
+        if regexpi(comp_type,'cont')
+            adj = 0.5 .* sigma.^2 .* Tminust .* tau;
+        elseif regexpi(comp_type,'disc')
+            adj = 0.5 .* sigma.^2 .* Tminust .* tau .* (tau + 1) ./ (1 + r);
+        elseif  regexpi(comp_type,'simp') || regexpi(comp_type,'smp')
+            adj = sigma.^2 .* Tminust .* tau  ./ (1 + tau .* r);
+        else  % e.g. linear compounding -> interest rate equals tradeable 
+              % linear combination of money and ZCB -> no adjustment required
+            adj = 0;
+        end
     end
 else    % all other models: not yet implemented
     adj = 0.0;
@@ -86,13 +108,47 @@ adj_rate = r + adj;
 
 end
 
-%!assert(calcConvexityAdjustment('31-Dec-2015','Black',0.0100501670841679,0.8,1095,1460,3,'simple'),0.0102421686841733,0.00000001);
-%!assert(calcConvexityAdjustment('31-Dec-2015','Black',0.0100501670841679,0.8,1460,1825,3,'simple'),0.0103061692175084,0.00000001);
-%!assert(calcConvexityAdjustment('31-Dec-2015','Black',0.01000,0.8,1460,1825,3,'cont'),0.0101280000000000,0.00000001);
-%!assert(calcConvexityAdjustment('31-Dec-2015','Black',0.01000,0.8,1460,1825),0.0101280000000000,0.00000001); 
-%!assert(calcConvexityAdjustment('31-Dec-2015','Black',0.01000,0.8,1460,1825,3),0.0101280000000000,0.00000001);
-%!error(calcConvexityAdjustment('31-Dec-2015','Black',0.01000,-0.1,1460,1825,3));
-%!error(calcConvexityAdjustment('31-Dec-2015','Black',0.01000,0.4,1825,1460,3));
-%!error(calcConvexityAdjustment('31-Dec-2015','Black',0.01000,0.8,1460));
-%!assert(calcConvexityAdjustment('31-Dec-2015','Black',0.0100501670841682,0.00555,1460,1825,3,'simple'),0.0100501794052708,0.00000001);
-%!assert(calcConvexityAdjustment('31-Dec-2015','Black',0.0100501670841679,0.00555,1095,1460,3,'simple'),0.0100501763249950,0.00000001);
+%!shared i
+%! i = struct();
+%! i.model = 'Black';
+%! i.basis = 3;
+%! i.compounding_type = 'simple';
+%!assert(calcConvexityAdjustment('31-Dec-2015',i,0.0100501670841679,0.8,1095,1460),0.0102421686841733,0.00000001);
+%!assert(calcConvexityAdjustment('31-Dec-2015',i,0.0100501670841679,0.8,1460,1825),0.0103061692175084,0.00000001);
+%!error(calcConvexityAdjustment('31-Dec-2015',i,0.01000,-0.1,1460,1825));
+%!error(calcConvexityAdjustment('31-Dec-2015',i,0.01000,0.4,1825,1460));
+%!error(calcConvexityAdjustment('31-Dec-2015',i,0.01000,0.8,1460));
+%!assert(calcConvexityAdjustment('31-Dec-2015',i,0.0100501670841682,0.00555,1460,1825),0.0100501794052708,0.00000001);
+%!assert(calcConvexityAdjustment('31-Dec-2015',i,0.0100501670841679,0.00555,1095,1460),0.0100501763249950,0.00000001);
+
+%!shared k
+%! k = struct();
+%! k.model = 'Black';
+%! k.basis = 3;
+%! k.compounding_type = 'cont';
+%!assert(calcConvexityAdjustment('31-Dec-2015',k,0.01000,0.8,1460,1825),0.0101280000000000,0.00000001); 
+
+%!shared j
+%! j = struct();
+%! j.model = 'Black';
+%! j.basis = 3;
+%! j.compounding_type = 'disc';
+%!assert(calcConvexityAdjustment('31-Dec-2015',j,0.01000,0.8,1460,1825),0.0102534653465347,0.00000001); 
+
+%!shared n
+%! n = struct();
+%! n.model = 'Normal';
+%! n.basis = 3;
+%! n.sub_type = 'CMS';
+%! n.compounding_type = 'cont';
+%!assert(calcConvexityAdjustment('31-Dec-2015',n,0.01000,0.00555,1460,1825),0.010061605,0.00000001); 
+
+%!shared m
+%! m = struct();
+%! m.model = 'Normal';
+%! m.basis = 3;
+%! m.compounding_type = 'disc';
+%! m.strike = 0.01;
+%! m.sub_type = 'Cap';
+%! m.CapFlag = true;
+%!assert(calcConvexityAdjustment('31-Dec-2015',m,0.01000,0.00555,1460,1825),0.01001540125,0.00000001); 
