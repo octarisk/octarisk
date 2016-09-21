@@ -14,17 +14,21 @@
 %# @deftypefn {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk})
 %# @deftypefnx {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk}, @var{nodes}, @var{path_static})
 %#
-%# Computes the price of european or american equity options according to the willow tree model.@*
-%# The willow tree approach provides a fast and accurate way of calculating option prices. Furthermore, massive parallelization due to litte memory consumption  is possible.
+%# Computes the price of european or american equity options according to the 
+%# willow tree model.@*
+%# The willow tree approach provides a fast and accurate way of calculating 
+%# option prices. 
 %# This implementation of the willow tree concept is based on following
 %# literature:
 %# @itemize @bullet
 %# @item 'Willow Tree', Andy C.T. Ho, Master thesis, May 2000
-%# @item 'Willow Power: Optimizing Derivative Pricing Trees', Michael Curran, ALGO RESEARCH QUARTERLY, Vol. 4, No. 4, December 2001
+%# @item 'Willow Power: Optimizing Derivative Pricing Trees', Michael Curran, 
+%# ALGO RESEARCH QUARTERLY, Vol. 4, No. 4, December 2001
 %# @end itemize
 %#
 %# Example of an American Call Option with continuous dividends:@*
-%# (365 days to maturity, vector with different spot prices and volatilities, strike = 8, r = 0.06, dividend = 0.05, timestep 5 days, 20 nodes):
+%# (365 days to maturity, vector with different spot prices and volatilities, 
+%# strike = 8, r = 0.06, dividend = 0.05, timestep 5 days, 20 nodes):
 %# @code{option_willowtree(1,1,[7;8;9;7;8;9],8,365,0.06,[0.2;0.2;0.2;0.3;0.3;0.3],0.05,5,20)}
 %#
 %# Variables:
@@ -34,11 +38,13 @@
 %# @item @var{S}: stock price at time 0
 %# @item @var{X}: strike price 
 %# @item @var{T}: time in days to maturity
-%# @item @var{r}: annual risk-free interest rate (continuously compounded, act/365)
-%# @item @var{sigma}: implied volatility of the stock price measured as annual standard deviation
+%# @item @var{r}: annual risk-free interest rate (cont, act/365)
+%# @item @var{sigma}: implied volatility of the stock price
 %# @item @var{dividend}: continuous dividend yield, act/365
-%# @item @var{dk}: size of timesteps for valuation points (optimal accuracy vs. runtime choice : 5 days timestep)
-%# @item @var{nodes}: number of nodes for willow tree setup. Number of nodes must be in list [10,15,20,30,40,50]. These vectors are optimized by Currans suggested Method to fulfill variance constraint (optimal accuracy vs. runtime choice: 20 nodes)
+%# @item @var{dk}: size of timesteps for valuation points (default: 5 days)
+%# @item @var{nodes}: number of nodes for willow tree setup. 
+%# Number of nodes must be in list [10,15,20,30,40,50]. These vectors are 
+%# optimized by Currans Method to fulfill variance constraint (default: 20)
 %# @end itemize
 %# @seealso{option_binomial, option_bs, option_exotic_mc}
 %# @end deftypefn
@@ -50,7 +56,7 @@ function [option_willowtree V_eur_option] = option_willowtree(CallFlag,AmericanF
 %-------------------------------------------------------------------------
  if nargin < 9 || nargin > 11
     print_usage ();
-  end
+ end
 
 
 if ~isnumeric (CallFlag)
@@ -116,7 +122,8 @@ else
 end
 rf_input = rf;
 
-% checking for consistency between S0 and K (either equal size, or S0 has fixed value while K is a vector)
+% checking for consistency between S0 and K (either equal size, or S0 has fixed 
+% value while K is a vector)
 if (rows(S0) < rows(K))
     if (rows(S0) > 1 )
         error ('Number of rows of spot (S0) and strike (K) does not match')
@@ -125,7 +132,8 @@ if (rows(S0) < rows(K))
     end
 end
 
-% applying multidimensionality (shifting all variables to 3rd dimension (1st (time) and 2nd (nodes) dimensions are used for building tree)
+% applying multidimensionality (shifting all variables to 3rd dimension 
+% (1st (time) and 2nd (nodes) dimensions are used for building tree)
 S0      = reshape(S0,1,1,rows(S0));
 K       = reshape(K,1,1,rows(K));
 T       = reshape(T,1,1,rows(T));
@@ -133,157 +141,19 @@ rf       = reshape(rf,1,1,rows(rf));
 sigma   = reshape(sigma,1,1,rows(sigma));
 T_years = T ./ 365;
 
-% Vectors with z-values 
-% solver optimization: (qi' * z_i^2) = 1 for n =10,15,20,30,40,50. Only z(1) and z(n) have been adjusted to fulfill variance = 1 condition.
-z_10 = [
--1.818408193,-1.036433389,-0.67448975,-0.385320466,-0.125661347,0.125661347,0.385320466,0.67448975,1.036433389,1.818408193
-];
-z_15 = [
--2.019979732,-1.318010897,-1.009990169,-0.776421761,-0.579132162,-0.402250065,-0.237202109,-0.078412413,0.078412413 ...
-,0.237202109,0.402250065,0.579132162,0.776421761,1.009990169,1.318010897,2.019979732
-];
-z_20 = [
--2.110897894,-1.439531471,-1.15034938,-0.934589291,-0.755415026,-0.597760126,-0.45376219,-0.318639364,-0.189118426 ...
-,-0.062706778,0.062706778,0.189118426,0.318639364,0.45376219,0.597760126,0.755415026,0.934589291,1.15034938,1.439531471 ...
-,2.110897894
-];
-z_30 = [
--2.269187459,-1.644853627,-1.382994127,-1.191816172,-1.036433389,-0.902734792,-0.783500375,-0.67448975, ...
--0.572967548,-0.477040428,-0.385320466,-0.296737838,-0.210428394,-0.125661347,-0.041789298,0.041789298, ...
-0.125661347,0.210428394,0.296737838,0.385320466,0.477040428,0.572967548,0.67448975,0.783500375,0.902734792, ...
-1.036433389,1.191816172,1.382994127,1.644853627,2.269187459
-];
-z_40 = [
--2.518840503,-1.780464342,-1.534120544,-1.356311745,-1.213339622,-1.091620367,-0.98423496,-0.887146559, ...
--0.797776846,-0.71436744,-0.635657014,-0.560703032,-0.488776411,-0.419295753,-0.351784345,-0.285840875, ...
--0.221118713,-0.157310685,-0.094137414,-0.031337982,0.031337982,0.094137414,0.157310685,0.221118713, ...
-0.285840875,0.351784345,0.419295753,0.488776411,0.560703032,0.635657014,0.71436744,0.797776846, ...
-0.887146559,0.98423496,1.091620367,0.98423496,1.213339622,1.356311745,1.780464342,2.518840503
-];
-z_50 = [
--2.510808322,-1.880793608,-1.644853627,-1.475791028,-1.340755034,-1.22652812,-1.126391129,-1.036433389, ...
--0.954165253,-0.877896295,-0.806421247,-0.738846849,-0.67448975,-0.612812991,-0.55338472,-0.495850347, ...
--0.439913166,-0.385320466,-0.331853346,-0.279319034,-0.227544977,-0.176374165,-0.125661347,-0.075269862, ...
--0.025068908,0.025068908,0.075269862,0.125661347,0.176374165,0.227544977,0.279319034,0.331853346,0.385320466, ...
-0.439913166,0.495850347,0.55338472,0.612812991,0.67448975,0.738846849,0.806421247,0.738846849,0.877896295, ...
-0.954165253,1.126391129,1.22652812,1.340755034,1.475791028,1.644853627,1.880793608,2.510808322
-];
-% getting desired z vector:
-if ( z_method == 10)
-    z = z_10';
-elseif ( z_method == 15 )
-    z = z_15';   
-elseif ( z_method == 20 )
-    z = z_20';
-elseif ( z_method == 30 )
-    z = z_30';   
-elseif ( z_method == 40 )
-    z = z_40';
-elseif ( z_method == 50 )
-    z = z_50';
-else
-    z = z_20'; %default 20 nodes
-end
-
-% Calculate equally distributed values for q
-n = length(z);
-q = ones(n,1) ./n; 
-% for convenience, transpose vector
-zi = z';
-zj = z;
-
 % Rounding Time according to timesteps dt and number of nodes
-N = round(T/dk);
-if ( N < 2 )    % in case of days to maturity <= dk -> adjust dk
+N = round(T/dk); % total number of timesteps
+if ( N < 2 )     % in case of days to maturity <= dk -> adjust dk
     N = 2;
     dk = dk / 2;
 end
-T = dk * N;
-dt=T/(N.*365);  % timestep between two valuation points in years
+T   = dk * N;
+dt  = T / (N.*365);  % timestep between two valuation points in years
 
-
-%-------------------------------------------------------------------------
-%           Generation of the Willow Tree via Optimization
-%-------------------------------------------------------------------------
-% check whether there exists an optimized transition matrix for the set of timesteps, nodes and stepsize (N,n,dk)
-tmp_filename = strcat(path_static,'/wt_transition_',num2str(N),'_',num2str(n),'_',num2str(dk),'.mat');        
-if ( willowtree_save_flag == 1 && exist(tmp_filename,'file'))
-  %fprintf('Taking file >>%s<< with Willowtree transition matrix.\n',tmp_filename);
-  tmp_load_struct = load(tmp_filename);
-  Transition_matrix = tmp_load_struct.Transition_matrix;
-else % Iterating through the time nodes to optimize transition matrizes 
-  for ii = 1 : 1 : (N-1)    % loop through all timesteps and optimize transition probabilities
-    h = dk;             % constant time steps only
-    tk = ii .* h;
-    alpha = h / tk;
-    beta = 1 ./sqrt(1+alpha);
-    F = abs(zj - beta .* zi).^3;
-    F = reshape(F,1,n^2);
-    p = [1:n^2];
-    u = ones(n,1);
-    r = z.^2;
-
-    % constraints:
-        b = [];
-        A = [];
-        btmp = [];
-        % 1) Pu = u -> unity vector
-        B = zeros(n,n^2);
-        for i = 1:1:n
-            B(i,:) = [ zeros(1,(i-1)*n), ones(1,n) , zeros(1,n^2-i*n) ];
-            btmp(i) = 1;
-        end
-        b = [b;btmp'];
-        A = [A;B];
-
-        % 2) Pz = bz 
-        B = zeros(n,n^2);
-        for i = 1:1:n
-            B(i,:) = [ zeros(1,(i-1)*n), zi , zeros(1,n^2-i*n) ];
-        end
-        btmp = ones(n,1) .* beta .* zj; 
-        b = [b;btmp];
-        A = [A;B];
-
-        % 3) Pr = b^2r + (1-b^2)u
-        B = zeros(n,n^2);
-        for i = 1:1:n
-            B(i,:) = [ zeros(1,(i-1)*n), zi.^2 , zeros(1,n^2-i*n) ];
-        end
-        btmp = ones(n,1) .* ((beta^2 .* zj.^2) + (1 - beta.^2)) ;
-        b = [b;btmp];
-        A = [A;B];
-
-        % 4) q'P = q'
-        B = zeros(n,n^2);
-        for i = 1:1:n
-            B(i,:) = [ zeros(1,(i-1)*n), q' , zeros(1,n^2-i*n) ];
-        end
-        b = [b;q];
-        A = [A;B];
-
-    % Formulate Minimization Problem
-    % min trace(PF)
-        c = F;              % Cost coefficients
-        A;              % Matrix of constraint coefficients
-        b;                 % The right hand side of constraints
-        lb = zeros(n^2,1);  % lower bound 
-        ub = [];            % Upper bound 
-        ctype = char(repmat(83,1,length(b)));   % char(83) = S: constraint type indicates equality 
-        vartype = char(repmat(67,1,n^2));   % Variable type C (=char(67)) continuous variable
-        s = 1;              % sense = 1: minimization problem (1)
-        % linear programming parameters:
-        param.msglev = 1;   % Level of messages output by solver. 3 is full output. Default is 1 (errors and warning only).
-        param.itlim = 100000;   % Simplex iterations limit
-        [xmin, fmin, errnum, extra] = glpk(c,A,b,lb,ub,ctype,vartype,s,param);  % final optimization
-        Pmin = reshape(xmin,n,n);   % reshape output to have transition vectors for each node in one column
-        Transition_matrix(:,:,ii) = Pmin'; % transpose and append, ready for vector multiplication 
-  end   % end for loop for all steps of transition matrix
-  if ( willowtree_save_flag == 1 )    % save transition matrix only if desired
-    fprintf('Save Willowtree transition matrix to >>%s<< \n',tmp_filename);
-    save ('-v7',tmp_filename,'Transition_matrix');   % save newly generated transition matrix for later use
-  end
-end     % end if loop, whether transition matrix shall be generated
+% generate Willowtree according to timesteps and number of nodes
+[Transition_matrix z] = generate_willowtree(N,dk,z_method,willowtree_save_flag,path_static);
+n = length(z);
+q = ones(n,1) ./n;
 
 %-------------------------------------------------------------------------
 %           Discounting values through the Willow Tree
@@ -292,7 +162,8 @@ end     % end if loop, whether transition matrix shall be generated
 % Setting tree at final timestep with underlying asset prices
 
 % Assuming geometric brownian motion:
-S_T = S0 .* (exp( (rf  - divyield - (sigma.^2 ./ 2)) .* T_years + sigma .* sqrt(T_years) .* z));
+S_T = S0 .* (exp( (rf  - divyield - (sigma.^2 ./ 2)) .* T_years + ...
+        sigma .* sqrt(T_years) .* z));
 
 [a b c] = size(S0);
 % getting payoff of option at time T
@@ -310,10 +181,12 @@ tmp_drift = rf  - divyield;
 
 % ######## iterating through timesteps and discounting expected values  ########
 for ii = (N-1) : -1 : 1  
-    timestep_value  = (Transition_matrix(:,:,ii) * present_value) .* discount_factor_mat ;
+    timestep_value  = (Transition_matrix(:,:,ii) * present_value) .* ...
+                                        discount_factor_mat ;
     timestep_value  = reshape(timestep_value,n,1,c);
     % Assuming geometric brownian motion:
-    S_act           = S0 .* exp( ((tmp_drift - (sigma.^2 ./ 2)) .* dt .* ii) + sigma .* sqrt(dt .* ii) .* z);
+    S_act       = S0 .* exp( ((tmp_drift - (sigma.^2 ./ 2)) .* dt .* ii) + ...
+                            sigma .* sqrt(dt .* ii) .* z);
     immediate_val   = callputflag.*(S_act - K);
     present_value   = max(timestep_value,AmericanOptionFlag.*immediate_val) ;
 end

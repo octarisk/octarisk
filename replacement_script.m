@@ -9,7 +9,7 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-%#
+
 %# -*- texinfo -*-
 %# @deftypefn {Function File} replacement_script(@var{replacement_list})
 %# Matlab Adaption of Octarisk Code 
