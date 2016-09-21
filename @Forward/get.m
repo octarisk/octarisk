@@ -39,7 +39,11 @@ function s = get (forward, property)
         case 'underlying_price_base'
           s = obj.underlying_price_base;    
         case 'underlying_sensitivity'
-          s = obj.underlying_sensitivity;   
+          s = obj.underlying_sensitivity; 
+        case 'component_weight'
+          s = obj.component_weight;
+        case 'net_basis'
+          s = obj.net_basis;
         otherwise
           error ('get: invalid property %s', property);
       end

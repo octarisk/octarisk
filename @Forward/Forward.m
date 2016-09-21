@@ -1,5 +1,5 @@
 classdef Forward < Instrument
-  
+    % Forward class incorporates Futures
     properties   % All properties of Class Forward with default values
         issue_date = '01-Jan-1900';
         maturity_date = '';
@@ -19,6 +19,8 @@ classdef Forward < Instrument
         spread = 0.0;          
         cf_dates = [];
         cf_values = [];
+        component_weight = 0.0;
+        net_basis = 0.0;
     end
     properties (SetAccess = private)
         sub_type = 'EQFWD';
@@ -62,12 +64,15 @@ classdef Forward < Instrument
          fprintf('convenience_yield: %f\n',b.convenience_yield);
          fprintf('storage_cost: %f\n',b.storage_cost);         
          fprintf('multiplier: %f\n',b.multiplier); 
+         fprintf('component_weight: %f\n',b.component_weight);
+         fprintf('net_basis: %f\n',b.net_basis);
          fprintf('discount_curve: %s\n',b.discount_curve); 
       end
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') ...
-                || strcmpi(sub_type,'EQFWD') || strcmpi(sub_type,'FX') )
-            error('Forward sub_type must be either Equity, EQFWD, Bond or FX')
+                || strcmpi(sub_type,'EQFWD') || strcmpi(sub_type,'FX') ...
+                || strcmpi(sub_type,'BondFuture'))
+            error('Forward sub_type must be either Equity, EQFWD, Bond, FX or BondFuture')
          end
          obj.sub_type = sub_type;
       end % set.sub_type

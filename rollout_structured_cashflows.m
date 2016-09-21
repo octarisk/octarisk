@@ -14,19 +14,17 @@
 %# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_structured_cashflows (@var{valuation_date},  @var{value_type}, @var{instrument}, @var{ref_curve}, @var{vola_surface}, @var{vola_riskfactor})
 %#
 %# Compute the dates and values of cash flows and 
-%# accrued interests for fixed rate bonds, floating rate notes, 
-%# amoritizing bonds, zero coupon bonds and structured products like caps and floors.@*
+%# accrued interests and last coupon date for fixed rate bonds, 
+%# floating rate notes, amoritizing bonds, zero coupon bonds and 
+%# structured products like caps and floors.@*
 %#
 %# @seealso{timefactor, discount_factor, get_forward_rate, interpolate_curve}
 %# @end deftypefn
 
-function [ret_dates ret_values accrued_interest] = rollout_structured_cashflows(valuation_date, value_type, ...
+function [ret_dates ret_values accrued_interest last_coupon_date] = rollout_structured_cashflows(valuation_date, value_type, ...
                                 instrument, ref_curve, vola_surface,vola_riskfactor)
 
 %TODO: introduce prepayment type 'default'
-% TODO: rollout_structured_cashflows
-%       - use objects as input variables: valuation_date, instrument (bond, cap etc.), reference_curve, vola_surface)
-%       - include structured cash flows like caps and floor rates
 
 % Parse bond struct
 if nargin < 3 || nargin > 6
@@ -521,6 +519,7 @@ ret_interest_values = cf_interest(:,(end-length(ret_dates)+1):end);
 %
 % calculate time in days from last coupon date
 ret_date_last_coupon = ret_dates_tmp(ret_dates_tmp<0);
+
 % distinguish three different cases:
 % A) issue_date.......first_cf_date....valuation_date...2nd_cf_date.....mat_date
 % B) valuation_date...issue_date......frist_cf_date.....2nd_cf_date.....mat_date
@@ -535,7 +534,8 @@ ret_date_last_coupon = ret_dates_tmp(ret_dates_tmp<0);
 % adjusted by actual days in year / days in leap year
 
 if length(ret_date_last_coupon) > 0                 % CASE A
-    ret_date_last_coupon = -ret_date_last_coupon(end);
+    last_coupon_date = ret_date_last_coupon(end);
+    ret_date_last_coupon = -ret_date_last_coupon(end);  
     [tf dip dib] = timefactor (valuation_date - ret_date_last_coupon, ...
                             valuation_date, dcc);
     % correct next coupon payment if leap year
@@ -551,9 +551,12 @@ if length(ret_date_last_coupon) > 0                 % CASE A
     end
     tf = tf * adj_factor;
 else
+    % last coupon date is first coupon date for Cases B and C:
+    last_coupon_date = ret_dates(1);
     % if valuation date before issue date -> tf = 0
     if ( valuation_date <= datenum(issue_date) )    % CASE B
         tf = 0;
+        
     % valuation date after issue date, but before first cf payment date
     else                                            % CASE C
         [tf dip dib] = timefactor (issue_date, valuation_date, dcc);

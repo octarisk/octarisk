@@ -85,6 +85,12 @@ function s = get (bond, property)
           s = obj.calibration_flag; 
         case 'accrued_interest'
           s = obj.accrued_interest;
+        case 'last_coupon_date'
+          s = obj.last_coupon_date;
+        case 'coupon_rate'
+          s = obj.coupon_rate;
+        case 'notional'
+          s = obj.notional;
         case 'clean_value_base'
           s = obj.clean_value_base;
         otherwise

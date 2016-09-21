@@ -14,7 +14,7 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{valuation_date}, @var{forward}, @var{discount_curve}, @var{underlying})
 %#
-%# Compute the theoretical value of equity and bond forwards.@*
+%# Compute the theoretical value of equity and bond forwards and futures.@*
 %# In the 'oop' version no input data checks are performed. @*
 %# Pre-requirements:@*
 %# @itemize @bullet
@@ -88,7 +88,7 @@ curve_comp_freq = discount_curve_object.get('compounding_freq');
 
 % Getting underlying properties
 % distinguish between index or RF underlyings for EQ and Bond Forwards
-if ( sum(strcmpi(type,{'Equity','EQFWD','Bond'})) > 0 )
+if ( sum(strcmpi(type,{'Equity','EQFWD','Bond','BondFuture'})) > 0 )
     if ( strfind(underlying_object.get('id'),'RF_') )   % underlying instrument is a risk factor
         tmp_underlying_sensitivity = forward.get('underlying_sensitivity');
         tmp_underlying_delta = underlying_object.getValue(value_type);
@@ -165,16 +165,37 @@ if ( sum(strcmpi(type,{'Equity','EQFWD'})) > 0 )
         discount_rate_instr, comp_type, basis, comp_freq);
     forward_price   = underlying_price ./ df_forward;
     payoff          = (forward_price - strike ) .* df_discount;
-    
-    % #####  Calculate forward value for bond forwards  #####
+ 
+ 
+% #####  Calculate forward value for bond forwards  #####
 elseif ( sum(strcmpi(type,{'Bond','BONDFWD'})) > 0 )
     df_discount     = discount_factor (valuation_date, ...
         forward.maturity_date, discount_rate_instr, ...
         comp_type, basis, comp_freq);
     forward_price   = underlying_price ./ df_discount;
     payoff          = underlying_price - (strike .* df_discount);
-    
-    % #####  Calculate forward value for FX forwards    #####
+ 
+ 
+% #####  Calculate future value for bond future  #####
+elseif ( sum(strcmpi(type,{'BondFuture'})) > 0 )
+    df_discount     = discount_factor (valuation_date, ...
+        maturity_date, discount_rate_instr, ...
+        comp_type, basis, comp_freq);
+    % get attribute values of underlying bond
+    last_coupon_date = underlying_object.get('last_coupon_date');
+    net_basis       = forward.get('net_basis');
+    comp_weight     = forward.get('component_weight');
+    coupon_rate     = underlying_object.get('coupon_rate');
+    notional        = underlying_object.get('notional');
+    % calculate accrued interest from last bond coupon date to forward settlement
+    accr_int        = coupon_rate * timefactor(last_coupon_date + ...
+                            valuation_date, maturity_date,3) * notional;
+    % calculate forward price and payoff value
+    forward_price   = net_basis + (underlying_price ./ df_discount - accr_int) ...
+                                ./ comp_weight;
+    payoff          = forward_price - strike;
+ 
+% #####  Calculate forward value for FX forwards    #####
 elseif ( sum(strcmpi(type,{'FX'})) > 0 )
     % extract rate from foreign curve
     foreign_rate_curve  = interpolate_curve(foreign_nodes,foreign_rates, ...

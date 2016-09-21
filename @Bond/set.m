@@ -21,7 +21,14 @@ function s = set (bond, varargin)
         s.accrued_interest = val;
       else
         error ('set: expecting accrued_interest to be a real number');
-      end   
+      end 
+    % ====================== set last_coupon_date ======================  
+     elseif (ischar (prop) && strcmp (prop, 'last_coupon_date'))   
+      if (isreal (val))
+        s.last_coupon_date = val;
+      else
+        error ('set: expecting last_coupon_date to be a real number');
+      end       
     % ====================== set ir_shock ======================
     elseif (ischar (prop) && strcmp (prop, 'ir_shock'))   
       if (isreal (val))

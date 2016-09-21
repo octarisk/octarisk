@@ -60,6 +60,7 @@ classdef Bond < Instrument
         dv01 = 0.0;
         pv01 = 0.0;
         accrued_interest = 0.0;
+        last_coupon_date = 0;
     end
    
    methods
@@ -111,6 +112,7 @@ classdef Bond < Instrument
          fprintf('reference_curve: %s\n',b.reference_curve); 
          fprintf('spread_curve: %s\n',b.spread_curve); 
          fprintf('accrued_interest: %d\n',b.accrued_interest); 
+         fprintf('last_coupon_date: %d\n',b.last_coupon_date);
          %fprintf('spot_value: %f %s\n',b.spot_value,b.currency);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);

@@ -31,7 +31,7 @@ classdef Instrument
       value_base = 0;      
       currency = 'EUR';
       asset_class = 'Unknown';   
-      type = 'Unknown';     
+      type = 'Unknown';      
     end
    
     properties (SetAccess = protected )

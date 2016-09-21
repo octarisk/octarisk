@@ -14,7 +14,7 @@ function obj = calc_value (forward,valuation_date,value_type,discount_curve_obje
     end
  
     % calculate value according to pricing formula
-    if ( sum(strcmpi(obj.sub_type,{'Equity','EQFWD','Bond'})) > 0 )
+    if ( sum(strcmpi(obj.sub_type,{'Equity','EQFWD','Bond','BondFuture'})) > 0 )
         [theo_value theo_price] = pricing_forward(valuation_date,value_type,obj, ...
                                     discount_curve_object, underlying_object);
     elseif ( sum(strcmpi(obj.sub_type,{'FX'})) > 0 )

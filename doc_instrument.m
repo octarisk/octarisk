@@ -81,6 +81,7 @@ end
 %! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25,'coupon_generation_method','forward');
 %! b = b.set('maturity_date','01-Feb-2025','notional',100,'compounding_type','simple','issue_date','01-Feb-2011');
 %! b = b.rollout('base','31-Mar-2016');
+%! assert(b.get('last_coupon_date'),-59);
 %! b = b.calc_yield_to_mat('31-Mar-2016');
 %! assert(b.ytm,0.0340800096184803,0.000001);
 %! c = Curve();
@@ -111,6 +112,7 @@ end
 %! b = b.calc_value('31-Dec-2015',c,'base');
 %! assert(b.getValue('base'),105.619895060083,0.0000001)
 %! b = b.calc_sensitivities('31-Mar-2016',c);
+%! assert(b.get('last_coupon_date'),-52);
 %! assert(b.get('convexity'),172.588468050282,0.0000001)
 %! assert(b.get('mod_duration'),9.09611845785009,0.0000001)
 %! assert(b.get('mac_duration'),10.0933391311049,0.0000001)
