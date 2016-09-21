@@ -14,7 +14,8 @@
 %# @deftypefn {Function File} {} adapt_matlab()
 %# Matlab Adaption of Octarisk Code
 %# Input files phrases to replace: wordlist_matlab.csv
-%# Input files for replacement: Automatical detection of all m.files in all directories for replacement
+%# Input files for replacement: Automatical detection of all m.files in all 
+%# directories for replacement
 %# Output data: Rewritten m.files
 %# @seealso{replacement_script}
 %# @end deftypefn

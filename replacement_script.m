@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} replacement_script(@var{replacement_list})
+%# @deftypefn {Function File} {} replacement_script(@var{replacement_list})
 %# Matlab Adaption of Octarisk Code 
 %# Input files phrases to replace: wordlist_matlab.csv 
 %# Format:(String;Replacement String;File)
