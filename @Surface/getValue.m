@@ -25,16 +25,16 @@ function y = getValue (surface, xx,yy,zz)
             yy = ones(rows(zz),1) .* yy;
         end         
     end
-    % type ir
+    % #################      A) type ir      ###################################
     if ( strcmpi(s.type,'IR'))           
         if (len == 1 && length(s.axis_x) > 0 && length(s.axis_y) == 0 && length(s.axis_z) == 0 )                    %first case: object is curve
-          if ( strcmp(upper(s.axis_x_name),'TERM') )
+          if ( strcmpi(s.axis_x_name,'TERM') )
             y = interpolate_curve(s.axix_x,s.values_base,xx,s.method_interpolation);
           else
             error('ERROR: Assuming curve for IR with term, got: %s',s.axis_x_name);
           end
         elseif (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0 )         %second case: object is surface 
-          if ( strcmp(upper(s.axis_x_name),'TENOR') && strcmp(upper(s.axis_y_name),'TERM'))
+          if ( strcmpi(s.axis_x_name,'TENOR') && strcmpi(s.axis_y_name,'TERM'))
             xx_structure = s.axis_x;    
             yy_structure = s.axis_y;    
             vola_matrix = s.values_base;               
@@ -51,7 +51,7 @@ function y = getValue (surface, xx,yy,zz)
             error('ERROR: Assuming surface for IR vol with tenor, term , got: %s, %s',s.axis_x_name,s.axis_y_name);
           end
         elseif (len == 3 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) > 0 )  %second case: object is cube 
-          if ( strcmp(upper(s.axis_x_name),'TENOR') && strcmp(upper(s.axis_y_name),'TERM')  && strcmp(upper(s.axis_z_name),'MONEYNESS') )
+          if ( strcmpi(s.axis_x_name,'TENOR') && strcmpi(s.axis_y_name,'TERM')  && strcmpi(s.axis_z_name,'MONEYNESS') )
             xx_structure = s.axis_x;  
             yy_structure = s.axis_y;  
             zz_structure = s.axis_z;  
@@ -67,10 +67,10 @@ function y = getValue (surface, xx,yy,zz)
             vola_cube = cat(3,vola_cube,vola_cube(:,:,end));
             vola_cube = cat(3,vola_cube(:,:,1),vola_cube);
             % WORKAROUND:
-            % interpolating the implied vola for more than 50000 MC scenarios is too memory extensive.
+            % interpolating the implied vola for more than 50000 MC scenarios is too memory expensive.
                 % therefore one needs to reduce the complexity:
                 % since for all MC scenarios the tenor and term is fixed, we make first a nearest neighbour matching of tenor and term
-                % and afterwards a linear intepolation of the moneyness. So to say we extract the moneyness dimension from the cube.
+                % and afterwards a linear intepolation of the moneyness. So to say we remove the moneyness dimension from the cube.
                 xx_nearest = interp1(xx_structure,xx_structure,xx(1),'nearest');
                 yy_nearest = interp1(yy_structure,yy_structure,yy(1),'nearest');
                 index_xx = find(xx_structure==xx_nearest);
@@ -85,16 +85,18 @@ function y = getValue (surface, xx,yy,zz)
             error('ERROR: Assuming cube for IR vol with tenor, term and moneyness, got: %s, %s, %s',s.axis_x_name,s.axis_y_name,s.axis_z_name);
           end
         end
-    % type index
+        
+    % #################      A) type index      ###################################
     elseif ( strcmpi(s.type,'INDEX'))
         if (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0  )         %second case: object is surface
-          if ( strcmp(upper(s.axis_x_name),'TERM') && strcmp(upper(s.axis_y_name),'MONEYNESS')  )
+          if ( strcmpi(s.axis_x_name,'TERM') && strcmpi(s.axis_y_name,'MONEYNESS')  )
             xx_structure = s.axis_x;    % first row equals structure of axis xx
             yy_structure = s.axis_y;    % first column equals structure of axis yy
 
             vola_matrix = s.values_base;                % Matrix without first row and first column contains zz values
 
-            % expand vectors and matrizes for constant extrapolation (add additional time steps and moneynesses, duplicate rows and cols)
+            % expand vectors and matrizes for constant extrapolation 
+            % (add additional time steps and moneynesses, duplicate rows and cols)
             xx_structure = [0,xx_structure,21900];
             yy_structure = [0,yy_structure,1000000];
             vola_matrix = horzcat(vola_matrix,vola_matrix(:,end));
@@ -109,9 +111,35 @@ function y = getValue (surface, xx,yy,zz)
         else
             error('ERROR: Surface Type Index has no surface defined');
         end
+        
+    % ###########      A) type prepayment procedure      #######################
+    % prepayment procedure: surface coupon rate / absolute ir shock 
+    elseif ( strcmpi(s.type,'PREPAYMENT'))
+        if (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0  )         %second case: object is surface
+          if ( strcmpi(s.axis_x_name,'coupon_rate') && strcmpi(s.axis_y_name,'ir_shock')  )
+            xx_structure = s.axis_x;    % first row equals structure of axis xx
+            yy_structure = s.axis_y;    % first column equals structure of axis yy
+
+            vola_matrix = s.values_base;                % Matrix without first row and first column contains zz values
+
+            % expand vectors and matrizes for constant extrapolation 
+            % (add additional time steps and moneynesses, duplicate rows and cols)
+            xx_structure = [-100,xx_structure,100];
+            yy_structure = [-100,yy_structure,100];
+            vola_matrix = horzcat(vola_matrix,vola_matrix(:,end));
+            vola_matrix = horzcat(vola_matrix(:,1),vola_matrix);
+            vola_matrix = vertcat(vola_matrix,vola_matrix(end,:));
+            vola_matrix = vertcat(vola_matrix(1,:),vola_matrix);                 
+            % interpolate on surface coupon_rate / ir_shock
+            y = interp2(xx_structure,yy_structure,vola_matrix,xx,yy,s.method_interpolation);
+           else
+            error('ERROR: Assuming surface for PREPAYMENT with coupon_rate, ir_shock, got: %s, %s',s.axis_x_name,s.axis_y_name);
+          end  
+        else
+            error('ERROR: Surface Type Index has no surface defined');
+        end
     end
   else
     print_usage ();
   end
-  %y(1:min(length(y),10))
 end

@@ -76,6 +76,22 @@ end
 
 %!test 
 %! fprintf('HOLD ON...\n');
+%! fprintf('\tdoc_instrument:\tPricing Zero Coupon Bond Bond Object\n');
+%! b = Bond();
+%! b = b.set('Name','Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)', 'id','114171','coupon_rate',0.00,'value_base',101.1190,'coupon_generation_method','backward');
+%! b = b.set('maturity_date','21-Apr-2020','notional',100,'compounding_type','disc','issue_date','21-Apr-2015','term',12,'compounding_freq',365,'sub_type','ZCB');
+%! [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date] = rollout_structured_cashflows('31-Dec-2015','base',b);
+%! b = b.rollout('base','31-Dec-2015');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,1095,1825],'rates_base',[-0.00519251,-0.00508595,-0.00367762],'method_interpolation','linear');
+%! c = c.set('rates_stress',[-0.00519251,-0.00508595,-0.00367762;-0.00519251,-0.00508595,-0.00367762;-0.00519251,-0.00508595,-0.00367762]);
+%! b = b.calc_value('31-Dec-2015',c,'base');
+%! b = b.rollout('stress','31-Dec-2015');
+%! b = b.calc_value('31-Dec-2015',c,'stress');
+%! assert(b.getValue('stress'),[101.810615897273;101.810615897273;101.810615897273],0.0000001); 
+                                                                                                                      
+%!test 
+%! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing 1st Fixed Rate Bond Object\n');
 %! b = Bond();
 %! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25,'coupon_generation_method','forward');
@@ -88,14 +104,14 @@ end
 %! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[0.01,0.04],'method_interpolation','monotone-convex');
 %! c = c.set('rates_stress',[0.02,0.05;0.005,0.014]);
 %! b = b.calc_spread_over_yield(c,'31-Mar-2016');
-%! assert(b.soy,-0.00368829585440858,0.00001);
+%! assert(b.soy,-0.00274310399175057,0.00001);
 %! b = b.set('soy',0.00);
 %! b = b.calc_value('31-Mar-2016',c,'base');
 %! b = b.calc_sensitivities('31-Mar-2016',c);
 %! assert(b.getValue('base'),99.1420775289364,0.00001);
-%! assert(b.get('convexity'),67.9346351630012,0.00001);
+%! assert(b.get('convexity'),64.1806456611515,0.00001);
 %! assert(b.get('mod_duration'),5.63642375918384,0.00001);
-%! assert(b.get('eff_duration'),5.65744733575198,0.00001);
+%! assert(b.get('eff_duration'),7.67144764167465,0.00001);
 %! assert(b.get('mac_duration'),7.66223670737639,0.00001);
 %! b = b.rollout('stress','31-Mar-2016');
 %! b = b.calc_value('31-Mar-2016',c,'stress');
@@ -113,15 +129,15 @@ end
 %! assert(b.getValue('base'),105.619895060083,0.0000001)
 %! b = b.calc_sensitivities('31-Mar-2016',c);
 %! assert(b.get('last_coupon_date'),-52);
-%! assert(b.get('convexity'),172.588468050282,0.0000001)
+%! assert(b.get('convexity'),106.724246965278,0.0000001)
 %! assert(b.get('mod_duration'),9.09611845785009,0.0000001)
 %! assert(b.get('mac_duration'),10.0933391311049,0.0000001)
-%! assert(b.get('eff_duration'),9.17981338892828,0.0000001)
+%! assert(b.get('eff_duration'),10.1124142671261,0.0000001)
 %! assert(b.get('dollar_duration'),960.731076972209,0.0000001)
-%! assert(b.get('eff_convexity'),174.205420287148,0.0000001)
-%! assert(b.get('dv01'),0.096073195268687,0.0000001)
-%! assert(b.get('pv01'),-0.0959820513046878,0.0000001)
-%! assert(b.get('spread_duration'),9.17981338892828,0.0000001)
+%! assert(b.get('eff_convexity'),106.827013628121,0.0000001)
+%! assert(b.get('dv01'),0.106605762118726,0.0000001)
+%! assert(b.get('pv01'),-0.106549401094469,0.0000001)
+%! assert(b.get('spread_duration'),10.1124142671261,0.0000001)
 %!test 
 %! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing Floating Rate Bond Object\n');
@@ -136,20 +152,20 @@ end
 %! c = c.set('id','IR_EUR','nodes',[30,90,180,365,730],'rates_base',[0.0019002740,0.0019002740,0.0019002301,0.0019001390,0.001900069],'method_interpolation','linear');
 %! b = b.set('clean_value_base',99.7527,'spread',0.003);
 %! b = b.calc_spread_over_yield(c,'30-Jun-2016');
-%! assert(b.get('soy'), 0.00399948418269946,0.0000001); 
+%! assert(b.get('soy'), 0.00398785481397732,0.0000001); 
 %! b = b.calc_value('30-Jun-2016',c,'base');
 %! assert(b.getValue('base'),99.7917725092950,0.0000001);
 %! b = b.calc_sensitivities('30-Jun-2016',c,r);
-%! assert(b.get('convexity'),1.10779411816050,0.0000001);
-%! assert(b.get('eff_convexity'),0.551778553743564,0.0000001);
-%! assert(b.get('eff_duration'),-0.00321909293737049,0.0000001);
-%! assert(b.get('mac_duration'),0.747367047335932,0.0000001);
+%! assert(b.get('convexity'),0.558796396962633,0.0000001);
+%! assert(b.get('eff_convexity'),1.98938819865058e-004,0.0000001);
+%! assert(b.get('eff_duration'),3.93109370316470e-005,0.0000001);
+%! assert(b.get('mac_duration'),0.747367046218197,0.0000001);
 %! r = r.set('floor',0.0);
 %! b = b.calc_sensitivities('30-Jun-2016',c,r);
-%! assert(b.get('eff_convexity'),74.8118222412937,0.0000001);
-%! assert(b.get('eff_duration'),0.368081125500380,0.0000001);
-%! assert(b.get('mac_duration'),0.747367047335932,0.0000001);
-%! assert(b.get('spread_duration'),0.744125307965525,0.0000001)
+%! assert(b.get('eff_convexity'),74.2605311454306,0.0000001);
+%! assert(b.get('eff_duration'),0.371340971970093,0.0000001);
+%! assert(b.get('mac_duration'),0.747367046218197,0.0000001);
+%! assert(b.get('spread_duration'),0.747374010847449,0.0000001)
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');
@@ -330,6 +346,39 @@ end
 %! floor = floor.calc_value('31-Dec-2015','stress',c);
 %! stress_values = floor.getValue('stress');
 %! assert(stress_values,[13.629274436848439;6.092263070602667;0.463877763957439],0.0000001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Bond Future and underlying FRB\n');
+%! b = Bond();
+%! b = b.set('Name','FRB_TEST','coupon_rate',0.025,'value_base',113.781,'clean_value_base',1,'coupon_generation_method','backward','term',12);
+%! b = b.set('maturity_date','04-Jan-2021','notional',100,'compounding_type','simple','issue_date','26-Nov-2010','day_count_convention','act/365');
+%! b = b.rollout('base','31-Mar-2016');
+%! b = b.rollout('stress','31-Mar-2016');
+%! c = Curve();
+%! c = c.set('id','EUR-SWAPRAW','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
+%!         'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!                     0.004576856,0.005563194,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526], ...
+%!         'rates_stress',[-1.38934530e-002,-1.2903390e-002,-1.14941980e-002,-1.15051680e-002,-1.11371070e-002,-1.048215300e-002, ...
+%!                     -9.6472220e-003,-8.6925630e-003,-7.6181070e-003,-6.5144340e-003,-5.423144e-003,-4.4368060e-003, ...
+%!                     -3.54135400000000e-003,-2.73938000000000e-003,-2.04319200000000e-003,-1.45285700000000e-003, ...
+%!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
+%!         'method_interpolation','linear');
+%! b = b.calc_spread_over_yield(c,'31-Mar-2016');
+%! assert(b.get('accrued_interest'),0.595890411,0.000001);
+%! assert(b.get('soy'),-0.003716422004,0.000001);
+%! b = b.calc_value('31-Mar-2016',c,'base');
+%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! assert(b.getValue('base'),114.376890411,0.00001);
+%! assert(b.getValue('stress'),119.70024104,0.00001);
+%! f = Forward();
+%! f = f.set('name','BOND_FUTURE_TEST','maturity_date','08-Jun-2016','strike_price',131.13);
+%! f = f.set('component_weight',0.863493,'net_basis',-0.009362442,'sub_type','BondFuture');
+%! f = f.set('compounding_type','cont','underlying_id','FRB_TEST');
+%! f = f.calc_value('31-Mar-2016','base',c,b);
+%! f = f.calc_value('31-Mar-2016','stress',c,b);
+%! assert(f.getValue('base'),0.0,0.00001);
+%! base_value = f.getValue('stress');
+%! assert(f.getValue('stress'),5.8994582871,0.00001);
 
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');

@@ -238,5 +238,5 @@ end
 
 %!test
 %! [T z] = generate_willowtree(11,1,20,0,pwd);
-%! assert(sum(sum(sum(T))),200)
+%! assert(sum(sum(sum(T))),200,sqrt(eps))
 %! assert(sum(z),0)

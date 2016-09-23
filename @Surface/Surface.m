@@ -86,8 +86,8 @@ classdef Surface
       end % disp
       
       function obj = set.type(obj,type)
-         if ~(strcmpi(type,'Index') || strcmpi(type,'IR')  || strcmpi(type,'Dummy')  )
-            error('Type must be either Index or IR or Dummy Curve')
+         if ~(strcmpi(type,'Index') || strcmpi(type,'IR')  || strcmpi(type,'Dummy')  || strcmpi(type,'Prepayment') )
+            error('Type must be either Index, IR, Prepayment or Dummy Surface')
          end
          obj.type = type;
       end % Set.type

@@ -130,4 +130,4 @@ function obj = phi_soy (x,valuation_date,cashflow_dates, cashflow_values, ...
 end
 %------------------------------------------------------------------
 
-%!assert(calibrate_soy_sqp(datenum('31-Dec-2015'),[182,547,912],[3,3,103],99.9,[90,365,730,1095],[0.01,0.02,0.025,0.028],3,'discrete','annual','monotone-convex'),0.010435195167,0.0000001)                
+%!assert(calibrate_soy_sqp(datenum('31-Dec-2015'),[182,547,912],[3,3,103],99.9,[90,365,730,1095],[0.01,0.02,0.025,0.028],3,'discrete','annual','monotone-convex'),0.0103811242758234,0.0000001)                

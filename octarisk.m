@@ -206,6 +206,7 @@ confidence = 0.999      % level of confidence vor MC VAR calculation
 copulatype = 't'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
 valuation_date = datenum('31-Dec-2015'); % valuation date
+fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
 base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
 mc_timesteps    = {'10d'}                % MC timesteps

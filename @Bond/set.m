@@ -184,6 +184,20 @@ function s = set (bond, varargin)
       else
         error ('set: expecting id to be a char');
       end
+    % ====================== set prepayment_source ======================
+    elseif (ischar (prop) && strcmp (prop, 'prepayment_source'))   
+      if (ischar(val))
+        s.prepayment_source = strtrim(val);
+      else
+        error ('set: expecting prepayment_source to be a char');
+      end
+    % ====================== set prepayment_type ======================
+    elseif (ischar (prop) && strcmp (prop, 'prepayment_type'))   
+      if (ischar(val))
+        s.prepayment_type = strtrim(val);
+      else
+        error ('set: expecting prepayment_type to be a char');
+      end
     % ====================== set issue_date ======================
     elseif (ischar (prop) && strcmp (prop, 'issue_date'))   
       if (ischar (val))
@@ -224,6 +238,13 @@ function s = set (bond, varargin)
       else
         error ('set: expecting discount_curve to be a char');
       end 
+    % ====================== set prepayment_curve  ======================
+    elseif (ischar (prop) && strcmp (prop, 'prepayment_curve'))   
+      if (ischar (val))
+        s.prepayment_curve = strtrim(val);
+      else
+        error ('set: expecting prepayment_curve to be a char');
+      end 
     % ====================== set coupon_generation_method  ====================
     elseif (ischar (prop) && strcmp (prop, 'coupon_generation_method'))   
       if (ischar (val))
@@ -238,6 +259,20 @@ function s = set (bond, varargin)
       else
         error ('set: expecting term to be a real number');
       end 
+    % ====================== set outstanding_balance ======================
+    elseif (ischar (prop) && strcmp (prop, 'outstanding_balance'))   
+      if (isnumeric (val) && isreal (val))
+        s.outstanding_balance = val;
+      else
+        error ('set: expecting outstanding_balance to be a real number');
+      end  
+    % ====================== set prepayment_rate ======================
+    elseif (ischar (prop) && strcmp (prop, 'prepayment_rate'))   
+      if (isnumeric (val) && isreal (val))
+        s.prepayment_rate = val;
+      else
+        error ('set: expecting prepayment_rate to be a real number');
+      end   
     % ====================== set ytm ======================
     elseif (ischar (prop) && strcmp (prop, 'ytm'))   
       if (isnumeric (val) && isreal (val))
@@ -347,10 +382,28 @@ function s = set (bond, varargin)
             s.enable_business_day_rule = logical(0);
         end
       elseif ( islogical(val))
-        s.long_first_period = val;
+        s.enable_business_day_rule = val;
       else
         error ('set: expecting enable_business_day_rule to be a real number or true/false');
       end 
+    % ====================== set prepayment_flag ======================
+    elseif (ischar (prop) && strcmp (prop, 'prepayment_flag'))   
+      if (isnumeric (val) && isreal (val))
+        s.prepayment_flag = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',lower(val)))
+            s.prepayment_flag = logical(0);
+        elseif ( strcmp('true',lower(val)))
+            s.prepayment_flag = logical(1);
+        else
+            printf('WARNING: Unknown val: >>%s<<. Setting prepayment_flag to false.',val);
+            s.prepayment_flag = logical(0);
+        end
+      elseif ( islogical(val))
+        s.prepayment_flag = val;
+      else
+        error ('set: expecting prepayment_flag to be a real number or true/false');
+      end
     % ====================== set clean_value_base ======================
     elseif (ischar (prop) && strcmp (prop, 'clean_value_base'))   
       if (isnumeric (val) && isreal (val))
@@ -373,6 +426,13 @@ function s = set (bond, varargin)
         s.spread = val;
       else
         error ('set: expecting spread to be a real number');
+      end 
+    % ====================== set psa_factor_term ======================
+    elseif (ischar (prop) && strcmp (prop, 'psa_factor_term'))   
+      if (isnumeric (val) && isreal (val))
+        s.psa_factor_term = val;
+      else
+        error ('set: expecting psa_factor_term to be a real number');
       end 
     % ====================== set long_first_period ======================
     elseif (ischar (prop) && strcmp (prop, 'long_first_period'))   

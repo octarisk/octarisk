@@ -11,18 +11,22 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_structured_cashflows (@var{valuation_date},  @var{value_type}, @var{instrument}, @var{ref_curve}, @var{vola_surface}, @var{vola_riskfactor})
+%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_structured_cashflows (@var{valuation_date},  @var{value_type}, @var{instrument}, @var{ref_curve}, @var{surface}, @var{vriskfactor})
 %#
-%# Compute the dates and values of cash flows and 
+%# Compute the dates and values of cash flows (interest and principal and 
 %# accrued interests and last coupon date for fixed rate bonds, 
-%# floating rate notes, amoritizing bonds, zero coupon bonds and 
+%# floating rate notes, amortizing bonds, zero coupon bonds and 
 %# structured products like caps and floors.@*
+%# For FAB, ref_curve is used as prepayment curve, surface for PSA factors,
+%# riskfactor for IR Curve shock extraction
 %#
 %# @seealso{timefactor, discount_factor, get_forward_rate, interpolate_curve}
 %# @end deftypefn
 
-function [ret_dates ret_values accrued_interest last_coupon_date] = rollout_structured_cashflows(valuation_date, value_type, ...
-                                instrument, ref_curve, vola_surface,vola_riskfactor)
+function [ret_dates ret_values ret_interest_values ret_principal_values ...
+                                    accrued_interest last_coupon_date] = ...
+                    rollout_structured_cashflows(valuation_date, value_type, ...
+                    instrument, ref_curve, surface,riskfactor)
 
 %TODO: introduce prepayment type 'default'
 
@@ -122,6 +126,7 @@ while datenum(cf_date) >= datenum(issue_date)
         new_cf_year = cf_year - 1;
         new_cf_month = cf_month;
         new_cf_day = cf_day;
+        comp_freq = 1;
     % rollout for annual 365 days (compounding frequency = 1 payment per year)
     elseif ( term == 365)
         new_cf_date = datenum(cf_date)-365;
@@ -129,6 +134,7 @@ while datenum(cf_date) >= datenum(issue_date)
         new_cf_year = new_cf_date(:,1);
         new_cf_month = new_cf_date(:,2);
         new_cf_day = new_cf_date(:,3);    
+        comp_freq = 1;
     % rollout for semi-annual (compounding frequency = 2 payments per year)
     elseif ( term == 6)
         new_cf_year = cf_year;
@@ -137,6 +143,7 @@ while datenum(cf_date) >= datenum(issue_date)
             new_cf_month = cf_month + 6;
             new_cf_year = cf_year - 1;
         end
+        comp_freq = 2;
         % error checking for end of month
         new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
     % rollout for quarter (compounding frequency = 4 payments per year)
@@ -147,6 +154,7 @@ while datenum(cf_date) >= datenum(issue_date)
             new_cf_month = cf_month + 9;
             new_cf_year = cf_year - 1;
         end
+        comp_freq = 4;
         % error checking for end of month
         new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
     % rollout for monthly (compounding frequency = 12 payments per year)
@@ -158,6 +166,7 @@ while datenum(cf_date) >= datenum(issue_date)
             new_cf_month = cf_month + 11;
             new_cf_year = cf_year - 1;
         end
+        comp_freq = 12;
         % error checking for end of month
         new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
     end
@@ -186,13 +195,15 @@ while datenum(cf_date) <= datenum(maturity_date)
         new_cf_year = cf_year + 1;
         new_cf_month = cf_month;
         new_cf_day = cf_day;
+        comp_freq = 1;
     % rollout for annual 365 days (compounding frequency = 1 payment per year)
     elseif ( term == 365)
         new_cf_date = datenum(cf_date) + 365;
         new_cf_date = datevec(new_cf_date);
         new_cf_year = new_cf_date(:,1);
         new_cf_month = new_cf_date(:,2);
-        new_cf_day = new_cf_date(:,3);     
+        new_cf_day = new_cf_date(:,3);   
+        comp_freq = 1;
     % rollout for semi-annual (compounding frequency = 2 payments per year)
     elseif ( term == 6)
         new_cf_year = cf_year;
@@ -201,6 +212,7 @@ while datenum(cf_date) <= datenum(maturity_date)
             new_cf_month = cf_month - 6;
             new_cf_year = cf_year + 1;
         end
+        comp_freq = 2;
         % error checking for end of month
         new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
     % rollout for quarter (compounding frequency = 4 payments per year)
@@ -211,6 +223,7 @@ while datenum(cf_date) <= datenum(maturity_date)
             new_cf_month = cf_month - 9;
             new_cf_year = cf_year + 1;
         end
+        comp_freq = 4;
         % error checking for end of month
         new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
     % rollout for monthly (compounding frequency = 12 payments per year)
@@ -222,6 +235,7 @@ while datenum(cf_date) <= datenum(maturity_date)
             new_cf_month = cf_month - 11;
             new_cf_year = cf_year + 1;
         end
+        comp_freq = 12;
         % error checking for end of month
         new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
     else
@@ -233,6 +247,7 @@ while datenum(cf_date) <= datenum(maturity_date)
         cf_dates = [cf_dates ; cf_date];
     end
 end        % end coupon generation forward
+
 %-------------------------------------------------------------------------------
 % cashflow rollout: method zero
 elseif ( strcmp(coupon_generation_method,'zero') == 1 )
@@ -278,6 +293,10 @@ if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )
     %cf_datesnum = cf_datesnum((cf_datesnum-today)>0)
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
+    % preallocate memory
+    cf_values = zeros(1,length(d1));
+    cf_principal = zeros(1,length(d1));
+    % calculate all cash flows
     for ii = 1: 1 : length(d2)
         cf_values(ii) = ((1 ./ discount_factor(d1(ii), d2(ii), coupon_rate, ...
                                             compounding_type, dcc, ...
@@ -288,9 +307,11 @@ if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )
     % Add notional payments
     if ( notional_at_start == 1)    % At notional payment at start
         ret_values(:,1) = ret_values(:,1) - notional;     
+        cf_principal(:,1) = - notional;
     end
     if ( notional_at_end == true) % Add notional payment at end to cf vector:
         ret_values(:,end) = ret_values(:,end) + notional;
+        cf_principal(:,end) = notional;
     end
     
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
@@ -303,6 +324,8 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP'
     notvec = zeros(1,length(d1));
     notvec(length(notvec)) = 1;
     cf_values = zeros(rows(tmp_rates),length(d1));
+    cf_principal = zeros(rows(tmp_rates),length(d1));
+    
     for ii = 1 : 1 : length(d1)
         % convert dates into years from valuation date with timefactor
         [tf dip dib] = timefactor (d1(ii), d2(ii), dcc);
@@ -330,8 +353,8 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP'
                 % get volatility according to moneyness and term
                 tenor   = t1; % days until foward start date
                 term    = t2 - t1; % days of caplet / floorlet
-                sigma = calcVolaShock(value_type,instrument,vola_surface, ...
-                            vola_riskfactor,tenor,term,moneyness);
+                sigma = calcVolaShock(value_type,instrument,surface, ...
+                            riskfactor,tenor,term,moneyness);
                             
                 % add convexity adjustment to forward rate
                 if ( instrument.convex_adj == true )
@@ -365,26 +388,35 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP'
         cf_values(:,ii) = forward_rate;
     end
     ret_values = cf_values .* notional;
-    cf_interest = ret_values; % .* 0.0; ????
+    cf_interest = ret_values;
     % Add notional payments
     if ( notional_at_start == true)    % At notional payment at start
-        ret_values(:,1) = ret_values(:,1) - notional;     
+        ret_values(:,1) = ret_values(:,1) - notional;  
+        cf_principal(:,1) = - notional;
     end
     if ( notional_at_end == true) % Add notional payment at end to cf vector:
         ret_values(:,end) = ret_values(:,end) + notional;
+        cf_principal(:,end) = notional;
     end
+    
 % Type ZCB: Zero Coupon Bond has notional cash flow at maturity date
 elseif ( strcmp(type,'ZCB') == 1 )   
     ret_values = notional;
+    cf_principal = notional;
     cf_interest = 0;
     
 % Type FAB: Calculate CF Values for all CF Periods for fixed amortizing bonds 
 %           (annuity loans and amortizable loans)
+
 elseif ( strcmp(type,'FAB') == 1 )
-    % fixed annuity: fixed total payments     
+    % TODO: if given amount outstanding shall be used for calculation cash flows,
+    % do the following: set issue date to valuation date, set notional to 
+    % amount outstanding, remove all cf_dates < 0, make new attribute specifying
+    % is outstanding amount shall be used
+    % fixed annuity: fixed total payments 
     if ( fixed_annuity_flag == 1)    
         number_payments = length(cf_dates) -1;
-        m = compounding_freq;
+        m = comp_freq;
         total_term = number_payments / m ; % total term of annuity in years      
         % Discrete compounding only
         % TODO: implement simple and continuous compounding for annuity 
@@ -424,7 +456,7 @@ elseif ( strcmp(type,'FAB') == 1 )
     %                       variable
     else                            
         number_payments = length(cf_dates) -1;
-        m = compounding_freq;
+        m = comp_freq;
         total_term = number_payments / m;   % total term of annuity in years
         amortization_rate = notional / number_payments;  
         cf_datesnum = datenum(cf_dates);
@@ -448,6 +480,19 @@ elseif ( strcmp(type,'FAB') == 1 )
     % prepayment: calculate modified cash flows while including prepayment
     if ( instrument.prepayment_flag == 1)
         
+        % Calculation rule:
+        % Extract PSA factor either from provided prepayment surface (depending
+        % on coupon_rate of FAB instrument and absolute ir shock or kept at 1.
+        % The absolute ir shock is extracted from a factor weighing absolute
+        % difference of the riskfactor curve base values to value_type values.
+        % Then this PSA factor is kept constant for all FAB cash flows.
+        % The PSA prepayment rate is extracted either from a constant prepayment
+        % rate or from the ref_curve (PSA prepayment rate curve) depending
+        % on the cash flow term.
+        % Prepayment_rate(i) = psa_factor(const) * PSA_prepayment(i)
+        % This prepayment rate is then used to iteratively calculated
+        % prepaid principal values and interest rate.
+        % 
         % Implementation: use either constant prepayment rate or use prepayment 
         %                   curve for calculation of scaling factor
         pp_type = instrument.prepayment_type; % either full or default
@@ -456,28 +501,61 @@ elseif ( strcmp(type,'FAB') == 1 )
             pp_curve_interp = method_interpolation;
             pp_curve_nodes = tmp_nodes;
             pp_curve_values = tmp_rates;
+        % case 2: constant prepayment rate: set up pseudo constant curve
         elseif ( strcmpi(instrument.prepayment_source,'rate'))
             pp_curve_interp = 'linear';
             pp_curve_nodes = [0];
             pp_curve_values = instrument.prepayment_rate;
+            comp_type_curve = 'cont';
+            basis_curve = 3;
+            comp_freq_curve = 'annual';
         end
+        
+        % generate PSA factor dummy surface if not provided
+        if (nargin < 5 ||  ~isobject(surface)) 
+            pp = Surface();
+            pp = pp.set('axis_x',[0.01],'axis_x_name','coupon_rate','axis_y',[0.0], ...
+                'axis_y_name','ir_shock','values_base',[1],'type','PREPAYMENT');
+        else % take provided PSA factor surface
+            pp = surface;
+        end
+        
+        % preallocate memory
         cf_principal_pp = zeros(rows(pp_curve_values),number_payments);
         cf_interest_pp = zeros(rows(pp_curve_values),number_payments);
+        
+        % calculate absolute IR shock from provided riskfactor curve
+        if (nargin < 6 ||  ~isobject(riskfactor)) 
+            abs_ir_shock = 0.0;
+        else    % calculate absolute IR shock of scenario minus base scenario
+            abs_ir_shock_rates =  riskfactor.getValue(value_type) - riskfactor.getValue('base');
+            % interpolate shock at factor term structure
+            abs_ir_shock = 0.0;
+            for ff = 1 : 1 : length(instrument.psa_factor_term)
+                abs_ir_shock = abs_ir_shock + interpolate_curve(riskfactor.nodes, ...
+                                                        abs_ir_shock_rates,ff);    
+            end
+            abs_ir_shock = abs_ir_shock ./ length(instrument.psa_factor_term);
+        end
+
+        % extract PSA factor from prepayment procedure (independent of PSA curve)
+        prepayment_factor = pp.getValue(coupon_rate,abs_ir_shock);
+                
         % case 1: full prepayment with rate from prepayment curve or 
         %           constant rate
         if ( strcmpi(pp_type,'full'))
             Q_scaling = ones(rows(pp_curve_values),1);
             for ii = 1 : 1 : number_payments 
                  % get prepayment rate at days to cashflow
-                tmp_timestep = d2(ii) - valuation_date; 
-                % prepayment_rate can be vector                
+                tmp_timestep = d2(ii) - d2(1); 
+                % extract PSA factor from prepayment procedure               
                 prepayment_rate = interpolate_curve(pp_curve_nodes, ...
-                                pp_curve_values,tmp_timestep,pp_curve_interp); 
+                                pp_curve_values,tmp_timestep,pp_curve_interp);
+                prepayment_rate = prepayment_rate .* prepayment_factor;
                 % convert annualized prepayment rate
                 lambda = ((1 ./ discount_factor (d1(ii), d2(ii), ...
-                prepayment_rate, comp_type_curve, basis_curve, comp_freq_curve)) - 1);   
-                % calculate new principal payment incl. prepayment 
-                %  (TODO: make lambda scenario dependent 
+                prepayment_rate, comp_type_curve, basis_curve, comp_freq_curve)) - 1);  
+
                 %       (cf_principal_pp will be matrix (:,ii))
                 cf_principal_pp(:,ii) = Q_scaling .* ( cf_principal(ii) ...
                                     + lambda .* ( amount_outstanding_vec(ii) ...
@@ -486,6 +564,7 @@ elseif ( strcmp(type,'FAB') == 1 )
                 % calculate new scaling Factor
                 Q_scaling = Q_scaling .* (1 - lambda);
             end
+        % case 2: TODO implementation
         elseif ( strcmpi(pp_type,'default'))
             cf_interest_pp = cf_interest;
             cf_principal_pp = cf_principal;
@@ -495,6 +574,7 @@ elseif ( strcmp(type,'FAB') == 1 )
         ret_values = ret_values_pp;
         cf_principal = cf_principal_pp;
         cf_interest = cf_interest_pp;
+        
     end % end prepayment procedure
 end
 %-------------------------------------------------------------------------------
@@ -513,7 +593,7 @@ ret_dates = ret_dates(ret_dates>0);
 
 ret_values = ret_values(:,(end-length(ret_dates)+1):end);
 ret_interest_values = cf_interest(:,(end-length(ret_dates)+1):end);
-
+ret_principal_values = cf_principal(:,(end-length(ret_dates)+1):end);
 %-------------------------------------------------------------------------------
 % #################   Calculation of accrued interests   #######################   
 %
@@ -547,7 +627,7 @@ if length(ret_date_last_coupon) > 0                 % CASE A
     days_to_next_coupon = ret_dates(1);  
     adj_factor = dib / (days_from_last_coupon + days_to_next_coupon);
     if ~( term == 365)
-    adj_factor = adj_factor * term / 12;
+    adj_factor = adj_factor .* term / 12;
     end
     tf = tf * adj_factor;
 else
@@ -560,13 +640,13 @@ else
     % valuation date after issue date, but before first cf payment date
     else                                            % CASE C
         [tf dip dib] = timefactor (issue_date, valuation_date, dcc);
-        days_from_last_coupon = valuation_date - issue_date;
-        days_to_next_coupon = ret_dates(1);  
+        days_from_last_coupon = valuation_date - datenum(issue_date);
+        days_to_next_coupon = ret_dates(1) ; 
         adj_factor = dib / (days_from_last_coupon + days_to_next_coupon);
         if ~( term == 365)
         adj_factor = adj_factor * term / 12;
         end
-        tf = tf * adj_factor;
+        tf = tf .* adj_factor;
     end
 end
 % value of next coupon -> accrued interest is pro-rata share of next coupon
@@ -632,7 +712,8 @@ end
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = true;
 %! bond_struct.prepayment_flag          = false;
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[170,535,900,1265,1631,1996,2361]);
 
 %!test
@@ -660,7 +741,8 @@ end
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = true;
 %! bond_struct.prepayment_flag          = false;
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_values,[3.5096,3.5000,3.5000,3.5000,3.5096,3.5000,103.5000],0.0001);
 
 %!test
@@ -688,7 +770,8 @@ end
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = true;
 %! bond_struct.prepayment_flag          = false;
-%! [ret_dates ret_values] = rollout_structured_cashflows('01-Nov-2011','base',bond_struct);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('01-Nov-2011','base',bond_struct);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_values,11.92133107 .* ones(1,10),0.00001);
 
 %!test
@@ -720,10 +803,10 @@ end
 %! bond_struct.prepayment_flag          = true;
 %! bond_struct.prepayment_rate          = 0.00; 
 %! c = Curve();
-%! c = c.set('id','IR_EUR','nodes',[0,900],'rates_stress',[0.0,0.06;0.0,0.08;0.01,0.10],'method_interpolation','linear','compounding_type','simple');
-%! [ret_dates ret_values] = rollout_structured_cashflows('01-Nov-2011','stress',bond_struct,c);
-%! assert(ret_values(:,end),[7.17230242361319;6.01329445326744;4.98166208851809 ],0.0000001); 
- 
+%! c = c.set('id','PSA_CURVE','nodes',[0,900],'rates_stress',[0.0,0.06;0.0,0.08;0.01,0.10],'method_interpolation','linear','compounding_type','simple');
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('01-Nov-2011','stress',bond_struct,c);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
+%! assert(ret_values(:,end),[7.63168805976622;6.53801392731666;5.48158314020277 ],0.0000001);     
 
 %!test 
 %! bond_struct=struct();
@@ -757,7 +840,8 @@ end
 %! discount_rates = [0.0001001034,0.0001000689,0.0001000684,0.0001000962,0.0003066350,0.0013812064,0.002484882,0.0035760168,0.0045624391,0.0054502705,0.0062599362];
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',discount_nodes,'rates_base',discount_rates,'method_interpolation','linear');
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct,c);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct,c);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_values(end),1.5281850227882421,0.000000001);
 %! assert(ret_values(1),0.0100004900156492,0.000000001);
 
@@ -799,7 +883,8 @@ end
 %! v = v.set('values_base',0.2);
 %! v = v.set('type','IR');
 %! r = Riskfactor();
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Mar-2016','base',cap_struct,c,v,r);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',cap_struct,c,v,r);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,456,0.000000001);
 %! assert(ret_values,5.63130599411650,0.000000001);
 
@@ -841,7 +926,8 @@ end
 %! v = v.set('values_base',sigma);
 %! v = v.set('type','IR');
 %! r = Riskfactor();
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
 %! assert(ret_values,[69.3193486314239,74.0148444015558],0.000000001);
 
@@ -883,7 +969,8 @@ end
 %! v = v.set('values_base',sigma);
 %! v = v.set('type','IR');
 %! r = Riskfactor();
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
 %! assert(ret_values,[68.7744654466300,74.03917364111012],0.000000001);
    
@@ -925,7 +1012,8 @@ end
 %! v = v.set('values_base',sigma);
 %! v = v.set('type','IR');
 %! r = Riskfactor();
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
 %! assert(ret_values,[18.2727946049505,23.5375027994284],0.000000001);
    
@@ -958,7 +1046,8 @@ end
 %! comp_freq_curve                      = 'annual';
 %! discount_nodes = [1825];
 %! discount_rates = [0.0001000962];
-%! [ret_dates ret_values] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,1825);
 %! assert(ret_values,1);
 
@@ -987,7 +1076,8 @@ end
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = true;
 %! bond_struct.prepayment_flag          = false;
-%! [ret_dates ret_values accrued_interest] = rollout_structured_cashflows('31-Dec-2015','base',bond_struct);
+%! [ret_dates ret_values ret_int ret_princ accrued_interest] = rollout_structured_cashflows('31-Dec-2015','base',bond_struct);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[314,679,1044,1409,1775,2140,2505,2870,3236,3601,3966],0.000000001);
 %! assert(ret_values,[1.504109589,1.5,1.5,1.5,1.504109589,1.5,1.5,1.5,1.504109589,1.5,101.5],0.000000001);
 %! assert(accrued_interest,0.213698630136987,0.0000001);
@@ -1017,7 +1107,8 @@ end
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = true;
 %! bond_struct.prepayment_flag          = false;
-%! [ret_dates ret_values accrued_interest] = rollout_structured_cashflows('31-Dec-2015','base',bond_struct);
+%! [ret_dates ret_values ret_int ret_princ accrued_interest] = rollout_structured_cashflows('31-Dec-2015','base',bond_struct);
+%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[90,274,455,639,820,1004,1185,1369,1551,1735,1916,2100],0.000000001);
 %! assert(ret_values,[1.0595890411,1.0712328767,1.0537671233,1.0712328767,1.0537671233,1.0712328767,1.0537671233,1.0712328767,1.0595890411,1.0712328767,1.0537671233,101.0712328767],0.000000001);
 %! assert(accrued_interest,0.535616438356163,0.0000001);

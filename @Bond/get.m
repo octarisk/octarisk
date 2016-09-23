@@ -93,6 +93,20 @@ function s = get (bond, property)
           s = obj.notional;
         case 'clean_value_base'
           s = obj.clean_value_base;
+        case 'prepayment_type'
+          s = obj.prepayment_type;
+        case 'prepayment_source'
+          s = obj.prepayment_source;
+        case 'prepayment_flag'
+          s = obj.prepayment_flag;
+        case 'prepayment_rate'
+          s = obj.prepayment_rate;
+        case 'prepayment_curve'
+          s = obj.prepayment_curve;  
+        case 'outstanding_balance'
+          s = obj.outstanding_balance;
+        case 'psa_factor_term'
+          s = obj.psa_factor_term;
         otherwise
           error ('get: invalid property %s', property);
       end

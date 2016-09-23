@@ -37,6 +37,8 @@ classdef Bond < Instrument
                                             % no prepayment curve is specified
         prepayment_curve         = 'PSA-BASE';  % specify prepayment curve
         clean_value_base = 0; % BOOL: value_base is clean without accr interest
+        outstanding_balance = 0.0;  % outstanding balance for FAB only
+        psa_factor_term = [365,1825];   % factor terms for abs_ir_shock calc
     end
    
     properties (SetAccess = private)
