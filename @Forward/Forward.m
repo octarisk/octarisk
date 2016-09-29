@@ -21,6 +21,7 @@ classdef Forward < Instrument
         cf_values = [];
         component_weight = 0.0;
         net_basis = 0.0;
+        calc_price_from_netbasis = false;
     end
     properties (SetAccess = private)
         sub_type = 'EQFWD';
@@ -67,12 +68,13 @@ classdef Forward < Instrument
          fprintf('component_weight: %f\n',b.component_weight);
          fprintf('net_basis: %f\n',b.net_basis);
          fprintf('discount_curve: %s\n',b.discount_curve); 
+         fprintf('calc_price_from_netbasis: %d\n',b.calc_price_from_netbasis);
       end
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') ...
                 || strcmpi(sub_type,'EQFWD') || strcmpi(sub_type,'FX') ...
-                || strcmpi(sub_type,'BondFuture'))
-            error('Forward sub_type must be either Equity, EQFWD, Bond, FX or BondFuture')
+                || strcmpi(sub_type,'BondFuture')  || strcmpi(sub_type,'EquityFuture'))
+            error('Forward sub_type must be either Equity, EquityFuture, EQFWD, Bond, FX or BondFuture')
          end
          obj.sub_type = sub_type;
       end % set.sub_type

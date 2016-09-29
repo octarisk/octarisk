@@ -232,6 +232,25 @@ function s = set (forward, varargin)
       else
         error ('set: expecting multiplier to be a real number');
       end
+    % ====================== set calc_price_from_netbasis ======================
+    elseif (ischar (prop) && strcmp (prop, 'calc_price_from_netbasis'))   
+      if (isnumeric (val) && isreal (val))
+        s.calc_price_from_netbasis = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',lower(val)))
+            s.calc_price_from_netbasis = logical(0);
+        elseif ( strcmp('true',lower(val)))
+            s.calc_price_from_netbasis = logical(1);
+        else
+            printf('WARNING: Unknown val: >>%s<<. Setting calc_price_from_netbasis to false.',val);
+            s.calc_price_from_netbasis = logical(0);
+        end
+      elseif ( islogical(val))
+        s.calc_price_from_netbasis = val;    
+      else
+        error ('set: expecting calc_price_from_netbasis to be a real number');
+      end   
+      
     % ====================== set dividend_yield  ======================
     elseif (ischar (prop) && strcmp (prop, 'dividend_yield'))   
       if (isreal (val))

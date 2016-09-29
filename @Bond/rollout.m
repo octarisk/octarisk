@@ -76,8 +76,11 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
   end
   
   % store outstanding balance for FAB only (sum of all remaining principal cf
+
   if ( strcmp(s.sub_type,'FAB'))
-    s = s.set('outstanding_balance',sum(ret_principal,2));
+      if (s.use_outstanding_balance == 0)
+        s = s.set('outstanding_balance',sum(ret_principal,2));
+      end
   end
   % set property value pairs to object
   s = s.set('cf_dates',ret_dates);

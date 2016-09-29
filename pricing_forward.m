@@ -12,54 +12,23 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{valuation_date}, @var{forward}, @var{discount_curve}, @var{underlying})
+%# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{valuation_date}, @var{forward}, @var{discount_curve_object}, @var{underlying_object}, @var{und_curve_object})
 %#
-%# Compute the theoretical value of equity and bond forwards and futures.@*
-%# In the 'oop' version no input data checks are performed. @*
-%# Pre-requirements:@*
-%# @itemize @bullet
-%# @item installed octave financial package
-%# @item custom functions timefactor, discount_factor, interpolate_curve
-%# @end itemize
+%# Compute the theoretical value and price of equity and bond forwards and 
+%# futures.@*
 %#
 %# Input and output variables:
 %# @itemize @bullet
-%# @item @var{forward}: Structure with relevant information for specification of
-%# the object forward:@*
-%#      @itemize @bullet
-%#      @item forward.type                   Equity, Bond
-%#      @item forward.currency               [optional] Currency (string, ISO code)
-%#      @item forward.maturity_date          Maturity date of forward
-%#      @item forward.strike_price           strike price (float).
-%# Can be a 1xN vector.
-%#      @item forward.underlying_price       market price of underlying (float),
-%# in forward currency units. Can be a 1xN vector.
-%#      @item forward.storage_cost           [optional] continuous storage
-%# cost p.a. (default 0)
-%#      @item forward.convenience_yield      [optional] continuous convenience
-%# yield p.a. (default 0)
-%#      @item forward.dividend_yield         [optional] continuous dividend
-%# yield p.a. (default 0)
-%#      @item forward.compounding_type       [optional] compounding type
-%# [simple, discrete, continuous] (default 'disc')
-%#      @item forward.compounding_frequency  [optional] compounding frequency
-%# [daily, weekly, monthly, semi-annual, annual] (default 'daily')
-%#      @item forward.day_count_convention   [optional] day count convenction
-%# (e.g. 'act/act' or '30/360E') (default 'act/act')
-%#      @end itemize
-%# @item @var{discount_nodes}: tmp_nodes is a 1xN vector with all timesteps of
-%# the given curve
-%# @item @var{discount_rates}: tmp_rates is a MxN matrix with discount curve
-%# rates defined in columns. Each row contains a specific scenario with
-%# different curve structure
-%# @item @var{theo_value}: returs a 1xN vector with all forward values
-%# @item @var{theo_price}: returs a 1xN vector with all forward prices
-%# @end itemize
-%# @seealso{timefactor, discount_factor, interpolate_curve}
+%# @item @var{valuation_date}: valuation date
+%# @item @var{forward}: forward object
+%# @item @var{discount_curve_object}: discount curve for forward
+%# @item @var{underlying_object}: underlying object of forward
+%# @item @var{und_curve_object}: discount curve object of underlying object
+%# @seealso{timefactor, discount_factor, interpolate_curve, convert_curve_rates}
 %# @end deftypefn
 
 function [theo_value theo_price] = pricing_forward(valuation_date,value_type, forward, ...
-    discount_curve_object, underlying_object, foreign_curve_object )
+    discount_curve_object, underlying_object, und_curve_object )
 
 if nargin < 5 || nargin > 6
     print_usage ();
@@ -88,7 +57,7 @@ curve_comp_freq = discount_curve_object.get('compounding_freq');
 
 % Getting underlying properties
 % distinguish between index or RF underlyings for EQ and Bond Forwards
-if ( sum(strcmpi(type,{'Equity','EQFWD','Bond','BondFuture'})) > 0 )
+if ( sum(strcmpi(type,{'Equity','EQFWD','BondFuture','EquityFuture'})) > 0 )
     if ( strfind(underlying_object.get('id'),'RF_') )   % underlying instrument is a risk factor
         tmp_underlying_sensitivity = forward.get('underlying_sensitivity');
         tmp_underlying_delta = underlying_object.getValue(value_type);
@@ -98,23 +67,45 @@ if ( sum(strcmpi(type,{'Equity','EQFWD','Bond','BondFuture'})) > 0 )
     else    % underlying is a index
         underlying_price = underlying_object.getValue(value_type);
     end
+    
 elseif ( sum(strcmpi(type,{'FX'})) > 0 )
     if nargin < 5
         error('pricing_forward: No foreign curve object provided.');
     end
-    % getting foreign curve properties
-    foreign_nodes           = foreign_curve_object.get('nodes');
-    foreign_rates           = foreign_curve_object.getValue(value_type);
-    interp_foreign          = foreign_curve_object.get('method_interpolation');
-    curve_basis_foreign     = foreign_curve_object.get('basis');
-    curve_comp_type_foreign = foreign_curve_object.get('compounding_type');
-    curve_comp_freq_foreign = foreign_curve_object.get('compounding_freq');
+    % getting underlying curve properties
+    foreign_nodes           = und_curve_object.get('nodes');
+    foreign_rates           = und_curve_object.getValue(value_type);
+    interp_foreign          = und_curve_object.get('method_interpolation');
+    curve_basis_foreign     = und_curve_object.get('basis');
+    curve_comp_type_foreign = und_curve_object.get('compounding_type');
+    curve_comp_freq_foreign = und_curve_object.get('compounding_freq');
     % Getting underlying currency properties
     underlying_price = underlying_object.getValue(value_type);
+    
+elseif ( sum(strcmpi(type,{'FX','Bond','BONDFWD'})) > 0 )
+    if nargin < 5
+        error('pricing_forward: No foreign curve object provided.');
+    end
+    if ( strfind(underlying_object.get('id'),'RF_') )   % underlying instrument is a risk factor
+        tmp_underlying_sensitivity = forward.get('underlying_sensitivity');
+        tmp_underlying_delta = underlying_object.getValue(value_type);
+        underlying_price = Riskfactor.get_abs_values(underlying_object.model, ...
+            tmp_underlying_delta, obj.underlying_price_base, ...
+            tmp_underlying_sensitivity);
+    else    % underlying is a index
+        underlying_price = underlying_object.getValue(value_type);
+    end
+    % getting underlying curve properties
+    und_nodes           = und_curve_object.get('nodes');
+    und_rates           = und_curve_object.getValue(value_type);
+    interp_und          = und_curve_object.get('method_interpolation');
+    curve_basis_und     = und_curve_object.get('basis');
+    curve_comp_type_und = und_curve_object.get('compounding_type');
+    curve_comp_freq_und = und_curve_object.get('compounding_freq');
+    % Getting underlying currency properties
+    underlying_price = underlying_object.getValue(value_type);
+
 end
-
-
-
 
 % convert valuation_date
 if (ischar(valuation_date))
@@ -143,10 +134,14 @@ discount_rate_cont  = convert_curve_rates(valuation_date,days_to_maturity, ...
     discount_rate_curve, curve_comp_type,curve_comp_freq, ...
     curve_basis, 'cont','annual',3);
 
-% calculate cost of carry curve rate (compounding type conv act/365
+% calculate cost of carry curve rate (compounding type cont act/365
 cost_of_carry_cont       = discount_rate_cont - forward.dividend_yield ...
     + forward.storage_cost - forward.convenience_yield;
 
+% calculate cost of carry curve rate (compounding type cont act/365)
+cost_of_carry_fut       = - forward.dividend_yield ...
+    + forward.storage_cost - forward.convenience_yield;
+    
 % convert cost of carry curve to instrument convention
 cost_of_carry_instr = convert_curve_rates(valuation_date,days_to_maturity, ...
     cost_of_carry_cont, 'cont','annual',3, ...
@@ -161,40 +156,118 @@ discount_rate_instr = convert_curve_rates(valuation_date,days_to_maturity, ...
 if ( sum(strcmpi(type,{'Equity','EQFWD'})) > 0 )
     df_forward      = discount_factor (valuation_date, maturity_date, ...
         cost_of_carry_instr , comp_type, basis, comp_freq);
-    df_discount     = discount_factor (valuation_date, maturity_date, ...
-        discount_rate_instr, comp_type, basis, comp_freq);
+    df_discount     = discount_factor (valuation_date, ...
+        maturity_date, discount_rate_curve, ...
+        curve_comp_type, curve_basis, curve_comp_freq);
     forward_price   = underlying_price ./ df_forward;
     payoff          = (forward_price - strike ) .* df_discount;
  
  
 % #####  Calculate forward value for bond forwards  #####
 elseif ( sum(strcmpi(type,{'Bond','BONDFWD'})) > 0 )
+    % the value of a bond forward is the discounted value of the underlying
+    % bond at settlement date. However, if the bond pays coupons, the future
+    % value of these payments has to be subtracted from the future bond price
+    % which is discounted. Moreover, accrued interest have to be paid at
+    % settlement, making it necessary to add these AI to the forward price.
+    % get PV of underlying Bond CF from valuation date until maturity date
+    %     discounted with underlying bonds discount curve
+    und_cf_dates    = underlying_object.get('cf_dates');
+    und_cf_values   = underlying_object.get('cf_values');
+    dtm = maturity_date - valuation_date;
+    und_cf_values   = und_cf_values(und_cf_dates < dtm);
+    und_cf_dates    = und_cf_dates(und_cf_dates < dtm);
+    und_spread      = underlying_object.get('soy');
+    
+    pv_und_bond_int = pricing_npv(valuation_date, ...
+            und_cf_dates, und_cf_values, und_spread, und_nodes, ...
+            und_rates, curve_basis, curve_comp_type, curve_comp_freq, interp_und, ...
+            curve_comp_type_und, curve_basis_und, curve_comp_freq_und);
+            
+    % calculate accrued interest from bonds last CF date < Ts until Ts
+    last_coupon_cf_date = und_cf_dates(end);
+    und_notional    = underlying_object.get('notional');
+    und_coupon_rate = underlying_object.get('coupon_rate');
+    und_basis       = underlying_object.get('basis');
+    accr_interest   = timefactor(last_coupon_cf_date,dtm,und_basis) ...
+                        * und_notional * und_coupon_rate;
+    
+    % get discount factor of forward curve df_discount(Tv,Ts)
     df_discount     = discount_factor (valuation_date, ...
-        forward.maturity_date, discount_rate_instr, ...
-        comp_type, basis, comp_freq);
-    forward_price   = underlying_price ./ df_discount;
-    payoff          = underlying_price - (strike .* df_discount);
- 
+        maturity_date, discount_rate_curve, ...
+        curve_comp_type, curve_basis, curve_comp_freq);
+
+    % calculate value and price of forward      
+    payoff          = underlying_price - pv_und_bond_int - ( strike + 
+                                                accr_interest ) .* df_discount;          
+    forward_price   = (underlying_price - pv_und_bond_int) ./ df_discount ...
+                        - accr_interest; 
  
 % #####  Calculate future value for bond future  #####
-elseif ( sum(strcmpi(type,{'BondFuture'})) > 0 )
+elseif ( sum(strcmpi(type,{'BondFuture'})) > 0 )  
     df_discount     = discount_factor (valuation_date, ...
-        maturity_date, discount_rate_instr, ...
-        comp_type, basis, comp_freq);
+        maturity_date, discount_rate_curve, ...
+        curve_comp_type, curve_basis, curve_comp_freq);
     % get attribute values of underlying bond
     last_coupon_date = underlying_object.get('last_coupon_date');
-    net_basis       = forward.get('net_basis');
     comp_weight     = forward.get('component_weight');
     coupon_rate     = underlying_object.get('coupon_rate');
     notional        = underlying_object.get('notional');
     % calculate accrued interest from last bond coupon date to forward settlement
     accr_int        = coupon_rate * timefactor(last_coupon_date + ...
                             valuation_date, maturity_date,3) * notional;
-    % calculate forward price and payoff value
-    forward_price   = net_basis + (underlying_price ./ df_discount - accr_int) ...
-                                ./ comp_weight;
-    payoff          = forward_price - strike;
- 
+    % calc price from netbasis in stress or MC scenario
+    if ~(strcmpi(value_type,'base'))
+        price_from_nb_flag = true;
+    else
+        price_from_nb_flag = forward.calc_price_from_netbasis;
+    end  
+    % a) calculate forward price from given net basis
+    if true(price_from_nb_flag)
+        net_basis       = forward.get('net_basis');
+        % calculate forward price and payoff value
+        forward_price   = net_basis + (underlying_price ./ df_discount - accr_int) ...
+                                    ./ comp_weight;
+        payoff          = forward_price - strike;
+    % b) calculate net basis and assume future value is 0.0 per definition
+    else
+        forward_price = strike;
+        payoff = forward_price - (underlying_price ./ df_discount - accr_int) ...
+                                    ./ comp_weight;
+    end
+
+% #####  Calculate value for equity future  #####
+elseif ( sum(strcmpi(type,{'EquityFuture'})) > 0 ) 
+    % cost of carry discount factor
+    df_forward      = discount_factor (valuation_date, maturity_date, ...
+        cost_of_carry_fut , 'cont', 3, 'annual');
+    % future interest rate discount factor
+    df_discount     = discount_factor (valuation_date, ...
+        maturity_date, discount_rate_curve, ...
+        curve_comp_type, curve_basis, curve_comp_freq);
+    % no discrete dividends are assumed, only continuous!
+    disc_payments = 0.0;
+    % calc price from netbasis in stress or MC scenario
+    if ~(strcmpi(value_type,'base'))
+        price_from_nb_flag = true;
+    else
+        price_from_nb_flag = forward.calc_price_from_netbasis;
+    end   
+    % a) calculate future price from given net basis
+    if true(price_from_nb_flag)
+        net_basis       = forward.get('net_basis');
+        % calculate forward price and payoff value
+        forward_price   = (underlying_price - disc_payments) * df_forward  ...
+                                    ./ df_discount + net_basis;
+        payoff          = forward_price - strike;
+    % b) calculate net basis and assume future value is 0.0 per definition in
+    %   base case only
+    else
+        forward_price = strike;
+        payoff = forward_price - (underlying_price - disc_payments) * df_forward  ...
+                                    ./ df_discount;
+    end
+    
 % #####  Calculate forward value for FX forwards    #####
 elseif ( sum(strcmpi(type,{'FX'})) > 0 )
     % extract rate from foreign curve

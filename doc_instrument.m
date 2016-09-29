@@ -377,9 +377,119 @@ end
 %! f = f.calc_value('31-Mar-2016','base',c,b);
 %! f = f.calc_value('31-Mar-2016','stress',c,b);
 %! assert(f.getValue('base'),0.0,0.00001);
-%! base_value = f.getValue('stress');
 %! assert(f.getValue('stress'),5.8994582871,0.00001);
 
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Bond Forward and underlying FRB\n');
+%! b = Bond();
+%! b = b.set('Name','FRB_TEST','coupon_rate',0.0475,'value_base',172.008,'clean_value_base',1,'coupon_generation_method','backward','term',12);
+%! b = b.set('maturity_date','04-Jul-2034','notional',100,'compounding_type','simple','issue_date','31-Jan-2003','day_count_convention','act/365');
+%! b = b.rollout('base','31-Mar-2016');
+%! b = b.rollout('stress','31-Mar-2016');
+%! c = Curve();
+%! c = c.set('id','EUR-SWAPRAW','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
+%!         'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!                     0.004576856,0.005563194,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526], ...
+%!         'rates_stress',[-1.38934530e-002,-1.2903390e-002,-1.14941980e-002,-1.15051680e-002,-1.11371070e-002,-1.048215300e-002, ...
+%!                     -9.6472220e-003,-8.6925630e-003,-7.6181070e-003,-6.5144340e-003,-5.423144e-003,-4.4368060e-003, ...
+%!                     -3.54135400000000e-003,-2.73938000000000e-003,-2.04319200000000e-003,-1.45285700000000e-003, ...
+%!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
+%!         'method_interpolation','linear');
+%! b = b.calc_spread_over_yield(c,'31-Mar-2016');
+%! assert(b.get('accrued_interest'),3.5267123288,0.0000001);
+%! assert(b.get('soy'),-0.003158478713,0.00001);
+%! b = b.calc_value('31-Mar-2016',c,'base');
+%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! assert(b.getValue('base'),175.53471232881,0.00005);
+%! assert(b.getValue('stress'),201.6005801229,0.00005);
+%! f = Forward();
+%! f = f.set('name','BOND_FORWARD_TEST','maturity_date','17-Oct-2019','strike_price',132.68);
+%! f = f.set('sub_type','Bond');
+%! f = f.set('compounding_type','cont','underlying_id','FRB_TEST');
+%! f = f.calc_value('31-Mar-2016','base',c,b,c);
+%! f = f.calc_value('31-Mar-2016','stress',c,b,c);
+%! assert(f.getValue('base'),21.9555751042,0.00005);
+%! assert(f.getValue('stress'),42.8245029271,0.00005);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Equity Future\n');
+%! i = Index();
+%! i = i.set('id','EURO_STOXX_50','value_base',3004.93,'scenario_stress',2403.944);
+%! c = Curve();
+%! c = c.set('id','EUR-SWAPRAW','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
+%!         'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!                     0.004576856,0.005563194,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526], ...
+%!        'rates_stress',[-1.38934530e-002,-1.2903390e-002,-1.14941980e-002,-1.15051680e-002,-1.11371070e-002,-1.048215300e-002, ...
+%!                     -9.6472220e-003,-8.6925630e-003,-7.6181070e-003,-6.5144340e-003,-5.423144e-003,-4.4368060e-003, ...
+%!                     -3.54135400000000e-003,-2.73938000000000e-003,-2.04319200000000e-003,-1.45285700000000e-003, ...
+%!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
+%!         'method_interpolation','linear');
+%! f = Forward();
+%! f = f.set('name','EQUITY_FUTURE_TEST','maturity_date','17-Jun-2016','strike_price',2925.0);
+%! f = f.set('sub_type','EquityFuture','calc_price_from_netbasis',0);
+%! f = f.set('compounding_type','cont','underlying_id','EURO_STOXX_50');
+%! f = f.calc_value('31-Mar-2016','base',c,i);
+%! assert(f.getValue('base'),0.0,0.00001);
+%! assert(f.get('net_basis'),-77.930763505,0.00001);
+%! f = f.calc_value('31-Mar-2016','stress',c,i);
+%! assert(f.getValue('stress'),-605.714448748,0.00001);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Fixed Amortizing Bond with given principal payments\n');
+%! b = Bond();
+%! b = b.set('Name','FAB_TEST','coupon_rate',0.02147,'value_base',34714367.9145355225,'clean_value_base',1,'coupon_generation_method','backward','term',3,'sub_type','FAB');
+%! b = b.set('maturity_date','12-Feb-2020','notional',34300000,'compounding_type','simple','issue_date','12-Mar-2016','day_count_convention','act/act');
+%! b = b.set('fixed_annuity',0,'prepayment_flag',false,'principal_payment',147000,'use_principal_pmt',1,'in_arrears',0,'long_first_period',false,'long_last_period',false);
+%! b = b.rollout('base','31-Mar-2016');
+%! b = b.rollout('stress','31-Mar-2016');
+%! c = Curve();
+%! c = c.set('id','EUR-SWAPRAW','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
+%!         'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!                     0.004576856,0.005563194,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526], ...
+%!        'rates_stress',[-1.38934530e-002,-1.2903390e-002,-1.14941980e-002,-1.15051680e-002,-1.11371070e-002,-1.048215300e-002, ...
+%!                     -9.6472220e-003,-8.6925630e-003,-7.6181070e-003,-6.5144340e-003,-5.423144e-003,-4.4368060e-003, ...
+%!                     -3.54135400000000e-003,-2.73938000000000e-003,-2.04319200000000e-003,-1.45285700000000e-003, ...
+%!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
+%!         'method_interpolation','linear');
+%! b = b.calc_spread_over_yield(c,'31-Mar-2016');
+%! assert(b.get('accrued_interest'),38229.5054644799,0.00001);
+%! assert(b.get('soy'),0.018682087543,0.00001);
+%! b = b.calc_value('31-Mar-2016',c,'base');
+%! assert(b.getValue('base'),34752597.42,10);
+%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! assert(b.getValue('stress'),36027871.49,10);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Pricing Agency MBS with given outstanding balance\n');
+%! c = Curve();
+%! c = c.set('id','EUR-SWAPRAW','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
+%!         'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!                     0.004576856,0.005563194,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526], ...
+%!         'rates_stress',[-1.38934530e-002,-1.2903390e-002,-1.14941980e-002,-1.15051680e-002,-1.11371070e-002,-1.048215300e-002, ...
+%!                     -9.6472220e-003,-8.6925630e-003,-7.6181070e-003,-6.5144340e-003,-5.423144e-003,-4.4368060e-003, ...
+%!                     -3.54135400000000e-003,-2.73938000000000e-003,-2.04319200000000e-003,-1.45285700000000e-003, ...
+%!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
+%!         'method_interpolation','linear');
+%! psa = Curve();
+%! psa = psa.set('id','PSA Standard','nodes',[0,900],'rates_base',[0,0.06]);
+%! v = Surface();
+%! v = v.set('axis_x',[0.055,0.06,0.065],'axis_x_name','coupon_rate','axis_y',[-0.01,0.0,0.01],'axis_y_name','ir_shock','values_base',[3.73,4.3,3.8;3,3.6,3.36;3.8252,3.36255,2.789],'type','PREPAYMENT');
+%! r = Curve();
+%! r = r.set('id','EUR-SWAPRAW','nodes',[365,730],'rates_base',[0.01,0.02], ...
+%!             'rates_stress',[0.01,0.02;0.005,0.01;0.03,0.04;0.05,0.06],'method_interpolation','linear');
+%! b = Bond();
+%! b = b.set('Name','AG_MBS','coupon_rate',0.065,'value_base',0.005660288,'clean_value_base',1,'coupon_generation_method','backward','term',1,'use_outstanding_balance',1);
+%! b = b.set('maturity_date','01-May-2021','notional',1,'compounding_type','simple','issue_date','01-May-2001','day_count_convention','act/365','outstanding_balance',0.00503653);
+%! b = b.set('sub_type','FAB','fixed_annuity',1,'prepayment_type','full','prepayment_source','curve','prepayment_flag',1,'prepayment_rate',0.06);
+%! b = b.rollout('base','31-Mar-2016',psa,v,r);
+%! b = b.calc_value('31-Mar-2016',c,'base');
+%! b = b.rollout('stress','31-Mar-2016',psa,v,r);
+%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! base_value = b.getValue('base');
+%! assert(b.getValue('base'),0.00570177978722126,0.000000001);
+%! stress_value = b.getValue('stress');
+%! assert(b.getValue('stress'),[0.00580964094701875;0.00579449560542397;0.00585112970654451;0.00585112970654451],0.000000001); 
+   
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
 %! b = Bond();

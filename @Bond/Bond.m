@@ -24,7 +24,10 @@ classdef Bond < Instrument
         ir_shock   = 0.01;      % shock used for calculation of effective duration
         in_arrears = 0;
         fixed_annuity = 0;      % property only needed for fixed amortizing bond 
-               % -> fixed annuity annuity flag (annuity loan or amortizable loan) 
+               % -> fixed annuity annuity flag (annuity loan or amortizable loan)
+        use_principal_pmt = 1;
+        principal_payment = 0.0; % principal payment (use_principal_pmt flag has
+                                 % to be set to true and fixed_annuity == false
         notional_at_start = 0; 
         notional_at_end = 1;
         calibration_flag = 0;   % flag set to true, if calibration 
@@ -39,6 +42,8 @@ classdef Bond < Instrument
         clean_value_base = 0; % BOOL: value_base is clean without accr interest
         outstanding_balance = 0.0;  % outstanding balance for FAB only
         psa_factor_term = [365,1825];   % factor terms for abs_ir_shock calc
+        use_outstanding_balance = 0;    % BOOL: use outstanding balance at 
+                                        % valuation date for payments
     end
    
     properties (SetAccess = private)
@@ -113,8 +118,11 @@ classdef Bond < Instrument
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('reference_curve: %s\n',b.reference_curve); 
          fprintf('spread_curve: %s\n',b.spread_curve); 
-         fprintf('accrued_interest: %d\n',b.accrued_interest); 
+         fprintf('accrued_interest: %f\n',b.accrued_interest); 
          fprintf('last_coupon_date: %d\n',b.last_coupon_date);
+         fprintf('principal_payment: %f\n',b.principal_payment); 
+         fprintf('use_principal_pmt: %d\n',b.use_principal_pmt);
+         fprintf('use_outstanding_balance: %d\n',b.use_outstanding_balance);
          %fprintf('spot_value: %f %s\n',b.spot_value,b.currency);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);

@@ -1,4 +1,4 @@
-function obj = calc_value (forward,valuation_date,value_type,discount_curve_object,underlying_object,foreign_curve_object)
+function obj = calc_value (forward,valuation_date,value_type,discount_curve_object,underlying_object,und_curve_object)
   obj = forward;
    if ( nargin < 4)
         error('Error: No  discount curve set. Aborting.');
@@ -14,7 +14,16 @@ function obj = calc_value (forward,valuation_date,value_type,discount_curve_obje
     end
  
     % calculate value according to pricing formula
-    if ( sum(strcmpi(obj.sub_type,{'Equity','EQFWD','Bond','BondFuture'})) > 0 )
+    if ( sum(strcmpi(obj.sub_type,{'BondFuture','EquityFuture'})) > 0 )
+        [theo_value theo_price] = pricing_forward(valuation_date,value_type,obj, ...
+                                    discount_curve_object, underlying_object);
+        % if flag for calculation of net basis is true, payoff equals net basis
+        % and payoff is zero by definition (only in base case)
+        if (obj.calc_price_from_netbasis == 0 && strcmpi(value_type,'base'))
+            obj = obj.set('net_basis',theo_value);
+            theo_value = zeros(rows(theo_price),1);   % per definition
+        end
+    elseif ( sum(strcmpi(obj.sub_type,{'Equity','EQFWD'})) > 0 )
         [theo_value theo_price] = pricing_forward(valuation_date,value_type,obj, ...
                                     discount_curve_object, underlying_object);
     elseif ( sum(strcmpi(obj.sub_type,{'FX'})) > 0 )
@@ -22,7 +31,13 @@ function obj = calc_value (forward,valuation_date,value_type,discount_curve_obje
             error('No foreign discount curve object set for FX forward.');
         end
         [theo_value theo_price] = pricing_forward(valuation_date,value_type,obj, ...
-                discount_curve_object, underlying_object, foreign_curve_object);
+                discount_curve_object, underlying_object, und_curve_object);
+    elseif ( sum(strcmpi(obj.sub_type,{'Bond','BONDFWD'})) > 0 )
+        if nargin < 5
+            error('No underlying discount curve object set for Bond forward.');
+        end
+        [theo_value theo_price] = pricing_forward(valuation_date,value_type,obj, ...
+                discount_curve_object, underlying_object, und_curve_object);
     end
     
     theo_value  = theo_value .* obj.multiplier;

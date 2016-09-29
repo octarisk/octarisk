@@ -427,6 +427,13 @@ function s = set (bond, varargin)
       else
         error ('set: expecting spread to be a real number');
       end 
+    % ====================== set principal_payment ======================
+    elseif (ischar (prop) && strcmp (prop, 'principal_payment'))   
+      if (isnumeric (val) && isreal (val))
+        s.principal_payment = val;
+      else
+        error ('set: expecting principal_payment to be a real number');
+      end       
     % ====================== set psa_factor_term ======================
     elseif (ischar (prop) && strcmp (prop, 'psa_factor_term'))   
       if (isnumeric (val) && isreal (val))
@@ -434,6 +441,24 @@ function s = set (bond, varargin)
       else
         error ('set: expecting psa_factor_term to be a real number');
       end 
+    % ====================== set use_outstanding_balance ======================
+    elseif (ischar (prop) && strcmp (prop, 'use_outstanding_balance'))   
+      if (isnumeric (val) && isreal (val))
+        s.use_outstanding_balance = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',lower(val)))
+            s.use_outstanding_balance = logical(0);
+        elseif ( strcmp('true',lower(val)))
+            s.use_outstanding_balance = logical(1);
+        else
+            printf('WARNING: Unknown val: >>%s<<. Setting use_outstanding_balance to false.',val);
+            s.use_outstanding_balance = logical(0);
+        end
+      elseif ( islogical(val))
+        s.use_outstanding_balance = val;    
+      else
+        error ('set: expecting use_outstanding_balance to be a real number');
+      end   
     % ====================== set long_first_period ======================
     elseif (ischar (prop) && strcmp (prop, 'long_first_period'))   
       if (isnumeric (val) && isreal (val))
@@ -452,6 +477,24 @@ function s = set (bond, varargin)
       else
         error ('set: expecting long_first_period to be a real number');
       end 
+    % ====================== set use_principal_pmt ======================
+    elseif (ischar (prop) && strcmp (prop, 'use_principal_pmt'))   
+      if (isnumeric (val) && isreal (val))
+        s.use_principal_pmt = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',lower(val)))
+            s.use_principal_pmt = logical(0);
+        elseif ( strcmp('true',lower(val)))
+            s.use_principal_pmt = logical(1);
+        else
+            printf('WARNING: Unknown val: >>%s<<. Setting use_principal_pmt to false.',val);
+            s.use_principal_pmt = logical(0);
+        end
+      elseif ( islogical(val))
+        s.use_principal_pmt = val;    
+      else
+        error ('set: expecting use_principal_pmt to be a real number');
+      end   
     % ====================== set long_last_period ======================
     elseif (ischar (prop) && strcmp (prop, 'long_last_period'))   
       if (isnumeric (val) && isreal (val))

@@ -44,6 +44,8 @@ function s = get (forward, property)
           s = obj.component_weight;
         case 'net_basis'
           s = obj.net_basis;
+        case 'calc_price_from_netbasis'
+          s = obj.calc_price_from_netbasis;
         otherwise
           error ('get: invalid property %s', property);
       end

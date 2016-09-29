@@ -107,6 +107,12 @@ function s = get (bond, property)
           s = obj.outstanding_balance;
         case 'psa_factor_term'
           s = obj.psa_factor_term;
+        case 'principal_payment'
+          s = obj.principal_payment;
+        case 'use_outstanding_balance'
+          s = obj.use_outstanding_balance;  
+        case 'use_principal_pmt'
+          s = obj.use_principal_pmt;
         otherwise
           error ('get: invalid property %s', property);
       end
