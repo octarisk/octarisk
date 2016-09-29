@@ -37,12 +37,22 @@ function s = get (bond, property)
           s = obj.vola_spread;
         case 'discount_curve'
           s = obj.discount_curve; 
-        case 'underlying'
-          s = obj.underlying;  
         case 'cf_dates'
           s = obj.cf_dates; 
         case 'cf_values'
-          s = obj.cf_values;  
+          s = obj.cf_values; 
+        case 'und_fixed_leg'
+          s = obj.und_fixed_leg; 
+        case 'und_floating_leg'
+          s = obj.und_floating_leg; 
+        case 'use_underlyings'
+          s = obj.use_underlyings;
+        case 'effective_date'
+          s = obj.effective_date;
+        case 'und_fixed_value'
+          s = obj.und_fixed_value;
+        case 'und_float_value'
+          s = obj.und_float_value;
         otherwise
           error ('get: invalid property %s', property);
       end

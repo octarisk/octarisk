@@ -78,7 +78,7 @@ if nargin > 3
     if (  strcmpi(type,'ZCB') )
         coupon_generation_method = 'zero';
         instrument.term = '0';
-    elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
+    elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
             last_reset_rate = instrument.last_reset_rate;
     elseif ( strcmpi(type,'FAB'))
             fixed_annuity_flag = instrument.fixed_annuity;
@@ -94,7 +94,7 @@ if (nargin < 2 && strcmp(type,'FRN') == 1)
     error('Too few arguments. No existing IR curve for type FRN.');
 end
 
-if (nargin < 2 && strcmp(type,'SWAP_FLOAT') == 1)
+if (nargin < 2 && strcmp(type,'SWAP_FLOATING') == 1)
     error('Too few arguments. No existing IR curve for type FRN.');
 end
 
@@ -317,7 +317,7 @@ if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )
     
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
 %           spot rate defined 
-elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOAT') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
+elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
     cf_datesnum = datenum(cf_dates);
     %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
@@ -902,7 +902,7 @@ end
 
 %!test 
 %! bond_struct=struct();
-%! bond_struct.sub_type                 = 'SWAP_FLOAT';
+%! bond_struct.sub_type                 = 'SWAP_FLOATING';
 %! bond_struct.issue_date               = '31-Mar-2018';
 %! bond_struct.maturity_date            = '28-Mar-2028';
 %! bond_struct.compounding_type         = 'disc';

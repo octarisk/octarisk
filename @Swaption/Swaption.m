@@ -2,6 +2,7 @@ classdef Swaption < Instrument
    
     properties   % All properties of Class Swaption with default values
         maturity_date = '';
+        effective_date = '';
         compounding_type = 'disc';
         compounding_freq = 1;               
         day_count_convention = 'act/365';
@@ -15,6 +16,9 @@ classdef Swaption < Instrument
         multiplier = 100;
         tenor = 10;
         no_payments = 1;
+        und_fixed_leg = '';         % String: underlying fixed leg
+        und_floating_leg = '';      % String: underlying floating leg
+        use_underlyings = false;    % BOOL: use underlying legs for valuation
     end
    
     properties (SetAccess = private)
@@ -27,6 +31,8 @@ classdef Swaption < Instrument
         vola_spread = 0.0;
         sub_type = 'SWAPT_EUR_PAY';
         model = 'BLACK76';
+        und_fixed_value = 0.0;
+        und_float_value = 0.0;
     end
 
    methods
@@ -52,8 +58,7 @@ classdef Swaption < Instrument
          fprintf('sub_type: %s\n',b.sub_type);                   
          fprintf('maturity_date: %s\n',b.maturity_date);      
          fprintf('strike: %f \n',b.strike);
-         fprintf('multiplier: %f \n',b.multiplier);         
-         fprintf('underlying: %s\n',b.underlying);  
+         fprintf('multiplier: %f \n',b.multiplier);          
          fprintf('vola_surface: %s\n',b.vola_surface ); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('spread: %f\n',b.spread); 
@@ -64,6 +69,18 @@ classdef Swaption < Instrument
          fprintf('compounding_freq: %d\n',b.compounding_freq);    
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('model: %s\n',b.model); 
+         fprintf('und_fixed_leg: %s\n',b.und_fixed_leg); 
+         fprintf('und_floating_leg: %s\n',b.und_floating_leg); 
+         fprintf('use_underlyings: %s\n',any2str(b.use_underlyings)); 
+         if ~(b.und_float_value == 0.0)
+            fprintf('und_float_value: %f \n',b.und_float_value);
+         end
+         if ~(b.und_fixed_value == 0.0)
+            fprintf('und_fixed_value: %f \n',b.und_fixed_value);
+         end
+         if ~(b.vola_spread == 0.0)
+            fprintf('vola_spread: %f \n',b.vola_spread);
+         end
       end
       % converting object <-> struct for saving / loading purposes
       % function b = saveobj (a)

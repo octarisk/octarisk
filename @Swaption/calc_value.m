@@ -1,13 +1,10 @@
-function obj = calc_value(swaption,value_type,vola_riskfactor,discount_curve,tmp_vola_surf_obj,valuation_date)
+function obj = calc_value(swaption,value_type,valuation_date,discount_curve,tmp_vola_surf_obj,vola_riskfactor,leg_fixed_obj,leg_float_obj)
     obj = swaption;
-    if ( nargin < 5)
+    if ( nargin < 4)
         error('Error: No  discount curve or vola surface set. Aborting.');
     end
     if ( nargin < 6)
-        valuation_date = today;
-    end
-    if (ischar(valuation_date))
-        valuation_date = datenum(valuation_date);
+        vola_riskfactor = Riskfactor();
     end
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
@@ -23,7 +20,6 @@ function obj = calc_value(swaption,value_type,vola_riskfactor,discount_curve,tmp
         call_flag = 0;
         moneyness_exponent = -1;
     end
-    
     
     % Get input variables
     
@@ -46,7 +42,7 @@ function obj = calc_value(swaption,value_type,vola_riskfactor,discount_curve,tmp
         theo_value_base         = 0;
         theo_value              = zeros(mc,1);
     else
-        % Valuation: Black-76 Modell:
+        % Valuation:
         tmp_spot            = obj.spot;
         tmp_strike          = obj.strike;
         tmp_value           = obj.value_base;
@@ -84,22 +80,56 @@ function obj = calc_value(swaption,value_type,vola_riskfactor,discount_curve,tmp
                         comp_type_curve,comp_freq_curve,basis_curve, ...
                         'cont','annual',3);
                         
-      % Valuation for: Black76 or Bachelier model
-        if ( strcmp(tmp_model,'BLACK76'))
-            theo_value      = max(swaption_black76(call_flag,tmp_forward_base, ...
-                                    tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
-                                    tmp_imp_vola_shock,tmp_swap_no_pmt, ...
-                                    tmp_swap_tenor) .* tmp_multiplier,0.001);
-        else
-            theo_value      = max(swaption_bachelier(call_flag,tmp_forward_base, ...
-                                    tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
-                                    tmp_imp_vola_shock,tmp_swap_no_pmt, ...
-                                    tmp_swap_tenor) .* tmp_multiplier,0.001);
+      % Valuation for: Black76 or Bachelier model according to type
+       
+        if (obj.use_underlyings == false)   % pricing with forward rates
+            if ( strcmp(tmp_model,'BLACK76'))
+                theo_value      = max(swaption_black76(call_flag,tmp_forward_base, ...
+                                        tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
+                                        tmp_imp_vola_shock,tmp_swap_no_pmt, ...
+                                        tmp_swap_tenor) .* tmp_multiplier,0.001);
+            else
+                theo_value      = max(swaption_bachelier(call_flag,tmp_forward_base, ...
+                                        tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
+                                        tmp_imp_vola_shock,tmp_swap_no_pmt, ...
+                                        tmp_swap_tenor) .* tmp_multiplier,0.001);
+            end
+        else    % pricing with underlying float and fixed leg
+            % make sure underlying objects are existing
+            if ( nargin < 8)
+                error('Error: No underlying fixed and floating leg set. Aborting.');
+            end
+            % evaluate fixed leg and floating leg: discount with swaptions 
+            %   discount curve:
+            % fixed leg:
+            cashflow_dates_fixed = leg_fixed_obj.get('cf_dates');
+            cashflow_values_fixed = leg_fixed_obj.getCF(value_type);
+            V_fix = pricing_npv(valuation_date, cashflow_dates_fixed, ...
+                                    cashflow_values_fixed, 0.0, ...
+                                    tmp_nodes, tmp_rates, basis, comp_type, ...
+                                    comp_freq, interp_method, ...
+                                    comp_type_curve, basis_curve, ...
+                                    comp_freq_curve);
+            % floating leg:
+            cashflow_dates_floating = leg_float_obj.get('cf_dates');
+            cashflow_values_floating  = leg_float_obj.getCF(value_type);
+            V_float = pricing_npv(valuation_date, cashflow_dates_floating, ...
+                                    cashflow_values_floating, 0.0, ...
+                                    tmp_nodes, tmp_rates, basis, comp_type, ...
+                                    comp_freq, interp_method, ...
+                                    comp_type_curve, basis_curve, ...
+                                    comp_freq_curve);
+            if ( regexp(value_type,'base'))
+                obj = obj.set('und_fixed_value',V_fix);
+                obj = obj.set('und_float_value',V_float);
+            end
+            % call pricing function
+            theo_value = swaption_underlyings(call_flag,tmp_strike,V_fix, ...
+                               V_float,tmp_effdate,tmp_imp_vola_shock, ...
+                               tmp_model) .* tmp_multiplier;
         end
-        
     end   % close loop if tmp_dtm < 0
     
-      
     % store theo_value vector in appropriate class property   
     if ( regexp(value_type,'stress'))
         obj = obj.set('value_stress',theo_value);  

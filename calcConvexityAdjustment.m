@@ -62,6 +62,8 @@ Tminust = timefactor(valuation_date, valuation_date + t1, basis);
 % calculate convexity adjustment according to model
 if (strcmpi(model,'Black'))            % Log-Normal model 
     % calculate convexity adjustment according to compounding type
+    % Source: H.P. Deutsch, Derivate und Interne Modelle, 4th Edition, 
+    %         Section 14.5 Convexity Adjustment.
     if regexpi(comp_type,'cont')
         adj = 0.5 .* r.^2 .* sigma.^2 .* Tminust .* tau;
     elseif regexpi(comp_type,'disc')
@@ -73,7 +75,7 @@ if (strcmpi(model,'Black'))            % Log-Normal model
         adj = 0;
     end
 elseif (strcmpi(model,'Normal'))            % Normal model
-    % calculate convexity adjustment for Caps / Floors
+    % calculate convexity adjustment for CMS Caps / Floors
     if (strcmpi(instrument.sub_type,'CAP') || strcmpi(instrument.sub_type,'FLOOR'))
         K = instrument.strike;
         if (instrument.CapFlag == true)
@@ -81,7 +83,8 @@ elseif (strcmpi(model,'Normal'))            % Normal model
         else
             psi = -1;
         end
-        % calculate adjustment according to Hagan 2003 Eq. 3.6c,d(preprint) 
+        % calculate adjustment according to S. Schlenkrich's approximation of 
+        % "Multi-Curve Convexity", 2015, SSRN 2667405, Appendix A.1, Formula 15
         adj = psi .* sigma.^2 .* tau .*  normcdf( psi .* ( r - K ) ./ ...
                                                     ( sigma .* sqrt(tau)));
     

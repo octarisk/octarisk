@@ -1,9 +1,9 @@
 function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
   s = bond;
 
-  if ( strcmp(s.sub_type,'FRN'))
+  if ( strcmpi(s.sub_type,'FRN') || strcmpi(s.sub_type,'SWAP_FLOATING'))
     if ( nargin < 3 )
-        error ('rollout for sub_type FRN: expecting reference curve object');
+        error ('rollout for sub_type FRN or SWAP_FLOATING: expecting reference curve object');
     elseif ( nargin == 3)
         tmp_curve_object = arg1;
         valuation_date = datestr(today);

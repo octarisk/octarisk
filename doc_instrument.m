@@ -214,11 +214,11 @@ end
 %! s = Swaption();
 %! s = s.set('maturity_date','31-Mar-2018');
 %! s = s.set('strike',0.0175,'multiplier',100);
-%! s = s.calc_value('base',r,c,v,'31-Mar-2016');
+%! s = s.calc_value('base','31-Mar-2016',c,v,r);
 %! assert(s.getValue('base'),0.89117199789300,0.0000001);
 %! s = s.set('value_base',0.9069751298);
-%! s = s.calc_vola_spread(r,c,v,'31-Mar-2016');
-%! s = s.calc_value('base',r,c,v,'31-Mar-2016');
+%! s = s.calc_vola_spread('31-Mar-2016',c,v,r);
+%! s = s.calc_value('base','31-Mar-2016',c,v,r);
 %! assert(s.getValue('base'),0.906975102470711,0.00001);
 
 %!test
@@ -460,7 +460,7 @@ end
 %! assert(b.getValue('stress'),36027871.49,10);
 
 %!test 
-%! fprintf('\tdoc_instrument:\tPricing Pricing Agency MBS with given outstanding balance\n');
+%! fprintf('\tdoc_instrument:\tPricing Agency MBS with given outstanding balance\n');
 %! c = Curve();
 %! c = c.set('id','EUR-SWAPRAW','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
 %!         'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
@@ -490,6 +490,43 @@ end
 %! stress_value = b.getValue('stress');
 %! assert(b.getValue('stress'),[0.00580964094701875;0.00579449560542397;0.00585112970654451;0.00585112970654451],0.000000001); 
    
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Payer Swaption\n');
+%! r = Curve();
+%! r = r.set('id','EUR-SWAP-NOFLOOR','nodes',[7300,7665,8030,8395,8760,9125,9490,9855,10220,10585,10900], ...
+%!         'rates_base',[0.02,0.01,0.0075,0.005,0.0025,-0.001,-0.002,-0.003,-0.005,-0.0075,-0.01], ...
+%!         'rates_stress',[0.02,0.01,0.0075,0.005,0.0025,-0.001,-0.002,-0.003,-0.005,-0.0075,-0.01;0.01,0.00,-0.0025,-0.005,-0.0075,-0.011,-0.012,-0.013,-0.015,-0.0175,-0.02;0.03,0.00,-0.0025,-0.005,-0.0075,-0.011,-0.012,-0.013,-0.015,-0.0175,-0.02],...
+%!         'method_interpolation','linear');
+%! fix = Bond();
+%! fix = fix.set('Name','SWAP_FIXED','coupon_rate',0.045,'value_base',100,'coupon_generation_method','forward','sub_type','SWAP_FIXED');
+%! fix = fix.set('maturity_date','24-Mar-2046','notional',100,'compounding_type','simple','issue_date','26-Mar-2036','term',365,'notional_at_end',0);
+%! fix = fix.rollout('base','31-Mar-2016');
+%! fix = fix.rollout('stress','31-Mar-2016');
+%! float = Bond();
+%! float = float.set('Name','SWAP_FLOAT','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','SWAP_FLOATING','spread',0.00);
+%! float = float.set('maturity_date','24-Mar-2046','notional',100,'compounding_type','simple','issue_date','26-Mar-2036','term',365,'notional_at_end',0);
+%! float = float.rollout('base',r,'31-Mar-2016');
+%! float = float.rollout('stress',r,'31-Mar-2016');
+%! v = Surface();
+%! v = v.set('axis_x',30,'axis_x_name','TENOR','axis_y',45,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.376563388);
+%! v = v.set('type','IR');
+%! s = Swaption();
+%! s = s.set('maturity_date','26-Mar-2036','effective_date','31-Mar-2016');
+%! s = s.set('strike',0.045,'multiplier',1,'sub_type','SWAPT_EUR_PAY','model','normal','tenor',10);
+%! s = s.set('und_fixed_leg','SWAP_FIXED','und_floating_leg','SWAP_FLOAT','use_underlyings',true);
+%! d = Riskfactor();     
+%! s = s.calc_value('base','31-Mar-2016',r,v,d,fix,float);
+%! assert(s.getValue('base'),642.6867193851,0.00001);
+%! s = s.calc_value('stress','31-Mar-2016',r,v,d,fix,float);
+%! stressed_value = s.getValue('stress');
+%! assert(stressed_value(2),827.6726713515,0.00001);
+%! s = s.set('value_base',650.0);
+%! s = s.calc_vola_spread('31-Mar-2016',r,v,d,fix,float);
+%! s = s.calc_value('base','31-Mar-2016',r,v,d,fix,float);
+%! assert(s.getValue('base'),650.000,0.0001);
+
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
 %! b = Bond();

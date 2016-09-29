@@ -73,105 +73,158 @@ function s = set (swaption, varargin)
       if (isvector (val) && isreal (val))
         s.value_base = val;
       else
-        error ('set: expecting the value to be a real vector');
+        error ('set: expecting value_base to be a real vector');
       end 
     % ====================== set name ======================
     elseif (ischar (prop) && strcmp (prop, 'name'))   
       if (ischar (val) )
         s.name = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting name to be a char');
       end
     % ====================== set id ======================
     elseif (ischar (prop) && strcmp (prop, 'id'))   
       if (ischar(val))
         s.id = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the id to be a char');
       end
     % ====================== set sub_type ======================
     elseif (ischar (prop) && strcmp (prop, 'sub_type'))   
       if (ischar (val))
         s.sub_type = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the sub_type to be a char');
       end   
     % ====================== set asset_class ======================
     elseif (ischar (prop) && strcmp (prop, 'asset_class'))   
       if (ischar (val))
         s.asset_class = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the asset_class to be a char');
       end 
     % ====================== set currency ======================
     elseif (ischar (prop) && strcmp (prop, 'currency'))   
       if (ischar (val))
         s.currency = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the currency to be a char');
       end 
     % ====================== set description ======================
     elseif (ischar (prop) && strcmp (prop, 'description'))   
       if (ischar (val))
         s.description = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the description to be a char');
       end
     % ====================== set maturity_date ======================
     elseif (ischar (prop) && strcmp (prop, 'maturity_date'))   
       if (ischar (val))
         s.maturity_date = datestr(strtrim(val),1);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting maturity_date to be a char');
+      end
+    % ====================== set effective_date ======================
+    elseif (ischar (prop) && strcmp (prop, 'effective_date'))   
+      if (ischar (val))
+        s.effective_date = datestr(strtrim(val),1);
+      else
+        error ('set: expecting effective_date to be a char');
       end
     % ====================== set discount_curve  ======================
     elseif (ischar (prop) && strcmp (prop, 'discount_curve'))   
       if (ischar (val))
         s.discount_curve = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting discount_curve to be a char');
       end
-    % ====================== set underlying ======================
-    elseif (ischar (prop) && strcmp (prop, 'underlying'))   
+    % ====================== set und_fixed_leg ======================
+    elseif (ischar (prop) && strcmp (prop, 'und_fixed_leg'))   
       if (ischar (val))
-        s.underlying = strtrim(val);
+        s.und_fixed_leg = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting und_fixed_leg to be a char');
+      end
+    % ====================== set und_floating_leg ======================
+    elseif (ischar (prop) && strcmp (prop, 'und_floating_leg'))   
+      if (ischar (val))
+        s.und_floating_leg = strtrim(val);
+      else
+        error ('set: expecting und_floating_leg to be a char');
       end
     % ====================== set model ======================
     elseif (ischar (prop) && strcmp (prop, 'model'))   
       if (ischar (val))
         s.model = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the model to be a char');
+      end  
+    % ====================== set underlying ======================
+    elseif (ischar (prop) && strcmp (prop, 'underlying'))   
+      if (ischar (val))
+        s.underlying = strtrim(val);
+      else
+        error ('set: expecting the underlying to be a char');
       end  
     % ====================== set vola_surface ======================
     elseif (ischar (prop) && strcmp (prop, 'vola_surface'))   
       if (ischar (val))
         s.vola_surface = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the vola_surface to be a char');
       end
     % ====================== set multiplier ======================
     elseif (ischar (prop) && strcmp (prop, 'multiplier'))   
       if (isnumeric (val) && isreal (val))
         s.multiplier = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the multiplier to be a real number');
+      end  
+    % ====================== set und_fixed_value ======================
+    elseif (ischar (prop) && strcmp (prop, 'und_fixed_value'))   
+      if (isnumeric (val) && isreal (val))
+        s.und_fixed_value = val;
+      else
+        error ('set: expecting the und_fixed_value to be a real number');
+      end 
+    % ====================== set und_float_value ======================
+    elseif (ischar (prop) && strcmp (prop, 'und_float_value'))   
+      if (isnumeric (val) && isreal (val))
+        s.und_float_value = val;
+      else
+        error ('set: expecting the und_float_value to be a real number');
+      end 
+    % ====================== set use_underlyings ======================
+    elseif (ischar (prop) && strcmp (prop, 'use_underlyings'))   
+      if (isnumeric (val) && isreal (val))
+        s.use_underlyings = logical(val);
+      elseif ( ischar(val))
+        if ( strcmp('false',lower(val)))
+            s.use_underlyings = logical(0);
+        elseif ( strcmp('true',lower(val)))
+            s.use_underlyings = logical(1);
+        else
+            printf('WARNING: Unknown val: >>%s<<. Setting use_underlyings to false.',val);
+            s.use_underlyings = logical(0);
+        end
+      elseif ( islogical(val))
+        s.use_underlyings = val;
+      else
+        error ('set: expecting use_underlyings to be a real number or true/false');
       end  
     % ====================== set spread ======================
     elseif (ischar (prop) && strcmp (prop, 'spread'))   
       if (isnumeric (val) && isreal (val))
         s.spread = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the spread to be a real number');
       end
     % ====================== set strike ======================
     elseif (ischar (prop) && strcmp (prop, 'strike'))   
       if (isnumeric (val) && isreal (val))
         s.strike = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the strike to be a real number');
       end
     % ====================== set spot ======================
     elseif (ischar (prop) && strcmp (prop, 'spot'))   
@@ -185,7 +238,7 @@ function s = set (swaption, varargin)
       if (isnumeric (val) && isreal (val))
         s.vola_sensi = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the vola_sensi to be a real number');
       end
     % ====================== set compounding_freq  ======================
     elseif (ischar (prop) && strcmp (prop, 'compounding_freq'))   
@@ -194,7 +247,7 @@ function s = set (swaption, varargin)
       elseif (ischar(val))
         s.compounding_freq  = val;
       else
-        error ('set: expecting the value to be a real number or char');
+        error ('set: expecting the compounding_freq to be a real number or char');
       end       
     % ====================== set day_count_convention ======================
     elseif (ischar (prop) && strcmp (prop, 'day_count_convention'))   
@@ -208,24 +261,24 @@ function s = set (swaption, varargin)
       if (ischar (val))
         s.compounding_type = strtrim(val);
       else
-        error ('set: expecting the value to be a char');
+        error ('set: expecting the compounding_type to be a char');
       end
     % ====================== set tenor ======================
     elseif (ischar (prop) && strcmp (prop, 'tenor'))   
       if (isnumeric (val) && isreal (val))
         s.tenor = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the tenor to be a real number');
       end
     % ====================== set no_payments  ======================
     elseif (ischar (prop) && strcmp (prop, 'no_payments'))   
       if (isnumeric (val) && isreal (val))
         s.no_payments = val;
       else
-        error ('set: expecting the value to be a real number');
+        error ('set: expecting the no_payments to be a real number');
       end
     else
-      error ('set: invalid property of soption class:  >>%s<< \n',prop);
+      error ('set: invalid property of swaption class:  >>%s<< \n',prop);
     end
   end
 end
