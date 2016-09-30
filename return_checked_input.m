@@ -16,6 +16,10 @@
 %# Return value with validated input values according to value type date, char, 
 %# numeric, and boolean or special treatment for scenario values. 
 %# Used for storing correct field values for classes or structs.
+%# The function itself is divided into two parts: special attributes with
+%# taylormade validation checks are used for type 'special', while a 
+%# generic approach according to differenct types are performed in the second
+%# part.
 %# @end deftypefn
 
 function retval = return_checked_input(obj,val,prop,type)
@@ -26,7 +30,8 @@ end
 % ######################     Special Attributes     ############################
 if ( strcmpi(type,'special'))
 % Special treatment for scenario_mc, timestep_mc and scenario_stress required
-    % ====================== set scenario_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
+    % ====================== set scenario_mc: if isvector -> append to 
+    %           existing vector / matrix, if ismatrix -> replace existing value
     if (ischar (prop) && strcmp (prop, 'scenario_mc'))   
       if (isvector (val) && isreal (val))
         tmp_vector = [obj.scenario_mc];
@@ -39,12 +44,14 @@ if ( strcmpi(type,'special'))
         else    % setting vector
             retval = val;
         end      
-      elseif (ismatrix(val) && isreal(val)) % replacing scenario_mc matrix with new matrix
+      % replacing scenario_mc matrix with new matrix
+      elseif (ismatrix(val) && isreal(val)) 
         retval = val;
       else
         error ('set: expecting scenario_mc to be a real vector');
       end
-     % ====================== set rates_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
+     % ====================== set rates_mc: if isvector -> append to existing 
+     %              vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'rates_mc'))   
       if (isreal (val))
 		% applying cap and floor rates before setting values
@@ -103,7 +110,7 @@ if ( strcmpi(type,'special'))
       else
         error ('set: expecting the base values to be a real vector');
       end
-    % ====================== set timestep_mc: appending or setting timestep vector ======================
+    % =========== set timestep_mc: appending or setting timestep vector ========
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc'))   
       if (iscell(val) && length(val) == 1)
         tmp_cell = obj.timestep_mc;
@@ -113,7 +120,8 @@ if ( strcmpi(type,'special'))
         else    % setting vector
             retval = val;
         end      
-      elseif (iscell(val) && length(val) > 1) % replacing timestep_mc cell vector with new vector
+      % replacing timestep_mc cell vector with new vector
+      elseif (iscell(val) && length(val) > 1) 
         retval = val;
       elseif ( ischar(val) )
         tmp_cell = obj.timestep_mc;
@@ -126,7 +134,7 @@ if ( strcmpi(type,'special'))
       else
         error ('set: expecting timestep_mc to be a cell vector');
       end
-    % ====================== set timestep_mc_cf: appending or setting timestep vector ======================
+    % =========== set timestep_mc_cf: appending or setting timestep vector =====
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc_cf'))   
       if (iscell(val) && length(val) == 1)
         tmp_cell = obj.timestep_mc_cf;
@@ -135,8 +143,9 @@ if ( strcmpi(type,'special'))
             retval = tmp_cell;
         else    % setting vector
             retval = val;
-        end      
-      elseif (iscell(val) && length(val) > 1) % replacing timestep_mc_cf cell vector with new vector
+        end    
+      % replacing timestep_mc_cf cell vector with new vector
+      elseif (iscell(val) && length(val) > 1) 
         retval = val;
       elseif ( ischar(val) )
         tmp_cell = obj.timestep_mc_cf;
@@ -161,7 +170,8 @@ if ( strcmpi(type,'special'))
             error ('set: expecting scenario_stress to be a real vector');
         end
       end 
-    % ====================== set cf_values_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
+    % ====================== set cf_values_mc: if isvector -> append 
+    % to existing vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'cf_values_mc'))   
       if (isreal (val))
         [mc_rows mc_cols mc_stack] = size(obj.cf_values_mc);
@@ -180,7 +190,8 @@ if ( strcmpi(type,'special'))
       else
         error ('set: expecting cf_values_mc to be real ');
       end
-    % ====================== set value_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
+    % ====================== set value_mc: if isvector -> append to 
+    %       existing vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'value_mc'))   
       if (isvector (val) && isreal (val))
         tmp_vector = [obj.value_mc];
@@ -192,8 +203,9 @@ if ( strcmpi(type,'special'))
             end
         else    % setting vector
             retval = val;
-        end      
-      elseif (ismatrix(val) && isreal(val)) % replacing value_mc matrix with new matrix
+        end    
+      % replacing value_mc matrix with new matrix
+      elseif (ismatrix(val) && isreal(val)) 
         retval = val;
       else
         if ( isempty(val))
