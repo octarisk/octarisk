@@ -744,7 +744,10 @@ ret_value_next_coupon = ret_interest_values(:,1);
 if ~( term == 365)
     tf = tf * 12 / term;
 end
+% TODO: why is there a vector of accrued_interest with length of
+%       scenario values for FRB in case C?
 accrued_interest = ret_value_next_coupon .* tf;
+accrued_interest = accrued_interest(1);
 
 %-------------------------------------------------------------------------------
 

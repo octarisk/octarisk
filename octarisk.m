@@ -494,10 +494,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                 tmp_vola_surf_obj        = get_sub_object(surface_struct, swaption.get('vola_surface'));
                 % Calibration of swaption vola spread            
                 if ( swaption.get('vola_spread') == 0 )
-                    swaption = swaption.calc_vola_spread(tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date);
+                    swaption = swaption.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
                 end
                 % calculate value
-                swaption = swaption.calc_value(tmp_scenario,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date);
+                swaption = swaption.calc_value(tmp_scenario,valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
                 % store swaption object in struct:
                     instrument_struct( ii ).object = swaption;
                     
@@ -655,12 +655,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                             end
                             bond = bond.rollout(tmp_scenario,tmp_ref_object,valuation_date);         
                     end 
-                    
                 % c) Calculate spread over yield (if not already run...)
                     if ( bond.get('calibration_flag') == 0 )
                         bond = bond.calc_spread_over_yield(tmp_curve_object,valuation_date);
                     end
-                    
                 % d) get net present value of all Cashflows (discounting of all cash flows)
 					if ( first_eval == 0)
                         bond = bond.calc_value (valuation_date,tmp_curve_object,'base');
@@ -671,8 +669,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                             bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);
                         end                       
                     end
-                    bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_scenario);                                                                                  
-
+                    bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_scenario);  
+                    bond
                     % store bond object in struct:
                     instrument_struct( ii ).object = bond;
             % Cash  Valuation: Cash is riskless

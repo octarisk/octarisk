@@ -1,279 +1,62 @@
-function s = set (forward, varargin)
-  s = forward;
+% setting attribute values
+function obj = set(obj, varargin)
+  % A) Specify fieldnames <-> types key/value pairs
+  typestruct = struct(
+                'type', 'char' , ...
+                'basis', 'numeric' , ...
+                'value_mc', 'special' , ...
+                'timestep_mc', 'special' , ...
+                'value_stress', 'special' , ...
+                'value_base', 'numeric' , ...
+                'underlying_price_base', 'numeric' , ...
+                'name', 'char' , ...
+                'id', 'char' , ...
+                'sub_type', 'char' , ...
+                'asset_class', 'char' , ...
+                'currency', 'char' , ...
+                'description', 'char' , ...
+                'cf_values', 'numeric' , ...
+                'cf_dates', 'numeric' , ...
+                'spread', 'numeric' , ...
+                'compounding_freq', 'charvnumber' , ...
+                'day_count_convention', 'char' , ...
+                'compounding_type', 'char' , ...
+                'discount_curve', 'char' , ...
+                'foreign_curve', 'char' , ...
+                'maturity_date', 'date' , ...
+                'issue_date', 'date' , ...
+                'underlying_id', 'char' , ...
+                'strike_price', 'numeric' , ...
+                'component_weight', 'numeric' , ...
+                'net_basis', 'numeric' , ...
+                'underlying_sensitivity', 'numeric' , ...
+                'multiplier', 'numeric' , ...
+                'calc_price_from_netbasis', 'boolean' , ...
+                'dividend_yield', 'numeric' , ...
+                'convenience_yield', 'numeric' , ...
+                'storage_cost', 'numeric'
+               );
+  % B) store values in object
   if (length (varargin) < 2 || rem (length (varargin), 2) ~= 0)
     error ('set: expecting property/value pairs');
   end
+  
   while (length (varargin) > 1)
     prop = varargin{1};
     prop = lower(prop);
     val = varargin{2};
     varargin(1:2) = [];
-    % ====================== set value_mc: if isvector -> append to existing vector / matrix, if ismatrix -> replace existing value
-    if (ischar (prop) && strcmp (prop, 'value_mc'))   
-      if (isvector (val) && isreal (val))
-        tmp_vector = [s.value_mc];
-        if ( rows(tmp_vector) > 0 ) % appending vector to existing vector
-            if ( rows(tmp_vector) == rows(val) )
-                s.value_mc = [tmp_vector, val];
-            else
-                error ('set: expecting equal number of rows')
-            end
-        else    % setting vector
-            s.value_mc = val;
-        end      
-      elseif (ismatrix(val) && isreal(val)) % replacing value_mc matrix with new matrix
-        s.value_mc = val;
-      else
-        if ( isempty(val))
-            s.value_mc = [];
-        else
-            error ('set: expecting the value_mc to be a real vector');
-        end
-      end
-    % ====================== set timestep_mc: appending or setting timestep vector ======================
-    elseif (ischar (prop) && strcmp (prop, 'timestep_mc'))   
-      if (iscell(val) && length(val) == 1)
-        tmp_cell = s.timestep_mc;
-        if ( length(tmp_cell) > 0 ) % appending vector to existing vector
-            s.timestep_mc{length(tmp_cell) + 1} = char(val);
-        else    % setting vector
-            s.timestep_mc = val;
-        end      
-      elseif (iscell(val) && length(val) > 1) % replacing timestep_mc cell vector with new vector
-        s.timestep_mc = val;
-      elseif ( ischar(val) )
-        tmp_cell = s.timestep_mc;
-        if ( length(tmp_cell) > 0 ) % appending vector to existing vector
-            s.timestep_mc{length(tmp_cell) + 1} = char(val);
-        else   % setting vector
-            s.timestep_mc = cellstr(val);
-        end 
-      else
-        error ('set: expecting the timestep_mc value to be a cell or a string');
-      end  
-    % ====================== set value_stress ======================
-    elseif (ischar (prop) && strcmp (prop, 'value_stress'))   
-      if (isvector (val) && isreal (val))
-        s.value_stress = val;
-      else
-        if ( isempty(val))
-            s.value_stress = [];
-        else
-            error ('set: expecting the value_stress to be a real vector');
-        end
-      end
-    % ====================== set value_spot ======================
-    elseif (ischar (prop) && strcmp (prop, 'value_base'))   
-      if (isvector (val) && isreal (val))
-        s.value_base = val;
-      else
-        error ('set: expecting the value_spot to be a real vector');
-      end 
-    % ====================== set underlying price base ======================
-    elseif (ischar (prop) && strcmp (prop, 'underlying_price_base'))   
-      if (isvector (val) && isreal (val))
-        s.underlying_price_base = val;
-      else
-        error ('set: expecting the underlying price base to be a real vector');
-      end
-    % ====================== set name ======================
-    elseif (ischar (prop) && strcmp (prop, 'name'))   
-      if (ischar (val) )
-        s.name = strtrim(val);
-      else
-        error ('set: expecting the name to be a char');
-      end
-    % ====================== set id ======================
-    elseif (ischar (prop) && strcmp (prop, 'id'))   
-      if (ischar(val))
-        s.id = strtrim(val);
-      else
-        error ('set: expecting the id to be a char');
-      end
-    % ====================== set sub_type ======================
-    elseif (ischar (prop) && strcmp (prop, 'sub_type'))   
-      if (ischar (val))
-        s.sub_type = strtrim(val);
-      else
-        error ('set: expecting the sub_type to be a char');
-      end   
-    % ====================== set asset_class ======================
-    elseif (ischar (prop) && strcmp (prop, 'asset_class'))   
-      if (ischar (val))
-        s.asset_class = strtrim(val);
-      else
-        error ('set: expecting the asset_class to be a char');
-      end 
-    % ====================== set currency ======================
-    elseif (ischar (prop) && strcmp (prop, 'currency'))   
-      if (ischar (val))
-        s.currency = strtrim(val);
-      else
-        error ('set: expecting the currency to be a char');
-      end 
-    % ====================== set description ======================
-    elseif (ischar (prop) && strcmp (prop, 'description'))   
-      if (ischar (val))
-        s.description = strtrim(val);
-      else
-        error ('set: expecting the description to be a char');
-      end
-     % ====================== set cf_values ======================
-    elseif (ischar (prop) && strcmp (prop, 'cf_values'))   
-      if (isvector (val) && isreal (val))
-        s.cf_values = val;
-      else
-        error ('set: expecting the cf_values to be a real vector');
-      end
-    % ====================== set cf_dates ======================
-    elseif (ischar (prop) && strcmp (prop, 'cf_dates'))   
-      if (isvector (val) && isreal (val))
-        s.cf_dates = val;
-      else
-        error ('set: expecting the cf_dates to be a real vector');
-      end
-    % ====================== set spread ======================
-    elseif (ischar (prop) && strcmp (prop, 'spread'))   
-      if (isreal (val))
-        s.spread = val;
-      else
-        error ('set: expecting the spread to be a real number');
-      end 
-    % ====================== set compounding_freq  ======================
-    elseif (ischar (prop) && strcmp (prop, 'compounding_freq'))   
-      if (isnumeric (val) && isreal(val))
-        s.compounding_freq  = val;
-      elseif (ischar(val))
-        s.compounding_freq  = val;
-      else
-        error ('set: expecting the compounding_freq to be a real number or char');
-      end         
-    % ====================== set day_count_convention ======================
-    elseif (ischar (prop) && strcmp (prop, 'day_count_convention'))   
-      if (ischar (val))
-        s.day_count_convention = strtrim(val);
-      else
-        error ('set: expecting the day_count_convention to be a char');
-      end 
-    % ====================== set compounding_type ======================
-    elseif (ischar (prop) && strcmp (prop, 'compounding_type'))   
-      if (ischar (val))
-        s.compounding_type = strtrim(val);
-      else
-        error ('set: expecting the compounding_type to be a char');
-      end 
-    % ====================== set discount_curve  ======================
-    elseif (ischar (prop) && strcmp (prop, 'discount_curve'))   
-      if (ischar (val))
-        s.discount_curve = strtrim(val);
-      else
-        error ('set: expecting the discount_curve to be a char');
-      end 
-    % ====================== set foreign_curve  ======================
-    elseif (ischar (prop) && strcmp (prop, 'foreign_curve'))   
-      if (ischar (val))
-        s.foreign_curve = strtrim(val);
-      else
-        error ('set: expecting foreign_curve to be a char');
-      end  
-    % ====================== set maturity_date ======================
-    elseif (ischar (prop) && strcmp (prop, 'maturity_date'))   
-      if (ischar (val))
-        s.maturity_date = datestr(strtrim(val),1);
-      else
-        error ('set: expecting maturity_date to be a char');
-      end
-    % ====================== set issue_date ======================
-    elseif (ischar (prop) && strcmp (prop, 'issue_date'))   
-      if (ischar (val))
-        s.issue_date = datestr(strtrim(val),1);
-      else
-        error ('set: expecting issue_date to be a char');
-      end
-    % ====================== set underlying_id   ======================
-    elseif (ischar (prop) && strcmp (prop, 'underlying_id'))   
-      if (ischar (val))
-        s.underlying_id = strtrim(val);
-      else
-        error ('set: expecting underlying_id to be a char');
-      end 
-    % ====================== set strike_price  ======================
-    elseif (ischar (prop) && strcmp (prop, 'strike_price'))   
-      if (isreal (val))
-        s.strike_price = val;
-      else
-        error ('set: expecting strike_price to be a real number');
-      end
-    % ====================== set component_weight  ======================
-    elseif (ischar (prop) && strcmp (prop, 'component_weight'))   
-      if (isreal (val))
-        s.component_weight = val;
-      else
-        error ('set: expecting component_weight to be a real number');
-      end
-    % ====================== set net_basis  ======================
-    elseif (ischar (prop) && strcmp (prop, 'net_basis'))   
-      if (isreal (val))
-        s.net_basis = val;
-      else
-        error ('set: expecting net_basis to be a real number');
-      end      
-    % ====================== set underlying_sensitivity  ======================
-    elseif (ischar (prop) && strcmp (prop, 'underlying_sensitivity'))   
-      if (isreal (val))
-        s.underlying_sensitivity = val;
-      else
-        error ('set: expecting underlying_sensitivity to be a real number');
-      end
-    % ====================== set multiplier  ======================
-    elseif (ischar (prop) && strcmp (prop, 'multiplier'))   
-      if (isreal (val))
-        s.multiplier = val;
-      else
-        error ('set: expecting multiplier to be a real number');
-      end
-    % ====================== set calc_price_from_netbasis ======================
-    elseif (ischar (prop) && strcmp (prop, 'calc_price_from_netbasis'))   
-      if (isnumeric (val) && isreal (val))
-        s.calc_price_from_netbasis = logical(val);
-      elseif ( ischar(val))
-        if ( strcmp('false',lower(val)))
-            s.calc_price_from_netbasis = logical(0);
-        elseif ( strcmp('true',lower(val)))
-            s.calc_price_from_netbasis = logical(1);
-        else
-            printf('WARNING: Unknown val: >>%s<<. Setting calc_price_from_netbasis to false.',val);
-            s.calc_price_from_netbasis = logical(0);
-        end
-      elseif ( islogical(val))
-        s.calc_price_from_netbasis = val;    
-      else
-        error ('set: expecting calc_price_from_netbasis to be a real number');
-      end   
-      
-    % ====================== set dividend_yield  ======================
-    elseif (ischar (prop) && strcmp (prop, 'dividend_yield'))   
-      if (isreal (val))
-        s.dividend_yield = val;
-      else
-        error ('set: expecting dividend_yield to be a real number');
-      end
-    % ====================== set convenience_yield  ======================
-    elseif (ischar (prop) && strcmp (prop, 'convenience_yield'))   
-      if (isreal (val))
-        s.convenience_yield = val;
-      else
-        error ('set: expecting convenience_yield to be a real number');
-      end
-    % ====================== set storage_cost ======================
-    elseif (ischar (prop) && strcmp (prop, 'storage_cost'))   
-      if (isreal (val))
-        s.storage_cost = val;
-      else
-        error ('set: expecting storage_cost to be a real number');
-      end  
-    else
-      error ('set: invalid property of forward class: >>%s<<',prop);
+    % check, if property is an existing field
+    if (sum(strcmpi(prop,fieldnames(typestruct)))==0)
+        fprintf('set: not an allowed fieldname >>%s<< with value >>%s<< :\n',prop,any2str(val));
+        fieldnames(typestruct)
+        error ('set: invalid property of %s class: >>%s<<\n',class(obj),prop);
     end
+    % get property type:
+    type = typestruct.(prop);
+    % input checks and validation
+    retval = return_checked_input(obj,val,prop,type);
+    % store property in object
+    obj.(prop) = retval;
   end
-end
+end   

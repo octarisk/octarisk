@@ -34,14 +34,13 @@ function s = calc_spread_over_yield (bond,discount_curve,valuation_date)
     else
         value_dirty = s.value_base;
     end
-    
+
     [spread_over_yield retcode] = calibrate_soy_sqp(valuation_date, s.cf_dates, ...
                             s.cf_values(1,:), value_dirty , ...
                             tmp_nodes, tmp_rates, basis, comp_type, comp_freq, ...
                             tmp_interp_discount, tmp_curve_comp_type, ...
                             tmp_curve_basis, tmp_curve_comp_freq);
-
-                
+            
      if ( retcode > 0 ) %failed calibration
         fprintf('Calibration failed for %s. Setting value_base to theo_value.\n',s.id); 
         % calculating theo_value in base case     

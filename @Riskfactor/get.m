@@ -1,51 +1,17 @@
-% @Riskfactor/get.m
+% @Riskfactor/get.m: return attribute value for given property key
 function s = get (obj, property)
   if (nargin == 1)
     s = obj.name;
   elseif (nargin == 2)
     if (ischar (property))
-      switch (property)
-        case 'name'
-          s = obj.name;
-        case 'id'
-          s = obj.id;
-        case 'description'
-          s = obj.description; 
-        case 'type'
-          s = obj.type; 
-        case 'model'
-          s = obj.model; 
-        case 'shift_type'
-          s = obj.shift_type;
-        case 'scenario_mc'
-          s = obj.scenario_mc;    
-        case 'scenario_stress'
-          s = obj.scenario_stress;
-        case 'timestep_mc'
-          s = obj.timestep_mc; 
-        case 'mean'
-          s = obj.mean; 
-        case 'std'
-          s = obj.std;   
-        case 'skew'
-          s = obj.skew; 
-        case 'kurt'
-          s = obj.kurt; 
-        case 'value_base'
-          s = obj.value_base;
-        case 'start_value'
-          s = obj.value_base;
-        case 'mr_level'
-          s = obj.mr_level;
-        case 'mr_rate'
-          s = obj.mr_rate;
-        case 'node'
-          s = obj.node;
-        case 'rate'
-          s = obj.value_base; 
-        otherwise
-          error ('get: invalid property %s', property);
-      end
+      % check, if property is an unique existing field
+        try
+            s = getfield(obj,property);
+        catch
+            fprintf('get: allowed fieldnames:\n');
+            fieldnames(obj)
+            error ('get: invalid property of %s class: >>%s<<\n',class(obj),property);
+        end
     else
       error ('get: expecting the property to be a string');
     end

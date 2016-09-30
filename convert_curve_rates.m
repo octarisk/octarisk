@@ -61,20 +61,6 @@
 %# 1,2,4,12,52,365 or [daily,weekly,monthly,quarter,semi-annual,annual] 
 %# (scalar or string)
 %# @item @var{dcc_basis_origin}: day-count basis of target rate(scalar)
-%#		@itemize @bullet
-%# 			@item @var{0} = actual/actual 
-%# 			@item @var{1} = 30/360 SIA (default)
-%# 			@item @var{2} = act/360
-%# 			@item @var{3} = act/365
-%# 			@item @var{4} = 30/360 PSA
-%# 			@item @var{5} = 30/360 ISDA
-%# 			@item @var{6} = 30/360 European
-%# 			@item @var{7} = act/365 Japanese
-%# 			@item @var{8} = act/act ISMA
-%# 			@item @var{9} = act/360 ISMA
-%# 			@item @var{10} = act/365 ISMA
-%# 			@item @var{11} = 30/360E
-%#      @end itemize
 %# @item @var{comp_type_target}: compounding type of target rate: 
 %# [simple, simp, disc, discrete, cont, continuous] (string)
 %# @item @var{comp_freq_target}: compounding frequency of target rate: 

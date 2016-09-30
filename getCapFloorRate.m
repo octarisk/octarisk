@@ -1,4 +1,4 @@
-%# Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
+%# Copyright (C) 2016 Schinzilord <schinzilord@octarisk.com>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
 %# the terms of the GNU General Public License as published by the Free Software
@@ -92,10 +92,12 @@ if (strcmpi(model,'Black') && X > 0.0 && sigma > 0.0)  % Black model only if X p
     end
 elseif (strcmpi(model,'Normal'))
     d = (F - X) ./ (sigma*sqrt(tf));
+    const = 1 / sqrt(2*pi);
+    pdf_d = const*exp(-d.^2 /2);
     if (CapFlag == true)
-        rate = (F - X) .* normcdf(d)  + sigma*sqrt(tf) .* normpdf(d);
+        rate = (F - X) .* 0.5.*(1+erf(d./sqrt(2)))  + sigma*sqrt(tf) .* pdf_d;
     else
-        rate = (X - F) .* normcdf(-d) + sigma*sqrt(tf) .* normpdf(d);
+        rate = (X - F) .* 0.5.*(1+erf(-d./sqrt(2))) + sigma*sqrt(tf) .* pdf_d;
     end
 % analytical model: just compare forward rates with strike rate
 else
@@ -113,3 +115,15 @@ end
 %!assert(getCapFloorRate(true, 0.0100501671, 0.005, 4, 0.0, 'Black'),0.00505016710000000,0.000000001);
 %!assert(getCapFloorRate(true, 0.0102421687, 0.005, 3, 0.8, 'Black'),0.00693193486314,0.000000001);
 %!assert(getCapFloorRate(true, 0.0103061692, 0.005, 4, 0.8, 'Black'),0.00740148444016,0.000000001);
+%!assert(getCapFloorRate(true, 0.0103061692, 0.005, 4, 0.8, 'Black'),0.0074015,0.00001);
+%!assert(getCapFloorRate(true, 0.0103061692, 0.005, 4, 0.8, 'Normal'),0.64096,0.00001);
+%!assert(getCapFloorRate(true, 0.0103061692, 0.005, 4, 0.0026, 'Normal'),0.0057228,0.00001);
+%!assert(getCapFloorRate(true, 0.0103061692, 0.005, 4, 0.003, 'Normal'),0.0059262,0.00001);
+%!assert(getCapFloorRate(false, 0.0103061692, 0.005, 4, 0.003, 'Normal'),6.2005e-004,0.00001);
+%!assert(getCapFloorRate(false, 0.0103061692, 0.02, 4, 0.003, 'Normal'),0.0098282,0.00001);
+%!assert(getCapFloorRate(false, 0.0103061692, 0.02, 4, 0.003, 'Analytic'),0.0096938,0.00001);
+%!assert(getCapFloorRate(true, 0.0103061692, 0.02, 4, 0.003, 'Analytic'),0.0,0.00001);
+%!assert(getCapFloorRate(true, 0.0103061692, 0.01, 4, 0.003, 'Analytic'),3.0617e-004,0.00001);
+%!assert(getCapFloorRate(true, [0.01;0.015], 0.01, 4, 0.003, 'Normal'),[0.0023937;0.0056798],0.00001);
+%!assert(getCapFloorRate(true, [0.01;0.015], 0.01, 4, 0.003, 'Black'),[2.3937e-005;5.0000e-003],0.00001);
+  

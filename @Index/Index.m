@@ -10,12 +10,10 @@ classdef Index
       type = ''; 
    end
    
-    properties (Access = protected )
+    properties (SetAccess = protected )
       scenario_stress = [];
       scenario_mc = [];
       shift_type = [];
-    end
-    properties (SetAccess = protected )
       timestep_mc = {};
     end
  

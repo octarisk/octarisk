@@ -1,4 +1,5 @@
-% setting Surface base
+% setting Surface base: special treatment for Surface class (no consolidation 
+% with return_checked_input function
 function s = set (obj, varargin)
   s = obj;
   if (length (varargin) < 2 || rem (length (varargin), 2) ~= 0)

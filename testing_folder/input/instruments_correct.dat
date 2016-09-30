@@ -1,4 +1,4 @@
-# Created by Octave 4.0.0, Tue Aug 09 14:01:16 2016 W. Europe Daylight Time <unknown@T43NB067>
+# Created by Octave 4.0.0, Fri Sep 30 22:49:56 2016 W. Europe Daylight Time <unknown@T43NB067>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
@@ -633,7 +633,7 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 61
+# length: 68
 # name: accrued_interest
 # type: scalar
 0
@@ -813,6 +813,11 @@ CFANLEIHE1
 01-Jan-1900
 
 
+# name: last_coupon_date
+# type: scalar
+0
+
+
 # name: last_reset_rate
 # type: scalar
 1e-005
@@ -865,6 +870,11 @@ Cashflowinstrument
 0
 
 
+# name: outstanding_balance
+# type: scalar
+0
+
+
 # name: prepayment_curve
 # type: sq_string
 # elements: 1
@@ -894,6 +904,18 @@ curve
 # elements: 1
 # length: 4
 full
+
+
+# name: principal_payment
+# type: scalar
+0
+
+
+# name: psa_factor_term
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 1825
 
 
 # name: pv01
@@ -930,6 +952,11 @@ IR_EUR
 SPREAD_EUR_HY
 
 
+# name: spread_duration
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -959,6 +986,16 @@ CASHFLOW
 # elements: 1
 # length: 4
 bond
+
+
+# name: use_outstanding_balance
+# type: scalar
+0
+
+
+# name: use_principal_pmt
+# type: scalar
+1
 
 
 # name: value_base
@@ -1774,7 +1811,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 61
+# length: 68
 # name: accrued_interest
 # type: scalar
 0
@@ -1952,6 +1989,11 @@ AGGR_EUR_FIN_BBB
 22-Nov-2011
 
 
+# name: last_coupon_date
+# type: scalar
+0
+
+
 # name: last_reset_rate
 # type: scalar
 0
@@ -2006,6 +2048,11 @@ BNP Paribas Fortis SA EMTN Fix 5.757% 04.10.2017
 0
 
 
+# name: outstanding_balance
+# type: scalar
+0
+
+
 # name: prepayment_curve
 # type: sq_string
 # elements: 1
@@ -2035,6 +2082,18 @@ curve
 # elements: 1
 # length: 4
 full
+
+
+# name: principal_payment
+# type: scalar
+0
+
+
+# name: psa_factor_term
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 1825
 
 
 # name: pv01
@@ -2071,6 +2130,11 @@ IR_EUR
 SPREAD_DUMMY
 
 
+# name: spread_duration
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -2102,6 +2166,16 @@ FRB
 bond
 
 
+# name: use_outstanding_balance
+# type: scalar
+0
+
+
+# name: use_principal_pmt
+# type: scalar
+1
+
+
 # name: value_base
 # type: scalar
 108.681
@@ -2131,7 +2205,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 61
+# length: 68
 # name: accrued_interest
 # type: scalar
 0
@@ -2309,6 +2383,11 @@ A1YC04
 22-Jan-2014
 
 
+# name: last_coupon_date
+# type: scalar
+0
+
+
 # name: last_reset_rate
 # type: scalar
 0
@@ -2363,6 +2442,11 @@ BASF SE MTN v.2014(2018/2019)
 0
 
 
+# name: outstanding_balance
+# type: scalar
+0
+
+
 # name: prepayment_curve
 # type: sq_string
 # elements: 1
@@ -2392,6 +2476,18 @@ curve
 # elements: 1
 # length: 4
 full
+
+
+# name: principal_payment
+# type: scalar
+0
+
+
+# name: psa_factor_term
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 1825
 
 
 # name: pv01
@@ -2428,6 +2524,11 @@ IR_EUR
 SPREAD_EUR_HY
 
 
+# name: spread_duration
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -2459,6 +2560,16 @@ FRB
 bond
 
 
+# name: use_outstanding_balance
+# type: scalar
+0
+
+
+# name: use_principal_pmt
+# type: scalar
+1
+
+
 # name: value_base
 # type: scalar
 1031.2
@@ -2488,7 +2599,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 61
+# length: 68
 # name: accrued_interest
 # type: scalar
 0
@@ -2666,6 +2777,11 @@ A1ZKC4
 04-Dec-2014
 
 
+# name: last_coupon_date
+# type: scalar
+0
+
+
 # name: last_reset_rate
 # type: scalar
 0.001
@@ -2720,6 +2836,11 @@ AUSTRIA 14/20 FLR MTN
 0
 
 
+# name: outstanding_balance
+# type: scalar
+0
+
+
 # name: prepayment_curve
 # type: sq_string
 # elements: 1
@@ -2749,6 +2870,18 @@ curve
 # elements: 1
 # length: 4
 full
+
+
+# name: principal_payment
+# type: scalar
+0
+
+
+# name: psa_factor_term
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 1825
 
 
 # name: pv01
@@ -2785,6 +2918,11 @@ IR_EUR
 SPREAD_DUMMY
 
 
+# name: spread_duration
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -2816,6 +2954,16 @@ FRN
 bond
 
 
+# name: use_outstanding_balance
+# type: scalar
+0
+
+
+# name: use_principal_pmt
+# type: scalar
+1
+
+
 # name: value_base
 # type: scalar
 100
@@ -2845,7 +2993,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 30
+# length: 33
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -2858,6 +3006,11 @@ Derivative
 3
 
 
+# name: calc_price_from_netbasis
+# type: bool
+0
+
+
 # name: cf_dates
 # type: null_matrix
 # rows: 0
@@ -2868,6 +3021,11 @@ Derivative
 # type: null_matrix
 # rows: 0
 # columns: 0
+
+
+# name: component_weight
+# type: scalar
+0
 
 
 # name: compounding_freq
@@ -2960,6 +3118,11 @@ EQFORW01
 # elements: 1
 # length: 14
 EQForward_test
+
+
+# name: net_basis
+# type: scalar
+0
 
 
 # name: spread
@@ -4595,7 +4758,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 61
+# length: 68
 # name: accrued_interest
 # type: scalar
 0
@@ -4773,6 +4936,11 @@ IR_EUR
 21-Apr-2015
 
 
+# name: last_coupon_date
+# type: scalar
+0
+
+
 # name: last_reset_rate
 # type: scalar
 1e-005
@@ -4827,6 +4995,11 @@ Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)
 0
 
 
+# name: outstanding_balance
+# type: scalar
+0
+
+
 # name: prepayment_curve
 # type: sq_string
 # elements: 1
@@ -4856,6 +5029,18 @@ curve
 # elements: 1
 # length: 4
 full
+
+
+# name: principal_payment
+# type: scalar
+0
+
+
+# name: psa_factor_term
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 1825
 
 
 # name: pv01
@@ -4892,6 +5077,11 @@ IR_EUR
 SPREAD_DUMMY
 
 
+# name: spread_duration
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -4923,6 +5113,16 @@ ZCB
 bond
 
 
+# name: use_outstanding_balance
+# type: scalar
+0
+
+
+# name: use_principal_pmt
+# type: scalar
+1
+
+
 # name: value_base
 # type: scalar
 101.119
@@ -4952,7 +5152,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 33
+# length: 36
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5015,6 +5215,11 @@ IR Payer Swaption
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: effective_date
+# type: null_sq_string
+# elements: 0
 
 
 # name: id
@@ -5095,11 +5300,36 @@ SWAPT_EUR_PAY
 swaption
 
 
+# name: und_fixed_leg
+# type: null_sq_string
+# elements: 0
+
+
+# name: und_fixed_value
+# type: scalar
+0
+
+
+# name: und_float_value
+# type: scalar
+0
+
+
+# name: und_floating_leg
+# type: null_sq_string
+# elements: 0
+
+
 # name: underlying
 # type: sq_string
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: use_underlyings
+# type: bool
+0
 
 
 # name: value_base
@@ -5129,24 +5359,6 @@ IR_EUR
 0
 
 
-# name: vola_surf
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: vola_surf_mc
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: vola_surf_stress
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
 # name: vola_surface
 # type: sq_string
 # elements: 1
@@ -5161,7 +5373,7 @@ RF_VOLA_IR_EUR
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 46
+# length: 43
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5406,24 +5618,6 @@ U
 0
 
 
-# name: vola_surf
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: vola_surf_mc
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: vola_surf_stress
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
 # name: vola_surface
 # type: sq_string
 # elements: 1
@@ -5443,7 +5637,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 46
+# length: 43
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5686,24 +5880,6 @@ D
 0
 
 
-# name: vola_surf
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: vola_surf_mc
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: vola_surf_stress
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
 # name: vola_surface
 # type: sq_string
 # elements: 1
@@ -5723,7 +5899,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 46
+# length: 43
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5966,24 +6142,6 @@ U
 # name: vola_spread
 # type: scalar
 0
-
-
-# name: vola_surf
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: vola_surf_mc
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: vola_surf_stress
-# type: null_matrix
-# rows: 0
-# columns: 0
 
 
 # name: vola_surface

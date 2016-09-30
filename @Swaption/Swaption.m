@@ -25,9 +25,6 @@ classdef Swaption < Instrument
         basis = 3;
         cf_dates = [];
         cf_values = [];
-        vola_surf = [];
-        vola_surf_mc  = [];
-        vola_surf_stress = [];
         vola_spread = 0.0;
         sub_type = 'SWAPT_EUR_PAY';
         model = 'BLACK76';
@@ -112,9 +109,6 @@ classdef Swaption < Instrument
           b.basis           = a.basis;
           b.cf_dates        = a.cf_dates;
           b.cf_values       = a.cf_values;
-          b.vola_surf       = a.vola_surf;
-          b.vola_surf_mc    = a.vola_surf_mc;
-          b.vola_surf_stress = a.vola_surf_stress;
           b.vola_spread     = a.vola_spread;
           b.sub_type        = a.sub_type;
       end  

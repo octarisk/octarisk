@@ -29,9 +29,6 @@ classdef Option < Instrument
         call_flag = 1;           % set by sub type -> 1: call, 0: put
         cf_dates = [];
         cf_values = [];
-        vola_surf = [];
-        vola_surf_mc  = [];
-        vola_surf_stress = [];
         vola_spread = 0.0;
         sub_type = 'OPT_EUR_C';
         option_type = 'European'; % set by sub_type [European, American, Barrier]

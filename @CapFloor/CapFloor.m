@@ -38,10 +38,10 @@ classdef CapFloor < Instrument
         cf_values = [];
         cf_values_mc  = [];
         cf_values_stress = [];
+        timestep_mc_cf = {};
         ytm = 0.0;
         soy = 0.0;      % spread over yield
         sub_type = 'CAP';
-        timestep_mc_cf = {};
         mac_duration = 0.0;
         mod_duration = 0.0;
         eff_duration = 0.0;
@@ -51,9 +51,6 @@ classdef CapFloor < Instrument
         pv01 = 0.0;
         accrued_interest = 0.0;
         basis = 3;
-        vola_surf = [];
-        vola_surf_mc  = [];
-        vola_surf_stress = [];
         vola_spread = 0.0;
         model = 'Black';
         CapFlag = true;

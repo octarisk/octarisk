@@ -55,10 +55,10 @@ classdef Bond < Instrument
         cf_values = [];
         cf_values_mc  = [];
         cf_values_stress = [];
+        timestep_mc_cf = {};
         ytm = 0.0;
         soy = 0.0;      % spread over yield
         sub_type = 'FRB';
-        timestep_mc_cf = {};
         mac_duration = 0.0;
         mod_duration = 0.0;
         eff_duration = 0.0;
@@ -113,8 +113,6 @@ classdef Bond < Instrument
          fprintf('long_first_period: %d\n',b.long_first_period); 
          fprintf('long_last_period: %d\n',b.long_last_period);  
          fprintf('last_reset_rate: %f\n',b.last_reset_rate); 
-         %fprintf('cf_dates: %f\n',b.cf_dates); 
-         %fprintf('cf_values: %f\n',b.cf_values); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('reference_curve: %s\n',b.reference_curve); 
          fprintf('spread_curve: %s\n',b.spread_curve); 
@@ -160,7 +158,7 @@ classdef Bond < Instrument
             if ( length(b.timestep_mc_cf) >= ii )
                 fprintf('MC timestep: %s\n',b.timestep_mc_cf{ii});
                 tmp_cf_values = b.getCF(b.timestep_mc_cf{ii});
-                fprintf('Scenariovalue:\n[ ')
+                fprintf('CF Scenariovalue:\n[ ')
                 for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
                     for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
                         fprintf('%f,',tmp_cf_values(jj,kk));
