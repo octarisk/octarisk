@@ -24,6 +24,7 @@
 %# @item @var{discount_curve_object}: discount curve for forward
 %# @item @var{underlying_object}: underlying object of forward
 %# @item @var{und_curve_object}: discount curve object of underlying object
+%# @end itemize
 %# @seealso{timefactor, discount_factor, interpolate_curve, convert_curve_rates}
 %# @end deftypefn
 
