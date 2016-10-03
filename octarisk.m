@@ -670,7 +670,6 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                         end                       
                     end
                     bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_scenario);  
-                    bond
                     % store bond object in struct:
                     instrument_struct( ii ).object = bond;
             % Cash  Valuation: Cash is riskless

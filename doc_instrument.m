@@ -268,6 +268,55 @@ end
 %! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
 
 %!test
+%! fprintf('\tdoc_instrument:\tPricing Asian Geometric Continuous Averaging Option Object\n');
+%! r = Riskfactor();
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[180],'rates_base',[0.05],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.200);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',80);
+%! o = Option();
+%! o = o.set('id','Asian_Geometric_Continuous','maturity_date','30-Jun-2016','sub_Type','OPT_ASN_P');
+%! o = o.set('strike',85,'multiplier',1,'div_yield',0.03,'averaging_type','rate','averaging_rule','geometric');
+%! o = o.set('averaging_monitoring','continuous');
+%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),4.69226159911852,0.000001);
+%! o = o.set('value_base',4.900);
+%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! assert(o.get('vola_spread'),0.0288927625504014,0.00001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Asian Arithmetic Continuous Averaging Option Object\n');
+%! r = Riskfactor();
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[180],'rates_base',[0.05],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.200);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',80);
+%! o = Option();
+%! o = o.set('id','Asian_Arithmetic_Continuous','maturity_date','30-Jun-2016','sub_Type','OPT_ASN_P');
+%! o = o.set('strike',85,'multiplier',1,'div_yield',0.03,'averaging_type','rate','averaging_rule','arithmetic');
+%! o = o.set('averaging_monitoring','continuous');
+%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! assert(o.getValue('base'),5.12741689918977,0.000001);
+%! o = o.set('value_base',5.00);
+%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! assert(o.get('vola_spread'),-0.0241361316761741,0.00001);
+%! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
+%! assert(o.get('theo_delta'),-0.857787632035219,0.00001);
+%! assert(o.get('theo_gamma'),0.0519774521673497,0.00001);
+%! assert(o.get('theo_vega'),0.0486623709116500,0.00001);
+%! assert(o.get('theo_theta'),-0.00214199425543171,0.00001);
+%! assert(o.get('theo_rho'),0.0980383964370191,0.00001);
+%! assert(o.get('theo_omega'),-13.7246022124715,0.00001);
+
+%!test
 %! fprintf('\tdoc_instrument:\tPricing American Option Object (Willowtree and Bjerksund and Stensland)\n');
 %! r = Riskfactor();
 %! c = Curve();

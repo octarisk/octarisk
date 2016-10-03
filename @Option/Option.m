@@ -22,6 +22,10 @@ classdef Option < Instrument
         outorin  = 'out';        % out or in Barrier Option {'out','in'}
         barrierlevel = 0.0;      % barrier level triggers barrier event 
         rebate   = 0.0;          % Rebate: payoff in case of a barrier event
+        averaging_type = 'rate';   % Asian averaging type {'rate','strike'}
+        averaging_rule = 'geometric'; % underlying distribution of average
+                                      % either {'geometric','arithmetic'}
+        averaging_monitoring = 'continuous'; % continuous or discrete averaging
     end
  
     properties (SetAccess = private)
@@ -69,6 +73,11 @@ classdef Option < Instrument
             fprintf('UporDown: %s\n',b.upordown);
             fprintf('OutorIn: %s\n',b.outorin);
          end
+         if ( strcmpi(b.option_type,'Asian') )
+            fprintf('averaging_type: %s\n',b.averaging_type);
+            fprintf('averaging_rule: %s\n',b.averaging_rule);
+            fprintf('averaging_monitoring: %s\n',b.averaging_monitoring);
+         end
          fprintf('maturity_date: %s\n',b.maturity_date);      
          fprintf('strike: %f \n',b.strike);
          fprintf('multiplier: %f \n',b.multiplier);         
@@ -89,7 +98,6 @@ classdef Option < Instrument
             fprintf('theo_rho:\t%8.4f\n',b.theo_rho);  
             fprintf('theo_omega:\t%8.4f\n',b.theo_omega);  
          end    
-
       end
       % converting object <-> struct for saving / loading purposes
       % function b = saveobj (a)
@@ -126,8 +134,9 @@ classdef Option < Instrument
           b.sub_type        = a.sub_type;
       end  
       function obj = set.sub_type(obj,sub_type)
-         if ~(any(strcmpi(sub_type,{'OPT_EUR_C','OPT_EUR_P','OPT_AM_C','OPT_AM_P','OPT_BAR_P','OPT_BAR_C'})))
-            error('Option sub_type must be either OPT_EUR_C, OPT_EUR_P, OPT_AM_C, OPT_AM_P, OPT_BAR_P or OPT_BAR_C')
+         if ~(any(strcmpi(sub_type,{'OPT_EUR_C','OPT_EUR_P','OPT_AM_C', ...
+                  'OPT_AM_P','OPT_BAR_P','OPT_BAR_C','OPT_ASN_P','OPT_ASN_C'})))
+            error('Option sub_type must be either OPT_EUR_C, OPT_EUR_P, OPT_AM_C, OPT_AM_P, OPT_BAR_P or OPT_BAR_C','OPT_ASN_P','OPT_ASN_C')
          end
          obj.sub_type = sub_type;
          % set call_flag
@@ -143,8 +152,34 @@ classdef Option < Instrument
             obj.option_type = 'American';
          elseif ( regexpi(sub_type,'_BAR_'))    % (European) Barrier option
             obj.option_type = 'Barrier';
+         elseif ( regexpi(sub_type,'_ASN_'))    % (European) Asian option
+            obj.option_type = 'Asian';
          end
       end % set.sub_type
+      
+      % restrictions for Asian Options
+      function obj = set.averaging_type(obj,averaging_type)
+         if ~(any(strcmpi(averaging_type,{'rate'})))
+            fprintf('Asian Option averaging type must be rate. Setting to rate.\n')
+            averaging_type = 'rate';
+         end
+         obj.averaging_type = lower(averaging_type);
+      end % set.averaging_type
+      function obj = set.averaging_rule(obj,averaging_rule)
+         if ~(any(strcmpi(averaging_rule,{'geometric','arithmetic'})))
+            error('Asian Option averaging rule must be geometric or arithmetic')
+         end
+         obj.averaging_rule = lower(averaging_rule);
+      end % set.averaging_rule
+      function obj = set.averaging_monitoring(obj,averaging_monitoring)
+         if ~(any(strcmpi(averaging_monitoring,{'continuous'})))
+            fprintf('Asian Option averaging monitoring must be continuous. Setting to continuous.\n')
+            averaging_monitoring = 'continuous';
+         end
+         obj.averaging_monitoring = lower(averaging_monitoring);
+      end % set.averaging_monitoring
+  
+      % restrictions for Barrier Options
       function obj = set.upordown(obj,upordown)
          if ~(any(strcmpi(upordown,{'U','D'})))
             error('Option upordown must be either U or D')

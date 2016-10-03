@@ -1,13 +1,13 @@
-# Created by Octave 4.0.0, Fri Sep 30 22:49:56 2016 W. Europe Daylight Time <unknown@T43NB067>
+# Created by Octave 4.0.0, Mon Oct 03 15:00:38 2016 W. Europe Daylight Time <unknown@T43NB067>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
- 1 32
+ 1 33
 # length: 3
 # name: id
 # type: cell
 # rows: 1
-# columns: 32
+# columns: 33
 # name: <cell-element>
 # type: sq_string
 # elements: 1
@@ -237,6 +237,14 @@ SWAPTIONC20180317
 # elements: 1
 # length: 13
 ODAXC20160318
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+ADAXC20161118
 
 
 
@@ -269,7 +277,7 @@ SYNTH01
 # name: name
 # type: cell
 # rows: 1
-# columns: 32
+# columns: 33
 # name: <cell-element>
 # type: sq_string
 # elements: 1
@@ -506,6 +514,14 @@ ODAXC20160318
 # type: sq_string
 # elements: 1
 # length: 13
+ADAXC20161118
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
 BDACC20160929
 
 
@@ -531,7 +547,7 @@ SYNTH01
 # name: object
 # type: cell
 # rows: 1
-# columns: 32
+# columns: 33
 # name: <cell-element>
 # type: scalar struct
 # ndims: 2
@@ -5373,12 +5389,33 @@ RF_VOLA_IR_EUR
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 43
+# length: 46
 # name: asset_class
 # type: sq_string
 # elements: 1
 # length: 10
 Derivative
+
+
+# name: averaging_monitoring
+# type: sq_string
+# elements: 1
+# length: 10
+continuous
+
+
+# name: averaging_rule
+# type: sq_string
+# elements: 1
+# length: 9
+geometric
+
+
+# name: averaging_type
+# type: sq_string
+# elements: 1
+# length: 4
+rate
 
 
 # name: barrierlevel
@@ -5637,12 +5674,318 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 43
+# length: 46
 # name: asset_class
 # type: sq_string
 # elements: 1
 # length: 10
 Derivative
+
+
+# name: averaging_monitoring
+# type: sq_string
+# elements: 1
+# length: 10
+continuous
+
+
+# name: averaging_rule
+# type: sq_string
+# elements: 1
+# length: 9
+geometric
+
+
+# name: averaging_type
+# type: sq_string
+# elements: 1
+# length: 4
+rate
+
+
+# name: barrierlevel
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: basis
+# type: scalar
+3
+
+
+# name: call_flag
+# type: scalar
+1
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: scalar
+1
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+disc
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 21
+Call Option Asian DAX
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: div_yield
+# type: scalar
+0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 13
+ADAXC20161118
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+18-Nov-2016
+
+
+# name: multiplier
+# type: scalar
+5
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 16
+DAX Asian Option
+
+
+# name: option_type
+# type: sq_string
+# elements: 1
+# length: 5
+Asian
+
+
+# name: outorin
+# type: sq_string
+# elements: 1
+# length: 3
+out
+
+
+# name: pricing_function_american
+# type: sq_string
+# elements: 1
+# length: 6
+BjSten
+
+
+# name: rebate
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: spot
+# type: scalar
+9220
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: strike
+# type: scalar
+10200
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 9
+OPT_ASN_C
+
+
+# name: theo_delta
+# type: scalar
+0
+
+
+# name: theo_gamma
+# type: scalar
+0
+
+
+# name: theo_omega
+# type: scalar
+0
+
+
+# name: theo_rho
+# type: scalar
+0
+
+
+# name: theo_theta
+# type: scalar
+0
+
+
+# name: theo_vega
+# type: scalar
+0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: timesteps_size
+# type: scalar
+5
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 6
+option
+
+
+# name: underlying
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: upordown
+# type: sq_string
+# elements: 1
+# length: 1
+U
+
+
+# name: value_base
+# type: scalar
+1500
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: vola_sensi
+# type: scalar
+1
+
+
+# name: vola_spread
+# type: scalar
+0
+
+
+# name: vola_surface
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+# name: willowtree_nodes
+# type: scalar
+20
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 46
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 10
+Derivative
+
+
+# name: averaging_monitoring
+# type: sq_string
+# elements: 1
+# length: 10
+continuous
+
+
+# name: averaging_rule
+# type: sq_string
+# elements: 1
+# length: 9
+geometric
+
+
+# name: averaging_type
+# type: sq_string
+# elements: 1
+# length: 4
+rate
 
 
 # name: barrierlevel
@@ -5899,12 +6242,33 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 43
+# length: 46
 # name: asset_class
 # type: sq_string
 # elements: 1
 # length: 10
 Derivative
+
+
+# name: averaging_monitoring
+# type: sq_string
+# elements: 1
+# length: 10
+continuous
+
+
+# name: averaging_rule
+# type: sq_string
+# elements: 1
+# length: 9
+geometric
+
+
+# name: averaging_type
+# type: sq_string
+# elements: 1
+# length: 4
+rate
 
 
 # name: barrierlevel

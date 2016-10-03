@@ -68,7 +68,7 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
         divyield = obj.get('div_yield');
         
       % Convert timefactor from Instrument basis to pricing basis (act/365)
-      tmp_dtm_pricing  = timefactor (valuation_date, ...
+        tmp_dtm_pricing  = timefactor (valuation_date, ...
                                 valuation_date + tmp_dtm, obj.basis) .* 365;
       
       % Valuation for: European plain vanilla options
@@ -76,7 +76,26 @@ function obj = calc_value(option,value_type,underlying,vola_riskfactor,discount_
             theo_value	= option_bs(call_flag,tmp_underlying_value, ...
                                 tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
                                 tmp_imp_vola_shock,divyield) .* tmp_multiplier;
-          
+                                
+      % Valuation for: (European) Asian options
+        elseif ( strcmpi(option_type,'Asian')  ) % calling Kemna-Vorst or Levy option pricing model
+            avg_rule = option.averaging_rule;
+            avg_monitoring = option.averaging_monitoring;
+            % distinguish Asian options:
+            if ( strcmpi(avg_rule,'geometric') && strcmpi(avg_monitoring,'continuous') )
+                % Call Kemna-Vorst90 pricing model
+                theo_value	= option_asian_vorst90(call_flag,tmp_underlying_value, ...
+                                tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock,divyield) .* tmp_multiplier;
+            elseif ( strcmpi(avg_rule,'arithmetic') && strcmpi(avg_monitoring,'continuous') )
+                % Call Levy pricing model
+                theo_value	= option_asian_levy(call_flag,tmp_underlying_value, ...
+                                tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
+                                tmp_imp_vola_shock,divyield) .* tmp_multiplier;
+            else
+                error('Unknown Asian averaging rule >>%s<< or monitoring >>%s<<',avg_rule,avg_monitoring);
+            end
+                             
       % Valuation for: American plain vanilla options
         elseif ( strcmpi(option_type,'American'))   % calling Willow tree option pricing model
             if ( strcmpi(obj.pricing_function_american,'Willowtree') )
