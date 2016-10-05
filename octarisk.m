@@ -23,7 +23,7 @@
 %#			0.0.4, 2016/03/28, Stefan Schloegl:   changed the implementation to object oriented approach (introduced instrument, risk factor classes) @*
 %#          0.1.0, 2016/04/02, Stefan Schloegl:   added volatility cube model (Surface class) for tenor / term / moneyness structure of volatility for ir vol @*
 %#          0.2.0, 2016/04/19, Stefan Schloegl:   improved the file interface and format for input files (market data, risk factors, instruments, positions, stresstests)  @*
-%# @*
+%#          0.4.0, 2016/10/08, Stefan Schloegl:   transfered instrument full valuation part into separate function. @*
 %# @*
 %# Calculate Monte-Carlo Value-at-Risk (VAR) and Expected Shortfall (ES) for instruments, positions and portfolios at a given confidence level on 
 %# 1D and 250D time horizon with a full valuation approach.
@@ -107,7 +107,7 @@ function octarisk(path_working_folder)
 %   3. Setup Stress test definitions
 %   4. Process yield curves and volatility surfaces, apply shocks to market data objects
 %   5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
-%       a) Total Loop over all Instruments and type dependent valuation
+%       a) Total Loop over all Instruments: call external pricing function
 %   6. Portfolio Aggregation
 %       a) loop over all portfolios / positions
 %       b) VaR Calculation
@@ -187,6 +187,7 @@ input_filename_seed			= 'random_seed.dat';
 % set filenames for vola surfaces
 input_filename_vola_index = 'vol_index_';
 input_filename_vola_ir = 'vol_ir_';
+input_filename_matrix = 'matrix_';
 
 % set general variables
 plotting = 1;           % switch for plotting data (0/1)
@@ -397,6 +398,16 @@ surface_struct=struct();
 persistent index_struct;
 index_struct=struct();
 [index_struct curve_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps,mc,no_stresstests);   
+
+% d) Loading matrix objects
+persistent matrix_struct;
+matrix_struct=struct();
+[matrix_struct matrix_failed_cell] = load_matrix_objects(matrix_struct,path_mktdata,input_filename_matrix);
+ 
+ % for kk = 1  : 1 : length(matrix_struct)
+   % matrix_struct(kk).id
+   % matrix_struct(kk).object
+% end
 % for kk = 1  : 1 : length(index_struct)
    % index_struct(kk).id
    % index_struct(kk).object
@@ -413,8 +424,8 @@ index_struct=struct();
 % end
 curve_gen_time = toc;
 
-% --------------------------------------------------------------------------------------------------------------------
-% 5. Full Valuation of all Instruments for all MC Scenarios determined by Riskfactors
+% ------------------------------------------------------------------------------
+% 5. Full Valuation of all Instruments for all MC Scenarios
 %   Total Loop over all Instruments and type dependent valuation
 fulvia = 0.0;
 fulvia_performance = {};
@@ -432,254 +443,18 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
     try
     tmp_id = instrument_struct( ii ).id;
     tic;
-    tmp_instr_obj = get_sub_object(instrument_struct, tmp_id); 
-    tmp_type = tmp_instr_obj.type;
-    tmp_sub_type = tmp_instr_obj.sub_type;
-	% Full Valuation depending on Type:
-            % ETF Debt Valuation:
-            if ( strcmp(tmp_type,'debt') == 1 )
-				% Using debt class
-                debt = tmp_instr_obj;
-				% get discount curve
-                tmp_discount_curve  = debt.get('discount_curve');
-                tmp_discount_object = get_sub_object(curve_struct, tmp_discount_curve);
-
-				% Calc value
-				debt = debt.calc_value(tmp_discount_object,tmp_scenario);
-
-                % store debt object in struct:
-                instrument_struct( ii ).object = debt;
-
-            % European Option Valuation according to Back-Scholes Model 
-            elseif ( strfind(tmp_type,'option') > 0 )    
-                % Using Option class
-                option = tmp_instr_obj;
-                
-                % Get relevant objects
-                tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, option.get('vola_surface'));
-                tmp_underlying_obj   = get_sub_object(index_struct, option.get('underlying'));
-
-                tmp_rf_curve_obj         = get_sub_object(curve_struct, option.get('discount_curve'));
-                tmp_vola_surf_obj        = get_sub_object(surface_struct, option.get('vola_surface'));
-                % Calibration of Option vola spread 
-                if ( option.get('vola_spread') == 0 )
-                    option = option.calc_vola_spread(tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date,path_static);
-                end
-                % calculate value
-                option = option.calc_value(tmp_scenario,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date,path_static);
-
-                % store option object in struct:
-                    instrument_struct( ii ).object = option;
-                % Debug Mode:
-                if ( regexp(option.name,'DEBUG') )
-                    fprintf('DEBUG for Instrument name %s of type %s \n',option.name,tmp_type);
-                    fprintf('\t Underyling Instrument %s \n',tmp_underlying_obj.id);
-                    tmp_underlying_obj
-                    fprintf('\t Underyling Vola Surface %s \n',tmp_vola_surf_obj.id);
-                    tmp_vola_surf_obj
-                    fprintf('\t Discount Curve %s \n',tmp_rf_curve_obj.id);
-                    tmp_rf_curve_obj
-                    fprintf('\t Underyling Vola Risk factor %s \n',tmp_rf_vola_obj.id);
-                    tmp_rf_vola_obj
-                    fprintf('\t Option %s \n',option.id);
-                    option
-                end
-            % European Swaption Valuation according to Back76 or Bachelier Model 
-            elseif ( strfind(tmp_type,'swaption') > 0 )    
-                % Using Swaption class
-                swaption = tmp_instr_obj;
-                % Get relevant objects
-                tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, 'RF_VOLA_EQ_DE'); %swaption.get('vola_surface'));
-                tmp_rf_curve_obj         = get_sub_object(curve_struct, swaption.get('discount_curve'));
-                tmp_vola_surf_obj        = get_sub_object(surface_struct, swaption.get('vola_surface'));
-                % Calibration of swaption vola spread            
-                if ( swaption.get('vola_spread') == 0 )
-                    swaption = swaption.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
-                end
-                % calculate value
-                swaption = swaption.calc_value(tmp_scenario,valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
-                % store swaption object in struct:
-                    instrument_struct( ii ).object = swaption;
-                    
-            %Equity Forward valuation
-            elseif (strcmp(tmp_type,'forward') )
-                % Using forward class
-                    forward = tmp_instr_obj;
-                 % Get underlying Index / instrument    
-                    tmp_underlying = forward.get('underlying_id');
-                    [tmp_underlying_object object_ret_code]  = get_sub_object(index_struct, tmp_underlying);
-                    if ( object_ret_code == 0 )
-                        fprintf('octarisk: WARNING: No index_struct object found for id >>%s<<\n',tmp_underlying_object);
-                    end
-                % Get discount curve
-                    tmp_discount_curve          = forward.get('discount_curve');            
-                    tmp_curve_object            = get_sub_object(curve_struct, tmp_discount_curve);	
-
-                %Calculate values of equity forward
-                if ( first_eval == 0)
-                % Base value
-                    forward = forward.calc_value(valuation_date,'base',tmp_curve_object,tmp_underlying_object);
-                end
-                % calculation of value for scenario               
-                    forward = forward.calc_value(valuation_date,tmp_scenario,tmp_curve_object,tmp_underlying_object);
-
-                % store bond object in struct:
-                    instrument_struct( ii ).object = forward;
-                % Debug Mode:
-                if ( regexp(forward.name,'DEBUG') )
-                    fprintf('DEBUG for Instrument name %s of type %s \n',forward.name,tmp_type);
-                    fprintf('\t Underyling Instrument %s \n',tmp_underlying_object.id);
-                    tmp_underlying_object
-                    fprintf('\t Discount Curve %s \n',tmp_curve_object.id);
-                    tmp_curve_object
-                    fprintf('\t Forward %s \n',forward.id);
-                    forward
-                end    
-            % Equity Valuation: Sensitivity based Approach       
-            elseif ( strcmp(tmp_type,'sensitivity') == 1 )
-            tmp_delta = 0;
-            tmp_shift = 0;
-            % Using sensitivity class
-                sensi               = tmp_instr_obj;
-                tmp_sensitivities   = sensi.get('sensitivities');
-                tmp_riskfactors     = sensi.get('riskfactors');
-                for jj = 1 : 1 : length(tmp_sensitivities)
-                    % get riskfactor:
-                    tmp_riskfactor = tmp_riskfactors{jj};
-                    % get idiosyncratic risk: normal distributed random variable with stddev speficied in special_num
-                    if ( strcmp(tmp_riskfactor,'IDIO') == 1 )
-                        if ( strcmp(tmp_scenario,'stress'))
-                            tmp_shift;
-                        else    % append idiosyncratic term only if not a stress risk factor
-                            tmp_idio_vola_p_a = sensi.get('idio_vola');
-                            tmp_idio_vec = ones(scen_number,1) .* tmp_idio_vola_p_a;
-                            tmp_shift = tmp_shift + tmp_sensitivities(jj) .* normrnd(0,tmp_idio_vec ./ sqrt(250/tmp_ts));
-                        end
-                    % get sensitivity approach shift from underlying riskfactors
-                    else
-                        tmp_rf_struct_obj    = get_sub_object(riskfactor_struct, tmp_riskfactor);
-                        tmp_delta   = tmp_rf_struct_obj.getValue(tmp_scenario);
-                        tmp_shift   = tmp_shift + ( tmp_sensitivities(jj) .* tmp_delta );
-                    end
-                end
-
-                % Calculate new absolute scenario values from Riskfactor PnL depending on riskfactor model
-                theo_value   = Riskfactor.get_abs_values('GBM', tmp_shift, sensi.getValue('base'));
-
-                % store values in sensitivity object:
-                if ( strcmp(tmp_scenario,'stress'))
-                    sensi = sensi.set('value_stress',theo_value);
-                else            
-                    sensi = sensi.set('value_mc',theo_value,'timestep_mc',tmp_scenario);           
-                end
-                % store bond object in struct:
-                    instrument_struct( ii ).object = sensi;
-                    
-            
-            % Synthetic Instrument Valuation: synthetic value is linear combination of underlying instrument values      
-            elseif ( strcmp(tmp_type,'synthetic') == 1 )
-                % get values of underlying instrument and weigh them by their sensitivity
-                tmp_value_base      = 0;
-                tmp_value           = 0;
-                % Using sensitivity class
-                synth               = tmp_instr_obj;
-                tmp_weights         = synth.get('weights');
-                tmp_instruments     = synth.get('instruments');
-                tmp_currency        = synth.get('currency');
-                % summing values over all underlying instruments
-                for jj = 1 : 1 : length(tmp_weights)
-                    % get underlying instrument:
-                    tmp_underlying              = tmp_instruments{jj};
-                    [und_obj  object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
-                    if ( object_ret_code == 0 )
-                        fprintf('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_underlying);
-                    end
-                    % Get instrument Value from full valuation instrument_struct:
-                    % absolute values from full valuation
-                    underlying_value_base       = und_obj.getValue('base');                 
-                    underlying_value_vec        = und_obj.getValue(tmp_scenario);  
-                    % Get FX rate:
-                    tmp_underlying_currency = und_obj.get('currency'); 
-                    if ( strcmp(tmp_underlying_currency,tmp_currency) == 1 )
-                        tmp_fx_rate_base    = 1;
-                        tmp_fx_value        = 1; %ones(scen_number,1);
-                    else
-                        %Conversion of currency:;
-                        tmp_fx_index = strcat('FX_', tmp_currency, tmp_underlying_currency);
-                        tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
-                        tmp_fx_rate_base  = tmp_fx_struct_obj.getValue('base');
-                        tmp_fx_value      = tmp_fx_struct_obj.getValue(tmp_scenario);
-                    end
-                    tmp_value_base      = tmp_value_base    + tmp_weights(jj) .* underlying_value_base ./ tmp_fx_rate_base;
-                    tmp_value           = tmp_value      + tmp_weights(jj) .* underlying_value_vec ./ tmp_fx_value;
-                end
-
-                % store values in sensitivity object:
-                if ( first_eval == 0)
-                    synth = synth.set('value_base',tmp_value_base);
-                end
-                if ( strcmp(tmp_scenario,'stress'))
-                    synth = synth.set('value_stress',tmp_value);
-                else                    
-                    synth = synth.set('value_mc',tmp_value,'timestep_mc',tmp_scenario);
-                end
-                % store bond object in struct:
-                    instrument_struct( ii ).object = synth;
-                    
-            % Cashflow Valuation: summing net present value of all cashflows according to cashflowdates
-            elseif ( sum(strcmp(tmp_type,'bond')) > 0 ) 
-                % Using Bond class
-                    bond = tmp_instr_obj;
-                % a) Get curve parameters    
-                  % get discount curve
-                    tmp_discount_curve  = bond.get('discount_curve');
-                    [tmp_curve_object object_ret_code]    = get_sub_object(curve_struct, tmp_discount_curve); 
-                    if ( object_ret_code == 0 )
-                        fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
-                    end
-                 
-                % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
-                    if( sum(strcmp(tmp_sub_type,{'FRB','SWAP_FIXED','ZCB','CASHFLOW'})) > 0 )       % Fixed Rate Bond instruments (incl. swap fixed leg)
-                        % rollout cash flows for all scenarios
-                        if ( first_eval == 0)
-                            bond = bond.rollout('base',valuation_date);
-                        end
-                        bond = bond.rollout(tmp_scenario,valuation_date);
-                    elseif( strcmp(tmp_sub_type,'FRN') || strcmp(tmp_sub_type,'SWAP_FLOAT'))       % Floating Rate Notes (incl. swap floating leg)
-                         %get reference curve object used for calculating floating rates:
-                            tmp_ref_curve   = bond.get('reference_curve');
-                            tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
-                        % rollout cash flows for all scenarios
-                            if ( first_eval == 0)
-                                bond = bond.rollout('base',tmp_ref_object,valuation_date);
-                            end
-                            bond = bond.rollout(tmp_scenario,tmp_ref_object,valuation_date);         
-                    end 
-                % c) Calculate spread over yield (if not already run...)
-                    if ( bond.get('calibration_flag') == 0 )
-                        bond = bond.calc_spread_over_yield(tmp_curve_object,valuation_date);
-                    end
-                % d) get net present value of all Cashflows (discounting of all cash flows)
-					if ( first_eval == 0)
-                        bond = bond.calc_value (valuation_date,tmp_curve_object,'base');
-                        % calculate sensitivities
-                        if( strcmp(tmp_sub_type,'FRN') || strcmp(tmp_sub_type,'SWAP_FLOAT'))
-                            bond = bond.calc_sensitivities(valuation_date,tmp_curve_object,tmp_ref_object);
-                        else
-                            bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);
-                        end                       
-                    end
-                    bond = bond.calc_value (valuation_date,tmp_curve_object,tmp_scenario);  
-                    % store bond object in struct:
-                    instrument_struct( ii ).object = bond;
-            % Cash  Valuation: Cash is riskless
-            elseif ( strcmp(tmp_type,'cash') == 1 ) 
-                % Using cash class
-                cash = tmp_instr_obj;
-                cash = cash.calc_value(tmp_scenario,scen_number);
-                % store cash object in struct:
-                    instrument_struct( ii ).object = cash;
-            end
+        % =================    Full valuation    ===============================
+        tmp_instr_obj = get_sub_object(instrument_struct, tmp_id); 
+        [ret_instr_obj ] = instrument_valuation(tmp_instr_obj, ...
+                                valuation_date, tmp_scenario, ...
+                                instrument_struct, surface_struct, ...
+                                matrix_struct, curve_struct, index_struct, ...
+                                riskfactor_struct, path_static, scen_number, ...
+                                tmp_ts, first_eval);
+        % store valuated instrument in struct
+        instrument_struct( ii ).object = ret_instr_obj;
+        % =================  End Full valuation  ===============================
+        
      % store performance data into cell array
      fulvia_performance{end + 1} = strcat(tmp_id,'_',num2str(scen_number),'_',num2str(toc),' s');
      fulvia = fulvia + toc ;  

@@ -47,7 +47,7 @@ elseif (info == -2)
     fprintf ('--- calibrate_swaption_underlyings: WARNING: BS No feasible point was found. ---\n');
     x = -99;
 elseif (info == 2)
-	fprintf ('+++ calibrate_swaption_underlyings: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
+	%fprintf ('+++ calibrate_swaption_underlyings: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
 else
 	fprintf ('--- calibrate_swaption_underlyings: WARNING: BS Optimization did not converge! ---\n');
     x = -99;

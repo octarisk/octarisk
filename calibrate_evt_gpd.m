@@ -64,7 +64,7 @@ elseif (info == -2)
     fprintf ('--- calibrate_evt_gpd: WARNING: BS No feasible point was found. ---\n');
     x = [0.0000001,1];
 elseif (info == 2)
-	fprintf ('+++ calibrate_evt_gpd: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
+	%fprintf ('+++ calibrate_evt_gpd: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
 else
 	fprintf ('--- calibrate_evt_gpd: WARNING: BS Optimization did not converge! ---\n');
     x = [0.0000001,1];
