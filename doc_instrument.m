@@ -577,6 +577,30 @@ end
 %! assert(s.getValue('base'),650.000,0.0001);
 
 %!test 
+%! fprintf('\tdoc_instrument:\tPricing Synthetic Instrument\n');
+%! s = Synthetic();
+%! s = s.set('id','TestSynthetic','instruments',{'EURO_STOXX_50','MSCIWORLD'},'weights',[1,1],'currency','EUR');
+%! i1 = Index();
+%! i1 = i1.set('id','EURO_STOXX_50','value_base',1000,'scenario_stress',2000);
+%! i2 = Index();
+%! i2 = i2.set('id','MSCIWORLD','value_base',1000,'scenario_stress',2000,'currency','USD');
+%! fx = Index();
+%! fx = fx.set('id','FX_EURUSD','value_base',1.1,'scenario_stress',1.2);
+%! instrument_struct = struct();
+%! instrument_struct(1).id = i1.id;
+%! instrument_struct(1).object = i1;
+%! instrument_struct(2).id = i2.id;
+%! instrument_struct(2).object = i2;
+%! index_struct = struct();
+%! index_struct(1).id = fx.id;
+%! index_struct(1).object = fx;
+%! valuation_date = datenum('31-Mar-2016');
+%! s = s.calc_value(valuation_date,'base',instrument_struct,index_struct);
+%! s = s.calc_value(valuation_date,'stress',instrument_struct,index_struct);
+%! assert(s.getValue('base'),1909.090909,0.0001);
+%! assert(s.getValue('stress'),3666.666667,0.0001);
+
+%!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
 %! b = Bond();
 %! r = Riskfactor();

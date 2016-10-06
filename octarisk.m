@@ -174,7 +174,9 @@ try
     end
 end    
 
-
+% set structure for storing parameters:
+persistent para_struct;
+para_struct = struct();
 % set filenames for input:
 input_filename_instruments  = 'instruments.csv';
 input_filename_corr_matrix  = 'corr.csv';
@@ -207,6 +209,7 @@ confidence = 0.999      % level of confidence vor MC VAR calculation
 copulatype = 't'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
 valuation_date = datenum('31-Dec-2015'); % valuation date
+para_struct.valuation_date = valuation_date;
 fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
 base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
@@ -219,7 +222,7 @@ runcode = '2015Q4'; %substr(md5sum(num2str(time()),true),-6)
 timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
 
 first_eval      = 0;
-
+para_struct.first_eval = first_eval;
 % set seed of random number generator
 if ( stable_seed == 1)
     % Read binary file and convert it to integers used as seed:
@@ -240,6 +243,7 @@ tic;
 mc_timestep_days = zeros(length(mc_timesteps),1);
 for kk = 1:1:length(mc_timesteps)
     tmp_ts = mc_timesteps{kk};
+    para_struct.mc_timestep = tmp_ts;
     if ( strcmpi(tmp_ts(end),'d') )
         mc_timestep_days(kk) = str2num(tmp_ts(1:end-1));  % get timestep days
     elseif ( strcmp(to_lower(tmp_ts(end)),'y'))
@@ -269,6 +273,7 @@ persistent stresstest_struct;
 stresstest_struct=struct();
 [stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, path_input,input_filename_stresstests,path_output_stresstests,path_archive,timestamp,archive_flag);
 no_stresstests = length(stresstest_struct);
+para_struct.no_stresstests = no_stresstests;
 
 % 5. Processing Market Data objects (Indizes and Marketcurves)
 persistent mktdata_struct;
@@ -444,15 +449,22 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
     tmp_id = instrument_struct( ii ).id;
     tic;
         % =================    Full valuation    ===============================
+        para_struct.scen_number = scen_number;
+        para_struct.path_static = path_static;
+        para_struct.timestep = tmp_ts;
+        para_struct.first_eval = first_eval;
         tmp_instr_obj = get_sub_object(instrument_struct, tmp_id); 
-        [ret_instr_obj ] = instrument_valuation(tmp_instr_obj, ...
-                                valuation_date, tmp_scenario, ...
+        %[ret_instr_obj ] = instrument_valuation(tmp_instr_obj, ...
+        %                        valuation_date, tmp_scenario, ...
+        %                        instrument_struct, surface_struct, ...
+         %                       matrix_struct, curve_struct, index_struct, ...
+        %                        riskfactor_struct, para_struct);
+        tmp_instr_obj = tmp_instr_obj.valuate(valuation_date, tmp_scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
-                                riskfactor_struct, path_static, scen_number, ...
-                                tmp_ts, first_eval);
+                                riskfactor_struct, para_struct);
         % store valuated instrument in struct
-        instrument_struct( ii ).object = ret_instr_obj;
+        instrument_struct( ii ).object = tmp_instr_obj;
         % =================  End Full valuation  ===============================
         
      % store performance data into cell array

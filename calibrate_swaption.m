@@ -39,7 +39,7 @@ lb = -sigma + 0.0001;
                                 x0, [], [], [], [], lb, []);	
 
 if (info == 1)
-	fprintf ('+++ calibrate_swaption: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
+	%fprintf ('+++ calibrate_swaption: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
 elseif (info == 0)
 	fprintf ('--- calibrate_swaption: WARNING: BS Number of iterations or function evaluations exceeded default values. ---\n');
     x = -99;

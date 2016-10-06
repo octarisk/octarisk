@@ -27,36 +27,52 @@
 %# @item @var{curve_struct}: structure with all curves in session
 %# @item @var{index_struct}: structure with all indizes in session
 %# @item @var{riskfactor_struct}: structure with all riskfactors in session
-%# @item @var{path_static}: OPTIONAL: path to folder with static files
-%# @item @var{scen_number}: OPTIONAL: number of scenarios
-%# @item @var{tmp_ts}: OPTIONAL: timestep number of days for MC scenarios
-%# @item @var{first_eval}: OPTIONAL: boolean, first_eval == 1 means calibration
+%# @item @var{para_struct}: structure with required parameters
+%# @itemize @bullet
+%# @item @var{para_struct.path_static}: OPTIONAL: path to folder with static files
+%# @item @var{para_struct.scen_number}: OPTIONAL: number of scenarios
+%# @item @var{para_struct.scenario}: OPTIONAL: timestep number of days for MC scenarios
+%# @item @var{para_struct.first_eval}: OPTIONAL: boolean, first_eval == 1 means calibration
+%# @end itemize
 %# @item @var{ret_instr_obj}: RETURN: evaluated instrument object
 %# @end itemize
 %# @end deftypefn
 
 function [ret_instr_obj] = instrument_valuation(instr_obj, valuation_date, scenario, ...
                                     instrument_struct, surface_struct, matrix_struct, ...
-                                    curve_struct, index_struct, riskfactor_struct, path_static, scen_number, tmp_ts, first_eval)
+                                    curve_struct, index_struct, riskfactor_struct, para_struct)
 
-if ( nargin < 12)
-    path_static = pwd;
+% set default parameter                                 
+if ( nargin < 10 )
     scen_number = 1;
-    tmp_ts = 1; % number of timestep in days for MC scenarios
-    first_eval = 0;  
+    path_static = '';
+    tmp_ts = 1;
+    first_eval = 1;
 end
-if ( nargin < 13)
-    scen_number = 1;
-    tmp_ts = 1; % number of timestep in days for MC scenarios
-    first_eval = 0;  
+% get parameter from provided struct
+if ( isfield(para_struct,'scen_number'))
+    scen_number = para_struct.scen_number;
+else
+    % Fallback: get scenario number from first curve object
+    tmp_curve_object = curve_struct(1).object;
+    scen_number = length(tmp_curve_object.getValue(scenario));
 end
-if ( nargin < 12)
-    tmp_ts = 1; % number of timestep in days for MC scenarios
-    first_eval = 0;
+if ( isfield(para_struct,'path_static'))
+    path_static = para_struct.path_static;
+else
+    path_static = '';
 end
-if ( nargin < 13)
-    first_eval = 0;
+if ( isfield(para_struct,'timestep'))
+    tmp_ts = para_struct.timestep;
+else
+    tmp_ts = 1;
 end
+if ( isfield(para_struct,'first_eval'))
+    first_eval = para_struct.first_eval;
+else
+    first_eval = 1;
+end
+
 
 
 ret_instr_obj = instr_obj;
@@ -191,6 +207,7 @@ tmp_shift = 0;
     end
 
     % Calculate new absolute scenario values from Riskfactor PnL depending on riskfactor model
+    %   calling static method located in Riskfactor class:
     theo_value   = Riskfactor.get_abs_values('GBM', tmp_shift, sensi.getValue('base'));
 
     % store values in sensitivity object:
@@ -204,51 +221,10 @@ tmp_shift = 0;
 
 % Synthetic Instrument Valuation: synthetic value is linear combination of underlying instrument values      
 elseif ( strcmp(tmp_type,'synthetic') == 1 )
-    % get values of underlying instrument and weigh them by their sensitivity
-    tmp_value_base      = 0;
-    tmp_value           = 0;
-    % Using sensitivity class
-    synth               = instr_obj;
-    tmp_weights         = synth.get('weights');
-    tmp_instruments     = synth.get('instruments');
-    tmp_currency        = synth.get('currency');
-    % summing values over all underlying instruments
-    for jj = 1 : 1 : length(tmp_weights)
-        % get underlying instrument:
-        tmp_underlying              = tmp_instruments{jj};
-        [und_obj  object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
-        if ( object_ret_code == 0 )
-            fprintf('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_underlying);
-        end
-        % Get instrument Value from full valuation instrument_struct:
-        % absolute values from full valuation
-        underlying_value_base       = und_obj.getValue('base');                 
-        underlying_value_vec        = und_obj.getValue(scenario);  
-        % Get FX rate:
-        tmp_underlying_currency = und_obj.get('currency'); 
-        if ( strcmp(tmp_underlying_currency,tmp_currency) == 1 )
-            tmp_fx_rate_base    = 1;
-            tmp_fx_value        = 1; %ones(scen_number,1);
-        else
-            %Conversion of currency:;
-            tmp_fx_index = strcat('FX_', tmp_currency, tmp_underlying_currency);
-            tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
-            tmp_fx_rate_base  = tmp_fx_struct_obj.getValue('base');
-            tmp_fx_value      = tmp_fx_struct_obj.getValue(scenario);
-        end
-        tmp_value_base      = tmp_value_base    + tmp_weights(jj) .* underlying_value_base ./ tmp_fx_rate_base;
-        tmp_value           = tmp_value      + tmp_weights(jj) .* underlying_value_vec ./ tmp_fx_value;
-    end
-
-    % store values in sensitivity object:
-    if ( first_eval == 0)
-        synth = synth.set('value_base',tmp_value_base);
-    end
-    if ( strcmp(scenario,'stress'))
-        synth = synth.set('value_stress',tmp_value);
-    else                    
-        synth = synth.set('value_mc',tmp_value,'timestep_mc',scenario);
-    end
+    % Using Synthetic class
+    synth = instr_obj;
+        
+    synth = synth.calc_value(valuation_date,scenario,instrument_struct,index_struct);
     % store bond object:
     ret_instr_obj = synth;
         

@@ -1,4 +1,3 @@
-
 function s = getValue (index, property) % method getValue for index
   obj = index;
   if (nargin == 1)

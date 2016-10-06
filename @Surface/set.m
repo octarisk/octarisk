@@ -117,6 +117,20 @@ function s = set (obj, varargin)
       else
         error ('set: expecting the value to be of type character');
       end 
+    % ====================== set name ======================
+    elseif (ischar (prop) && strcmp (prop, 'name'))   
+      if (ischar (val))
+        s.name = val;
+      else
+        error ('set: expecting the name to be of type character');
+      end 
+    % ====================== set id ======================
+    elseif (ischar (prop) && strcmp (prop, 'id'))   
+      if (ischar (val))
+        s.id = val;
+      else
+        error ('set: expecting the id to be of type character');
+      end 
     % ====================== set description ======================
     elseif (ischar (prop) && strcmp (prop, 'description'))   
       if (ischar (val))

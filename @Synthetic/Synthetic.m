@@ -3,12 +3,19 @@ classdef Synthetic < Instrument
     properties   % All properties of Class Debt with default values
         instruments  = {'TEST_INSTRUMENT'};
         weights    = [1]; 
+        compounding_type = 'cont';
+        compounding_freq = 'annual';                
+        day_count_convention = 'act/365';         
+        instr_vol_surfaces  = {'INSTRUMENT_VOL'};
+        discount_curve = '';
+        correlation_matrix = '';
     end
    
     properties (SetAccess = private)
         sub_type  = 'SYNTH';
         cf_dates  = [];
         cf_values = [];
+        basis = 3;
     end
    
    methods
@@ -37,12 +44,26 @@ classdef Synthetic < Instrument
          for ( ii = 1 : 1 : length(b.weights))
             fprintf('Instrument: %s | weight: %f\n',b.instruments{ii},b.weights(ii));            
          end
+         fprintf('compounding_type: %s\n',b.compounding_type); 
+         fprintf('compounding_freq: %s\n',b.compounding_freq); 
+         fprintf('day_count_convention: %s\n',b.day_count_convention); 
+         fprintf('basis: %s\n',any2str(b.basis)); 
+         fprintf('correlation_matrix: %s\n',b.correlation_matrix); 
+         fprintf('discount_curve: %s\n',b.discount_curve); 
+         fprintf('Instrument Volatility Surface(s): %s \n',any2str(b.instr_vol_surfaces));            
       end
+      
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,{'SYNTH'}) )
             error('Synthetic Instrument sub_type must be SYNTH')
          end
          obj.sub_type = sub_type;
       end % set.sub_type
+      
+      function obj = set.day_count_convention(obj,day_count_convention)
+         obj.day_count_convention = day_count_convention;
+         % Call superclass method to set basis
+         obj.basis = Instrument.get_basis(obj.day_count_convention);
+      end % set.day_count_convention
    end 
 end 
