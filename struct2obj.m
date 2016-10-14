@@ -36,6 +36,7 @@ if ~(isfield(s,'type'))
 end
 
 object_class = getfield(s,'type');
+object_class = lower(object_class);
 switch object_class
 case 'option'
     obj = Option();
@@ -63,6 +64,8 @@ case 'synthetic'
     obj = Synthetic();
 case 'swaption'
     obj = Swaption();
+case 'discount curve'
+    obj = Curve();
 otherwise
     fprintf('No constructor found for class >>%s<<. Returning struct.\n',object_class);
     obj = s;

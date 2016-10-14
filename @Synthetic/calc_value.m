@@ -15,9 +15,14 @@ tmp_currency        = obj.get('currency');
 for jj = 1 : 1 : length(tmp_weights)
     % get underlying instrument:
     tmp_underlying              = tmp_instruments{jj};
+    % 1st try: find underlying in instrument_struct
     [und_obj  object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
     if ( object_ret_code == 0 )
-        fprintf('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_underlying);
+        % 2nd try: find underlying in instrument_struct
+        [und_obj  object_ret_code_new]  = get_sub_object(index_struct, tmp_underlying);
+        if ( object_ret_code_new == 0 )
+            fprintf('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_underlying);
+        end
     end
     % Get instrument Value from full valuation instrument_struct:
     % absolute values from full valuation

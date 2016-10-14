@@ -46,6 +46,9 @@ if ischar(d1) || ischar(d2)
    d1 = datenum(d1);
    d2 = datenum(d2);
 end
+if ischar(basis)
+    basis = get_basis(basis);
+end
 if nargin < 4
    compounding_type = 1;
    comp_type = 1;
@@ -58,7 +61,10 @@ if nargin < 6
     comp_freq = 1;
 end
 
+% experimental: call oct file. performance gain only if dimensions > 100000
+% df = discount_factor_cpp (d1, d2, rate, comp_type, basis, comp_freq);
 
+% oldschool Octave implementation:
 if ischar(comp_type)
     if ( regexpi(comp_type,'simp'))
         compounding_type = 1;

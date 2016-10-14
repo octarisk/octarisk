@@ -18,6 +18,12 @@
 
 % function for extracting sub-structure object from struct object according to id
 function  [match_obj ret_code] = get_sub_object(input_struct, input_id)	
+    % check whether input struct is not empty
+    if ~( isfield(input_struct,'id'))
+        match_obj = '';
+	    ret_code = 0;
+		return;
+    end
 	a = {input_struct.id};
 	b = 1:1:length(a);
 	c = strcmp(a, input_id);	
@@ -27,18 +33,32 @@ function  [match_obj ret_code] = get_sub_object(input_struct, input_id)
         summe = 0;
         for ii=1:1:length(c)
             if ( c(ii) == 1)
-                match_obj = input_struct(ii).object;        
-                ret_code = 1;
-                return;
+                % return object if possible
+                if ( isfield(input_struct(ii),'object'))
+                    match_obj = input_struct(ii).object;        
+                    ret_code = 1;
+                    return;
+                else
+                    match_obj = '';
+                    ret_code = 0;
+                    return;
+                end
             end            
             summe = summe + 1;
         end       
     end
     matches = b * c';
 	if (matches > 0)
+        % return object if possible
+        if ( isfield(input_struct(matches),'object'))
 	    	match_obj = input_struct(matches).object;
 	    	ret_code = 1;
-		return;
+            return;
+        else
+            match_obj = '';
+	    	ret_code = 0;
+            return;
+        end
 	else
 	    %fprintf('octarisk::get_sub_object: WARNING: No object found for input_id: >>%s<<\n',input_id);
 	    match_obj = '';
@@ -63,12 +83,21 @@ end
 %! s(2).object = c;
 %! s(2).id = c.id;
 %!test
-%! [retstruct retcode] = get_sub_object(s,'C-TEST');
-%! assert(isequal(retstruct,c),true);
+%! [retobj retcode] = get_sub_object(s,'C-TEST');
+%! assert(isequal(retobj,c),true);
 %! assert(retcode,1);
 %!test
 %! s(3).object = c;
 %! s(3).id = c.id;
-%! [retstruct retcode] = get_sub_object(s,'C-TEST');
-%! assert(isequal(retstruct,c),true);
+%! [retobj retcode] = get_sub_object(s,'C-TEST');
+%! assert(isequal(retobj,c),true);
 %! assert(retcode,1);
+%!test
+%! p = struct();
+%! [retobj retcode] = get_sub_object(p,'AAA');
+%! assert(retcode,0);
+%!test
+%! k = struct();
+%! k.id = 'AAA';
+%! [retobj retcode] = get_sub_object(k,'AAA');
+%! assert(retcode,0);
