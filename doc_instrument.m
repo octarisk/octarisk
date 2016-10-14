@@ -618,6 +618,87 @@ end
 %! assert(s.getValue('stress'),3666.666667,0.0001);
 
 %!test 
+%! fprintf('\tdoc_instrument:\tPricing European Call Option on Basket\n');
+%! % Set up Synthetic Basket instrument
+%! s = Synthetic();
+%! s = s.set('id','TestSynthetic','instruments',{'EURO_STOXX_50','MSCIWORLD'},'weights',[0.4,0.6],'currency','EUR');
+%! s = s.set('discount_curve','IR_EUR','instr_vol_surfaces',{'V1','V2'},'correlation_matrix','BASKET_CORR','sub_type','Basket');
+%! % Set up structure with Instrument and index objects
+%! i1 = Index();
+%! i1 = i1.set('id','EURO_STOXX_50','value_base',1000,'scenario_stress',[900;1100]);
+%! i2 = Index();
+%! i2 = i2.set('id','MSCIWORLD','value_base',1000,'scenario_stress',[900;1100],'currency','USD');
+%! fx = Index();
+%! fx = fx.set('id','FX_EURUSD','value_base',1.0,'scenario_stress',[1.0;1.0]);
+%! instrument_struct = struct();
+%! instrument_struct(1).id = s.id;
+%! instrument_struct(1).object = s;
+%! index_struct = struct();
+%! index_struct(1).id = fx.id;
+%! index_struct(1).object = fx;
+%! index_struct(2).id = i1.id;
+%! index_struct(2).object = i1;
+%! index_struct(3).id = i2.id;
+%! index_struct(3).object = i2;
+%! valuation_date = datenum('30-Jun-2016');
+%! s = s.calc_value(valuation_date,'base',instrument_struct,index_struct);
+%! % Set up structure with Riskfactor objects
+%! r1 = Riskfactor();
+%! r1 = r1.set('id','V1','scenario_stress',[0.2;-0.1],'model','GBM');
+%! r2 = Riskfactor();
+%! r2 = r1.set('id','V2');
+%! riskfactor_struct(1).id = r1.id;
+%! riskfactor_struct(1).object = r1;
+%! riskfactor_struct(2).id = r2.id;
+%! riskfactor_struct(2).object = r2;
+%! % Set up structure with discount curve object
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
+%!      'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!                     0.004576856,0.0036879820,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526],'method_interpolation','linear');
+%! curve_struct = struct();
+%! curve_struct(1).id = c.id;
+%! curve_struct(1).object = c;
+%! % Set up structure with volatlity surface objects
+%! v1 = Surface();
+%! v1 = v1.set('id','V1','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v1 = v1.set('values_base',0.269944411);
+%! v1 = v1.set('type','INDEX');
+%! v2 = Surface();
+%! v2 = v2.set('id','V2','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v2 = v2.set('values_base',0.1586683369);
+%! v2 = v2.set('type','INDEX');
+%! surface_struct = struct();
+%! surface_struct(1).id = v1.id;
+%! surface_struct(1).object = v1;
+%! surface_struct(2).id = v2.id;
+%! surface_struct(2).object = v2;
+%! % Set up structure with matrix object
+%! m = Matrix();
+%! m = m.set('id','BASKET_CORR','components',{'EURO_STOXX_50','MSCIWORLD'});
+%! m = m.set('matrix',[1.0,0.3;0.3,1]);
+%! matrix_struct = struct();
+%! matrix_struct(1).id = m.id;
+%! matrix_struct(1).object = m;
+%! % Set up basket option objects to evaluate
+%! o = Option();
+%! o = o.set('maturity_date','28-Jun-2026','sub_type','OPT_EUR_C','discount_curve','IR_EUR');
+%! o = o.set('strike',1000,'multiplier',1,'underlying','TestSynthetic','value_base',250,'vola_spread',0.0000000001);
+%! % Base valuation
+%! value_type = 'base';
+%! o = o.valuate (valuation_date, value_type, ...
+%!                     instrument_struct, surface_struct, matrix_struct, ...
+%!                     curve_struct, index_struct, riskfactor_struct);
+%! assert(o.getValue('base'),228.057832386340,0.00000001);
+%! % Stress valuation
+%! value_type = 'stress';
+%! % valuation with instrument function
+%! o = o.valuate (valuation_date, value_type, ...
+%!                     instrument_struct, surface_struct, matrix_struct, ...
+%!                     curve_struct, index_struct, riskfactor_struct);         
+%! assert(o.getValue('stress'),[216.054078327894;273.283323323431],0.00000001);
+
+%!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
 %! b = Bond();
 %! r = Riskfactor();

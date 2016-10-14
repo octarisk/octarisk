@@ -95,15 +95,62 @@ if ( strcmp(tmp_type,'debt') == 1 )
 
 % European Option Valuation according to Back-Scholes Model 
 elseif ( strfind(tmp_type,'option') > 0 )    
+    % Valuation of Options: depending of underlying type (single underlying like
+    % index or instruments OR basket underlying (synthetic)) 
     % Using Option class
     option = instr_obj;
     
-    % Get relevant objects
-    tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, option.get('vola_surface'));
-    tmp_underlying_obj   = get_sub_object(index_struct, option.get('underlying'));
+    tmp_rf_curve_obj  = get_sub_object(curve_struct, option.get('discount_curve'));
+    
+    % 1st try: find underlying in instrument_struct
+    [tmp_underlying_obj  object_ret_code]  = get_sub_object(instrument_struct, option.get('underlying'));
+    if ( object_ret_code == 0 )
+        % 2nd try: find underlying in instrument_struct
+        [tmp_underlying_obj]  = get_sub_object(index_struct, option.get('underlying'));
+    end
 
-    tmp_rf_curve_obj         = get_sub_object(curve_struct, option.get('discount_curve'));
-    tmp_vola_surf_obj        = get_sub_object(surface_struct, option.get('vola_surface'));
+    % 1st Case: Option on Basket (=Synthetic Instrument) calculate diversified 
+    %           vola and underlying value store values in generic objects 
+    %           used for further calculation
+    if ( strcmpi(class(tmp_underlying_obj),'Synthetic') && tmp_underlying_obj.is_basket )
+        % valuation of Synthetic Basket
+        tmp_underlying_obj = tmp_underlying_obj.calc_value(valuation_date,scenario,instrument_struct,index_struct);
+        
+        % calculate diversified vola for base scenario
+        basket_vola_base = get_basket_volatility(valuation_date,'base', ...
+                  tmp_underlying_obj,option,instrument_struct,index_struct, ...
+                  curve_struct, riskfactor_struct,matrix_struct,surface_struct);
+                  
+        % calculate diversified vola for scenario type
+        basket_vola = get_basket_volatility(valuation_date,scenario, ...
+                  tmp_underlying_obj,option,instrument_struct,index_struct, ...
+                  curve_struct, riskfactor_struct,matrix_struct,surface_struct);
+                  
+        % generate Vola object with base vola
+        tmp_vola_surf_obj = Surface();
+        tmp_vola_surf_obj = tmp_vola_surf_obj.set('id','Basket Vola','axis_x',365, ...
+                   'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+        tmp_vola_surf_obj = tmp_vola_surf_obj.set('values_base',basket_vola_base);
+        tmp_vola_surf_obj = tmp_vola_surf_obj.set('type','INDEX');
+        
+        % generate risk factor object with vola shocks
+        basket_vola_shocks = log(basket_vola ./ basket_vola_base);% assuming GBM
+        tmp_rf_vola_obj = Riskfactor();
+        tmp_rf_vola_obj = tmp_rf_vola_obj.set('id','Basket Vola RF','model','GBM');
+        if ( strcmpi(scenario,'base'))
+            tmp_rf_vola_obj = tmp_rf_vola_obj.set('value_base',1);
+        elseif ( strcmpi(scenario,'stress'))
+            tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_stress',basket_vola_shocks);
+        else                    
+            tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_mc',basket_vola_shocks, ...
+                                                    'timestep_mc',scenario);
+        end
+    else
+    % 2nd Case: Option on single underlying, take real objects
+        tmp_vola_surf_obj = get_sub_object(surface_struct, option.get('vola_surface'));
+        tmp_rf_vola_obj   = get_sub_object(riskfactor_struct, option.get('vola_surface'));
+    end
+
     % Calibration of Option vola spread 
     if ( option.get('vola_spread') == 0 )
         option = option.calc_vola_spread(tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date,path_static);

@@ -16,6 +16,7 @@ classdef Synthetic < Instrument
         cf_dates  = [];
         cf_values = [];
         basis = 3;
+        is_basket = false;
     end
    
    methods
@@ -54,10 +55,13 @@ classdef Synthetic < Instrument
       end
       
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,{'SYNTH'}) )
-            error('Synthetic Instrument sub_type must be SYNTH')
+         if ~(strcmpi(sub_type,{'SYNTH'}) || strcmpi(sub_type,{'Basket'}) )
+            error('Synthetic Instrument sub_type must be SYNTH or Basket')
          end
          obj.sub_type = sub_type;
+         if ( strcmpi(sub_type,{'Basket'}) )
+            obj.is_basket = true;
+         end
       end % set.sub_type
       
       function obj = set.day_count_convention(obj,day_count_convention)
