@@ -18,7 +18,7 @@ for jj = 1 : 1 : length(tmp_weights)
     % 1st try: find underlying in instrument_struct
     [und_obj  object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
     if ( object_ret_code == 0 )
-        % 2nd try: find underlying in instrument_struct
+        % 2nd try: find underlying in index struct
         [und_obj  object_ret_code_new]  = get_sub_object(index_struct, tmp_underlying);
         if ( object_ret_code_new == 0 )
             fprintf('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_underlying);
