@@ -37,7 +37,7 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
         tmp_impl_vola_spread    = 0;
         theo_value_base         = 0;
     else
-        % Valuation: Black-76 Modell:
+        % Valuation:
         tmp_spot            = obj.spot;
         tmp_strike          = obj.strike;
         tmp_value           = obj.value_base;
@@ -55,11 +55,19 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
         basis_curve         = discount_curve.basis;
         comp_freq_curve     = discount_curve.compounding_freq;
         
+        % apply floor at 0.00001 for forward rates
+        if ( regexpi(tmp_model,'black'))
+            floor_flag          = true;
+        else
+            floor_flag          = false;
+        end
+        
         % Get underlying yield rates:
         tmp_forward_base    = get_forward_rate(tmp_nodes,tmp_rates_base, ...
-                                tmp_effdate,tmp_dtm, comp_type, ...
+                                tmp_effdate,tmp_dtm-tmp_effdate, comp_type, ...
                                 interp_method, comp_freq, basis, valuation_date, ...
-                                comp_type_curve, basis_curve, comp_freq_curve);
+                                comp_type_curve, basis_curve, ...
+                                comp_freq_curve, floor_flag);
 
         tmp_moneyness_base      = (tmp_forward_base ./tmp_strike).^moneyness_exponent;
                 
@@ -75,7 +83,7 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
                         
         % Calculate Swaption base value and implied spread
         if (obj.use_underlyings == false)   % pricing with forward rates
-            if ( strcmp(upper(tmp_model),'BLACK76'))
+            if ( regexpi(tmp_model,'black'))
                 tmp_swaptionvalue_base  = swaption_black76(call_flag,tmp_forward_base, ...
                                             tmp_strike,tmp_effdate,tmp_rf_rate_base, ...
                                             tmp_indexvol_base,tmp_swap_no_pmt, ...
@@ -135,7 +143,7 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
         else
           %disp('Calibration seems to be successful.. checking');
           if (obj.use_underlyings == false)   % pricing with forward rates
-            if ( strcmp(upper(tmp_model),'BLACK76'))
+            if ( regexpi(tmp_model,'black'))
                 tmp_new_val      = swaption_black76(call_flag,tmp_forward_base, ...
                                         tmp_strike,tmp_effdate,tmp_rf_rate_base, ...
                                         tmp_indexvol_base+ tmp_impl_vola_spread, ...

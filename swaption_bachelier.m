@@ -50,9 +50,7 @@ elseif ~isnumeric (F)
 elseif ~isnumeric (X)
     error ('Strike X must be numeric ')
 elseif X < 0
-    error ('Strike X must be positive ')
-elseif F < 0
-    error ('Price F must be positive ')    
+    error ('Strike X must be positive ')   
 elseif ~isnumeric (T)
     error ('Time T in years must be numeric ')
 elseif ( T < 0)

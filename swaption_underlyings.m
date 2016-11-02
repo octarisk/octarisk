@@ -31,7 +31,7 @@ T = T ./ 365;
 Y = K .* V_float ./ V_fix;
 
 % distinguish swaption models Black and Bachelier (normal)
-if strcmpi(model,'BLACK76')
+if regexpi(model,'black')
     d1 = (log(Y./K) + (0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
     d2 = d1 - sigma.*sqrt(T);
     % Calculation of Black Value

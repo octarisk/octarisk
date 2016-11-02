@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{forward_rate}=} get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq},, @var{basis}, @var{valuation_date}, @var{comp_type_curve}, @var{basis_curve}, @var{comp_freq_curve} )
+%# @deftypefn {Function File} {@var{forward_rate}=} get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq},, @var{basis}, @var{valuation_date}, @var{comp_type_curve}, @var{basis_curve}, @var{comp_freq_curve} , @var{floor_flag})
 %#
 %# Compute the forward rate calculated from interpolated rates from a  
 %# yield curve. CAUTION: the forward rate is floored to 0.000001.
@@ -33,6 +33,7 @@
 %# @item @var{comp_type_curve}: (optional) compounding type of curve
 %# @item @var{basis_curve}: (optional) day count convention of curve
 %# @item @var{comp_freq_curve}: (optional) compounding frequency of curve
+%# @item @var{floor_flag}: (optional) Bool: flooring forward rates to 0.000001
 %# @end itemize
 %# @seealso{interpolate_curve, convert_curve_rates,timefactor}
 %# @end deftypefn

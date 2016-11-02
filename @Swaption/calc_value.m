@@ -9,7 +9,6 @@ function obj = calc_value(swaption,value_type,valuation_date,discount_curve,tmp_
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates        = discount_curve.getValue(value_type);
-        tmp_rates_base   = discount_curve.getValue('base');
     tmp_type = obj.sub_type;
     % Get Call or Putflag
     %fprintf('==============================\n');
@@ -32,8 +31,6 @@ function obj = calc_value(swaption,value_type,valuation_date,discount_curve,tmp_
     
     % interpolating rates
     tmp_rf_rate              = interpolate_curve(tmp_nodes,tmp_rates, ...
-                                                tmp_effdate ) + obj.spread;
-    tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base, ...
                                                 tmp_effdate ) + obj.spread;
     tmp_impl_vola_spread     = obj.vola_spread;    
     mc = length(tmp_rf_rate);
@@ -60,18 +57,20 @@ function obj = calc_value(swaption,value_type,valuation_date,discount_curve,tmp_
         basis_curve         = discount_curve.basis;
         comp_freq_curve     = discount_curve.compounding_freq;
         
-        % Get underlying yield rates:
-        tmp_forward_base    = get_forward_rate(tmp_nodes,tmp_rates_base, ...
-                                tmp_effdate,tmp_dtm, comp_type, ...
-                                interp_method, comp_freq, basis, valuation_date, ...
-                                comp_type_curve, basis_curve, comp_freq_curve);
-
-        tmp_moneyness_base      = (tmp_forward_base ./tmp_strike).^moneyness_exponent;
-        
+        % apply floor at 0.00001 for forward rates
+        if ( regexpi(tmp_model,'black'))
+            floor_flag          = true;
+        else
+            floor_flag          = false;
+        end
+        % Get underlying yield rates:        
         tmp_forward_shock       = get_forward_rate(tmp_nodes,tmp_rates, ...
-                                                    tmp_effdate,tmp_dtm);
+                                    tmp_effdate,tmp_dtm-tmp_effdate, comp_type, ...
+                                    interp_method, comp_freq, basis, valuation_date, ...
+                                    comp_type_curve, basis_curve, ...
+                                    comp_freq_curve, floor_flag);
         tmp_moneyness           = (tmp_forward_shock ./tmp_strike).^moneyness_exponent; 
-                    
+        
         tmp_imp_vola_shock = calcVolaShock(value_type,obj,tmp_vola_surf_obj, ...
                             vola_riskfactor,tmp_swap_tenor,tmp_dtm,tmp_moneyness);
 
@@ -83,16 +82,16 @@ function obj = calc_value(swaption,value_type,valuation_date,discount_curve,tmp_
       % Valuation for: Black76 or Bachelier model according to type
        
         if (obj.use_underlyings == false)   % pricing with forward rates
-            if ( strcmp(tmp_model,'BLACK76'))
-                theo_value      = max(swaption_black76(call_flag,tmp_forward_base, ...
+            if ( regexpi(tmp_model,'black'))
+                theo_value      = swaption_black76(call_flag,tmp_forward_shock, ...
                                         tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
                                         tmp_imp_vola_shock,tmp_swap_no_pmt, ...
-                                        tmp_swap_tenor) .* tmp_multiplier,0.001);
+                                        tmp_swap_tenor) .* tmp_multiplier;
             else
-                theo_value      = max(swaption_bachelier(call_flag,tmp_forward_base, ...
+                theo_value      = swaption_bachelier(call_flag,tmp_forward_shock, ...
                                         tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
                                         tmp_imp_vola_shock,tmp_swap_no_pmt, ...
-                                        tmp_swap_tenor) .* tmp_multiplier,0.001);
+                                        tmp_swap_tenor) .* tmp_multiplier;
             end
         else    % pricing with underlying float and fixed leg
             % make sure underlying objects are existing
