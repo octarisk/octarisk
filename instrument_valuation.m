@@ -80,7 +80,7 @@ tmp_type = instr_obj.type;
 tmp_sub_type = instr_obj.sub_type;
 % Full Valuation depending on Type:
 % ETF Debt Valuation:
-if ( strcmp(tmp_type,'debt') == 1 )
+if ( strcmpi(tmp_type,'debt') == 1 )
     % Using debt class
     debt = instr_obj;
     % get discount curve
@@ -153,10 +153,10 @@ elseif ( strfind(tmp_type,'option') > 0 )
 
     % Calibration of Option vola spread 
     if ( option.get('vola_spread') == 0 )
-        option = option.calc_vola_spread(tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date,path_static);
+        option = option.calc_vola_spread(valuation_date,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
     end
     % calculate value
-    option = option.calc_value(scenario,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,valuation_date,path_static);
+    option = option.calc_value(valuation_date,scenario,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
 
     % store option object:
     ret_instr_obj = option;
@@ -187,12 +187,12 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
         swaption = swaption.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
     end
     % calculate value
-    swaption = swaption.calc_value(scenario,valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
+    swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
     % store swaption object:
     ret_instr_obj = swaption;
         
 %Equity Forward valuation
-elseif (strcmp(tmp_type,'forward') )
+elseif (strcmpi(tmp_type,'forward') )
     % Using forward class
         forward = instr_obj;
      % Get underlying Index / instrument    
@@ -226,7 +226,7 @@ elseif (strcmp(tmp_type,'forward') )
         forward
     end    
 % Equity Valuation: Sensitivity based Approach       
-elseif ( strcmp(tmp_type,'sensitivity') == 1 )
+elseif ( strcmpi(tmp_type,'sensitivity') == 1 )
 tmp_delta = 0;
 tmp_shift = 0;
 % Using sensitivity class
@@ -237,8 +237,8 @@ tmp_shift = 0;
         % get riskfactor:
         tmp_riskfactor = tmp_riskfactors{jj};
         % get idiosyncratic risk: normal distributed random variable with stddev speficied in special_num
-        if ( strcmp(tmp_riskfactor,'IDIO') == 1 )
-            if ( strcmp(scenario,'stress'))
+        if ( strcmpi(tmp_riskfactor,'IDIO') == 1 )
+            if ( strcmpi(scenario,'stress'))
                 tmp_shift;
             else    % append idiosyncratic term only if not a stress risk factor
                 tmp_idio_vola_p_a = sensi.get('idio_vola');
@@ -258,7 +258,7 @@ tmp_shift = 0;
     theo_value   = Riskfactor.get_abs_values('GBM', tmp_shift, sensi.getValue('base'));
 
     % store values in sensitivity object:
-    if ( strcmp(scenario,'stress'))
+    if ( strcmpi(scenario,'stress'))
         sensi = sensi.set('value_stress',theo_value);
     else            
         sensi = sensi.set('value_mc',theo_value,'timestep_mc',scenario);           
@@ -267,7 +267,7 @@ tmp_shift = 0;
     ret_instr_obj = sensi;
 
 % Synthetic Instrument Valuation: synthetic value is linear combination of underlying instrument values      
-elseif ( strcmp(tmp_type,'synthetic') == 1 )
+elseif ( strcmpi(tmp_type,'synthetic') == 1 )
     % Using Synthetic class
     synth = instr_obj;
         
@@ -276,7 +276,7 @@ elseif ( strcmp(tmp_type,'synthetic') == 1 )
     ret_instr_obj = synth;
         
 % Cashflow Valuation: summing net present value of all cashflows according to cashflowdates
-elseif ( sum(strcmp(tmp_type,'bond')) > 0 ) 
+elseif ( sum(strcmpi(tmp_type,'bond')) > 0 ) 
     % Using Bond class
         bond = instr_obj;
     % a) Get curve parameters    
@@ -288,13 +288,13 @@ elseif ( sum(strcmp(tmp_type,'bond')) > 0 )
         end
      
     % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
-        if( sum(strcmp(tmp_sub_type,{'FRB','SWAP_FIXED','ZCB','CASHFLOW'})) > 0 )       % Fixed Rate Bond instruments (incl. swap fixed leg)
+        if( sum(strcmpi(tmp_sub_type,{'FRB','SWAP_FIXED','ZCB','CASHFLOW'})) > 0 )       % Fixed Rate Bond instruments (incl. swap fixed leg)
             % rollout cash flows for all scenarios
             if ( first_eval == 0)
                 bond = bond.rollout('base',valuation_date);
             end
             bond = bond.rollout(scenario,valuation_date);
-        elseif( strcmp(tmp_sub_type,'FRN') || strcmp(tmp_sub_type,'SWAP_FLOAT'))       % Floating Rate Notes (incl. swap floating leg)
+        elseif( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOAT'))       % Floating Rate Notes (incl. swap floating leg)
              %get reference curve object used for calculating floating rates:
                 tmp_ref_curve   = bond.get('reference_curve');
                 tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
@@ -306,24 +306,24 @@ elseif ( sum(strcmp(tmp_type,'bond')) > 0 )
         end 
     % c) Calculate spread over yield (if not already run...)
         if ( bond.get('calibration_flag') == 0 )
-            bond = bond.calc_spread_over_yield(tmp_curve_object,valuation_date);
+            bond = bond.calc_spread_over_yield(valuation_date,tmp_curve_object);
         end
     % d) get net present value of all Cashflows (discounting of all cash flows)
         if ( first_eval == 0)
-            bond = bond.calc_value (valuation_date,tmp_curve_object,'base');
+            bond = bond.calc_value (valuation_date,'base',tmp_curve_object);
             % calculate sensitivities
-            if( strcmp(tmp_sub_type,'FRN') || strcmp(tmp_sub_type,'SWAP_FLOAT'))
+            if( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOAT'))
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object,tmp_ref_object);
             else
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);
             end                       
         end
-        bond = bond.calc_value (valuation_date,tmp_curve_object,scenario);  
+        bond = bond.calc_value (valuation_date,scenario,tmp_curve_object);  
     % e) store bond object:
     ret_instr_obj = bond;
     
 % Cash  Valuation: Cash is riskless
-elseif ( strcmp(tmp_type,'cash') == 1 ) 
+elseif ( strcmpi(tmp_type,'cash') == 1 ) 
     % Using cash class
     cash = instr_obj;
     cash = cash.calc_value(scenario,scen_number);

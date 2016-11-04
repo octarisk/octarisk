@@ -1,4 +1,4 @@
-function obj = calc_vola_spread(option,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,valuation_date,path_static)
+function obj = calc_vola_spread(option,valuation_date,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,path_static)
     obj = option;
     if ( nargin < 5)
         error('Error: No discount curve, vola surface or underlying set. Aborting.');

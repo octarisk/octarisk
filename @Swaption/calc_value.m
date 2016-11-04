@@ -1,4 +1,4 @@
-function obj = calc_value(swaption,value_type,valuation_date,discount_curve,tmp_vola_surf_obj,vola_riskfactor,leg_fixed_obj,leg_float_obj)
+function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_vola_surf_obj,vola_riskfactor,leg_fixed_obj,leg_float_obj)
     obj = swaption;
     if ( nargin < 4)
         error('Error: No  discount curve or vola surface set. Aborting.');

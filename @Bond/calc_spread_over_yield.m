@@ -1,4 +1,4 @@
-function s = calc_spread_over_yield (bond,discount_curve,valuation_date)
+function s = calc_spread_over_yield (bond,valuation_date,discount_curve)
    s = bond;
    if ( nargin == 2)
         valuation_date = datestr(today);

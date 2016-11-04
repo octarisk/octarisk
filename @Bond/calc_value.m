@@ -1,10 +1,10 @@
-function obj = calc_value(bond,valuation_date,discount_curve,value_type)
+function obj = calc_value(bond,valuation_date,value_type,discount_curve)
   obj = bond;
    if ( nargin < 3)
-        error('Error: No  discount curve set. Aborting.');
+        error('No value_type set. [stress,1d,10d,...]');
    end
    if ( nargin < 4)
-        error('No value_type set. [stress,1d,10d,...]');
+        error('Error: No  discount curve set. Aborting.');
    end
 
     % Get discount curve nodes and rate

@@ -85,9 +85,9 @@ end
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[365,1095,1825],'rates_base',[-0.00519251,-0.00508595,-0.00367762],'method_interpolation','linear');
 %! c = c.set('rates_stress',[-0.00519251,-0.00508595,-0.00367762;-0.00519251,-0.00508595,-0.00367762;-0.00519251,-0.00508595,-0.00367762]);
-%! b = b.calc_value('31-Dec-2015',c,'base');
+%! b = b.calc_value('31-Dec-2015','base',c);
 %! b = b.rollout('stress','31-Dec-2015');
-%! b = b.calc_value('31-Dec-2015',c,'stress');
+%! b = b.calc_value('31-Dec-2015','stress',c);
 %! assert(b.getValue('stress'),[101.810615897273;101.810615897273;101.810615897273],0.0000001); 
                                                                                                                       
 %!test 
@@ -103,10 +103,10 @@ end
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[0.01,0.04],'method_interpolation','monotone-convex');
 %! c = c.set('rates_stress',[0.02,0.05;0.005,0.014]);
-%! b = b.calc_spread_over_yield(c,'31-Mar-2016');
+%! b = b.calc_spread_over_yield('31-Mar-2016',c);
 %! assert(b.soy,-0.00274310399175057,0.00001);
 %! b = b.set('soy',0.00);
-%! b = b.calc_value('31-Mar-2016',c,'base');
+%! b = b.calc_value('31-Mar-2016','base',c);
 %! b = b.calc_sensitivities('31-Mar-2016',c);
 %! assert(b.getValue('base'),99.1420775289364,0.00001);
 %! assert(b.get('convexity'),64.1806456611515,0.00001);
@@ -114,7 +114,7 @@ end
 %! assert(b.get('eff_duration'),7.67144764167465,0.00001);
 %! assert(b.get('mac_duration'),7.66223670737639,0.00001);
 %! b = b.rollout('stress','31-Mar-2016');
-%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! b = b.calc_value('31-Mar-2016','stress',c);
 %! assert(b.getValue('stress'),[91.8547937772494;118.8336876898364],0.0000001); 
 
 %!test 
@@ -125,7 +125,7 @@ end
 %! b = b.rollout('base','31-Dec-2015');
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015],'rates_base',[0.00010026,0.00010027,0.00010027,0.00010014,0.00010009,0.00096236,0.00231387,0.00376975,0.005217,0.00660956,0.00791501,0.00910955,0.01018287],'method_interpolation','linear');
-%! b = b.calc_value('31-Dec-2015',c,'base');
+%! b = b.calc_value('31-Dec-2015','base',c);
 %! assert(b.getValue('base'),105.619895060083,0.0000001)
 %! b = b.calc_sensitivities('31-Mar-2016',c);
 %! assert(b.get('last_coupon_date'),-52);
@@ -151,9 +151,9 @@ end
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[30,90,180,365,730],'rates_base',[0.0019002740,0.0019002740,0.0019002301,0.0019001390,0.001900069],'method_interpolation','linear');
 %! b = b.set('clean_value_base',99.7527,'spread',0.003);
-%! b = b.calc_spread_over_yield(c,'30-Jun-2016');
+%! b = b.calc_spread_over_yield('30-Jun-2016',c);
 %! assert(b.get('soy'), 0.00398785481397732,0.0000001); 
-%! b = b.calc_value('30-Jun-2016',c,'base');
+%! b = b.calc_value('30-Jun-2016','base',c);
 %! assert(b.getValue('base'),99.7917725092950,0.0000001);
 %! b = b.calc_sensitivities('30-Jun-2016',c,r);
 %! assert(b.get('convexity'),0.558796396962633,0.0000001);
@@ -215,8 +215,8 @@ end
 %! s = s.set('strike',0.0153,'multiplier',100,'sub_type','SWAPT_EUR_PAY','model','normal','tenor',10);
 %! s = s.set('use_underlyings',false);
 %! d = Riskfactor();     
-%! s = s.calc_value('base','31-Mar-2016',r,v,d);
-%! s = s.calc_value('stress','31-Mar-2016',r,v,d);
+%! s = s.calc_value('31-Mar-2016','base',r,v,d);
+%! s = s.calc_value('31-Mar-2016','stress',r,v,d);
 %! assert(s.getValue('base'),7.66316612096985,0.0000001);
 %! assert(s.getValue('stress'),7.66316612096985,0.0000001);
 % %! s = s.set('value_base',8.000);
@@ -235,11 +235,11 @@ end
 % %! s = Swaption();
 % %! s = s.set('maturity_date','31-Mar-2018');
 % %! s = s.set('strike',0.0175,'multiplier',100);
-% %! s = s.calc_value('base','31-Mar-2016',c,v,r);
+% %! s = s.calc_value('31-Mar-2016','base',c,v,r);
 % %! assert(s.getValue('base'),0.89117199789300,0.0000001);
 % %! s = s.set('value_base',0.9069751298);
 % %! s = s.calc_vola_spread('31-Mar-2016',c,v,r);
-% %! s = s.calc_value('base','31-Mar-2016',c,v,r);
+% %! s = s.calc_value('31-Mar-2016','base',c,v,r);
 % %! assert(s.getValue('base'),0.906975102470711,0.00001);
 
 %!test
@@ -256,12 +256,12 @@ end
 %! o = Option();
 %! o = o.set('maturity_date','29-Mar-2026');
 %! o = o.set('strike',384.7481,'multiplier',1);
-%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
 %! assert(o.getValue('base'),71.4875735979,0.0000001);
 %! o = o.set('value_base',70.00);
-%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
 %! assert(o.getValue('base'),70.000,0.001);
-%! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_greeks('31-Mar-2016','base',i,r,c,v);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing European Barrier Option Object\n');
@@ -278,15 +278,15 @@ end
 %! o = o.set('maturity_date','30-Sep-2016','sub_Type','OPT_BAR_C');
 %! o = o.set('strike',90,'multiplier',1,'div_yield',0.04,'upordown','D','outorin','in');
 %! o = o.set('barrierlevel',95,'rebate',3);
-%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
 %! assert(o.getValue('base'),7.77203592837206,0.0000001);
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.2200);
 %! v = v.set('type','INDEX');
-%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
 %! assert(o.get('vola_spread'),0.030000,0.00001);
-%! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_greeks('31-Mar-2016','base',i,r,c,v);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Asian Geometric Continuous Averaging Option Object\n');
@@ -303,10 +303,10 @@ end
 %! o = o.set('id','Asian_Geometric_Continuous','maturity_date','30-Jun-2016','sub_Type','OPT_ASN_P');
 %! o = o.set('strike',85,'multiplier',1,'div_yield',0.03,'averaging_type','rate','averaging_rule','geometric');
 %! o = o.set('averaging_monitoring','continuous');
-%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
 %! assert(o.getValue('base'),4.69226159911852,0.000001);
 %! o = o.set('value_base',4.900);
-%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
 %! assert(o.get('vola_spread'),0.0288927625504014,0.00001);
 
 %!test
@@ -324,12 +324,12 @@ end
 %! o = o.set('id','Asian_Arithmetic_Continuous','maturity_date','30-Jun-2016','sub_Type','OPT_ASN_P');
 %! o = o.set('strike',85,'multiplier',1,'div_yield',0.03,'averaging_type','rate','averaging_rule','arithmetic');
 %! o = o.set('averaging_monitoring','continuous');
-%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
 %! assert(o.getValue('base'),5.12741689918977,0.000001);
 %! o = o.set('value_base',5.00);
-%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
 %! assert(o.get('vola_spread'),-0.0241361316761741,0.00001);
-%! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_greeks('31-Mar-2016','base',i,r,c,v);
 %! assert(o.get('theo_delta'),-0.857787632035219,0.00001);
 %! assert(o.get('theo_gamma'),0.0519774521673497,0.00001);
 %! assert(o.get('theo_vega'),0.0486623709116500,0.00001);
@@ -352,21 +352,21 @@ end
 %! o = o.set('maturity_date','29-Mar-2026','currency','USD','timesteps_size',5,'willowtree_nodes',30);
 %! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
 %! o = o.set('pricing_function_american','Willowtree');
-%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
 %! assert(o.getValue('base'),123.043,0.001);
 %! o = o.set('value_base',100);
-%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
 %! assert(o.getValue('base'),100.000,0.001);
 %! o = Option();
 %! o = o.set('maturity_date','29-Mar-2026','currency','USD');
 %! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
 %! o = o.set('pricing_function_american','Bjsten');
-%! o = o.calc_value('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
 %! assert(o.getValue('base'),122.2909543913,0.0000001);
 %! o = o.set('value_base',100);
-%! o = o.calc_vola_spread(i,r,c,v,'31-Mar-2016');
+%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
 %! assert(o.getValue('base'),100.000,0.0001);
-%! o = o.calc_greeks('base',i,r,c,v,'31-Mar-2016');
+%! o = o.calc_greeks('31-Mar-2016','base',i,r,c,v);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Debt Object\n');
@@ -450,11 +450,11 @@ end
 %!                     -3.54135400000000e-003,-2.73938000000000e-003,-2.04319200000000e-003,-1.45285700000000e-003, ...
 %!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
 %!         'method_interpolation','linear');
-%! b = b.calc_spread_over_yield(c,'31-Mar-2016');
+%! b = b.calc_spread_over_yield('31-Mar-2016',c);
 %! assert(b.get('accrued_interest'),0.595890411,0.000001);
 %! assert(b.get('soy'),-0.003716422004,0.000001);
-%! b = b.calc_value('31-Mar-2016',c,'base');
-%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! b = b.calc_value('31-Mar-2016','base',c);
+%! b = b.calc_value('31-Mar-2016','stress',c);
 %! assert(b.getValue('base'),114.376890411,0.00001);
 %! assert(b.getValue('stress'),119.70024104,0.00001);
 %! f = Forward();
@@ -482,11 +482,11 @@ end
 %!                     -3.54135400000000e-003,-2.73938000000000e-003,-2.04319200000000e-003,-1.45285700000000e-003, ...
 %!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
 %!         'method_interpolation','linear');
-%! b = b.calc_spread_over_yield(c,'31-Mar-2016');
+%! b = b.calc_spread_over_yield('31-Mar-2016',c);
 %! assert(b.get('accrued_interest'),3.5267123288,0.0000001);
 %! assert(b.get('soy'),-0.003158478713,0.00001);
-%! b = b.calc_value('31-Mar-2016',c,'base');
-%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! b = b.calc_value('31-Mar-2016','base',c);
+%! b = b.calc_value('31-Mar-2016','stress',c);
 %! assert(b.getValue('base'),175.53471232881,0.00005);
 %! assert(b.getValue('stress'),201.6005801229,0.00005);
 %! f = Forward();
@@ -538,12 +538,12 @@ end
 %!                     -3.54135400000000e-003,-2.73938000000000e-003,-2.04319200000000e-003,-1.45285700000000e-003, ...
 %!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
 %!         'method_interpolation','linear');
-%! b = b.calc_spread_over_yield(c,'31-Mar-2016');
+%! b = b.calc_spread_over_yield('31-Mar-2016',c);
 %! assert(b.get('accrued_interest'),38229.5054644799,0.00001);
 %! assert(b.get('soy'),0.018682087543,0.00001);
-%! b = b.calc_value('31-Mar-2016',c,'base');
+%! b = b.calc_value('31-Mar-2016','base',c);
 %! assert(b.getValue('base'),34752597.42,10);
-%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! b = b.calc_value('31-Mar-2016','stress',c);
 %! assert(b.getValue('stress'),36027871.49,10);
 
 %!test 
@@ -569,9 +569,9 @@ end
 %! b = b.set('maturity_date','01-May-2021','notional',1,'compounding_type','simple','issue_date','01-May-2001','day_count_convention','act/365','outstanding_balance',0.00503653);
 %! b = b.set('sub_type','FAB','fixed_annuity',1,'prepayment_type','full','prepayment_source','curve','prepayment_flag',1,'prepayment_rate',0.06);
 %! b = b.rollout('base','31-Mar-2016',psa,v,r);
-%! b = b.calc_value('31-Mar-2016',c,'base');
+%! b = b.calc_value('31-Mar-2016','base',c);
 %! b = b.rollout('stress','31-Mar-2016',psa,v,r);
-%! b = b.calc_value('31-Mar-2016',c,'stress');
+%! b = b.calc_value('31-Mar-2016','stress',c);
 %! base_value = b.getValue('base');
 %! assert(b.getValue('base'),0.00570177978722126,0.000000001);
 %! stress_value = b.getValue('stress');
@@ -604,14 +604,14 @@ end
 %! s = s.set('strike',0.045,'multiplier',1,'sub_type','SWAPT_EUR_PAY','model','normal','tenor',10);
 %! s = s.set('und_fixed_leg','SWAP_FIXED','und_floating_leg','SWAP_FLOAT','use_underlyings',true);
 %! d = Riskfactor();     
-%! s = s.calc_value('base','31-Mar-2016',r,v,d,fix,float);
+%! s = s.calc_value('31-Mar-2016','base',r,v,d,fix,float);
 %! assert(s.getValue('base'),642.6867193851,0.00001);
-%! s = s.calc_value('stress','31-Mar-2016',r,v,d,fix,float);
+%! s = s.calc_value('31-Mar-2016','stress',r,v,d,fix,float);
 %! stressed_value = s.getValue('stress');
 %! assert(stressed_value(2),827.6726713515,0.00001);
 %! s = s.set('value_base',650.0);
 %! s = s.calc_vola_spread('31-Mar-2016',r,v,d,fix,float);
-%! s = s.calc_value('base','31-Mar-2016',r,v,d,fix,float);
+%! s = s.calc_value('31-Mar-2016','base',r,v,d,fix,float);
 %! assert(s.getValue('base'),650.000,0.0001);
 
 %!test 
