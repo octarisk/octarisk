@@ -167,6 +167,48 @@ end
 %! assert(b.get('mac_duration'),0.747367046218197,0.0000001);
 %! assert(b.get('spread_duration'),0.747374010847449,0.0000001)
 
+%!test 
+%! fprintf('HOLD ON...\n');
+%! fprintf('\tdoc_instrument:\tPricing Stochastic Cash Flow Object\n');
+%! b = Bond();
+%! b = b.set('cf_dates',[365,730],'stochastic_riskfactor','RF_TEST','stochastic_surface','SURF_TEST');
+%! b = b.set('sub_type','STOCHASTIC','stochastic_rf_type','uniform');
+%! r = Riskfactor();
+%! r = r.set('value_base',0.5,'scenario_stress',[0.05;0.50;0.95],'model','BM');
+%! value_dates = [365,730];
+%! value_quantile = [0.1,0.5,0.9];
+%! value_matrix = [90,91;100,100;110,111];
+%! v = Surface();
+%! v = v.set('axis_x',value_dates,'axis_x_name','DATE','axis_y',value_quantile,'axis_y_name','QUANTILE');
+%! v = v.set('values_base',value_matrix);
+%! v = v.set('type','STOCHASTIC');
+%! b = b.rollout('base',r,v);
+%! b = b.rollout('stress',r,v);
+%! assert(b.getCF('base'),[100,100]);
+%! c = Curve();
+%! c = c.set('id','EUR-SWAP','nodes',[365,730], 'rates_base',[0.01,0.02], 'rates_stress',[0.03,0.04;0.01,0.02;0.005,0.01],'method_interpolation','linear');
+%! b = b.calc_value('31-Mar-2016','base',c);
+%! assert(b.getValue('base'),195.083927290149,0.0000001);
+
+
+%!test 
+%! fprintf('HOLD ON...\n');
+%! fprintf('\tdoc_instrument:\tPricing Stochastic Value Object\n');
+%! r = Riskfactor();
+%! r = r.set('value_base',0.5,'scenario_stress',[0.3;0.50;0.7],'model','BM');
+%! value_x = 0;
+%! value_quantile = [0.1,0.5,0.9];
+%! value_matrix = [90;100;110];
+%! v = Surface();
+%! v = v.set('axis_x',value_x,'axis_x_name','DATE','axis_y',value_quantile,'axis_y_name','QUANTILE');
+%! v = v.set('values_base',value_matrix);
+%! v = v.set('type','STOCHASTIC');
+%! s = Stochastic();
+%! s = s.set('sub_type','STOCHASTIC','stochastic_rf_type','uniform','t_degree_freedom',10);
+%! s = s.calc_value('31-Mar-2016','base',r,v);
+%! s = s.calc_value('31-Mar-2016','stress',r,v);
+%! assert(s.getValue('stress'),[95;100;105]);
+
 %!test
 %! fprintf('\tdoc_instrument:\tPricing EQ Forward Object\n');
 %! c = Curve();

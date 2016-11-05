@@ -226,7 +226,7 @@ elseif (strcmpi(tmp_type,'forward') )
         forward
     end    
 % Equity Valuation: Sensitivity based Approach       
-elseif ( strcmpi(tmp_type,'sensitivity') == 1 )
+elseif ( strcmpi(tmp_type,'sensitivity'))
 tmp_delta = 0;
 tmp_shift = 0;
 % Using sensitivity class
@@ -267,7 +267,7 @@ tmp_shift = 0;
     ret_instr_obj = sensi;
 
 % Synthetic Instrument Valuation: synthetic value is linear combination of underlying instrument values      
-elseif ( strcmpi(tmp_type,'synthetic') == 1 )
+elseif ( strcmpi(tmp_type,'synthetic'))
     % Using Synthetic class
     synth = instr_obj;
         
@@ -302,7 +302,18 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 if ( first_eval == 0)
                     bond = bond.rollout('base',tmp_ref_object,valuation_date);
                 end
-                bond = bond.rollout(scenario,tmp_ref_object,valuation_date);         
+                bond = bond.rollout(scenario,tmp_ref_object,valuation_date);  
+        elseif( strcmpi(tmp_sub_type,'STOCHASTIC') )       % Stochastic CF instrument
+             %get riskfactor object and surface object:
+                tmp_riskfactor   = bond.get('stochastic_riskfactor');
+                tmp_rf_obj 	     = get_sub_object(curve_struct, tmp_riskfactor);
+                tmp_surface      = bond.get('stochastic_surface');
+                tmp_surf_obj 	 = get_sub_object(riskfactor_struct, tmp_surface);
+            % rollout cash flows for all scenarios
+                if ( first_eval == 0)
+                    bond = bond.rollout('base',tmp_rf_obj,tmp_surf_obj);
+                end
+                bond = bond.rollout(scenario,tmp_rf_obj,tmp_surf_obj); 
         end 
     % c) Calculate spread over yield (if not already run...)
         if ( bond.get('calibration_flag') == 0 )
@@ -321,9 +332,22 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         bond = bond.calc_value (valuation_date,scenario,tmp_curve_object);  
     % e) store bond object:
     ret_instr_obj = bond;
+
+elseif ( strcmpi(tmp_type,'stochastic'))
+    % Using Stochastic class
+    stoch = instr_obj;
+    %get riskfactor object and surface object:
+    tmp_riskfactor   = bond.get('stochastic_riskfactor');
+    tmp_rf_obj 	     = get_sub_object(curve_struct, tmp_riskfactor);
+    tmp_surface      = bond.get('stochastic_curve');
+    tmp_surf_obj 	 = get_sub_object(riskfactor_struct, tmp_surface);
+        
+    stoch = stoch.calc_value(valuation_date,scenario,tmp_rf_obj,tmp_surf_obj);
+    % store Stochastic object:
+    ret_instr_obj = stoch;
     
 % Cash  Valuation: Cash is riskless
-elseif ( strcmpi(tmp_type,'cash') == 1 ) 
+elseif ( strcmpi(tmp_type,'cash')) 
     % Using cash class
     cash = instr_obj;
     cash = cash.calc_value(scenario,scen_number);

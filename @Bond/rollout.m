@@ -63,6 +63,35 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     ret_values = s.get('cf_values');
     accr_int = 0.0;
     last_coupon_date = 0.0;
+    
+  % type stochastic -> get cash flows from underlying surface and risk factor quantiles
+  elseif ( strcmpi(s.sub_type,'STOCHASTIC') )
+    % arg1: riskfactor random variable -> cashflows drawn from surface
+    % arg2: surface containing all cashflows per scenario and cf_date
+    % calculate cash flow values from risk factor and surface
+    rvec = arg1.getValue(value_type); 
+    % distinguish between uniform and normal distributed risk factor values
+    if ( strcmpi(s.stochastic_rf_type,'normal') )
+        rvec = normcdf(rvec);   % convert normal(0,1) distributed random number
+                                % to [0,1] uniform distributed number
+    elseif ( strcmpi(s.stochastic_rf_type,'t') )
+        df = s.t_degree_freedom; % degree of freedom for t distributed risk factor
+        rvec = tcdf(rvec,df);   % convert t(df) distributed random number
+                                % to [0,1] uniform distributed number
+    end
+    % uniform distribution of riskfactor -> do nothing
+       
+    % get all cash flow values from risk factor and underlying matrix surface
+    ret_dates = s.get('cf_dates');
+    ret_values = zeros(length(rvec),length(ret_dates));
+    for ii = 1:1:length(ret_dates)
+      tmp_cf_date = ret_dates(ii);
+      tmp_cf_values = arg2.getValue(tmp_cf_date,rvec);
+      ret_values(:,ii) = tmp_cf_values;
+    end
+    accr_int = 0.0;
+    last_coupon_date = 0.0;
+    
   % all other bond types (like FRB etc.)
   else  
     if ( nargin < 3)

@@ -86,7 +86,7 @@ function y = getValue (surface, xx,yy,zz)
           end
         end
         
-    % #################      A) type index      ###################################
+    % #################      B) type index      ###################################
     elseif ( strcmpi(s.type,'INDEX'))
         if (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0  )         %second case: object is surface
           if ( strcmpi(s.axis_x_name,'TERM') && strcmpi(s.axis_y_name,'MONEYNESS')  )
@@ -112,7 +112,38 @@ function y = getValue (surface, xx,yy,zz)
             error('ERROR: Surface Type Index has no surface defined');
         end
         
-    % ###########      A) type prepayment procedure      #######################
+    % #################      C) type stochastic      ###################################
+    elseif ( strcmpi(s.type,'STOCHASTIC'))
+        if (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0  )         %second case: object is surface
+          if ( strcmpi(s.axis_x_name,'DATE') && strcmpi(s.axis_y_name,'QUANTILE')  )
+            xx_structure = s.axis_x;    % first row equals structure of axis xx
+            % increase x axis value by 1 if value is 0 
+            % (xx_structure has to be strictly monotonic)
+            if ( length(xx_structure) == 1 && xx_structure == 0) 
+                xx_structure = 1;
+            end
+            yy_structure = s.axis_y;    % first column equals structure of axis yy
+
+            vola_matrix = s.values_base;                % Matrix without first row and first column contains zz values
+
+            % expand vectors and matrizes for constant extrapolation 
+            % (add additional time steps and moneynesses, duplicate rows and cols)
+            xx_structure = [0,xx_structure,21900];
+            yy_structure = [0,yy_structure,1000000];
+            vola_matrix = horzcat(vola_matrix,vola_matrix(:,end));
+            vola_matrix = horzcat(vola_matrix(:,1),vola_matrix);
+            vola_matrix = vertcat(vola_matrix,vola_matrix(end,:));
+            vola_matrix = vertcat(vola_matrix(1,:),vola_matrix);                 
+            % interpolate on surface term / moneyness
+            y = interp2(xx_structure,yy_structure,vola_matrix,xx,yy,s.method_interpolation);
+           else
+            error('ERROR: Assuming surface for STOCHASTIC values with DATE, QUANTILE, got: %s, %s',s.axis_x_name,s.axis_y_name);
+          end  
+        else
+            error('ERROR: Surface Type Index has no surface defined');
+        end
+        
+    % ###########      D) type prepayment procedure      #######################
     % prepayment procedure: surface coupon rate / absolute ir shock 
     elseif ( strcmpi(s.type,'PREPAYMENT'))
         if (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0  )         %second case: object is surface

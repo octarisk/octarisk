@@ -33,17 +33,21 @@ classdef Bond < Instrument
         calibration_flag = 0;   % flag set to true, if calibration 
                                 %(mark to market) successful
         % variables required for fixed amortizing bonds with prepayments
-        prepayment_type          = 'full';  % ['full','default']
-        prepayment_source        = 'curve'; % ['curve','rate']
-        prepayment_flag          = false;   % toggle prepayment on and off
-        prepayment_rate          = 0.00;    % constant prepayment rate in case
+        prepayment_type         = 'full';  % ['full','default']
+        prepayment_source       = 'curve'; % ['curve','rate']
+        prepayment_flag         = false;   % toggle prepayment on and off
+        prepayment_rate         = 0.00;    % constant prepayment rate in case
                                             % no prepayment curve is specified
-        prepayment_curve         = 'PSA-BASE';  % specify prepayment curve
-        clean_value_base = 0; % BOOL: value_base is clean without accr interest
-        outstanding_balance = 0.0;  % outstanding balance for FAB only
-        psa_factor_term = [365,1825];   % factor terms for abs_ir_shock calc
+        prepayment_curve        = 'PSA-BASE';  % specify prepayment curve
+        clean_value_base        = 0; % BOOL: value_base is clean without accr interest
+        outstanding_balance     = 0.0;  % outstanding balance for FAB only
+        psa_factor_term         = [365,1825];   % factor terms for abs_ir_shock calc
         use_outstanding_balance = 0;    % BOOL: use outstanding balance at 
                                         % valuation date for payments
+        stochastic_riskfactor   = 'RF_MATRIX';    % used for stochastic cf
+        stochastic_surface      = 'SURFACE_MATRIX';  % used for stochastic cf
+        stochastic_rf_type      = 'normal';       % either t, normal or univariate
+        t_degree_freedom        = 120;  % degrees of freedom for t distribution
     end
    
     properties (SetAccess = private)
@@ -121,6 +125,14 @@ classdef Bond < Instrument
          fprintf('principal_payment: %f\n',b.principal_payment); 
          fprintf('use_principal_pmt: %d\n',b.use_principal_pmt);
          fprintf('use_outstanding_balance: %d\n',b.use_outstanding_balance);
+         if ( strcmpi(b.sub_type,'STOCHASTIC'))
+            fprintf('stochastic_riskfactor: %s\n',b.stochastic_riskfactor); 
+            fprintf('stochastic_surface: %s\n',b.stochastic_surface); 
+            fprintf('stochastic_rf_type: %s\n',b.stochastic_rf_type); 
+            if ( strcmpi(b.stochastic_rf_type,'t'))
+                fprintf('t_degree_freedom: %d\n',b.t_degree_freedom); 
+            end
+         end
          %fprintf('spot_value: %f %s\n',b.spot_value,b.currency);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
@@ -176,8 +188,8 @@ classdef Bond < Instrument
          if ~(strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FRN') ...
                 || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') ...
                 || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') ...
-                || strcmpi(sub_type,'ZCB'))
-            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED or SWAP_FLOATING: %s',sub_type)
+                || strcmpi(sub_type,'ZCB')  || strcmpi(sub_type,'STOCHASTIC'))
+            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED, STOCHASTIC or SWAP_FLOATING: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
