@@ -64,7 +64,7 @@ else        % Normal Model
     elseif ( strcmpi(value_type,'base'))
         imp_vola_shock  = impl_vola_spread + indexvol_base;
     else     % all MC scenarios use max condition
-        imp_vola_shock  = indexvol_base + impl_vola_atm + impl_vola_spread;  
+        imp_vola_shock  = indexvol_base .+ impl_vola_atm + impl_vola_spread;  
     end
 end
         

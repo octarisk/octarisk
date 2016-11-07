@@ -189,6 +189,7 @@ input_filename_seed			= 'random_seed.dat';
 % set filenames for vola surfaces
 input_filename_vola_index = 'vol_index_';
 input_filename_vola_ir = 'vol_ir_';
+input_filename_surf_stoch = 'surf_stochastic_';
 input_filename_matrix = 'matrix_';
 
 % set general variables
@@ -394,11 +395,11 @@ curve_struct=struct();
 % b) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 persistent surface_struct;
 surface_struct=struct();
-[surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir);
-% for kk = 1  : 1 : length(surface_struct)
-   % surface_struct(kk).id
-   % surface_struct(kk).object
-% end
+[surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir,input_filename_surf_stoch);
+for kk = 1  : 1 : length(surface_struct)
+   surface_struct(kk).id
+   surface_struct(kk).object
+end
 % c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
 index_struct=struct();

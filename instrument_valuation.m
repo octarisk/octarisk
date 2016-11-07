@@ -179,7 +179,7 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
     % Using Swaption class
     swaption = instr_obj;
     % Get relevant objects
-    tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, 'RF_VOLA_EQ_DE'); %swaption.get('vola_surface'));
+    tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, swaption.get('vola_surface'));
     tmp_rf_curve_obj         = get_sub_object(curve_struct, swaption.get('discount_curve'));
     tmp_vola_surf_obj        = get_sub_object(surface_struct, swaption.get('vola_surface'));
     % Calibration of swaption vola spread            
@@ -190,7 +190,24 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
     swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
     % store swaption object:
     ret_instr_obj = swaption;
-        
+
+% European CapFloor Valuation according to Back76 or Bachelier Model 
+elseif ( strfind(tmp_type,'capfloor') > 0 )    
+    % Using CapFloor class
+    capfloor = instr_obj;
+    % Get relevant objects
+    tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, capfloor.get('vola_surface'));
+    tmp_rf_curve_obj         = get_sub_object(curve_struct, capfloor.get('discount_curve'));
+    tmp_vola_surf_obj        = get_sub_object(surface_struct, capfloor.get('vola_surface'));
+    % TODO: Calibration of capfloor vola spread            
+    %if ( capfloor.get('vola_spread') == 0 )
+    %    capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
+    %end
+    capfloor = capfloor.rollout(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
+    capfloor = capfloor.calc_value(valuation_date,scenario,tmp_rf_curve_obj);
+    % store capfloor object:
+    ret_instr_obj = capfloor;
+    
 %Equity Forward valuation
 elseif (strcmpi(tmp_type,'forward') )
     % Using forward class

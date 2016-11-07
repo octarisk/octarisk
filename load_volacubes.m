@@ -11,14 +11,15 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{surface_struct} @var{vola_failed_cell}] =} load_volacubes(@var{surface_struct}, @var{path_mktdata}, @var{input_filename_vola_index}, @var{input_filename_vola_ir})
+%# @deftypefn {Function File} {[@var{surface_struct} @var{vola_failed_cell}] =} load_volacubes(@var{surface_struct}, @var{path_mktdata}, @var{input_filename_vola_index}, @var{input_filename_vola_ir}, @var{input_filename_vola_stochastic})
 %# Load data from mktdata volatility surfaces / cubes specification files and 
 %# generate a struct with parsed data. Store all stresstests in provided struct 
 %# and return the final struct and a cell containing the failed volatility ids.
 %# @end deftypefn
 
 function [surface_struct vola_failed_cell] = load_volacubes(surface_struct, ...
-                  path_mktdata,input_filename_vola_index,input_filename_vola_ir)
+                  path_mktdata,input_filename_vola_index,input_filename_vola_ir, ...
+                  input_filename_surf_stochastic)
 
 % Get list of all files in mktdata folder
 tmp_list_files = dir(path_mktdata);
@@ -43,8 +44,9 @@ vola_failed_cell = {};
 for ii = 1 : 1 : length(tmp_list_files)
     tmp_filename = tmp_list_files( ii ).name;
     try % try to find a match between file in mktdata folder and provided string 
-      % for INDEX and IR volatilities
-      % vola for index found  
+    
+      % for INDEX, STOCHASTIC and IR volatilities
+      % index found
         if ( regexp(tmp_filename,input_filename_vola_index) == 1)      
             tmp_len_struct = length(surface_struct);
             M = load(strcat(path_mktdata,'/',tmp_filename));
@@ -72,7 +74,37 @@ for ii = 1 : 1 : length(tmp_list_files)
                                 'axis_y',yy_structure,'values_base',vola_matrix);
             surface_struct( tmp_len_struct + 1).id = tmp_id;
             surface_struct( tmp_len_struct + 1).object = tmp_surface_object;
-      % vola for ir found  
+            
+      % stochastic found  
+        elseif ( regexp(tmp_filename,input_filename_surf_stochastic) == 1)      
+            tmp_len_struct = length(surface_struct);
+            M = load(strcat(path_mktdata,'/',tmp_filename));
+            % Get axis values and matrix: 
+            % Format: 3 columns: xx yy value [moneyness term impl_vola]
+            xx_structure = unique(M(:,1))';
+            yy_structure = unique(M(:,2))';
+            % dimensionality of matrix has to be swapped XX <-> YY
+            vola_matrix = zeros(length(yy_structure),length(xx_structure));   
+            % loop through all rows and store values in vola_matrix
+            for ii = 1 : 1 : rows(M)
+                index_xx = find(xx_structure==M(ii,1));
+                index_yy = find(yy_structure==M(ii,2));
+                vola_matrix(index_yy,index_xx) = M(ii,3);
+            end
+            % Generate object and store data
+            % remove first string identifying file
+            tmp_id = strrep(tmp_filename,input_filename_surf_stochastic,''); 
+            tmp_id = strrep(tmp_id,'.dat',''); % remove file ending
+            tmp_surface_object = Surface(tmp_id);
+            tmp_surface_object = tmp_surface_object.set('type','STOCHASTIC', ...
+                                            'description','STOCHASTIC Vola Surface');     
+            tmp_surface_object = tmp_surface_object.set('axis_x_name','DATE', ...
+                                'axis_y_name','QUANTILE','axis_x',xx_structure, ...
+                                'axis_y',yy_structure,'values_base',vola_matrix);
+            surface_struct( tmp_len_struct + 1).id = tmp_id;
+            surface_struct( tmp_len_struct + 1).object = tmp_surface_object;
+            
+      % ir found  
         elseif ( regexp(tmp_filename,input_filename_vola_ir) == 1)       
             tmp_len_struct = length(surface_struct);
             M = load(strcat(path_mktdata,'/',tmp_filename));

@@ -172,7 +172,7 @@ end
 %! fprintf('\tdoc_instrument:\tPricing Stochastic Cash Flow Object\n');
 %! b = Bond();
 %! b = b.set('cf_dates',[365,730],'stochastic_riskfactor','RF_TEST','stochastic_surface','SURF_TEST');
-%! b = b.set('sub_type','STOCHASTIC','stochastic_rf_type','uniform');
+%! b = b.set('sub_type','STOCHASTICCF','stochastic_rf_type','uniform');
 %! r = Riskfactor();
 %! r = r.set('value_base',0.5,'scenario_stress',[0.05;0.50;0.95],'model','BM');
 %! value_dates = [365,730];

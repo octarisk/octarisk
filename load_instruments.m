@@ -80,7 +80,15 @@ tmp_list_files = dir(path); % load all files of directory path into cell
             tmp_list_files(ii) = [];                            % remove SWAPT entry           
         end
     end
-  % 2. move OPTION to last entry in tmp_filelist
+  % 2. move CAPFLOOR to last entry in tmp_filelist
+    for ii = 1 : 1 : length(tmp_list_files)
+        tmp_filename = tmp_list_files( ii ).name;
+        if (strcmpi(tmp_filename(1:end-4),'CAPFLOOR'))
+            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append CAPFLOOR entry behind last entry of struct
+            tmp_list_files(ii) = [];                            % remove CAPFLOOR entry           
+        end
+    end
+  % 3. move OPTION to last entry in tmp_filelist
     for ii = 1 : 1 : length(tmp_list_files)
         tmp_filename = tmp_list_files( ii ).name;
         if (strcmpi(tmp_filename(1:end-4),'OPT'))
@@ -88,7 +96,15 @@ tmp_list_files = dir(path); % load all files of directory path into cell
             tmp_list_files(ii) = [];                            % remove OPT entry           
         end
     end
-  % 3. move SYNTHETICs to last entry in tmp_filelist
+  % 4. move FORWARD to last entry in tmp_filelist
+    for ii = 1 : 1 : length(tmp_list_files)
+        tmp_filename = tmp_list_files( ii ).name;
+        if (strcmpi(tmp_filename(1:end-4),'FWD'))
+            tmp_list_files(end + 1 ) = tmp_list_files( ii );    % append FWD entry behind last entry of struct
+            tmp_list_files(ii) = [];                            % remove FWD entry           
+        end
+    end
+  % 5. move SYNTHETICs to last entry in tmp_filelist
     for ii = 1 : 1 : length(tmp_list_files)
         tmp_filename = tmp_list_files( ii ).name;
         if (strcmpi(tmp_filename(1:end-4),'SYNTH'))
@@ -158,9 +174,13 @@ for ii = 1 : 1 : length(tmp_list_files)
                 i = Bond(); 
             elseif ( sum(strcmp(tmp_instrument_type,{'FWD'})) > 0)        % store data in Class Forward
                 i = Forward();  
+            elseif ( sum(strcmp(tmp_instrument_type,{'STOCH'})) > 0)        % store data in Class Stochastic
+                i = Stochastic(); 
+            elseif ( sum(strcmp(tmp_instrument_type,{'CAPFLOOR'})) > 0)        % store data in Class CapFloor
+                i = CapFloor(); 
             elseif ( sum(strcmp(tmp_instrument_type,{'DBT'})) > 0)        % store data in Class Debt
                 i = Debt();  
-             elseif ( sum(strcmp(tmp_instrument_type,{'COM','RET','COM','STK','ALT','SENSI'})) > 0)        % store data in Class Sensitivity Instrument
+            elseif ( sum(strcmp(tmp_instrument_type,{'COM','RET','COM','STK','ALT','SENSI'})) > 0)        % store data in Class Sensitivity Instrument
                 i = Sensitivity();  
             elseif ( sum(strcmp(tmp_instrument_type,{'SYNTH'})) > 0)        % store data in Class Synthetic Instrument
                 i = Synthetic();  

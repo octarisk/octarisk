@@ -65,7 +65,7 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     last_coupon_date = 0.0;
     
   % type stochastic -> get cash flows from underlying surface and risk factor quantiles
-  elseif ( strcmpi(s.sub_type,'STOCHASTIC') )
+  elseif ( strcmpi(s.sub_type,'STOCHASTICCF') )
     % arg1: riskfactor random variable -> cashflows drawn from surface
     % arg2: surface containing all cashflows per scenario and cf_date
     % calculate cash flow values from risk factor and surface
