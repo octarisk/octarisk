@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{adj_rate} @var{adj}] =} calcVolaShock (@var{valuation_date}, @var{model}, @var{r}, @var{sigma}, @var{t1}, @var{t2}, @var{basis}, @var{comp_type})
+%# @deftypefn {Function File} {[@var{adj_rate} @var{adj}] =} calcConvexityAdjustment (@var{valuation_date}, @var{instrument}, @var{r}, @var{sigma}, @var{t1}, @var{t2})
 %#
 %# Return convexity adjustment to a given forward rate with specified forward
 %# start and end dates and forward volatility. @*
@@ -58,6 +58,7 @@ model       = instrument.model;
 % calculate timefactors
 tau = timefactor(valuation_date + t1, valuation_date + t2, basis);
 Tminust = timefactor(valuation_date, valuation_date + t1, basis);
+
     
 % calculate convexity adjustment according to model
 if (strcmpi(model,'Black'))            % Log-Normal model 
@@ -75,32 +76,16 @@ if (strcmpi(model,'Black'))            % Log-Normal model
         adj = 0;
     end
 elseif (strcmpi(model,'Normal'))            % Normal model
-    % calculate convexity adjustment for CMS Caps / Floors
-    if (strcmpi(instrument.sub_type,'CAP') || strcmpi(instrument.sub_type,'FLOOR'))
-        K = instrument.strike;
-        if (instrument.CapFlag == true)
-            psi = 1;
-        else
-            psi = -1;
-        end
-        % calculate adjustment according to S. Schlenkrich's approximation of 
-        % "Multi-Curve Convexity", 2015, SSRN 2667405, Appendix A.1, Formula 15
-        adj = psi .* sigma.^2 .* tau .*  normcdf( psi .* ( r - K ) ./ ...
-                                                    ( sigma .* sqrt(tau)));
-    
-    % calculate convexity adjustment for other instruments (e.g. CMS swaps)
-    else
-       % calculate convexity adjustment according to compounding type
-        if regexpi(comp_type,'cont')
-            adj = 0.5 .* sigma.^2 .* Tminust .* tau;
-        elseif regexpi(comp_type,'disc')
-            adj = 0.5 .* sigma.^2 .* Tminust .* tau .* (tau + 1) ./ (1 + r);
-        elseif  regexpi(comp_type,'simp') || regexpi(comp_type,'smp')
-            adj = sigma.^2 .* Tminust .* tau  ./ (1 + tau .* r);
-        else  % e.g. linear compounding -> interest rate equals tradeable 
-              % linear combination of money and ZCB -> no adjustment required
-            adj = 0;
-        end
+    % calculate convexity adjustment with normal vol instead of lognormal vol
+    if regexpi(comp_type,'cont')
+        adj = 0.5 .* sigma.^2 .* Tminust .* tau;
+    elseif regexpi(comp_type,'disc')
+        adj = 0.5 .* sigma.^2 .* Tminust .* tau .* (tau + 1) ./ (1 + r);
+    elseif  regexpi(comp_type,'simp') || regexpi(comp_type,'smp')
+        adj = sigma.^2 .* Tminust .* tau  ./ (1 + tau .* r);
+    else  % e.g. linear compounding -> interest rate equals tradeable 
+          % linear combination of money and ZCB -> no adjustment required
+        adj = 0;
     end
 else    % all other models: not yet implemented
     adj = 0.0;
@@ -110,6 +95,7 @@ end
 adj_rate = r + adj;
 
 end
+
 
 %!shared i
 %! i = struct();
@@ -138,13 +124,6 @@ end
 %! j.compounding_type = 'disc';
 %!assert(calcConvexityAdjustment('31-Dec-2015',j,0.01000,0.8,1460,1825),0.0102534653465347,0.00000001); 
 
-%!shared n
-%! n = struct();
-%! n.model = 'Normal';
-%! n.basis = 3;
-%! n.sub_type = 'CMS';
-%! n.compounding_type = 'cont';
-%!assert(calcConvexityAdjustment('31-Dec-2015',n,0.01000,0.00555,1460,1825),0.010061605,0.00000001); 
 
 %!shared m
 %! m = struct();
@@ -154,4 +133,4 @@ end
 %! m.strike = 0.01;
 %! m.sub_type = 'Cap';
 %! m.CapFlag = true;
-%!assert(calcConvexityAdjustment('31-Dec-2015',m,0.01000,0.00555,1460,1825),0.01001540125,0.00000001); 
+%!assert(calcConvexityAdjustment('31-Dec-2015',m,0.01000,0.00555,1460,1825),0.0101219900990099,0.00000001); 

@@ -63,6 +63,22 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     ret_values = s.get('cf_values');
     accr_int = 0.0;
     last_coupon_date = 0.0;
+  
+  % type CMS Floating Leg
+  elseif ( strcmpi(s.sub_type,'CMS_FLOATING'))
+    if ( nargin < 6 )
+        error ('rollout for sub_type CMS_FLOATING: expecting valuation_date,curve,vola,vola risk factor objects');
+    end
+    valuation_date  = arg1;
+    curve_object    = arg2;
+    vola_surface    = arg3;
+    vola_rf         = arg4;
+  
+    % call function for generating CF dates and values and accrued_interest
+    [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
+                            value_type, s, curve_object, vola_surface, vola_rf);
+    accr_int = 0.0;
+    last_coupon_date = 0.0;
     
   % type stochastic -> get cash flows from underlying surface and risk factor quantiles
   elseif ( strcmpi(s.sub_type,'STOCHASTICCF') )

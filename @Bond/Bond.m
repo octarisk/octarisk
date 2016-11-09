@@ -32,7 +32,7 @@ classdef Bond < Instrument
         notional_at_end = 1;
         calibration_flag = 0;   % flag set to true, if calibration 
                                 %(mark to market) successful
-        % variables required for fixed amortizing bonds with prepayments
+        % attributes required for fixed amortizing bonds with prepayments
         prepayment_type         = 'full';  % ['full','default']
         prepayment_source       = 'curve'; % ['curve','rate']
         prepayment_flag         = false;   % toggle prepayment on and off
@@ -48,6 +48,13 @@ classdef Bond < Instrument
         stochastic_surface      = 'SURFACE_MATRIX';  % used for stochastic cf
         stochastic_rf_type      = 'normal';       % either t, normal or univariate
         t_degree_freedom        = 120;  % degrees of freedom for t distribution
+        % attributes for CMS Floating and Fixed Legs
+        cms_model               = 'Black'; % volatility model [Black, normal]
+        cms_sliding_term        = 1825; % sliding term of CMS float leg in days
+        cms_term                = 365; % instrument.underlying_term;
+        cms_spread              = 0.0; % instrument.underlying_spread;
+        cms_comp_type           = 'simple'; % CMS compounding type
+        vola_spread             = 0.0;
     end
    
     properties (SetAccess = private)
@@ -125,7 +132,14 @@ classdef Bond < Instrument
          fprintf('principal_payment: %f\n',b.principal_payment); 
          fprintf('use_principal_pmt: %d\n',b.use_principal_pmt);
          fprintf('use_outstanding_balance: %d\n',b.use_outstanding_balance);
-         if ( strcmpi(b.sub_type,'STOCHASTIC'))
+         if ( regexpi(b.sub_type,'CMS'))
+            fprintf('cms_model: %s\n',b.cms_model); 
+            fprintf('cms_sliding_term: %s\n',any2str(b.cms_sliding_term)); 
+            fprintf('cms_term: %s\n',any2str(b.cms_term)); 
+            fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
+            fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
+         end        
+         if ( strcmpi(b.sub_type,'STOCHASTICCF'))
             fprintf('stochastic_riskfactor: %s\n',b.stochastic_riskfactor); 
             fprintf('stochastic_surface: %s\n',b.stochastic_surface); 
             fprintf('stochastic_rf_type: %s\n',b.stochastic_rf_type); 
@@ -188,8 +202,9 @@ classdef Bond < Instrument
          if ~(strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FRN') ...
                 || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') ...
                 || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') ...
-                || strcmpi(sub_type,'ZCB')  || strcmpi(sub_type,'STOCHASTICCF'))
-            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED, STOCHASTICCF or SWAP_FLOATING: %s',sub_type)
+                || strcmpi(sub_type,'ZCB')  || strcmpi(sub_type,'STOCHASTICCF') ...
+                || strcmpi(sub_type,'CMS_FLOATING'))
+            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING or CMS_FLOATING: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
