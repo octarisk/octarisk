@@ -10,6 +10,16 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     elseif ( nargin == 4)
         tmp_curve_object = arg1;
         valuation_date = datestr(arg2);
+    elseif ( nargin == 5)
+        tmp_curve_object = arg1;
+        valuation_date = datestr(arg2);
+        vola_surface = arg3;
+        vola_riskfactor = Riskfactor();
+    elseif ( nargin == 6)
+        tmp_curve_object = arg1;
+        valuation_date = datestr(arg2);
+        vola_surface = arg3;
+        vola_riskfactor = arg4;
     end
     
     if ischar(valuation_date)
@@ -17,8 +27,14 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     end
 
     % call function for generating CF dates and values and accrued_interest
-    [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
-                                valuation_date,value_type,s,tmp_curve_object);
+    if ( nargin <= 4)
+        % no vola surface set
+        [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
+                valuation_date,value_type,s,tmp_curve_object);
+    elseif ( nargin > 4)
+        [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
+                valuation_date,value_type,s,tmp_curve_object, vola_surface, vola_riskfactor);
+    end
                                 
   % Fixed Amortizing Bonds                              
   elseif ( strcmpi(s.sub_type,'FAB'))

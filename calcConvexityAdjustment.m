@@ -14,10 +14,12 @@
 %# @deftypefn {Function File} {[@var{adj_rate} @var{adj}] =} calcConvexityAdjustment (@var{valuation_date}, @var{instrument}, @var{r}, @var{sigma}, @var{t1}, @var{t2})
 %#
 %# Return convexity adjustment to a given forward rate with specified forward
-%# start and end dates and forward volatility. @*
+%# start and end dates and forward volatility. For CMS Rate adjustments use
+%# function get_cms_rate. @*
 %# Implementation of log-normal convexity adjustment according to H.P. Deutsch, 
 %# Derivate und Interne Modelle, 4th Edition, Section 14.5 Convexity Adjustment.
-%#
+%# Normal model convexity adjustment just uses absolute volatility (sigma) 
+%# instead of relative volatility (sigma*r).
 %# Input and output variables:
 %# @itemize @bullet
 %# @item @var{valuation_date}: valuation date [required] 
@@ -76,7 +78,7 @@ if (strcmpi(model,'Black'))            % Log-Normal model
         adj = 0;
     end
 elseif (strcmpi(model,'Normal'))            % Normal model
-    % calculate convexity adjustment with normal vol instead of lognormal vol
+    % calculate convexity adjustment with absolute vol instead of relative vol
     if regexpi(comp_type,'cont')
         adj = 0.5 .* sigma.^2 .* Tminust .* tau;
     elseif regexpi(comp_type,'disc')

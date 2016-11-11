@@ -22,7 +22,7 @@ classdef Bond < Instrument
         spread_curve = 'SPREAD_DUMMY';
         spot_value = 0.0;
         ir_shock   = 0.01;      % shock used for calculation of effective duration
-        in_arrears = 0;
+        in_arrears = 0;         % flag: if set to 0, in fine is assumed
         fixed_annuity = 0;      % property only needed for fixed amortizing bond 
                % -> fixed annuity annuity flag (annuity loan or amortizable loan)
         use_principal_pmt = 1;
@@ -49,10 +49,12 @@ classdef Bond < Instrument
         stochastic_rf_type      = 'normal';       % either t, normal or univariate
         t_degree_freedom        = 120;  % degrees of freedom for t distribution
         % attributes for CMS Floating and Fixed Legs
+        convex_adj              = true; % Boolean: use convexity adjustment
+        cms_convex_model        = 'Hull'; % Model for calculating convexity adj.
         cms_model               = 'Black'; % volatility model [Black, normal]
         cms_sliding_term        = 1825; % sliding term of CMS float leg in days
-        cms_term                = 365; % instrument.underlying_term;
-        cms_spread              = 0.0; % instrument.underlying_spread;
+        cms_term                = 365; % term of CMS
+        cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
     end
@@ -138,6 +140,7 @@ classdef Bond < Instrument
             fprintf('cms_term: %s\n',any2str(b.cms_term)); 
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
+            fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
          end        
          if ( strcmpi(b.sub_type,'STOCHASTICCF'))
             fprintf('stochastic_riskfactor: %s\n',b.stochastic_riskfactor); 

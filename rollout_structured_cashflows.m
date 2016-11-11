@@ -332,18 +332,61 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
         [tf dip dib] = timefactor (d1(ii), d2(ii), dcc);
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
-        if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rates
-            % get forward rate from provided curve
+  
+        if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rate
+            payment_date        = t2;
+            % adjust forward start and end date for in fine vs. in arrears
+            if ( instrument.in_arrears == 0)    % in fine
+                fsd  = t1;
+                fed  = t2;
+                timing_adjustment = 1; % no timing adjustment required for in fine
+            else    % in arrears
+                fsd  = t2;
+                fed  = t2 + (t2 - t1);
+            end
+             % get forward rate from provided curve
             forward_rate_curve = get_forward_rate(tmp_nodes,tmp_rates, ...
-                        t1,t2-t1,compounding_type,method_interpolation, ...
+                        fsd,fed-fsd,compounding_type,method_interpolation, ...
                         compounding_freq, dcc, valuation_date, ...
                         comp_type_curve, basis_curve, comp_freq_curve,floor_flag);
+                        
+            % calculate timing adjustment
+            timing_adjustment = 1;
+            if ( instrument.in_arrears == 0)    % in fine
+                fsd  = t1;
+                fed  = t2;
+                timing_adjustment = 1; % no timing adjustment required for in fine
+            else    % in arrears
+                fsd  = t2;
+                fed  = t2 + (t2 - t1);
+                % for in arrears, a timing adjustment is required:
+                if ( isobject(surface))
+                    % get volatility according to moneyness and term
+                    tenor   = fsd; % days until foward start date
+                    term    = fed-fsd; % days of caplet / floorlet
+                    sigma   = calcVolaShock(value_type,instrument,surface, ...
+                                riskfactor,tenor,term,1);
+                    % assuming correlation = 1, forward vola = discount vola
+                    %   and simple compounding, act/365
+                    df_t1_t2 = discount_factor(valuation_date + t1, ...
+                                valuation_date + t2, forward_rate_curve, ...
+                                'simple', 3, comp_freq_curve);
+                    % calculate time factor from issue date to forward start date
+                    tf_t_reset_date = timefactor (d1(1), d1(1) + fsd, dcc);
+                    timing_adjustment = 1 + sigma.^2 .* (1 - df_t1_t2) .* tf_t_reset_date;
+                else
+                    fprintf('WARNING: rollout_structured_cashflows: no timing adjustment for in Arrears instrument can be calculated. No Volatility surface set. \n');
+                    timing_adjustment = 1; % no timing adjustment required for in fine
+                end
+            end
+            % adjust forward rate by timing adjustment
+            forward_rate_curve = forward_rate_curve .* timing_adjustment;
             % calculate final floating cash flows
             if (strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
                 % call function to calculate probability weighted forward rate
                 X = instrument.strike;  % get from strike curve ?!?
                 % calculate timefactor of forward start date
-                tf_fsd = timefactor (valuation_date, valuation_date + t1, dcc);
+                tf_fsd = timefactor (valuation_date, valuation_date + fsd, dcc);
                 % calculate moneyness 
                 if (instrument.CapFlag == true)
                     moneyness_exponent = 1;
@@ -352,15 +395,15 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
                 end
                 moneyness = (forward_rate_curve ./ X) .^ moneyness_exponent;
                 % get volatility according to moneyness and term
-                tenor   = t1; % days until foward start date
-                term    = t2 - t1; % days of caplet / floorlet
+                tenor   = fsd; % days until foward start date
+                term    = fed-fsd; % days of caplet / floorlet
                 sigma = calcVolaShock(value_type,instrument,surface, ...
                             riskfactor,tenor,term,moneyness);
                             
                 % add convexity adjustment to forward rate
                 if ( instrument.convex_adj == true )
                     [adj_rate ca] = calcConvexityAdjustment(valuation_date, ...
-                            instrument, forward_rate_curve,sigma,t1,t2);
+                            instrument, forward_rate_curve,sigma,fsd,fed);
                 else
                     adj_rate = forward_rate_curve;
                 end
@@ -411,41 +454,59 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
     cf_values = zeros(rows(tmp_rates),length(d1));
     cf_principal = zeros(rows(tmp_rates),length(d1));
     
-    for ii = 1 : 1 : length(d1)
+    for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
         [tf dip dib] = timefactor (t1, t2, dcc);
         if ( t1 >= 0 && t2 >= t1 )    % for future cash flows use forward rates
+        % (I) Calculate CMS x-let value with or without convexity adjustment and 
+        %   distinguish between swaplets, caplets and floorlets 
             sliding_term        = instrument.cms_sliding_term;
             underlying_term     = instrument.cms_term;
             underlying_spread   = instrument.cms_spread;
             underlying_comp_type = instrument.cms_comp_type;
             model               = instrument.cms_model;
+            payment_date        = t2;
+            if ( instrument.in_arrears == 0)    % in fine
+                fixing_start_date  = t1;
+            else    % in arrears
+                fixing_start_date  = t2;
+            end
             % set up underlying swap
             swap = Bond();
             swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
                             'value_base',1,'coupon_generation_method', ...
                             'forward','last_reset_rate',-0.000, ...
                             'sub_type', 'SWAP_FLOATING','spread',0.00, ...
-                            'maturity_date',datestr(valuation_date + t1 + sliding_term), ...
+                            'maturity_date',datestr(valuation_date + fixing_start_date + sliding_term), ...
                             'notional',1,'compounding_type',underlying_comp_type, ...
-                            'issue_date', datestr(valuation_date + t1), ...
+                            'issue_date', datestr(valuation_date + fixing_start_date), ...
                             'term',underlying_term,'notional_at_end',0, ...
                             'notional_at_start',0);
             % get volatility according to moneyness and term
             moneyness = 1.0; % moneyness hard coded to 1.0
-            tenor   = t1; % days until foward start date
+            tenor   = fixing_start_date; % days until foward start date
             sigma   = calcVolaShock(value_type,instrument,surface, ...
                             riskfactor,tenor,sliding_term,moneyness);         
-            % calculate cms_rate
-            [cms_rate convex_adj] = get_cms_rate(valuation_date,value_type, ...
-                    swap,ref_curve,sigma,model);
-            % calculate final floating cash flows
+            % calculate cms_rate according to cms model and instrument type
+            % either adjustments for swaplets, caplets or floorlets are calculated
+            if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
+                [cms_rate convex_adj] = get_cms_rate_hull(valuation_date,value_type, ...
+                        swap,ref_curve,sigma,model);
+            elseif ( strcmpi( instrument.cms_convex_model,'Hagan' ) )
+                [cms_rate convex_adj] = get_cms_rate_hagan(valuation_date,value_type, ...
+                        instrument,swap,ref_curve,sigma,payment_date);
+            end
+             % add convexity adjustment to cms rate
+            if ( instrument.convex_adj == true )
+                cms_rate = cms_rate + convex_adj;
+            end      
+        % (II) Calculate final floating cash flows: special cap/floorrate
             if (strcmpi(type,'CAP_CMS') || strcmpi(type,'FLOOR_CMS'))
                 % call function to calculate probability weighted forward rate
                 X = instrument.strike;  % TODO: get from strike curve ?!?
                 % calculate timefactor of forward start date
-                tf_fsd = timefactor (valuation_date, valuation_date + t1, dcc);
+                tf_fsd = timefactor (valuation_date, valuation_date + fixing_start_date, dcc);
                 % calculate moneyness 
                 if (instrument.CapFlag == true)
                     moneyness_exponent = 1;
@@ -454,7 +515,7 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 end
                 moneyness = (cms_rate ./ X) .^ moneyness_exponent;
                 % get volatility according to moneyness and term
-                tenor   = t1; % days until foward start date
+                tenor   = fixing_start_date; % days until foward start date
                 term    = t2 - t1; % days of caplet / floorlet
                 sigma = calcVolaShock(value_type,instrument,surface, ...
                             riskfactor,tenor,term,moneyness);

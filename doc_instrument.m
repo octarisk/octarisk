@@ -75,7 +75,6 @@ function a = doc_instrument()
 end
 
 %!test 
-%! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing Zero Coupon Bond Bond Object\n');
 %! b = Bond();
 %! b = b.set('Name','Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)', 'id','114171','coupon_rate',0.00,'value_base',101.1190,'coupon_generation_method','backward');
@@ -91,7 +90,6 @@ end
 %! assert(b.getValue('stress'),[101.810615897273;101.810615897273;101.810615897273],0.0000001); 
                                                                                                                       
 %!test 
-%! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing 1st Fixed Rate Bond Object\n');
 %! b = Bond();
 %! b = b.set('Name','Test_FRB','coupon_rate',0.035,'value_base',101.25,'coupon_generation_method','forward');
@@ -139,7 +137,6 @@ end
 %! assert(b.get('pv01'),-0.106549401094469,0.0000001)
 %! assert(b.get('spread_duration'),10.1124142671261,0.0000001)
 %!test 
-%! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing Floating Rate Bond Object\n');
 %! b = Bond();
 %! b = b.set('Name','Test_FRN','coupon_rate',0.00,'value_base',99.7527,'coupon_generation_method','backward','compounding_type','simple');
@@ -168,7 +165,6 @@ end
 %! assert(b.get('spread_duration'),0.747374010847449,0.0000001)
 
 %!test 
-%! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing Stochastic Cash Flow Object\n');
 %! b = Bond();
 %! b = b.set('cf_dates',[365,730],'stochastic_riskfactor','RF_TEST','stochastic_surface','SURF_TEST');
@@ -192,7 +188,6 @@ end
 
 
 %!test 
-%! fprintf('HOLD ON...\n');
 %! fprintf('\tdoc_instrument:\tPricing Stochastic Value Object\n');
 %! r = Riskfactor();
 %! r = r.set('value_base',0.5,'scenario_stress',[0.3;0.50;0.7],'model','BM');
@@ -436,6 +431,25 @@ end
 %! cap = cap.rollout('31-Dec-2015','base',c,v,r);
 %! cap = cap.calc_value('31-Dec-2015','base',c);
 %! assert(cap.getValue('base'),137.0063959386,0.0000001);
+
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing CMS Cap Object with Black Model\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,1095,1460],'rates_base',[0.01,0.01,0.01],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.8);
+%! v = v.set('type','IR');
+%! r = Riskfactor();
+%! cap_cms = CapFloor();
+%! cap_cms = cap_cms.set('id','TEST_CAP','name','TEST_CAP','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
+%! cap_cms = cap_cms.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! cap_cms = cap_cms.set('strike',0.005,'model','Black','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','CAP_CMS');
+%! cap_cms = cap_cms.set('cms_model','Black','cms_sliding_term',365,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple');
+%! cap_cms = cap_cms.rollout( '31-Dec-2015', 'base', c, v, r);
+%! cap_cms = cap_cms.calc_value('31-Dec-2015','base',c);
+%! assert(cap_cms.getValue('base'),137.006395938592,0.0000001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing 1st Floor Object with Normal Model\n');
@@ -760,6 +774,100 @@ end
 %!                     instrument_struct, surface_struct, matrix_struct, ...
 %!                     curve_struct, index_struct, riskfactor_struct);         
 %! assert(o.getValue('stress'),[216.054078327894;273.283323323431],0.00000001);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing CMS Floating Leg with Hull Convexity Adjustment\n');
+%! valuation_date = datenum('31-Mar-2016');
+%! cms_float = Bond();
+%! cms_float = cms_float.set('Name','CMS_FLOAT','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','CMS_FLOATING','spread',0.00);
+%! cms_float = cms_float.set('maturity_date','26-Mar-2036','notional',100,'compounding_type','simple','issue_date','29-Mar-2026','term',365,'notional_at_end',0);
+%! cms_float = cms_float.set('cms_model','Black','cms_sliding_term',1825,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hull');
+%! ref_curve = Curve();
+%! ref_curve = ref_curve.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125], ...
+%!       'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277], ...
+%!       'rates_stress',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277; ...
+%!       -0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277], ...
+%!       'method_interpolation','linear','compounding_type','continuous');    
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.8);
+%! v = v.set('type','IR');
+%! vola_rf = Riskfactor();
+%! value_type = 'base'; 
+%! cms_float = cms_float.rollout(value_type, valuation_date, ref_curve, v, vola_rf);
+%! cms_float = cms_float.calc_value(valuation_date,value_type,ref_curve);
+%! assert(cms_float.getValue(value_type),20.2751684618757,0.00000001);
+%! value_type = 'stress'; 
+%! cms_float = cms_float.rollout(value_type, valuation_date, ref_curve, v, vola_rf);
+%! cms_float = cms_float.calc_value(valuation_date,value_type,ref_curve);
+%! assert(cms_float.getValue(value_type),[20.2751684618757;20.2751684618757],0.00000001);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing CMS Cap with Normal Model and Hagan Convexity Adjustment\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125], ...
+%!       'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277], ...
+%!       'rates_stress',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277; ...
+%!       -0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277], ...
+%!       'method_interpolation','linear','compounding_type','continuous');    
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.009988);
+%! v = v.set('type','IR');
+%! r = Riskfactor();
+%! value_type = 'base'; 
+%! cap_cms = CapFloor();
+%! cap_cms = cap_cms.set('id','TEST_CAP','name','TEST_CAP','issue_date','31-Mar-2018','maturity_date','31-Mar-2019','compounding_type','simple');
+%! cap_cms = cap_cms.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! cap_cms = cap_cms.set('strike',0.005,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','CAP_CMS');
+%! cap_cms = cap_cms.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan');
+%! cap_cms = cap_cms.rollout( '31-Mar-2016', 'base', c, v, r);
+%! cap_cms = cap_cms.calc_value('31-Mar-2016','base',c);
+%! assert(cap_cms.getValue('base'),0.520661480462725,0.00000001);
+%! cap_cms = cap_cms.rollout( '31-Mar-2016', 'stress', c, v, r);
+%! cap_cms = cap_cms.calc_value('31-Mar-2016','stress',c);
+%! assert(cap_cms.getValue('stress'),[0.520661480462725;0.520661480462725],0.00000001);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Floating Leg (in Arrears with Timing Adjustment)\n');
+%! valuation_date = datenum('31-Mar-2016');
+%! float = Bond();
+%! float = float.set('Name','FLOAT','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','SWAP_FLOATING','spread',0.00);
+%! float = float.set('maturity_date','29-Mar-2026','notional',100,'compounding_type','simple','issue_date','31-Mar-2016','term',365,'notional_at_end',1);
+%! float = float.set('in_arrears',1);
+%! ref_curve = Curve();
+%! ref_curve = ref_curve.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125], ...
+%!      'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277], ...
+%!       'rates_stress',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277; ...
+%!       -0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!       0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!       0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277], ...
+%!       'method_interpolation','linear','compounding_type','continuous');    
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.8);
+%! v = v.set('type','IR');
+%! vola_rf = Riskfactor();
+%! value_type = 'base';
+%! float = float.rollout(value_type, ref_curve , valuation_date, v, vola_rf);
+%! float = float.calc_value(valuation_date,value_type,ref_curve);
+%! assert(float.getValue('base'),102.129818647705,0.00000001);
 
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');

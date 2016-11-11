@@ -28,6 +28,14 @@ classdef CapFloor < Instrument
         vola_surface = 'RF_VOLA_IR_EUR';
         strike = 0.005;
         convex_adj = true;      % flag for using convex adj. for forward rates
+        % attributes for CMS Floating and Fixed Legs
+        cms_model               = 'Black'; % volatility model [Black, normal]
+        cms_convex_model        = 'Hull'; % Model for calculating convexity adj.
+        cms_sliding_term        = 1825; % sliding term of CMS float leg in days
+        cms_term                = 365; % term of CMS
+        cms_spread              = 0.0; % spread of CMS
+        cms_comp_type           = 'simple'; % CMS compounding type
+        vola_spread             = 0.0;
     end
    
     properties (SetAccess = private)
@@ -92,6 +100,14 @@ classdef CapFloor < Instrument
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('model: %s\n',b.model); 
          fprintf('convex_adj: %s\n',any2str(b.convex_adj)); 
+         if ( regexpi(b.sub_type,'CMS'))
+            fprintf('cms_model: %s\n',b.cms_model); 
+            fprintf('cms_sliding_term: %s\n',any2str(b.cms_sliding_term)); 
+            fprintf('cms_term: %s\n',any2str(b.cms_term)); 
+            fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
+            fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
+            fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
+         end  
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
          [mc_rows mc_cols mc_stack] = size(b.cf_values_mc);
@@ -143,11 +159,12 @@ classdef CapFloor < Instrument
       end
       
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,'CAP') || strcmpi(sub_type,'FLOOR') )
-            error('CapFloor sub_type must be either CAP, FLOOR')
+         if ~(strcmpi(sub_type,'CAP') || strcmpi(sub_type,'FLOOR') ...
+                || strcmpi(sub_type,'CAP_CMS') || strcmpi(sub_type,'FLOOR_CMS'))
+            error('CapFloor sub_type must be either CAP(_CMS), FLOOR(_CMS)')
          end
          obj.sub_type = sub_type;
-         if strcmpi(sub_type,'CAP') 
+         if regexpi(sub_type,'CAP') 
             obj.CapFlag = true;
          else
             obj.CapFlag = false;
