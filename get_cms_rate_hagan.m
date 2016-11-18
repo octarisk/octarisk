@@ -34,7 +34,7 @@
 %# @item @var{sigma}: volatility used for calculating convexity adjustment
 %# @item @var{payment_date}: payment date of cashflow
 %# @end itemize
-%# @seealso{interpolate_curve, discount_factor, timefactor, rollout_structured_cashflows}
+%# @seealso{discount_factor, timefactor, rollout_structured_cashflows}
 %# @end deftypefn
 
 function [cms_rate convex_adj] = get_cms_rate_hagan(valuation_date,value_type,instrument,swap,curve,sigma,payment_date)
@@ -74,7 +74,7 @@ TF = timefactor(valuation_date,datenum(swap.issue_date),basis);
 for ii = 1:1:length(cms_dates)
     tmp_date = cms_dates(ii);
     % interpolate rates from given curve rates
-    r_curve = interpolate_curve(nodes,rates,tmp_date,interp_method);
+    r_curve = curve.getRate(value_type,tmp_date);
     % calculate discount factor
     cms_df(:,ii) = discount_factor (valuation_date, (tmp_date + valuation_date), ...
                         r_curve, comp_type_curve, basis_curve, comp_freq_curve);
@@ -85,6 +85,8 @@ for ii = 1:1:length(cms_dates)-1
     tf_df(:,ii) = timefactor(cms_dates(ii),cms_dates(ii+1),basis);
 end
 
+% cms_df
+% tf_df
 % TODO: implement swap premiums at start and end of swap lifetime
 prem_end = 0.0; %swap.premium_at_end;
 prem_start = 0.0; %swap.premium_at_start;
@@ -102,7 +104,7 @@ nominator = cms_df(:,1) .- cms_df(:,end);
 cms_df_tmp = cms_df(:,2:end);  % remove first discount factor
 Annuity = sum(cms_df_tmp.*tf_df,2);
 cms_rate = nominator ./ Annuity;
-                        
+                       
 
 % Convexity Adjustment according to Hagan Paper "Convexity Conundrums", 2003:
 % number of underlying cms payments per year
@@ -136,13 +138,13 @@ Dt_p = cms_df_tmp(:,1);  % Discount Factor: Hagan specifies adjustment to value,
 
 % distinguish between CMS Swaplets, Caplets and Floorlets
 convex_adj = 0.0;
-if ( regexpi( instrument.sub_type,'FLOATING') )                         
+if ( regexpi( instrument.sub_type,'FLOATING') || regexpi( instrument.sub_type,'FRN_SPECIAL'))                         
     if (strcmpi(model,'Black')) % Formula 3.5b
         convex_adj = dG .* (exp(sigma.^2 .* TF) -1) .* cms_rate.^2 .*  Annuity ./ Dt_p;
     else    % normal model Formula 3.6b
         convex_adj = dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p;
     end
-elseif ( regexpi( instrument.sub_type,'CAP') )  % CMS rate adjustment to cap
+elseif ( regexpi( instrument.sub_type,'^CAP') )  % CMS rate adjustment to cap
     X = instrument.strike;
     h = (cms_rate - X) ./ (sigma*sqrt(TF));
     pdf_h = exp(-h.^2 /2) ./ sqrt(2*pi);
@@ -151,7 +153,7 @@ elseif ( regexpi( instrument.sub_type,'CAP') )  % CMS rate adjustment to cap
     else    % normal model Formula 3.6c
         convex_adj = dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p .* pdf_h;
     end
-elseif ( regexpi( instrument.sub_type,'FLOOR') )  % CMS rate aAdjustment to floorlet
+elseif ( regexpi( instrument.sub_type,'^FLOOR') )  % CMS rate aAdjustment to floorlet
     X = instrument.strike;
     h = (X - cms_rate) ./ (sigma*sqrt(TF));
     pdf_h = exp(-h.^2 /2) ./ sqrt(2*pi);

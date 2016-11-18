@@ -76,8 +76,6 @@ for ii = 1 : 1 : length(mktdata_struct)
                 tmp_ir_shock_matrix = [];
                 
                 % get stress values of risk factor curve
-                rf_shock_nodes    = tmp_rf_object.get('nodes');
-                rf_shock_rates    = tmp_rf_object.getValue('stress') ;
                 rf_shifttype      = tmp_rf_object.get('rates_base');
                 rf_shifttype      = rf_shifttype(:,1);   % get just first column of shifttype matrix ->  per stresstest one shifttype for all nodes (columns)
                 % loop through all IR Curve nodes and get interpolated shock value from risk factor
@@ -85,7 +83,7 @@ for ii = 1 : 1 : length(mktdata_struct)
                 for ii = 1 : 1 : length(curve_nodes)
                     tmp_node = curve_nodes(ii);
                     % get interpolated shock vector at node
-                    tmp_shock = interpolate_curve(rf_shock_nodes,rf_shock_rates,tmp_node,interp_method);
+                    tmp_shock = tmp_rf_object.getRate('stress',tmp_node);
                     % generate total shock matrix
                     tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock);
                 end
@@ -106,14 +104,14 @@ for ii = 1 : 1 : length(mktdata_struct)
                 tmp_shocktype_mc = tmp_rf_object.get('shocktype_mc');
                 for kk = 1 : 1 : length(tmp_timestep_mc)
                     tmp_value_type = tmp_timestep_mc{kk};
-                    rf_shock_nodes    = tmp_rf_object.get('nodes');
-                    rf_shock_rates    = tmp_rf_object.getValue(tmp_value_type);
+                    %rf_shock_nodes    = tmp_rf_object.get('nodes');
+                    %rf_shock_rates    = tmp_rf_object.getValue(tmp_value_type);
                     % loop through all IR Curve nodes and get interpolated shock value from risk factor
                     tmp_ir_shock_matrix = [];
                     for ii = 1 : 1 : length(curve_nodes)
                         tmp_node = curve_nodes(ii);
                         % get interpolated shock vector at node
-                        tmp_shock = interpolate_curve(rf_shock_nodes,rf_shock_rates,tmp_node,interp_method);
+                        tmp_shock = tmp_rf_object.getRate(tmp_value_type,tmp_node);
                         % generate total shock matrix
                         tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock);
                     end
@@ -199,10 +197,6 @@ for ii = 1 : 1 : length(mktdata_struct)
                     dcc_basis_origin = tmp_incr_object.get('basis');
                     
                     %fprintf('Actual increment:%s\n',tmp_incr_id);
-                    % get stress values of risk factor curve
-                    incr_shock_nodes    = tmp_incr_object.get('nodes');
-                    incr_stress_rates   = tmp_incr_object.getValue('stress');
-                    incr_base_rates     = tmp_incr_object.get('rates_base');
                     
                     % loop through all IR Curve nodes and get interpolated shock value from risk factor
                     tmp_incr_stress_rate = [];  %zeros(no_stresstests,length(aggr_curve_nodes));
@@ -210,8 +204,8 @@ for ii = 1 : 1 : length(mktdata_struct)
                     for ii = 1 : 1 : length(aggr_curve_nodes)
                         tmp_node = aggr_curve_nodes(ii);
                         % get interpolated shock vector at node
-                        rate_stress_origin = interpolate_curve(incr_shock_nodes,incr_stress_rates,tmp_node,interp_method);
-                        rate_base_origin = interpolate_curve(incr_shock_nodes,incr_base_rates,tmp_node,interp_method);
+                        rate_stress_origin  = tmp_incr_object.getRate('stress',tmp_node);
+                        rate_base_origin    = tmp_incr_object.getRate('base',tmp_node);
                         % convert from comp type / dcc of increment curve to comp type / dcc of aggregated curve
                         tmp_base_rate   = convert_curve_rates(valuation_date,tmp_node,rate_base_origin,comp_type_origin,comp_freq_origin, ...
                             dcc_basis_origin, comp_type_target,comp_freq_target,dcc_basis_target);
@@ -234,13 +228,13 @@ for ii = 1 : 1 : length(mktdata_struct)
                     
                     for kk = 1 : 1 : length(timesteps_mc)
                         tmp_value_type = timesteps_mc{kk};
-                        incr_shock_rates    = tmp_incr_object.getValue(tmp_value_type);
+                        %incr_shock_rates    = tmp_incr_object.getValue(tmp_value_type);
                         % loop through all IR Curve nodes and get interpolated shock value from risk factor
                         tmp_ir_shock_matrix = [];
                         for ii = 1 : 1 : length(aggr_curve_nodes)
                             tmp_node = aggr_curve_nodes(ii);
                             % get interpolated shock vector at node
-                            rate_shock_origin = interpolate_curve(incr_shock_nodes,incr_shock_rates,tmp_node,interp_method);
+                            rate_shock_origin    = tmp_incr_object.getRate(tmp_value_type,tmp_node);
                             % convert from comp type / dcc of increment curve to comp type / dcc of aggregated curve
                             tmp_shock_rate = convert_curve_rates(valuation_date,tmp_node,rate_shock_origin,comp_type_origin,comp_freq_origin, ...
                                 dcc_basis_origin, comp_type_target,comp_freq_target,dcc_basis_target);

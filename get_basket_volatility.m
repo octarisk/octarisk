@@ -85,12 +85,8 @@ tmp_discount = basket.get('discount_curve');
 if ( object_ret_code == 0 )
     fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_discount);
 end
-basis_curve      = discount_curve.get('basis');
-tmp_nodes        = discount_curve.get('nodes');
-tmp_rates        = discount_curve.getValue(value_type);
-method_interp    = discount_curve.get('method_interpolation');
-rf_rate          = interpolate_curve(tmp_nodes,tmp_rates,dtm,method_interp);
-        
+rf_rate          = discount_curve.getRate(value_type,dtm);
+    
 
 % 4. get underlying volatility surfaces
 tmp_vol_surfaces  = basket.get('instr_vol_surfaces');

@@ -54,6 +54,8 @@ case 'index'
     obj = Index();
 case 'cash'
     obj = Cash();
+case 'capfloor'
+    obj = CapFloor();    
 case 'debt'
     obj = Debt();
 case 'surface'

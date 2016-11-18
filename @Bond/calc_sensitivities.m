@@ -109,7 +109,7 @@ if ( strcmp(bond.sub_type,'FRN') || strcmp(bond.sub_type,'SWAP_FLOAT'))
     
     % calculate and set effective convexity based on 100bp down / upshift:
         eff_convexity = ( theo_value_100bpdown + theo_value_100bpup - 2 * theo_value ) ...
-                        / ( theo_value * 0.0001  );
+                        / ( theo_value * obj.ir_shock^2  );
         obj.eff_convexity = eff_convexity;  
     
     % calculate and set DV01 duration based on 1bp down / upshift:
@@ -201,7 +201,7 @@ else  % all bonds with fixed cashflows (FRB, SWAP_FIXED, CF Instruments)
     
     % calculate and set effective convexity based on 100bp down / upshift:
     eff_convexity = ( theo_value_100bpdown + theo_value_100bpup - 2 * theo_value ) ...
-                    / ( theo_value * 0.0001  );
+                    / ( theo_value * bond.ir_shock^2  );
     obj.eff_convexity = eff_convexity;  
     
     % calculate and set DV01 duration based on 1bp down / upshift:

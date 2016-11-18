@@ -1,4 +1,4 @@
-# Created by Octave 4.0.0, Mon Oct 03 15:00:38 2016 W. Europe Daylight Time <unknown@T43NB067>
+# Created by Octave 4.0.0, Mon Nov 14 16:47:59 2016 W. Europe Standard Time <unknown@T43NB067>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
@@ -101,14 +101,6 @@ A1YC04
 # elements: 1
 # length: 6
 A1ZKC4
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 8
-EQFORW01
 
 
 
@@ -261,6 +253,14 @@ BDACC20160929
 # elements: 1
 # length: 14
 GCFUTC20160126
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
 
 
 
@@ -377,14 +377,6 @@ A1ZKC4
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 8
-EQFORW01
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
 # length: 6
 ETF012
 
@@ -531,6 +523,14 @@ BDACC20160929
 # elements: 1
 # length: 14
 GCFUTC20160126
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
 
 
 
@@ -649,7 +649,7 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 68
+# length: 80
 # name: accrued_interest
 # type: scalar
 0
@@ -713,6 +713,42 @@ Fixed Income
 0
 
 
+# name: cms_comp_type
+# type: sq_string
+# elements: 1
+# length: 6
+simple
+
+
+# name: cms_convex_model
+# type: sq_string
+# elements: 1
+# length: 4
+Hull
+
+
+# name: cms_model
+# type: sq_string
+# elements: 1
+# length: 5
+Black
+
+
+# name: cms_sliding_term
+# type: scalar
+1825
+
+
+# name: cms_spread
+# type: scalar
+0
+
+
+# name: cms_term
+# type: scalar
+365
+
+
 # name: compounding_freq
 # type: scalar
 1
@@ -723,6 +759,11 @@ Fixed Income
 # elements: 1
 # length: 4
 disc
+
+
+# name: convex_adj
+# type: bool
+1
 
 
 # name: convexity
@@ -973,11 +1014,37 @@ SPREAD_EUR_HY
 0
 
 
+# name: stochastic_rf_type
+# type: sq_string
+# elements: 1
+# length: 6
+normal
+
+
+# name: stochastic_riskfactor
+# type: sq_string
+# elements: 1
+# length: 9
+RF_MATRIX
+
+
+# name: stochastic_surface
+# type: sq_string
+# elements: 1
+# length: 14
+SURFACE_MATRIX
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
 # length: 8
 CASHFLOW
+
+
+# name: t_degree_freedom
+# type: scalar
+120
 
 
 # name: term
@@ -1029,6 +1096,11 @@ bond
 # type: null_matrix
 # rows: 0
 # columns: 0
+
+
+# name: vola_spread
+# type: scalar
+0
 
 
 # name: ytm
@@ -1827,7 +1899,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 68
+# length: 80
 # name: accrued_interest
 # type: scalar
 0
@@ -1889,6 +1961,42 @@ Fixed Income
 0
 
 
+# name: cms_comp_type
+# type: sq_string
+# elements: 1
+# length: 6
+simple
+
+
+# name: cms_convex_model
+# type: sq_string
+# elements: 1
+# length: 4
+Hull
+
+
+# name: cms_model
+# type: sq_string
+# elements: 1
+# length: 5
+Black
+
+
+# name: cms_sliding_term
+# type: scalar
+1825
+
+
+# name: cms_spread
+# type: scalar
+0
+
+
+# name: cms_term
+# type: scalar
+365
+
+
 # name: compounding_freq
 # type: scalar
 1
@@ -1899,6 +2007,11 @@ Fixed Income
 # elements: 1
 # length: 6
 simple
+
+
+# name: convex_adj
+# type: bool
+1
 
 
 # name: convexity
@@ -2151,11 +2264,37 @@ SPREAD_DUMMY
 0
 
 
+# name: stochastic_rf_type
+# type: sq_string
+# elements: 1
+# length: 6
+normal
+
+
+# name: stochastic_riskfactor
+# type: sq_string
+# elements: 1
+# length: 9
+RF_MATRIX
+
+
+# name: stochastic_surface
+# type: sq_string
+# elements: 1
+# length: 14
+SURFACE_MATRIX
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
 # length: 3
 FRB
+
+
+# name: t_degree_freedom
+# type: scalar
+120
 
 
 # name: term
@@ -2209,6 +2348,11 @@ bond
 # columns: 0
 
 
+# name: vola_spread
+# type: scalar
+0
+
+
 # name: ytm
 # type: scalar
 0
@@ -2221,7 +2365,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 68
+# length: 80
 # name: accrued_interest
 # type: scalar
 0
@@ -2283,6 +2427,42 @@ Fixed Income
 0
 
 
+# name: cms_comp_type
+# type: sq_string
+# elements: 1
+# length: 6
+simple
+
+
+# name: cms_convex_model
+# type: sq_string
+# elements: 1
+# length: 4
+Hull
+
+
+# name: cms_model
+# type: sq_string
+# elements: 1
+# length: 5
+Black
+
+
+# name: cms_sliding_term
+# type: scalar
+1825
+
+
+# name: cms_spread
+# type: scalar
+0
+
+
+# name: cms_term
+# type: scalar
+365
+
+
 # name: compounding_freq
 # type: scalar
 365
@@ -2293,6 +2473,11 @@ Fixed Income
 # elements: 1
 # length: 4
 disc
+
+
+# name: convex_adj
+# type: bool
+1
 
 
 # name: convexity
@@ -2545,11 +2730,37 @@ SPREAD_EUR_HY
 0
 
 
+# name: stochastic_rf_type
+# type: sq_string
+# elements: 1
+# length: 6
+normal
+
+
+# name: stochastic_riskfactor
+# type: sq_string
+# elements: 1
+# length: 9
+RF_MATRIX
+
+
+# name: stochastic_surface
+# type: sq_string
+# elements: 1
+# length: 14
+SURFACE_MATRIX
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
 # length: 3
 FRB
+
+
+# name: t_degree_freedom
+# type: scalar
+120
 
 
 # name: term
@@ -2603,6 +2814,11 @@ bond
 # columns: 0
 
 
+# name: vola_spread
+# type: scalar
+0
+
+
 # name: ytm
 # type: scalar
 0
@@ -2615,7 +2831,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 68
+# length: 80
 # name: accrued_interest
 # type: scalar
 0
@@ -2677,6 +2893,42 @@ Fixed Income
 0
 
 
+# name: cms_comp_type
+# type: sq_string
+# elements: 1
+# length: 6
+simple
+
+
+# name: cms_convex_model
+# type: sq_string
+# elements: 1
+# length: 4
+Hull
+
+
+# name: cms_model
+# type: sq_string
+# elements: 1
+# length: 5
+Black
+
+
+# name: cms_sliding_term
+# type: scalar
+1825
+
+
+# name: cms_spread
+# type: scalar
+0
+
+
+# name: cms_term
+# type: scalar
+365
+
+
 # name: compounding_freq
 # type: scalar
 365
@@ -2687,6 +2939,11 @@ Fixed Income
 # elements: 1
 # length: 4
 disc
+
+
+# name: convex_adj
+# type: bool
+1
 
 
 # name: convexity
@@ -2939,11 +3196,37 @@ SPREAD_DUMMY
 0
 
 
+# name: stochastic_rf_type
+# type: sq_string
+# elements: 1
+# length: 6
+normal
+
+
+# name: stochastic_riskfactor
+# type: sq_string
+# elements: 1
+# length: 9
+RF_MATRIX
+
+
+# name: stochastic_surface
+# type: sq_string
+# elements: 1
+# length: 14
+SURFACE_MATRIX
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
 # length: 3
 FRN
+
+
+# name: t_degree_freedom
+# type: scalar
+120
 
 
 # name: term
@@ -2997,217 +3280,14 @@ bond
 # columns: 0
 
 
+# name: vola_spread
+# type: scalar
+0
+
+
 # name: ytm
 # type: scalar
 0
-
-
-
-
-
-# name: <cell-element>
-# type: scalar struct
-# ndims: 2
- 1 1
-# length: 33
-# name: asset_class
-# type: sq_string
-# elements: 1
-# length: 10
-Derivative
-
-
-# name: basis
-# type: scalar
-3
-
-
-# name: calc_price_from_netbasis
-# type: bool
-0
-
-
-# name: cf_dates
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: cf_values
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: component_weight
-# type: scalar
-0
-
-
-# name: compounding_freq
-# type: sq_string
-# elements: 1
-# length: 6
-annual
-
-
-# name: compounding_type
-# type: sq_string
-# elements: 1
-# length: 4
-cont
-
-
-# name: convenience_yield
-# type: scalar
-0
-
-
-# name: currency
-# type: sq_string
-# elements: 1
-# length: 3
-EUR
-
-
-# name: day_count_convention
-# type: sq_string
-# elements: 1
-# length: 7
-act/365
-
-
-# name: description
-# type: sq_string
-# elements: 1
-# length: 25
-EQForward test instrument
-
-
-# name: discount_curve
-# type: sq_string
-# elements: 1
-# length: 6
-IR_EUR
-
-
-# name: dividend_yield
-# type: scalar
-0
-
-
-# name: foreign_curve
-# type: sq_string
-# elements: 1
-# length: 6
-IR_USD
-
-
-# name: id
-# type: sq_string
-# elements: 1
-# length: 8
-EQFORW01
-
-
-# name: issue_date
-# type: sq_string
-# elements: 1
-# length: 11
-01-Jan-1900
-
-
-# name: maturity_date
-# type: sq_string
-# elements: 1
-# length: 11
-17-Oct-2018
-
-
-# name: multiplier
-# type: scalar
-0.1
-
-
-# name: name
-# type: sq_string
-# elements: 1
-# length: 14
-EQForward_test
-
-
-# name: net_basis
-# type: scalar
-0
-
-
-# name: spread
-# type: scalar
-0
-
-
-# name: storage_cost
-# type: scalar
-0
-
-
-# name: strike_price
-# type: scalar
-9800
-
-
-# name: sub_type
-# type: sq_string
-# elements: 1
-# length: 5
-EQFWD
-
-
-# name: timestep_mc
-# type: cell
-# rows: 0
-# columns: 0
-
-
-# name: type
-# type: sq_string
-# elements: 1
-# length: 7
-forward
-
-
-# name: underlying_id
-# type: sq_string
-# elements: 1
-# length: 5
-EQ_DE
-
-
-# name: underlying_price_base
-# type: scalar
-0
-
-
-# name: underlying_sensitivity
-# type: scalar
-1
-
-
-# name: value_base
-# type: scalar
-2
-
-
-# name: value_mc
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: value_stress
-# type: null_matrix
-# rows: 0
-# columns: 0
 
 
 
@@ -4774,7 +4854,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 68
+# length: 80
 # name: accrued_interest
 # type: scalar
 0
@@ -4836,6 +4916,42 @@ Fixed Income
 0
 
 
+# name: cms_comp_type
+# type: sq_string
+# elements: 1
+# length: 6
+simple
+
+
+# name: cms_convex_model
+# type: sq_string
+# elements: 1
+# length: 4
+Hull
+
+
+# name: cms_model
+# type: sq_string
+# elements: 1
+# length: 5
+Black
+
+
+# name: cms_sliding_term
+# type: scalar
+1825
+
+
+# name: cms_spread
+# type: scalar
+0
+
+
+# name: cms_term
+# type: scalar
+365
+
+
 # name: compounding_freq
 # type: scalar
 365
@@ -4846,6 +4962,11 @@ Fixed Income
 # elements: 1
 # length: 4
 disc
+
+
+# name: convex_adj
+# type: bool
+1
 
 
 # name: convexity
@@ -5098,11 +5219,37 @@ SPREAD_DUMMY
 0
 
 
+# name: stochastic_rf_type
+# type: sq_string
+# elements: 1
+# length: 6
+normal
+
+
+# name: stochastic_riskfactor
+# type: sq_string
+# elements: 1
+# length: 9
+RF_MATRIX
+
+
+# name: stochastic_surface
+# type: sq_string
+# elements: 1
+# length: 14
+SURFACE_MATRIX
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
 # length: 3
 ZCB
+
+
+# name: t_degree_freedom
+# type: scalar
+120
 
 
 # name: term
@@ -5154,6 +5301,11 @@ bond
 # type: null_matrix
 # rows: 0
 # columns: 0
+
+
+# name: vola_spread
+# type: scalar
+0
 
 
 # name: ytm
@@ -6527,12 +6679,22 @@ RF_VOLA_COM_GOLD
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 15
+# length: 33
 # name: asset_class
 # type: sq_string
 # elements: 1
-# length: 11
-Diversified
+# length: 10
+Derivative
+
+
+# name: basis
+# type: scalar
+3
+
+
+# name: calc_price_from_netbasis
+# type: bool
+0
 
 
 # name: cf_dates
@@ -6547,11 +6709,240 @@ Diversified
 # columns: 0
 
 
+# name: component_weight
+# type: scalar
+0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: convenience_yield
+# type: scalar
+0
+
+
 # name: currency
 # type: sq_string
 # elements: 1
 # length: 3
 EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 25
+EQForward test instrument
+
+
+# name: discount_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: dividend_yield
+# type: scalar
+0
+
+
+# name: foreign_curve
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+EQFORW01
+
+
+# name: issue_date
+# type: sq_string
+# elements: 1
+# length: 11
+01-Jan-1900
+
+
+# name: maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+17-Oct-2018
+
+
+# name: multiplier
+# type: scalar
+0.1
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 14
+EQForward_test
+
+
+# name: net_basis
+# type: scalar
+0
+
+
+# name: spread
+# type: scalar
+0
+
+
+# name: storage_cost
+# type: scalar
+0
+
+
+# name: strike_price
+# type: scalar
+9800
+
+
+# name: sub_type
+# type: sq_string
+# elements: 1
+# length: 5
+EQFWD
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 7
+forward
+
+
+# name: underlying_id
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: underlying_price_base
+# type: scalar
+0
+
+
+# name: underlying_sensitivity
+# type: scalar
+1
+
+
+# name: value_base
+# type: scalar
+2
+
+
+# name: value_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: value_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 23
+# name: asset_class
+# type: sq_string
+# elements: 1
+# length: 11
+Diversified
+
+
+# name: basis
+# type: scalar
+3
+
+
+# name: cf_dates
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: cf_values
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: correlation_matrix
+# type: null_sq_string
+# elements: 0
+
+
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
 
 
 # name: description
@@ -6561,11 +6952,30 @@ EUR
 Synthetic test instrument
 
 
+# name: discount_curve
+# type: null_sq_string
+# elements: 0
+
+
 # name: id
 # type: sq_string
 # elements: 1
 # length: 7
 SYNTH01
+
+
+# name: instr_vol_surfaces
+# type: cell
+# rows: 1
+# columns: 1
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+INSTRUMENT_VOL
+
+
+
 
 
 # name: instruments
@@ -6588,6 +6998,11 @@ EQFORW01
 
 
 
+
+
+# name: is_basket
+# type: bool
+0
 
 
 # name: name

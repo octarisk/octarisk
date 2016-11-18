@@ -474,7 +474,7 @@ end
 %! assert(stress_values,[13.629274436848439;6.092263070602667;0.463877763957439],0.0000001);
 
 %!test
-%! fprintf('\tdoc_instrument:\tPricing 2nd Floor Object with Normal Model\n');
+%! fprintf('\tdoc_instrument:\tPricing 3nd Floor Object with Normal Model\n');
 %! floor = CapFloor();
 %! floor = floor.set('id','TEST_FLOOR','name','TEST_FLOOR','issue_date','30-Jun-2017','maturity_date','30-Jun-2018','compounding_type','simple');
 %! floor = floor.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
@@ -489,6 +489,28 @@ end
 %! floor = floor.rollout('30-Jun-2016','base',c,v,r);
 %! floor = floor.calc_value('30-Dec-2016','base',c);
 %! assert(floor.getValue('base'),5.0503156821,0.0000001);
+
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing CMS Floor Object with Normal Model without CA\n');
+%! floor = CapFloor();
+%! floor = floor.set('id','TEST_FLOOR','name','TEST_FLOOR','issue_date','29-Jun-2021','maturity_date','29-Jun-2022','compounding_type','simple');
+%! floor = floor.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0,'ir_shock',0.005);
+%! floor = floor.set('strike',0.02,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR_CMS','convex_adj',false);
+%! floor = floor.set('cms_model','Normal','cms_sliding_term',365,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hull');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[1460,1825,2190,2555],'rates_base',[-0.0007102520,-0.0000300010,0.0008896040,0.0018981976],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',1825,'axis_x_name','TENOR','axis_y',365,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.0014240366);
+%! v = v.set('type','IR');
+%! r = Riskfactor();
+%! floor = floor.rollout('30-Jun-2016','base',c,v,r);
+%! floor = floor.calc_value('30-Dec-2016','base',c);
+%! floor = floor.calc_sensitivities('30-Jun-2016','base',c,v,r,c);
+%! assert(floor.getValue('base'),1.44201131641819,0.000000001);
+%! assert(floor.get('eff_duration'),75.3761329917373,0.000000001);
+%! assert(floor.get('eff_convexity'),802.649265026805,0.000000001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Bond Future and underlying FRB\n');
@@ -835,10 +857,10 @@ end
 %! cap_cms = cap_cms.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan');
 %! cap_cms = cap_cms.rollout( '31-Mar-2016', 'base', c, v, r);
 %! cap_cms = cap_cms.calc_value('31-Mar-2016','base',c);
-%! assert(cap_cms.getValue('base'),0.520661480462725,0.00000001);
+%! assert(cap_cms.getValue('base'),0.529008908714200,0.00000001);
 %! cap_cms = cap_cms.rollout( '31-Mar-2016', 'stress', c, v, r);
 %! cap_cms = cap_cms.calc_value('31-Mar-2016','stress',c);
-%! assert(cap_cms.getValue('stress'),[0.520661480462725;0.520661480462725],0.00000001);
+%! assert(cap_cms.getValue('stress'),[0.529008908714200;0.529008908714200],0.00000001);
 
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Floating Leg (in Arrears with Timing Adjustment)\n');

@@ -11,6 +11,8 @@ classdef Curve
       day_count_convention = 'act/365'; 
       shocktype_mc = 'absolute';  
       increments = '';
+      alpha = 0.19; % alpha parameter for Smith-Wilson interpolation method
+      ufr = 0.042; % ultimate forward rate for Smith-Wilson interpolation method
     end
    
     properties (SetAccess = protected )

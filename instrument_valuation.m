@@ -197,14 +197,18 @@ elseif ( strfind(tmp_type,'capfloor') > 0 )
     capfloor = instr_obj;
     % Get relevant objects
     tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, capfloor.get('vola_surface'));
-    tmp_rf_curve_obj         = get_sub_object(curve_struct, capfloor.get('discount_curve'));
+    tmp_disc_curve_obj       = get_sub_object(curve_struct, capfloor.get('discount_curve'));
+    tmp_rf_curve_obj         = get_sub_object(curve_struct, capfloor.get('reference_curve'));
     tmp_vola_surf_obj        = get_sub_object(surface_struct, capfloor.get('vola_surface'));
     % TODO: Calibration of capfloor vola spread            
     %if ( capfloor.get('vola_spread') == 0 )
     %    capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
     %end
     capfloor = capfloor.rollout(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
-    capfloor = capfloor.calc_value(valuation_date,scenario,tmp_rf_curve_obj);
+    if ( first_eval == 0)
+        capfloor = capfloor.calc_sensitivities(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj,tmp_disc_curve_obj);
+    end
+    capfloor = capfloor.calc_value(valuation_date,scenario,tmp_disc_curve_obj);
     % store capfloor object:
     ret_instr_obj = capfloor;
     

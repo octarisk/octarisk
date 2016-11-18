@@ -77,7 +77,6 @@ if nargin > 3
     type = instrument.sub_type;
     if (  strcmpi(type,'ZCB') )
         coupon_generation_method = 'zero';
-        instrument.term = '0';
     elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
             last_reset_rate = instrument.last_reset_rate;
     elseif ( strcmpi(type,'FAB'))
@@ -88,6 +87,23 @@ if nargin > 3
     term = instrument.term;
     compounding_freq = instrument.compounding_freq;
     maturity_date = instrument.maturity_date;
+
+    % get term time factor
+    if ( mod(term,365) == 0 && term ~= 0)
+        term_factor = 365 / term; 
+    elseif ( term == 12)
+        term_factor = 1; 
+    elseif ( term == 6)
+        term_factor = 2; 
+    elseif ( term == 3)
+        term_factor = 4; 
+    elseif ( term == 2)
+        term_factor = 6; 
+    elseif ( term == 1)
+        term_factor = 12; 
+    else    
+        term_factor = 1;
+    end
 
 % check for existing interest rate curve for FRN
 if (nargin < 2 && strcmp(type,'FRN') == 1)
@@ -443,6 +459,138 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
         cf_principal(:,end) = notional;
     end
 
+% Special floating types (capitalized, average, min, max)
+elseif ( strcmpi(type,'FRN_SPECIAL'))
+    % assume in fine -> fixing at forward start date -> use issue date as first
+    cf_datesnum = [datenum(issue_date);datenum(cf_dates)];
+    d1 = cf_datesnum(1:length(cf_datesnum)-1);
+    d2 = cf_datesnum(2:length(cf_datesnum));
+    notvec = zeros(1,length(d1));
+    notvec(length(notvec)) = 1;
+    cms_rates = zeros(rows(tmp_rates),length(d1));
+    cms_tf    = zeros(rows(tmp_rates),length(d1));
+    cf_principal = zeros(rows(tmp_rates),length(d1));
+    
+    for ii = 2 : 1 : length(d1)
+        t1 = (d1(ii) - valuation_date);
+        t2 = (d2(ii) - valuation_date);
+        [tf dip dib] = timefactor (t1, t2, dcc);
+        if ( t1 >= 0 && t2 >= t1 )    % for future cash flows use forward rates
+        % (I) Calculate CMS x-let value with or without convexity adjustment and 
+        %   distinguish between swaplets, caplets and floorlets 
+            sliding_term        = instrument.cms_sliding_term;
+            underlying_term     = instrument.cms_term;
+            underlying_spread   = instrument.cms_spread;
+            underlying_comp_type = instrument.cms_comp_type;
+            model               = instrument.cms_model;
+            % payment date of FRN special is maturity date -> use date for CA
+            %     ( will be incorporated in nominator of delta of Hagan)
+            payment_date        = datenum(maturity_date) - valuation_date
+            if ( instrument.in_arrears == 0)    % in fine
+                fixing_start_date  = t1;
+            else    % in arrears
+                fixing_start_date  = t2;
+            end
+            % payment_date
+            % fixing_start_date
+            % set up underlying swap
+            swap = Bond();
+            swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
+                            'value_base',1,'coupon_generation_method', ...
+                            'forward','last_reset_rate',-0.000, ...
+                            'sub_type', 'SWAP_FLOATING','spread',0.00, ...
+                            'maturity_date',datestr(valuation_date + fixing_start_date + sliding_term), ...
+                            'notional',1,'compounding_type',underlying_comp_type, ...
+                            'issue_date', datestr(valuation_date + fixing_start_date), ...
+                            'term',underlying_term,'notional_at_end',0, ...
+                            'notional_at_start',0);
+            % get volatility according to moneyness and term
+            moneyness = 1.0; % moneyness hard coded to 1.0
+            tenor   = fixing_start_date; % days until foward start date
+            sigma   = calcVolaShock(value_type,instrument,surface, ...
+                            riskfactor,tenor,sliding_term,moneyness);        
+            % calculate cms_rate according to cms model and instrument type
+            % either adjustments for swaplets, caplets or floorlets are calculated
+            if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
+                [cms_rate convex_adj] = get_cms_rate_hull(valuation_date,value_type, ...
+                        swap,ref_curve,sigma,model);
+            elseif ( strcmpi( instrument.cms_convex_model,'Hagan' ) )
+                [cms_rate convex_adj] = get_cms_rate_hagan(valuation_date,value_type, ...
+                        instrument,swap,ref_curve,sigma,payment_date);
+            end
+             % set convexity adjustment to zero if necessary
+            if ( instrument.convex_adj == false )
+                convex_adj = 0.0;
+            end 
+            % get final capitalized rate
+            final_rate = (spread + cms_rate + convex_adj) .* tf;
+            
+        elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
+                                        % next is in future, use last reset rate
+            final_rate = (spread + last_reset_rate) .* tf;
+            
+        else    % if both cf dates t1 and t2 lie in the past omit cash flow
+            final_rate = 0.0;
+        end 
+        cms_tf(:,ii) = tf;  % store timefactor of cms rate        
+        cms_rates(:,ii) = final_rate;
+    end
+    cms_rates(:,1)=[];  % remove first cms_rates
+    cms_tf(:,1)=[];  % remove first time factor
+    % Capitalized Floater adjustments:
+    % 1. only final cash flow at maturity date
+    cf_dates    = [issuevec;matvec];
+    % update business date
+    cf_business_dates = datevec(busdate(datenum(cf_dates)-1 + business_day_rule, ...
+                                    business_day_direction));
+                                    
+    % 2. adjust cms rates according to rate composition function
+    if ( strcmpi(instrument.rate_composition,'capitalized'))
+        tmp_rates = prod(1+cms_rates,2) - 1;
+        % convert curve rates to instrument type
+        tmp_rates = convert_curve_rates(valuation_date,cf_dates(:,end), ...
+                                tmp_rates,'simple','annual',basis_curve, ...
+                                compounding_type,compounding_freq,dcc);
+        % annualize rate after simple capitalization was performed:
+        if ( regexpi(compounding_type,'mp'))    % simple
+            adj_rate = term_factor .* tmp_rates ./ (length(cms_rates));
+        elseif ( regexpi(compounding_type,'cont')) % continuous
+            adj_rate = log(1+tmp_rates .* term_factor) ./ (length(cms_rates));
+        else    % discrete compounding
+            adj_rate = (prod(1+cms_rates .* term_factor,2)) ...
+                        ^(1/(term_factor .* length(cms_rates))) - 1;
+        end
+    else
+        % annualize rate before operation is performed:
+        if ( regexpi(compounding_type,'mp'))    % simple
+            tmp_rates = cms_rates ./ cms_tf;
+        elseif ( regexpi(compounding_type,'cont')) % continuous
+            tmp_rates = log(1+cms_rates ./ cms_tf);
+        else    % discrete compounding
+            tmp_rates = (1+cms_rates).^(1./cms_tf) - 1;
+        end
+        % distinguish rate composition methods
+        if ( strcmpi(instrument.rate_composition,'average'))
+            adj_rate = mean(tmp_rates);
+        elseif ( strcmpi(instrument.rate_composition,'max'))
+            adj_rate = max(tmp_rates);
+        elseif ( strcmpi(instrument.rate_composition,'min'))
+            adj_rate = min(tmp_rates);
+        end  
+    end
+    
+    % adjust adj_rate to term and compounding type of instrument
+    instr_adj_rate = (1 ./ discount_factor(datestr(valuation_date), ...
+                            datestr(maturity_date), adj_rate, ...
+                            compounding_type, dcc, compounding_freq)) - 1;                  
+    ret_values  = instr_adj_rate .* notional;
+    cf_interest = ret_values;
+    % Add notional payments at end (start will be neglected)
+    if ( notional_at_end == true) % Add notional payment at end to cf vector:
+        ret_values = ret_values + notional;
+        cf_principal = notional;
+    end
+
 % Type CMS and CMS Caps/Floors: Calculate CF Values for all CF Periods with cms rates
 elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type,'FLOOR_CMS'))
     % assume in fine -> fixing at forward start date -> use issue date as first
@@ -472,6 +620,8 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
             else    % in arrears
                 fixing_start_date  = t2;
             end
+            % payment_date
+            % fixing_start_date
             % set up underlying swap
             swap = Bond();
             swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
@@ -487,7 +637,7 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
             moneyness = 1.0; % moneyness hard coded to 1.0
             tenor   = fixing_start_date; % days until foward start date
             sigma   = calcVolaShock(value_type,instrument,surface, ...
-                            riskfactor,tenor,sliding_term,moneyness);         
+                            riskfactor,tenor,sliding_term,moneyness)  ;       
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
             if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
@@ -497,10 +647,11 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 [cms_rate convex_adj] = get_cms_rate_hagan(valuation_date,value_type, ...
                         instrument,swap,ref_curve,sigma,payment_date);
             end
-             % add convexity adjustment to cms rate
-            if ( instrument.convex_adj == true )
-                cms_rate = cms_rate + convex_adj;
-            end      
+             % set convexity adjustment to zero if necessary
+            if ( instrument.convex_adj == false )
+                convex_adj = 0.0;
+            end 
+            
         % (II) Calculate final floating cash flows: special cap/floorrate
             if (strcmpi(type,'CAP_CMS') || strcmpi(type,'FLOOR_CMS'))
                 % call function to calculate probability weighted forward rate
@@ -513,19 +664,30 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 else
                     moneyness_exponent = -1;
                 end
+                % distinguish between Hagan (adjustmen to value) and Hull 
+                % (adjustment to rate) convexity adjustment:
+                if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
+                    cms_rate  = cms_rate + convex_adj;
+                end
                 moneyness = (cms_rate ./ X) .^ moneyness_exponent;
                 % get volatility according to moneyness and term
                 tenor   = fixing_start_date; % days until foward start date
                 term    = t2 - t1; % days of caplet / floorlet
                 sigma = calcVolaShock(value_type,instrument,surface, ...
                             riskfactor,tenor,term,moneyness);
-                % calculate cms rate according to CAP/FLOOR model
+                % calculate CAP/FLOOR rate according to model based on cms rate
                 cms_rate = getCapFloorRate(instrument.CapFlag, ...
                         cms_rate, X, tf_fsd, sigma, instrument.model);
-                % adjust cms rate to term of caplet / floorlet
-                cms_rate = cms_rate .* tf;
+                
+                % adjust cms rate to term of caplet / floorlet and add back
+                % convexity adjustment in case of Hagan
+                if ( strcmpi( instrument.cms_convex_model,'Hagan' ) )
+                    cms_rate = (cms_rate + convex_adj) .* tf;
+                else
+                    cms_rate = cms_rate .* tf;
+                end
             else % all other CMS floating swap legs
-                cms_rate = (spread + cms_rate) .* tf;
+                cms_rate = (spread + cms_rate + convex_adj) .* tf;
             end
         elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
                                         % next is in future, use last reset rate
@@ -1394,3 +1556,58 @@ end
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_values(1:3),[269736.833333330,331317.955519128,330524.621420768],sqrt(eps))
 %! assert(ret_values(end),32268464.028369263,sqrt(eps))
+
+% testing FRN special floaters: average, min, max, capitalized CMS rates in fine and in arrears
+%!test
+%! valuation_date = datenum('30-Jun-2016');
+%! cap_float = Bond();
+%! cap_float = cap_float.set('Name','TEST_FRN_SPECIAL','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','FRN_SPECIAL','spread',0.00);
+%! cap_float = cap_float.set('maturity_date','28-Jun-2026','notional',100,'compounding_type','simple','issue_date','30-Jun-2016','term',365,'notional_at_end',1,'convex_adj',false);
+%! cap_float = cap_float.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan','in_arrears',0,'day_count_convention','act/365');
+%! ref_curve = Curve();
+%! ref_curve = ref_curve.set('id','IR_EUR','nodes',[365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125], ...
+%!       'rates_base',[-0.0011206280,-0.001240769,-0.001150661,-0.0007102520,-0.0000300010,0.0008896040,0.0018981976,0.0029556280,0.0039820610,0.005027342,0.0059025460,0.006667721,0.007372754,0.007958249,0.008374833,0.008612803, ...
+%!                     0.008781331,0.0089597410,0.009217389,0.009583927,0.0100790350,0.010662948,0.011305847,0.011987858,0.0126891510], ...
+%!       'method_interpolation','linear','compounding_type','continuous');                     
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! v = v.set('values_base',0.001);
+%! v = v.set('type','IR');
+%! vola_rf = Riskfactor();
+%! value_type = 'base'; 
+% average, in fine, CA false
+%! cap_float = cap_float.set('rate_composition','average');
+%! [ret_dates ret_values ret_interest_values ret_principal_values ...
+%!                                     accrued_interest last_coupon_date] = ...
+%!                     rollout_structured_cashflows(valuation_date, value_type, ...
+%!                     cap_float, ref_curve, v,vola_rf);
+%! assert(ret_values,108.271971385784,sqrt(eps));
+% min, in fine, CA false
+%! cap_float = cap_float.set('rate_composition','min');
+%! [ret_dates ret_values ret_interest_values ret_principal_values ...
+%!                                     accrued_interest last_coupon_date] = ...
+%!                     rollout_structured_cashflows(valuation_date, value_type, ...
+%!                     cap_float, ref_curve, v,vola_rf);
+%! assert(ret_values,99.9700569884139,sqrt(eps));
+% max, in fine, CA false
+%! cap_float = cap_float.set('rate_composition','max');
+%! [ret_dates ret_values ret_interest_values ret_principal_values ...
+%!                                     accrued_interest last_coupon_date] = ...
+%!                     rollout_structured_cashflows(valuation_date, value_type, ...
+%!                     cap_float, ref_curve, v,vola_rf);
+%! assert(ret_values,115.219608147154,sqrt(eps));
+% capitalized, in fine, CA false
+%! cap_float = cap_float.set('rate_composition','capitalized');
+%! [ret_dates ret_values ret_interest_values ret_principal_values ...
+%!                                     accrued_interest last_coupon_date] = ...
+%!                     rollout_structured_cashflows(valuation_date, value_type, ...
+%!                     cap_float, ref_curve, v,vola_rf);
+%! assert(ret_values,108.571656255091,sqrt(eps));
+% capitalized, in arrears
+%! cap_float = cap_float.set('rate_composition','capitalized','in_arrears',1);
+%! [ret_dates ret_values ret_interest_values ret_principal_values ...
+%!                                     accrued_interest last_coupon_date] = ...
+%!                     rollout_structured_cashflows(valuation_date, value_type, ...
+%!                     cap_float, ref_curve, v,vola_rf);
+%! assert(ret_values,110.223626446553,sqrt(eps));
+

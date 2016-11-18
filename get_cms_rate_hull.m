@@ -26,7 +26,7 @@
 %# @item @var{sigma}: volatility used for calculating convexity adjustment
 %# @item @var{model}: volatility model used for calculating convexity adjustment
 %# @end itemize
-%# @seealso{interpolate_curve, discount_factor, timefactor, rollout_structured_cashflows}
+%# @seealso{discount_factor, timefactor, rollout_structured_cashflows}
 %# @end deftypefn
 
 function [cms_rate convex_adj] = get_cms_rate_hull(valuation_date,value_type,swap,curve,sigma,model)
@@ -65,7 +65,7 @@ tf_start = timefactor(valuation_date,datenum(swap.issue_date),basis);
 for ii = 1:1:length(cms_dates)
     tmp_date = cms_dates(ii);
     % interpolate rates from given curve rates
-    r_curve = interpolate_curve(nodes,rates,tmp_date,interp_method);
+    r_curve = curve.getRate(value_type,tmp_date);
     % calculate discount factor
     cms_df(:,ii) = discount_factor (valuation_date, (tmp_date + valuation_date), ...
                         r_curve, comp_type_curve, basis_curve, comp_freq_curve);
@@ -106,7 +106,6 @@ if (strcmpi(model,'Black'))
 else    % normal model
     convex_adj = -0.5 .* sigma.^2 .* tf_start .* ddP ./ dP;
 end
-
 
 end % end main function
 

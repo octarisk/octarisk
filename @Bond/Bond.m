@@ -57,6 +57,8 @@ classdef Bond < Instrument
         cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
+        rate_composition        = 'capitalize'; % function for CMS rates
+                                    % ['capitalize', 'average', 'max', 'min']
     end
    
     properties (SetAccess = private)
@@ -141,7 +143,10 @@ classdef Bond < Instrument
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
-         end        
+         end 
+         if ( regexpi(b.sub_type,'FRN_SPECIAL'))
+            fprintf('rate_composition: %s\n',b.rate_composition); 
+         end 
          if ( strcmpi(b.sub_type,'STOCHASTICCF'))
             fprintf('stochastic_riskfactor: %s\n',b.stochastic_riskfactor); 
             fprintf('stochastic_surface: %s\n',b.stochastic_surface); 
@@ -206,8 +211,8 @@ classdef Bond < Instrument
                 || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') ...
                 || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') ...
                 || strcmpi(sub_type,'ZCB')  || strcmpi(sub_type,'STOCHASTICCF') ...
-                || strcmpi(sub_type,'CMS_FLOATING'))
-            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING or CMS_FLOATING: %s',sub_type)
+                || strcmpi(sub_type,'CMS_FLOATING') || strcmpi(sub_type,'FRN_SPECIAL'))
+            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL or CMS_FLOATING: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
@@ -244,7 +249,15 @@ classdef Bond < Instrument
         end 
         obj.compounding_freq = compounding;
       end % set.compounding_freq
-    
+  
+      function obj = set.rate_composition(obj,rate_composition)
+         if ~(strcmpi(rate_composition,'capitalized') || strcmpi(rate_composition,'average') ...
+                || strcmpi(rate_composition,'min') || strcmpi(rate_composition,'max'))
+            error('Bond rate_composition must be either capitalized, average, min, max : %s',rate_composition);
+         end
+         obj.rate_composition = tolower(rate_composition);
+      end % set.rate_composition
+  
    end % end static methods
    
 end 

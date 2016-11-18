@@ -25,7 +25,7 @@
 %# @item @var{underlying_object}: underlying object of forward
 %# @item @var{und_curve_object}: discount curve object of underlying object
 %# @end itemize
-%# @seealso{timefactor, discount_factor, interpolate_curve, convert_curve_rates}
+%# @seealso{timefactor, discount_factor, convert_curve_rates}
 %# @end deftypefn
 
 function [theo_value theo_price] = pricing_forward(valuation_date,value_type, forward, ...
@@ -127,9 +127,7 @@ end
 % Problem: convenience yield / storage costs have convention CONT act/365
 
 % Get discount curve and calculate cost of carry
-discount_rate_curve       = interpolate_curve(discount_nodes,discount_rates, ...
-    days_to_maturity,interp_discount);
-
+discount_rate_curve = discount_curve_object.getRate(value_type,days_to_maturity);
 % Convert discount rate to cont rate act/365
 discount_rate_cont  = convert_curve_rates(valuation_date,days_to_maturity, ...
     discount_rate_curve, curve_comp_type,curve_comp_freq, ...
@@ -272,8 +270,7 @@ elseif ( sum(strcmpi(type,{'EquityFuture'})) > 0 )
 % #####  Calculate forward value for FX forwards    #####
 elseif ( sum(strcmpi(type,{'FX'})) > 0 )
     % extract rate from foreign curve
-    foreign_rate_curve  = interpolate_curve(foreign_nodes,foreign_rates, ...
-        days_to_maturity,interp_foreign);
+    foreign_rate_curve = und_curve_object.getRate(value_type,days_to_maturity);
     % Convert foreign rate from curve rate convention to instrument convention
     foreign_rate_instr  = convert_curve_rates(valuation_date,days_to_maturity, ...
         foreign_rate_curve, curve_comp_type_foreign, ...

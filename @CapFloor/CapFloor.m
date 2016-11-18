@@ -108,6 +108,9 @@ classdef CapFloor < Instrument
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
          end  
+         fprintf('ir_shock: %f \n',b.ir_shock);
+         fprintf('eff_duration: %f \n',b.eff_duration);
+         fprintf('eff_convexity: %f \n',b.eff_convexity);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
          [mc_rows mc_cols mc_stack] = size(b.cf_values_mc);
