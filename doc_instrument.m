@@ -892,6 +892,35 @@ end
 %! assert(float.getValue('base'),102.129818647705,0.00000001);
 
 %!test 
+%! fprintf('\tdoc_instrument:\tPricing Fixed Rate Bond with embedded European Put Option\n');
+%! valuation_date = datenum('01-Jan-2016');
+%! rates_base = [0.0501772,0.0498284,0.0497234,0.0496157,0.0499058,0.0509389,0.0579733,0.0630595,0.0673464,0.0694816,0.0708807,0.0727527,0.0730852,0.0739790,0.0749015];
+%! rates_stress = repmat(rates_base,2,1);
+%! curve = Curve();
+%! curve = curve.set('id','IR_EUR','nodes',[3,31,62,94,185,367,731,1096,1461,1826,2194,2558,2922,3287,3653], ...
+%!       'rates_base',rates_base, 'rates_stress',rates_stress, 'method_interpolation','linear','compounding_type','continuous');   
+%! b = Bond();
+%! b = b.set('Name','FRB_TEST','coupon_rate',0.00,'coupon_generation_method','backward','term',12,'sub_type','ZCB');
+%! b = b.set('maturity_date','29-Dec-2024','notional',100,'compounding_type','simple','issue_date','01-Jan-2016','day_count_convention','30/360E');
+%! b = b.set('treenodes',30,'put_schedule','PUT_SCHEDULE','embedded_option_flag',true);
+%! call_schedule = Curve();
+%! call_schedule = call_schedule.set('id','CALL_SCHEDULE','nodes',[],'rates_base',[],'type','Call Schedule');
+%! put_schedule = Curve();
+%! put_schedule = put_schedule.set('id','PUT_SCHEDULE','nodes',[1095],'rates_base',[0.63],'type','Put Schedule');
+%! value_type = 'base';
+%! b = b.rollout(value_type,valuation_date);
+%! b = b.calc_value(valuation_date,value_type,curve,call_schedule,put_schedule);
+%! base_value = b.getValue(value_type);
+%! option_value = b.get('embedded_option_value');
+%! assert(base_value,53.1857840724563,0.00000001);
+% John c. Hull, Option Future and Derivatives gives an put option value of 1.8093 (for 500 steps)
+%! assert(option_value,1.79785695975905,0.00000001);
+%! value_type = 'stress';
+%! b = b.rollout(value_type,valuation_date);
+%! b = b.calc_value(valuation_date,value_type,curve,call_schedule,put_schedule);
+%! assert(b.getValue(value_type),[53.1857840724563;53.1857840724563],0.00000001);
+
+%!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
 %! b = Bond();
 %! r = Riskfactor();

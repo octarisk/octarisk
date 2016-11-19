@@ -73,10 +73,10 @@ Input and output variables:\n\
           return octave_value_list();
 
         // Input parameter
-        double T            = args(0).double_value ();  // Timesteps
-        double N_tmp        = args(1).double_value ();
-        double alpha        = args(2).double_value ();
-        NDArray sigma_vec   = args(3).array_value ();
+        double T            = args(0).double_value ();  // Timefactor until maturity
+        double N_tmp        = args(1).double_value ();  // number of timesteps
+        double alpha        = args(2).double_value ();  // mean reversion parameter
+        NDArray sigma_vec   = args(3).array_value ();   // volatility of IR
         NDArray cf_dates    = args(4).array_value ();
         Matrix cf_matrix    = args(5).matrix_value ();
         Matrix R_matrix     = args(6).matrix_value ();
@@ -85,6 +85,7 @@ Input and output variables:\n\
         double notional     = args(9).double_value ();
         int MatIndex        = args(10).int_value();     // Index of Option Maturity
         double K            = args(11).double_value();  // Strike
+        bool american       = args(12).bool_value();    // American option
         
         // total number of scenarios:
         int len_sigma = sigma_vec.length ();
@@ -100,16 +101,12 @@ Input and output variables:\n\
         
         // initialize scenario dependent output:
         dim_vector dim_scen (len, 1);
-        NDArray EuroPutVec (dim_scen);
-        NDArray EuroCallVec (dim_scen);
-        NDArray AmPutVec (dim_scen);
-        NDArray AmCallVec (dim_scen);
+        NDArray PutVec (dim_scen);
+        NDArray CallVec (dim_scen);
         for (octave_idx_type ii = 0; ii < len; ii++) 
         {
-            EuroPutVec(ii) = 0.0;
-            EuroCallVec(ii) = 0.0;
-            AmPutVec(ii) = 0.0;
-            AmCallVec(ii) = 0.0;
+            PutVec(ii) = 0.0;
+            CallVec(ii) = 0.0;
         }
         // std::cout << "Looping via scen:" << len << "\n";  
 
@@ -119,7 +116,7 @@ Input and output variables:\n\
         // Threshold (M), jMax, and state vector (x)
             // limit alpha and therefore jMax
             double M = -std::max(alpha,0.0002)*step;
-            double jMax_tmp = ceil(-0.183500000000/M);
+            double jMax_tmp = ceil(-0.1835/M);
             int N = static_cast<int>(N_tmp);
             int jMax = static_cast<int>(jMax_tmp);
         // Build the HW probability trees for pu, pm, and pd.
@@ -213,52 +210,52 @@ Input and output variables:\n\
             retval_buildB = get_bond_price(newargs_buildB);
             Matrix B = retval_buildB(0).matrix_value ();
     
-             // Get American Option Prices
-            octave_value_list newargs_AmOpt;
-            newargs_AmOpt(0) = K; 
-            newargs_AmOpt(1) = B;
-            newargs_AmOpt(2) = jMax;
-            newargs_AmOpt(3) = MatIndex;
-            newargs_AmOpt(4) = d;  
-            newargs_AmOpt(5) = pu;
-            newargs_AmOpt(6) = pm;
-            newargs_AmOpt(7) = pd;
-            octave_value_list retval_AmOpt;
-            retval_AmOpt  = get_american_option_price(newargs_AmOpt);
-            AmPutVec(ii)  = retval_AmOpt(0).double_value ();
-            AmCallVec(ii) = retval_AmOpt(1).double_value ();
-            
-            // Get Option payoffs and prices
-            double EuroPut = 0.0;
-            double EuroCall = 0.0;
-            dim_vector dcf (2*jMax+1,1);
-            NDArray Payoff_Put (dcf);
-            NDArray Payoff_Call (dcf);
+            if (american == true)
+            {
+                 // Get American Option Prices
+                octave_value_list newargs_AmOpt;
+                newargs_AmOpt(0) = K; 
+                newargs_AmOpt(1) = B;
+                newargs_AmOpt(2) = jMax;
+                newargs_AmOpt(3) = MatIndex;
+                newargs_AmOpt(4) = d;  
+                newargs_AmOpt(5) = pu;
+                newargs_AmOpt(6) = pm;
+                newargs_AmOpt(7) = pd;
+                octave_value_list retval_AmOpt;
+                retval_AmOpt  = get_american_option_price(newargs_AmOpt);
+                PutVec(ii)  = retval_AmOpt(0).double_value ();
+                CallVec(ii) = retval_AmOpt(1).double_value ();
+            } else {
+                // Get European Option payoffs and prices
+                double Put = 0.0;
+                double Call = 0.0;
+                dim_vector dcf (2*jMax+1,1);
+                NDArray Payoff_Put (dcf);
+                NDArray Payoff_Call (dcf);
 
-            // Payoff Put is max(K - B(:,OptionMaturity+1)
-            for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-                double tmp_diff = K - B(mm,MatIndex);
-                Payoff_Put(mm) = std::max(tmp_diff , 0.0);
+                // Payoff Put is max(K - B(:,OptionMaturity+1)
+                for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
+                    double tmp_diff = K - B(mm,MatIndex);
+                    Payoff_Put(mm) = std::max(tmp_diff , 0.0);
+                }
+                
+                // Payoff Call is max(K - B(:,OptionMaturity+1)
+                for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
+                    double tmp_diff = B(mm,MatIndex) - K;
+                    Payoff_Call(mm) = std::max(tmp_diff , 0.0);
+                }
+                
+                // Option Price is the payoff times the Arrow Debreu prices
+                for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
+                    Call += Q(mm,MatIndex) * Payoff_Call(mm);
+                    Put  += Q(mm,MatIndex) * Payoff_Put(mm);
+                }
+                // store scenario value in return Array
+                PutVec(ii) = Put;
+                CallVec(ii) = Call;
             }
-            
-            // Payoff Call is max(K - B(:,OptionMaturity+1)
-            for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-                double tmp_diff = B(mm,MatIndex) - K;
-                Payoff_Call(mm) = std::max(tmp_diff , 0.0);
-            }
-            
-            // Option Price is the payoff times the Arrow Debreu prices
-            for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-                EuroCall += Q(mm,MatIndex) * Payoff_Call(mm);
-                EuroPut  += Q(mm,MatIndex) * Payoff_Put(mm);
-            }
-            
-            // store scenario value in return Array
-            EuroPutVec(ii) = EuroPut;
-            EuroCallVec(ii) = EuroCall;
-            
-           
-            
+
             // store trees for first scenario only
             if ( ii == 0 ) 
             {
@@ -271,16 +268,14 @@ Input and output variables:\n\
         
         // return European Put and Call prices
         octave_value_list option_outargs;
-        option_outargs(0) = EuroPutVec;
-        option_outargs(1) = EuroCallVec;
-        option_outargs(2) = AmPutVec;
-        option_outargs(3) = AmCallVec;
-        option_outargs(4) = B_first;
-        option_outargs(5) = pu;
-        option_outargs(6) = pm;
-        option_outargs(7) = pd;
-        option_outargs(8) = r_first;
-        option_outargs(9) = Q_first;
+        option_outargs(0) = PutVec;
+        option_outargs(1) = CallVec;
+        option_outargs(2) = B_first;
+        option_outargs(3) = pu;
+        option_outargs(4) = pm;
+        option_outargs(5) = pd;
+        option_outargs(6) = r_first;
+        option_outargs(7) = Q_first;
         
        return octave_value (option_outargs);
     }

@@ -13,6 +13,8 @@ classdef Curve
       increments = '';
       alpha = 0.19; % alpha parameter for Smith-Wilson interpolation method
       ufr = 0.042; % ultimate forward rate for Smith-Wilson interpolation method
+      % WARNING: american call or put option not implemented properly. Do not use!
+      american_flag = 0; % specifying option type if used as call or put schedule
     end
    
     properties (SetAccess = protected )
@@ -121,8 +123,9 @@ classdef Curve
       
       function obj = set.type(obj,type)
          if ~(strcmpi(type,'Discount Curve') || strcmpi(type,'Spread Curve')  || strcmpi(type,'Dummy Curve') ...
-                    || strcmpi(type,'Aggregated Curve') || strcmpi(type,'Prepayment Curve'))
-            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve, Dummy Curve or Prepayment Curve')
+                    || strcmpi(type,'Aggregated Curve') || strcmpi(type,'Prepayment Curve') ...
+                    || strcmpi(type,'Call Schedule') || strcmpi(type,'Put Schedule'))
+            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve, Dummy Curve, Call or Put Schedule or Prepayment Curve')
          end
          obj.type = type;
       end % Set.type

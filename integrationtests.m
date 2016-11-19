@@ -19,6 +19,11 @@
 
 function integrationtests(path_folder)
 
+% 0) check for required oct files
+if ~( exist('pricing_callable_bond_cpp') == 3)
+    error('ERROR: pricing_callable_bond_cpp.oct does not exist in path. Compilation required.');
+end
+
 % 1) Specify all functions, which have embedded tests:
 function_cell = {'doc_instrument'};
 path_testing_folder = path_folder;

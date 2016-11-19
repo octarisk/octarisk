@@ -59,6 +59,12 @@ classdef Bond < Instrument
         vola_spread             = 0.0;
         rate_composition        = 'capitalize'; % function for CMS rates
                                     % ['capitalize', 'average', 'max', 'min']
+        embedded_option_flag    = false; % true: bond is call or putable
+        alpha                   = 0.1; % callable bond mean reversion constant
+        sigma                   = 0.01; % callable bond rate volatility
+        treenodes               = 50; % callable bond tree nodes
+        call_schedule           = ''; % callable bond call schedule curve
+        put_schedule            = ''; % callable bond put schedule curve
     end
    
     properties (SetAccess = private)
@@ -83,6 +89,7 @@ classdef Bond < Instrument
         pv01 = 0.0;
         accrued_interest = 0.0;
         last_coupon_date = 0;
+        embedded_option_value = 0.0;
     end
    
    methods
@@ -143,6 +150,14 @@ classdef Bond < Instrument
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
+         end 
+         if ( b.embedded_option_flag == true)
+            fprintf('embedded_option_value: %f\n',b.embedded_option_value); 
+            fprintf('alpha: %s\n',any2str(b.alpha)); 
+            fprintf('sigma: %s\n',any2str(b.sigma)); 
+            fprintf('treenodes: %s\n',any2str(b.treenodes)); 
+            fprintf('call_schedule: %s\n',b.call_schedule); 
+            fprintf('put_schedule: %s\n',b.put_schedule); 
          end 
          if ( regexpi(b.sub_type,'FRN_SPECIAL'))
             fprintf('rate_composition: %s\n',b.rate_composition); 
