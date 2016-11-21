@@ -85,7 +85,8 @@ Input and output variables:\n\
         double notional     = args(9).double_value ();
         int MatIndex        = args(10).int_value();     // Index of Option Maturity
         double K            = args(11).double_value();  // Strike
-        bool american       = args(12).bool_value();    // American option
+        Matrix accr_int_mat = args(12).matrix_value ();
+        bool american       = args(13).bool_value();    // American option
         
         // total number of scenarios:
         int len_sigma = sigma_vec.length ();
@@ -153,9 +154,11 @@ Input and output variables:\n\
             // cf_values
             dim_vector dim_cols_cf (1, cols_cf_matrix);
             NDArray cf_values (dim_cols_cf);
+            NDArray accr_int (dim_cols_cf);
             for (octave_idx_type zz = 0; zz < cols_cf_matrix; zz++) 
             {
                 cf_values(zz) = cf_matrix(ii,zz);
+                accr_int(zz) = accr_int_mat(ii,zz);
             }                
             // scenario dependent Hull White tree parameters
             double dr = sigma*sqrt(3*step);
@@ -222,6 +225,7 @@ Input and output variables:\n\
                 newargs_AmOpt(5) = pu;
                 newargs_AmOpt(6) = pm;
                 newargs_AmOpt(7) = pd;
+                newargs_AmOpt(8) = accr_int;
                 octave_value_list retval_AmOpt;
                 retval_AmOpt  = get_american_option_price(newargs_AmOpt);
                 PutVec(ii)  = retval_AmOpt(0).double_value ();
@@ -236,20 +240,23 @@ Input and output variables:\n\
 
                 // Payoff Put is max(K - B(:,OptionMaturity+1)
                 for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-                    double tmp_diff = K - B(mm,MatIndex);
+                    double tmp_diff = K - B(mm,MatIndex) + accr_int(MatIndex - 1);
+                    //std::cout << "tmp_diff = Strike " << K << " - BondPrice " << B(mm,MatIndex) << " + cf " << accr_int(MatIndex - 1) << "\n"; 
                     Payoff_Put(mm) = std::max(tmp_diff , 0.0);
                 }
                 
                 // Payoff Call is max(K - B(:,OptionMaturity+1)
                 for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-                    double tmp_diff = B(mm,MatIndex) - K;
+                    double tmp_diff = B(mm,MatIndex) - K - accr_int(MatIndex - 1);
+                    //std::cout << "tmp_diff = Strike " << K << " - BondPrice " << B(mm,MatIndex) << " - cf " << accr_int(MatIndex - 1) << "\n"; 
                     Payoff_Call(mm) = std::max(tmp_diff , 0.0);
                 }
-                
+
                 // Option Price is the payoff times the Arrow Debreu prices
                 for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
                     Call += Q(mm,MatIndex) * Payoff_Call(mm);
-                    Put  += Q(mm,MatIndex) * Payoff_Put(mm);
+                    //std::cout << "Put Payoff " << Payoff_Put(mm) << "Call Payoff " << Payoff_Call(mm) << "Q " << Q(mm,MatIndex) << "\n";  
+                    Put  += Q(mm,MatIndex) * Payoff_Put(mm); 
                 }
                 // store scenario value in return Array
                 PutVec(ii) = Put;
@@ -294,6 +301,7 @@ octave_value_list get_american_option_price(const octave_value_list& args)
     Matrix pu       = args(5).matrix_value ();
     Matrix pm       = args(6).matrix_value ();
     Matrix pd       = args(7).matrix_value ();
+    NDArray accr_int = args(8).array_value ();
     
     // Initialize the American puts and call trees
     dim_vector dv (2*jMax+1,MatIndex+1);  // span Matrix
@@ -308,8 +316,8 @@ octave_value_list get_american_option_price(const octave_value_list& args)
 
     // Intrinsic value at maturity
     for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-        AP(mm,MatIndex) = std::max(K-B(mm,MatIndex),0.0);
-        AC(mm,MatIndex) = std::max(B(mm,MatIndex)-K,0.0);
+        AP(mm,MatIndex) = std::max(K-B(mm,MatIndex) + accr_int(MatIndex - 1),0.0);
+        AC(mm,MatIndex) = std::max(B(mm,MatIndex)-K - accr_int(MatIndex - 1),0.0);
     }
     
     Matrix EP = AP; 
@@ -329,19 +337,22 @@ octave_value_list get_american_option_price(const octave_value_list& args)
                     EP(i-1,j-1) = d(i-1,j-1)*(EP(i-2,j)*pu(i-1,j-1) + EP(i-1,j)*pm(i-1,j-1) + EP(i,j)*pd(i-1,j-1));
                     EC(i-1,j-1) = d(i-1,j-1)*(EC(i-2,j)*pu(i-1,j-1) + EC(i-1,j)*pm(i-1,j-1) + EC(i,j)*pd(i-1,j-1));
                 }
-                AP(i-1,j-1) = std::max(EP(i-1,j-1), K - B(i-1,j-1));
-                AC(i-1,j-1) = std::max(EC(i-1,j-1), B(i-1,j-1) - K);
+                AP(i-1,j-1) = std::max(EP(i-1,j-1), K - B(i-1,j-1) + accr_int(j-2));
+                AC(i-1,j-1) = std::max(EC(i-1,j-1), B(i-1,j-1) - K  - accr_int(j-2));
+                EP(i-1,j-1) = AP(i-1,j-1);  // store new values for discounting
+                EC(i-1,j-1) = AC(i-1,j-1);
             }
         } else { // Tip of the tree
             for (octave_idx_type i=jMax-(j-2); i <= jMax+j; i++) {
                 EP(i-1,j-1) = d(i-1,j-1)*(EP(i-2,j)*pu(i-1,j-1) + EP(i-1,j)*pm(i-1,j-1) + EP(i,j)*pd(i-1,j-1));
-                AP(i-1,j-1) = std::max(EP(i-1,j-1), K - B(i-1,j-1));
+                AP(i-1,j-1) = std::max(EP(i-1,j-1), K - B(i-1,j-1) + accr_int(j-2));
                 EC(i-1,j-1) = d(i-1,j-1)*(EC(i-2,j)*pu(i-1,j-1) + EC(i-1,j)*pm(i-1,j-1) + EC(i,j)*pd(i-1,j-1));
-                AC(i-1,j-1) = std::max(EC(i-1,j-1), B(i-1,j-1)-K);
+                AC(i-1,j-1) = std::max(EC(i-1,j-1), B(i-1,j-1) - K - accr_int(j-2));
+                EP(i-1,j-1) = AP(i-1,j-1);
+                EC(i-1,j-1) = AC(i-1,j-1);
             }
         } 
     }
-    
     // return American Option Prices
     octave_value_list outargs;
     outargs(0) = AP(jMax,0);

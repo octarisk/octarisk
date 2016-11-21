@@ -26,7 +26,7 @@
 %# @seealso{pricing_callable_bond_cpp}
 %# @end deftypefn
 
-function [OptionValue] = option_bond_hw(value_type,bond,curve,callschedule,putschedule)
+function [OptionValue OptionValuePut OptionValueCall] = option_bond_hw(value_type,bond,curve,callschedule,putschedule)
  
  if nargin < 5 || nargin > 5
      print_usage ();
@@ -39,7 +39,7 @@ function [OptionValue] = option_bond_hw(value_type,bond,curve,callschedule,putsc
 % Yearly zero coupon rates and tenors
 % Specify callable bond
 notional = bond.notional;
-cf_dates = bond.cf_dates;
+cf_dates = bond.cf_dates
 cf_values = bond.getCF(value_type);
 
 % ------------------------------------------------------------------------------
@@ -60,8 +60,16 @@ put_strike = putschedule.getValue(value_type);
 
 % ------------------------------------------------------------------------------
 % B) Map cash flow and call/put dates to tree dates 
-last_cf_date = cf_dates(end);
+last_cf_date = cf_dates(end); % max(put_dates(end),call_dates(end))
 
+
+if (length(call_dates) > 0 && call_dates(end) > last_cf_date)
+    call_dates(end) = last_cf_date;
+end
+
+if (length(put_dates) > 0 && put_dates(end) > last_cf_date)
+    put_dates(end) = last_cf_date;
+end
 % rollout all cash flows:
 N = round(bond.treenodes);
 stepsize = max(round(last_cf_date / N),1);
@@ -103,14 +111,43 @@ for kk = 1 : 1 : length(cf_dates)
     idx = interp1(tree_dates,[1:length(tree_dates)],cf_dates(kk),'nearest');
     tree_cf(:,idx) = cf_values(:,kk);
 end
-% ------------------------------------------------------------------------------
 
+
+% calculate accrued interest for interest rate bonds only
+accr_int = zeros(rows(tree_cf),columns(tree_cf));
+if ( length(cf_dates) > 1 ) % coupon bearing bonds
+    for mm = 1 : 1 : length(tree_dates)
+        idx = interp1(cf_dates,[1:length(cf_dates)],tree_dates(mm),'previous');
+        if ( idx > 0 && idx < length(cf_dates))
+            prev_cf_date = cf_dates(idx);
+            next_cf_date = cf_dates(idx + 1);
+            next_cf_value = cf_values(idx + 1);
+            act_date = tree_dates(mm) ;
+            if (act_date > prev_cf_date && act_date < next_cf_date)
+                tmp_accr_int =   next_cf_value .* (act_date - prev_cf_date) ./ (next_cf_date - prev_cf_date);
+            elseif (act_date == prev_cf_date)
+                tmp_accr_int = cf_values(idx);
+            else
+                tmp_accr_int = 0.0;
+            end
+        elseif ( idx == length(cf_dates)) % final cash flow
+            tmp_accr_int = cf_values(end) .- notional;
+        else
+            tmp_accr_int = 0.0;
+        end
+        accr_int(:,mm) = tmp_accr_int;
+    end
+ 
+else    % zero coupon bonds or bullet bonds
+    accr_int(:,end) = cf_values(end) .- notional;
+end
+% ------------------------------------------------------------------------------
 
 % ------------------------------------------------------------------------------
 % C)  Derive tree values from input data 
 
 % Maturity (T) number of time steps (N) and time increment (dt)
-T = tree_dates(end)/365;
+T = tree_dates(end)/365;    % required for determining rows of HW tree
 % TODO: according to cash flow pattern and call rates, dt has to be calculated
 
 timeincrements = diff(tree_dates);
@@ -155,8 +192,9 @@ if ( length(call_dates) > 0 )   % only if call schedule has some dates
         american_flag = callschedule.american_flag;
         
         % Call pricing funciton C++ 
-        [Put Call] = pricing_callable_bond_cpp(T,N,alpha,sigma,tree_dates, ...
-                    tree_cf,R_matrix,dt,Timevec,notional,Mat,K,american_flag);
+        [Put Call cppB] = pricing_callable_bond_cpp(T,N,alpha,sigma,tree_dates, ...
+                    tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
+        %BondBaseValue = cppB(round(rows(cppB)/2),1)
         OptionValueCall += Call;
     end
 end        
@@ -167,19 +205,22 @@ if ( length(put_dates) > 0 )   % only if put schedule has some dates
         if (isnan(Mat))
             Mat = length(tree_dates);
         end
+        Mat
         % calculate strike value
         K = put_strike(mm) * notional;
         american_flag = putschedule.american_flag;
         
         % Call pricing funciton C++ 
         [Put Call cppB pu pm pd r Q] = pricing_callable_bond_cpp(T,N,alpha,sigma,tree_dates, ...
-                    tree_cf,R_matrix,dt,Timevec,notional,Mat,K,american_flag);
-        BondBaseValue = cppB(round(rows(cppB)/2),1);
+                    tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
+        %BondBaseValue = cppB(round(rows(cppB)/2),1)
         OptionValuePut += Put;
     end
 end        
 % cpptime = toc;
 % return values: Putvalue is valuable to bond holder, call value reduces price
+%OptionValuePut
+%OptionValueCall
 OptionValue = OptionValuePut - OptionValueCall;
 
 end

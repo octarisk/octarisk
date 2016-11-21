@@ -23,6 +23,8 @@ classdef CapFloor < Instrument
         notional_at_start = 0; 
         notional_at_end = 0;
         coupon_rate = 0.0;
+        prorated = true; % Bool: true means deposit method 
+        %  (adjust cash flows for leap year), false = bond method (fixed coupon)
         calibration_flag = 0;   % flag set to true, if calibration 
                                 %(mark to market) successful            
         vola_surface = 'RF_VOLA_IR_EUR';

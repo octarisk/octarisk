@@ -88,7 +88,7 @@ if nargin > 3
     compounding_freq = instrument.compounding_freq;
     maturity_date = instrument.maturity_date;
 
-    % get term time factor
+    % get term time factor (payments per year)
     if ( mod(term,365) == 0 && term ~= 0)
         term_factor = 365 / term; 
     elseif ( term == 12)
@@ -313,11 +313,23 @@ if ( strcmp(type,'FRB') == 1 || strcmp(type,'SWAP_FIXED') == 1 )
     % preallocate memory
     cf_values = zeros(1,length(d1));
     cf_principal = zeros(1,length(d1));
-    % calculate all cash flows
+    % calculate all cash flows (assume prorated == true --> deposit method
     for ii = 1: 1 : length(d2)
         cf_values(ii) = ((1 ./ discount_factor(d1(ii), d2(ii), coupon_rate, ...
                                             compounding_type, dcc, ...
                                             compounding_freq)) - 1) .* notional;
+        % prorated == false: adjust deposit method to bond method --> in case
+        % of leap year adjust time period length by adding one day and
+        % recalculate cash flow
+        if ( instrument.prorated == false) 
+            delta_coupon = cf_values(ii) - coupon_rate .* notional;
+            delta_prorated = notional .* coupon_rate / 365;
+            if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
+                cf_values(ii) = ((1 ./ discount_factor(d1(ii)+1, d2(ii), ...
+                                    coupon_rate, compounding_type, dcc, ...
+                                    compounding_freq)) - 1) .* notional;
+            end
+        end
     end
     ret_values = cf_values;
     cf_interest = cf_values;
