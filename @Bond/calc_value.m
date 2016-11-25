@@ -44,10 +44,26 @@ function obj = calc_value(bond,valuation_date,value_type,discount_curve,call_sch
             error('Error: No call or put schedule set. Aborting.');
         end
         % check whether call or put schedule have been set
-        if ~(strcmpi(call_schedule.type,'Call Schedule') || strcmpi(put_schedule.type,'Put Schedule'))
-            error('Error: Not a call or put schedule: >>%s<< >>%s<<. Aborting.',any2str(call_schedule.id),any2str(put_schedule.id));
+        if isobject(call_schedule)
+            if ~(strcmpi(call_schedule.type,'Call Schedule'))
+                error('Error: Not a call schedule: >>%s<<. Aborting.',any2str(call_schedule.id));
+            end
+        else    
+            call_schedule = [];
         end
-        OptionValue = option_bond_hw(value_type,bond,discount_curve,call_schedule,put_schedule);
+        if isobject(put_schedule)
+            if ~(strcmpi(put_schedule.type,'Put Schedule'))
+                error('Error: Not a put schedule: >>%s<<. Aborting.',any2str(put_schedule.id));
+            end
+        else    
+            put_schedule = [];
+        end
+        if (length(put_schedule) == 0 && length(call_schedule) == 0)
+            error('Error: At least a call or put schedule have to be set.');
+        end
+        % call option pricing function
+        OptionValue = option_bond_hw(value_type,bond,discount_curve, ...
+                                                    call_schedule,put_schedule);
         % add embedded Option value
         theo_value = theo_value + OptionValue;
         if ( strcmp(value_type,'base'))

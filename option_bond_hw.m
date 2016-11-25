@@ -39,7 +39,7 @@ function [OptionValue OptionValuePut OptionValueCall] = option_bond_hw(value_typ
 % Yearly zero coupon rates and tenors
 % Specify callable bond
 notional = bond.notional;
-cf_dates = bond.cf_dates
+cf_dates = bond.cf_dates;
 cf_values = bond.getCF(value_type);
 
 % ------------------------------------------------------------------------------
@@ -48,16 +48,21 @@ cf_values = bond.getCF(value_type);
 alpha = bond.alpha;
 sigma = bond.sigma;
 
-% Strike price for puts on the discount bond
-
 % get call or put schedule
-% call date
-% days to maturity of callable feature
-call_dates = callschedule.get('nodes');
-call_strike = callschedule.getValue(value_type);
-put_dates = putschedule.get('nodes');
-put_strike = putschedule.getValue(value_type);
-
+if isobject(callschedule)
+    call_dates = callschedule.get('nodes');
+    call_strike = callschedule.getValue(value_type);
+else
+    call_dates = [];
+    call_strike = [];
+end
+if isobject(putschedule)
+    put_dates = putschedule.get('nodes');
+    put_strike = putschedule.getValue(value_type);
+else
+    put_dates = [];
+    put_strike = [];
+end
 % ------------------------------------------------------------------------------
 % B) Map cash flow and call/put dates to tree dates 
 last_cf_date = cf_dates(end); % max(put_dates(end),call_dates(end))
@@ -141,6 +146,7 @@ if ( length(cf_dates) > 1 ) % coupon bearing bonds
 else    % zero coupon bonds or bullet bonds
     accr_int(:,end) = cf_values(end) .- notional;
 end
+
 % ------------------------------------------------------------------------------
 
 % ------------------------------------------------------------------------------
@@ -169,6 +175,9 @@ if ( rows(R_matrix) > 1 )
     if ( rows(tree_cf) == 1)
         tree_cf = repmat(tree_cf,rows(R_matrix),1);
     end
+    if ( rows(accr_int) == 1)
+        accr_int = repmat(accr_int,rows(R_matrix),1);
+    end
     if ( rows(sigma) == 1)
         sigma = repmat(sigma,rows(R_matrix),1);
     end
@@ -190,7 +199,6 @@ if ( length(call_dates) > 0 )   % only if call schedule has some dates
         % calculate strike value
         K = call_strike(mm) * notional;
         american_flag = callschedule.american_flag;
-        
         % Call pricing funciton C++ 
         [Put Call cppB] = pricing_callable_bond_cpp(T,N,alpha,sigma,tree_dates, ...
                     tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
@@ -205,11 +213,9 @@ if ( length(put_dates) > 0 )   % only if put schedule has some dates
         if (isnan(Mat))
             Mat = length(tree_dates);
         end
-        Mat
         % calculate strike value
         K = put_strike(mm) * notional;
         american_flag = putschedule.american_flag;
-        
         % Call pricing funciton C++ 
         [Put Call cppB pu pm pd r Q] = pricing_callable_bond_cpp(T,N,alpha,sigma,tree_dates, ...
                     tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
@@ -219,8 +225,8 @@ if ( length(put_dates) > 0 )   % only if put schedule has some dates
 end        
 % cpptime = toc;
 % return values: Putvalue is valuable to bond holder, call value reduces price
-%OptionValuePut
-%OptionValueCall
+% OptionValuePut
+% OptionValueCall
 OptionValue = OptionValuePut - OptionValueCall;
 
 end

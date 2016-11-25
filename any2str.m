@@ -18,7 +18,7 @@
 %# boolean values and structs.
 %# @end deftypefn
 
-function [output type] = any2str(value)
+function [output] = any2str(value)
 if nargin > 1
     fprintf('WARNING: Only one argument is allowed.\n');
 end

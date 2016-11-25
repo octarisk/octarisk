@@ -18,12 +18,12 @@
 %# P.S. Hagan, Convexity Conundrums, 2003.
 %# There is a minor issue with Hagans formulas: An adjustment to the 
 %# value of the swaplet / caplet / floorlet is being calculated. For calculation 
-%# of thisadjustment a volatility is required. The volatility has to be 
-%# interpolatedfrom a given volatility cube with a given moneyness. In case of 
-%# swaplets,the moneyness can be assumed to be 1.0. For caplets / floorlets, the 
+%# of this adjustment a volatility is required. The volatility has to be 
+%# interpolated from a given volatility cube with a given moneyness. In case of 
+%# swaplets, the moneyness can be assumed to be 1.0. For caplets / floorlets, the 
 %# moneyness can be calculated as (cms_rate-X) or (cms_rate/X). Here either the
 %# adjusted cms rate or still the unadjusted cms rate can be used to calculate
-%# the moneyness.
+%# the moneyness.@*
 %# Explanation of Input Parameters:
 %# @*
 %# @itemize @bullet
@@ -147,20 +147,20 @@ if ( regexpi( instrument.sub_type,'FLOATING') || regexpi( instrument.sub_type,'F
 elseif ( regexpi( instrument.sub_type,'^CAP') )  % CMS rate adjustment to cap
     X = instrument.strike;
     h = (cms_rate - X) ./ (sigma*sqrt(TF));
-    pdf_h = exp(-h.^2 /2) ./ sqrt(2*pi);
+    cdf_h = 0.5.*(1+erf(h./sqrt(2)));
     if (strcmpi(model,'Black')) % Formula 3.5c
         %convex_adj = yet to be implemented...
     else    % normal model Formula 3.6c
-        convex_adj = dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p .* pdf_h;
+        convex_adj = dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p .* cdf_h;
     end
 elseif ( regexpi( instrument.sub_type,'^FLOOR') )  % CMS rate aAdjustment to floorlet
     X = instrument.strike;
     h = (X - cms_rate) ./ (sigma*sqrt(TF));
-    pdf_h = exp(-h.^2 /2) ./ sqrt(2*pi);
+    cdf_h = 0.5.*(1+erf(h./sqrt(2)));
     if (strcmpi(model,'Black')) % Formula 3.5d
         %convex_adj =  yet to be implemented...
     else    % normal model Formula 3.6d
-        convex_adj = -dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p .* pdf_h;
+        convex_adj = -dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p .* cdf_h;
     end
 end
 
