@@ -18,7 +18,7 @@ for ii = 1 : 1 : length(oct_file_list)
             link_to_file = strcat(path_to_oct_files,'/',tmp_filename);
             
             % compile .cc file
-            [outfile, status] = mkoctfile(link_to_file);
+            [outfile, status] = mkoctfile (link_to_file);
             if ( status == 0 )
                 fprintf('----> File >>%s<< succesfully compiled\n',tmp_filename);
                 counter_compiled += 1;

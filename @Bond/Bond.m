@@ -57,6 +57,8 @@ classdef Bond < Instrument
         cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
+        prorated                = true; % Bool: true means deposit method 
+        %  (adjust cash flows for leap year), false = bond method (fixed coupon)
         rate_composition        = 'capitalize'; % function for CMS rates
                                     % ['capitalize', 'average', 'max', 'min']
         embedded_option_flag    = false; % true: bond is call or putable
