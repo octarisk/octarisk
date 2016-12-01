@@ -6,7 +6,7 @@ classdef Surface
       description = '';
       type = ''; 
       moneyness_type = 'K/S';
-      method_interpolation = 'linear';    
+      method_interpolation = 'linear';    % 3D: [bilinear,nearest]
     end
    
     properties (SetAccess = protected )

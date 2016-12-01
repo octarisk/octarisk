@@ -144,21 +144,23 @@ if ( regexpi( instrument.sub_type,'FLOATING') || regexpi( instrument.sub_type,'F
     else    % normal model Formula 3.6b
         convex_adj = dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p;
     end
-elseif ( regexpi( instrument.sub_type,'^CAP') )  % CMS rate adjustment to cap
+elseif ( regexpi( instrument.sub_type,'^CAP') )  % CMS rate adjustment to caplet
     X = instrument.strike;
     h = (cms_rate - X) ./ (sigma*sqrt(TF));
     cdf_h = 0.5.*(1+erf(h./sqrt(2)));
     if (strcmpi(model,'Black')) % Formula 3.5c
         %convex_adj = yet to be implemented...
+        fprintf('WARNING: get_cms_rate_hagan: Convexity Adjustment for Cap Black model not yet implemented. Setting adjustment to zero.\n');
     else    % normal model Formula 3.6c
         convex_adj = dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p .* cdf_h;
     end
-elseif ( regexpi( instrument.sub_type,'^FLOOR') )  % CMS rate aAdjustment to floorlet
+elseif ( regexpi( instrument.sub_type,'^FLOOR') )  % CMS rate adjustment to floorlet
     X = instrument.strike;
     h = (X - cms_rate) ./ (sigma*sqrt(TF));
     cdf_h = 0.5.*(1+erf(h./sqrt(2)));
     if (strcmpi(model,'Black')) % Formula 3.5d
         %convex_adj =  yet to be implemented...
+        fprintf('WARNING: get_cms_rate_hagan: Convexity Adjustment for floor Black model not yet implemented. Setting adjustment to zero.\n');
     else    % normal model Formula 3.6d
         convex_adj = -dG .* TF .* sigma.^2 .*  Annuity ./ Dt_p .* cdf_h;
     end

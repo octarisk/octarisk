@@ -1,4 +1,4 @@
-%# Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
 %# the terms of the GNU General Public License as published by the Free Software
@@ -199,8 +199,9 @@ if ( length(call_dates) > 0 )   % only if call schedule has some dates
         % calculate strike value
         K = call_strike(mm) * notional;
         american_flag = callschedule.american_flag;
+        call_flag = true;
         % Call pricing funciton C++ 
-        [Put Call cppB] = pricing_callable_bond_cpp(T,N,alpha,sigma,tree_dates, ...
+        [Call cppB] = pricing_callable_bond_cpp(call_flag,T,N,alpha,sigma,tree_dates, ...
                     tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
         %BondBaseValue = cppB(round(rows(cppB)/2),1)
         OptionValueCall += Call;
@@ -216,8 +217,9 @@ if ( length(put_dates) > 0 )   % only if put schedule has some dates
         % calculate strike value
         K = put_strike(mm) * notional;
         american_flag = putschedule.american_flag;
+        call_flag = false;
         % Call pricing funciton C++ 
-        [Put Call cppB pu pm pd r Q] = pricing_callable_bond_cpp(T,N,alpha,sigma,tree_dates, ...
+        [Put cppB pu pm pd r Q] = pricing_callable_bond_cpp(call_flag,T,N,alpha,sigma,tree_dates, ...
                     tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
         %BondBaseValue = cppB(round(rows(cppB)/2),1)
         OptionValuePut += Put;

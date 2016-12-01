@@ -1,4 +1,4 @@
-function s = calc_spread_over_yield (bond,valuation_date,discount_curve)
+function s = calc_spread_over_yield (bond,valuation_date,discount_curve,call_schedule,put_schedule)
    s = bond;
    if ( nargin == 2)
         valuation_date = datestr(today);
@@ -35,6 +35,37 @@ function s = calc_spread_over_yield (bond,valuation_date,discount_curve)
         value_dirty = s.value_base;
     end
 
+    % calculate embedded option value
+    if ( bond.embedded_option_flag == true)
+        if ( nargin < 5)
+            error('Error: No call or put schedule set. Aborting.');
+        end
+        % check whether call or put schedule have been set
+        if isobject(call_schedule)
+            if ~(strcmpi(call_schedule.type,'Call Schedule'))
+                error('Error: Not a call schedule: >>%s<<. Aborting.',any2str(call_schedule.id));
+            end
+        else    
+            call_schedule = [];
+        end
+        if isobject(put_schedule)
+            if ~(strcmpi(put_schedule.type,'Put Schedule'))
+                error('Error: Not a put schedule: >>%s<<. Aborting.',any2str(put_schedule.id));
+            end
+        else    
+            put_schedule = [];
+        end
+        if (length(put_schedule) == 0 && length(call_schedule) == 0)
+            error('Error: At least a call or put schedule have to be set.');
+        end
+        % call option pricing function
+        OptionValue = option_bond_hw('base',bond,discount_curve, ...
+                                                    call_schedule,put_schedule);
+        % adjust value_dirty by embedded option value:
+        value_dirty = value_dirty - OptionValue;
+    end
+    
+    % calculate spread over yield (with fixed embedded option value)
     [spread_over_yield retcode] = calibrate_soy_sqp(valuation_date, s.cf_dates, ...
                             s.cf_values(1,:), value_dirty , ...
                             tmp_nodes, tmp_rates, basis, comp_type, comp_freq, ...

@@ -66,21 +66,73 @@ function y = getValue (surface, xx,yy,zz)
             vola_cube = cat(1,vola_cube(1,:,:),vola_cube); 
             vola_cube = cat(3,vola_cube,vola_cube(:,:,end));
             vola_cube = cat(3,vola_cube(:,:,1),vola_cube);
-            % WORKAROUND:
-            % interpolating the implied vola for more than 50000 MC scenarios is too memory expensive.
-                % therefore one needs to reduce the complexity:
-                % since for all MC scenarios the tenor and term is fixed, we make first a nearest neighbour matching of tenor and term
-                % and afterwards a linear intepolation of the moneyness. So to say we remove the moneyness dimension from the cube.
+            if ( regexpi(s.method_interpolation,'nearest'))
+                % map to nearest x,y and z value:
                 xx_nearest = interp1(xx_structure,xx_structure,xx(1),'nearest');
                 yy_nearest = interp1(yy_structure,yy_structure,yy(1),'nearest');
                 index_xx = find(xx_structure==xx_nearest);
                 index_yy = find(yy_structure==yy_nearest);
-            % extract moneyness vector
-            moneyness_vec = vola_cube(index_xx,index_yy,:);
-            [aa bb cc] = size(moneyness_vec);
-            moneyness_vec = reshape(moneyness_vec,cc,1,1);      
-            % interpolate on moneyness dimension, hold tenor and term fix (map to nearest)
-            y = interp1(zz_structure,moneyness_vec,zz,s.method_interpolation);
+                % extract moneyness vector
+                moneyness_vec = vola_cube(index_yy,index_xx,:);
+                [aa bb cc] = size(moneyness_vec);
+                moneyness_vec = reshape(moneyness_vec,cc,1,1);      
+                % interpolate on moneyness dimension, hold tenor and term fix (map to nearest)
+                y = interp1(zz_structure,moneyness_vec,zz,'nearest');
+            else    % default: linear (if( regexpi(s.method_interpolation,'linear')))
+                % Trilinear Interpolation:
+                x = xx(1);
+                y = yy(1);
+                z = zz(1);
+                % get index values of 6 previous and next points on all axis
+                x0 = interp1(xx_structure,xx_structure,x,'previous');
+                x1 = interp1(xx_structure,xx_structure,x,'next');
+                y0 = interp1(yy_structure,yy_structure,y,'previous');
+                y1 = interp1(yy_structure,yy_structure,y,'next');
+                z0 = interp1(zz_structure,zz_structure,z,'previous');
+                z1 = interp1(zz_structure,zz_structure,z,'next');
+                % get differences
+                if ( x0 == x1)
+                    xd = 0;
+                else
+                    xd = (x - x0) / (x1 - x0);
+                end
+                if ( y0 == y1)
+                    yd = 0;
+                else
+                    yd = (y - y0) / (y1 - y0);
+                end
+                if ( z0 == z1)
+                    zd = 0;
+                else
+                    zd = (z - z0) / (z1 - z0);
+                end
+                % get indizes   
+                index_x0 = find(xx_structure==x0);
+                index_x1 = find(xx_structure==x1);
+                index_y0 = find(yy_structure==y0);
+                index_y1 = find(yy_structure==y1);
+                index_z0 = find(zz_structure==z0);
+                index_z1 = find(zz_structure==z1);
+                % extract volatility value
+                V_x0y0z0 = vola_cube(index_y0,index_x0,index_z0);
+                V_x0y0z1 = vola_cube(index_y0,index_x0,index_z1);
+                V_x0y1z0 = vola_cube(index_y1,index_x0,index_z0);
+                V_x0y1z1 = vola_cube(index_y1,index_x0,index_z1);
+                V_x1y0z0 = vola_cube(index_y0,index_x1,index_z0);
+                V_x1y0z1 = vola_cube(index_y0,index_x1,index_z1);
+                V_x1y1z0 = vola_cube(index_y1,index_x1,index_z0);
+                V_x1y1z1 = vola_cube(index_y1,index_x1,index_z1);
+                % interpolate along x axis
+                c00 = V_x0y0z0 * ( 1 - xd ) + V_x1y0z0 * xd;
+                c01 = V_x0y0z1 * ( 1 - xd ) + V_x1y0z1 * xd;
+                c10 = V_x0y1z0 * ( 1 - xd ) + V_x1y1z0 * xd;
+                c11 = V_x0y1z1 * ( 1 - xd ) + V_x1y1z1 * xd;
+                % interpolate along y axis
+                c0 = c00 * (1 - yd ) + c10 * yd;
+                c1 = c01 * (1 - yd ) + c11 * yd;
+                % interpolate along x axis and return final value "y"
+                y = c0 * (1 - zd ) + c1 * zd;              
+            end
           else
             error('ERROR: Assuming cube for IR vol with tenor, term and moneyness, got: %s, %s, %s',s.axis_x_name,s.axis_y_name,s.axis_z_name);
           end

@@ -562,8 +562,8 @@ elseif ( strcmpi(type,'FRN_SPECIAL'))
             else    % in arrears
                 fixing_start_date  = t2;
             end
-            % payment_date
-            % fixing_start_date
+             % fixing_start_date
+             % payment_date
             % set up underlying swap
             swap = Bond();
             swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
@@ -576,7 +576,11 @@ elseif ( strcmpi(type,'FRN_SPECIAL'))
                             'term',underlying_term,'notional_at_end',0, ...
                             'notional_at_start',0);
             % get volatility according to moneyness and term
-            moneyness = 1.0; % moneyness hard coded to 1.0
+            if ( regexpi(surface.moneyness_type,'-'))
+                moneyness = 0.0; % surface with absolute moneyness
+            else
+                moneyness = 1.0; % surface with relative moneyness
+            end
             tenor   = fixing_start_date; % days until foward start date
             sigma   = calcVolaShock(value_type,instrument,surface, ...
                             riskfactor,tenor,sliding_term,moneyness);        
@@ -706,7 +710,11 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                             'term',underlying_term,'notional_at_end',0, ...
                             'notional_at_start',0);
             % get volatility according to moneyness and term
-            moneyness = 1.0; % moneyness hard coded to 1.0
+            if ( regexpi(surface.moneyness_type,'-'))
+                moneyness = 0.0; % surface with absolute moneyness
+            else
+                moneyness = 1.0; % surface with relative moneyness
+            end
             tenor   = fixing_start_date; % days until foward start date
             sigma   = calcVolaShock(value_type,instrument,surface, ...
                             riskfactor,tenor,sliding_term,moneyness)  ;       

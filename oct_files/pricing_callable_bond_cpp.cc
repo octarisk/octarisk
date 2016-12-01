@@ -1,8 +1,5 @@
 /*
 Copyright (C) 2016 Schinzilord <schinzilord@octarisk.com>
-Copyright (C) 2011 User Anon from http://www.volopta.com/Matlab.html. 
-The code was adopted and extended from his Octave script 
-"Hull_White_Trinomial_Tree_Clewlow_Strickland.m".
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -14,6 +11,7 @@ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 details.
 */
+
 
 #include <octave/oct.h>
 #include <cmath>
@@ -31,29 +29,30 @@ static octave_value_list build_hw_tree(const NDArray& Rate, const NDArray& P,
 static octave_value_list get_bond_price(const NDArray& cf_values, const int& jMax, 
                     const int& N, const Matrix& d, const Matrix& pu,
                     const Matrix& pm, const Matrix& pd, const double& notional);
-static octave_value_list get_american_option_price(const double& K, 
-                    const Matrix& B, const int& jMax, const int& MatIndex, 
-                    const Matrix& d, const Matrix& pu, const Matrix& pm, 
-                    const Matrix& pd, const NDArray& accr_int );
+static octave_value_list get_american_option_price(const bool& call_flag, 
+                    const double& K, const Matrix& B, const int& jMax, 
+                    const int& MatIndex, const Matrix& d, const Matrix& pu, 
+                    const Matrix& pm, const Matrix& pd, const NDArray& accr_int);
 
 DEFUN_DLD (pricing_callable_bond_cpp, args, nargout, "-*- texinfo -*-\n\
 @deftypefn{Loadable Function} {@var{Put} @var{Call}} = pricing_callable_bond_cpp(@var{T}, \n\
 @var{N}, @var{alpha}, @var{sigma_vec}, @var{cf_dates}, @var{cf_matrix}, \n\
 @var{R_matrix}, @var{dt}, @var{Timevec}, @var{notional}, @var{Mat}, @var{K}) \n\
 \n\
-Compute the put and call value of a bondoption based on the Hull-White Tree.\n\
+Compute the put or call value of a bond option based on the Hull-White Tree.\n\
 \n\
 This function should be called from Octave script option_bond_hw.m\n\
 which handles all input and ouput data.\n\
 References:\n\
 @itemize @bullet\n\
 @item Hull, Options, Futures and other derivatives, 6th Edition\n\
-@item User Anan from volopta.com references to Clewlow and Strickland,\n\
-Implementing Derivatives Models.\n\
+@item Clewlow and Strickland, Implementing Derivatives Models, Page 255ff,.\n\
+Chapter 9: Constructing Trinomial Trees for the short rate, 1st Edition \n\
 @end itemize\n\
 \n\
 Input and output variables:\n\
 @itemize @bullet\n\
+@item @var{call_flag}: Boolean (true: call option, false: put option\n\
 @item @var{T}: Bond Maturity in years\n\
 @item @var{N}: Number of cash flow dates / call dates\n\
 @item @var{alpha}: mean reversion parameter of Hull-White model\n\
@@ -66,6 +65,8 @@ Input and output variables:\n\
 @item @var{notional}: bond notional)\n\
 @item @var{Mat}: cash flow index of options maturity date\n\
 @item @var{K}: Strike value\n\
+@item @var{accr_int_mat}: scenario dependent interest cash flow values\n\
+@item @var{american}: Boolean (true: american option, false: european option\n\
 @item @var{Put}: OUTPUT: Putprices (vector)\n\
 @item @var{Call}: OUTPUT: Callprices (vector)\n\
 @end itemize\n\
@@ -74,7 +75,7 @@ Input and output variables:\n\
   octave_value retval;
   int nargin = args.length ();
 
-  if (nargin < 11 )
+  if (nargin < 15 )
     print_usage ();
   else
   {
@@ -83,20 +84,21 @@ Input and output variables:\n\
           return octave_value_list();
 
         // Input parameter
-        double T            = args(0).double_value ();  // Timefactor until maturity
-        double N_tmp        = args(1).double_value ();  // number of timesteps
-        double alpha        = args(2).double_value ();  // mean reversion parameter
-        NDArray sigma_vec   = args(3).array_value ();   // volatility of IR
-        NDArray cf_dates    = args(4).array_value ();
-        Matrix cf_matrix    = args(5).matrix_value ();
-        Matrix R_matrix     = args(6).matrix_value ();
-        NDArray dt          = args(7).array_value ();
-        NDArray Timevec     = args(8).array_value ();
-        double notional     = args(9).double_value ();
-        int MatIndex        = args(10).int_value();     // Index of Option Maturity
-        double K            = args(11).double_value();  // Strike
-        Matrix accr_int_mat = args(12).matrix_value ();
-        bool american       = args(13).bool_value();    // American option
+        bool call_flag      = args(0).bool_value();    // Call option
+        double T            = args(1).double_value ();  // Timefactor until maturity
+        double N_tmp        = args(2).double_value ();  // number of timesteps
+        double alpha        = args(3).double_value ();  // mean reversion parameter
+        NDArray sigma_vec   = args(4).array_value ();   // volatility of IR
+        NDArray cf_dates    = args(5).array_value ();
+        Matrix cf_matrix    = args(6).matrix_value ();
+        Matrix R_matrix     = args(7).matrix_value ();
+        NDArray dt          = args(8).array_value ();
+        NDArray Timevec     = args(9).array_value ();
+        double notional     = args(10).double_value ();
+        int MatIndex        = args(11).int_value();     // Index of Option Maturity
+        double K            = args(12).double_value();  // Strike
+        Matrix accr_int_mat = args(13).matrix_value ();
+        bool american       = args(14).bool_value();    // American option
         
         // total number of scenarios:
         int len_sigma = sigma_vec.length ();
@@ -112,8 +114,10 @@ Input and output variables:\n\
         
         // initialize scenario dependent output:
         dim_vector dim_scen (len, 1);
+        NDArray OptionVec (dim_scen);
         NDArray PutVec (dim_scen);
         NDArray CallVec (dim_scen);
+        OptionVec.fill(0.0);
         PutVec.fill(0.0);
         CallVec.fill(0.0);
 
@@ -121,7 +125,7 @@ Input and output variables:\n\
         // Hull White tree parameters
             double step = T/N_tmp;
         // Threshold (M), jMax, and state vector (x)
-            // limit alpha and therefore jMax
+            // limit alpha and therefore jMax 
             double M = -std::max(alpha,0.0002)*step;
             double jMax_tmp = ceil(-0.1835/M);
             int N = static_cast<int>(N_tmp);
@@ -170,7 +174,6 @@ Input and output variables:\n\
             dr = sigma*sqrt(3*step);
             dx = dr;
 
-            // x = dr.*[jMax:-1:-jMax];
             dim_vector dim_x (2*jMax+1, 1);
             NDArray x (dim_x);
             octave_idx_type kk = 0;
@@ -187,7 +190,6 @@ Input and output variables:\n\
             }
 
             // Build Hull-White Tree
-            
             octave_value_list retval_hwtree;
             retval_hwtree = build_hw_tree(R,P,jMax,N,x,dx,dt,pu,pm,pd);
             Matrix r = retval_hwtree(0).matrix_value ();
@@ -195,7 +197,6 @@ Input and output variables:\n\
             Matrix Q = retval_hwtree(2).matrix_value ();
            
             // Get Bond prices
-            
             octave_value_list retval_buildB;
             retval_buildB = get_bond_price(cf_values, jMax, N, d, pu, pm, pd, 
                                             notional );
@@ -206,38 +207,32 @@ Input and output variables:\n\
             {
                 // Get American Option Prices
                 octave_value_list retval_AmOpt;
-                retval_AmOpt  = get_american_option_price(K, B, jMax, MatIndex, 
-                                                    d, pu, pm, pd, accr_int);
-                PutVec(ii)  = retval_AmOpt(0).double_value ();
-                CallVec(ii) = retval_AmOpt(1).double_value ();
+                retval_AmOpt  = get_american_option_price(call_flag, K, B, jMax,  
+                                              MatIndex, d, pu, pm, pd, accr_int);
+                OptionVec(ii)  = retval_AmOpt(0).double_value ();
             } else {
                 // Get European Option payoffs and prices
-                double Put = 0.0;
-                double Call = 0.0;
-                dim_vector dcf (2*jMax+1,1);
-                NDArray Payoff_Put (dcf);
-                NDArray Payoff_Call (dcf);
+                double OptVal = 0.0;
+                double Payoff;
 
-                // Payoff Put is max(K - B(:,OptionMaturity+1)
-                for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-                    Payoff_Put(mm) = std::max(K - B(mm,MatIndex) + 
-                                                accr_int(MatIndex - 1) , 0.0);
+                // distinguish between call or put value
+                if (call_flag == false) {   // Option is Put
+                    // Payoff Put is max(K - B(:,OptionMaturity+1) times A-D price
+                    for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
+                        Payoff = std::max(K - B(mm,MatIndex) + 
+                                                    accr_int(MatIndex - 1) , 0.0);
+                        OptVal  += Q(mm,MatIndex) * Payoff; 
+                    }
+                    OptionVec(ii) = OptVal;
+                } else {                    // Option is Call
+                    // Payoff Call is max(K - B(:,OptionMaturity+1) times A-D price
+                    for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
+                        Payoff = std::max(B(mm,MatIndex) - K - 
+                                                    accr_int(MatIndex - 1) , 0.0);
+                        OptVal += Q(mm,MatIndex) * Payoff;                            
+                    }
+                    OptionVec(ii) = OptVal;
                 }
-                
-                // Payoff Call is max(K - B(:,OptionMaturity+1)
-                for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-                    Payoff_Call(mm) = std::max(B(mm,MatIndex) - K - 
-                                                accr_int(MatIndex - 1) , 0.0);
-                }
-
-                // Option Price is the payoff times the Arrow Debreu prices
-                for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-                    Call += Q(mm,MatIndex) * Payoff_Call(mm);
-                    Put  += Q(mm,MatIndex) * Payoff_Put(mm); 
-                }
-                // store scenario value in return Array
-                PutVec(ii) = Put;
-                CallVec(ii) = Call;
             }
             
             // store trees for first scenario only
@@ -250,81 +245,113 @@ Input and output variables:\n\
             
         } // scenario loop finished
         
-        // return Put and Call prices
+        // return Option price
         octave_value_list option_outargs;
-        option_outargs(0) = PutVec;
-        option_outargs(1) = CallVec;
-        option_outargs(2) = B_first;
-        option_outargs(3) = pu;
-        option_outargs(4) = pm;
-        option_outargs(5) = pd;
-        option_outargs(6) = r_first;
-        option_outargs(7) = Q_first;
+        option_outargs(0) = OptionVec;
+        option_outargs(1) = B_first;
+        option_outargs(2) = pu;
+        option_outargs(3) = pm;
+        option_outargs(4) = pd;
+        option_outargs(5) = r_first;
+        option_outargs(6) = Q_first;
         
        return octave_value (option_outargs);
     }
   return retval;
 } // end of DEFUN_DLD
 
+//#########################    STATIC FUNCTIONS    #############################
+
 // static function for calculating American Option Prices
 //octave_value_list get_american_option_price(const octave_value_list& args)
-octave_value_list get_american_option_price(const double& K, const Matrix& B, 
-                    const int& jMax, const int& MatIndex, const Matrix& d, 
-                    const Matrix& pu, const Matrix& pm, const Matrix& pd, 
-                    const NDArray& accr_int )
+octave_value_list get_american_option_price(const bool& call_flag, const double& K, 
+                    const Matrix& B, const int& jMax, const int& MatIndex, 
+                    const Matrix& d, const Matrix& pu, const Matrix& pm, 
+                    const Matrix& pd, const NDArray& accr_int )
 {
-    // Initialize the American puts and call trees
+    octave_value_list outargs;
     dim_vector dv (2*jMax+1,MatIndex+1);  // span Matrix
-    Matrix AP (dv);
-    Matrix AC (dv);
-    AP.fill(0.0);
-    AC.fill(0.0);
+    // distinguish between call or put value
+    
+    if (call_flag == false) {                           // Option is Put
+        // Initialize the American puts trees
+        Matrix AP (dv);
+        AP.fill(0.0);
 
-    // Intrinsic value at maturity
-    for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
-        AP(mm,MatIndex) = std::max(K-B(mm,MatIndex) + accr_int(MatIndex - 1),0.0);
-        AC(mm,MatIndex) = std::max(B(mm,MatIndex)-K - accr_int(MatIndex - 1),0.0);
+        // Intrinsic value at maturity
+        for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
+            AP(mm,MatIndex) = std::max(K-B(mm,MatIndex) + accr_int(MatIndex - 1),0.0);
+        }
+        
+        Matrix EP = AP; 
+
+        // Work backwards through the tree
+        for (octave_idx_type j=MatIndex; j >= 1; j--) {
+            // catch ctrl + c
+            OCTAVE_QUIT;
+            if (j>jMax) {
+                for (octave_idx_type i=1; i <= 2*jMax+1; i++) {
+                    if (i==1) {
+                        EP(i-1,j-1) = d(i-1,j-1)*(EP(i-1,j)*pu(i-1,j-1) + EP(i,j)*pm(i-1,j-1) + EP(i+1,j)*pd(i-1,j-1));
+                    } else if (i==2*jMax+1) {
+                        EP(i-1,j-1) = d(i-1,j-1)*(EP(i-1,j)*pd(i-1,j-1) + EP(i-2,j)*pm(i-1,j-1) + EP(i-3,j)*pu(i-1,j-1));
+                    } else {
+                        EP(i-1,j-1) = d(i-1,j-1)*(EP(i-2,j)*pu(i-1,j-1) + EP(i-1,j)*pm(i-1,j-1) + EP(i,j)*pd(i-1,j-1));
+                    }
+                    AP(i-1,j-1) = std::max(EP(i-1,j-1), K - B(i-1,j-1) + accr_int(j-2));
+                    EP(i-1,j-1) = AP(i-1,j-1);  // store new values for discounting
+                }
+            } else {
+                for (octave_idx_type i=jMax-(j-2); i <= jMax+j; i++) {
+                    EP(i-1,j-1) = d(i-1,j-1)*(EP(i-2,j)*pu(i-1,j-1) + EP(i-1,j)*pm(i-1,j-1) + EP(i,j)*pd(i-1,j-1));
+                    AP(i-1,j-1) = std::max(EP(i-1,j-1), K - B(i-1,j-1) + accr_int(j-2));
+                    EP(i-1,j-1) = AP(i-1,j-1);
+                }
+            } 
+        }
+        // set American Put Price
+        outargs(0) = AP(jMax,0);
+    } else {                                        // Option is Call
+        // Initialize the American call trees
+        Matrix AC (dv);
+        AC.fill(0.0);
+
+        // Intrinsic value at maturity
+        for (octave_idx_type mm = 0; mm < 2*jMax+1; mm++) {
+            AC(mm,MatIndex) = std::max(B(mm,MatIndex)-K - accr_int(MatIndex - 1),0.0);
+        }
+        
+        Matrix EC = AC;
+
+        // Work backwards through the tree
+        for (octave_idx_type j=MatIndex; j >= 1; j--) {
+            // catch ctrl + c
+            OCTAVE_QUIT;
+            if (j>jMax) {
+                for (octave_idx_type i=1; i <= 2*jMax+1; i++) {
+                    if (i==1) {
+                        EC(i-1,j-1) = d(i-1,j-1)*(EC(i-1,j)*pu(i-1,j-1) + EC(i,j)*pm(i-1,j-1) + EC(i+1,j)*pd(i-1,j-1));
+                    } else if (i==2*jMax+1) {
+                        EC(i-1,j-1) = d(i-1,j-1)*(EC(i-1,j)*pd(i-1,j-1) + EC(i-2,j)*pm(i-1,j-1) + EC(i-3,j)*pu(i-1,j-1));
+                    } else {
+                        EC(i-1,j-1) = d(i-1,j-1)*(EC(i-2,j)*pu(i-1,j-1) + EC(i-1,j)*pm(i-1,j-1) + EC(i,j)*pd(i-1,j-1));
+                    }
+                    AC(i-1,j-1) = std::max(EC(i-1,j-1), B(i-1,j-1) - K  - accr_int(j-2));
+                    EC(i-1,j-1) = AC(i-1,j-1);
+                }
+            } else {
+                for (octave_idx_type i=jMax-(j-2); i <= jMax+j; i++) {
+                    EC(i-1,j-1) = d(i-1,j-1)*(EC(i-2,j)*pu(i-1,j-1) + EC(i-1,j)*pm(i-1,j-1) + EC(i,j)*pd(i-1,j-1));
+                    AC(i-1,j-1) = std::max(EC(i-1,j-1), B(i-1,j-1) - K - accr_int(j-2));
+                    EC(i-1,j-1) = AC(i-1,j-1);
+                }
+            } 
+        }
+        // set American Call Price
+        outargs(0) = AC(jMax,0);
     }
     
-    Matrix EP = AP; 
-    Matrix EC = AC;
-
-    // Work backwards through the tree
-    for (octave_idx_type j=MatIndex; j >= 1; j--) {
-        // catch ctrl + c
-        OCTAVE_QUIT;
-        if (j>jMax) {
-            for (octave_idx_type i=1; i <= 2*jMax+1; i++) {
-                if (i==1) {             // first row.
-                    EP(i-1,j-1) = d(i-1,j-1)*(EP(i-1,j)*pu(i-1,j-1) + EP(i,j)*pm(i-1,j-1) + EP(i+1,j)*pd(i-1,j-1));
-                    EC(i-1,j-1) = d(i-1,j-1)*(EC(i-1,j)*pu(i-1,j-1) + EC(i,j)*pm(i-1,j-1) + EC(i+1,j)*pd(i-1,j-1));
-                } else if (i==2*jMax+1) { // last row.
-                    EP(i-1,j-1) = d(i-1,j-1)*(EP(i-1,j)*pd(i-1,j-1) + EP(i-2,j)*pm(i-1,j-1) + EP(i-3,j)*pu(i-1,j-1));
-                    EC(i-1,j-1) = d(i-1,j-1)*(EC(i-1,j)*pd(i-1,j-1) + EC(i-2,j)*pm(i-1,j-1) + EC(i-3,j)*pu(i-1,j-1));
-                } else {
-                    EP(i-1,j-1) = d(i-1,j-1)*(EP(i-2,j)*pu(i-1,j-1) + EP(i-1,j)*pm(i-1,j-1) + EP(i,j)*pd(i-1,j-1));
-                    EC(i-1,j-1) = d(i-1,j-1)*(EC(i-2,j)*pu(i-1,j-1) + EC(i-1,j)*pm(i-1,j-1) + EC(i,j)*pd(i-1,j-1));
-                }
-                AP(i-1,j-1) = std::max(EP(i-1,j-1), K - B(i-1,j-1) + accr_int(j-2));
-                AC(i-1,j-1) = std::max(EC(i-1,j-1), B(i-1,j-1) - K  - accr_int(j-2));
-                EP(i-1,j-1) = AP(i-1,j-1);  // store new values for discounting
-                EC(i-1,j-1) = AC(i-1,j-1);
-            }
-        } else { // Tip of the tree
-            for (octave_idx_type i=jMax-(j-2); i <= jMax+j; i++) {
-                EP(i-1,j-1) = d(i-1,j-1)*(EP(i-2,j)*pu(i-1,j-1) + EP(i-1,j)*pm(i-1,j-1) + EP(i,j)*pd(i-1,j-1));
-                AP(i-1,j-1) = std::max(EP(i-1,j-1), K - B(i-1,j-1) + accr_int(j-2));
-                EC(i-1,j-1) = d(i-1,j-1)*(EC(i-2,j)*pu(i-1,j-1) + EC(i-1,j)*pm(i-1,j-1) + EC(i,j)*pd(i-1,j-1));
-                AC(i-1,j-1) = std::max(EC(i-1,j-1), B(i-1,j-1) - K - accr_int(j-2));
-                EP(i-1,j-1) = AP(i-1,j-1);
-                EC(i-1,j-1) = AC(i-1,j-1);
-            }
-        } 
-    }
-    // return American Option Prices
-    octave_value_list outargs;
-    outargs(0) = AP(jMax,0);
-    outargs(1) = AC(jMax,0);
+    // return American Option Price
     return outargs;      
 }
 
@@ -334,7 +361,6 @@ octave_value_list get_bond_price(const NDArray& cf_values, const int& jMax,
                     const int& N, const Matrix& d, const Matrix& pu,
                     const Matrix& pm, const Matrix& pd, const double& notional)
 {
-
     // Initialize the discount bond matrix B
     dim_vector dv (2*jMax+1,N+1);  // span Matrix
     Matrix B (dv);
@@ -359,9 +385,9 @@ octave_value_list get_bond_price(const NDArray& cf_values, const int& jMax,
     for (octave_idx_type j=N; j >= 1; j--) {
         if (j>jMax) {
             for (octave_idx_type i=1; i <= 2*jMax+1; i++) {
-                if (i==1) {             // first row.
+                if (i==1) {
                     B(i-1,j-1) = d(i-1,j-1)*(B(i-1,j)*pu(i-1,j-1) + B(i,j)*pm(i-1,j-1) + B(i+1,j)*pd(i-1,j-1));
-                } else if (i==2*jMax+1) { // last row.
+                } else if (i==2*jMax+1) {
                     B(i-1,j-1) = d(i-1,j-1)*(B(i-1,j)*pd(i-1,j-1) + B(i-2,j)*pm(i-1,j-1) + B(i-3,j)*pu(i-1,j-1));
                 } else {
                     B(i-1,j-1) = d(i-1,j-1)*(B(i-2,j)*pu(i-1,j-1) + B(i-1,j)*pm(i-1,j-1) + B(i,j)*pd(i-1,j-1));
@@ -391,7 +417,6 @@ octave_value_list build_hw_tree(const NDArray& Rate, const NDArray& P,
                     const double& dx, const NDArray& dt, const Matrix& pu,
                     const Matrix& pm, const Matrix& pd)
 {
-    
     // Initialize the required matrices.
     dim_vector dv (2*jMax+1,N+1);  // span Matrix
     Matrix r (dv);
@@ -401,7 +426,7 @@ octave_value_list build_hw_tree(const NDArray& Rate, const NDArray& P,
     d.fill(0.0);
     Q.fill(0.0);
 
-    // Vector of "J" indices runinng from jMax down to -jMax.
+    // Vector of "J" indices running from jMax to -jMax.
     dim_vector vecdim (2*jMax+1,1); 
     NDArray J (vecdim);
     octave_idx_type kk = 0;
@@ -417,34 +442,27 @@ octave_value_list build_hw_tree(const NDArray& Rate, const NDArray& P,
     S.fill(0.0);
     a.fill(0.0);
 
-    // build tree
-    // First Arrow-Debreu price
+    // calculate Arrow-Debreu prices
     Q(jMax+1,1) = 1;
 
-    //  Build the interest rate tree.  Calculate separately:
-    //    - the first node (Column 1)
-    //    - the "tip" of the tree (Columns 2 through jMax +1)
-    //    - the "box" of the tree (Columns Jmax+2 through N)
     for (octave_idx_type j=1;j<=N+1;j++) {
         if (j==1) {
-            // First node: column 1
             Q(jMax,0) = 1;
             d(jMax,0) = exp(-Rate(0)*dt(j-1));
             a(0) = -log(P(0))/dt(j-1);
             S(0) = Q(jMax,0) *exp(-x(jMax)*dx*dt(j-1));
             r(jMax,0) = x(jMax) + a(0);
         } else if (j<=jMax+1) {
-            // Tip of the tree: columns 2 through jMax+1
             for (octave_idx_type i=jMax-(j-2);i<=jMax+j;i++) {
-                if (i==jMax-(j-2)) {       // First row
+                if (i==jMax-(j-2)) {
                     Q(i-1,j-1) = Q(i,j-2)*pu(i,j-2)*d(i,j-2);
-                } else if (i==jMax-(j-2)+1) {  // Second row
+                } else if (i==jMax-(j-2)+1) {
                     Q(i-1,j-1) = Q(i-1,j-2)*pm(i-1,j-2)*d(i-1,j-2) + Q(i,j-2)*pu(i,j-2)*d(i,j-2);
-                } else if (i==jMax+j) {        //Last row
+                } else if (i==jMax+j) { 
                     Q(i-1,j-1) = Q(i-2,j-2)*pd(i-2,j-2)*d(i-2,j-2);
-                } else if (i==jMax+j-1) {       // Second to last row
+                } else if (i==jMax+j-1) {
                     Q(i-1,j-1) = Q(i-1,j-2)*pm(i-1,j-2)*d(i-1,j-2) + Q(i-2,j-2)*pd(i-2,j-2)*d(i-2,j-2);
-                } else {                   // Middle rows
+                } else {
                     Q(i-1,j-1) = Q(i-2,j-2)*pd(i-2,j-2)*d(i-2,j-2) + Q(i-1,j-2)*pm(i-1,j-2)*d(i-1,j-2) + Q(i,j-2)*pu(i,j-2)*d(i,j-2);
                 }
                 S(j-1) = 0;
@@ -458,23 +476,22 @@ octave_value_list build_hw_tree(const NDArray& Rate, const NDArray& P,
                 }
             }
         } else {
-            // Box of the tree: columns jMax+2 through N
             for (octave_idx_type i=1;i<=2*jMax+1;i++) {
-                if (i==1) {            // First row
+                if (i==1) {
                     Q(i-1,j-1) = Q(i-1,j-2)*pu(i-1,j-2)*d(i-1,j-2) + Q(i,j-2)*pu(i,j-2)*d(i,j-2);
-                } else if (i==2) {        // Second row
+                } else if (i==2) {
                     Q(i-1,j-1) = Q(i-2,j-2)*pm(i-2,j-2)*d(i-2,j-2) + Q(i-1,j-2)*pm(i-1,j-2)*d(i-1,j-2) + Q(i,j-2)*pu(i,j-2)*d(i,j-2);
-                } else if (i==3) {        // Third row
-                    if (jMax==2) {     // Special case of third row when jMax=2
+                } else if (i==3) {
+                    if (jMax==2) {
                         Q(i-1,j-1) = Q(i-3,j-2)*pd(i-3,j-2)*d(i-3,j-2) + Q(i-2,j-2)*pd(i-2,j-2)*d(i-2,j-2) + Q(i-1,j-2)*pm(i-1,j-2)*d(i-1,j-2) + Q(i,j-2)*pu(i,j-2)*d(i,j-2) + Q(i+2-1,j-2)*pu(i+2-1,j-2)*d(i+2-1,j-2);
                     } else {
                         Q(i-1,j-1) = Q(i-3,j-2)*pd(i-3,j-2)*d(i-3,j-2) + Q(i-2,j-2)*pd(i-2,j-2)*d(i-2,j-2) + Q(i-1,j-2)*pm(i-1,j-2)*d(i-1,j-2) + Q(i,j-2)*pu(i,j-2)*d(i,j-2);
                     }
-                }  else if (i==2*jMax+1) {  // Last row
+                }  else if (i==2*jMax+1) {
                     Q(i-1,j-1) = Q(i-1,j-2)*pd(i-1,j-2)*d(i-1,j-2) + Q(i-2,j-2)*pd(i-2,j-2)*d(i-2,j-2);
-                } else if (i==2*jMax) {    // Second to last row
+                } else if (i==2*jMax) {
                     Q(i-1,j-1) = Q(i,j-2)*pm(i,j-2)*d(i,j-2) + Q(i-1,j-2)*pm(i-1,j-2)*d(i-1,j-2) + Q(i-2,j-2)*pd(i-2,j-2)*d(i-2,j-2);
-                } else  {               // Middle rows
+                } else  {
                     Q(i-1,j-1) = Q(i-2,j-2)*pd(i-2,j-2)*d(i-2,j-2) + Q(i-1,j-2)*pm(i-1,j-2)*d(i-1,j-2) + Q(i,j-2)*pu(i,j-2)*d(i,j-2);
                 }
                 S(j-1) = 0;
@@ -490,7 +507,6 @@ octave_value_list build_hw_tree(const NDArray& Rate, const NDArray& P,
         }
     }
 
-    
     // return tree
     octave_value_list outargs;
     outargs(0) = r;
@@ -528,7 +544,6 @@ octave_value_list build_hw_probabilities(const int& jMax, const int& N,
     for (int j=1; j<=N+1; j++ ) 
     {
         if (j<=jMax) {
-            // Tip of the tree.
             for (int i=jMax+2-j; i<=jMax+j; i++ ) 
             {
                 pu(i-1,j-1) = (0.166666666666667) + (J(i-1)*J(i-1)*M*M + J(i-1)*M)/2.0;
@@ -536,7 +551,6 @@ octave_value_list build_hw_probabilities(const int& jMax, const int& N,
                 pd(i-1,j-1) = (0.166666666666667) + (J(i-1)*J(i-1)*M*M - J(i-1)*M)/2.0;
             }
         } else {
-            // Remaining nodes.
             for (int i= 1 ; i<=2*jMax+1; i++ ) 
             {
                 if (i==1) {
@@ -555,7 +569,6 @@ octave_value_list build_hw_probabilities(const int& jMax, const int& N,
             }
         }
     }
-    
     // return probabilities
     octave_value_list outargs;
     outargs(0) = pu;
@@ -568,70 +581,68 @@ octave_value_list build_hw_probabilities(const int& jMax, const int& N,
 // static function for input parameter checks
 bool any_bad_argument(const octave_value_list& args)
 {
-    // octave_value_list:
-    // T,N,alpha,sigma_vec,cf_dates,cf_matrix,R_matrix,dt,Timevec,notional,Mat,K
     
-    if (!args(10).is_numeric_type())
+    if (!args(11).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting K to be a numeric");
         return true;
     }
     
-    if (!args(9).is_numeric_type())
+    if (!args(10).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting Mat to be a scalar");
         return true;
     }
     
-    if (!args(8).is_numeric_type())
+    if (!args(9).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting notional to be a numeric");
         return true;
     }
     
-    if (!args(7).is_numeric_type())
+    if (!args(8).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting Timevec to be a numeric");
         return true;
     }
     
-    if (!args(6).is_numeric_type())
+    if (!args(7).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting dt to be a numeric");
         return true;
     }
     
-    if (!args(5).is_numeric_type())
+    if (!args(6).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting cf_matrix to be a numeric");
         return true;
     }
     
-    if (!args(4).is_numeric_type())
+    if (!args(5).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting cf_dates to be a numeric");
         return true;
     }
     
-    if (!args(0).is_numeric_type())
+    if (!args(1).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting T to be a numeric");
         return true;
     }
 
-    if (!args(1).is_numeric_type())
+    if (!args(2).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting N to be a numeric");
         return true;
     }
 
-    if (!args(2).is_numeric_type())
+    if (!args(3).is_numeric_type())
     {
         error("pricing_callable_bond_cpp: expecting alpha to be a numeric");
         return true;
     }
 
-    if (!args(3).is_numeric_type ())
+    if (!args(4).is_numeric_type ())
     {
         error("pricing_callable_bond_cpp: expecting sigma to be a numeric");
         return true;

@@ -26,7 +26,8 @@ end
     comp_type_discount = discount_curve.get('compounding_type');
     comp_freq_discount = discount_curve.get('compounding_freq');
  
-% B) Calculate analytic sensitivities where no new CF rollout is required     
+% B) Calculate analytic sensitivities where no new CF rollout is required    
+    % TODO: incorporate embedded bond option calculation 
     [theo_value MacDur Convex MonDur] = pricing_npv(valuation_date, cashflow_dates, ...
                                 cashflow_values, bond.soy, ...
                                 nodes_discount, rates_discount, basis_bond, ...
