@@ -118,7 +118,7 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     ret_values = zeros(length(rvec),length(ret_dates));
     for ii = 1:1:length(ret_dates)
       tmp_cf_date = ret_dates(ii);
-      tmp_cf_values = arg2.getValue(tmp_cf_date,rvec);
+      tmp_cf_values = arg2.interpolate(tmp_cf_date,rvec);
       ret_values(:,ii) = tmp_cf_values;
     end
     accr_int = 0.0;

@@ -51,7 +51,7 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,vola_risk
         tmp_moneyness      = ( tmp_underlying_value ./ tmp_strike).^moneyness_exponent;
                 
         % get implied volatility spread (choose offset to vola, that tmp_value == option_bs with input of appropriate vol):
-        tmp_indexvol_base  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness);
+        tmp_indexvol_base  = tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness);
         tmp_impl_vola_atm  = max(vola_riskfactor.getValue(value_type),-tmp_indexvol_base);
         
       % Get Volatility according to volatility smile given by vola surface
@@ -60,23 +60,23 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,vola_risk
         if ( strcmpi(tmp_model,'GBM') || strcmpi(tmp_model,'BKM') ) % Log-normal Motion
             if ( strcmpi(value_type,'stress'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
-                            tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) ...
+                            tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness)) ...
                             .* exp(vola_riskfactor.getValue(value_type));
             elseif ( strcmpi(value_type,'base'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_indexvol_base);
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) ...
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness) ...
                                 .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
             end
         else        % Normal Model
             if ( strcmpi(value_type,'stress'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
-                            tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness)) ...
+                            tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness)) ...
                             .* (vola_riskfactor.getValue(value_type) + 1);
             elseif ( strcmpi(value_type,'base'))
                 tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_indexvol_base);
             else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness) ...
+                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness) ...
                                     + tmp_impl_vola_atm + tmp_impl_vola_spread;  
             end
         end

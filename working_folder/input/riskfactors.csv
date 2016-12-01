@@ -1,4 +1,4 @@
-HeaderRISKFACTOR,nameCHAR,idCHAR,typeCHAR,descriptionCHAR,modelCHAR,meanNMBR,stdNMBR,skewNMBR,kurtNMBR,value_baseNMBR,mr_levelNMBR,mr_rateNMBR,nodeNMBR
+HeaderRISKFACTOR,nameCHAR,idCHAR,typeCHAR,descriptionCHAR,modelCHAR,meanNMBR,stdNMBR,skewNMBR,kurtNMBR,value_baseNMBR,mr_levelNMBR,mr_rateNMBR,nodeNMBR,node2NMBR
 Item,RF_EQ_DE,RF_EQ_DE,RF_EQ,Riskfactor Equity Germany,GBM,0,0.18,-0.4,5,0,,,
 Item,RF_EQ_EUR,RF_EQ_EUR,RF_EQ,Riskfactor Equity Euro,GBM,0,0.18,-0.5,5,0,,,
 Item,RF_EQ_EU,RF_EQ_EU,RF_EQ,Riskfactor Equity Europe,GBM,0,0.144,-0.5,5,0,,,
@@ -13,6 +13,8 @@ Item,RF_ALT_BC,RF_ALT_BC,RF_ALT,Riskfactor Bitcin EUR,GBM,0,0.5,-0.3,4.5,,,,
 Item,RF_FX_EURUSD,RF_FX_EURUSD,RF_FX,Riskfactor Forex EUR USD,SRD,0,0.08,0,3,1.08,1.2,0.001,
 Item,RF_VOLA_EQ_DE,RF_VOLA_EQ_DE,RF_VOLA,Riskfactor Impl Vola Germany,SRD,0,0.1,0,3,0.31,0.21,0.0275,
 Item,RF_VOLA_IR_EUR,RF_VOLA_IR_EUR,RF_VOLA,Riskfactor Impl Swap Vola EUR,GBM,0,0.3,0.0,3.0,0.0,,,
+Item,RF_VOLA_IR_EUR_730_365,RF_VOLA_IR_EUR_730_365,RF_VOLA,Riskfactor Impl Swap Vola EUR 2,GBM,0,0.3,0.0,3.0,0.0,,,730,365
+Item,RF_VOLA_IR_EUR_1825_3650,RF_VOLA_IR_EUR_1825_3650,RF_VOLA,Riskfactor Impl Swap Vola EUR 3,GBM,0,0.3,0.0,3.0,0.0,,,1825,3650
 Item,RF_IR_EUR_1Y,RF_IR_EUR_1Y,RF_IR,Riskfactor IR EUR 1year,BM,0,0.0011,0,3,0.0008,,,365
 Item,RF_IR_EUR_10Y,RF_IR_EUR_10Y,RF_IR,Riskfactor IR EUR 10year,BM,0,0.0032,0,3,0.0026,,,3650
 Item,RF_IR_EUR_20Y,RF_IR_EUR_20Y,RF_IR,Riskfactor IR EUR 20year,BM,0,0.006,0,3,0.015,,,7300

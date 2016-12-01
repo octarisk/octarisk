@@ -1,4 +1,4 @@
-% Risk Factor Superflass, for documentation see dummy function doc_riskfactor.m
+% Risk Factor Superclass, for documentation see dummy function doc_riskfactor.m
 classdef Riskfactor
    % file: @Riskfactor/Riskfactor.m
    properties
@@ -13,7 +13,9 @@ classdef Riskfactor
       value_base = 0.0;
       mr_level
       mr_rate
-      node
+      node = 0;
+      node2 = 0;
+      node3 = 0;
       type = ''; 
    end
    

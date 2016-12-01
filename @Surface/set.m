@@ -131,6 +131,20 @@ function s = set (obj, varargin)
       else
         error ('set: expecting the id to be of type character');
       end 
+    % ====================== set riskfactors ======================
+    elseif (ischar (prop) && strcmp (prop, 'riskfactors'))   
+      if (iscell (val))
+        s.riskfactors = val;
+      else
+        error ('set: expecting riskfactors to be of type cell');
+      end
+    % ====================== set shock_struct ======================
+    elseif (ischar (prop) && strcmp (prop, 'shock_struct'))   
+      if (isstruct (val))
+        s.shock_struct = val;
+      else
+        error ('set: expecting shock_struct to be of type struct');
+      end 
     % ====================== set description ======================
     elseif (ischar (prop) && strcmp (prop, 'description'))   
       if (ischar (val))

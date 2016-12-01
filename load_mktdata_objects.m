@@ -126,7 +126,9 @@ for ii = 1 : 1 : length(tmp_list_files)
             if ( sum(strcmp(tmp_mktdata_type,{'INDEX'})) > 0)        % store data in Class INDEX
                 i = Index(); 
             elseif ( sum(strcmp(tmp_mktdata_type,{'CURVE','AGGREGATEDCURVE'}))  > 0)        % store data in Class CURVE
-                i = Curve();              
+                i = Curve(); 
+            elseif ( sum(strcmp(tmp_mktdata_type,{'SURFACE','CUBE'}))  > 0)        % store data in Class Surface
+                i = Surface();  
             end
             % B.3b)  Loop through all mktdata attributes
             tmp_cell = content{jj};
@@ -210,13 +212,14 @@ for ii = 1 : 1 : length(tmp_list_files)
                             end
                             i = i.set(tmp_columnname,tmp_entry);
                         end
-                    elseif ( strcmp(tmp_columnname,'increments'))  % split into cell
+                    elseif ( strcmp(tmp_columnname,'increments') || ...
+                                            strcmp(tmp_columnname,'riskfactors'))  % split into cell
                         try
                             tmp_entry = strsplit( tmp_entry, '|');
                         catch
                             tmp_entry = {};
                         end 
-                        i = i.set(tmp_columnname,tmp_entry);    
+                        i = i.set(tmp_columnname,tmp_entry);  
                     else    % set new attribute, no special treatment
                         if ( ischar(tmp_entry))
                             if (length(tmp_entry)>0)

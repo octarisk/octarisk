@@ -22,7 +22,7 @@ elseif ( strcmpi(obj.stochastic_rf_type,'t') )
 end 
 
 % map stochastic risk factor to 1D curve values (x axis: 0), return value
-tmp_value = surf_obj.getValue(0,rvec);
+tmp_value = surf_obj.interpolate(0,rvec);
 
 % store values in sensitivity object:
 if ( strcmpi(value_type,'base'))

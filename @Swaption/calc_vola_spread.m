@@ -73,7 +73,7 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
                 
         % get implied volatility spread 
         % (choose offset to vola, that tmp_value == option_bs with input of appropriate vol):
-        tmp_indexvol_base           = tmp_vola_surf_obj.getValue(tmp_swap_tenor, ...
+        tmp_indexvol_base           = tmp_vola_surf_obj.interpolate(tmp_swap_tenor, ...
                                         tmp_dtm,tmp_moneyness_base);
 
         % Convert interest rates into act/365 continuous (used by pricing)

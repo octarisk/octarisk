@@ -971,9 +971,9 @@ end
 %! vv = vv.set('id','TEST_CUBE','axis_x',[365,730,1825,2555,3650,4380],'axis_x_name','TENOR','axis_y',[365,730,1095,1460,1825,2555,3650],'axis_y_name','TERM','axis_z',[-0.005,0.0,0.005],'axis_z_name','MONEYNESS');
 %! vv = vv.set('values_base',vola_cube,'method_interpolation','linear');
 %! vv = vv.set('type','IR');
-%! assert(vv.getValue(1095,1700,0.000),0.00283819035616438,0.000001)
-%! assert(vv.getValue(1460,1700,0.002),0.00450785873150685,0.000001)
-%! assert(vv.getValue(1825,1700,-0.001),0.00476692691780822,0.000001)
-%! assert(vv.getValue(2000,1700,-0.0025),0.00503838293282042,0.000001)
+%! assert(vv.interpolate(1095,1700,0.000),0.00283819035616438,0.000001)
+%! assert(vv.interpolate(1460,1700,0.002),0.00450785873150685,0.000001)
+%! assert(vv.interpolate(1825,1700,-0.001),0.00476692691780822,0.000001)
+%! assert(vv.interpolate(2000,1700,-0.0025),0.00503838293282042,0.000001)
 %! vv = vv.set('method_interpolation','nearest');
-%! assert(vv.getValue(3650,730,0.0025),0.00978959,0.000001)
+%! assert(vv.interpolate(3650,730,0.0025),0.00978959,0.000001)

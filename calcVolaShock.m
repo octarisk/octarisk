@@ -30,12 +30,12 @@ if ( strcmpi(vola_surf_obj.type,'IR'))
     if nargin < 7
         error('calcVolaShock: Surface type IR needs tenor,term and moneyness as input variables.');
     end
-    indexvol_base       = vola_surf_obj.getValue(xx,yy,zz);
+    indexvol_base       = vola_surf_obj.interpolate(xx,yy,zz);
 elseif ( strcmpi(vola_surf_obj.type,'INDEX'))
     if nargin < 6
         error('calcVolaShock: Surface type INDEX needs term and moneyness as input variables.');
     end
-    indexvol_base       = vola_surf_obj.getValue(xx,yy);
+    indexvol_base       = vola_surf_obj.interpolate(xx,yy);
 else
     error('calcVolaShock: Only vola surface types IR and INDEX are supported.');
 end

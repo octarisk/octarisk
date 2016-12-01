@@ -360,13 +360,14 @@ end
 % --------------------------------------------------------------------------------------------------------------------
 % 2.) Monte Carlo Riskfactor Simulation for all timesteps
 [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
+
+
+% 3.) Take Riskfactor Shiftvalues from Stressdefinition
+[riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
 % for kk = 1  : 1 : length(riskfactor_struct)
    % riskfactor_struct(kk).id
    % riskfactor_struct(kk).object
 % end
-
-% 3.) Take Riskfactor Shiftvalues from Stressdefinition
-[riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
 
 scengen = toc;
 
@@ -392,18 +393,21 @@ curve_struct=struct();
    % curve_struct(kk).object
 % end
 
-% b) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
+
+% b) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
+persistent index_struct;
+index_struct=struct();
 persistent surface_struct;
 surface_struct=struct();
+[index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests);   
+
+% c) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
+
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir,input_filename_surf_stoch);
 % for kk = 1  : 1 : length(surface_struct)
    % surface_struct(kk).id
    % surface_struct(kk).object
 % end
-% c) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
-persistent index_struct;
-index_struct=struct();
-[index_struct curve_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,mc_timesteps,mc,no_stresstests);   
 
 % d) Loading matrix objects
 persistent matrix_struct;

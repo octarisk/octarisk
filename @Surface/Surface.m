@@ -6,7 +6,9 @@ classdef Surface
       description = '';
       type = ''; 
       moneyness_type = 'K/S';
-      method_interpolation = 'linear';    % 3D: [bilinear,nearest]
+      method_interpolation = 'linear';    % 3D: [linear,nearest]
+      shock_struct = struct();      % structure containing risk factor shocks
+      riskfactors = {};             % cell containing all risk factors
     end
    
     properties (SetAccess = protected )
@@ -35,7 +37,7 @@ classdef Surface
         a.name          = name;
         a.id            = tmp_id;
         a.description   = tmp_description;
-        a.type          = upper(tmp_type);                             
+        a.type          = upper(tmp_type);  
       end % Surface
       
       function disp(a)
@@ -45,6 +47,7 @@ classdef Surface
             a.name,a.id,a.description,a.type);
          fprintf('moneyness_type: %s\n',a.moneyness_type);
          fprintf('method_interpolation: %s\n',a.method_interpolation);
+         fprintf('riskfactors: %s\n',any2str(a.riskfactors));
          % looping via all x axis values if defined
          if ( length(a.axis_x) > 0 )
             fprintf('Axis x %s : Values :\n[ ',a.axis_x_name);
@@ -96,7 +99,7 @@ classdef Surface
       
       function obj = set.method_interpolation(obj,method_interpolation)
          if ~(sum(strcmpi(method_interpolation,{'linear','nearest'}))>0  )
-            error('Interpolation method must be linear or nearest')
+            error('Interpolation method >>%s<< must be linear or nearest.',any2str(method_interpolation))
          end
          obj.method_interpolation = method_interpolation;
       end % Set.method_interpolation

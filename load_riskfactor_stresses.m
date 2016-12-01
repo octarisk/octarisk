@@ -42,7 +42,7 @@ for ii = 1 : 1 : length( stresstest_struct )
                 tmp_stress = [0.0];
             end
             rf_object = rf_object.set('scenario_stress',tmp_stress);    % add stress shift value into stress test vector of risk factor -> order preserved
-            rf_object = rf_object.set('shift_type',tmp_shift_type);
+            rf_object = rf_object.set('shift_type',cat(1,rf_object.shift_type,tmp_shift_type));
             % store risk factor object back into struct:
             riskfactor_struct( kk ).object = rf_object; 
             number_riskfactors = number_riskfactors + 1;

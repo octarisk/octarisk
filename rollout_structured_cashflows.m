@@ -967,7 +967,7 @@ elseif ( strcmp(type,'FAB') == 1 )
             abs_ir_shock = abs_ir_shock ./ length(instrument.psa_factor_term);
         end
         % extract PSA factor from prepayment procedure (independent of PSA curve)
-        prepayment_factor = pp.getValue(coupon_rate,abs_ir_shock);
+        prepayment_factor = pp.interpolate(coupon_rate,abs_ir_shock);
                 
         % case 1: full prepayment with rate from prepayment curve or 
         %           constant rate

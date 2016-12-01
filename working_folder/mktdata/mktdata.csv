@@ -20,3 +20,5 @@ Index,EQ_DE,DAX30,Equity Index,EUR,DAX Equity Index German Blue Chips,9820
 Index,COM_GOLD,Gold,Commodity Index,USD,Gold 1 Ounce USD,1073
 Index,FX_EURUSD,EUR_USD,Exchange Rate,EUR,EUR USD Exchange rate,1.08
 Index,FX_EURCAD,EUR_CAD,Exchange Rate,EUR,EUR CAD Exchange rate,1.25
+HeaderSURFACE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,moneyness_typeCHAR,method_interpolationCHAR,riskfactorsCHAR
+Surface,RF_VOLA_IR_EUR,RF_VOLA_IR_EUR,IR,Test description,K-S,linear,RF_VOLA_IR_EUR_730_365|RF_VOLA_IR_EUR_1825_3650

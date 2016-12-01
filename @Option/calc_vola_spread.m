@@ -49,7 +49,7 @@ function obj = calc_vola_spread(option,valuation_date,underlying,vola_riskfactor
                 
         % get implied volatility spread (choose offset to vola, 
         % that tmp_value == option_bs with input of appropriate vol):
-        tmp_indexvol_base       = tmp_vola_surf_obj.getValue(tmp_dtm,tmp_moneyness_base);
+        tmp_indexvol_base       = tmp_vola_surf_obj.interpolate(tmp_dtm,tmp_moneyness_base);
 
         % Convert divyield and interest rates into act/365 continuous (used by pricing)       
         tmp_rf_rate_base = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate_base, ...

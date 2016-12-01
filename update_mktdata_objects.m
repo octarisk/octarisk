@@ -19,13 +19,13 @@
 %# During aggregation and instrument currency conversion the appropriate FX exchange rate is always chosen by FX_BasecurrencyForeigncurrency)
 %# @end deftypefn
 
-function [index_struct curve_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,timesteps_mc,mc,no_stresstests)
+function [index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,timesteps_mc,mc,no_stresstests)
 
 id_failed_cell = {};
 index_curve_objects = 0;
 % loop through all Index and Curve mktdata objects (except Aggregated Curves -> stacked in next step)
 for ii = 1 : 1 : length(mktdata_struct)
-    % get class -> switch between curve, index
+    % get class -> switch between curve, index, surface
     tmp_object = mktdata_struct(ii).object;
     tmp_class = lower(class(tmp_object));
     if ( strcmp(tmp_class,'index'))
@@ -59,6 +59,80 @@ for ii = 1 : 1 : length(mktdata_struct)
             fprintf('ERROR: There has been an error for new Index object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
             id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
         end
+    % Surfaces
+    elseif ( strcmpi(tmp_class,'surface'))
+        tmp_id = tmp_object.id;
+        try  % Update risk factor shock values
+            tmp_riskfactors = tmp_object.riskfactors;
+            shock_struct = tmp_object.shock_struct;
+            tmp_coordinates = [];
+            tmp_shock_values = [];
+          % update stress values
+            for ii = 1:1:length(tmp_riskfactors)
+                tmp_rf = tmp_riskfactors{ii};
+                [tmp_rf_obj  object_ret_code]  = get_sub_object(riskfactor_struct, tmp_rf);
+                if ( object_ret_code == 0 )
+                    error('update_mktdata_object: risk factor >>%s<< not found for surface >>%s<<',tmp_rf,tmp_id);  
+                end
+                % loop through all value types and set struct
+                % loop through stress values
+                % append coordinates of risk factor
+                tmp_xyz = [tmp_rf_obj.node;tmp_rf_obj.node2;tmp_rf_obj.node3];
+                tmp_coordinates = cat(2,tmp_coordinates,tmp_xyz);
+                tmp_shock = tmp_rf_obj.getValue('stress');
+                tmp_model = tmp_rf_obj.model;   % TODO: check models are equal for all risk factors
+                % append shock values
+                tmp_shock_values = cat(2,tmp_shock_values,tmp_shock); 
+                tmp_shift_type = tmp_rf_obj.shift_type;
+               % store MC timesteps for later use
+                tmp_timestep_mc = tmp_rf_obj.get('timestep_mc');
+            end
+             % generate temporary struct with stress values
+            tmp_s               = struct();
+            tmp_s.model         = tmp_model;
+            tmp_s.coordinates   = tmp_coordinates;
+            tmp_s.values        = tmp_shock_values;
+            tmp_s.shift_type    = tmp_shift_type;
+            % store stress struct
+            shock_struct = setfield(shock_struct,'stress',tmp_s);
+                
+          % loop through all MC timesteps (with inner loop via all Riskfactors
+            for kk = 1 : 1 : length(tmp_timestep_mc)
+                tmp_shock_values = [];
+                tmp_value_type = tmp_timestep_mc{kk};
+                for ii = 1:1:length(tmp_riskfactors)
+                    tmp_rf = tmp_riskfactors{ii};
+                    [tmp_rf_obj  object_ret_code]  = get_sub_object(riskfactor_struct, tmp_rf);
+                    if ( object_ret_code == 0 )
+                        error('update_mktdata_object: risk factor >>%s<< not found for surface >>%s<<',tmp_rf,tmp_id);  
+                    end
+                    % loop through all value types and set struct
+                    tmp_shock = tmp_rf_obj.getValue(tmp_value_type);
+                    % append shock values
+                    tmp_shock_values = cat(2,tmp_shock_values,tmp_shock); 
+                end 
+                 % generate temporary struct
+                tmp_s               = struct();
+                tmp_s.model         = tmp_model;
+                tmp_s.coordinates   = tmp_coordinates;
+                tmp_s.values        = tmp_shock_values;
+                % store stress struct
+                shock_struct = setfield(shock_struct,tmp_value_type,tmp_s);
+            end
+            
+            % store final struct
+            tmp_object.shock_struct = shock_struct;
+                        
+            % store surface object in struct
+            tmp_store_struct = length(surface_struct) + 1;
+            surface_struct( tmp_store_struct ).id      = tmp_id;
+            surface_struct( tmp_store_struct ).object  = tmp_object;
+            index_curve_objects = index_curve_objects + 1;
+        catch
+            fprintf('ERROR: There has been an error for new Surface object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
+            id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
+        end
+    % Curves    
     elseif ( strcmpi(tmp_class,'curve') && ~strcmpi(tmp_object.type,'aggregated curve'))
         tmp_id = tmp_object.id;
         try
