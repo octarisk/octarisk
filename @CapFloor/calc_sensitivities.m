@@ -1,6 +1,6 @@
-function obj = calc_sensitivities(capfloor,valuation_date,value_type, reference_curve, vola_surface, vola_rf, discount_curve)
+function obj = calc_sensitivities(capfloor,valuation_date,value_type, reference_curve, vola_surface, discount_curve)
 obj = capfloor;
-if ( nargin < 7)
+if ( nargin < 6)
     error('Error: No reference curve, discount curve, vola surface or vola risk factor set. Aborting.');
 end
 
@@ -9,7 +9,7 @@ if ischar(valuation_date)
 end
   
 % a) get object attributes
-    obj = obj.rollout(valuation_date,'base',reference_curve,vola_surface,vola_rf);
+    obj = obj.rollout(valuation_date,'base',reference_curve,vola_surface);
     obj = obj.calc_value(valuation_date,'base',reference_curve);
     theo_value      = obj.getValue('base');
     basis_obj       = obj.get('basis');
@@ -42,7 +42,7 @@ end
         % set adjusted curve rates in reference curve
         reference_curve = reference_curve.set('rates_base',rates_ref_sensi);
         [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
-                             'base', obj, reference_curve, vola_surface, vola_rf);
+                             'base', obj, reference_curve, vola_surface);
 
         theo_value_ir_down = pricing_npv(valuation_date, ret_dates, ...
                                     ret_values, obj.soy - obj.ir_shock, ...
@@ -61,7 +61,7 @@ end
         % set adjusted curve rates in reference curve
         reference_curve = reference_curve.set('rates_base',rates_ref_sensi);
         [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
-                             'base', obj, reference_curve, vola_surface, vola_rf);
+                             'base', obj, reference_curve, vola_surface);
 
         theo_value_ir_up = pricing_npv(valuation_date, ret_dates, ...
                                     ret_values, obj.soy + obj.ir_shock, ...

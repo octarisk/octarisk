@@ -1,11 +1,9 @@
-function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_vola_surf_obj,vola_riskfactor,leg_fixed_obj,leg_float_obj)
+function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_vola_surf_obj,leg_fixed_obj,leg_float_obj)
     obj = swaption;
     if ( nargin < 4)
         error('Error: No  discount curve or vola surface set. Aborting.');
     end
-    if ( nargin < 6)
-        vola_riskfactor = Riskfactor();
-    end
+
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates        = discount_curve.getValue(value_type);
@@ -71,9 +69,8 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
                                     comp_freq_curve, floor_flag);
         tmp_moneyness           = (tmp_forward_shock ./tmp_strike).^moneyness_exponent; 
         
-        tmp_imp_vola_shock = calcVolaShock(value_type,obj,tmp_vola_surf_obj, ...
-                            vola_riskfactor,tmp_swap_tenor,tmp_dtm,tmp_moneyness);
-
+        tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
+                tmp_swap_tenor,tmp_dtm,tmp_moneyness) + tmp_impl_vola_spread;
       % Convert interest rates into act/365 continuous (used by pricing)
         tmp_rf_rate_conv = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate, ...
                         comp_type_curve,comp_freq_curve,basis_curve, ...
@@ -95,7 +92,7 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
             end
         else    % pricing with underlying float and fixed leg
             % make sure underlying objects are existing
-            if ( nargin < 8)
+            if ( nargin < 7)
                 error('Error: No underlying fixed and floating leg set. Aborting.');
             end
             % evaluate fixed leg and floating leg: discount with swaptions 

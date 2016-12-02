@@ -1,15 +1,15 @@
-function obj = calc_value(option,valuation_date,value_type,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,path_static)
+function obj = calc_value(option,valuation_date,value_type,underlying,discount_curve,tmp_vola_surf_obj,path_static)
     obj = option;
-    if ( nargin < 6)
+    if ( nargin < 5)
         error('Error: No  discount curve, vola surface or underlying set. Aborting.');
     end
-    if ( nargin < 7)
+    if ( nargin < 6)
         valuation_date = today;
     end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
     end
-    if ( nargin < 8)
+    if ( nargin < 7)
         path_static = pwd;
     end
     % Get discount curve nodes and rate
@@ -58,9 +58,8 @@ function obj = calc_value(option,valuation_date,value_type,underlying,vola_riskf
                                                             moneyness_exponent;
         tmp_moneyness           = (tmp_underlying_value ./ tmp_strike).^ ...
                                                             moneyness_exponent;
-        tmp_imp_vola_shock = calcVolaShock(value_type,obj,tmp_vola_surf_obj, ...
-                            vola_riskfactor,tmp_dtm,tmp_moneyness);
-    
+        tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
+                                                        tmp_dtm,tmp_moneyness);
       % Convert interest rates into act/365 continuous (used by pricing)     
         tmp_rf_rate_conv = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate, ...
                         comp_type_curve,comp_freq_curve,basis_curve, ...

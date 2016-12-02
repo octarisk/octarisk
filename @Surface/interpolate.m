@@ -72,8 +72,8 @@ function y = interpolate (surface, xx,yy,zz)
                 yy_nearest = interp1(yy_structure,yy_structure,yy(1),'nearest');
                 index_xx = find(xx_structure==xx_nearest);
                 index_yy = find(yy_structure==yy_nearest);
-                % extract moneyness vector
-                moneyness_vec = vola_cube(index_xx,index_yy,:);
+                % extract moneyness vector (x axis -> dimension 2, y axis -> dimension 1)
+                moneyness_vec = vola_cube(index_yy,index_xx,:);
                 [aa bb cc] = size(moneyness_vec);
                 moneyness_vec = reshape(moneyness_vec,cc,1,1);      
                 % interpolate on moneyness dimension, hold tenor and term fix (map to nearest)

@@ -99,15 +99,10 @@ for jj = 1 : 1 : length(tmp_vol_surfaces)
     [vol_obj  object_ret_code]  = get_sub_object(surface_struct, tmp_vol_surface);
     if ( object_ret_code == 0 )
         fprintf('octarisk: WARNING: No surface_struct object found for id >>%s<<\n',tmp_vol_surface);
-    end
-    [rf_vola_obj  object_ret_code] = get_sub_object(riskfactor_struct, tmp_vol_surface);
-    if ( object_ret_code == 0 )
-        fprintf('octarisk: WARNING: No riskfactor_struct object found for id >>%s<<\n',tmp_vol_surface);
-    end         
+    end    
     % Get implied vola scenario value (based on volatility surface object and
     %   vola risk factor
-    underlying_volas(:,jj) = calcVolaShock(value_type,option,vol_obj, ...
-                            rf_vola_obj,dtm,tmp_moneyness);
+    underlying_volas(:,jj) = vol_obj.getValue(value_type,dtm,tmp_moneyness);                       
 end
 
 % 5. calculate diversified volatility:

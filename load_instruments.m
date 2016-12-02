@@ -170,25 +170,25 @@ for ii = 1 : 1 : length(tmp_list_files)
           error_flag = 0;
           if (length(content{jj}) > 3)  % parse row only if it contains some meaningful data
             % B.3a) Generate object of appropriate class
-            if ( sum(strcmp(tmp_instrument_type,{'FRB','FRN','ZCB','FAB','CASHFLOW','BOND'})) > 0)        % store data in Class Bond
+            if ( sum(strcmpi(tmp_instrument_type,{'FRB','FRN','ZCB','FAB','CASHFLOW','BOND'})) > 0)        % store data in Class Bond
                 i = Bond(); 
-            elseif ( sum(strcmp(tmp_instrument_type,{'FWD'})) > 0)        % store data in Class Forward
+            elseif ( sum(strcmpi(tmp_instrument_type,{'FWD'})) > 0)        % store data in Class Forward
                 i = Forward();  
-            elseif ( sum(strcmp(tmp_instrument_type,{'STOCH'})) > 0)        % store data in Class Stochastic
+            elseif ( sum(strcmpi(tmp_instrument_type,{'STOCH'})) > 0)        % store data in Class Stochastic
                 i = Stochastic(); 
-            elseif ( sum(strcmp(tmp_instrument_type,{'CAPFLOOR'})) > 0)        % store data in Class CapFloor
+            elseif ( sum(strcmpi(tmp_instrument_type,{'CAPFLOOR'})) > 0)        % store data in Class CapFloor
                 i = CapFloor(); 
-            elseif ( sum(strcmp(tmp_instrument_type,{'DBT'})) > 0)        % store data in Class Debt
+            elseif ( sum(strcmpi(tmp_instrument_type,{'DBT'})) > 0)        % store data in Class Debt
                 i = Debt();  
-            elseif ( sum(strcmp(tmp_instrument_type,{'COM','RET','COM','STK','ALT','SENSI'})) > 0)        % store data in Class Sensitivity Instrument
+            elseif ( sum(strcmpi(tmp_instrument_type,{'COM','RET','COM','STK','ALT','SENSI'})) > 0)        % store data in Class Sensitivity Instrument
                 i = Sensitivity();  
-            elseif ( sum(strcmp(tmp_instrument_type,{'SYNTH'})) > 0)        % store data in Class Synthetic Instrument
+            elseif ( sum(strcmpi(tmp_instrument_type,{'SYNTH'})) > 0)        % store data in Class Synthetic Instrument
                 i = Synthetic();  
             elseif ( regexp(tmp_instrument_type,'OPT') == 1)        % store data in Class Option
                 i = Option(); 
             elseif ( regexp(tmp_instrument_type,'SWAPT') == 1)      % store data in Class Swaption
                 i = Swaption(); 
-            elseif ( sum(strcmp(tmp_instrument_type,{'CASH'})) > 0)  % store data in Class Cash
+            elseif ( sum(strcmpi(tmp_instrument_type,{'CASH'})) > 0)  % store data in Class Cash
                 i = Cash();                     
             end
 
@@ -199,7 +199,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                 tmp_cell_item = tmp_cell{mm};
                 tmp_cell_type = upper(tmp_header_type{mm-1});
                 % B.3b.i) convert item to appropriate type
-                if ( strcmp(tmp_cell_type,'NMBR'))
+                if ( strcmpi(tmp_cell_type,'NMBR'))
                     try
                         tmp_entry = str2num(tmp_cell_item);
                     catch
@@ -208,7 +208,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                         error_flag = 1;
                     end
                      
-                elseif ( strcmp(tmp_cell_type,'CHAR'))
+                elseif ( strcmpi(tmp_cell_type,'CHAR'))
                     try
                         tmp_entry = strtrim(tmp_cell_item);
                     catch
@@ -216,7 +216,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                         tmp_entry = '';
                         error_flag = 1;
                     end
-                elseif ( strcmp(tmp_cell_type,'BOOL'))
+                elseif ( strcmpi(tmp_cell_type,'BOOL'))
                     try                    
                         if (isnumeric (tmp_cell_item))
                             tmp_entry = logical(tmp_cell_item);
@@ -232,7 +232,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                         tmp_entry = 0;
                         error_flag = 1;
                     end    
-                elseif ( strcmp(tmp_cell_type,'DATE'))
+                elseif ( strcmpi(tmp_cell_type,'DATE'))
                     try
                         tmp_entry = datestr(tmp_cell_item);
                     catch

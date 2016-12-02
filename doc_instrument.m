@@ -250,19 +250,17 @@ end
 %! s = Swaption();
 %! s = s.set('maturity_date','28-Mar-2026','effective_date','28-Mar-2026');
 %! s = s.set('strike',0.0153,'multiplier',100,'sub_type','SWAPT_EUR_PAY','model','normal','tenor',10);
-%! s = s.set('use_underlyings',false);
-%! d = Riskfactor();     
-%! s = s.calc_value('31-Mar-2016','base',r,v,d);
-%! s = s.calc_value('31-Mar-2016','stress',r,v,d);
+%! s = s.set('use_underlyings',false);    
+%! s = s.calc_value('31-Mar-2016','base',r,v);
+%! s = s.calc_value('31-Mar-2016','stress',r,v);
 %! assert(s.getValue('base'),7.66316612096985,0.0000001);
 %! assert(s.getValue('stress'),7.66316612096985,0.0000001);
 % %! s = s.set('value_base',8.000);
-% %! s = s.calc_vola_spread('31-Mar-2016',r,v,d);
-% %! s = s.calc_value('base','31-Mar-2016',r,v,d);
+% %! s = s.calc_vola_spread('31-Mar-2016',r,v);
+% %! s = s.calc_value('base','31-Mar-2016',r,v);
 % %! assert(s.getValue('base'),8.000,0.001);
 
 % %! fprintf('\tdoc_instrument:\tPricing Swaption Object\n');
-% %! r = Riskfactor();
 % %! c = Curve();
 % %! c = c.set('id','IR_EUR','nodes',[730,4380],'rates_base',[0.0001001034,0.0062559362],'method_interpolation','linear');
 % %! v = Surface();
@@ -272,16 +270,15 @@ end
 % %! s = Swaption();
 % %! s = s.set('maturity_date','31-Mar-2018');
 % %! s = s.set('strike',0.0175,'multiplier',100);
-% %! s = s.calc_value('31-Mar-2016','base',c,v,r);
+% %! s = s.calc_value('31-Mar-2016','base',c,v);
 % %! assert(s.getValue('base'),0.89117199789300,0.0000001);
 % %! s = s.set('value_base',0.9069751298);
-% %! s = s.calc_vola_spread('31-Mar-2016',c,v,r);
-% %! s = s.calc_value('31-Mar-2016','base',c,v,r);
+% %! s = s.calc_vola_spread('31-Mar-2016',c,v);
+% %! s = s.calc_value('31-Mar-2016','base',c,v);
 % %! assert(s.getValue('base'),0.906975102470711,0.00001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing European Option Object\n');
-%! r = Riskfactor();
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');
 %! v = Surface();
@@ -293,16 +290,15 @@ end
 %! o = Option();
 %! o = o.set('maturity_date','29-Mar-2026');
 %! o = o.set('strike',384.7481,'multiplier',1);
-%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
 %! assert(o.getValue('base'),71.4875735979,0.0000001);
 %! o = o.set('value_base',70.00);
-%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.getValue('base'),70.000,0.001);
-%! o = o.calc_greeks('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing European Barrier Option Object\n');
-%! r = Riskfactor();
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[180],'rates_base',[0.08],'method_interpolation','linear');
 %! v = Surface();
@@ -315,15 +311,15 @@ end
 %! o = o.set('maturity_date','30-Sep-2016','sub_Type','OPT_BAR_C');
 %! o = o.set('strike',90,'multiplier',1,'div_yield',0.04,'upordown','D','outorin','in');
 %! o = o.set('barrierlevel',95,'rebate',3);
-%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
 %! assert(o.getValue('base'),7.77203592837206,0.0000001);
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.2200);
 %! v = v.set('type','INDEX');
-%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),0.030000,0.00001);
-%! o = o.calc_greeks('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Asian Geometric Continuous Averaging Option Object\n');
@@ -340,15 +336,14 @@ end
 %! o = o.set('id','Asian_Geometric_Continuous','maturity_date','30-Jun-2016','sub_Type','OPT_ASN_P');
 %! o = o.set('strike',85,'multiplier',1,'div_yield',0.03,'averaging_type','rate','averaging_rule','geometric');
 %! o = o.set('averaging_monitoring','continuous');
-%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
 %! assert(o.getValue('base'),4.69226159911852,0.000001);
 %! o = o.set('value_base',4.900);
-%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),0.0288927625504014,0.00001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Asian Arithmetic Continuous Averaging Option Object\n');
-%! r = Riskfactor();
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[180],'rates_base',[0.05],'method_interpolation','linear');
 %! v = Surface();
@@ -361,12 +356,12 @@ end
 %! o = o.set('id','Asian_Arithmetic_Continuous','maturity_date','30-Jun-2016','sub_Type','OPT_ASN_P');
 %! o = o.set('strike',85,'multiplier',1,'div_yield',0.03,'averaging_type','rate','averaging_rule','arithmetic');
 %! o = o.set('averaging_monitoring','continuous');
-%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
 %! assert(o.getValue('base'),5.12741689918977,0.000001);
 %! o = o.set('value_base',5.00);
-%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),-0.0241361316761741,0.00001);
-%! o = o.calc_greeks('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
 %! assert(o.get('theo_delta'),-0.857787632035219,0.00001);
 %! assert(o.get('theo_gamma'),0.0519774521673497,0.00001);
 %! assert(o.get('theo_vega'),0.0486623709116500,0.00001);
@@ -376,7 +371,6 @@ end
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing American Option Object (Willowtree and Bjerksund and Stensland)\n');
-%! r = Riskfactor();
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');
 %! v = Surface();
@@ -389,21 +383,21 @@ end
 %! o = o.set('maturity_date','29-Mar-2026','currency','USD','timesteps_size',5,'willowtree_nodes',30);
 %! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
 %! o = o.set('pricing_function_american','Willowtree');
-%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
 %! assert(o.getValue('base'),123.043,0.001);
 %! o = o.set('value_base',100);
-%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.getValue('base'),100.000,0.001);
 %! o = Option();
 %! o = o.set('maturity_date','29-Mar-2026','currency','USD');
 %! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
 %! o = o.set('pricing_function_american','Bjsten');
-%! o = o.calc_value('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
 %! assert(o.getValue('base'),122.2909543913,0.0000001);
 %! o = o.set('value_base',100);
-%! o = o.calc_vola_spread('31-Mar-2016',i,r,c,v);
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.getValue('base'),100.000,0.0001);
-%! o = o.calc_greeks('31-Mar-2016','base',i,r,c,v);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Debt Object\n');
@@ -427,8 +421,7 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.8);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
-%! cap = cap.rollout('31-Dec-2015','base',c,v,r);
+%! cap = cap.rollout('31-Dec-2015','base',c,v);
 %! cap = cap.calc_value('31-Dec-2015','base',c);
 %! assert(cap.getValue('base'),137.0063959386,0.0000001);
 
@@ -441,13 +434,12 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.8);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
 %! cap_cms = CapFloor();
 %! cap_cms = cap_cms.set('id','TEST_CAP','name','TEST_CAP','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
 %! cap_cms = cap_cms.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
 %! cap_cms = cap_cms.set('strike',0.005,'model','Black','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','CAP_CMS');
 %! cap_cms = cap_cms.set('cms_model','Black','cms_sliding_term',365,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple');
-%! cap_cms = cap_cms.rollout( '31-Dec-2015', 'base', c, v, r);
+%! cap_cms = cap_cms.rollout( '31-Dec-2015', 'base', c, v);
 %! cap_cms = cap_cms.calc_value('31-Dec-2015','base',c);
 %! assert(cap_cms.getValue('base'),137.006395938592,0.0000001);
 
@@ -464,17 +456,16 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.00555);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
-%! floor = floor.rollout('31-Dec-2015','base',c,v,r);
+%! floor = floor.rollout('31-Dec-2015','base',c,v);
 %! floor = floor.calc_value('31-Dec-2015','base',c);
 %! assert(floor.getValue('base'),39.9458733223202,0.0000001);
-%! floor = floor.rollout('31-Dec-2015','stress',c,v,r);
+%! floor = floor.rollout('31-Dec-2015','stress',c,v);
 %! floor = floor.calc_value('31-Dec-2015','stress',c);
 %! stress_values = floor.getValue('stress');
 %! assert(stress_values,[13.629274436848439;6.092263070602667;0.463877763957439],0.0000001);
 
 %!test
-%! fprintf('\tdoc_instrument:\tPricing 3nd Floor Object with Normal Model\n');
+%! fprintf('\tdoc_instrument:\tPricing 2nd Floor Object with Normal Model\n');
 %! floor = CapFloor();
 %! floor = floor.set('id','TEST_FLOOR','name','TEST_FLOOR','issue_date','30-Jun-2017','maturity_date','30-Jun-2018','compounding_type','simple');
 %! floor = floor.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
@@ -485,8 +476,7 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.00059707);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
-%! floor = floor.rollout('30-Jun-2016','base',c,v,r);
+%! floor = floor.rollout('30-Jun-2016','base',c,v);
 %! floor = floor.calc_value('30-Dec-2016','base',c);
 %! assert(floor.getValue('base'),5.0503156821,0.0000001);
 
@@ -504,10 +494,9 @@ end
 %! v = v.set('axis_x',1825,'axis_x_name','TENOR','axis_y',365,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.0014240366);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
-%! floor = floor.rollout('30-Jun-2016','base',c,v,r);
+%! floor = floor.rollout('30-Jun-2016','base',c,v);
 %! floor = floor.calc_value('30-Dec-2016','base',c);
-%! floor = floor.calc_sensitivities('30-Jun-2016','base',c,v,r,c);
+%! floor = floor.calc_sensitivities('30-Jun-2016','base',c,v,c);
 %! assert(floor.getValue('base'),1.44201131641819,0.000000001);
 %! assert(floor.get('eff_duration'),75.3761329917373,0.000000001);
 %! assert(floor.get('eff_convexity'),802.649265026805,0.000000001);
@@ -680,16 +669,15 @@ end
 %! s = Swaption();
 %! s = s.set('maturity_date','26-Mar-2036','effective_date','31-Mar-2016');
 %! s = s.set('strike',0.045,'multiplier',1,'sub_type','SWAPT_EUR_PAY','model','normal','tenor',10);
-%! s = s.set('und_fixed_leg','SWAP_FIXED','und_floating_leg','SWAP_FLOAT','use_underlyings',true);
-%! d = Riskfactor();     
-%! s = s.calc_value('31-Mar-2016','base',r,v,d,fix,float);
+%! s = s.set('und_fixed_leg','SWAP_FIXED','und_floating_leg','SWAP_FLOAT','use_underlyings',true);  
+%! s = s.calc_value('31-Mar-2016','base',r,v,fix,float);
 %! assert(s.getValue('base'),642.6867193851,0.00001);
-%! s = s.calc_value('31-Mar-2016','stress',r,v,d,fix,float);
+%! s = s.calc_value('31-Mar-2016','stress',r,v,fix,float);
 %! stressed_value = s.getValue('stress');
 %! assert(stressed_value(2),827.6726713515,0.00001);
 %! s = s.set('value_base',650.0);
-%! s = s.calc_vola_spread('31-Mar-2016',r,v,d,fix,float);
-%! s = s.calc_value('31-Mar-2016','base',r,v,d,fix,float);
+%! s = s.calc_vola_spread('31-Mar-2016',r,v,fix,float);
+%! s = s.calc_value('31-Mar-2016','base',r,v,fix,float);
 %! assert(s.getValue('base'),650.000,0.0001);
 
 %!test 
@@ -716,86 +704,6 @@ end
 %! assert(s.getValue('base'),1909.090909,0.0001);
 %! assert(s.getValue('stress'),3666.666667,0.0001);
 
-%!test 
-%! fprintf('\tdoc_instrument:\tPricing European Call Option on Basket\n');
-%! % Set up Synthetic Basket instrument
-%! s = Synthetic();
-%! s = s.set('id','TestSynthetic','instruments',{'EURO_STOXX_50','MSCIWORLD'},'weights',[0.4,0.6],'currency','EUR');
-%! s = s.set('discount_curve','IR_EUR','instr_vol_surfaces',{'V1','V2'},'correlation_matrix','BASKET_CORR','sub_type','Basket');
-%! % Set up structure with Instrument and index objects
-%! i1 = Index();
-%! i1 = i1.set('id','EURO_STOXX_50','value_base',1000,'scenario_stress',[900;1100]);
-%! i2 = Index();
-%! i2 = i2.set('id','MSCIWORLD','value_base',1000,'scenario_stress',[900;1100],'currency','USD');
-%! fx = Index();
-%! fx = fx.set('id','FX_EURUSD','value_base',1.0,'scenario_stress',[1.0;1.0]);
-%! instrument_struct = struct();
-%! instrument_struct(1).id = s.id;
-%! instrument_struct(1).object = s;
-%! index_struct = struct();
-%! index_struct(1).id = fx.id;
-%! index_struct(1).object = fx;
-%! index_struct(2).id = i1.id;
-%! index_struct(2).object = i1;
-%! index_struct(3).id = i2.id;
-%! index_struct(3).object = i2;
-%! valuation_date = datenum('30-Jun-2016');
-%! s = s.calc_value(valuation_date,'base',instrument_struct,index_struct);
-%! % Set up structure with Riskfactor objects
-%! r1 = Riskfactor();
-%! r1 = r1.set('id','V1','scenario_stress',[0.2;-0.1],'model','GBM');
-%! r2 = Riskfactor();
-%! r2 = r1.set('id','V2');
-%! riskfactor_struct(1).id = r1.id;
-%! riskfactor_struct(1).object = r1;
-%! riskfactor_struct(2).id = r2.id;
-%! riskfactor_struct(2).object = r2;
-%! % Set up structure with discount curve object
-%! c = Curve();
-%! c = c.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
-%!      'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
-%!                     0.004576856,0.0036879820,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526],'method_interpolation','linear');
-%! curve_struct = struct();
-%! curve_struct(1).id = c.id;
-%! curve_struct(1).object = c;
-%! % Set up structure with volatlity surface objects
-%! v1 = Surface();
-%! v1 = v1.set('id','V1','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
-%! v1 = v1.set('values_base',0.269944411);
-%! v1 = v1.set('type','INDEX');
-%! v2 = Surface();
-%! v2 = v2.set('id','V2','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
-%! v2 = v2.set('values_base',0.1586683369);
-%! v2 = v2.set('type','INDEX');
-%! surface_struct = struct();
-%! surface_struct(1).id = v1.id;
-%! surface_struct(1).object = v1;
-%! surface_struct(2).id = v2.id;
-%! surface_struct(2).object = v2;
-%! % Set up structure with matrix object
-%! m = Matrix();
-%! m = m.set('id','BASKET_CORR','components',{'EURO_STOXX_50','MSCIWORLD'});
-%! m = m.set('matrix',[1.0,0.3;0.3,1]);
-%! matrix_struct = struct();
-%! matrix_struct(1).id = m.id;
-%! matrix_struct(1).object = m;
-%! % Set up basket option objects to evaluate
-%! o = Option();
-%! o = o.set('maturity_date','28-Jun-2026','sub_type','OPT_EUR_C','discount_curve','IR_EUR');
-%! o = o.set('strike',1000,'multiplier',1,'underlying','TestSynthetic','value_base',250,'vola_spread',0.0000000001);
-%! % Base valuation
-%! value_type = 'base';
-%! o = o.valuate (valuation_date, value_type, ...
-%!                     instrument_struct, surface_struct, matrix_struct, ...
-%!                     curve_struct, index_struct, riskfactor_struct);
-%! assert(o.getValue('base'),228.057832386340,0.00000001);
-%! % Stress valuation
-%! value_type = 'stress';
-%! % valuation with instrument function
-%! o = o.valuate (valuation_date, value_type, ...
-%!                     instrument_struct, surface_struct, matrix_struct, ...
-%!                     curve_struct, index_struct, riskfactor_struct);         
-%! assert(o.getValue('stress'),[216.054078327894;273.283323323431],0.00000001);
 
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing CMS Floating Leg with Hull Convexity Adjustment\n');
@@ -820,13 +728,12 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.8);
 %! v = v.set('type','IR');
-%! vola_rf = Riskfactor();
 %! value_type = 'base'; 
-%! cms_float = cms_float.rollout(value_type, valuation_date, ref_curve, v, vola_rf);
+%! cms_float = cms_float.rollout(value_type, valuation_date, ref_curve, v);
 %! cms_float = cms_float.calc_value(valuation_date,value_type,ref_curve);
 %! assert(cms_float.getValue(value_type),20.2751684618757,0.00000001);
 %! value_type = 'stress'; 
-%! cms_float = cms_float.rollout(value_type, valuation_date, ref_curve, v, vola_rf);
+%! cms_float = cms_float.rollout(value_type, valuation_date, ref_curve, v);
 %! cms_float = cms_float.calc_value(valuation_date,value_type,ref_curve);
 %! assert(cms_float.getValue(value_type),[20.2751684618757;20.2751684618757],0.00000001);
 
@@ -848,16 +755,15 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.009988);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
 %! value_type = 'base'; 
 %! cap_cms = CapFloor();
 %! cap_cms = cap_cms.set('id','TEST_CAP','name','TEST_CAP','issue_date','31-Mar-2018','maturity_date','31-Mar-2019','compounding_type','simple');
 %! cap_cms = cap_cms.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
 %! cap_cms = cap_cms.set('strike',0.005,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','CAP_CMS');
 %! cap_cms = cap_cms.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan');
-%! cap_cms = cap_cms.rollout( '31-Mar-2016', 'base', c, v, r);
+%! cap_cms = cap_cms.rollout( '31-Mar-2016', 'base', c, v);
 %! cap_cms = cap_cms.calc_value('31-Mar-2016','base',c);
-%! cap_cms = cap_cms.rollout( '31-Mar-2016', 'stress', c, v, r);
+%! cap_cms = cap_cms.rollout( '31-Mar-2016', 'stress', c, v);
 %! cap_cms = cap_cms.calc_value('31-Mar-2016','stress',c);
 %! assert(cap_cms.getValue('base'),0.531866524532582,0.00000001);
 %! assert(cap_cms.getValue('stress'),[0.531866524532582;0.531866524532582],0.00000001);
@@ -887,9 +793,8 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.8);
 %! v = v.set('type','IR');
-%! vola_rf = Riskfactor();
 %! value_type = 'base';
-%! float = float.rollout(value_type, ref_curve , valuation_date, v, vola_rf);
+%! float = float.rollout(value_type, ref_curve , valuation_date, v);
 %! float = float.calc_value(valuation_date,value_type,ref_curve);
 %! assert(float.getValue('base'),102.129818647705,0.00000001);
 
@@ -921,6 +826,90 @@ end
 %! b = b.rollout(value_type,valuation_date);
 %! b = b.calc_value(valuation_date,value_type,curve,call_schedule,put_schedule);
 %! assert(b.getValue(value_type),[53.1857;53.1857],0.0001);
+
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing European Call Option on Basket\n');
+%! % Set up Synthetic Basket instrument
+%! s = Synthetic();
+%! s = s.set('id','TestSynthetic','instruments',{'EURO_STOXX_50','MSCIWORLD'},'weights',[0.4,0.6],'currency','EUR');
+%! s = s.set('discount_curve','IR_EUR','instr_vol_surfaces',{'V1','V2'},'correlation_matrix','BASKET_CORR','sub_type','Basket');
+%! % Set up structure with Instrument and index objects
+%! i1 = Index();
+%! i1 = i1.set('id','EURO_STOXX_50','value_base',1000,'scenario_stress',[900;1100]);
+%! i2 = Index();
+%! i2 = i2.set('id','MSCIWORLD','value_base',1000,'scenario_stress',[900;1100],'currency','USD');
+%! fx = Index();
+%! fx = fx.set('id','FX_EURUSD','value_base',1.0,'scenario_stress',[1.0;1.0]);
+%! instrument_struct = struct();
+%! instrument_struct(1).id = s.id;
+%! instrument_struct(1).object = s;
+%! index_struct = struct();
+%! index_struct(1).id = fx.id;
+%! index_struct(1).object = fx;
+%! index_struct(2).id = i1.id;
+%! index_struct(2).object = i1;
+%! index_struct(3).id = i2.id;
+%! index_struct(3).object = i2;
+%! valuation_date = datenum('30-Jun-2016');
+%! s = s.calc_value(valuation_date,'base',instrument_struct,index_struct);
+%! % Set up structure with Riskfactor objects
+%! r1 = Riskfactor();
+%! r1 = r1.set('id','V1','scenario_stress',[0.2;-0.1],'model','GBM','shift_type',[1;1], 'node',730,'node2',1);
+%! r2 = Riskfactor();
+%! r2 = r1.set('id','V2');
+%! riskfactor_struct(1).id = r1.id;
+%! riskfactor_struct(1).object = r1;
+%! riskfactor_struct(2).id = r2.id;
+%! riskfactor_struct(2).object = r2;
+%! % Set up structure with discount curve object
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300], ...
+%!      'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!                     0.004576856,0.0036879820,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526],'method_interpolation','linear');
+%! curve_struct = struct();
+%! curve_struct(1).id = c.id;
+%! curve_struct(1).object = c;
+%! % Set up structure with volatlity surface objects
+%! v1 = Surface();
+%! v1 = v1.set('id','V1','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v1 = v1.set('values_base',0.269944411);
+%! v1 = v1.set('type','INDEX','riskfactors',{'V1'});
+%! v1 = v1.apply_rf_shocks(riskfactor_struct);
+%! v2 = Surface();
+%! v2 = v2.set('id','V2','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v2 = v2.set('values_base',0.1586683369);
+%! v2 = v2.set('type','INDEX');
+%! v2 = v2.apply_rf_shocks(riskfactor_struct);
+%! surface_struct = struct();
+%! surface_struct(1).id = v1.id;
+%! surface_struct(1).object = v1;
+%! surface_struct(2).id = v2.id;
+%! surface_struct(2).object = v2;
+%! % Set up structure with matrix object
+%! m = Matrix();
+%! m = m.set('id','BASKET_CORR','components',{'EURO_STOXX_50','MSCIWORLD'});
+%! m = m.set('matrix',[1.0,0.3;0.3,1]);
+%! matrix_struct = struct();
+%! matrix_struct(1).id = m.id;
+%! matrix_struct(1).object = m;
+%! % Set up basket option objects to evaluate
+%! o = Option();
+%! o = o.set('maturity_date','28-Jun-2026','sub_type','OPT_EUR_C','discount_curve','IR_EUR');
+%! o = o.set('strike',1000,'multiplier',1,'underlying','TestSynthetic','value_base',250,'vola_spread',0.0000000001);
+%! % Base valuation
+%! value_type = 'base';
+%! o = o.valuate (valuation_date, value_type, ...
+%!                     instrument_struct, surface_struct, matrix_struct, ...
+%!                     curve_struct, index_struct, riskfactor_struct);
+%! assert(o.getValue('base'),228.057832164390,0.00000001);
+%! % Stress valuation
+%! value_type = 'stress';
+%! % valuation with instrument function
+%! o = o.valuate (valuation_date, value_type, ...
+%!                     instrument_struct, surface_struct, matrix_struct, ...
+%!                     curve_struct, index_struct, riskfactor_struct);      
+%! assert(o.getValue('stress'),[198.460087766560;280.691637148358],0.00000001);
 
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');

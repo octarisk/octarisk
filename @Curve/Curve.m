@@ -62,6 +62,9 @@ classdef Curve
          fprintf('day_count_convention: %s\n',a.day_count_convention);
          fprintf('dcc_basis: %d\n',a.basis);
          fprintf('shocktype_mc: %s\n',a.shocktype_mc);
+         if ( regexpi(a.type,'Schedule'))
+            fprintf('american_flag: %s\n',any2str(a.american_flag));
+         end
          if ( isnumeric(a.floor))
 			fprintf('floor rate: %f\n',a.floor);
          end

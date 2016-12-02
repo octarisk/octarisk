@@ -1,15 +1,15 @@
-function obj = calc_vola_spread(option,valuation_date,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,path_static)
+function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,tmp_vola_surf_obj,path_static)
     obj = option;
-    if ( nargin < 5)
+    if ( nargin < 4)
         error('Error: No discount curve, vola surface or underlying set. Aborting.');
     end
-    if ( nargin < 6)
+    if ( nargin < 5)
         valuation_date = today;
     end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
     end
-    if ( nargin < 7)
+    if ( nargin < 6)
         path_static = pwd;
     end
     % Get discount curve nodes and rate
@@ -49,7 +49,7 @@ function obj = calc_vola_spread(option,valuation_date,underlying,vola_riskfactor
                 
         % get implied volatility spread (choose offset to vola, 
         % that tmp_value == option_bs with input of appropriate vol):
-        tmp_indexvol_base       = tmp_vola_surf_obj.interpolate(tmp_dtm,tmp_moneyness_base);
+        tmp_indexvol_base       = tmp_vola_surf_obj.getValue('base',tmp_dtm,tmp_moneyness_base);
 
         % Convert divyield and interest rates into act/365 continuous (used by pricing)       
         tmp_rf_rate_base = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate_base, ...

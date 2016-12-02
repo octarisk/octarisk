@@ -20,7 +20,6 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
     else
         print_usage ();
     end
-  
     % get shock value and calculate model dependent shocked base value
     if ~(strcmpi(value_type,'base'))
         shockvalue = 0.0;
@@ -30,12 +29,28 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
             % get risk factor coordinates and values from struct
             tmp_coordinates = [struct_out.coordinates];
             tmp_values = [struct_out.values];
+            % get interpolation coordinate matrix
+            max_len = max([length(xx);length(yy);length(zz)]);
+            if ( length(xx) < max_len)
+                xx = repmat(xx,max_len,1);
+            end
+            if ( length(yy) < max_len)
+                yy = repmat(yy,max_len,1);
+            end
+            if ( length(zz) < max_len)
+                zz = repmat(zz,max_len,1);
+            end
+            interpoint = [xx,yy,zz];
+                
             % calculate inverse distance weighted shock
             for ii = 1:1:columns(tmp_coordinates)
                 tmp_vektor = tmp_coordinates(:,ii);
-                distance = calc_distance([xx;yy;zz],tmp_vektor,2);
+                if ( rows(tmp_vektor) > columns(tmp_vektor))
+                    tmp_vektor = tmp_vektor';
+                end
+                distance = calc_distance(interpoint,tmp_vektor,2);
                 shockvalue = shockvalue +  tmp_values(:,ii) ./ distance;
-                idw_weight = idw_weight + distance^(-1);
+                idw_weight = idw_weight + distance.^(-1);
             end
             shockvalue = shockvalue ./ idw_weight;
             % get model dependent shocked values
@@ -52,7 +67,8 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
                 y = Riskfactor.get_abs_values(struct_out.model,shockvalue,value_base);
             end
         catch
-            fprintf('surface.getValue: Object has no risk factor values for >>%s<<.\n',value_type);
+            %fprintf('surface.getValue: Object has no risk factor values for >>%s<<.\n',value_type);
+            y = value_base;
         end
     else    % value type 'base'
         y = value_base;
@@ -73,9 +89,9 @@ function d = calc_distance(x,y,norm)
         norm = 2;
     end
     norm = max(norm,0.001);
-    if ~( rows(x) == rows(y) || columns(x) == columns(y))
-        error('calc_distance: points needs to be of same dimension');
+    if ~( columns(x) == columns(y))
+        error('calc_distance: points needs to be of same y dimension');
     end
     % calculate distance
-    d = (sum( abs(x - y).^norm ))^(1/norm);
+    d = (sum( abs(x .- y).^norm,2)).^(1/norm);
 end

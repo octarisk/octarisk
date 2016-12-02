@@ -20,6 +20,7 @@ classdef Bond < Instrument
         discount_curve = 'IR_EUR';
         reference_curve = 'IR_EUR';
         spread_curve = 'SPREAD_DUMMY';
+        vola_surface = '';
         spot_value = 0.0;
         ir_shock   = 0.01;      % shock used for calculation of effective duration
         in_arrears = 0;         % flag: if set to 0, in fine is assumed
@@ -146,6 +147,7 @@ classdef Bond < Instrument
          fprintf('use_principal_pmt: %d\n',b.use_principal_pmt);
          fprintf('use_outstanding_balance: %d\n',b.use_outstanding_balance);
          if ( regexpi(b.sub_type,'CMS'))
+            fprintf('vola_surface: %s\n',b.vola_surface); 
             fprintf('cms_model: %s\n',b.cms_model); 
             fprintf('cms_sliding_term: %s\n',any2str(b.cms_sliding_term)); 
             fprintf('cms_term: %s\n',any2str(b.cms_term)); 
@@ -160,9 +162,17 @@ classdef Bond < Instrument
             fprintf('treenodes: %s\n',any2str(b.treenodes)); 
             fprintf('call_schedule: %s\n',b.call_schedule); 
             fprintf('put_schedule: %s\n',b.put_schedule); 
+            fprintf('vola_surface: %s\n',b.vola_surface); 
          end 
          if ( regexpi(b.sub_type,'FRN_SPECIAL'))
+            fprintf('vola_surface: %s\n',b.vola_surface); 
             fprintf('rate_composition: %s\n',b.rate_composition); 
+            fprintf('cms_model: %s\n',b.cms_model); 
+            fprintf('cms_sliding_term: %s\n',any2str(b.cms_sliding_term)); 
+            fprintf('cms_term: %s\n',any2str(b.cms_term)); 
+            fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
+            fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
+            fprintf('cms_convex_model: %s\n',b.cms_convex_model);
          end 
          if ( strcmpi(b.sub_type,'STOCHASTICCF'))
             fprintf('stochastic_riskfactor: %s\n',b.stochastic_riskfactor); 

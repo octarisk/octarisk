@@ -33,7 +33,7 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
                 valuation_date,value_type,s,tmp_curve_object);
     elseif ( nargin > 4)
         [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
-                valuation_date,value_type,s,tmp_curve_object, vola_surface, vola_riskfactor);
+                valuation_date,value_type,s,tmp_curve_object, vola_surface);
     end
                                 
   % Fixed Amortizing Bonds                              
@@ -82,17 +82,16 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
   
   % type CMS Floating Leg or FRN Special (capitalized, average, min, max CMS rates)
   elseif ( strcmpi(s.sub_type,'CMS_FLOATING') || strcmpi(s.sub_type,'FRN_SPECIAL'))
-    if ( nargin < 6 )
+    if ( nargin < 5 )
         error ('rollout for sub_type CMS_FLOATING or FRN_SPECIAL: expecting valuation_date,curve,vola,vola risk factor objects');
     end
     valuation_date  = arg1;
     curve_object    = arg2;
     vola_surface    = arg3;
-    vola_rf         = arg4;
   
     % call function for generating CF dates and values and accrued_interest
     [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
-                            value_type, s, curve_object, vola_surface, vola_rf);
+                            value_type, s, curve_object, vola_surface);
     accr_int = 0.0;
     last_coupon_date = 0.0;
     

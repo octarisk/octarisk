@@ -1,15 +1,15 @@
-function obj = calc_greeks(option,valuation_date,value_type,underlying,vola_riskfactor,discount_curve,tmp_vola_surf_obj,path_static)
+function obj = calc_greeks(option,valuation_date,value_type,underlying,discount_curve,tmp_vola_surf_obj,path_static)
     obj = option;
-    if ( nargin < 5)
+    if ( nargin < 4)
         error('Error: No  discount curve, vola surface or underlying set. Aborting.');
     end
-    if ( nargin < 6)
+    if ( nargin < 5)
         valuation_date = today;
     end
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date);
     end
-    if ( nargin < 7)
+    if ( nargin < 6)
         path_static = pwd;
     end
     % Get discount curve nodes and rate
@@ -51,35 +51,9 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,vola_risk
         tmp_moneyness      = ( tmp_underlying_value ./ tmp_strike).^moneyness_exponent;
                 
         % get implied volatility spread (choose offset to vola, that tmp_value == option_bs with input of appropriate vol):
-        tmp_indexvol_base  = tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness);
-        tmp_impl_vola_atm  = max(vola_riskfactor.getValue(value_type),-tmp_indexvol_base);
-        
-      % Get Volatility according to volatility smile given by vola surface
-        % Calculate Volatility depending on model
-        tmp_model = vola_riskfactor.model;
-        if ( strcmpi(tmp_model,'GBM') || strcmpi(tmp_model,'BKM') ) % Log-normal Motion
-            if ( strcmpi(value_type,'stress'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
-                            tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness)) ...
-                            .* exp(vola_riskfactor.getValue(value_type));
-            elseif ( strcmpi(value_type,'base'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_indexvol_base);
-            else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness) ...
-                                .* exp(tmp_impl_vola_atm) + tmp_impl_vola_spread;
-            end
-        else        % Normal Model
-            if ( strcmpi(value_type,'stress'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + ...
-                            tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness)) ...
-                            .* (vola_riskfactor.getValue(value_type) + 1);
-            elseif ( strcmpi(value_type,'base'))
-                tmp_imp_vola_shock  = (tmp_impl_vola_spread + tmp_indexvol_base);
-            else
-                tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(value_type,tmp_dtm,tmp_moneyness) ...
-                                    + tmp_impl_vola_atm + tmp_impl_vola_spread;  
-            end
-        end
+        tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(value_type, ...
+                                tmp_dtm,tmp_moneyness) + tmp_impl_vola_spread;
+ 
        % Convert timefactor from Instrument basis to pricing basis (act/365)
         tmp_dtm_pricing  = timefactor (valuation_date, ...
                                 valuation_date + tmp_dtm, obj.basis) .* 365;

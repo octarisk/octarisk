@@ -1,4 +1,4 @@
-function s = rollout (capfloor, valuation_date, value_type, curve_object, vola_surface, vola_rf)
+function s = rollout (capfloor, valuation_date, value_type, curve_object, vola_surface)
   s = capfloor;
     
   if ischar(valuation_date)
@@ -7,7 +7,7 @@ function s = rollout (capfloor, valuation_date, value_type, curve_object, vola_s
 
   % call function for generating CF dates and values and accrued_interest
   [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
-                            value_type, s, curve_object, vola_surface, vola_rf);
+                            value_type, s, curve_object, vola_surface);
   
   % set property value pairs to object
   s = s.set('cf_dates',ret_dates);

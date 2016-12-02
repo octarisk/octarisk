@@ -32,7 +32,7 @@
 %# @item @var{para_struct.path_static}: OPTIONAL: path to folder with static files
 %# @item @var{para_struct.scen_number}: OPTIONAL: number of scenarios
 %# @item @var{para_struct.scenario}: OPTIONAL: timestep number of days for MC scenarios
-%# @item @var{para_struct.first_eval}: OPTIONAL: boolean, first_eval == 1 means calibration
+%# @item @var{para_struct.first_eval}: OPTIONAL: boolean, first_eval == 1 means first evaluation
 %# @end itemize
 %# @item @var{ret_instr_obj}: RETURN: evaluated instrument object
 %# @end itemize
@@ -131,32 +131,43 @@ elseif ( strfind(tmp_type,'option') > 0 )
         tmp_vola_surf_obj = tmp_vola_surf_obj.set('id','Basket Vola','axis_x',365, ...
                    'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
         tmp_vola_surf_obj = tmp_vola_surf_obj.set('values_base',basket_vola_base);
-        tmp_vola_surf_obj = tmp_vola_surf_obj.set('type','INDEX');
+        tmp_vola_surf_obj = tmp_vola_surf_obj.set('type','INDEX', ...
+                                                'riskfactors',{'BasketVolaRF'});
         
         % generate risk factor object with vola shocks
-        basket_vola_shocks = log(basket_vola ./ basket_vola_base);% assuming GBM
+        
         tmp_rf_vola_obj = Riskfactor();
-        tmp_rf_vola_obj = tmp_rf_vola_obj.set('id','Basket Vola RF','model','GBM');
+        tmp_rf_vola_obj = tmp_rf_vola_obj.set('id','BasketVolaRF','model','GBM');
         if ( strcmpi(scenario,'base'))
             tmp_rf_vola_obj = tmp_rf_vola_obj.set('value_base',1);
         elseif ( strcmpi(scenario,'stress'))
-            tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_stress',basket_vola_shocks);
-        else                    
+            basket_vola_shocks = (basket_vola ./ basket_vola_base) - 1;% assuming relative shock
+            shift_type = ones(length(basket_vola_shocks),1);
+            tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_stress',basket_vola_shocks,'shift_type',shift_type);
+        else     
+            basket_vola_shocks = log(basket_vola ./ basket_vola_base);% assuming GBM
             tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_mc',basket_vola_shocks, ...
                                                     'timestep_mc',scenario);
         end
+        % update basket volatilty for basket vola shock
+        tmp_rf_struct(1).id = tmp_rf_vola_obj.id;
+        tmp_rf_struct(1).object = tmp_rf_vola_obj;
+        tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
     else
     % 2nd Case: Option on single underlying, take real objects
         tmp_vola_surf_obj = get_sub_object(surface_struct, option.get('vola_surface'));
-        tmp_rf_vola_obj   = get_sub_object(riskfactor_struct, option.get('vola_surface'));
     end
 
     % Calibration of Option vola spread 
     if ( option.get('vola_spread') == 0 )
-        option = option.calc_vola_spread(valuation_date,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+        option = option.calc_vola_spread(valuation_date,tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
     end
     % calculate value
-    option = option.calc_value(valuation_date,scenario,tmp_underlying_obj,tmp_rf_vola_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+    option = option.calc_value(valuation_date,scenario,tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+    if ( first_eval == 1)
+        % calculate greeks
+        option = option.calc_greeks(valuation_date,'base',tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+    end
 
     % store option object:
     ret_instr_obj = option;
@@ -179,15 +190,14 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
     % Using Swaption class
     swaption = instr_obj;
     % Get relevant objects
-    tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, swaption.get('vola_surface'));
     tmp_rf_curve_obj         = get_sub_object(curve_struct, swaption.get('discount_curve'));
     tmp_vola_surf_obj        = get_sub_object(surface_struct, swaption.get('vola_surface'));
     % Calibration of swaption vola spread            
     if ( swaption.get('vola_spread') == 0 )
-        swaption = swaption.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
+        swaption = swaption.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
     end
     % calculate value
-    swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
+    swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj);
     % store swaption object:
     ret_instr_obj = swaption;
 
@@ -196,17 +206,16 @@ elseif ( strfind(tmp_type,'capfloor') > 0 )
     % Using CapFloor class
     capfloor = instr_obj;
     % Get relevant objects
-    tmp_rf_vola_obj          = get_sub_object(riskfactor_struct, capfloor.get('vola_surface'));
     tmp_disc_curve_obj       = get_sub_object(curve_struct, capfloor.get('discount_curve'));
     tmp_rf_curve_obj         = get_sub_object(curve_struct, capfloor.get('reference_curve'));
     tmp_vola_surf_obj        = get_sub_object(surface_struct, capfloor.get('vola_surface'));
     % TODO: Calibration of capfloor vola spread            
     %if ( capfloor.get('vola_spread') == 0 )
-    %    capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
+    %    capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
     %end
-    capfloor = capfloor.rollout(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj);
-    if ( first_eval == 0)
-        capfloor = capfloor.calc_sensitivities(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_rf_vola_obj,tmp_disc_curve_obj);
+    capfloor = capfloor.rollout(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj);
+    if ( first_eval == 1)
+        capfloor = capfloor.calc_sensitivities(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_disc_curve_obj);
     end
     capfloor = capfloor.calc_value(valuation_date,scenario,tmp_disc_curve_obj);
     % store capfloor object:
@@ -227,7 +236,7 @@ elseif (strcmpi(tmp_type,'forward') )
         tmp_curve_object            = get_sub_object(curve_struct, tmp_discount_curve);	
 
     %Calculate values of equity forward
-    if ( first_eval == 0)
+    if ( first_eval == 1)
     % Base value
         forward = forward.calc_value(valuation_date,'base',tmp_curve_object,tmp_underlying_object);
     end
@@ -311,7 +320,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
     % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
         if( sum(strcmpi(tmp_sub_type,{'FRB','SWAP_FIXED','ZCB','CASHFLOW'})) > 0 )       % Fixed Rate Bond instruments (incl. swap fixed leg)
             % rollout cash flows for all scenarios
-            if ( first_eval == 0)
+            if ( first_eval == 1)
                 bond = bond.rollout('base',valuation_date);
             end
             bond = bond.rollout(scenario,valuation_date);
@@ -320,10 +329,19 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 tmp_ref_curve   = bond.get('reference_curve');
                 tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
             % rollout cash flows for all scenarios
-                if ( first_eval == 0)
+                if ( first_eval == 1)
                     bond = bond.rollout('base',tmp_ref_object,valuation_date);
                 end
-                bond = bond.rollout(scenario,tmp_ref_object,valuation_date);  
+                bond = bond.rollout(scenario,tmp_ref_object,valuation_date);
+        elseif( strcmpi(tmp_sub_type,'FRN_SPECIAL') || regexpi(tmp_sub_type,'CMS') )     % FRN_SPECIAL, CMS Swaplets
+            %get reference curve object used for calculating floating rates:
+                tmp_ref_curve   = bond.get('reference_curve');
+                tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
+                tmp_surface     = bond.get('vola_surface');
+                tmp_surf_object = get_sub_object(surface_struct, tmp_surface);
+            % rollout cash flows for all scenarios   
+                bond = bond.rollout(scenario, valuation_date,tmp_ref_object,tmp_surf_object);
+
         elseif( strcmpi(tmp_sub_type,'STOCHASTIC') )       % Stochastic CF instrument
              %get riskfactor object and surface object:
                 tmp_riskfactor   = bond.get('stochastic_riskfactor');
@@ -331,7 +349,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 tmp_surface      = bond.get('stochastic_surface');
                 tmp_surf_obj 	 = get_sub_object(riskfactor_struct, tmp_surface);
             % rollout cash flows for all scenarios
-                if ( first_eval == 0)
+                if ( first_eval == 1)
                     bond = bond.rollout('base',tmp_rf_obj,tmp_surf_obj);
                 end
                 bond = bond.rollout(scenario,tmp_rf_obj,tmp_surf_obj); 
@@ -341,7 +359,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
             bond = bond.calc_spread_over_yield(valuation_date,tmp_curve_object);
         end
     % d) get net present value of all Cashflows (discounting of all cash flows)
-        if ( first_eval == 0)
+        if ( first_eval == 1)
             bond = bond.calc_value (valuation_date,'base',tmp_curve_object);
             % calculate sensitivities
             if( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOAT'))

@@ -451,8 +451,7 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
                     % get volatility according to moneyness and term
                     tenor   = fsd; % days until foward start date
                     term    = fed-fsd; % days of caplet / floorlet
-                    sigma   = calcVolaShock(value_type,instrument,surface, ...
-                                riskfactor,tenor,term,1);
+                    sigma   = surface.getValue(value_type,tenor,term,1);
                     % assuming correlation = 1, forward vola = discount vola
                     %   and simple compounding, act/365
                     df_t1_t2 = discount_factor(valuation_date + t1, ...
@@ -484,8 +483,7 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
                 % get volatility according to moneyness and term
                 tenor   = fsd; % days until foward start date
                 term    = fed-fsd; % days of caplet / floorlet
-                sigma = calcVolaShock(value_type,instrument,surface, ...
-                            riskfactor,tenor,term,moneyness);
+                sigma = surface.getValue(value_type,tenor,term,moneyness);
                             
                 % add convexity adjustment to forward rate
                 if ( instrument.convex_adj == true )
@@ -582,8 +580,8 @@ elseif ( strcmpi(type,'FRN_SPECIAL'))
                 moneyness = 1.0; % surface with relative moneyness
             end
             tenor   = fixing_start_date; % days until foward start date
-            sigma   = calcVolaShock(value_type,instrument,surface, ...
-                            riskfactor,tenor,sliding_term,moneyness);        
+            sigma   = surface.getValue(value_type,tenor,term,moneyness);  
+            
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
             if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
@@ -716,8 +714,8 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 moneyness = 1.0; % surface with relative moneyness
             end
             tenor   = fixing_start_date; % days until foward start date
-            sigma   = calcVolaShock(value_type,instrument,surface, ...
-                            riskfactor,tenor,sliding_term,moneyness)  ;       
+            sigma   = surface.getValue(value_type,tenor,term,moneyness); 
+            
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
             if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
@@ -753,8 +751,8 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 % get volatility according to moneyness and term
                 tenor   = fixing_start_date; % days until foward start date
                 term    = t2 - t1; % days of caplet / floorlet
-                sigma = calcVolaShock(value_type,instrument,surface, ...
-                            riskfactor,tenor,term,moneyness);
+                sigma   = surface.getValue(value_type,tenor,term,moneyness); 
+                
                 % calculate CAP/FLOOR rate according to model based on cms rate
                 cms_rate = getCapFloorRate(instrument.CapFlag, ...
                         cms_rate, X, tf_fsd, sigma, instrument.model);
@@ -1376,8 +1374,7 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.2);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
-%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',cap_struct,c,v,r);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',cap_struct,c,v);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,456,0.000000001);
 %! assert(ret_values,5.63130599411650,0.000000001);
@@ -1419,8 +1416,7 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',sigma);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
-%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
 %! assert(ret_values,[69.3193486314239,74.0148444015558],0.000000001);
@@ -1462,8 +1458,7 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',sigma);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
-%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
 %! assert(ret_values,[68.7744654466300,74.03917364111012],0.000000001);
@@ -1505,8 +1500,7 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',sigma);
 %! v = v.set('type','IR');
-%! r = Riskfactor();
-%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v,r);
+%! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
 %! assert(ret_values,[18.2727946049505,23.5375027994284],0.000000001);
@@ -1657,41 +1651,40 @@ end
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.001);
 %! v = v.set('type','IR');
-%! vola_rf = Riskfactor();
 %! value_type = 'base'; 
 % average, in fine, CA false
 %! cap_float = cap_float.set('rate_composition','average');
 %! [ret_dates ret_values ret_interest_values ret_principal_values ...
 %!                                     accrued_interest last_coupon_date] = ...
 %!                     rollout_structured_cashflows(valuation_date, value_type, ...
-%!                     cap_float, ref_curve, v,vola_rf);
+%!                     cap_float, ref_curve, v);
 %! assert(ret_values,108.271971385784,sqrt(eps));
 % min, in fine, CA false
 %! cap_float = cap_float.set('rate_composition','min');
 %! [ret_dates ret_values ret_interest_values ret_principal_values ...
 %!                                     accrued_interest last_coupon_date] = ...
 %!                     rollout_structured_cashflows(valuation_date, value_type, ...
-%!                     cap_float, ref_curve, v,vola_rf);
+%!                     cap_float, ref_curve, v);
 %! assert(ret_values,99.9700569884139,sqrt(eps));
 % max, in fine, CA false
 %! cap_float = cap_float.set('rate_composition','max');
 %! [ret_dates ret_values ret_interest_values ret_principal_values ...
 %!                                     accrued_interest last_coupon_date] = ...
 %!                     rollout_structured_cashflows(valuation_date, value_type, ...
-%!                     cap_float, ref_curve, v,vola_rf);
+%!                     cap_float, ref_curve, v);
 %! assert(ret_values,115.219608147154,sqrt(eps));
 % capitalized, in fine, CA false
 %! cap_float = cap_float.set('rate_composition','capitalized');
 %! [ret_dates ret_values ret_interest_values ret_principal_values ...
 %!                                     accrued_interest last_coupon_date] = ...
 %!                     rollout_structured_cashflows(valuation_date, value_type, ...
-%!                     cap_float, ref_curve, v,vola_rf);
+%!                     cap_float, ref_curve, v);
 %! assert(ret_values,108.571656255091,sqrt(eps));
 % capitalized, in arrears
 %! cap_float = cap_float.set('rate_composition','capitalized','in_arrears',1);
 %! [ret_dates ret_values ret_interest_values ret_principal_values ...
 %!                                     accrued_interest last_coupon_date] = ...
 %!                     rollout_structured_cashflows(valuation_date, value_type, ...
-%!                     cap_float, ref_curve, v,vola_rf);
+%!                     cap_float, ref_curve, v);
 %! assert(ret_values,110.223626446553,sqrt(eps));
 

@@ -1,10 +1,7 @@
-function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_surf_obj,vola_riskfactor,leg_fixed_obj,leg_float_obj)
+function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_surf_obj,leg_fixed_obj,leg_float_obj)
     obj = swaption;
     if ( nargin < 3)
         error('Error: No discount curve or vola surface set. Aborting.');
-    end
-    if ( nargin < 5)
-        vola_riskfactor = Riskfactor();
     end
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
@@ -101,7 +98,7 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
                                         tmp_model);
         else    % pricing with underlying float and fixed leg
             % make sure underlying objects are existing
-            if ( nargin < 7)
+            if ( nargin < 6)
                 error('Error: No underlying fixed and floating leg set. Aborting.');
             end
             % evaluate fixed leg and floating leg: discount with swaptions 

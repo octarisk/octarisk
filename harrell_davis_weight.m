@@ -11,14 +11,21 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} harrell_davis_weight (@var{scenarios}, @var{observation}, @var{alpha})
+%# @deftypefn {Function File} {[@var{X}] =} harrell_davis_weight (@var{scenarios}, @var{observation}, @var{alpha})
 %#
 %# Compute the Harrell-Davis (1982) quantile estimator and jacknife standard errors of quantiles. 
 %# The quantile estimator is a weighted linear combination or order statistics in which the order statistics used 
 %# in traditional nonparametric quantile estimators are given the greatest weight. In small samples the H-D estimator 
 %# is more efficient than traditional ones, and the two methods are asymptotically equivalent. 
 %# The H-D estimator is the limit of a bootstrap average as the number of bootstrap resamples becomes infinitely large. 
-%#
+%# @*
+%# Variables:
+%# @itemize @bullet
+%# @item @var{scenarios}: number of total scenarios
+%# @item @var{observation}: input vector for which HD weights shall be calculated
+%# @item @var{alpha}: quantile (e.g. 0.005) 
+%# @item @var{X}: OUTPUT: HD-weight corresponding to observation vector
+%# @end itemize
 %# @end deftypefn
 
 function X = harrell_davis_weight(scenarios,observation,alpha)
@@ -50,11 +57,15 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
     
 end
 
+%!test
+%! hd_vec = harrell_davis_weight(600,1:3,0.005)';
+%! assert(hd_vec,[ 0.0796170388679505;0.2425460273970582;0.2540220601759450],0.00001);
+
 %# Tests:
 %scenarios  = 50000
 %alpha    = 0.01
 % ii = 250 :  750;
-% hd_vec = harrell-davis-weight(scenarios,ii,alpha);
+% hd_vec = harrell_davis_weight(scenarios,ii,alpha);
 % figure(1);
 % clf;
 % plot ( ii, hd_vec, 'r' );

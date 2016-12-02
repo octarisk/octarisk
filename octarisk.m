@@ -222,7 +222,7 @@ gpd_confidence_levels = [0.9;0.95;0.975;0.99;0.995;0.999;0.9999];   % vector wit
 runcode = '2015Q4'; %substr(md5sum(num2str(time()),true),-6)
 timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
 
-first_eval      = 0;
+first_eval      = 1;    % means first evaluation
 para_struct.first_eval = first_eval;
 % set seed of random number generator
 if ( stable_seed == 1)
@@ -408,7 +408,11 @@ surface_struct=struct();
    % surface_struct(kk).id
    % surface_struct(kk).object
 % end
-
+% tmp_obj = get_sub_object(surface_struct,'RF_VOLA_IR_EUR')
+% tmp_obj.shock_struct
+% tmp_obj.getValue('base',400,500,0)
+% tmp_obj.getValue('stress',400,500,0)
+  
 % d) Loading matrix objects
 persistent matrix_struct;
 matrix_struct=struct();
@@ -488,7 +492,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
         instrument_struct( ii ).object = cc;
     end
   end 
-  first_eval = 1;
+  first_eval = 0;
 end      % end eval mc timesteps and stress loops
 
 tic;
