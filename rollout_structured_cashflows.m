@@ -580,7 +580,7 @@ elseif ( strcmpi(type,'FRN_SPECIAL'))
                 moneyness = 1.0; % surface with relative moneyness
             end
             tenor   = fixing_start_date; % days until foward start date
-            sigma   = surface.getValue(value_type,tenor,term,moneyness);  
+            sigma   = surface.getValue(value_type,tenor,sliding_term,moneyness);  
             
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
@@ -714,7 +714,7 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 moneyness = 1.0; % surface with relative moneyness
             end
             tenor   = fixing_start_date; % days until foward start date
-            sigma   = surface.getValue(value_type,tenor,term,moneyness); 
+            sigma   = surface.getValue(value_type,tenor,sliding_term,moneyness); 
             
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
@@ -747,12 +747,17 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
                     cms_rate  = cms_rate + convex_adj;
                 end
-                moneyness = (cms_rate ./ X) .^ moneyness_exponent;
+                % get volatility according to moneyness and term
+                if ( regexpi(surface.moneyness_type,'-')) % surface with absolute moneyness
+                    moneyness = (X - cms_rate);
+                else % surface with relative moneyness
+                    moneyness = (cms_rate ./ X) .^ moneyness_exponent; 
+                end
+                
                 % get volatility according to moneyness and term
                 tenor   = fixing_start_date; % days until foward start date
                 term    = t2 - t1; % days of caplet / floorlet
-                sigma   = surface.getValue(value_type,tenor,term,moneyness); 
-                
+                sigma   = surface.getValue(value_type,tenor,term,moneyness);
                 % calculate CAP/FLOOR rate according to model based on cms rate
                 cms_rate = getCapFloorRate(instrument.CapFlag, ...
                         cms_rate, X, tf_fsd, sigma, instrument.model);

@@ -5446,8 +5446,8 @@ IR Payer Swaption
 # name: sub_type
 # type: sq_string
 # elements: 1
-# length: 13
-SWAPT_EUR_PAY
+# length: 9
+SWAPT_PAY
 
 
 # name: tenor

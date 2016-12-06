@@ -39,8 +39,8 @@ function y = interpolate (surface, xx,yy,zz)
             yy_structure = s.axis_y;    
             vola_matrix = s.values_base;               
             % expand vectors and matrizes for constant extrapolation (add additional tenors and terms, duplicate rows and cols)
-            xx_structure = [0,xx_structure,21900];
-            yy_structure = [0,yy_structure,21900];
+            xx_structure = [0,xx_structure,100000];
+            yy_structure = [0,yy_structure,100000];
             vola_matrix = cat(2,vola_matrix,vola_matrix(:,end));
             vola_matrix = cat(2,vola_matrix(:,1),vola_matrix);
             vola_matrix = cat(1,vola_matrix,vola_matrix(end,:));
@@ -57,8 +57,8 @@ function y = interpolate (surface, xx,yy,zz)
             zz_structure = s.axis_z;  
             vola_cube = s.values_base;
             % expand vectors and matrizes for constant extrapolation (add additional time steps and moneynesses, duplicate rows and cols)
-            xx_structure = [0,xx_structure,21900];
-            yy_structure = [0,yy_structure,21900];
+            xx_structure = [0,xx_structure,100000];
+            yy_structure = [0,yy_structure,100000];
             zz_structure = [-100000000,zz_structure,100000000];
             vola_cube = cat(2,vola_cube,vola_cube(:,end,:));
             vola_cube = cat(2,vola_cube(:,1,:),vola_cube);

@@ -249,7 +249,7 @@ end
 %! v = v.set('type','IR');
 %! s = Swaption();
 %! s = s.set('maturity_date','28-Mar-2026','effective_date','28-Mar-2026');
-%! s = s.set('strike',0.0153,'multiplier',100,'sub_type','SWAPT_EUR_PAY','model','normal','tenor',10);
+%! s = s.set('strike',0.0153,'multiplier',100,'sub_type','SWAPT_PAY','model','normal','tenor',10);
 %! s = s.set('use_underlyings',false);    
 %! s = s.calc_value('31-Mar-2016','base',r,v);
 %! s = s.calc_value('31-Mar-2016','stress',r,v);
@@ -668,7 +668,7 @@ end
 %! v = v.set('type','IR');
 %! s = Swaption();
 %! s = s.set('maturity_date','26-Mar-2036','effective_date','31-Mar-2016');
-%! s = s.set('strike',0.045,'multiplier',1,'sub_type','SWAPT_EUR_PAY','model','normal','tenor',10);
+%! s = s.set('strike',0.045,'multiplier',1,'sub_type','SWAPT_PAY','model','normal','tenor',10);
 %! s = s.set('und_fixed_leg','SWAP_FIXED','und_floating_leg','SWAP_FLOAT','use_underlyings',true);  
 %! s = s.calc_value('31-Mar-2016','base',r,v,fix,float);
 %! assert(s.getValue('base'),642.6867193851,0.00001);

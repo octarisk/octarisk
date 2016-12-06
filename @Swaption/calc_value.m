@@ -9,8 +9,7 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
         tmp_rates        = discount_curve.getValue(value_type);
     tmp_type = obj.sub_type;
     % Get Call or Putflag
-    %fprintf('==============================\n');
-    if ( strcmp(tmp_type,'SWAPT_EUR_PAY') == 1 )
+    if ( obj.call_flag == true)
         call_flag = 1;
         moneyness_exponent = 1;
     else
@@ -67,10 +66,24 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
                                     interp_method, comp_freq, basis, valuation_date, ...
                                     comp_type_curve, basis_curve, ...
                                     comp_freq_curve, floor_flag);
-        tmp_moneyness           = (tmp_forward_shock ./tmp_strike).^moneyness_exponent; 
-        
-        tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
-                tmp_swap_tenor,tmp_dtm,tmp_moneyness) + tmp_impl_vola_spread;
+                      
+        % determining volatility cube axis
+        if ( regexpi(tmp_vola_surf_obj.axis_x_name,'TENOR'))
+            % x-axis: effective date of swaption -> option term
+            % y-axis: underlying swap tenor -> underlying term
+            xx = tmp_effdate;
+            yy = tmp_swap_tenor*365;
+        elseif ( regexpi(tmp_vola_surf_obj.axis_x_name,'TERM'))
+            % x-axis: underlying swap tenor -> underlying term 
+            % y-axis: effective date of swaption -> option term
+            xx = tmp_swap_tenor*365;
+            yy = tmp_effdate;
+        else
+            fprintf('Swaption.calc_value: WARNING: Volatility surface has neither TENOR nor TERM axis. Taking value at (0,0). \n');
+            xx = 0;
+            yy = 0;
+        end
+                
       % Convert interest rates into act/365 continuous (used by pricing)
         tmp_rf_rate_conv = convert_curve_rates(valuation_date,tmp_dtm,tmp_rf_rate, ...
                         comp_type_curve,comp_freq_curve,basis_curve, ...
@@ -79,12 +92,22 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
       % Valuation for: Black76 or Bachelier model according to type
        
         if (obj.use_underlyings == false)   % pricing with forward rates
+            % get volatility according to moneyness and term
+            if ( regexpi(tmp_vola_surf_obj.moneyness_type,'-')) % surface with absolute moneyness
+                tmp_moneyness = (tmp_strike - tmp_forward_shock);
+            else % surface with relative moneyness
+                tmp_moneyness = (tmp_forward_shock ./tmp_strike).^moneyness_exponent; 
+            end 
+            tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
+                 xx,yy,tmp_moneyness) + tmp_impl_vola_spread;
+                 
             if ( regexpi(tmp_model,'black'))
                 theo_value      = swaption_black76(call_flag,tmp_forward_shock, ...
                                         tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
                                         tmp_imp_vola_shock,tmp_swap_no_pmt, ...
                                         tmp_swap_tenor) .* tmp_multiplier;
             else
+                
                 theo_value      = swaption_bachelier(call_flag,tmp_forward_shock, ...
                                         tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
                                         tmp_imp_vola_shock,tmp_swap_no_pmt, ...
@@ -119,6 +142,20 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
                 obj = obj.set('und_fixed_value',V_fix);
                 obj = obj.set('und_float_value',V_float);
             end
+            % update implied volatility
+            Y = tmp_strike .* V_float ./ V_fix;
+            % get volatility according to moneyness and term
+            % surface with absolute moneyness K - S
+            if ( regexpi(tmp_vola_surf_obj.moneyness_type,'-')) 
+                tmp_moneyness = (tmp_strike - Y);
+            else % surface with relative moneyness
+                tmp_moneyness = (Y ./tmp_strike).^moneyness_exponent; 
+            end    
+
+            % interpolation of volatility
+            tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
+                xx,yy,tmp_moneyness) + tmp_impl_vola_spread;
+            
             % call pricing function
             theo_value = swaption_underlyings(call_flag,tmp_strike,V_fix, ...
                                V_float,tmp_effdate,tmp_imp_vola_shock, ...

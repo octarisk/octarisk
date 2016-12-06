@@ -48,9 +48,7 @@ if ~isnumeric (PayerReceiverFlag)
 elseif ~isnumeric (F)
     error ('Underlying future price F must be numeric ')
 elseif ~isnumeric (X)
-    error ('Strike X must be numeric ')
-elseif X < 0
-    error ('Strike X must be positive ')   
+    error ('Strike X must be numeric ') 
 elseif ~isnumeric (T)
     error ('Time T in years must be numeric ')
 elseif ( T < 0)
@@ -75,7 +73,6 @@ T = T ./ 365;
 % C = ((F-X)*N(d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)
 %# P = ((X-F)*N(-d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)
     d1 = (F-X)./(sigma.*sqrt(T));
-
     
 % Calculation of BS Price
 if ( PayerReceiverFlag == 1 ) % Call / Payer swaption 'p'
@@ -85,7 +82,7 @@ if ( PayerReceiverFlag == 1 ) % Call / Payer swaption 'p'
 else   % Put / Receiver swaption 'r'  
     N1 = 0.5.*(1+erf(-d1./sqrt(2)));
     n1 = exp(- d1 .^2 /2)./sqrt(2*pi);
-    value = (-(X-F).*N1 + sigma.*sqrt(T).*n1).*exp(-r.*T);
+    value = ((X-F).*N1 + sigma.*sqrt(T).*n1).*exp(-r.*T);
 end
 
    
@@ -98,4 +95,4 @@ SwaptionBachelierValue = value .* multi;
 end
 
 %!assert(swaption_bachelier(1,0.0609090679070339,0.062,1825,0.06,0.01219,2,3) * 100, 2.07117344171174,0.00001);
-%!assert(swaption_bachelier(0,0.0609090679070339,0.062,1825,0.06,0.01219,2,3) * 100, 2.06419541383222,0.00001);
+%!assert(swaption_bachelier(0,0.0609090679070339,0.062,1825,0.06,0.01219,2,3) * 100, 2.28974797561069,0.00001);

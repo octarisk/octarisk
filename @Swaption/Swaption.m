@@ -14,7 +14,7 @@ classdef Swaption < Instrument
         strike = 0.025;
         spot = 0.025;
         multiplier = 100;
-        tenor = 10;
+        tenor = 10;                 % Tenor of underlying swap in years
         no_payments = 1;
         und_fixed_leg = '';         % String: underlying fixed leg
         und_floating_leg = '';      % String: underlying floating leg
@@ -26,10 +26,11 @@ classdef Swaption < Instrument
         cf_dates = [];
         cf_values = [];
         vola_spread = 0.0;
-        sub_type = 'SWAPT_EUR_PAY';
+        sub_type = 'SWAPT_PAY';
         model = 'BLACK76';
         und_fixed_value = 0.0;
         und_float_value = 0.0;
+        call_flag = false;
     end
 
    methods
@@ -113,8 +114,13 @@ classdef Swaption < Instrument
           b.sub_type        = a.sub_type;
       end  
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,'SWAPT_EUR_REC') || strcmpi(sub_type,'SWAPT_EUR_PAY') )
-            error('Swaption sub_type must be either SWAPT_EUR_REC, SWAPT_EUR_PAY')
+         if ~(strcmpi(sub_type,'SWAPT_REC') || strcmpi(sub_type,'SWAPT_PAY') )
+            error('Swaption sub_type must be either SWAPT_REC, SWAPT_PAY')
+         end
+         if (strcmpi(sub_type,'SWAPT_PAY') )
+            obj.call_flag = true; % Receive fixed, pay float -> put option on fixed
+         else
+            obj.call_flag = false;
          end
          obj.sub_type = sub_type;
       end % set.sub_type
