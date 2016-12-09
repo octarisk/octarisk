@@ -148,7 +148,7 @@ classdef Curve
         end
         obj.day_count_convention = day_count_convention;
         % Call superclass method to set basis
-        obj.basis = Curve.get_basis(obj.day_count_convention);
+        obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
       
       function obj = set.compounding_freq(obj,compounding_freq)
@@ -189,17 +189,6 @@ classdef Curve
          end
       end % set.cap
       
-		
-		
-    end
-    methods (Static = true)
-      function basis = get_basis(dcc_string)
-            dcc_cell = {'act/act' '30/360 SIA' 'act/360' 'act/365' '30/360 PSA' '30/360 ISDA' '30/360 European' 'act/365 Japanese' 'act/act ISMA' 'act/360 ISMA' 'act/365 ISMA' '30/360E'};
-            findvec = strcmpi(dcc_string,dcc_cell);
-            tt = 1:1:length(dcc_cell);
-            tt = (tt - 1)';
-            basis = dot(single(findvec),tt);
-      end %get_basis
    end
    
 end % classdef
