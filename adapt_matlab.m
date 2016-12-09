@@ -22,8 +22,10 @@
 
 function adapt_matlab
 
-% Delete unneccessary wrapper scripts
+% Delete unneccessary scripts
 delete('fmincon.m');
+delete('any2str.m'); %replaced by adapted function from function folder
+delete('get_basis.m'); %replaced by function with container.map dictionary from function folder
 
 % Replacement script for main directory
 replacement_script('wordlist_matlab.csv');

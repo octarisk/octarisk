@@ -35,7 +35,7 @@ classdef Synthetic < Instrument
         valuation_date = today; 
         % use constructor inherited from Class Instrument
         b = b@Instrument(name,id,description,'synthetic',currency,value_base, ...
-                        asset_class,valuation_date); 
+                        asset_class); 
       end 
       
       function disp(b)
