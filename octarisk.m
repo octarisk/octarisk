@@ -258,7 +258,11 @@ scenario_ts_days = [mc_timestep_days; 0];
 persistent instrument_struct;
 instrument_struct=struct();
 [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_input,input_filename_instruments,path_output_instruments,path_archive,timestamp,archive_flag);
-
+% for kk = 1 : 1 : min(10,length(instrument_struct))
+    % printf('>>%s<<\n',instrument_struct(kk).id)
+    % tmpobject = instrument_struct(kk).object;
+    % tmpobject
+% end
 % 2. Processing Riskfactor data
 persistent riskfactor_struct;
 riskfactor_struct=struct();
@@ -443,7 +447,8 @@ curve_gen_time = toc;
 %   Total Loop over all Instruments and type dependent valuation
 fulvia = 0.0;
 fulvia_performance = {};
-instrument_valuation_failed_cell = {};  
+instrument_valuation_failed_cell = {}; 
+number_instruments =  length( instrument_struct );
 for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and other scenarios
   tmp_scenario  = scenario_set{ kk };    % get scenario from scenario_set
   tmp_ts        = scenario_ts_days(kk);  % get timestep days
@@ -470,6 +475,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
                                 riskfactor_struct, para_struct);
         % store valuated instrument in struct
         instrument_struct( ii ).object = tmp_instr_obj;
+        % print status message:
+        if ( mod(ii,round(number_instruments/10)) == 0 )
+            %fprintf('%s Pct. processed. Continuing...\n',any2str(round((ii/number_instruments)*100)));
+            fprintf('|%s %s|\n',any2str(char(repmat(61,1,round((ii/number_instruments)*10)))),any2str(char(repmat(95,1,10-round((ii/number_instruments)*10)))));
+        end
         % =================  End Full valuation  ===============================
         
      % store performance data into cell array
@@ -566,7 +576,10 @@ for mm = 1 : 1 : length( portfolio_struct )
         tmp_id = position_struct( ii ).id;
         tmp_quantity = position_struct( ii ).quantity;
         try	% trying to find position in valuated instruments
-			tmp_instr_object = get_sub_object(instrument_struct, tmp_id);		
+            [tmp_instr_object object_ret_code]  = get_sub_object(instrument_struct, tmp_id);
+            if ( object_ret_code == 0 )
+                error('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_id);
+            end	
 			tmp_value = tmp_instr_object.getValue('base');
 			tmp_currency = tmp_instr_object.get('currency'); 
 
@@ -575,7 +588,10 @@ for mm = 1 : 1 : length( portfolio_struct )
 					tmp_fx_rate = 1;
 			else
 					tmp_fx_index = strcat('FX_',fund_currency, tmp_currency);
-					tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
+                    [tmp_fx_struct_obj object_ret_code]  = get_sub_object(index_struct, tmp_fx_index);
+                    if ( object_ret_code == 0 )
+                        error('octarisk: WARNING: No index_struct object found for FX id >>%s<<\n',tmp_fx_index);
+                    end	
 					tmp_fx_rate = tmp_fx_struct_obj.getValue('base');
 			end        
 			position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate;
@@ -740,7 +756,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   for ii = 1 : 1 : length( riskfactor_cell) % loop through all MC risk factors only
     tmp_object      = get_sub_object(riskfactor_struct, riskfactor_cell{ii});
     tmp_delta_shock   = tmp_object.getValue(tmp_scen_set);
-    fprintf(fid, '|VaR %s scenario delta |%s|%1.3f|%1.3f|%1.3f|%1.3f|%1.3f|\n',tmp_scen_set,tmp_id,tmp_delta_shock(confi_scenarionumber_shock_m2),tmp_delta_shock(confi_scenarionumber_shock_m1),tmp_delta_shock(confi_scenarionumber_shock),tmp_delta_shock(confi_scenarionumber_shock_p1),tmp_delta_shock(confi_scenarionumber_shock_p2));
+    fprintf(fid, '|VaR %s scenario delta |%s|%1.3f|%1.3f|%1.3f|%1.3f|%1.3f|\n',tmp_scen_set,tmp_object.id,tmp_delta_shock(confi_scenarionumber_shock_m2),tmp_delta_shock(confi_scenarionumber_shock_m1),tmp_delta_shock(confi_scenarionumber_shock),tmp_delta_shock(confi_scenarionumber_shock_p1),tmp_delta_shock(confi_scenarionumber_shock_p2));
   end
   % 7.1) Print Report for all Positions:
   total_var_undiversified = 0;

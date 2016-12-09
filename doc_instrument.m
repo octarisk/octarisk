@@ -136,6 +136,29 @@ end
 %! assert(b.get('dv01'),0.106605762118726,0.0000001)
 %! assert(b.get('pv01'),-0.106549401094469,0.0000001)
 %! assert(b.get('spread_duration'),10.1124142671261,0.0000001)
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing 3rd Fixed Rate Bond Object\n');
+%! b = Bond();
+%! b = b.set('Name','Test_FRB','coupon_rate',0.025,'value_base',118.1823,'clean_value_base',0,'coupon_generation_method','backward','term',0);
+%! b = b.set('maturity_date','30-Nov-2016','notional',100,'compounding_type','simple','issue_date','30-Nov-2009');
+%! b = b.rollout('base','30-Sep-2016');
+%! assert(b.get('accrued_interest'),17.0958904109588,0.000000001);
+%! assert(b.get('cf_dates'),61);
+%! assert(b.getCF('base'),117.513698630137,0.000000001);
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[0.01,0.04],'method_interpolation','monotone-convex');
+%! c = c.set('rates_stress',[0.02,0.05;0.005,0.014]);
+%! b = b.calc_value('30-Sep-2016','base',c);
+%! b = b.calc_sensitivities('30-Sep-2016',c);
+%! assert(b.getValue('base'),117.317469891155,0.000000001);
+%! assert(b.get('eff_duration'),0.167123365467675,0.000000001);
+%! assert(b.get('mac_duration'),0.167123287671233,0.000000001);
+%! assert(b.get('eff_convexity'),0.0279301997816818,0.000000001);
+%! b = b.rollout('stress','30-Sep-2016');
+%! b = b.calc_value('30-Sep-2016','stress',c);
+%! assert(b.getValue('stress'),[117.121568822210;117.415543267658],0.000000001);
+
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Floating Rate Bond Object\n');
 %! b = Bond();

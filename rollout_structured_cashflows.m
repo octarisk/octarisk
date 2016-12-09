@@ -94,7 +94,7 @@ if nargin > 3
     % get term time factor (payments per year)
     if ( mod(term,365) == 0 && term ~= 0)
         term_factor = 365 / term; 
-    elseif ( term == 12)
+    elseif ( term == 12 || term == 52)
         term_factor = 1; 
     elseif ( term == 6)
         term_factor = 2; 
@@ -103,7 +103,9 @@ if nargin > 3
     elseif ( term == 2)
         term_factor = 6; 
     elseif ( term == 1)
-        term_factor = 12; 
+        term_factor = 12;
+    elseif ( term == 0) % All cash flows are paid at maturity
+        term_factor = 1;         
     else    
         term_factor = 1;
     end
@@ -130,7 +132,7 @@ matvec = datevec(maturity_date);
 % floor forward rate at 0.000001:
 floor_flag = false;
 % cashflow rollout: method backwards
-if ( strcmp(coupon_generation_method,'backward') == 1 )
+if ( strcmpi(coupon_generation_method,'backward') )
 cf_date = matvec;
 cf_dates = cf_date;
 
@@ -148,7 +150,7 @@ while datenum(cf_date) >= datenum(issue_date)
         new_cf_day = cf_day;
         comp_freq = 1;
     % rollout for annual 365 days (compounding frequency = 1 payment per year)
-    elseif ( term == 365)
+    elseif ( term == 365 || term == 52 || term == 0)
         new_cf_date = datenum(cf_date)-365;
         new_cf_date = datevec(new_cf_date);
         new_cf_year = new_cf_date(:,1);
@@ -199,7 +201,7 @@ end % end coupon generation backward
 
 
 % cashflow rollout: method forward
-elseif ( strcmp(coupon_generation_method,'forward') == 1 )
+elseif ( strcmpi(coupon_generation_method,'forward') )
 cf_date = issuevec;
 cf_dates = cf_date;
 
@@ -217,7 +219,7 @@ while datenum(cf_date) <= datenum(maturity_date)
         new_cf_day = cf_day;
         comp_freq = 1;
     % rollout for annual 365 days (compounding frequency = 1 payment per year)
-    elseif ( term == 365)
+    elseif ( term == 365 || term == 52 || term == 0)
         new_cf_date = datenum(cf_date) + 365;
         new_cf_date = datevec(new_cf_date);
         new_cf_year = new_cf_date(:,1);
@@ -270,7 +272,7 @@ end        % end coupon generation forward
 
 %-------------------------------------------------------------------------------
 % cashflow rollout: method zero
-elseif ( strcmp(coupon_generation_method,'zero') == 1 )
+elseif ( strcmpi(coupon_generation_method,'zero'))
     % rollout for zero coupon bonds -> just one cashflow at maturity
         cf_dates = [issuevec ; matvec];
 end 
@@ -1067,6 +1069,16 @@ elseif ( strcmp(type,'FAB') == 1 )
 end
 %-------------------------------------------------------------------------------
 
+% special treatment for term == 0 (means all cash flows summed up at Maturity)
+if ( term == 0 )
+    cf_dates = [issuevec;cf_dates(end,:)];
+    cf_business_dates = [issuevec;cf_business_dates(end,:)];
+    ret_values = sum(ret_values,2);
+    cf_interest = sum(cf_interest,2);
+    cf_principal = sum(cf_principal,2);
+end
+% end special treatment
+
 ret_dates_tmp = datenum(cf_business_dates);
 ret_dates = ret_dates_tmp(2:rows(cf_business_dates));
 if enable_business_day_rule == 1
@@ -1141,8 +1153,17 @@ end
 ret_value_next_coupon = ret_interest_values(:,1);
 
 % scale tf according to term:
-if ~( term == 365)
+if ~( term == 365 || term == 0)
     tf = tf * 12 / term;
+% term = maturity --> special calculation for accrued int
+elseif ( term == 0) 
+    if ( valuation_date <= datenum(issue_date) )    % CASE B
+        tf = 0;
+    else                                            % CASE A/C
+        tf_id_md = timefactor(issue_date, maturity_date, dcc);
+        tf_id_vd = timefactor(issue_date, valuation_date, dcc);
+        tf = tf_id_vd ./ tf_id_md;
+    end
 end
 % TODO: why is there a vector of accrued_interest with length of
 %       scenario values for FRB in case C?

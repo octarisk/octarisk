@@ -1,6 +1,6 @@
 HeaderCURVE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,method_interpolationCHAR,nodesCHAR,rates_baseCHAR,floorNMBR,capNMBR,american_flagBOOL
-Curve,IR_EUR,IR_EUR,Discount Curve,EUR-SWAP Curve,monotone-convex,365|1095|1825|3650|7300|10950|21900,-0.00519251|-0.00508595|-0.00367762|0.00185694|0.00776253|0.00999986|0.00123,,
-Curve,IR_USD,IR_USD,Discount Curve,USD-SWAP Curve,monotone-convex,365|1095|1825|3650|7300|10950|21900,0.00119251|0.00208595|0.00127762|0.00385694|0.01276253|0.01399986|0.00163,,
+Curve,IR_EUR,IR_EUR,Discount Curve,EUR-SWAP Curve,linear,365|1095|1825|3650|7300|10950|21900,-0.00519251|-0.00508595|-0.00367762|0.00185694|0.00776253|0.00999986|0.00123,,
+Curve,IR_USD,IR_USD,Discount Curve,USD-SWAP Curve,linear,365|1095|1825|3650|7300|10950|21900,0.00119251|0.00208595|0.00127762|0.00385694|0.01276253|0.01399986|0.00163,,
 Curve,SPREAD_EUR_HY,SPREAD_EUR_HY,Spread Curve,SPREAD_EUR_High Yield Curve,linear,1825,0.02,,
 Curve,SPREAD_USD_HY,SPREAD_USD_HY,Spread Curve,SPREAD_USD_High Yield Curve,linear,1825,0.03,,
 Curve,SPREAD_USD_AAA,SPREAD_USD_AAA,Spread Curve,SPREAD_USD_AAA Curve,linear,1825,0.01,0.005,0.09
@@ -22,5 +22,34 @@ Index,EQ_DE,DAX30,Equity Index,EUR,DAX Equity Index German Blue Chips,9820
 Index,COM_GOLD,Gold,Commodity Index,USD,Gold 1 Ounce USD,1073
 Index,FX_EURUSD,EUR_USD,Exchange Rate,EUR,EUR USD Exchange rate,1.08
 Index,FX_EURCAD,EUR_CAD,Exchange Rate,EUR,EUR CAD Exchange rate,1.25
+Index,FX_EURMYR,EUR_MYR,Exchange Rate,EUR,EUR MYR Exchange rate,1.11
+Index,FX_EURKRW,EUR_KRW,Exchange Rate,EUR,EUR KRW Exchange rate,1.12
+Index,FX_EURTHB,EUR_THB,Exchange Rate,EUR,EUR THB Exchange rate,1.21
+Index,FX_EURDKK,EUR_DKK,Exchange Rate,EUR,EUR DKK Exchange rate,1.24
+Index,FX_EURAUD,EUR_AUD,Exchange Rate,EUR,EUR AUD Exchange rate,1.45
+Index,FX_EURPHP,EUR_PHP,Exchange Rate,EUR,EUR PHP Exchange rate,1.32
+Index,FX_EURTRY,EUR_TRY,Exchange Rate,EUR,EUR TRY Exchange rate,1.32
+Index,FX_EUREGP,EUR_EGP,Exchange Rate,EUR,EUR EGP Exchange rate,1.32
+Index,FX_EURGBP,EUR_GBP,Exchange Rate,EUR,EUR GBP Exchange rate,1.32
+Index,FX_EURCNY,EUR_CNY,Exchange Rate,EUR,EUR CNY Exchange rate,1.32
+Index,FX_EURIDR,EUR_IDR,Exchange Rate,EUR,EUR IDR Exchange rate,1.32
+Index,FX_EURCHF,EUR_CHF,Exchange Rate,EUR,EUR CHF Exchange rate,1.32
+Index,FX_EURSGD,EUR_PHP,Exchange Rate,EUR,EUR PHP Exchange rate,1.32
+Index,FX_EURTWD,EUR_TWD,Exchange Rate,EUR,EUR TWD Exchange rate,1.32
+Index,FX_EURRUB,EUR_RUB,Exchange Rate,EUR,EUR RUB Exchange rate,1.32
+Index,FX_EURZAR,EUR_ZAR,Exchange Rate,EUR,EUR ZAR Exchange rate,1.32
+Index,FX_EURARS,EUR_ARS,Exchange Rate,EUR,EUR ARS Exchange rate,1.32
 HeaderSURFACE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,moneyness_typeCHAR,method_interpolationCHAR,riskfactorsCHAR
 Surface,RF_VOLA_IR_EUR,RF_VOLA_IR_EUR,IR,Test description,K-S,linear,RF_VOLA_IR_EUR_730_365|RF_VOLA_IR_EUR_1825_3650
+
+
+
+
+
+
+
+
+
+
+
+

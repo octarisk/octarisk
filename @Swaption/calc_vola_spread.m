@@ -91,9 +91,9 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
         if (obj.use_underlyings == false)   % pricing with forward rates
             % get volatility according to moneyness and term
             if ( regexpi(tmp_vola_surf_obj.moneyness_type,'-')) % surface with absolute moneyness
-                tmp_moneyness_base = (tmp_strike - tmp_forward_shock);
+                tmp_moneyness_base = (tmp_strike - tmp_forward_base);
             else % surface with relative moneyness
-                tmp_moneyness_base = (tmp_forward_shock ./tmp_strike).^moneyness_exponent; 
+                tmp_moneyness_base = (tmp_forward_base ./tmp_strike).^moneyness_exponent; 
             end 
             tmp_indexvol_base = tmp_vola_surf_obj.getValue('base', ...
                  xx,yy,tmp_moneyness_base);
@@ -141,7 +141,11 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
                                     comp_freq_curve);
                                     
             % update implied volatility
-            Y = tmp_strike .* V_float ./ V_fix;
+            if ~(V_fix == 0.0)
+                Y = tmp_strike .* V_float ./ V_fix;
+            else
+                Y = 0.0;
+            end
             % get volatility according to moneyness and term
             % surface with absolute moneyness K - S
             if ( regexpi(tmp_vola_surf_obj.moneyness_type,'-')) 

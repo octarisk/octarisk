@@ -234,6 +234,9 @@ classdef Bond < Instrument
 
       end
       function obj = set.sub_type(obj,sub_type)
+         if (strcmpi(sub_type,'Fixed Rate Bond'))   % replace Fixed Rate Bond
+            sub_type = 'FRB';
+         end
          if ~(strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FRN') ...
                 || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') ...
                 || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') ...
@@ -248,6 +251,32 @@ classdef Bond < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
+      
+      function obj = set.term(obj,term)
+        if ( isempty(term))
+            fprintf('Need valid term for id >>%s<<. Setting to default value 12 month.\n',obj.id);
+            obj.term = 12;
+        else
+            if ( sum(term == [0;1;3;6;12;52;365]) == 0)
+                fprintf('Need valid term in [0;1;3;6;12;52;365] for id >>%s<<. Setting to default value 12 month.\n',obj.id);
+                obj.term = 12;
+            else 
+                obj.term = term;
+            end
+        end
+      end % set.term
+      
+      function obj = set.coupon_generation_method(obj,coupon_generation_method)
+        if ( strcmpi(coupon_generation_method,'backward'))
+            obj.coupon_generation_method = 'backward';
+        elseif ( strcmpi(coupon_generation_method,'forward') )
+            obj.coupon_generation_method = 'forward';
+        else
+            fprintf('Need valid coupon_generation_method for id >>%s<<. Setting to default value backward.\n',obj.id);
+            obj.coupon_generation_method = 'backward';
+        end
+      end % set.coupon_generation_method
+      
       
       % setting compounding frequency to numeric value
       function obj = set.compounding_freq(obj,comp_freq)
@@ -265,14 +294,14 @@ classdef Bond < Instrument
             elseif ( strcmpi(comp_freq,'annual') )
                 compounding = 1;       
             else
-                fprintf('Need valid compounding frequency. Setting to default value 1.\n');
+                fprintf('Need valid compounding frequency for id >>%s<<. Setting to default value 1.\n',obj.id);
                 compounding = 1;
             end
         elseif isnumeric(comp_freq)
             compounding = comp_freq;
         else
             compounding = 1;
-            fprintf('Need valid compounding frequency. Setting to default value 1.\n');
+            fprintf('Need valid compounding frequency for id >>%s<<. Setting to default value 1.\n',obj.id);
         end 
         obj.compounding_freq = compounding;
       end % set.compounding_freq
@@ -280,7 +309,7 @@ classdef Bond < Instrument
       function obj = set.rate_composition(obj,rate_composition)
          if ~(strcmpi(rate_composition,'capitalized') || strcmpi(rate_composition,'average') ...
                 || strcmpi(rate_composition,'min') || strcmpi(rate_composition,'max'))
-            error('Bond rate_composition must be either capitalized, average, min, max : %s',rate_composition);
+            error('Bond rate_composition must be either capitalized, average, min, max : %s for id >>%s<<.\n',rate_composition,obj.id);
          end
          obj.rate_composition = tolower(rate_composition);
       end % set.rate_composition
