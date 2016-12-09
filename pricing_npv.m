@@ -144,6 +144,8 @@ MacDur = 0;
 Convexity = 0;
 Convexity_alt = 0;
 MonDur = 0.0;
+
+                        
 for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows  
     tmp_dtm = cashflow_dates(zz);
     tmp_cf_value = cashflow_values(:,zz);
@@ -152,12 +154,18 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
             % get discount rate from discount curve
 			rate_curve = interpolate_curve(discount_nodes,discount_rates, ...
                                             tmp_dtm,interp_discount);
-            % convert spread rate convention (cont, act/365) to curve conv
+        % The optimizer sometimes applies a rate of -1,
+        %  which leads to a division by zero:
+            if ( rate_curve == -1)
+                rate_curve = -0.99999;
+                fprintf('pricing_npv: WARNING: rate is -1. setting to -0.99999\n');
+            end   
+        % convert spread rate convention (cont, act/365) to curve conv
             spread_constant_conv = convert_curve_rates(valuation_date,tmp_dtm, ...
-                        spread_constant,'cont','annual',3, ...
+                        spread_constant,'continuous','annual',3, ...
                         comp_type_curve,comp_freq_curve,basis_curve);
-            % combine with constant spread (e.g. spread over yield)
-			yield_total 	= rate_curve  + spread_constant_conv;           
+        % combine with constant spread (e.g. spread over yield)
+			yield_total 	= rate_curve  + spread_constant_conv;        
 			tmp_cf_date 	= valuation_date + tmp_dtm;
         % Get actual discount factor and time factor acc. to curve convention
 			tmp_df 			= discount_factor (valuation_date, tmp_cf_date, ...
@@ -189,10 +197,16 @@ end
 
 % Return NPV and MacDur
 npv = tmp_npv;
-MacDur = MacDur ./ npv;
-Convexity = Convexity ./ npv;    
-Convexity_alt = Convexity_alt ./ npv;        
-            
+if  ~( npv == 0.0)
+    MacDur = MacDur ./ npv;
+    Convexity = Convexity ./ npv;    
+    Convexity_alt = Convexity_alt ./ npv;
+else
+    MacDur = 0.0;
+    Convexity = 0.0;    
+    Convexity_alt = 0.0;
+end
+              
 end
  
 

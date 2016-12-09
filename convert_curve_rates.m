@@ -106,32 +106,6 @@ elseif ( strcmpi(comp_type_target,'CONT') )
     comp_type_target = 'CONTINUOUS';
 end
 
-
-%abbreviation: origin and target types and dcc are the same -> return input rate
-if ( strcmp(comp_type_origin,comp_type_target) ...
-                && strcmp(num2str(comp_freq_origin),num2str(comp_freq_target)) ...
-                && (dcc_basis_origin == dcc_basis_target))
-    rate_target = rate_origin;
-    conversion_type = 'No conversion';  
-    return
-end
-
-% calculate timefactor:
-% validation date as datenum or char
-if ischar(valuation_date)
-   valuation_date = datenum(valuation_date);
-end
-term_datenum = valuation_date + node;
-timefactor_origin = timefactor(valuation_date,term_datenum,dcc_basis_origin);
-timefactor_target = timefactor(valuation_date,term_datenum,dcc_basis_target);
-
-% Error handling: timefactor is zero -> any conversion yields zero rate (RW compatibility)
-if ( timefactor_target == 0.0)
-    rate_target = rate_origin;
-    conversion_type = 'Timefactor is zero.';  
-    return
-end
-
 % error check compounding frequency
 if ischar(comp_freq_origin)
     if ( regexpi(comp_freq_origin,'^da'))
@@ -167,6 +141,33 @@ if ischar(comp_freq_target)
         error('convert_curve_rates:Need valid compounding frequency. Unknown >>%s<<',comp_freq_target)
     end
 end
+
+%abbreviation: origin and target types and dcc are the same -> return input rate
+if ( strcmpi(comp_type_origin,comp_type_target) ...
+        && (dcc_basis_origin == dcc_basis_target) ...
+        && strcmpi(comp_freq_origin,comp_freq_target))
+    rate_target = rate_origin;
+    conversion_type = 'No conversion';  
+    return
+end
+
+% calculate timefactor:
+% validation date as datenum or char
+if ischar(valuation_date)
+   valuation_date = datenum(valuation_date);
+end
+term_datenum = valuation_date + node;
+timefactor_origin = timefactor(valuation_date,term_datenum,dcc_basis_origin);
+timefactor_target = timefactor(valuation_date,term_datenum,dcc_basis_target);
+
+% Error handling: timefactor is zero -> any conversion yields zero rate (RW compatibility)
+if ( timefactor_target == 0.0)
+    rate_target = rate_origin;
+    conversion_type = 'Timefactor is zero.';  
+    return
+end
+
+
 
 % now  get one of the following cases:
 

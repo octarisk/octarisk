@@ -234,7 +234,13 @@ for ii = 1 : 1 : length(tmp_list_files)
                     end    
                 elseif ( strcmpi(tmp_cell_type,'DATE'))
                     try
-                        tmp_entry = datestr(tmp_cell_item);
+                        % check for number
+                        if (length(str2num(tmp_cell_item)) > 0)
+                            tmp_entry = str2num(tmp_cell_item);
+                            tmp_entry = datestr(valuation_date + tmp_entry);
+                        else % otherwise assume its a date
+                            tmp_entry = datestr(tmp_cell_item);
+                        end
                     catch
                         fprintf('Item >>%s<< is not a DATE \n',tmp_cell_item);
                         tmp_entry = '01-Jan-1900';

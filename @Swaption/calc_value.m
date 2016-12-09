@@ -143,7 +143,12 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
                 obj = obj.set('und_float_value',V_float);
             end
             % update implied volatility
-            Y = tmp_strike .* V_float ./ V_fix;
+            if ~(V_fix == 0.0)
+                Y = tmp_strike .* V_float ./ V_fix;
+            else
+                Y = 0.0;
+            end
+            
             % get volatility according to moneyness and term
             % surface with absolute moneyness K - S
             if ( regexpi(tmp_vola_surf_obj.moneyness_type,'-')) 

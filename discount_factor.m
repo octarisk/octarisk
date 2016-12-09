@@ -61,6 +61,11 @@ if nargin < 6
     comp_freq = 1;
 end
 
+% Prevent division by zero:
+if ( rate == -1)
+    rate = -0.99999;
+    fprintf('discount_factor: WARNING: rate is -1. setting to -0.9\n');
+end
 % experimental: call oct file. performance gain only if dimensions > 100000
 % df = discount_factor_cpp (d1, d2, rate, comp_type, basis, comp_freq);
 
