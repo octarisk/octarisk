@@ -75,21 +75,23 @@ if ( rows(tmp_cashflow_values) > 1 )
 end
 % Start parameter
 retcode = 0;
-x0 = -0.0001;
+x0 = 0.01;
 
 % Start time:
 if ischar(valuation_date)
    valuation_date = datenum(valuation_date);
 end
 
-
-%p0=[x0]'; % Guessed parameters.
-options(1) = 0;
-options(2) = 1e-5;          
-[x, obj, info, iter] = fmincon (@ (x) phi_soy(x,valuation_date, ...
-            tmp_cashflow_dates, tmp_cashflow_values,tmp_act_value, ...
-            tmp_nodes,tmp_rates,basis,comp_type, comp_freq,interp_discount, ...
-            comp_type_curve, basis_curve, comp_freq_curve), x0,[], [], [], [], -1, 1);
+% get time factors and interpolated rates to speed up valuation function
+[tf_vec rate_vec] = get_bond_tf_rates(valuation_date, ...
+            tmp_cashflow_dates, tmp_cashflow_values, 0.0, tmp_nodes, ...
+            tmp_rates, basis, comp_type, comp_freq, interp_discount, ...
+            comp_type_curve, basis_curve, comp_freq_curve, false);
+            
+% call optimization function       
+[x, obj, info, iter] = fmincon (@ (x) phi_soy(x,valuation_date,tmp_cashflow_dates, ...
+            tmp_cashflow_values,tmp_act_value,comp_type_curve, basis_curve, ...
+            comp_freq_curve, rate_vec), x0,[], [], [], [], -1, 1);
 
 if (info == 1)
 	%fprintf ('+++ calibrate_soy_sqp: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
@@ -117,17 +119,24 @@ end
 %-------------------------------------------------------------------------------
 %------------------- Begin Subfunctions ----------------------------------------
  
-% Definition Objective Function for spread over yield:	    
-function obj = phi_soy (x,valuation_date,cashflow_dates, cashflow_values, ...
-                        act_value,discount_nodes, discount_rates, basis, ...
-                        comp_type, comp_freq, interp_discount, ...
-                        comp_type_curve, basis_curve, comp_freq_curve)
-        % Calling pricing function with actual spread
-        tmp_npv = pricing_npv(valuation_date,cashflow_dates, cashflow_values,x, ...
-                discount_nodes, discount_rates,basis,comp_type,comp_freq, ...
-                interp_discount, comp_type_curve, basis_curve, comp_freq_curve);
+% Definition Objective Function for spread over yield:	
+function obj = phi_soy (x,valuation_date,tmp_cashflow_dates,tmp_cashflow_values,act_value, ...
+                comp_type_curve, basis_curve, comp_freq_curve,rate_vec)
+        % convert constant spread 
+        x = convert_curve_rates(valuation_date,valuation_date + tmp_cashflow_dates', ...
+                        x,'continuous','annual',3, ...
+                        comp_type_curve,comp_freq_curve,basis_curve)';
+        % add spread to interpolated rates
+        rate_vec = rate_vec + x;
+        % get discount factor
+        tmp_df 	= discount_factor (valuation_date, valuation_date + tmp_cashflow_dates', ...
+                                               rate_vec', comp_type_curve, ...
+                                               basis_curve, comp_freq_curve); 
+        % Calculate actual NPV of cash flows    
+        tmp_npv = tmp_cashflow_values * tmp_df;
         obj = (act_value - tmp_npv).^2;
-end
+end    
+
 %------------------------------------------------------------------
 
 %!assert(calibrate_soy_sqp(datenum('31-Dec-2015'),[182,547,912],[3,3,103],99.9,[90,365,730,1095],[0.01,0.02,0.025,0.028],3,'discrete','annual','monotone-convex'),0.0103811242758234,0.0000001)                

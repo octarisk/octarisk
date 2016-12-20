@@ -110,6 +110,27 @@ function s = set (obj, varargin)
       else
         error ('set: expecting the value to be of type character');
       end 
+    % ====================== set compounding_type ======================
+    elseif (ischar (prop) && strcmp (prop, 'compounding_type'))   
+      if (ischar (val))
+        s.compounding_type = val;
+      else
+        error ('set: expecting the value to be of type character');
+      end 
+    % ====================== set day_count_convention ======================
+    elseif (ischar (prop) && strcmp (prop, 'day_count_convention'))   
+      if (ischar (val))
+        s.day_count_convention = val;
+      else
+        error ('set: expecting the value to be of type character');
+      end 
+    % ====================== set compounding_freq ======================
+    elseif (ischar (prop) && strcmp (prop, 'compounding_freq'))   
+      if (ischar (val))
+        s.compounding_freq = val;
+      else
+        error ('set: expecting the value to be of type character');
+      end 
     % ====================== set type ======================
     elseif (ischar (prop) && strcmp (prop, 'type'))   
       if (ischar (val))

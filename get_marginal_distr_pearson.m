@@ -293,7 +293,7 @@ end
       m1 = -(sss*(kkk+3)+a1*(10*kkk-12*sss^2-18)/1)/(sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)));
       m2 = -(-sss*(kkk+3)-a2*(10*kkk-12*sss^2-18)/1)/(sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)));
        if ~((m1>-1)&&(m2>-1))
-         disp('WARNING: no distribution type defined, setting to default case')
+         disp('WARNING: get_marginal_distr_pearson: no distribution type defined, setting to default case')
          m1 = -0.999;
          m2 = m1;
        end

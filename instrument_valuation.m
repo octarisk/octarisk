@@ -85,8 +85,11 @@ if ( strcmpi(tmp_type,'debt') == 1 )
     debt = instr_obj;
     % get discount curve
     tmp_discount_curve  = debt.get('discount_curve');
-    tmp_discount_object = get_sub_object(curve_struct, tmp_discount_curve);
-
+    [tmp_discount_object object_ret_code] = get_sub_object(curve_struct, tmp_discount_curve);
+    if ( object_ret_code == 0 )
+        fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
+    end
+    
     % Calc value
     debt = debt.calc_value(tmp_discount_object,scenario);
 
@@ -100,7 +103,10 @@ elseif ( strfind(tmp_type,'option') > 0 )
     % Using Option class
     option = instr_obj;
     
-    tmp_rf_curve_obj  = get_sub_object(curve_struct, option.get('discount_curve'));
+    [tmp_rf_curve_obj object_ret_code] = get_sub_object(curve_struct, option.get('discount_curve'));
+    if ( object_ret_code == 0 )
+        fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',option.get('discount_curve'));
+    end
     
     % 1st try: find underlying in instrument_struct
     [tmp_underlying_obj  object_ret_code]  = get_sub_object(instrument_struct, option.get('underlying'));
@@ -155,6 +161,10 @@ elseif ( strfind(tmp_type,'option') > 0 )
         tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
     else
     % 2nd Case: Option on single underlying, take real objects
+        tmp_underlying_obj = tmp_underlying_obj.valuate(valuation_date, scenario, ...
+                                instrument_struct, surface_struct, ...
+                                matrix_struct, curve_struct, index_struct, ...
+                                riskfactor_struct, para_struct);
         tmp_vola_surf_obj = get_sub_object(surface_struct, option.get('vola_surface'));
     end
 
@@ -163,11 +173,12 @@ elseif ( strfind(tmp_type,'option') > 0 )
         option = option.calc_vola_spread(valuation_date,tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
     end
     % calculate value
-    option = option.calc_value(valuation_date,scenario,tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
     if ( first_eval == 1)
         % calculate greeks
+        option = option.calc_value(valuation_date,'base',tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
         option = option.calc_greeks(valuation_date,'base',tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
     end
+    option = option.calc_value(valuation_date,scenario,tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
 
     % store option object:
     ret_instr_obj = option;
@@ -190,25 +201,84 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
     % Using Swaption class
     swaption = instr_obj;
     % Get relevant objects
-    tmp_rf_curve_obj         = get_sub_object(curve_struct, swaption.get('discount_curve'));
-    tmp_vola_surf_obj        = get_sub_object(surface_struct, swaption.get('vola_surface'));
+    [tmp_rf_curve_obj object_ret_code] = get_sub_object(curve_struct, swaption.get('discount_curve'));
+    if ( object_ret_code == 0 )
+        fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',swaption.get('discount_curve'));
+    end
+          
+    [tmp_vola_surf_obj object_ret_code] = get_sub_object(surface_struct, swaption.get('vola_surface'));
+    if ( object_ret_code == 0 )
+        fprintf('WARNING: instrument_valuation: No surface_struct object found for id >>%s<<\n',swaption.get('vola_surface'));
+    end
+    
     % Calibration of swaption vola spread            
-    if ( swaption.get('vola_spread') == 0 )
+    if ( swaption.get('calibration_flag') == false )
         swaption = swaption.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
     end
     % calculate value
-    swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj);
+    if ( swaption.use_underlyings == true)      % use underlying fixed and floating legs
+        % get underlying fixed and floating legs
+        [fixed_leg object_ret_code] = get_sub_object(instrument_struct, swaption.get('und_fixed_leg'));
+        if ( object_ret_code == 0 )
+            fprintf('WARNING: instrument_valuation: No instrument_struct fixed leg object found for id >>%s<<\n',swaption.get('und_fixed_leg'));
+        end
+        % TODO: cashflow rollout of fixed leg and floating leg
+        [float_leg object_ret_code] = get_sub_object(instrument_struct, swaption.get('und_floating_leg'));
+        if ( object_ret_code == 0 )
+            fprintf('WARNING: instrument_valuation: No instrument_struct floating leg object found for id >>%s<<\n',swaption.get('und_floating_leg'));
+        end
+        % calculate underlying values
+        if ( sum(strcmp(scenario,fixed_leg.timestep_mc))==0)
+            fixed_leg = fixed_leg.valuate(valuation_date, scenario, ...
+                                instrument_struct, surface_struct, ...
+                                matrix_struct, curve_struct, index_struct, ...
+                                riskfactor_struct, para_struct);
+        end
+        if ( sum(strcmp(scenario,float_leg.timestep_mc))==0)
+            float_leg = float_leg.valuate(valuation_date, scenario, ...
+                                instrument_struct, surface_struct, ...
+                                matrix_struct, curve_struct, index_struct, ...
+                                riskfactor_struct, para_struct);
+        end
+        %Calculate base values of swaption
+        if ( first_eval == 1)
+            swaption = swaption.calc_value(valuation_date,'base',tmp_rf_curve_obj,tmp_vola_surf_obj,fixed_leg,float_leg);
+        end
+        swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,fixed_leg,float_leg);
+    else     % use reference curve for extracting forward rates
+        %Calculate base values of swaption
+        if ( first_eval == 1)
+            swaption = swaption.calc_value(valuation_date,'base',tmp_rf_curve_obj,tmp_vola_surf_obj);
+        end
+        swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj);
+    end
+    
     % store swaption object:
     ret_instr_obj = swaption;
+    % if ( strcmpi(scenario,'stress'))
+        % swaption
+    % end
 
 % European CapFloor Valuation according to Back76 or Bachelier Model 
 elseif ( strfind(tmp_type,'capfloor') > 0 )    
     % Using CapFloor class
     capfloor = instr_obj;
     % Get relevant objects
-    tmp_disc_curve_obj       = get_sub_object(curve_struct, capfloor.get('discount_curve'));
-    tmp_rf_curve_obj         = get_sub_object(curve_struct, capfloor.get('reference_curve'));
-    tmp_vola_surf_obj        = get_sub_object(surface_struct, capfloor.get('vola_surface'));
+    [tmp_disc_curve_obj object_ret_code]  = get_sub_object(curve_struct, capfloor.get('discount_curve'));
+    if ( object_ret_code == 0 )
+        fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',capfloor.get('discount_curve'));
+    end
+              
+    [tmp_rf_curve_obj object_ret_code] = get_sub_object(curve_struct, capfloor.get('reference_curve'));
+    if ( object_ret_code == 0 )
+        fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',capfloor.get('reference_curve'));
+    end
+          
+    [tmp_vola_surf_obj object_ret_code] = get_sub_object(surface_struct, capfloor.get('vola_surface'));
+    if ( object_ret_code == 0 )
+        fprintf('WARNING: instrument_valuation: No surface_struct object found for id >>%s<<\n',capfloor.get('vola_surface'));
+    end
+    
     % TODO: Calibration of capfloor vola spread            
     %if ( capfloor.get('vola_spread') == 0 )
     %    capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
@@ -229,11 +299,19 @@ elseif (strcmpi(tmp_type,'forward') )
         tmp_underlying = forward.get('underlying_id');
         [tmp_underlying_object object_ret_code]  = get_sub_object(index_struct, tmp_underlying);
         if ( object_ret_code == 0 )
-            fprintf('octarisk: WARNING: No index_struct object found for id >>%s<<\n',tmp_underlying_object);
+            fprintf('WARNING: instrument_valuation: No index_struct object found for id >>%s<<\n',tmp_underlying_object);
         end
+    % calculate underlying values
+        tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
+                                instrument_struct, surface_struct, ...
+                                matrix_struct, curve_struct, index_struct, ...
+                                riskfactor_struct, para_struct); 
     % Get discount curve
-        tmp_discount_curve          = forward.get('discount_curve');            
-        tmp_curve_object            = get_sub_object(curve_struct, tmp_discount_curve);	
+        tmp_discount_curve                  = forward.get('discount_curve');            
+        [tmp_curve_object object_ret_code]  = get_sub_object(curve_struct, tmp_discount_curve);	
+        if ( object_ret_code == 0 )
+            fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
+        end
 
     %Calculate values of equity forward
     if ( first_eval == 1)
@@ -277,7 +355,10 @@ tmp_shift = 0;
             end
         % get sensitivity approach shift from underlying riskfactors
         else
-            tmp_rf_struct_obj    = get_sub_object(riskfactor_struct, tmp_riskfactor);
+            [tmp_rf_struct_obj object_ret_code]  = get_sub_object(riskfactor_struct, tmp_riskfactor);	
+            if ( object_ret_code == 0 )
+                fprintf('WARNING: instrument_valuation: No riskfactor_struct object found for id >>%s<<\n',tmp_riskfactor);
+            end
             tmp_delta   = tmp_rf_struct_obj.getValue(scenario);
             tmp_shift   = tmp_shift + ( tmp_sensitivities(jj) .* tmp_delta );
         end
@@ -314,7 +395,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         tmp_discount_curve  = bond.get('discount_curve');
         [tmp_curve_object object_ret_code]    = get_sub_object(curve_struct, tmp_discount_curve); 
         if ( object_ret_code == 0 )
-            fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
+            fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
         end
      
     % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
@@ -324,7 +405,46 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 bond = bond.rollout('base',valuation_date);
             end
             bond = bond.rollout(scenario,valuation_date);
-        elseif( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOAT'))       % Floating Rate Notes (incl. swap floating leg)
+        elseif ( strcmpi(tmp_sub_type,'FAB') )
+            % cash flow rollout
+            if ( bond.prepayment_flag == true  ) % fixed amortizing bond with prepayment
+                if ( strcmpi(bond.prepayment_source,'curve'))
+                    psa_curve_id  = bond.get('prepayment_curve');
+                    [psa_curve object_ret_code]    = get_sub_object(curve_struct, psa_curve_id); 
+                    if ( object_ret_code == 0 )
+                        fprintf('WARNING: instrument_valuation: No psa curve_struct object found for id >>%s<<\n',psa_curve_id);
+                    end
+                else
+                    psa_curve = Curve();
+                end
+                % get prepayment procedure (if any)
+                pp_surface_id = bond.get('prepayment_procedure');
+                if ( isempty(pp_surface_id))
+                    pp_surface = [];
+                else
+                    [pp_surface object_ret_code]    = get_sub_object(surface_struct, pp_surface_id); 
+                    if ( object_ret_code == 0 )
+                        fprintf('WARNING: instrument_valuation: No prepayment procedure surface_struct object found for id >>%s<<\n',pp_surface_id);
+                    end
+                end
+                % get ir curve
+                tmp_ir_curve  = bond.get('discount_curve');
+                [tmp_curve_object object_ret_code]    = get_sub_object(curve_struct, tmp_ir_curve); 
+                if ( object_ret_code == 0 )
+                    fprintf('WARNING: instrument_valuation: No discount curve_struct object found for id >>%s<<\n',tmp_ir_curve);
+                end
+            
+                if ( first_eval == 1)
+                    bond = bond.rollout('base',valuation_date,psa_curve,pp_surface,tmp_curve_object);
+                end
+                bond = bond.rollout(scenario,valuation_date,psa_curve,pp_surface,tmp_curve_object);
+            else % fixed amortizing bond without prepayment
+                if ( first_eval == 1)
+                    bond = bond.rollout('base',valuation_date);
+                end
+                bond = bond.rollout(scenario,valuation_date);
+            end
+        elseif( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOATING'))       % Floating Rate Notes (incl. swap floating leg)
              %get reference curve object used for calculating floating rates:
                 tmp_ref_curve   = bond.get('reference_curve');
                 tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
@@ -353,6 +473,8 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                     bond = bond.rollout('base',tmp_rf_obj,tmp_surf_obj);
                 end
                 bond = bond.rollout(scenario,tmp_rf_obj,tmp_surf_obj); 
+        else
+            fprintf('WARNING: instrument_valuation: unknown BOND sub_type >>%s<< for id >>%s<<\n',bond.id,tmp_sub_type);
         end 
     % c) Calculate spread over yield (if not already run...)
         if ( bond.get('calibration_flag') == 0 )
@@ -362,7 +484,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         if ( first_eval == 1)
             bond = bond.calc_value (valuation_date,'base',tmp_curve_object);
             % calculate sensitivities
-            if( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOAT'))
+            if( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOATING'))
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object,tmp_ref_object);
             else
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);

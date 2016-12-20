@@ -16,12 +16,17 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
         call_flag = 0;
         moneyness_exponent = -1;
     end
+
+    if ( ischar(valuation_date))
+        valuation_date = datenum(valuation_date);
+    end
     
     % Get input variables
     
-    % Convert tmp_effdate timefactor from Instrument basis to pricing basis (act/365)
-    tmp_effdate  = timefactor (valuation_date, ...
-                                datenum(obj.maturity_date), obj.basis) .* 365;
+    % ??Convert tmp_effdate timefactor from Instrument basis to pricing basis (act/365)??
+    % get days in period
+    [tmp_tf tmp_effdate dib]  = timefactor (valuation_date, ...
+                                datenum(obj.maturity_date), obj.basis);
     % calculating swaption maturity date: effdate + tenor
     tmp_dtm          = tmp_effdate + 365 * obj.tenor; % unit years is assumed
     tmp_effdate = max(tmp_effdate,1);
@@ -68,16 +73,16 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
                                     comp_freq_curve, floor_flag);
                       
         % determining volatility cube axis
-        if ( regexpi(tmp_vola_surf_obj.axis_x_name,'TENOR'))
+        if ( regexpi(tmp_vola_surf_obj.axis_x_name,'TENOR')) % standard case
             % x-axis: effective date of swaption -> option term
             % y-axis: underlying swap tenor -> underlying term
-            xx = tmp_effdate;
+            xx = datenum(obj.maturity_date) - valuation_date;
             yy = tmp_swap_tenor*365;
         elseif ( regexpi(tmp_vola_surf_obj.axis_x_name,'TERM'))
             % x-axis: underlying swap tenor -> underlying term 
             % y-axis: effective date of swaption -> option term
             xx = tmp_swap_tenor*365;
-            yy = tmp_effdate;
+            yy = datenum(obj.maturity_date) - valuation_date;
         else
             fprintf('Swaption.calc_value: WARNING: Volatility surface has neither TENOR nor TERM axis. Taking value at (0,0). \n');
             xx = 0;
@@ -118,26 +123,10 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
             if ( nargin < 7)
                 error('Error: No underlying fixed and floating leg set. Aborting.');
             end
-            % evaluate fixed leg and floating leg: discount with swaptions 
-            %   discount curve:
             % fixed leg:
-            cashflow_dates_fixed = leg_fixed_obj.get('cf_dates');
-            cashflow_values_fixed = leg_fixed_obj.getCF(value_type);
-            V_fix = pricing_npv(valuation_date, cashflow_dates_fixed, ...
-                                    cashflow_values_fixed, 0.0, ...
-                                    tmp_nodes, tmp_rates, basis, comp_type, ...
-                                    comp_freq, interp_method, ...
-                                    comp_type_curve, basis_curve, ...
-                                    comp_freq_curve);
+            V_fix = leg_fixed_obj.getValue(value_type);
             % floating leg:
-            cashflow_dates_floating = leg_float_obj.get('cf_dates');
-            cashflow_values_floating  = leg_float_obj.getCF(value_type);
-            V_float = pricing_npv(valuation_date, cashflow_dates_floating, ...
-                                    cashflow_values_floating, 0.0, ...
-                                    tmp_nodes, tmp_rates, basis, comp_type, ...
-                                    comp_freq, interp_method, ...
-                                    comp_type_curve, basis_curve, ...
-                                    comp_freq_curve);
+            V_float = leg_float_obj.getValue(value_type);
             if ( regexp(value_type,'base'))
                 obj = obj.set('und_fixed_value',V_fix);
                 obj = obj.set('und_float_value',V_float);
@@ -158,9 +147,10 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
             end    
 
             % interpolation of volatility
+            % calculate yy: time between maturity and issue date of underlying
+            yy = datenum(leg_fixed_obj.maturity_date) - datenum(leg_fixed_obj.issue_date);
             tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
                 xx,yy,tmp_moneyness) + tmp_impl_vola_spread;
-            
             % call pricing function
             theo_value = swaption_underlyings(call_flag,tmp_strike,V_fix, ...
                                V_float,tmp_effdate,tmp_imp_vola_shock, ...
@@ -173,6 +163,7 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
         obj = obj.set('value_stress',theo_value);  
     elseif ( regexp(value_type,'base'))
         obj = obj.set('value_base',theo_value);    
+        obj = obj.set('implied_volatility',tmp_imp_vola_shock);
     else  
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);

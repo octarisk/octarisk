@@ -63,7 +63,7 @@ function [x, obj, info, iter, nf, lambda] = fmincon (objf,x0,A,b,Aeq,beq,lb,ub)
 % Wrapper function for Matlab compatibility 
 
 maxiter = 300;
-tolerance = sqrt(eps);
+tolerance = 0.0001; %sqrt(eps);
 
 if nargin < 3
     A = [];
@@ -99,6 +99,7 @@ else
 end
 
 % Call Octave sqp solver:
+
 [x, obj, info, iter, nf, lambda] = sqp (x0, objf, g, h, lb, ub, maxiter, tolerance);
 
 % map return codes for Matlab compatibility
@@ -126,3 +127,35 @@ end
 end
 
 %!assert(fmincon (@(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2,[0.5,0],[1,2],1,[2,1],1),[0.41494;0.17011],0.0001)
+
+
+% % #############      Call Octave fmin  ########################################
+
+
+% options = optimset ('MaxIter',maxiter,'TolFun',tolerance,'TolX',sqrt(eps));
+% tic
+% [x, obj, info] = fminunc (objf, x0, options);
+% fminunc_time = toc
+% fprintf('Soy: >>%f<< Obj: >>%f<<\n',x,obj);
+% info
+% if ( info == 2)
+    % info = 1;
+% end
+% iter = [];
+% nf = [];
+% lambda = [];
+
+
+% % ############# Call Octave fminbnd   ##########################################
+
+% a = -0.1;
+% b = 0.1;
+% options = optimset ('MaxIter',maxiter,'TolX',sqrt(eps));
+% tic
+% [x, obj, info, output]  = fminbnd (objf, a , b, options);
+% fminbnd_time  = toc
+% fprintf('Soy: >>%f<< Obj: >>%f<<\n',x,obj);
+% info
+% iter = [];
+% nf = [];
+% lambda = [];

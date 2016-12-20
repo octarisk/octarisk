@@ -88,7 +88,9 @@ end      % close loop via all mc_timesteps
 % clear temporary riskfactor_struct      
 rf_failed_cell = unique(rf_failed_cell); 
 % returning statistics
-fprintf('SUCCESS: generated MC scenario values for >>%d<< risk factors in %d MC timesets.\n',number_riskfactors/kk,kk);
+if (length( mc_timesteps ) > 0 )
+    fprintf('SUCCESS: generated MC scenario values for >>%d<< risk factors in %d MC timesets.\n',number_riskfactors/kk,kk);
+end
 if (length(rf_failed_cell) > 0 )
     fprintf('WARNING: OCTARISK::load_riskfactor_scenarios:  >>%d<< risk factors failed during MC scenario generation: \n',length(rf_failed_cell));
     rf_failed_cell

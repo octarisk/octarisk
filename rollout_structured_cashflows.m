@@ -85,6 +85,7 @@ if nargin > 3
     elseif ( strcmpi(type,'FAB'))
             fixed_annuity_flag = instrument.fixed_annuity;
             use_principal_pmt_flag = instrument.use_principal_pmt;
+            use_annuity_amount = instrument.use_annuity_amount;
     end
     notional = instrument.notional;
     term = instrument.term;
@@ -436,7 +437,7 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
              % get forward rate from provided curve
             forward_rate_curve = get_forward_rate(tmp_nodes,tmp_rates, ...
                         fsd,fed-fsd,compounding_type,method_interpolation, ...
-                        compounding_freq, dcc, valuation_date, ...
+                        compounding_freq, basis_curve, valuation_date, ...
                         comp_type_curve, basis_curve, comp_freq_curve,floor_flag);
                         
             % calculate timing adjustment
@@ -818,42 +819,66 @@ elseif ( strcmp(type,'FAB') == 1 )
     % is outstanding amount shall be used
     % fixed annuity: fixed total payments 
     if ( fixed_annuity_flag == 1)    
-        number_payments = length(cf_dates) -1;
-        m = comp_freq;
-        total_term = number_payments / m ; % total term of annuity in years      
-        % Discrete compounding only with act/365 day count convention
-        % TODO: implement simple and continuous compounding for annuity 
-        %       calculation
-        if ( in_arrears_flag == 1)  % in arrears payments (at end of period)    
-            rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) ... 
-                                / (( 1 + coupon_rate  )^total_term - 1) ) ...
-                                / (m + coupon_rate / 2 * ( m + 1 ));            
-        else                        % in advance payments
-            rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) ...
-                                / (( 1 + coupon_rate )^total_term - 1) ) ...
-                                / (m + coupon_rate / 2 * ( m - 1 ));   
+        if ( use_annuity_amount == 0)   % calculate annuity from coupon rate and notional
+            number_payments = length(cf_dates) -1;
+            m = comp_freq;
+            total_term = number_payments / m ; % total term of annuity in years      
+            % Discrete compounding only with act/365 day count convention
+            % TODO: implement simple and continuous compounding for annuity 
+            %       calculation
+            if ( in_arrears_flag == 1)  % in arrears payments (at end of period)    
+                rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) ... 
+                                    / (( 1 + coupon_rate  )^total_term - 1) ) ...
+                                    / (m + coupon_rate / 2 * ( m + 1 ));            
+            else                        % in advance payments
+                rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) ...
+                                    / (( 1 + coupon_rate )^total_term - 1) ) ...
+                                    / (m + coupon_rate / 2 * ( m - 1 ));   
+            end
+            ret_values = ones(1,number_payments) .* rate;
+            
+            % calculate principal and interest cf
+            cf_datesnum = datenum(cf_dates);
+            d1 = cf_datesnum(1:length(cf_datesnum)-1);
+            d2 = cf_datesnum(2:length(cf_datesnum));
+            cf_interest = zeros(1,number_payments);
+            amount_outstanding_vec = zeros(1,number_payments);
+            amount_outstanding_vec(1) = notional;
+            % cashflows of first date
+            cf_interest(1) = notional.* ((1 ./ discount_factor (d1(1), d2(1), ...
+                        coupon_rate, compounding_type, dcc, compounding_freq)) - 1); 
+            % cashflows of remaining dates
+            for ii = 2 : 1 : number_payments
+                amount_outstanding_vec(ii) = amount_outstanding_vec(ii - 1) ... 
+                                            - ( rate -  cf_interest(ii-1) );
+                cf_interest(ii) = amount_outstanding_vec(ii) .* ((1 ./ ...
+                                discount_factor (d1(ii), d2(ii), coupon_rate, ...
+                                     compounding_type, dcc, compounding_freq)) - 1);          
+            end
+            cf_principal = rate - cf_interest;
+        else    % use fixed given annuity_amount
+            annuity_amt = instrument.annuity_amount;
+            number_payments = length(cf_dates) -1;
+            m = comp_freq;
+            cf_datesnum = datenum(cf_dates);
+            d1 = cf_datesnum(1:length(cf_datesnum)-1);
+            d2 = cf_datesnum(2:length(cf_datesnum));
+            cf_interest = zeros(1,number_payments);
+            amount_outstanding = notional;
+            %amount_outstanding_vec = zeros(number_payments,1);
+            for ii = 1: 1 : number_payments
+                cf_interest(ii) = ((1 ./ discount_factor (d1(ii), d2(ii), ...
+                                      coupon_rate, compounding_type, dcc, ...
+                                      compounding_freq)) - 1) .* amount_outstanding;
+                % deduct annuity amount and add back interest cash flows:
+                amount_outstanding = amount_outstanding - annuity_amt + cf_interest(ii);
+                %amount_outstanding_vec(ii) = amount_outstanding;
+            end
+            ret_values = annuity_amt .* ones(1,number_payments);
+            ret_values(end) = ret_values(end) + amount_outstanding;
+            cf_principal = ret_values - cf_interest;
+            cf_interest;
         end
-        ret_values = ones(1,number_payments) .* rate;
-        
-        % calculate principal and interest cf
-        cf_datesnum = datenum(cf_dates);
-        d1 = cf_datesnum(1:length(cf_datesnum)-1);
-        d2 = cf_datesnum(2:length(cf_datesnum));
-        cf_interest = zeros(1,number_payments);
-        amount_outstanding_vec = zeros(1,number_payments);
-        amount_outstanding_vec(1) = notional;
-        % cashflows of first date
-        cf_interest(1) = notional.* ((1 ./ discount_factor (d1(1), d2(1), ...
-                    coupon_rate, compounding_type, dcc, compounding_freq)) - 1); 
-        % cashflows of remaining dates
-        for ii = 2 : 1 : number_payments
-            amount_outstanding_vec(ii) = amount_outstanding_vec(ii - 1) ... 
-                                        - ( rate -  cf_interest(ii-1) );
-            cf_interest(ii) = amount_outstanding_vec(ii) .* ((1 ./ ...
-                            discount_factor (d1(ii), d2(ii), coupon_rate, ...
-                                 compounding_type, dcc, compounding_freq)) - 1);          
-        end
-        cf_principal = rate - cf_interest;
     % fixed amortization: only amortization is fixed, coupon payments are 
     %                       variable
     else
@@ -1269,6 +1294,7 @@ end
 %! bond_struct.term                     = 12   ;
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
+%! bond_struct.use_annuity_amount       = 0;
 %! bond_struct.notional                 = 100 ;
 %! bond_struct.coupon_rate              = 0.0333; 
 %! bond_struct.coupon_generation_method = 'backward' ;
@@ -1306,6 +1332,7 @@ end
 %! bond_struct.business_day_rule        = 0 ;
 %! bond_struct.business_day_direction   = 1  ;
 %! bond_struct.enable_business_day_rule = 0;
+%! bond_struct.use_annuity_amount       = 0;
 %! bond_struct.spread                   = 0.00 ;
 %! bond_struct.long_first_period        = false;
 %! bond_struct.long_last_period         = false;
@@ -1650,6 +1677,7 @@ end
 %! bond_struct.long_last_period         = false;
 %! bond_struct.last_reset_rate          = 0.0000000;
 %! bond_struct.fixed_annuity            = 0;
+%! bond_struct.use_annuity_amount       = 0;
 %! bond_struct.in_arrears               = 0;
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = true;

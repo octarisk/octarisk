@@ -1,0 +1,4 @@
+FX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR
+Index,FX_EURUSD,EUR_USD,Exchange Rate,EUR,EUR USD Exchange rate,1.08
+Index,FX_EURCAD,EUR_CAD,Exchange Rate,EUR,EUR CAD Exchange rate,1.25
+

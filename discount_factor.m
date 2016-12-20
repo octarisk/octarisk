@@ -42,9 +42,11 @@ end
 if ~isnumeric(rate)
     error('Rate is not a valid number')
 end
-if ischar(d1) || ischar(d2)
-   d1 = datenum(d1);
-   d2 = datenum(d2);
+if ischar(d1) 
+   d1 = datenum(d1,1);
+end
+if ischar(d2)
+   d2 = datenum(d2,1);
 end
 if ischar(basis)
     basis = get_basis(basis);

@@ -43,7 +43,7 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,discount_
         theo_theta  = 0.0;
         theo_rho    = 0.0;
         theo_omega  = 0.0; 
-        
+        tmp_multiplier = 0.0;
     else
         tmp_strike         = obj.strike;
         tmp_value          = obj.value_base;

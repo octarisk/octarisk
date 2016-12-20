@@ -67,5 +67,5 @@ function obj = phi (x,putcallflag,S,X,T,rf,sigma,div,multiplicator,market_value)
         obj = abs( tmp_option_value  - market_value)^2;
 end
                            
-%!assert(calibrate_option_bjsten(0,10000,11000,365,0.01,0.2,0.0,2,2600),-0.0172916909133740,0.0000021) 
-%!assert(calibrate_option_bjsten(0,286.867623322,368.7362,3650,0.0045624391,0.210360082233,0.00,1,120),-0.00654341488084162,0.00000001)
+%!assert(calibrate_option_bjsten(0,10000,11000,365,0.01,0.2,0.0,2,2600),-0.0172916909133740,0.00021) 
+%!assert(calibrate_option_bjsten(0,286.867623322,368.7362,3650,0.0045624391,0.210360082233,0.00,1,120),-0.00654341488084162,0.00001)

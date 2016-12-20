@@ -61,9 +61,9 @@ classdef Instrument
          value_stress_rows = min(rows(a.value_stress),5);
          value_mc_rows = min(rows(a.value_mc),5);
          value_mc_cols = min(length(a.timestep_mc),2);
-         fprintf('name: %s\nid: %s\ndescription: %s\ntype: %s\nasset_class: %s\ncurrency: %s\nvalue_base: %f %s\n', ... 
+         fprintf('name: %s\nid: %s\ndescription: %s\ntype: %s\nasset_class: %s\ncurrency: %s\nvalue_base: %8.6f %s\n', ... 
             a.name,a.id,a.description,a.type,a.asset_class,a.currency,a.value_base,a.currency);
-         fprintf('value_stress: %8.2f \n',a.value_stress(1:value_stress_rows));
+         fprintf('value_stress: %8.6f \n',a.value_stress(1:value_stress_rows));
          fprintf('\n');
          % looping via first 5 MC scenario values
          for ( ii = 1 : 1 : value_mc_cols)
@@ -71,7 +71,7 @@ classdef Instrument
             %fprintf('Scenariovalue: %8.2f \n',a.value_mc(1:value_mc_rows,ii));
             fprintf('Scenariovalues:\n[ ')
                 for ( jj = 1 : 1 : value_mc_rows)
-                    fprintf('%f,\n',a.value_mc(jj,ii));
+                    fprintf('%8.6f,\n',a.value_mc(jj,ii));
                 end
             fprintf(' ]\n');
          end

@@ -25,9 +25,9 @@ function d = yeardays (y, basis)
 	end
   end
 
-  bact = ismember (basis(:), [0 8]);
-  b360 = ismember (basis(:), [1 2 4 5 6 9 11]);
-  b365 = ismember (basis(:), [3 7 10]);
+  bact = ismember (basis(:), [0 8])
+  b360 = ismember (basis(:), [1 2 4 5 6 9 11])
+  b365 = ismember (basis(:), [3 7 10])
 
   badbasismask = ~ (bact | b360 | b365);
   if any (badbasismask)

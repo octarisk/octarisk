@@ -18,7 +18,7 @@
 %# @end deftypefn
 
 function [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves( ...
-                curve_struct,riskfactor_struct,mc_timesteps,path_output,saving)
+                curve_struct,riskfactor_struct,mc_timesteps,path_output,saving,run_mc)
 
 curve_failed_cell = {};
 % 1) Processing Yield Curve: Getting Cell with IDs of IR nodes
@@ -94,48 +94,50 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
         % contains matrix with delta of stress:
         curve_object = curve_object.set('rates_stress',tmp_rates_stress);   
         % loop via all mc timesteps
-        for kk = 1:1:length(mc_timesteps)
-            tmp_ts = mc_timesteps{kk};
-            % get original yield curve
-            tmp_rates_shock = [];  
-            tmp_nodes = [];
-            tmp_model_cell = {};
-            for jj = 1 : 1 : length( riskfactor_struct )
-                tmp_rf_struct_obj = riskfactor_struct( jj ).object;
-                tmp_rf_id = tmp_rf_struct_obj.id;
-                if ( regexp(tmp_rf_id,tmp_curve_id) == 1 )           
-                    tmp_delta_shock     = tmp_rf_struct_obj.getValue(tmp_ts);
-                    % just needed for sorting final results:
-                    tmp_node            = tmp_rf_struct_obj.get('node'); 
-                    tmp_nodes 		    = cat(2,tmp_nodes,tmp_node);
-                    % Calculate new absolute values from Riskfactor PnL 
-                    % depending on riskfactor model:
-                    tmp_model           = tmp_rf_struct_obj.get('model');
-                    tmp_model_cell{end + 1 } = tmp_model;
-                    if ( strcmp(tmp_model,{'GBM','BKM'}))
-                        tmp_shocktype_mc = 'relative';
-                        tmp_delta_shock = exp(tmp_delta_shock);
-                    else
-                        tmp_shocktype_mc = 'absolute';
-                    end          
-                    tmp_rates_shock = cat(2,tmp_rates_shock,tmp_delta_shock);
+        if ( run_mc == true )
+            for kk = 1:1:length(mc_timesteps)
+                tmp_ts = mc_timesteps{kk};
+                % get original yield curve
+                tmp_rates_shock = [];  
+                tmp_nodes = [];
+                tmp_model_cell = {};
+                for jj = 1 : 1 : length( riskfactor_struct )
+                    tmp_rf_struct_obj = riskfactor_struct( jj ).object;
+                    tmp_rf_id = tmp_rf_struct_obj.id;
+                    if ( regexp(tmp_rf_id,tmp_curve_id) == 1 )           
+                        tmp_delta_shock     = tmp_rf_struct_obj.getValue(tmp_ts);
+                        % just needed for sorting final results:
+                        tmp_node            = tmp_rf_struct_obj.get('node'); 
+                        tmp_nodes 		    = cat(2,tmp_nodes,tmp_node);
+                        % Calculate new absolute values from Riskfactor PnL 
+                        % depending on riskfactor model:
+                        tmp_model           = tmp_rf_struct_obj.get('model');
+                        tmp_model_cell{end + 1 } = tmp_model;
+                        if ( strcmp(tmp_model,{'GBM','BKM'}))
+                            tmp_shocktype_mc = 'relative';
+                            tmp_delta_shock = exp(tmp_delta_shock);
+                        else
+                            tmp_shocktype_mc = 'absolute';
+                        end          
+                        tmp_rates_shock = cat(2,tmp_rates_shock,tmp_delta_shock);
+                    end
+                end  
+                % sort nodes and accordingly original and stress rates:
+                    [tmp_nodes tmp_indizes] = sort(tmp_nodes);
+                    tmp_rates_shock = tmp_rates_shock(:,tmp_indizes);
+                % check, whether all risk factors of one curve have the same model
+                if ( length(unique(tmp_model_cell)) > 1 )
+                    fprintf('WARNING: octarisk::load_yieldcurves: ', ...
+                            'one curve has different stochastic models ', ...
+                            'for their nodes: %s\n',tmp_model_cell);
                 end
-            end  
-            % sort nodes and accordingly original and stress rates:
-                [tmp_nodes tmp_indizes] = sort(tmp_nodes);
-                tmp_rates_shock = tmp_rates_shock(:,tmp_indizes);
-            % check, whether all risk factors of one curve have the same model
-            if ( length(unique(tmp_model_cell)) > 1 )
-                fprintf('WARNING: octarisk::load_yieldcurves: ', ...
-                        'one curve has different stochastic models ', ...
-                        'for their nodes: %s\n',tmp_model_cell);
-            end
-            % Save curves into struct
-            curve_object = curve_object.set('rates_mc',tmp_rates_shock, ...
-                                            'timestep_mc',tmp_ts); 
-        end  % close loop via scenario_sets (mc,stress)
-        % store shocktype_mc
-        curve_object = curve_object.set('shocktype_mc',tmp_shocktype_mc);
+                % Save curves into struct
+                curve_object = curve_object.set('rates_mc',tmp_rates_shock, ...
+                                                'timestep_mc',tmp_ts); 
+            end  % close loop via scenario_sets (mc,stress)
+            % store shocktype_mc
+            curve_object = curve_object.set('shocktype_mc',tmp_shocktype_mc);
+        end
         % store curve object in final struct
         curve_struct( ii ).object = curve_object;
         
@@ -156,10 +158,12 @@ curve_object = curve_object.set('type','Spread Curve','description', ...
 curve_object = curve_object.set('nodes',[365]);
 curve_object = curve_object.set('rates_base',[0]);
 curve_object = curve_object.set('rates_stress',[0]);
-for kk = 1:1:length(mc_timesteps)    % append dummy curves for all mc_timesteps
-    curve_object = curve_object.set('rates_mc',[0], ...
-                                    'timestep_mc',mc_timesteps{kk});
-end    
+if ( run_mc == true )
+    for kk = 1:1:length(mc_timesteps)    % append dummy curves for all mc_timesteps
+        curve_object = curve_object.set('rates_mc',[0], ...
+                                        'timestep_mc',mc_timesteps{kk});
+    end    
+end
 curve_struct( length(rf_ir_cur_cell) + 1  ).object = curve_object;  
 % append Dummy Spread Curve (used for all instruments without 
 % defined spread curve): 
@@ -170,10 +174,12 @@ curve_object = curve_object.set('type','Spread Curve','description', ...
 curve_object = curve_object.set('nodes',[365]);
 curve_object = curve_object.set('rates_base',[0]);
 curve_object = curve_object.set('rates_stress',[0]);
-for kk = 1:1:length(mc_timesteps)    % append dummy curves for all mc_timesteps
-    curve_object = curve_object.set('rates_mc',[0], ...
-                                    'timestep_mc',mc_timesteps{kk});
-end    
+if ( run_mc == true )
+    for kk = 1:1:length(mc_timesteps)    % append dummy curves for all mc_timesteps
+        curve_object = curve_object.set('rates_mc',[0], ...
+                                        'timestep_mc',mc_timesteps{kk});
+    end   
+end 
 curve_struct( length(rf_ir_cur_cell) + 1  ).object = curve_object;   
 
 % end filling curve_struct

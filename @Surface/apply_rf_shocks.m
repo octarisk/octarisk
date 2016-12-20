@@ -5,7 +5,15 @@ function [surface] = apply_rf_shocks (surface, riskfactor_struct)
     if (nargin < 2)
         error('Surface.apply_rf_shocks: no risk factor struct given.');
     end
-
+  
+% check for empty risk factor definition
+if (length(surface.riskfactors) == 0)
+    break
+elseif (length(surface.riskfactors) == 1)
+    if (isempty(surface.riskfactors{1}))
+        break
+    end
+end
 % what is done here:
 % - get all underlying risk factors
 % - get all shock values of each risk factor (for stress and MC scenarios)
@@ -26,7 +34,7 @@ function [surface] = apply_rf_shocks (surface, riskfactor_struct)
         tmp_rf = tmp_riskfactors{ii};
         [tmp_rf_obj  object_ret_code] = get_sub_object(riskfactor_struct,tmp_rf);
         if ( object_ret_code == 0 )
-            error('Surface.apply_rf_shocks: risk factor >>%s<< not found for surface >>%s<<',tmp_rf,tmp_id);  
+            error('Surface.apply_rf_shocks: risk factor >>%s<< not found for surface >>%s<<',tmp_rf,surface.id);  
         end
         % loop through all value types and set struct
         % loop through stress values
@@ -37,7 +45,7 @@ function [surface] = apply_rf_shocks (surface, riskfactor_struct)
         % check models are equal for all risk factors
         if ( ii > 1)
             if ~( strcmpi(tmp_model, tmp_rf_obj.model))
-                error('Surface.apply_rf_shocks: Model >>%s<< of risk factor >>%s<< not equal to already stored model >>%s<< for surface >>%s<<',tmp_rf_obj.model,tmp_rf,tmp_model,tmp_id);  
+                error('Surface.apply_rf_shocks: Model >>%s<< of risk factor >>%s<< not equal to already stored model >>%s<< for surface >>%s<<',tmp_rf_obj.model,tmp_rf,tmp_model,surface.id);  
             end
         else
             tmp_model = tmp_rf_obj.model; 

@@ -26,12 +26,14 @@ classdef Bond < Instrument
         in_arrears = 0;         % flag: if set to 0, in fine is assumed
         fixed_annuity = 0;      % property only needed for fixed amortizing bond 
                % -> fixed annuity annuity flag (annuity loan or amortizable loan)
+        annuity_amount = 0;     % fixed annnuity amount (only if fixed_annuity == 1)
+        use_annuity_amount = 0; % BOOL: flag for using fixed annuity amount
         use_principal_pmt = 1;
         principal_payment = 0.0; % principal payment (use_principal_pmt flag has
                                  % to be set to true and fixed_annuity == false
         notional_at_start = 0; 
         notional_at_end = 1;
-        calibration_flag = 0;   % flag set to true, if calibration 
+        calibration_flag = 1;   % flag set to true, if calibration 
                                 %(mark to market) successful
         % attributes required for fixed amortizing bonds with prepayments
         prepayment_type         = 'full';  % ['full','default']
@@ -40,6 +42,7 @@ classdef Bond < Instrument
         prepayment_rate         = 0.00;    % constant prepayment rate in case
                                             % no prepayment curve is specified
         prepayment_curve        = 'PSA-BASE';  % specify prepayment curve
+        prepayment_procedure    = ''; % specify prepayment_procedure (coupon rate / abs_shock_ir)
         clean_value_base        = 0; % BOOL: value_base is clean without accr interest
         outstanding_balance     = 0.0;  % outstanding balance for FAB only
         psa_factor_term         = [365,1825];   % factor terms for abs_ir_shock calc

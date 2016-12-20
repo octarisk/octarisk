@@ -204,26 +204,35 @@ pkg load statistics;	% load statistics package (needed in scenario_generation_MC
 pkg load financial;		% load financial packages (needed throughout all scripts)
 
 % 2. VAR specific variables
-mc = 50000              % number of MonteCarlo scenarios
+mc = 40000              % number of MonteCarlo scenarios
 hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be used
-confidence = 0.999      % level of confidence vor MC VAR calculation
-copulatype = 't'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
+confidence = 0.995      % level of confidence vor MC VAR calculation
+copulatype = 'Gaussian'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
-valuation_date = datenum('31-Dec-2015'); % valuation date
+valuation_date = datenum('30-Sep-2016'); % valuation date
 para_struct.valuation_date = valuation_date;
 fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
 base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
-mc_timesteps    = {'10d'}                % MC timesteps
-scenario_set    = [mc_timesteps,'stress'];          % append stress scenarios
+mc_timesteps    = {'250d'} %{'250d'}                % MC timesteps
+mc_timesteps    = {} %{'250d'}                % MC timesteps
+scenario_set    = [mc_timesteps,'stress'];   % %       % append stress scenarios
+scenario_set    = {'stress'};   %{'stress'} %       % append stress scenarios
 gpd_confidence_levels = [0.9;0.95;0.975;0.99;0.995;0.999;0.9999];   % vector with confidence levels used in reporting of EVT VAR and ES
 
 % specify unique runcode and timestamp:
-runcode = '2015Q4'; %substr(md5sum(num2str(time()),true),-6)
+runcode = '2016Q3'; %substr(md5sum(num2str(time()),true),-6)
 timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
 
 first_eval      = 1;    % means first evaluation
 para_struct.first_eval = first_eval;
+plottime = 0;   % initializing plottime
+aggr = 0;       % initializing aggregation time
+if length(mc_timesteps) > 0
+    run_mc = true;
+else
+    run_mc = false;
+end
 % set seed of random number generator
 if ( stable_seed == 1)
     % Read binary file and convert it to integers used as seed:
@@ -253,7 +262,11 @@ for kk = 1:1:length(mc_timesteps)
         error('Unknown number of days in timestep: %s\n',tmp_ts);
     end
 end
-scenario_ts_days = [mc_timestep_days; 0];
+if (run_mc == true)
+    scenario_ts_days = [mc_timestep_days; 0];
+else
+    scenario_ts_days = zeros(length(scenario_set),1);
+end
 % 1. Processing Instruments data
 persistent instrument_struct;
 instrument_struct=struct();
@@ -271,7 +284,7 @@ riskfactor_struct=struct();
 % 3. Processing Positions data
 persistent portfolio_struct;
 portfolio_struct=struct();
-[portfolio_struct id_failed_cell] = load_positions(portfolio_struct, path_input,input_filename_positions,path_output_positions,path_archive,timestamp,archive_flag);
+[portfolio_struct id_failed_cell positions_cell] = load_positions(portfolio_struct, path_input,input_filename_positions,path_output_positions,path_archive,timestamp,archive_flag);
 
 % 4. Processing Stresstest data
 persistent stresstest_struct;
@@ -298,73 +311,73 @@ parseinput = toc;
 % 1.) Model Riskfactor Scenario Generation
 tic;
 %-----------------------------------------------------------------
+if (run_mc == true)
+    % special adjustment needed for HD vec if testing is performed with small MC numbers
+    if ( mc < 1000 ) 
+        hd_limit = mc - 1;
+    end
 
-% special adjustment needed for HD vec if testing is performed with small MC numbers
-if ( mc < 1000 ) 
-    hd_limit = mc - 1;
-end
+    % a.) Load input correlation matrix
 
-% a.) Load input correlation matrix
+    %corr_matrix = load(input_filename_corr_matrix); % path to correlation matrix
 
-%corr_matrix = load(input_filename_corr_matrix); % path to correlation matrix
+    [corr_matrix riskfactor_cell] = load_correlation_matrix(path_mktdata,input_filename_corr_matrix,path_archive,timestamp,archive_flag);
+    %corr_matrix = eye(length(riskfactor_struct));  % for test cases
 
-[corr_matrix riskfactor_cell] = load_correlation_matrix(path_mktdata,input_filename_corr_matrix,path_archive,timestamp,archive_flag);
-%corr_matrix = eye(length(riskfactor_struct));  % for test cases
-
-% b) Get distribution parameters: all four moments and return for marginal distributions are taken directly from riskfactors
-%   in order of their appearance in correlation matrix
-for ii = 1 : 1 : length(riskfactor_cell)
-    rf_id = riskfactor_cell{ii};
-    rf_object = get_sub_object(riskfactor_struct, rf_id);
-    rf_para_distributions(1,ii)   = rf_object.mean;  % mu
-    rf_para_distributions(2,ii)   = rf_object.std;   % sigma
-    rf_para_distributions(3,ii)   = rf_object.skew;  % skew
-    rf_para_distributions(4,ii)   = rf_object.kurt;  % kurt    
-end
-% c) call MC scenario generation (Copula approach, Pearson distribution types 1-7 according four moments of distribution parameters)
-%    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
-[R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,stable_seed);
-%[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
-
-% variable for switching statistical analysis on and off
-if ( mc_scen_analysis == 1 )
-    % Perform statistical tests on MC risk factor distributions:
-    for ii = 1 : 1 : length(riskfactor_cell)  
+    % b) Get distribution parameters: all four moments and return for marginal distributions are taken directly from riskfactors
+    %   in order of their appearance in correlation matrix
+    for ii = 1 : 1 : length(riskfactor_cell)
         rf_id = riskfactor_cell{ii};
-        rf_object = get_sub_object(riskfactor_struct, rf_id);    
-        fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
-        fprintf('Pearson_type: >>%d<<\n',distr_type(ii));  
-        mean_target = rf_object.mean;   % mean
-        mean_act = mean(R_250(:,ii));
-        sigma_target = rf_object.std;   % sigma
-        sigma_act = std(R_250(:,ii));
-        skew_target = rf_object.skew;   % skew
-        skew_act = skewness(R_250(:,ii));
-        kurt_target = rf_object.kurt;   % kurt    
-        kurt_act = kurtosis(R_250(:,ii));
-        fprintf('Stat. parameter:  \t| Target | Actual \n');
-        fprintf('Mean comparision: \t| %0.4f |  %0.4f \n',mean_target,mean_act);
-        fprintf('Vola comparision: \t| %0.4f |  %0.4f \n',sigma_target,sigma_act);
-        fprintf('Skewness comparision: \t| %0.4f |  %0.4f \n',skew_target,skew_act);
-        fprintf('Kurtosis comparision: \t| %0.4f |  %0.4f \n',kurt_target,kurt_act);
-        % test for bimodality -> fit polynomial and calculate parabola opening parameter sign
-        [xx yy] = hist(R_250(:,ii),80);
-        p = polyfit(yy,xx,2);
-        if ( p(1) > 0 )
-            fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
+        rf_object = get_sub_object(riskfactor_struct, rf_id);
+        rf_para_distributions(1,ii)   = rf_object.mean;  % mu
+        rf_para_distributions(2,ii)   = rf_object.std;   % sigma
+        rf_para_distributions(3,ii)   = rf_object.skew;  % skew
+        rf_para_distributions(4,ii)   = rf_object.kurt;  % kurt    
+    end
+    % c) call MC scenario generation (Copula approach, Pearson distribution types 1-7 according four moments of distribution parameters)
+    %    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
+    [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,stable_seed);
+    %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
+
+    % variable for switching statistical analysis on and off
+    if ( mc_scen_analysis == 1 )
+        % Perform statistical tests on MC risk factor distributions:
+        for ii = 1 : 1 : length(riskfactor_cell)  
+            rf_id = riskfactor_cell{ii};
+            rf_object = get_sub_object(riskfactor_struct, rf_id);    
+            fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
+            fprintf('Pearson_type: >>%d<<\n',distr_type(ii));  
+            mean_target = rf_object.mean;   % mean
+            mean_act = mean(R_250(:,ii));
+            sigma_target = rf_object.std;   % sigma
+            sigma_act = std(R_250(:,ii));
+            skew_target = rf_object.skew;   % skew
+            skew_act = skewness(R_250(:,ii));
+            kurt_target = rf_object.kurt;   % kurt    
+            kurt_act = kurtosis(R_250(:,ii));
+            fprintf('Stat. parameter:  \t| Target | Actual \n');
+            fprintf('Mean comparision: \t| %0.4f |  %0.4f \n',mean_target,mean_act);
+            fprintf('Vola comparision: \t| %0.4f |  %0.4f \n',sigma_target,sigma_act);
+            fprintf('Skewness comparision: \t| %0.4f |  %0.4f \n',skew_target,skew_act);
+            fprintf('Kurtosis comparision: \t| %0.4f |  %0.4f \n',kurt_target,kurt_act);
+            % test for bimodality -> fit polynomial and calculate parabola opening parameter sign
+            [xx yy] = hist(R_250(:,ii),80);
+            p = polyfit(yy,xx,2);
+            if ( p(1) > 0 )
+                fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
+            end
         end
     end
+    % Generate Structure with Risk factor scenario values: scale values according to timestep
+    M_struct = struct();
+    for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random matrix and derive all other timesteps from them
+            % [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,mc_timestep_days(kk)); % uncomment, if new random numbers needed for each timestep
+            M_struct( kk ).matrix = R_250 ./ sqrt(250/mc_timestep_days(kk));
+    end
+    % --------------------------------------------------------------------------------------------------------------------
+    % 2.) Monte Carlo Riskfactor Simulation for all timesteps
+    [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
 end
-% Generate Structure with Risk factor scenario values: scale values according to timestep
-M_struct = struct();
-for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random matrix and derive all other timesteps from them
-        % [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,mc_timestep_days(kk)); % uncomment, if new random numbers needed for each timestep
-        M_struct( kk ).matrix = R_250 ./ sqrt(250/mc_timestep_days(kk));
-end
-% --------------------------------------------------------------------------------------------------------------------
-% 2.) Monte Carlo Riskfactor Simulation for all timesteps
-[riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
-
 
 % 3.) Take Riskfactor Shiftvalues from Stressdefinition
 [riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
@@ -391,11 +404,12 @@ tic;
 
 persistent curve_struct;
 curve_struct=struct();
-[rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving);
+[rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving,run_mc);
 % for kk = 1  : 1 : length(curve_struct)
    % curve_struct(kk).id
    % curve_struct(kk).object
 % end
+
 
 
 % b) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
@@ -403,7 +417,7 @@ persistent index_struct;
 index_struct=struct();
 persistent surface_struct;
 surface_struct=struct();
-[index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests);   
+[index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests,run_mc);   
 
 % c) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 
@@ -435,11 +449,23 @@ matrix_struct=struct();
     % curve_struct(kk).object
  % end
 
-% for kk = 1  : 1 : length(riskfactor_struct)
-   % riskfactor_struct(kk).object
-   % %riskfactor_struct(kk).object.getValue('250d')
-   % %riskfactor_struct(kk).object.getValue('base')
-% end
+for kk = 1  : 1 : length(riskfactor_struct)
+   riskfactor_struct(kk).object
+   %riskfactor_struct(kk).object.getValue('stress')
+   %riskfactor_struct(kk).object.getValue('base')
+end
+
+
+% [vol_surf ret_code] = get_sub_object(surface_struct,'EUR-SWAP-VOL')
+
+[curve ret_code] = get_sub_object(curve_struct,'EUR-SWAP')
+[curve ret_code] = get_sub_object(curve_struct,'DKK-MBS-AAA')
+[curve ret_code] = get_sub_object(curve_struct,'DKK-SWAP')
+% [match_obj1 ret_code] = get_sub_object(instrument_struct,'10317977_DE0028_AZL')
+% [match_obj2 ret_code] = get_sub_object(instrument_struct,'10317926_DE0028_AZL')
+% [match_obj3 ret_code] = get_sub_object(instrument_struct,'10317978_DE0028_AZL')
+
+
 curve_gen_time = toc;
 
 % ------------------------------------------------------------------------------
@@ -452,14 +478,18 @@ number_instruments =  length( instrument_struct );
 for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and other scenarios
   tmp_scenario  = scenario_set{ kk };    % get scenario from scenario_set
   tmp_ts        = scenario_ts_days(kk);  % get timestep days
-  if ( strcmp(tmp_scenario,'stress'))
+  if ( strcmpi(tmp_scenario,'stress'))
       scen_number = no_stresstests;
+  elseif ( strcmpi(tmp_scenario,'base'))
+      scen_number = 1;
   else
       scen_number = mc;
   end
-  fprintf('== Full evaluation | scenario set %s | number of scenarios %d | timestep in days %d ==\n',tmp_scenario, scen_number,tmp_ts);
+  fprintf('== Full valuation | scenario set %s | number of scenarios %d | timestep in days %d ==\n',tmp_scenario, scen_number,tmp_ts);
   for ii = 1 : 1 : length( instrument_struct )
     try
+    % TODO: loop via positions_cell -> get id from instrument struct -> valuate these instruments only
+    % store in special valuated_instruments struct -> aggregate from these struct only
     tmp_id = instrument_struct( ii ).id;
     tic;
         % =================    Full valuation    ===============================
@@ -528,6 +558,27 @@ else
 end
 
 
+% print all base values
+fprintf('Instrument Base and IR stress Values: \n');
+fprintf('ID,Base,IR-50bp,IR+50bp,IR-100bp,IR+100bp,Currency\n');
+for kk = 1:1:length(instrument_struct)
+    obj = instrument_struct(kk).object;
+    stressvec = obj.getValue('stress');
+    if (length(stressvec) > 1)
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(4),obj.currency);
+    else
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),obj.currency);
+    end
+end
+% fprintf('Swaption Base, Vola and Underlying Values: \n');
+% fprintf('ID,Base,Vola,FixedLeg,FloatingLeg,Currency\n');
+% for kk = 1:1:length(instrument_struct)
+    % obj = instrument_struct(kk).object;
+    % if (strcmpi(obj.type,'swaption'))
+        % fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),obj.implied_volatility,obj.und_fixed_value,obj.und_float_value,obj.currency);       
+    % end
+% end
+
 % --------------------------------------------------------------------------------------------------------------------
 % 6. Portfolio Aggregation
 tic;
@@ -539,25 +590,27 @@ confi_scenario = max(round(confi * mc),1);
 persistent aggr_key_struct;
 position_failed_cell = {};
 % before looping via all portfolio make one time Harrel Davis Vector:
-% HD VaR only if number of scenarios < hd_limit
-if ( mc < hd_limit )
-    % take values from file in static folder, if already calculated
-    tmp_filename = strcat(path_static,'/hd_vec_',num2str(mc),'.mat');
-    if ( exist(tmp_filename,'file'))
-        fprintf('Taking file >>%s<< with HD vector in static folder\n',tmp_filename);
-        tmp_load_struct = load(tmp_filename);
-        hd_vec= tmp_load_struct.hd_vec;
-    else % otherwise calculate HD vector and save it to static folder
-        fprintf('New HD vector is calculated for %d MC scenarios and saved in static foler\n',mc);
-        minhd           = min(2*confi_scenario+1,mc);
-        hd_vec_min      = zeros(max(confi_scenario-500,0)-1,1);
-        hd_vec_max      = zeros(mc-min(confi_scenario+500,mc)-1,1);
-        tt              = max(confi_scenario-500,0):1:min(confi_scenario+500,mc);
-        hd_vec_func     = harrell_davis_weight(mc,tt,confi)';
-        hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
-        save ('-v7',tmp_filename,'hd_vec');
+if (run_mc == true)
+    % HD VaR only if number of scenarios < hd_limit
+    if ( mc < hd_limit )
+        % take values from file in static folder, if already calculated
+        tmp_filename = strcat(path_static,'/hd_vec_',num2str(mc),'.mat');
+        if ( exist(tmp_filename,'file'))
+            fprintf('Taking file >>%s<< with HD vector in static folder\n',tmp_filename);
+            tmp_load_struct = load(tmp_filename);
+            hd_vec= tmp_load_struct.hd_vec;
+        else % otherwise calculate HD vector and save it to static folder
+            fprintf('New HD vector is calculated for %d MC scenarios and saved in static foler\n',mc);
+            minhd           = min(2*confi_scenario+1,mc);
+            hd_vec_min      = zeros(max(confi_scenario-500,0)-1,1);
+            hd_vec_max      = zeros(mc-min(confi_scenario+500,mc)-1,1);
+            tt              = max(confi_scenario-500,0):1:min(confi_scenario+500,mc);
+            hd_vec_func     = harrell_davis_weight(mc,tt,confi)';
+            hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
+            save ('-v7',tmp_filename,'hd_vec');
+        end
+        %size_hdvec = size(hd_vec);
     end
-    %size_hdvec = size(hd_vec);
 end
 % a) loop over all portfolios (outer loop) and via all positions (inner loop)
 for mm = 1 : 1 : length( portfolio_struct )
@@ -572,6 +625,8 @@ for mm = 1 : 1 : length( portfolio_struct )
     position_struct = portfolio_struct( mm ).position;
     portfolio_value = 0;
     PositionStructlength = length( position_struct  );
+    fprintf('=== Aggregation for Portfolio >>%s<< ===\n',tmp_port_id);
+    fprintf('ID,BaseValue,Quantity,FX_Rate,Portfoliovalue\n');
     for ii = 1 : 1 : length( position_struct  )
         tmp_id = position_struct( ii ).id;
         tmp_quantity = position_struct( ii ).quantity;
@@ -593,9 +648,10 @@ for mm = 1 : 1 : length( portfolio_struct )
                         error('octarisk: WARNING: No index_struct object found for FX id >>%s<<\n',tmp_fx_index);
                     end	
 					tmp_fx_rate = tmp_fx_struct_obj.getValue('base');
-			end        
+			end              
 			position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate;
 			portfolio_value = portfolio_value + tmp_value .* tmp_quantity  ./ tmp_fx_rate;
+            fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f\n',tmp_id,tmp_value,tmp_quantity,tmp_fx_rate,portfolio_value);
 		catch	% if instrument not found raise warning and populate cell
 			fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
 			position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
@@ -617,7 +673,9 @@ for mm = 1 : 1 : length( portfolio_struct )
     fprintf(fid, 'Portfolio name: %s \n',tmp_port_name);
     fprintf(fid, 'Portfolio description: %s \n',tmp_port_description);
     fprintf(fid, 'VaR calculated at %2.1f%% confidence intervall: \n',confidence.*100);
-    fprintf(fid, 'Number of Monte Carlo Scenarios: %i \n', mc);
+    if (run_mc == true)
+        fprintf(fid, 'Number of Monte Carlo Scenarios: %i \n', mc);
+    end
     fprintf(fid, 'Valuation Date: %s \n',datestr(valuation_date));
     fprintf(fid, 'Portfolio currency: %s \n',fund_currency);
     fprintf(fid, 'Portfolio base value: %9.2f %s \n',base_value,fund_currency);   
@@ -628,7 +686,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     tmp_scen_set  = scenario_set{ kk };    % get timestep string
  
   % ##############################    BEGIN  MC REPORTS    ##############################
-  if ~( strcmp(tmp_scen_set,'stress') )     % MC scenario
+  if ~( strcmpi(tmp_scen_set,'stress') || strcmpi(tmp_scen_set,'base'))     % MC scenario
     tmp_ts      = scenario_ts_days(kk);  % get timestep days 
     fprintf('Aggregation for time step: %d \n',tmp_ts);
     fprintf('Aggregation for scenario set: %s \n',tmp_scen_set);     
@@ -691,7 +749,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     nu = length(evt_tail_shock);   
     [VAR_EVT_shock ES_EVT_shock]        = get_gpd_var(chi, sigma, u, gpd_confidence_levels, mc, nu);        
    else % apply dummy values
-    [VAR_EVT_shock ES_EVT_shock]    = horzcat(zeros(length(gpd_confidence_levels),1), zeros(length(gpd_confidence_levels),1));
+    [VAR_EVT_shock]    = horzcat(zeros(length(gpd_confidence_levels),1), zeros(length(gpd_confidence_levels),1));
+    ES_EVT_shock = VAR_EVT_shock;
    end
 
 
@@ -989,7 +1048,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 
 
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    BEGIN  STRESS REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
-elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
+elseif ( strcmpi(tmp_scen_set,'stress') )     % Stress scenario
     % prepare stresstest plotting and report output
     stresstest_plot_desc = {stresstest_struct.id};
     portfolio_stress    = zeros(no_stresstests,1);
@@ -1020,7 +1079,7 @@ elseif ( strcmp(tmp_scen_set,'stress') )     % Stress scenario
 			  
 			% Store new Values in Position's struct
 			pos_vec_stress  = new_value_vec_stress .*  sign(tmp_quantity) ./ tmp_fx_value_stress;
-			octamat = [  pos_vec_shock ] ;
+			%octamat = [  pos_vec_stress ] ;
 			position_struct( ii ).stresstests = pos_vec_stress;
 			portfolio_stress = portfolio_stress + new_value_vec_stress .*  tmp_quantity ./ tmp_fx_value_stress;
 		catch	% if instrument not found raise warning and populate cell

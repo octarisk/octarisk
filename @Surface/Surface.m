@@ -5,7 +5,10 @@ classdef Surface
       id = '';
       description = '';
       type = ''; 
-      moneyness_type = 'K/S';
+      moneyness_type = 'K/S'; % in list {'K/S','K-S'}
+      compounding_type = 'cont';
+      compounding_freq = 'annual';               
+      day_count_convention = 'act/365';
       method_interpolation = 'linear';    % 3D: [linear,nearest]
       shock_struct = struct();      % structure containing risk factor shocks
       riskfactors = {};             % cell containing all risk factors
@@ -18,7 +21,8 @@ classdef Surface
       values_base = [];
       axis_x_name = '';
       axis_y_name = '';
-      axis_z_name = '';    
+      axis_z_name = ''; 
+      basis = 3;      
     end
  
    % Class methods
@@ -96,6 +100,41 @@ classdef Surface
          end
          obj.type = type;
       end % Set.type
+      
+      function obj = set.day_count_convention(obj,day_count_convention)
+        obj.day_count_convention = day_count_convention;
+        % Call superclass method to set basis
+        obj.basis = Instrument.get_basis(obj.day_count_convention);
+      end % set.day_count_convention
+      
+      function obj = set.moneyness_type(obj,moneyness_type)
+        moneyness_type = upper(moneyness_type);
+        moneyness_type = strrep (moneyness_type,' ', '');
+        if ~(sum(strcmpi(moneyness_type,{'K/S','K-S'}))>0  )
+            fprintf('Curve:set: for curve >>%s<<: moneyness_type >>%s<< must be K/S or K-S. Setting to >>K/S<<\n',obj.id,moneyness_type);
+            moneyness_type = 'K/S';
+        end
+         obj.moneyness_type = moneyness_type;
+      end % set.moneyness_type
+      
+      function obj = set.compounding_freq(obj,compounding_freq)
+        compounding_freq = lower(compounding_freq);
+        if ~(sum(strcmpi(compounding_freq,{'day','daily','week','weekly','month','monthly','quarter','quarterly','semi-annual','annual'}))>0  )
+            fprintf('Curve:set: for curve >>%s<<: compounding_freq >>%s<< must be either day,daily,week,weekly,month,monthly,quarter,quarterly,semi-annual,annual. Setting to >>annual<<\n',obj.id,compounding_freq);
+            compounding_freq = 'annual';
+        end
+         obj.compounding_freq = compounding_freq;
+      end % set.compounding_freq
+      
+      
+      function obj = set.compounding_type(obj,compounding_type)
+        compounding_type = lower(compounding_type);
+        if ~(sum(strcmpi(compounding_type,{'simple','continuous','discrete'}))>0  )
+            fprintf('Curve:set: for curve >>%s<<: Compounding type >>%s<< must be either >>simple<<, >>continuous<<, or >>discrete<<. Setting to >>continuous<<\n',obj.id,compounding_type);
+            compounding_type = 'continuous';
+        end
+         obj.compounding_type = compounding_type;
+      end % set.compounding_type
       
       function obj = set.method_interpolation(obj,method_interpolation)
          if ~(sum(strcmpi(method_interpolation,{'linear','nearest'}))>0  )

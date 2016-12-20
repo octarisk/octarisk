@@ -52,7 +52,7 @@ for jj = 1 : 1 : length(tmp_instruments)
         % 2nd try: find underlying in instrument_struct
         [und_obj  object_ret_code_new]  = get_sub_object(index_struct, tmp_underlying);
         if ( object_ret_code_new == 0 )
-            fprintf('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_underlying);
+            fprintf('WARNING: get_basket_volatility:  No instrument_struct object found for id >>%s<<\n',tmp_underlying);
         end
     end
     % Get Value from full valuated underlying:
@@ -76,14 +76,14 @@ basket_value = (underlying_weights * underlying_values')';
 tmp_corr_matrix = basket.get('correlation_matrix');
 [corr_matrix  object_ret_code]  = get_sub_object(matrix_struct, tmp_corr_matrix);
 if ( object_ret_code == 0 )
-    fprintf('octarisk: WARNING: No matrix_struct object found for id >>%s<<\n',tmp_corr_matrix);
+    fprintf('WARNING: get_basket_volatility:  No matrix_struct object found for id >>%s<<\n',tmp_corr_matrix);
 end
 
 % 3. get discount curve of synthetic instrument
 tmp_discount = basket.get('discount_curve');
 [discount_curve  object_ret_code]  = get_sub_object(curve_struct, tmp_discount);
 if ( object_ret_code == 0 )
-    fprintf('octarisk: WARNING: No curve_struct object found for id >>%s<<\n',tmp_discount);
+    fprintf('WARNING: get_basket_volatility: No curve_struct object found for id >>%s<<\n',tmp_discount);
 end
 rf_rate          = discount_curve.getRate(value_type,dtm);
     
@@ -98,7 +98,7 @@ for jj = 1 : 1 : length(tmp_vol_surfaces)
     tmp_vol_surface             = tmp_vol_surfaces{jj};
     [vol_obj  object_ret_code]  = get_sub_object(surface_struct, tmp_vol_surface);
     if ( object_ret_code == 0 )
-        fprintf('octarisk: WARNING: No surface_struct object found for id >>%s<<\n',tmp_vol_surface);
+        fprintf('WARNING: get_basket_volatility: No surface_struct object found for id >>%s<<\n',tmp_vol_surface);
     end    
     % Get implied vola scenario value (based on volatility surface object and
     %   vola risk factor

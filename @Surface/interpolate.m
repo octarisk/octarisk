@@ -52,9 +52,9 @@ function y = interpolate (surface, xx,yy,zz)
           end
         elseif (len == 3 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) > 0 )  %second case: object is cube 
           if ( strcmpi(s.axis_x_name,'TENOR') && strcmpi(s.axis_y_name,'TERM')  && strcmpi(s.axis_z_name,'MONEYNESS') )
-            xx_structure = s.axis_x;  
-            yy_structure = s.axis_y; 
-            zz_structure = s.axis_z;  
+            xx_structure = s.axis_x;
+            yy_structure = s.axis_y;
+            zz_structure = s.axis_z;
             vola_cube = s.values_base;
             % expand vectors and matrizes for constant extrapolation (add additional time steps and moneynesses, duplicate rows and cols)
             xx_structure = [0,xx_structure,100000];
@@ -82,7 +82,7 @@ function y = interpolate (surface, xx,yy,zz)
                 % Trilinear Interpolation:
                 x = xx(1);
                 y = yy(1);
-                z = zz(1);
+                z = zz;
                 % get index values of 6 previous and next points on all axis
                 x0 = interp1(xx_structure,xx_structure,x,'previous');
                 x1 = interp1(xx_structure,xx_structure,x,'next');
@@ -101,18 +101,23 @@ function y = interpolate (surface, xx,yy,zz)
                 else
                     yd = (y - y0) / (y1 - y0);
                 end
-                if ( z0 == z1)
-                    zd = 0;
-                else
-                    zd = (z - z0) / (z1 - z0);
-                end
+                % if ( z0 == z1)
+                    % zd = 0;
+                % else
+                    % zd = (z - z0) ./ (z1 - z0);
+                % end
+                % return vector zd
+                zd = (1 - ( z0 == z1)) .* (z - z0) ./ (z1 - z0);
+                zd(isnan(zd))=0;
                 % get indizes   
                 index_x0 = find(xx_structure==x0);
                 index_x1 = find(xx_structure==x1);
                 index_y0 = find(yy_structure==y0);
                 index_y1 = find(yy_structure==y1);
-                index_z0 = find(zz_structure==z0);
-                index_z1 = find(zz_structure==z1);
+                tmp_z0 = (zz_structure==z0);
+                index_z0 = sum(tmp_z0 .* [1:1:columns(tmp_z0)],2);
+                tmp_z1 = (zz_structure==z1);
+                index_z1 = sum(tmp_z1 .* [1:1:columns(tmp_z1)],2);
                 % extract volatility value
                 V_x0y0z0 = vola_cube(index_y0,index_x0,index_z0);
                 V_x0y0z1 = vola_cube(index_y0,index_x0,index_z1);
@@ -122,16 +127,27 @@ function y = interpolate (surface, xx,yy,zz)
                 V_x1y0z1 = vola_cube(index_y0,index_x1,index_z1);
                 V_x1y1z0 = vola_cube(index_y1,index_x1,index_z0);
                 V_x1y1z1 = vola_cube(index_y1,index_x1,index_z1);
+                % reshaping results
+                [rr cc uu] = size(V_x0y0z0);
+                V_x0y0z0 = reshape(V_x0y0z0,uu,1,1);
+                V_x0y0z1 = reshape(V_x0y0z1,uu,1,1);
+                V_x0y1z0 = reshape(V_x0y1z0,uu,1,1);
+                V_x0y1z1 = reshape(V_x0y1z1,uu,1,1);
+                V_x1y0z0 = reshape(V_x1y0z0,uu,1,1);
+                V_x1y0z1 = reshape(V_x1y0z1,uu,1,1);
+                V_x1y1z0 = reshape(V_x1y1z0,uu,1,1);
+                V_x1y1z1 = reshape(V_x1y1z1,uu,1,1);
+                
                 % interpolate along x axis
-                c00 = V_x0y0z0 * ( 1 - xd ) + V_x1y0z0 * xd;
-                c01 = V_x0y0z1 * ( 1 - xd ) + V_x1y0z1 * xd;
-                c10 = V_x0y1z0 * ( 1 - xd ) + V_x1y1z0 * xd;
-                c11 = V_x0y1z1 * ( 1 - xd ) + V_x1y1z1 * xd;
+                c00 = V_x0y0z0 .* ( 1 - xd ) + V_x1y0z0 .* xd;
+                c01 = V_x0y0z1 .* ( 1 - xd ) + V_x1y0z1 .* xd;
+                c10 = V_x0y1z0 .* ( 1 - xd ) + V_x1y1z0 .* xd;
+                c11 = V_x0y1z1 .* ( 1 - xd ) + V_x1y1z1 .* xd;
                 % interpolate along y axis
-                c0 = c00 * (1 - yd ) + c10 * yd;
-                c1 = c01 * (1 - yd ) + c11 * yd;
+                c0 = c00 .* (1 - yd ) + c10 .* yd;
+                c1 = c01 .* (1 - yd ) + c11 .* yd;
                 % interpolate along x axis and return final value "y"
-                y = c0 * (1 - zd ) + c1 * zd;              
+                y = c0 .* (1 - zd ) + c1 .* zd;           
             end
           else
             error('ERROR: Assuming cube for IR vol with tenor, term and moneyness, got: %s, %s, %s',s.axis_x_name,s.axis_y_name,s.axis_z_name);

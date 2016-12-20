@@ -123,7 +123,7 @@ for ii = 1 : 1 : length(tmp_list_files)
           error_flag = 0;
           if (length(content{jj}) > 3)  % parse row only if it contains some meaningful data
             % B.3a) Generate object of appropriate class
-            if ( sum(strcmp(tmp_mktdata_type,{'INDEX'})) > 0)        % store data in Class INDEX
+            if ( sum(strcmp(tmp_mktdata_type,{'INDEX','FX'})) > 0)        % store data in Class INDEX
                 i = Index(); 
             elseif ( sum(strcmp(tmp_mktdata_type,{'CURVE','AGGREGATEDCURVE'}))  > 0)        % store data in Class CURVE
                 i = Curve(); 
@@ -133,6 +133,9 @@ for ii = 1 : 1 : length(tmp_list_files)
             % B.3b)  Loop through all mktdata attributes
             tmp_cell = content{jj};
             for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in row and set object attributes
+                if ( mm > length(tmp_colname)+1)
+                    error('load_mktdata_objects: more attributes than header values specified.');
+                end
                 tmp_columnname = lower(tmp_colname{mm-1});
                 tmp_cell_item = tmp_cell{mm};
                 tmp_cell_type = upper(tmp_header_type{mm-1});

@@ -15,6 +15,8 @@ classdef Curve
       ufr = 0.042; % ultimate forward rate for Smith-Wilson interpolation method
       % WARNING: american call or put option not implemented properly. Do not use!
       american_flag = 0; % specifying option type if used as call or put schedule
+      curve_function = 'sum';   % required for aggregated curves
+      curve_parameter = 1;      % required for aggregated curves
     end
    
     properties (SetAccess = protected )
@@ -80,7 +82,7 @@ classdef Curve
          % looping via all nodes if defined
          if ( length(a.nodes) > 0 )
             fprintf('Nodes:\n[ ');
-            for (ii = 1 : 1 : length(a.nodes))
+            for (ii = 1 : 1 : min(length(a.nodes),10) )
                 fprintf('%d,',a.nodes(ii));
             end
             fprintf(' ]\n');
@@ -142,10 +144,6 @@ classdef Curve
       end % Set.method_interpolation
       
       function obj = set.day_count_convention(obj,day_count_convention)
-        if ~(sum(strcmpi(day_count_convention,{'act/act','30/360 SIA','act/360','act/365','30/360 PSA','30/360 ISDA','30/360 European','act/365 Japanese','act/act ISMA','act/360 ISMA','act/365 ISMA','30/360E'}))>0  )
-            fprintf('Curve:set: for curve >>%s<<: day_count_convention >>%s<< must be either act/act,30/360 SIA,act/360,act/365,30/360 PSA,30/360 ISDA,30/360 European,act/365 Japanese,act/act ISMA,act/360 ISMA,act/365 ISMA,30/360E Setting to >>act/365<<\n',obj.id,day_count_convention);
-            day_count_convention = 'act/365';
-        end
         obj.day_count_convention = day_count_convention;
         % Call superclass method to set basis
         obj.basis = Instrument.get_basis(obj.day_count_convention);
@@ -188,6 +186,14 @@ classdef Curve
              obj.rates_mc = min(obj.rates_mc,cap);
          end
       end % set.cap
+      
+      function obj = set.curve_function(obj,curve_function)
+         if ~(strcmpi(curve_function,'sum') || strcmpi(curve_function,'factor') ...
+                || strcmpi(curve_function,'product') || strcmpi(curve_function,'divide'))
+            error('Bond curve_function must be either sum, factor, product or divide : %s for id >>%s<<.\n',curve_function,obj.id);
+         end
+         obj.curve_function = tolower(curve_function);
+      end % set.curve_function
       
    end
    

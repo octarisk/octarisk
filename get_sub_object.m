@@ -17,7 +17,8 @@
 %# @end deftypefn
 
 % function for extracting sub-structure object from struct object according to id
-function  [match_obj ret_code] = get_sub_object(input_struct, input_id)	
+function  [match_obj ret_code matches] = get_sub_object(input_struct, input_id)	
+    matches = 0;
     % check whether input struct is not empty
     if ~( isfield(input_struct,'id'))
         match_obj = '';

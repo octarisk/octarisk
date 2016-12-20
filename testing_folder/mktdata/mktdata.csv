@@ -18,5 +18,6 @@ Curve,AGGR_EUR_FIN_BBB,AGGR_EUR_FIN_BBB,Aggregated Curve,Aggregated Spread Curve
 HeaderINDEX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR
 Index,EQ_DE,DAX30,Equity Index,EUR,DAX Equity Index German Blue Chips,9820
 Index,COM_GOLD,Gold,Commodity Index,USD,Gold 1 Ounce USD,1073
+HeaderFX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR
 Index,FX_EURUSD,EUR_USD,Exchange Rate,EUR,EUR USD Exchange rate,1.08
 Index,FX_EURCAD,EUR_CAD,Exchange Rate,EUR,EUR CAD Exchange rate,1.25

@@ -16,14 +16,14 @@
 %# Load data from position specification file and generate objects with parsed data. Store all objects in provided position struct and return the final struct and a cell containing the failed position ids.
 %# @end deftypefn
 
-function [tmp_portfolio_struct id_failed_cell] = load_positions(portfolio_struct, path_positions,file_positions,path_output,path_archive,tmp_timestamp,archive_flag)
+function [tmp_portfolio_struct id_failed_cell positions_cell] = load_positions(portfolio_struct, path_positions,file_positions,path_output,path_archive,tmp_timestamp,archive_flag)
 
 % A) Prepare position object generation
 % A.0) Specify local variables
 separator = ',';
 path_positions_in = strcat(path_positions,'/',file_positions);
 path = path_output;
-
+positions_cell = {};
 % A.1) delete all old files in path_output
 oldfiles = dir(path);
 try
@@ -47,7 +47,7 @@ file_comments = fopen( strcat(path,'/','comments.txt'), 'a');
 % A.6) loop via all entries of cell and save into files per position type
 for ii = 1 : 1 : length(celltmp);
     tmp_entries = celltmp{ii};
-    if ( regexp(tmp_entries,'#') == 1)    % comment -> skip  print comment to stdout
+    if ( regexpi(tmp_entries,'#'))    % comment -> skip  print comment to stdout
         fprintf(file_comments, 'Comment found: %s\n',tmp_entries); 
     elseif ( ~isempty(tmp_entries) )
         % extract filename:
@@ -209,6 +209,8 @@ for ii = 1 : 1 : length(tmp_list_files)
                     number_portfolios = number_portfolios + 1;
                 elseif ( strcmpi(tmp_position_type,'POSITION'))
                     number_positions = number_positions + 1;
+                    % add position id to position_cell
+                    positions_cell{ length(positions_cell) + 1 } =  tmp_cell_struct{1, jj - 1};
                 end
                 number_positions = number_positions + 1;
             end

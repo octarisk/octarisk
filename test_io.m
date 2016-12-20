@@ -214,16 +214,16 @@ try
         fprintf('=== Processing object >>%s<< \n',tmp_instrument_struct(ii).id);
         object_struct(ii).id     = tmp_instrument_struct(ii).id;
         object_struct(ii).name   = tmp_instrument_struct(ii).name;
-        tmp_obj = struct2obj(tmp_instrument_struct(ii).object);
+        tmp_obj = struct2obj(tmp_instrument_struct(ii).object,0);
         object_struct(ii).object = tmp_obj;
         % compare new object with original object
         if (isequal(tmp_obj,instrument_struct(ii).object))
             fprintf('SUCCESS: Objects are equal.\n');
             equal_objects = equal_objects + 1;
         else
-            error('ERROR: Objects are not equal:');
             tmp_obj
             instrument_struct(ii).object
+            error('ERROR: Objects are not equal:');
         end
     end
     % compare number of equal objects

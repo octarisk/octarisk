@@ -40,10 +40,10 @@ if nargin < 2
    error('Needed at least date1 and date2')
 end
 if ischar(d1)
-   d1 = datenum(d1);
+   d1 = datenum(d1,1);
 end
 if ischar(d2)
-   d2 = datenum(d2);
+   d2 = datenum(d2,1);
 end
 
 if nargin < 3
@@ -179,19 +179,19 @@ elseif (any(basis == [0,8]))            % YYY/actual
         years2 = dvec2(:,1);
         % if years1 == years2 
         y1_eq_y2 = years1 == years2;
-            dip_y1_eq_y2 = datenum(dvec2) - datenum(dvec1);
-            dib_y1_eq_y2 = yeardays(years1,basis);
+            dip_y1_eq_y2 = d2 - d1;
+            dib_y1_eq_y2 = yeardays_actual(years1);
         % elseif  years2 > years1
         y2_gt_y1 = years2 > years1;
             y1_ymonth_day_matrix = repmat([12,31,0,0,0],length(years1),1);
             y2_ymonth_day_matrix = repmat([01,01,0,0,0],length(years2),1);
             end_of_year_period1 = horzcat(years1,y1_ymonth_day_matrix);
             begin_of_year_period2 = horzcat(years2,y2_ymonth_day_matrix);
-            days_period1 = datenum(end_of_year_period1) - datenum(dvec1);
-            days_period2 = datenum(dvec2) - datenum(begin_of_year_period2) + 1;
+            days_period1 = datenum(end_of_year_period1) - d1;
+            days_period2 = d2 - datenum(begin_of_year_period2) + 1;
             dib_y2_gt_y1 = 1;
-            dip_y2_gt_y1 = (days_period1 ./ yeardays(years1,basis)) + ...
-                (days_period2 ./ yeardays(years2,basis)) + (years2 - years1 - 1);           
+            dip_y2_gt_y1 = (days_period1 ./ yeardays_actual(years1)) + ...
+                (days_period2 ./ yeardays_actual(years2)) + (years2 - years1 - 1);           
         % else
         y1_gt_y2 = years1 > years2;
             dip_y1_gt_y2 = 0;
@@ -207,6 +207,13 @@ tf = dip ./ dib;
  
 end
  
+% helper function yeardays_actual()
+function days = yeardays_actual(year)
+    days = 365 + (eomday(year, 2) == 29);
+end
+
+
+% testing
 %!assert(timefactor('31-Dec-2015','29-Feb-2024',0),8.16393410,0.000001) 
 %!assert(timefactor('31-Dec-2015','29-Feb-2024',3),8.16986310,0.000001) 
 %!assert(timefactor('31-Dec-2015','29-Feb-2024',22),8.16986310,0.000001) 

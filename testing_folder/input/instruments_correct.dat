@@ -1,4 +1,4 @@
-# Created by Octave 4.0.0, Mon Nov 14 16:47:59 2016 W. Europe Standard Time <unknown@T43NB067>
+# Created by Octave 4.0.0, Mon Dec 19 18:06:18 2016 W. Europe Standard Time <unknown@T43NB067>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
@@ -649,10 +649,15 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 80
+# length: 90
 # name: accrued_interest
 # type: scalar
 0
+
+
+# name: alpha
+# type: scalar
+0.1
 
 
 # name: asset_class
@@ -679,7 +684,12 @@ Fixed Income
 
 # name: calibration_flag
 # type: scalar
-0
+1
+
+
+# name: call_schedule
+# type: null_sq_string
+# elements: 0
 
 
 # name: cf_dates
@@ -836,6 +846,16 @@ IR_EUR
 0
 
 
+# name: embedded_option_flag
+# type: bool
+0
+
+
+# name: embedded_option_value
+# type: scalar
+0
+
+
 # name: enable_business_day_rule
 # type: scalar
 0
@@ -968,6 +988,11 @@ full
 0
 
 
+# name: prorated
+# type: bool
+1
+
+
 # name: psa_factor_term
 # type: matrix
 # rows: 1
@@ -975,9 +1000,21 @@ full
  365 1825
 
 
+# name: put_schedule
+# type: null_sq_string
+# elements: 0
+
+
 # name: pv01
 # type: scalar
 0
+
+
+# name: rate_composition
+# type: sq_string
+# elements: 1
+# length: 10
+capitalize
 
 
 # name: reference_curve
@@ -985,6 +1022,11 @@ full
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: sigma
+# type: scalar
+0.01
 
 
 # name: soy
@@ -1064,6 +1106,11 @@ CASHFLOW
 # columns: 0
 
 
+# name: treenodes
+# type: scalar
+50
+
+
 # name: type
 # type: sq_string
 # elements: 1
@@ -1101,6 +1148,11 @@ bond
 # name: vola_spread
 # type: scalar
 0
+
+
+# name: vola_surface
+# type: null_sq_string
+# elements: 0
 
 
 # name: ytm
@@ -1899,10 +1951,15 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 80
+# length: 90
 # name: accrued_interest
 # type: scalar
 0
+
+
+# name: alpha
+# type: scalar
+0.1
 
 
 # name: asset_class
@@ -1929,7 +1986,12 @@ Fixed Income
 
 # name: calibration_flag
 # type: scalar
-0
+1
+
+
+# name: call_schedule
+# type: null_sq_string
+# elements: 0
 
 
 # name: cf_dates
@@ -2084,6 +2146,16 @@ AGGR_EUR_FIN_BBB
 0
 
 
+# name: embedded_option_flag
+# type: bool
+0
+
+
+# name: embedded_option_value
+# type: scalar
+0
+
+
 # name: enable_business_day_rule
 # type: bool
 0
@@ -2218,6 +2290,11 @@ full
 0
 
 
+# name: prorated
+# type: bool
+1
+
+
 # name: psa_factor_term
 # type: matrix
 # rows: 1
@@ -2225,9 +2302,21 @@ full
  365 1825
 
 
+# name: put_schedule
+# type: null_sq_string
+# elements: 0
+
+
 # name: pv01
 # type: scalar
 0
+
+
+# name: rate_composition
+# type: sq_string
+# elements: 1
+# length: 10
+capitalize
 
 
 # name: reference_curve
@@ -2235,6 +2324,11 @@ full
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: sigma
+# type: scalar
+0.01
 
 
 # name: soy
@@ -2314,6 +2408,11 @@ FRB
 # columns: 0
 
 
+# name: treenodes
+# type: scalar
+50
+
+
 # name: type
 # type: sq_string
 # elements: 1
@@ -2353,6 +2452,11 @@ bond
 0
 
 
+# name: vola_surface
+# type: null_sq_string
+# elements: 0
+
+
 # name: ytm
 # type: scalar
 0
@@ -2365,10 +2469,15 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 80
+# length: 90
 # name: accrued_interest
 # type: scalar
 0
+
+
+# name: alpha
+# type: scalar
+0.1
 
 
 # name: asset_class
@@ -2395,7 +2504,12 @@ Fixed Income
 
 # name: calibration_flag
 # type: scalar
-0
+1
+
+
+# name: call_schedule
+# type: null_sq_string
+# elements: 0
 
 
 # name: cf_dates
@@ -2550,6 +2664,16 @@ IR_EUR
 0
 
 
+# name: embedded_option_flag
+# type: bool
+0
+
+
+# name: embedded_option_value
+# type: scalar
+0
+
+
 # name: enable_business_day_rule
 # type: bool
 0
@@ -2684,6 +2808,11 @@ full
 0
 
 
+# name: prorated
+# type: bool
+1
+
+
 # name: psa_factor_term
 # type: matrix
 # rows: 1
@@ -2691,9 +2820,21 @@ full
  365 1825
 
 
+# name: put_schedule
+# type: null_sq_string
+# elements: 0
+
+
 # name: pv01
 # type: scalar
 0
+
+
+# name: rate_composition
+# type: sq_string
+# elements: 1
+# length: 10
+capitalize
 
 
 # name: reference_curve
@@ -2701,6 +2842,11 @@ full
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: sigma
+# type: scalar
+0.01
 
 
 # name: soy
@@ -2780,6 +2926,11 @@ FRB
 # columns: 0
 
 
+# name: treenodes
+# type: scalar
+50
+
+
 # name: type
 # type: sq_string
 # elements: 1
@@ -2819,6 +2970,11 @@ bond
 0
 
 
+# name: vola_surface
+# type: null_sq_string
+# elements: 0
+
+
 # name: ytm
 # type: scalar
 0
@@ -2831,10 +2987,15 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 80
+# length: 90
 # name: accrued_interest
 # type: scalar
 0
+
+
+# name: alpha
+# type: scalar
+0.1
 
 
 # name: asset_class
@@ -2861,7 +3022,12 @@ Fixed Income
 
 # name: calibration_flag
 # type: scalar
-0
+1
+
+
+# name: call_schedule
+# type: null_sq_string
+# elements: 0
 
 
 # name: cf_dates
@@ -3016,6 +3182,16 @@ IR_EUR
 0
 
 
+# name: embedded_option_flag
+# type: bool
+0
+
+
+# name: embedded_option_value
+# type: scalar
+0
+
+
 # name: enable_business_day_rule
 # type: scalar
 0
@@ -3150,6 +3326,11 @@ full
 0
 
 
+# name: prorated
+# type: bool
+1
+
+
 # name: psa_factor_term
 # type: matrix
 # rows: 1
@@ -3157,9 +3338,21 @@ full
  365 1825
 
 
+# name: put_schedule
+# type: null_sq_string
+# elements: 0
+
+
 # name: pv01
 # type: scalar
 0
+
+
+# name: rate_composition
+# type: sq_string
+# elements: 1
+# length: 10
+capitalize
 
 
 # name: reference_curve
@@ -3167,6 +3360,11 @@ full
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: sigma
+# type: scalar
+0.01
 
 
 # name: soy
@@ -3246,6 +3444,11 @@ FRN
 # columns: 0
 
 
+# name: treenodes
+# type: scalar
+50
+
+
 # name: type
 # type: sq_string
 # elements: 1
@@ -3283,6 +3486,11 @@ bond
 # name: vola_spread
 # type: scalar
 0
+
+
+# name: vola_surface
+# type: null_sq_string
+# elements: 0
 
 
 # name: ytm
@@ -3339,9 +3547,8 @@ ETF012
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -3456,9 +3663,8 @@ DBX1EU
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -3573,9 +3779,8 @@ ETF114
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -3690,9 +3895,8 @@ A0DPMW
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -3807,9 +4011,8 @@ ETF127
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -3924,9 +4127,8 @@ DBX1A7
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -4041,9 +4243,8 @@ LYX0BX
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -4158,9 +4359,8 @@ ETF060
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -4275,9 +4475,8 @@ LYX0AG
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -4410,9 +4609,8 @@ A0LGQL
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -4779,9 +4977,8 @@ BTCOIN
 
 
 # name: idio_vola
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: name
@@ -4854,10 +5051,15 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 80
+# length: 90
 # name: accrued_interest
 # type: scalar
 0
+
+
+# name: alpha
+# type: scalar
+0.1
 
 
 # name: asset_class
@@ -4884,7 +5086,12 @@ Fixed Income
 
 # name: calibration_flag
 # type: scalar
-0
+1
+
+
+# name: call_schedule
+# type: null_sq_string
+# elements: 0
 
 
 # name: cf_dates
@@ -5039,6 +5246,16 @@ IR_EUR
 0
 
 
+# name: embedded_option_flag
+# type: bool
+0
+
+
+# name: embedded_option_value
+# type: scalar
+0
+
+
 # name: enable_business_day_rule
 # type: scalar
 0
@@ -5173,6 +5390,11 @@ full
 0
 
 
+# name: prorated
+# type: bool
+1
+
+
 # name: psa_factor_term
 # type: matrix
 # rows: 1
@@ -5180,9 +5402,21 @@ full
  365 1825
 
 
+# name: put_schedule
+# type: null_sq_string
+# elements: 0
+
+
 # name: pv01
 # type: scalar
 0
+
+
+# name: rate_composition
+# type: sq_string
+# elements: 1
+# length: 10
+capitalize
 
 
 # name: reference_curve
@@ -5190,6 +5424,11 @@ full
 # elements: 1
 # length: 6
 IR_EUR
+
+
+# name: sigma
+# type: scalar
+0.01
 
 
 # name: soy
@@ -5269,6 +5508,11 @@ ZCB
 # columns: 0
 
 
+# name: treenodes
+# type: scalar
+50
+
+
 # name: type
 # type: sq_string
 # elements: 1
@@ -5308,6 +5552,11 @@ bond
 0
 
 
+# name: vola_surface
+# type: null_sq_string
+# elements: 0
+
+
 # name: ytm
 # type: scalar
 0
@@ -5320,7 +5569,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 36
+# length: 39
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5331,6 +5580,16 @@ Derivative
 # name: basis
 # type: scalar
 3
+
+
+# name: calibration_flag
+# type: scalar
+1
+
+
+# name: call_flag
+# type: bool
+1
 
 
 # name: cf_dates
@@ -5397,6 +5656,11 @@ IR_EUR
 SWAPTIONC20180317
 
 
+# name: implied_volatility
+# type: scalar
+0
+
+
 # name: maturity_date
 # type: sq_string
 # elements: 1
@@ -5408,7 +5672,7 @@ SWAPTIONC20180317
 # type: sq_string
 # elements: 1
 # length: 7
-Black76
+black76
 
 
 # name: multiplier
@@ -5571,9 +5835,8 @@ rate
 
 
 # name: barrierlevel
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: basis
@@ -5691,9 +5954,8 @@ BjSten
 
 
 # name: rebate
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: spot
@@ -5856,9 +6118,8 @@ rate
 
 
 # name: barrierlevel
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: basis
@@ -5976,9 +6237,8 @@ BjSten
 
 
 # name: rebate
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: spot
@@ -6424,9 +6684,8 @@ rate
 
 
 # name: barrierlevel
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: basis
@@ -6544,9 +6803,8 @@ BjSten
 
 
 # name: rebate
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 # name: spot

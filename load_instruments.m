@@ -170,7 +170,7 @@ for ii = 1 : 1 : length(tmp_list_files)
           error_flag = 0;
           if (length(content{jj}) > 3)  % parse row only if it contains some meaningful data
             % B.3a) Generate object of appropriate class
-            if ( sum(strcmpi(tmp_instrument_type,{'FRB','FRN','ZCB','FAB','CASHFLOW','BOND'})) > 0)        % store data in Class Bond
+            if ( sum(strcmpi(tmp_instrument_type,{'FRB','FRN','ZCB','FAB','CASHFLOW','BOND','SWAPFIXED','SWAPFLOAT'})) > 0)        % store data in Class Bond
                 i = Bond(); 
             elseif ( sum(strcmpi(tmp_instrument_type,{'FWD'})) > 0)        % store data in Class Forward
                 i = Forward();  
@@ -184,9 +184,9 @@ for ii = 1 : 1 : length(tmp_list_files)
                 i = Sensitivity();  
             elseif ( sum(strcmpi(tmp_instrument_type,{'SYNTH'})) > 0)        % store data in Class Synthetic Instrument
                 i = Synthetic();  
-            elseif ( regexp(tmp_instrument_type,'OPT') == 1)        % store data in Class Option
+            elseif ( regexpi(tmp_instrument_type,'OPT') == 1)        % store data in Class Option
                 i = Option(); 
-            elseif ( regexp(tmp_instrument_type,'SWAPT') == 1)      % store data in Class Swaption
+            elseif ( regexpi(tmp_instrument_type,'SWAPT') == 1)      % store data in Class Swaption
                 i = Swaption(); 
             elseif ( sum(strcmpi(tmp_instrument_type,{'CASH'})) > 0)  % store data in Class Cash
                 i = Cash();                     
@@ -201,7 +201,11 @@ for ii = 1 : 1 : length(tmp_list_files)
                 % B.3b.i) convert item to appropriate type
                 if ( strcmpi(tmp_cell_type,'NMBR'))
                     try
-                        tmp_entry = str2num(tmp_cell_item);
+                        if ( isempty(tmp_cell_item))
+                            tmp_entry = 0.0;
+                        else
+                            tmp_entry = str2num(tmp_cell_item);
+                        end
                     catch
                         fprintf('Item >>%s<< is not NUMERIC \n',tmp_cell_item);
                         tmp_entry = 0.0;
@@ -239,7 +243,12 @@ for ii = 1 : 1 : length(tmp_list_files)
                             tmp_entry = str2num(tmp_cell_item);
                             tmp_entry = datestr(valuation_date + tmp_entry);
                         else % otherwise assume its a date
-                            tmp_entry = datestr(tmp_cell_item);
+                            % check for empty date
+                            if ( isempty(tmp_cell_item) )
+                                tmp_entry = datestr(valuation_date);
+                            else
+                                tmp_entry = datestr(tmp_cell_item);
+                            end
                         end
                     catch
                         fprintf('Item >>%s<< is not a DATE \n',tmp_cell_item);
@@ -247,7 +256,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                         error_flag = 1;
                     end
                 else
-                    fprintf('Unknown type: >>%s<< for item value >>%s<<. Aborting: >>%s<< \n',tmp_cell_type,tmp_cell_item,lasterr);
+                    fprintf('Unknown type: >>%s<< for item value >>%s<< in line >>%d<< and column >>%d<<.\n Aborting: >>%s<< \n',tmp_cell_type,tmp_cell_item,jj,mm,lasterr);
                 end
                 % fprintf('Trying to store item:');
                     % tmp_entry
@@ -259,18 +268,25 @@ for ii = 1 : 1 : length(tmp_list_files)
                 % B.3b.ii) Store attribute in object
                 
                 try
-                    
                     % special case: cf_dates and cf_values come as vectors
                     if ( strcmp(tmp_columnname,'cf_dates'))
                         tmp_cf_dates= strsplit( tmp_entry, '|');
-                        % convert cashflow dates to numbers and apply busday rule
+                        % convert cashflow dates to numbers and apply busday rule                        
                         if ( length(tmp_entry) > 1 )
-                            tmp_cf_dates = busdate(datenum(tmp_cf_dates,1));
-                            tmp_entry = (tmp_cf_dates)' - valuation_date;
-                            i = i.set(tmp_columnname,tmp_entry);
+                            if (length(str2num(tmp_cf_dates{1})) > 0) % if cf_dates are days from valuation date
+                                tmp_entry = [];
+                                for ll = 1 : 1 : length(tmp_cf_dates)    % loop through all cash flows and convert it to numbers
+                                    tmp_entry = [tmp_entry, str2num(tmp_cf_dates{ll}) ];
+                                end
+                                i = i.set(tmp_columnname,tmp_entry);
+                            else    % otherwise cf_dates are datestrings
+                                tmp_cf_dates = busdate(datenum(tmp_cf_dates,1));
+                                tmp_entry = (tmp_cf_dates)' - valuation_date;
+                                i = i.set(tmp_columnname,tmp_entry);
+                            end
                         else
                             tmp_entry = [];
-                        end 
+                        end
                     elseif ( strcmp(tmp_columnname,'cf_values'))
                         tmp_entry_split = strsplit(tmp_entry, '|');
                         tmp_entry = [];
@@ -329,7 +345,7 @@ for ii = 1 : 1 : length(tmp_list_files)
                         end
                     end % end special case for cf dates and values
                 catch
-                    fprintf('Object attribute %s could not be set. There was an error: %s\n',tmp_columnname,lasterr);
+                    fprintf('Object attribute %s could not be set for line >>%d<< and column >>%d<<.\n There was an error: %s\n',tmp_columnname,jj,mm,lasterr);
                     error_flag = 1;
                 end
             end

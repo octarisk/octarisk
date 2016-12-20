@@ -241,7 +241,6 @@ if ( strcmpi(type,'special'))
       else
         retval = '';
       end
-    % ====================== set cap ======================
     else
         error ('return_checked_input: unknown input type >>%s<< and prop >>%s<< not a special input.',type,prop);
     end 

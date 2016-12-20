@@ -19,6 +19,7 @@ classdef Swaption < Instrument
         und_fixed_leg = '';         % String: underlying fixed leg
         und_floating_leg = '';      % String: underlying floating leg
         use_underlyings = false;    % BOOL: use underlying legs for valuation
+        calibration_flag = 1;       % BOOL: if true, no calibration will be done
     end
    
     properties (SetAccess = private)
@@ -27,10 +28,11 @@ classdef Swaption < Instrument
         cf_values = [];
         vola_spread = 0.0;
         sub_type = 'SWAPT_PAY';
-        model = 'BLACK76';
+        model = 'black';
         und_fixed_value = 0.0;
         und_float_value = 0.0;
         call_flag = false;
+        implied_volatility = 0.0;
     end
 
    methods
@@ -75,6 +77,9 @@ classdef Swaption < Instrument
          end
          if ~(b.und_fixed_value == 0.0)
             fprintf('und_fixed_value: %f \n',b.und_fixed_value);
+         end
+         if ~(b.implied_volatility == 0.0)
+            fprintf('implied_volatility: %f \n',b.implied_volatility);
          end
          if ~(b.vola_spread == 0.0)
             fprintf('vola_spread: %f \n',b.vola_spread);
@@ -129,6 +134,15 @@ classdef Swaption < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
+      
+      function obj = set.model(obj,model)
+        model = lower(model);
+        if ~(strcmpi(model,'normal') || strcmpi(model,'black') || strcmpi(model,'black76') )
+            error('Swaption model must be either normal or black')
+        end
+        obj.model = model;
+      end % set.model
+      
    end 
    
 end 
