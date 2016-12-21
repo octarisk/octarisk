@@ -1,6 +1,10 @@
 % method of class @Surface
 function [y value_base] = getValue (s, value_type, xx,yy,zz)
     % get interpolated market value from Surface/Cube
+    if ~(ischar(value_type))
+        fprintf('Surface.getValue: >>%s<< needs to be a char.\n',any2str(value_type));
+        error('Correct call: Surface.getValue(value_type,xx,[yy,[zz]])');
+    end
     if (nargin < 2)
         value_base = 0.0;
         xx = 0;

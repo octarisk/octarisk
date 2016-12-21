@@ -204,7 +204,7 @@ pkg load statistics;	% load statistics package (needed in scenario_generation_MC
 pkg load financial;		% load financial packages (needed throughout all scripts)
 
 % 2. VAR specific variables
-mc = 40000              % number of MonteCarlo scenarios
+mc = 50000              % number of MonteCarlo scenarios
 hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be used
 confidence = 0.995      % level of confidence vor MC VAR calculation
 copulatype = 'Gaussian'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
@@ -215,9 +215,9 @@ fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
 base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
 mc_timesteps    = {'250d'} %{'250d'}                % MC timesteps
-mc_timesteps    = {} %{'250d'}                % MC timesteps
+%mc_timesteps    = {} %{'250d'}                % MC timesteps
 scenario_set    = [mc_timesteps,'stress'];   % %       % append stress scenarios
-scenario_set    = {'stress'};   %{'stress'} %       % append stress scenarios
+%scenario_set    = {'stress'};   %{'stress'} %       % append stress scenarios
 gpd_confidence_levels = [0.9;0.95;0.975;0.99;0.995;0.999;0.9999];   % vector with confidence levels used in reporting of EVT VAR and ES
 
 % specify unique runcode and timestamp:
@@ -449,18 +449,19 @@ matrix_struct=struct();
     % curve_struct(kk).object
  % end
 
-for kk = 1  : 1 : length(riskfactor_struct)
-   riskfactor_struct(kk).object
-   %riskfactor_struct(kk).object.getValue('stress')
-   %riskfactor_struct(kk).object.getValue('base')
-end
+% for kk = 1  : 1 : length(riskfactor_struct)
+   % riskfactor_struct(kk).object
+   % %riskfactor_struct(kk).object.getValue('stress')
+   % %riskfactor_struct(kk).object.getValue('base')
+% end
 
 
 % [vol_surf ret_code] = get_sub_object(surface_struct,'EUR-SWAP-VOL')
 
-[curve ret_code] = get_sub_object(curve_struct,'EUR-SWAP')
-[curve ret_code] = get_sub_object(curve_struct,'DKK-MBS-AAA')
-[curve ret_code] = get_sub_object(curve_struct,'DKK-SWAP')
+% [curve ret_code] = get_sub_object(curve_struct,'EUR-SPREAD-COVERED-AAA')
+% [curve ret_code] = get_sub_object(curve_struct,'DKK-SWAP')
+% [curve ret_code] = get_sub_object(curve_struct,'DKK-MBS-AAA')
+
 % [match_obj1 ret_code] = get_sub_object(instrument_struct,'10317977_DE0028_AZL')
 % [match_obj2 ret_code] = get_sub_object(instrument_struct,'10317926_DE0028_AZL')
 % [match_obj3 ret_code] = get_sub_object(instrument_struct,'10317978_DE0028_AZL')
@@ -585,7 +586,7 @@ tic;
 Total_Portfolios = length( portfolio_struct );
 base_value = 0;
 idx_figure = 0;
-confi = 1 - confidence;
+confi = 1 - confidence
 confi_scenario = max(round(confi * mc),1);
 persistent aggr_key_struct;
 position_failed_cell = {};
@@ -603,8 +604,8 @@ if (run_mc == true)
             fprintf('New HD vector is calculated for %d MC scenarios and saved in static foler\n',mc);
             minhd           = min(2*confi_scenario+1,mc);
             hd_vec_min      = zeros(max(confi_scenario-500,0)-1,1);
-            hd_vec_max      = zeros(mc-min(confi_scenario+500,mc)-1,1);
-            tt              = max(confi_scenario-500,0):1:min(confi_scenario+500,mc);
+            hd_vec_max      = zeros(mc-min(confi_scenario+500,mc),1);
+            tt              = max(confi_scenario-500,1):1:min(confi_scenario+500,mc);
             hd_vec_func     = harrell_davis_weight(mc,tt,confi)';
             hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
             save ('-v7',tmp_filename,'hd_vec');
@@ -612,6 +613,7 @@ if (run_mc == true)
         %size_hdvec = size(hd_vec);
     end
 end
+
 % a) loop over all portfolios (outer loop) and via all positions (inner loop)
 for mm = 1 : 1 : length( portfolio_struct )
     %disp('Aggregation for Portfolio ');
@@ -786,7 +788,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   size_hdvec = size(portfolio_shock_sort);
     mc_var_shock_value_abs    = dot(hd_vec,portfolio_shock_sort);
     mc_var_shock_value_rel    = dot(hd_vec,endstaende_sort_shock);
-    mc_var_shock_diff_hd      = abs(portfolio_shock_sort(confi_scenario) - mc_var_shock_value_abs)
+    mc_var_shock_diff_hd      = abs(portfolio_shock_sort(confi_scenario) - mc_var_shock_value_abs);
+    fprintf('Absolute difference of HD VaR vs. VaR(confidence): %9.2f\n',mc_var_shock_diff_hd);
   else
     mc_var_shock_value_abs    = portfolio_shock_sort(confi_scenario);
     mc_var_shock_value_rel    = endstaende_sort_shock(confi_scenario);

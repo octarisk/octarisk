@@ -280,6 +280,25 @@ classdef Bond < Instrument
         end
       end % set.coupon_generation_method
       
+      function obj = set.cf_dates(obj,cf_dates)
+        % check for length of vectors cf_dates and cf_values
+        if ~( isempty(obj.cf_values))
+            if ~( columns(cf_dates) == columns(obj.cf_values)  )
+                fprintf('WARNING: Bond.set(cf_dates): Number of columns of cf_dates (>>%s<<) not equal to cf_values columns (>>%s<<) for id >>%s<<\n',any2str(columns(cf_dates)),any2str(columns(obj.cf_values)),obj.id);
+            end
+        end
+        obj.cf_dates = cf_dates;
+      end % set.cf_dates
+      
+      function obj = set.cf_values(obj,cf_values)
+        % check for length of vectors cf_dates and cf_values
+        if ~( isempty(obj.cf_dates))
+            if ~( columns(cf_values) == columns(obj.cf_dates)  )
+                fprintf('WARNING: Bond.set(cf_values): Number of columns of cf_values (>>%s<<) not equal to cf_dates (>>%s<<) for id >>%s<<\n',any2str(columns(cf_values)),any2str(columns(obj.cf_dates)),obj.id);
+            end
+        end
+        obj.cf_values = cf_values;
+      end % set.cf_values
       
       % setting compounding frequency to numeric value
       function obj = set.compounding_freq(obj,comp_freq)

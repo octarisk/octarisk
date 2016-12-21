@@ -161,10 +161,12 @@ elseif ( strfind(tmp_type,'option') > 0 )
         tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
     else
     % 2nd Case: Option on single underlying, take real objects
-        tmp_underlying_obj = tmp_underlying_obj.valuate(valuation_date, scenario, ...
+        if ~( strcmpi(class(tmp_underlying_obj),'Index'))   % valuate instruments only
+            tmp_underlying_obj = tmp_underlying_obj.valuate(valuation_date, scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
                                 riskfactor_struct, para_struct);
+        end
         tmp_vola_surf_obj = get_sub_object(surface_struct, option.get('vola_surface'));
     end
 
@@ -182,20 +184,7 @@ elseif ( strfind(tmp_type,'option') > 0 )
 
     % store option object:
     ret_instr_obj = option;
-    % Debug Mode:
-    if ( regexp(option.name,'DEBUG') )
-        fprintf('DEBUG for Instrument name %s of type %s \n',option.name,tmp_type);
-        fprintf('\t Underyling Instrument %s \n',tmp_underlying_obj.id);
-        tmp_underlying_obj
-        fprintf('\t Underyling Vola Surface %s \n',tmp_vola_surf_obj.id);
-        tmp_vola_surf_obj
-        fprintf('\t Discount Curve %s \n',tmp_rf_curve_obj.id);
-        tmp_rf_curve_obj
-        fprintf('\t Underyling Vola Risk factor %s \n',tmp_rf_vola_obj.id);
-        tmp_rf_vola_obj
-        fprintf('\t Option %s \n',option.id);
-        option
-    end
+    
 % European Swaption Valuation according to Back76 or Bachelier Model 
 elseif ( strfind(tmp_type,'swaption') > 0 )    
     % Using Swaption class
@@ -302,10 +291,12 @@ elseif (strcmpi(tmp_type,'forward') )
             fprintf('WARNING: instrument_valuation: No index_struct object found for id >>%s<<\n',tmp_underlying_object);
         end
     % calculate underlying values
-        tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
+        if ~( strcmpi(class(tmp_underlying_object),'Index'))   % valuate instruments only
+            tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
                                 riskfactor_struct, para_struct); 
+        end
     % Get discount curve
         tmp_discount_curve                  = forward.get('discount_curve');            
         [tmp_curve_object object_ret_code]  = get_sub_object(curve_struct, tmp_discount_curve);	
@@ -323,16 +314,7 @@ elseif (strcmpi(tmp_type,'forward') )
 
     % store bond object:
     ret_instr_obj = forward;
-    % Debug Mode:
-    if ( regexp(forward.name,'DEBUG') )
-        fprintf('DEBUG for Instrument name %s of type %s \n',forward.name,tmp_type);
-        fprintf('\t Underyling Instrument %s \n',tmp_underlying_object.id);
-        tmp_underlying_object
-        fprintf('\t Discount Curve %s \n',tmp_curve_object.id);
-        tmp_curve_object
-        fprintf('\t Forward %s \n',forward.id);
-        forward
-    end    
+   
 % Equity Valuation: Sensitivity based Approach       
 elseif ( strcmpi(tmp_type,'sensitivity'))
 tmp_delta = 0;

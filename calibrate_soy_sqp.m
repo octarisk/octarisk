@@ -76,7 +76,8 @@ end
 % Start parameter
 retcode = 0;
 x0 = 0.01;
-
+lb = -1;
+ub = 1;
 % Start time:
 if ischar(valuation_date)
    valuation_date = datenum(valuation_date);
@@ -91,7 +92,7 @@ end
 % call optimization function       
 [x, obj, info, iter] = fmincon (@ (x) phi_soy(x,valuation_date,tmp_cashflow_dates, ...
             tmp_cashflow_values,tmp_act_value,comp_type_curve, basis_curve, ...
-            comp_freq_curve, rate_vec), x0,[], [], [], [], -1, 1);
+            comp_freq_curve, rate_vec), x0,[], [], [], [], lb, ub);
 
 if (info == 1)
 	%fprintf ('+++ calibrate_soy_sqp: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');

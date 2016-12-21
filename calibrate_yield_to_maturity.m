@@ -33,6 +33,9 @@ x0 = 0.01;
 options(1) = 0;
 options(2) = 1e-5;
 
+if ( ischar(valuation_date))
+    valuation_date = datenum(valuation_date);
+end
 % Calculate yield to maturity
 [x, obj, info, iter] = fmincon (@ (x) phi_ytm(x, valuation_date, ...
                                 tmp_cashflow_dates, tmp_cashflow_values, act_value), ...
@@ -68,9 +71,12 @@ end
 function obj = phi_ytm (x,valuation_date,cashflow_dates, ...
 						cashflow_values,act_value)
 			tmp_yield = [x];
-            nodes = [365];
-            tmp_npv = pricing_npv(valuation_date,cashflow_dates, ...
-								  cashflow_values,0,nodes,tmp_yield);
+            % get discount factors for all cash flow dates and ytm rate
+            tmp_df 	= discount_factor (valuation_date, valuation_date + cashflow_dates', ...
+                                                   tmp_yield,'disc',3,'annual'); 
+            % Calculate actual NPV of cash flows    
+            tmp_npv = cashflow_values * tmp_df;
+        
 			obj = (act_value - tmp_npv).^2;
 end
 %-------------------------------------------------------------------------------

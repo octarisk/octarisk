@@ -113,7 +113,11 @@ q = divrate;    % assuming act/365 continuous compounding
     theta = theta ./ 365;
     vega    = S .* exp(-q.*T) .* N1s .* sqrt(T) ./ 100;
     rho     = eta .* T.* X .*exp(-r.*T).* normcdf_eta_d2 ./ 100;
-    omega   = delta .* S ./ value;
+    if ~(value == 0)
+        omega   = delta .* S ./ value;
+    else
+        omega = 0;
+    end
 end
 
 %!assert(option_bs(0,[10000;9000;11000],11000,365,0.01,[0.2;0.025;0.03]),[1351.5596289;1890.5481719;83.4751769],0.000002)

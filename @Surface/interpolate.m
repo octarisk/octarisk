@@ -107,8 +107,13 @@ function y = interpolate (surface, xx,yy,zz)
                     % zd = (z - z0) ./ (z1 - z0);
                 % end
                 % return vector zd
-                zd = (1 - ( z0 == z1)) .* (z - z0) ./ (z1 - z0);
-                zd(isnan(zd))=0;
+                % prevent warning: division by zero for length(z)==1
+                if ( length(z) == 1 && z1 == z0)
+                    zd = 0;
+                else
+                    zd = (1 - ( z0 == z1)) .* (z - z0) ./ (z1 - z0);
+                    zd(isnan(zd))=0;    % replace NaN (z1(i) == z0(i)) with zero 
+                end
                 % get indizes   
                 index_x0 = find(xx_structure==x0);
                 index_x1 = find(xx_structure==x1);

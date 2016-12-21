@@ -17,6 +17,8 @@
 %# @code{nonlincon} are NOT processed. @*
 %# Return codes are also mapped according to fmincon expected return codes. 
 %# Note: This function mimics the behaviour of fmincon only.@*
+%# In order to speed up minimizing, a bounded minimization algorithm fminbnd
+%# is used in a first try. If this fails, sqp algorithm is called.
 %# 
 %# Matlab:
 %# @example
@@ -53,8 +55,8 @@
 %# @item @var{b}: inequality constraint vector
 %# @item @var{Aeq}: equality constraint matrix
 %# @item @var{beq}: equality constraint vector
-%# @item @var{lb}: lower bound
-%# @item @var{ub}: upper bound
+%# @item @var{lb}: lower bound (required for fminbnd, defaults to -10)
+%# @item @var{ub}: upper bound (required for fminbnd, defaults to 10)
 %# @end itemize
 %# @seealso{sqp}
 %# @end deftypefn
@@ -64,6 +66,9 @@ function [x, obj, info, iter, nf, lambda] = fmincon (objf,x0,A,b,Aeq,beq,lb,ub)
 
 maxiter = 300;
 tolerance = 0.0001; %sqrt(eps);
+iter = [];
+nf = [];
+lambda = [];
 
 if nargin < 3
     A = [];
@@ -98,34 +103,51 @@ else
     g = [];
 end
 
-% Call Octave sqp solver:
-
-[x, obj, info, iter, nf, lambda] = sqp (x0, objf, g, h, lb, ub, maxiter, tolerance);
-
-% map return codes for Matlab compatibility
-% 101 -> normally -> 1
-if info == 101
-    info = 1;
-    
-% 102 -> BFGS update failed -> -1 
-elseif info == 102
-    info = -1;
-    
-% 103 -> max number iterations reached -> 0
-elseif info == 103
+% 1st try: Call Octave fminbnd solver (faster algorithm)
+try
+    options = optimset ('MaxIter',maxiter,'TolX',sqrt(eps));
+    if isempty(ub)
+        ub = 10;
+    end
+    if isempty(lb)
+        lb = -10;
+    end
+    [x, obj, info, output]  = fminbnd (objf, lb , ub, options);
+catch
     info = 0;
-
-% 104 -> stepsize has become too small -> 2   
-elseif info == 104
-    info = 2;
-
-% else
-else 
-    info = -3;
 end
 
+% 2nd try: in case of no solution, call unbounded nonlinear solver
+if ~(info == 1)
+    % Call Octave sqp solver:
+    [x, obj, info, iter, nf, lambda] = sqp (x0, objf, g, h, lb, ub, maxiter, tolerance);
+
+    % map return codes for Matlab compatibility
+    % 101 -> normally -> 1
+    if info == 101
+        info = 1;
+        
+    % 102 -> BFGS update failed -> -1 
+    elseif info == 102
+        info = -1;
+        
+    % 103 -> max number iterations reached -> 0
+    elseif info == 103
+        info = 0;
+
+    % 104 -> stepsize has become too small -> 2   
+    elseif info == 104
+        info = 2;
+
+    % else
+    else 
+        info = -3;
+    end
+
 end
 
+% return values
+end
 %!assert(fmincon (@(x)100*(x(2)-x(1)^2)^2 + (1-x(1))^2,[0.5,0],[1,2],1,[2,1],1),[0.41494;0.17011],0.0001)
 
 
@@ -148,8 +170,8 @@ end
 
 % % ############# Call Octave fminbnd   ##########################################
 
-% a = -0.1;
-% b = 0.1;
+% a = lb;
+% b = ub;
 % options = optimset ('MaxIter',maxiter,'TolX',sqrt(eps));
 % tic
 % [x, obj, info, output]  = fminbnd (objf, a , b, options);
