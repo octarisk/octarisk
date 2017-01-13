@@ -5,7 +5,8 @@ classdef Curve
       id = '';
       description = '';
       type = '';  
-      method_interpolation = 'linear'; %'monotone-convex';  
+      method_interpolation = 'linear'; %'monotone-convex'; 
+	  method_extrapolation = 'constant';
       compounding_type = 'cont';
       compounding_freq = 'annual';               
       day_count_convention = 'act/365'; 
@@ -17,6 +18,7 @@ classdef Curve
       american_flag = 0; % specifying option type if used as call or put schedule
       curve_function = 'sum';   % required for aggregated curves
       curve_parameter = 1;      % required for aggregated curves
+	  sln_level = [];			% required for shifted log-normal model of risk factors
     end
    
     properties (SetAccess = protected )
@@ -143,6 +145,15 @@ classdef Curve
          obj.method_interpolation = method_interpolation;
       end % Set.method_interpolation
       
+	  function obj = set.method_extrapolation(obj,method_extrapolation)
+         method_extrapolation = lower(method_extrapolation);
+         if ~(sum(strcmpi(method_extrapolation,{'linear','constant','monotone-convex','smith-wilson'}))>0  )
+            error('Extrapolation method must be either linear or constant. Smith-Wilson and Monotone Convex automatically have extrapolation embedded.')
+         end
+         obj.method_extrapolation = method_extrapolation;
+      end % Set.method_extrapolation
+	  
+
       function obj = set.day_count_convention(obj,day_count_convention)
         obj.day_count_convention = day_count_convention;
         % Call superclass method to set basis

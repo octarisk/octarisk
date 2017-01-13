@@ -101,7 +101,7 @@ Input and output variables:\n\
         bool american       = args(14).bool_value();    // American option
         
         // total number of scenarios:
-        int len_sigma = sigma_vec.length ();
+        int len_sigma = sigma_vec.numel ();
         int len_rate  = R_matrix.rows ();
         int len;
         if ( len_sigma > len_rate )
@@ -183,9 +183,9 @@ Input and output variables:\n\
             }
             
             // Set Discount Factor vector
-            dim_vector dim_P (R.length(), 1);
+            dim_vector dim_P (R.numel(), 1);
             NDArray P (dim_P);
-            for (octave_idx_type pp = 0; pp < P.length(); pp++) {
+            for (octave_idx_type pp = 0; pp < P.numel(); pp++) {
                 P(pp) = std::exp(-R(pp) * Timevec(pp));
             }
 
@@ -436,7 +436,7 @@ octave_value_list build_hw_tree(const NDArray& Rate, const NDArray& P,
         kk++;
     }
     
-    dim_vector vecdim_R (Rate.length(),1);
+    dim_vector vecdim_R (Rate.numel(),1);
     NDArray a (vecdim_R);
     NDArray S (vecdim_R);
     S.fill(0.0);

@@ -16,7 +16,8 @@ classdef Riskfactor
       node = 0;
       node2 = 0;
       node3 = 0;
-      type = ''; 
+      type = '';
+	  sln_level = 0.0;
    end
    
     properties (SetAccess = protected )
@@ -82,8 +83,8 @@ classdef Riskfactor
       end % disp
       
       function obj = set.model(obj,model)
-         if ~(strcmpi(model,'GBM') || strcmpi(model,'BM') || strcmpi(model,'BKM') || strcmpi(model,'OU') || strcmpi(model,'SRD') )
-            error('Model must be either GBM, BM, BKM, OU or SRD')
+         if ~(strcmpi(model,'GBM') || strcmpi(model,'BM') || strcmpi(model,'BKM') || strcmpi(model,'OU') || strcmpi(model,'SRD') || strcmpi(model,'SLN') )
+            error('Model must be either GBM, BM, BKM, SLN, OU or SRD')
          end
          obj.model = model;
       end % Set.model
@@ -94,7 +95,25 @@ classdef Riskfactor
          end
          obj.type = type;
       end % Set.type
-      
+	  
+	  function obj = set.shift_type(obj,shift_type)
+	    if ( rows(obj.scenario_stress) > 1)
+			if ( rows(shift_type) ~= rows(obj.scenario_stress))
+				error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(shift_type),rows(obj.scenario_stress))
+			end
+		end
+         obj.shift_type = shift_type;
+      end % Set.shift_type
+	  
+	  function obj = set.scenario_stress(obj,scenario_stress)
+	    if ( rows(obj.shift_type) > 1)
+			if ( rows(obj.shift_type) ~= rows(scenario_stress))
+				error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(obj.shift_type),rows(scenario_stress))
+			end
+		end
+        obj.scenario_stress = scenario_stress;
+      end % Set.scenario_stress
+
     end
     methods (Static = true)
     

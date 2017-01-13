@@ -460,11 +460,6 @@ matrix_struct=struct();
 
 % [curve ret_code] = get_sub_object(curve_struct,'EUR-SPREAD-COVERED-AAA')
 % [curve ret_code] = get_sub_object(curve_struct,'DKK-SWAP')
-% [curve ret_code] = get_sub_object(curve_struct,'DKK-MBS-AAA')
-
-% [match_obj1 ret_code] = get_sub_object(instrument_struct,'10317977_DE0028_AZL')
-% [match_obj2 ret_code] = get_sub_object(instrument_struct,'10317926_DE0028_AZL')
-% [match_obj3 ret_code] = get_sub_object(instrument_struct,'10317978_DE0028_AZL')
 
 
 curve_gen_time = toc;
@@ -491,7 +486,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
     try
     % TODO: loop via positions_cell -> get id from instrument struct -> valuate these instruments only
     % store in special valuated_instruments struct -> aggregate from these struct only
-    tmp_id = instrument_struct( ii ).id;
+    tmp_id = instrument_struct( ii ).id
     tic;
         % =================    Full valuation    ===============================
         para_struct.scen_number = scen_number;
@@ -571,14 +566,7 @@ for kk = 1:1:length(instrument_struct)
         fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),obj.currency);
     end
 end
-% fprintf('Swaption Base, Vola and Underlying Values: \n');
-% fprintf('ID,Base,Vola,FixedLeg,FloatingLeg,Currency\n');
-% for kk = 1:1:length(instrument_struct)
-    % obj = instrument_struct(kk).object;
-    % if (strcmpi(obj.type,'swaption'))
-        % fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),obj.implied_volatility,obj.und_fixed_value,obj.und_float_value,obj.currency);       
-    % end
-% end
+
 
 % --------------------------------------------------------------------------------------------------------------------
 % 6. Portfolio Aggregation
@@ -741,19 +729,19 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   % Preparing vector for extreme value theory VAR and ES
   
   % only apply EVT if there is some risk in MC data
-  if ( abs(std(p_l_absolut_shock)) > 0)
-    confi_scenario_evt_95   = round(0.025 * mc);
-    evt_tail_shock          = p_l_absolut_shock(1:confi_scenario_evt_95)';
-    % Calculate VAR and ES from GPD:
-    u = min(-evt_tail_shock);
-    [aa bb cc] = size(evt_tail_shock);
-    [chi sigma] = calibrate_evt_gpd(-evt_tail_shock);
-    nu = length(evt_tail_shock);   
-    [VAR_EVT_shock ES_EVT_shock]        = get_gpd_var(chi, sigma, u, gpd_confidence_levels, mc, nu);        
-   else % apply dummy values
-    [VAR_EVT_shock]    = horzcat(zeros(length(gpd_confidence_levels),1), zeros(length(gpd_confidence_levels),1));
-    ES_EVT_shock = VAR_EVT_shock;
-   end
+  % if ( abs(std(p_l_absolut_shock)) > 0)
+    % confi_scenario_evt_95   = round(0.025 * mc);
+    % evt_tail_shock          = p_l_absolut_shock(1:confi_scenario_evt_95)';
+    % % Calculate VAR and ES from GPD:
+    % u = min(-evt_tail_shock);
+    % [aa bb cc] = size(evt_tail_shock);
+    % [chi sigma] = calibrate_evt_gpd(-evt_tail_shock);
+    % nu = length(evt_tail_shock);   
+    % [VAR_EVT_shock ES_EVT_shock]        = get_gpd_var(chi, sigma, u, gpd_confidence_levels, mc, nu);        
+   % else % apply dummy values
+    % [VAR_EVT_shock]    = horzcat(zeros(length(gpd_confidence_levels),1), zeros(length(gpd_confidence_levels),1));
+    % ES_EVT_shock = VAR_EVT_shock;
+   % end
 
 
   % Preparing direct VAR measures:
@@ -818,7 +806,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   for ii = 1 : 1 : length( riskfactor_cell) % loop through all MC risk factors only
     tmp_object      = get_sub_object(riskfactor_struct, riskfactor_cell{ii});
     tmp_delta_shock   = tmp_object.getValue(tmp_scen_set);
-    fprintf(fid, '|VaR %s scenario delta |%s|%1.3f|%1.3f|%1.3f|%1.3f|%1.3f|\n',tmp_scen_set,tmp_object.id,tmp_delta_shock(confi_scenarionumber_shock_m2),tmp_delta_shock(confi_scenarionumber_shock_m1),tmp_delta_shock(confi_scenarionumber_shock),tmp_delta_shock(confi_scenarionumber_shock_p1),tmp_delta_shock(confi_scenarionumber_shock_p2));
+    fprintf(fid, '|VaR %s scenario values |%s|%1.3f|%1.3f|%1.3f|%1.3f|%1.3f|\n',tmp_scen_set,tmp_object.id,tmp_delta_shock(confi_scenarionumber_shock_m2),tmp_delta_shock(confi_scenarionumber_shock_m1),tmp_delta_shock(confi_scenarionumber_shock),tmp_delta_shock(confi_scenarionumber_shock_p1),tmp_delta_shock(confi_scenarionumber_shock_p2));
   end
   % 7.1) Print Report for all Positions:
   total_var_undiversified = 0;
@@ -967,23 +955,23 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f %s|\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
   
-  % print EVT VAR and ES to file
-  fprintf(fid, '= GPD extreme value VAR and ES: \n');
-  for jj = 1 : 1 : length( gpd_confidence_levels )
-    fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,VAR_EVT_shock(jj),fund_currency);
-  end
-  for jj = 1 : 1 : length( gpd_confidence_levels )
-    fprintf(fid, '|Port EVT ES  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,ES_EVT_shock(jj),fund_currency);
-  end
+  % % print EVT VAR and ES to file
+  % fprintf(fid, '= GPD extreme value VAR and ES: \n');
+  % for jj = 1 : 1 : length( gpd_confidence_levels )
+    % fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,VAR_EVT_shock(jj),fund_currency);
+  % end
+  % for jj = 1 : 1 : length( gpd_confidence_levels )
+    % fprintf(fid, '|Port EVT ES  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,ES_EVT_shock(jj),fund_currency);
+  % end
   
   % Output to stdout:
   fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
   fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
   fprintf('ES  %s@%2.1f%%: \t %9.2f %s\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
-  fprintf('GPD extreme value VAR and ES: \n');
-  fprintf('VaR EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,VAR_EVT_shock(end),fund_currency);
-  fprintf('ES  EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,ES_EVT_shock(end),fund_currency);
+  % fprintf('GPD extreme value VAR and ES: \n');
+  % fprintf('VaR EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,VAR_EVT_shock(end),fund_currency);
+  % fprintf('ES  EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,ES_EVT_shock(end),fund_currency);
   fprintf('Low tail VAR: \n');
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,50.0,-VAR50_shock,fund_currency);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,70.0,-VAR70_shock,fund_currency);

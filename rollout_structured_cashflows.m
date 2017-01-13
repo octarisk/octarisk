@@ -760,6 +760,8 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 % get volatility according to moneyness and term
                 tenor   = fixing_start_date; % days until foward start date
                 term    = t2 - t1; % days of caplet / floorlet
+				% current implementation: option term is term of cap
+				% in principle one could use cms_sliding term to get appropriate volatility
                 sigma   = surface.getValue(value_type,tenor,term,moneyness);
                 % calculate CAP/FLOOR rate according to model based on cms rate
                 cms_rate = getCapFloorRate(instrument.CapFlag, ...

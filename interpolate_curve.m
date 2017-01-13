@@ -13,7 +13,7 @@
 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep})
-%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{ufr}, @var{alpha})
+%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{interp_method}, @var{ufr}, @var{alpha}, @var{extrap_method})
 %#
 %# Calculate an interpolated rate on a curve for a given timestep.@*
 %# Supported methods are: linear (default), moneymarket, exponential, loglinear, 
@@ -33,17 +33,19 @@
 %# 						different curve structure
 %# @item @var{timestep}: is a scalar, specifiying the interpolated timestep on 
 %# 						vector nodes
+%# @item @var{interp_method}: OPTIONAL: interpolation method
 %# @item @var{ufr}:   OPTIONAL: (only used for smith-wilson): ultimate forward 
 %# 								rate (default: last liquid point)
 %# @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed 
 %# 								to ultimate forward rate (default: 0.1)
+%# @item @var{extrap_method}: OPTIONAL: extrapolation method
 %# @end itemize
 %# @seealso{interp1, interp2, interp3, interpn}
 %# @end deftypefn
 
-function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
+function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha,method_extrapolation)
 
-  if (nargin < 3 || nargin > 6)
+  if (nargin < 3 || nargin > 7)
     print_usage ();
   end
   
@@ -54,24 +56,33 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
 					'smith-wilson','monotone-convex','constant','next','previous'};
     findvec = strcmpi(method,method_cell);
     if ( findvec == 0)
-         error('Error: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson, monotone-convex or constant, next or previous');
+         error('Error: interpolate_curve: Interpolation method must be either linear, mm (money market), exponential, loglinear, spline (experimental support only), smith-wilson, monotone-convex or constant, next or previous');
     end
+  end
+  if ( nargin < 7)
+	method_extrapolation = 'none';
   end
   
   if (strcmpi(method,'smith-wilson'))
     if (nargin == 4)
         %disp('Warning: neither ufr nor reversion speed are specified. 
-        % Setting ufr to last liquid rate and alpha = 0.1');
+        % Setting ufr to EIOPA ufr and alpha = 0.19');
         alpha = 0.19;
-        ufr = 0.042; %rates(end);
+        ufr = 0.042;
     elseif (nargin == 5)
-        disp('Warning: no reversion speed provided. Setting alpha = 0.1');
+        disp('Warning: interpolate_curve: no reversion speed provided. Setting alpha = 0.1');
         alpha = 0.19;
     elseif (nargin == 6)  
         if (alpha <= 0.0)
-            error('Error: A positive reversion speed rate must be provided.');    
+            error('Error: interpolate_curve: A positive reversion speed rate must be provided.');    
         end
     end
+	if isempty(alpha)
+		alpha = 0.19;
+	end
+	if isempty(ufr)
+		ufr = 0.042;
+	end
   end
 % dimension time -> columnwise
 % dimension scenarios -> rowwise
@@ -79,23 +90,43 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha)
 no_scen_nodes = columns(nodes);
 no_scen_rates = columns(rates);
 if ~( no_scen_nodes == no_scen_rates )
-    error('Error: Number of columns must be equivalent');
+    error('Error: interpolate_curve: Number of columns must be equivalent');
 end
 
 if ~( issorted(nodes) == 1)
-    error('Error: Nodes have to be sorted')
+    error('Error: interpolate_curve: Nodes have to be sorted')
+end
+
+
+% short-cut: if timestep equals node, return rates at this node
+eq_vec = (timestep == nodes);
+if ( sum(eq_vec) > 0 )
+	tmp_idx = 1:1:length(eq_vec);
+	idx_node = tmp_idx * eq_vec';
+	y = rates(:,idx_node);
+	return
 end
 
 dnodes = diff(nodes);
 
 if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant 
 		% extrapolation only for methods except smith-wilson and monotone-convex
-    if ( timestep <= nodes(1) ) % constant extrapolation
-        y = rates(:,1);
-        return
-    elseif ( timestep >= nodes(end) ) % constant extrapolation
-        y = rates(:,end);
-        return
+    if ( timestep <= nodes(1) ) % constant or linear extrapolation
+		if ( strcmpi(method_extrapolation,'linear'))
+			y = interp1(nodes',rates',timestep,'linear','extrap')';
+			return
+		else
+			y = rates(:,1);
+			return
+		end
+    elseif ( timestep >= nodes(end) ) % constant or linear extrapolation
+		if ( strcmpi(method_extrapolation,'linear'))
+			y = interp1(nodes',rates',timestep,'linear','extrap')';
+			return
+		else
+			y = rates(:,end);
+			return
+		end
     else
         % linear interpolation
         if (strcmpi(method,'linear'))          % linear interpolation
@@ -107,7 +138,7 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
 							./ dnodes(ii)).* rates(:,ii+1)) ;            
                 end
             end
-            
+			
         elseif (strcmpi(method,'mm'))          % money market interpolation
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
@@ -494,6 +525,8 @@ end
 % 'A Technical Note on the Smith-Wilson Method' by 'The Financial Supervisory 
 % Authority of Norway', 2010 and 'QIS 5 Risk-free interest rates – 
 % Extrapolation method', published by CEIOPS (now EIOPA).
+% The values from CEIOPS Excel sheet have been validated.
+% (ceiops-tool-extrapolation-risk-free-rates2_en)
 %
 % Be aware of singularities in extreme events. Take into account of increasing 
 % alpha in that cases.
@@ -534,7 +567,7 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
         % Matlab adaption
         %nodesinput_y_tmp = repmat(nodes_input_y,1,columns(rates_input));
         %rates_x_nodes = rates_input .*nodesinput_y_tmp;
-        rates_x_nodes = rates_input .*nodes_input_y;
+        rates_x_nodes = log(1+rates_input) .*nodes_input_y;
         m  = 1 ./ exp(rates_x_nodes);
         
         % 2. calculate matrix W (size length(rates)^2)
@@ -564,10 +597,13 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
     if ~(isreal(R))
        error('ERROR: R vector not real');    
     end
+	% Return continuous compounded rates
+	R = exp(R)-1;
 end
 
+
 %!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'monotone-convex' ),[0.012116882;0.007318077],0.000001)
-%!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'smith-wilson',0.05,0.12),[0.012023083;0.0015458739299],0.000001)
+%!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'smith-wilson',0.05,0.12),[0.01201874447087881;0.00145313313347883],0.000000001)
 %!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'linear'),[0.01186301;0.00847945],0.000001)
 %!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'linear'),0.004927301319,0.0000000001)
 %!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'mm'),0.00494794483,0.0000000001)

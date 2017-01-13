@@ -46,27 +46,27 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
             Y       = Y_tmp(:,ii);
             % Case Dependency:
                 % Geometric Brownian Motion Riskfactor Modeling
-                    if ( strcmp(tmp_model,'GBM') )
+                    if ( strcmpi(tmp_model,'GBM') || strcmpi(tmp_model,'SLN')  )
                         tmp_delta 	    = Y + ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(256)).^2) .* ts);
                 % Brownian Motion Riskfactor Modeling
-                    elseif ( strcmp(tmp_model,'BM') )
+                    elseif ( strcmpi(tmp_model,'BM') )
                         tmp_delta 	    = Y + (tmp_drift * ts);
                 % Black-Karasinski (log-normal mean reversion) Riskfactor Modeling
-                    elseif ( strcmp(tmp_model,'BKM') )
+                    elseif ( strcmpi(tmp_model,'BKM') )
                         % startlevel, sigma_p_a, mr_level, mr_rate
                         tmp_start       = rf_object.value_base;
                         tmp_mr_level    = rf_object.mr_level;
                         tmp_mr_rate     = rf_object.mr_rate;    
                         tmp_delta       = Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
                 % Ornstein-Uhlenbeck process 
-                    elseif ( strcmp(tmp_model,'OU') )    
+                    elseif ( strcmpi(tmp_model,'OU') )    
                         % startlevel, sigma_p_a, mr_level, mr_rate
                         tmp_start       = rf_object.value_base;
                         tmp_mr_level    = rf_object.mr_level;
                         tmp_mr_rate     = rf_object.mr_rate;     
                         tmp_delta       = Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
                 % Square-root diffusion process
-                    elseif ( strcmp(tmp_model,'SRD') )    
+                    elseif ( strcmpi(tmp_model,'SRD') )    
                         % startlevel, sigma_p_a, mr_level, mr_rate
                         tmp_start       = rf_object.value_base;
                         tmp_mr_level    = rf_object.mr_level;

@@ -120,25 +120,32 @@ M1 = (w' * F')';               % weighted Forwardprice of Basket
 % Loop via all elements of matrix and vola / forward price vector
 % Loop is easier to maintain than complex vectorizing in third dimension
 % and fast enough (there wont be more than a dozen underlyings)
+% all intermediate results are stored in matrizes
+% subsequently, a C++ script is called (long double precision is used to prevent
+% a precision overflow in extreme volatility shock cases for large time factors)
 M2 = 0.0;
-dimension = length(underlying_ids);
+dimension 	     = length(underlying_ids);
+exp_matrix       = zeros(max(rows(F),rows(sigma)),dimension^2);
+prefactor_matrix = zeros(max(rows(F),rows(sigma)),dimension^2);
+
+step = 0;
 for ii = 1 : 1 : dimension
     id_ii = underlying_ids{ii};
     for jj = 1 : 1 : dimension
+		step = step + 1;
         id_jj = underlying_ids{jj};
-        % error handling: realmax is upper limit
-        % in case of extreme vola shocks exponent can get >700 exceeding
-        % double precision limit of 10^308
         tmp_exponent = corr_matrix.getValue(id_ii,id_jj) .* sigma(:,ii) .* sigma(:,jj) .* TF;
         tmp_prefactor =  w(ii) .* F(:,ii) .* w(jj) .* F(:,jj);
-        dyn_limit = log( realmax / (tmp_prefactor * dimension^2))';
-        % maximum of exponent
-        tmp_exponent = min(tmp_exponent,dyn_limit);
-        % calculate M2
-        M2 = M2 + tmp_prefactor .* exp(tmp_exponent);
+		% store prefactors
+		exp_matrix(:,step) = tmp_exponent;
+		prefactor_matrix(:,step) = tmp_prefactor;
+
     end
 end
-% calculating final Basket Vola
-vola = sqrt(log(M2./M1.^2) ./ TF);
+
+% calculating final Basket Vola with c++ code (using long double precision)
+vola = calc_vola_basket_cpp(M1,TF,exp_matrix,prefactor_matrix)
 
 end
+
+

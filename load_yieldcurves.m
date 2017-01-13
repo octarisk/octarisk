@@ -65,6 +65,7 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
         tmp_nodes = [];
         tmp_rates_original = [];
         tmp_rates_stress = [];
+		sln_level = [];
         for jj = 1 : 1 : length( riskfactor_struct )
             tmp_rf_struct_obj = riskfactor_struct( jj ).object;
             tmp_rf_id = tmp_rf_struct_obj.id;
@@ -101,10 +102,11 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
                 tmp_rates_shock = [];  
                 tmp_nodes = [];
                 tmp_model_cell = {};
+				sln_level = [];
                 for jj = 1 : 1 : length( riskfactor_struct )
                     tmp_rf_struct_obj = riskfactor_struct( jj ).object;
                     tmp_rf_id = tmp_rf_struct_obj.id;
-                    if ( regexp(tmp_rf_id,tmp_curve_id) == 1 )           
+                    if ( regexpi(tmp_rf_id,tmp_curve_id) == 1 )           
                         tmp_delta_shock     = tmp_rf_struct_obj.getValue(tmp_ts);
                         % just needed for sorting final results:
                         tmp_node            = tmp_rf_struct_obj.get('node'); 
@@ -113,9 +115,16 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
                         % depending on riskfactor model:
                         tmp_model           = tmp_rf_struct_obj.get('model');
                         tmp_model_cell{end + 1 } = tmp_model;
-                        if ( strcmp(tmp_model,{'GBM','BKM'}))
+						% it is assumend that all risk factors have same shocktype
+						%   (only last risk factor model type is relevant)
+                        if ( strcmpi(tmp_model,{'GBM','BKM'}))
                             tmp_shocktype_mc = 'relative';
                             tmp_delta_shock = exp(tmp_delta_shock);
+						elseif ( strcmpi(tmp_model,{'SLN'}))	
+							tmp_shocktype_mc = 'sln_relative';
+                            tmp_delta_shock = exp(tmp_delta_shock);
+							% store SLN shifts in vector
+							sln_level = cat(2,sln_level,tmp_rf_struct_obj.get('sln_level'));
                         else
                             tmp_shocktype_mc = 'absolute';
                         end          
@@ -137,6 +146,8 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
             end  % close loop via scenario_sets (mc,stress)
             % store shocktype_mc
             curve_object = curve_object.set('shocktype_mc',tmp_shocktype_mc);
+			% store shifted log-normal shift parameters
+			curve_object = curve_object.set('sln_level',sln_level);
         end
         % store curve object in final struct
         curve_struct( ii ).object = curve_object;
