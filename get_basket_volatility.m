@@ -91,8 +91,7 @@ rf_rate          = discount_curve.getRate(value_type,dtm);
 % 4. get underlying volatility surfaces
 tmp_vol_surfaces  = basket.get('instr_vol_surfaces');
 
-tmp_moneyness   = (basket_value ./ strike).^ ...
-                        moneyness_exponent;                      
+tmp_moneyness   = (basket_value ./ strike).^ moneyness_exponent;                      
 for jj = 1 : 1 : length(tmp_vol_surfaces)
     % get underlying volatility surface:
     tmp_vol_surface             = tmp_vol_surfaces{jj};
@@ -144,7 +143,7 @@ for ii = 1 : 1 : dimension
 end
 
 % calculating final Basket Vola with c++ code (using long double precision)
-vola = calc_vola_basket_cpp(M1,TF,exp_matrix,prefactor_matrix)
+vola = calc_vola_basket_cpp(M1,TF,exp_matrix,prefactor_matrix);
 
 end
 

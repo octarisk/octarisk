@@ -16,5 +16,5 @@ function rate = getRate (curve, value_type, node)
 
 % interpolate
     rate = interpolate_curve(nodes,rates,node,interp_method,ufr,alpha,extrap_method);
-  
+	
 end
