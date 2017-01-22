@@ -196,7 +196,7 @@ input_filename_matrix = 'matrix_';
 plotting = 1;           % switch for plotting data (0/1)
 saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
 archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
-stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
+stable_seed = 0;        % switch for using stored random numbers (1) or drawing new random numbers (0)
 mc_scen_analysis = 0;   % switch for applying statistical tests on risk factor MC scenario values 
                         %   (compare target statistic parameters with actual values)
 % load packages
@@ -209,6 +209,12 @@ hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be use
 confidence = 0.995      % level of confidence vor MC VAR calculation
 copulatype = 'Gaussian'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
 nu = 10                 % single parameter nu for t-Copula 
+rnd_number_gen = 'Mersenne-Twister';	% type of random number generator in ['Mersenne-Twister','MLCG']
+						% MLCG is Octave's "old" random number generator.
+						% although this is undocumented, Fortran code of Octave Version 2.0.5 seems to
+						% implement a multiplicative linear congruential generator (MLCG) of form 
+						% random_variable = (A*S) MOD M	
+	
 valuation_date = datenum('30-Sep-2016'); % valuation date
 para_struct.valuation_date = valuation_date;
 fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
@@ -216,7 +222,7 @@ base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id'}    % aggregation key
 mc_timesteps    = {'250d'} %{'250d'}                % MC timesteps
 %mc_timesteps    = {} %{'250d'}                % MC timesteps
-scenario_set    = [mc_timesteps,'stress'];   % %       % append stress scenarios
+scenario_set    = [mc_timesteps];   % %       % append stress scenarios ,'stress'
 %scenario_set    = {'stress'};   %{'stress'} %       % append stress scenarios
 gpd_confidence_levels = [0.9;0.95;0.975;0.99;0.995;0.999;0.9999];   % vector with confidence levels used in reporting of EVT VAR and ES
 
@@ -241,16 +247,42 @@ if ( stable_seed == 1)
     %    A 2496 bit binary file can be initialized from /dev/urandom (head --byte=2496 /dev/urandom > random_seed.dat)
     %    This file will be converted to a 32bit unsigned integer vector and used as seed.
     %    This high entropy seed is required to avoid low entropy random numbers used during scenario generation.
-    fid = fopen(strcat(path_static,'/',input_filename_seed)); % open file
-    random_seed = fread(fid,Inf,'uint32');		% convert binary file into integers
-    fclose(fid);								% close file 
-    rand('state',random_seed);					% set seed
-    randn('state',random_seed);
+    %fid = fopen(strcat(path_static,'/',input_filename_seed)); % open file
+    %random_seed = fread(fid,Inf,'uint32');		% convert binary file into integers
+    %fclose(fid);								% close file 
+	random_seed = load(strcat(path_static,'/',input_filename_seed));
+	if ~(strcmpi(rnd_number_gen,'Mersenne-Twister'))
+		rand('seed',random_seed);				% set seed for MLCG
+		randn('seed',random_seed);
+	else	% Mersenne-Twister
+		rand('state',random_seed);				% set seed for Mersenne-Twister
+		randn('state',random_seed);
+	end
 else % use random seed
-	rand ('state', 'reset');
-	randn ('state', 'reset');
-	%rand ('seed', 201103917);
-	%randn ('seed', 201103917);
+	if ~(strcmpi(rnd_number_gen,'Mersenne-Twister'))
+		rand('seed','reset');					% reset seed for MLCG
+		randn('seed','reset');
+		% query seed
+		seed_rand = rand ('seed');
+		seed_randn = randn ('seed');
+	else	% Mersenne-Twister
+		rand ('state', 'reset');				% reset seed for Mersenne-Twister	
+		randn ('state', 'reset');
+		% query seed
+		seed_rand = rand ('state');
+		seed_randn = rand ('state');
+	end
+	% store used seed_rand
+	savename = 'seed_rand';
+	endung   = '.dat';
+	path 	 = strcat(path_static,'/');
+	fullpath = [path, savename, endung];
+	save ('-ascii', fullpath, savename);
+	% store used seed_randn
+	savename = 'seed_randn';
+	endung   = '.dat';
+	fullpath = [path, savename, endung];
+	save ('-ascii', fullpath, savename);
 end
 % I) #########            INPUT                 #########
 tic;
@@ -346,32 +378,7 @@ if (run_mc == true)
 
     % variable for switching statistical analysis on and off
     if ( mc_scen_analysis == 1 )
-        % Perform statistical tests on MC risk factor distributions:
-        for ii = 1 : 1 : length(riskfactor_cell)  
-            rf_id = riskfactor_cell{ii};
-            rf_object = get_sub_object(riskfactor_struct, rf_id);    
-            fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
-            fprintf('Pearson_type: >>%d<<\n',distr_type(ii));  
-            mean_target = rf_object.mean;   % mean
-            mean_act = mean(R_250(:,ii));
-            sigma_target = rf_object.std;   % sigma
-            sigma_act = std(R_250(:,ii));
-            skew_target = rf_object.skew;   % skew
-            skew_act = skewness(R_250(:,ii));
-            kurt_target = rf_object.kurt;   % kurt    
-            kurt_act = kurtosis(R_250(:,ii));
-            fprintf('Stat. parameter:  \t| Target | Actual \n');
-            fprintf('Mean comparision: \t| %0.4f |  %0.4f \n',mean_target,mean_act);
-            fprintf('Vola comparision: \t| %0.4f |  %0.4f \n',sigma_target,sigma_act);
-            fprintf('Skewness comparision: \t| %0.4f |  %0.4f \n',skew_target,skew_act);
-            fprintf('Kurtosis comparision: \t| %0.4f |  %0.4f \n',kurt_target,kurt_act);
-            % test for bimodality -> fit polynomial and calculate parabola opening parameter sign
-            [xx yy] = hist(R_250(:,ii),80);
-            p = polyfit(yy,xx,2);
-            if ( p(1) > 0 )
-                fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
-            end
-        end
+        retcode = perform_rf_stat_tests(riskfactor_cell,riskfactor_struct,R_250,distr_type);
     end
     % Generate Structure with Risk factor scenario values: scale values according to timestep
     M_struct = struct();
@@ -460,41 +467,6 @@ matrix_struct=struct();
    % %riskfactor_struct(kk).object.getValue('base')
 % end
 
-
-% [vol_surf ret_code] = get_sub_object(surface_struct,'EUR-SWAP-VOL')
-
-% [curve ret_code] = get_sub_object(curve_struct,'EUR-SPREAD-COVERED-AAA')
-[curve ret_code] = get_sub_object(curve_struct,'EUR-SWAP')
-
-rates_mc_7300 = curve.getRate('250d',7300);
-base_7300 = curve.getRate('base',7300)
-rates_mc_7300_diff_sorted = sort(rates_mc_7300 - curve.getRate('base',7300));
-rates_mc_7300_mean = mean(rates_mc_7300_diff_sorted)
-rates_mc_7300_skew = skewness(rates_mc_7300_diff_sorted)
-rates_mc_7300_std = std(rates_mc_7300_diff_sorted)
-rates_mc_7300_kurt = kurtosis(rates_mc_7300_diff_sorted)
-quantile_001 = rates_mc_7300_diff_sorted(1)
-quantile_005 = rates_mc_7300_diff_sorted(5)
-quantile_010 = rates_mc_7300_diff_sorted(10)
-quantile_248 = rates_mc_7300_diff_sorted(248)
-quantile_249 = rates_mc_7300_diff_sorted(249)
-quantile_250 = rates_mc_7300_diff_sorted(250)
-quantile_251 = rates_mc_7300_diff_sorted(251)
-
-rates_mc_21900 = curve.getRate('250d',21900);
-base_21900 = curve.getRate('base',21900)
-rates_mc_21900_diff_sorted = sort(rates_mc_21900 - curve.getRate('base',21900));
-rates_mc_21900_mean = mean(rates_mc_21900_diff_sorted)
-rates_mc_21900_skew = skewness(rates_mc_21900_diff_sorted)
-rates_mc_21900_std = std(rates_mc_21900_diff_sorted)
-rates_mc_21900_kurt = kurtosis(rates_mc_21900_diff_sorted)
-quantile_001 = rates_mc_21900_diff_sorted(1)
-quantile_005 = rates_mc_21900_diff_sorted(5)
-quantile_010 = rates_mc_21900_diff_sorted(10)
-quantile_248 = rates_mc_21900_diff_sorted(248)
-quantile_249 = rates_mc_21900_diff_sorted(249)
-quantile_250 = rates_mc_21900_diff_sorted(250)
-quantile_251 = rates_mc_21900_diff_sorted(251)
 
 curve_gen_time = toc;
 
@@ -959,9 +931,9 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   end
   plot_vec_pie = zeros(1,length(pie_chart_values_plot_instr_shock));
   plot_vec_pie(1) = 1;
-
-
-
+  pie_chart_values_plot_instr_shock = pie_chart_values_plot_instr_shock ./ sum(pie_chart_values_plot_instr_shock);
+  pie_chart_values_plot_pos_shock = pie_chart_values_plot_pos_shock ./ sum(pie_chart_values_plot_pos_shock);
+  
   fprintf(fid, '\n');
   % Print aggregation key report:  
   fprintf(fid, '=== Aggregation Key VAR === \n');  

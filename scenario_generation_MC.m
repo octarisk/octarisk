@@ -54,19 +54,29 @@ factor_time_horizon = 256 / time_horizon;
 % 3) Test for positive semi-definiteness
 fprintf('Testing correlation matrix for positive semi-definiteness:\n');
 corr_matrix = correct_correlation_matrix(corr_matrix);
-
+new_corr = false;
 % B.1) Generating multivariate random variables if stable_seed is 0
     tmp_number_rf = rows(corr_matrix);  % get number of risk factors
     tmp_filename = strcat(path_static,'/random_numbers_',num2str(mc),'_', ...
                             num2str(tmp_number_rf),'_',copulatype,'.mat');
     % use existing random numbers                        
     if ( exist(tmp_filename,'file') && (stable_seed == 1))
-        fprintf('Taking file >>%s<< with random numbers from static folder\n',tmp_filename);
+        fprintf('scenario_generation_MC: Taking file >>%s<< with random numbers from static folder\n',tmp_filename);
         Y_struct = load(tmp_filename);  % read in from stored file
         Y = Y_struct.Y;
+		% test random numbers for matching correlation settings
+		if (norm(abs(corr(Y) - corr_matrix)) > 0.02)
+			fprintf('scenario_generation_MC: WARNING: Frobenius norm of stored correlation matrix minus correlation settings > 0.02. New random numbers will be drawn.\n');
+			new_corr = true;
+		end
     % otherwise draw new random numbers and save to static folder for next run
     else 
-        fprintf('New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
+		new_corr = true;
+    end
+	
+	% draw new random numbers
+	if ( new_corr == true)
+        fprintf('scenario_generation_MC: New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
         if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
             % draw random variables from multivariate normal distribution
             Y   = mvnrnd(0,corr_matrix,mc);      
@@ -78,12 +88,13 @@ corr_matrix = correct_correlation_matrix(corr_matrix);
             save ('-v7',tmp_filename,'Y');
         end
     end
+	
 
 % B.2) Calculate cumulative distribution functions 
 %      -> map t- or normdistributed random numbers to intervall [0,1]  
-if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
+if ( strcmpi(copulatype, 'Gaussian') ) % Gaussian copula   
     Z   = normcdf(Y,0,1);                % generate bivariate normal copula
-elseif ( strcmp(copulatype, 't') == 1) % t-copula 
+elseif ( strcmpi(copulatype, 't')) % t-copula 
     Z   = tcdf(Y,nu);                   % generate bivariate normal copula
 end
 
