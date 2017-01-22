@@ -10,7 +10,8 @@ classdef Curve
       compounding_type = 'cont';
       compounding_freq = 'annual';               
       day_count_convention = 'act/365'; 
-      shocktype_mc = 'absolute';  
+      shocktype_mc = 'absolute';
+	  shocktype_stress = 'absolute';
       increments = '';
       alpha = 0.19; % alpha parameter for Smith-Wilson interpolation method
       ufr = 0.042; % ultimate forward rate for Smith-Wilson interpolation method

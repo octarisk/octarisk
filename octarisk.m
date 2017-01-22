@@ -246,6 +246,11 @@ if ( stable_seed == 1)
     fclose(fid);								% close file 
     rand('state',random_seed);					% set seed
     randn('state',random_seed);
+else % use random seed
+	rand ('state', 'reset');
+	randn ('state', 'reset');
+	%rand ('seed', 201103917);
+	%randn ('seed', 201103917);
 end
 % I) #########            INPUT                 #########
 tic;
@@ -459,8 +464,37 @@ matrix_struct=struct();
 % [vol_surf ret_code] = get_sub_object(surface_struct,'EUR-SWAP-VOL')
 
 % [curve ret_code] = get_sub_object(curve_struct,'EUR-SPREAD-COVERED-AAA')
-% [curve ret_code] = get_sub_object(curve_struct,'DKK-SWAP')
+[curve ret_code] = get_sub_object(curve_struct,'EUR-SWAP')
 
+rates_mc_7300 = curve.getRate('250d',7300);
+base_7300 = curve.getRate('base',7300)
+rates_mc_7300_diff_sorted = sort(rates_mc_7300 - curve.getRate('base',7300));
+rates_mc_7300_mean = mean(rates_mc_7300_diff_sorted)
+rates_mc_7300_skew = skewness(rates_mc_7300_diff_sorted)
+rates_mc_7300_std = std(rates_mc_7300_diff_sorted)
+rates_mc_7300_kurt = kurtosis(rates_mc_7300_diff_sorted)
+quantile_001 = rates_mc_7300_diff_sorted(1)
+quantile_005 = rates_mc_7300_diff_sorted(5)
+quantile_010 = rates_mc_7300_diff_sorted(10)
+quantile_248 = rates_mc_7300_diff_sorted(248)
+quantile_249 = rates_mc_7300_diff_sorted(249)
+quantile_250 = rates_mc_7300_diff_sorted(250)
+quantile_251 = rates_mc_7300_diff_sorted(251)
+
+rates_mc_21900 = curve.getRate('250d',21900);
+base_21900 = curve.getRate('base',21900)
+rates_mc_21900_diff_sorted = sort(rates_mc_21900 - curve.getRate('base',21900));
+rates_mc_21900_mean = mean(rates_mc_21900_diff_sorted)
+rates_mc_21900_skew = skewness(rates_mc_21900_diff_sorted)
+rates_mc_21900_std = std(rates_mc_21900_diff_sorted)
+rates_mc_21900_kurt = kurtosis(rates_mc_21900_diff_sorted)
+quantile_001 = rates_mc_21900_diff_sorted(1)
+quantile_005 = rates_mc_21900_diff_sorted(5)
+quantile_010 = rates_mc_21900_diff_sorted(10)
+quantile_248 = rates_mc_21900_diff_sorted(248)
+quantile_249 = rates_mc_21900_diff_sorted(249)
+quantile_250 = rates_mc_21900_diff_sorted(250)
+quantile_251 = rates_mc_21900_diff_sorted(251)
 
 curve_gen_time = toc;
 
@@ -486,7 +520,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
     try
     % TODO: loop via positions_cell -> get id from instrument struct -> valuate these instruments only
     % store in special valuated_instruments struct -> aggregate from these struct only
-    tmp_id = instrument_struct( ii ).id
+    tmp_id = instrument_struct( ii ).id;
     tic;
         % =================    Full valuation    ===============================
         para_struct.scen_number = scen_number;
@@ -567,6 +601,16 @@ for kk = 1:1:length(instrument_struct)
     end
 end
 
+% disp("Analysis BELGIUM_KINGDOM_76_FIX_19_2038")
+% b = get_sub_object(instrument_struct, 'BELGIUM_KINGDOM_76_FIX_19_2038');
+% stressvec = (b.getValue('250d') - b.getValue('base')) .* 6749320.46;
+% stressvec_sorted = sort(stressvec);
+% stressvec_sorted(248)
+% stressvec_sorted(249)
+% stressvec_sorted(250)
+% stressvec_sorted(251)
+% hd_vec = harrell_davis_weight(50000,1:50000,0.005)';
+% hd_pos_var = dot(hd_vec,stressvec_sorted)
 
 % --------------------------------------------------------------------------------------------------------------------
 % 6. Portfolio Aggregation
@@ -844,10 +888,12 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 			if ( ii == 1)   % first use of struct
 				tmp_aggr_cell = {};
 				aggregation_mat = [];
+				aggregation_basevalue = [];
 				aggregation_decomp_shock = 0;
 			else            % reading from struct from previous instrument
 				tmp_aggr_cell           = aggr_key_struct( jj ).key_values;
 				aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
+				aggregation_basevalue   = [aggr_key_struct( jj ).aggregation_basevalue];
 				aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
 			end
 			if (isProp(tmp_instr_object,aggregation_key{jj}) == 1)
@@ -861,11 +907,13 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 					if (sum(strcmp(tmp_aggr_cell,tmp_aggr_key_value)) > 0)   % aggregation key found
 						tmp_vec_xx = 1:1:length(tmp_aggr_cell);
 						tmp_aggr_key_index = strcmp(tmp_aggr_cell,tmp_aggr_key_value)*tmp_vec_xx';
+						aggregation_basevalue(:,tmp_aggr_key_index) = aggregation_basevalue(:,tmp_aggr_key_index) + tmp_basevalue;
 						aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) + (octamat .* tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);
 						aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + tmp_decomp_var_shock;
 					else    % aggregation key not found -> set value for first time
 						tmp_aggr_cell{end+1} = tmp_aggr_key_value;
 						tmp_aggr_key_index = length(tmp_aggr_cell);
+						aggregation_basevalue(:,tmp_aggr_key_index) = tmp_basevalue;
 						aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  - tmp_basevalue);
 						aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock;
 					end
@@ -879,15 +927,16 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 			aggr_key_struct( jj ).key_name = aggregation_key{jj};
 			aggr_key_struct( jj ).key_values = tmp_aggr_cell;
 			aggr_key_struct( jj ).aggregation_mat = aggregation_mat;
+			aggr_key_struct( jj ).aggregation_basevalue = aggregation_basevalue;
 			aggr_key_struct( jj ).aggregation_decomp_shock = aggregation_decomp_shock;
 		end
 		
 	   
 		total_var_undiversified = total_var_undiversified + tmp_pos_var;
 		% Store Values for piechart (Except CASH):
-		pie_chart_values_instr_shock(ii) = round((tmp_pos_var) / abs(tmp_quantity));
+		pie_chart_values_instr_shock(ii) = (tmp_pos_var) / abs(tmp_quantity);
 		pie_chart_desc_instr_shock(ii) = cellstr( strcat(tmp_instr_object.id));
-		pie_chart_values_pos_shock(ii) = round((tmp_decomp_var_shock) );
+		pie_chart_values_pos_shock(ii) = (tmp_decomp_var_shock) ;
 		pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
     catch	% if instrument not found raise warning and populate cell
 		fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
@@ -922,18 +971,25 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     tmp_aggr_cell               = aggr_key_struct( jj ).key_values;
     tmp_aggr_key_name           = aggr_key_struct( jj ).key_name;
     tmp_aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
+	tmp_aggregation_basevalue   = [aggr_key_struct( jj ).aggregation_basevalue];
     tmp_aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
     fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-    fprintf('|VaR %s | Key value   | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
+    fprintf('|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
     fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-    fprintf(fid, '|VaR %s | Key value   | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
+    fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
     for ii = 1 : 1 : length(tmp_aggr_cell)
         tmp_aggr_key_value          = tmp_aggr_cell{ii};
-        tmp_sorted_aggr_mat			= sort(tmp_aggregation_mat(:,ii));
-        tmp_standalone_aggr_key_var = abs(tmp_sorted_aggr_mat(confi_scenario));
+        tmp_sorted_aggr_mat			= sort(tmp_aggregation_mat(:,ii));	
+		% HD VaR only if number of scenarios < hd_limit
+	    if ( mc < hd_limit )
+		    tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
+	    else
+		    tmp_standalone_aggr_key_var = abs(tmp_sorted_aggr_mat(confi_scenario));
+	    end
         tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
-        fprintf('|VaR %s | %s \t |%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
-        fprintf(fid, '|VaR %s | %s \t |%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
+		tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
+        fprintf('|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
+        fprintf(fid, '|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
     end
   end
 

@@ -7,6 +7,8 @@
 *.m~
 # exclude oct files, since compilation is OE specific
 *.oct
+*.o
+octave-workspace
 # exclude the following folders
 /working_folder/output/*
 /working_folder/archive/*

@@ -96,23 +96,27 @@ classdef Riskfactor
          obj.type = type;
       end % Set.type
 	  
-	  function obj = set.shift_type(obj,shift_type)
-	    if ( rows(obj.scenario_stress) > 1)
-			if ( rows(shift_type) ~= rows(obj.scenario_stress))
-				error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(shift_type),rows(obj.scenario_stress))
-			end
-		end
-         obj.shift_type = shift_type;
-      end % Set.shift_type
+	  % function obj = set.shift_type(obj,shift_type)
+	    % if ( rows(obj.scenario_stress) > 1)
+			% shift_type
+			% obj.scenario_stress
+			% if ( rows(shift_type) ~= rows(obj.scenario_stress))
+				% error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(shift_type),rows(obj.scenario_stress))
+			% end
+		% end
+         % obj.shift_type = shift_type;
+      % end % Set.shift_type
 	  
-	  function obj = set.scenario_stress(obj,scenario_stress)
-	    if ( rows(obj.shift_type) > 1)
-			if ( rows(obj.shift_type) ~= rows(scenario_stress))
-				error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(obj.shift_type),rows(scenario_stress))
-			end
-		end
-        obj.scenario_stress = scenario_stress;
-      end % Set.scenario_stress
+	  % function obj = set.scenario_stress(obj,scenario_stress)
+		% scenario_stress
+		% obj.shift_type
+	    % if ( rows(obj.shift_type) > 1)
+			% if ( rows(obj.shift_type) ~= rows(scenario_stress))
+				% error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(obj.shift_type),rows(scenario_stress))
+			% end
+		% end
+        % obj.scenario_stress = scenario_stress;
+      % end % Set.scenario_stress
 
     end
     methods (Static = true)
