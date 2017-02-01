@@ -30,8 +30,8 @@ if ~(strcmpi(value_type,'Base'))
 				% apply shock to curve
 				if ( strcmpi(shocktype,'absolute'))
 					rates_shock(:,kk) = shock + rate_base;
-				elseif ( strcmpi(shocktype,'absolute'))
-					rates_shock(:,kk) = shock * rate_base;
+				elseif ( strcmpi(shocktype,'relative'))
+					rates_shock(:,kk) = shock .* rate_base;
 				else
 					error ('Curve.getRate: Unknown shocktype >>%s<<',any2str(shocktype));
 				end

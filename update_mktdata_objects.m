@@ -124,40 +124,34 @@ for ii = 1 : 1 : length(mktdata_struct)
                     tmp_shocktype_mc = tmp_rf_object.get('shocktype_mc');
                     for kk = 1 : 1 : length(tmp_timestep_mc)
                         tmp_value_type = tmp_timestep_mc{kk};
-                        %rf_shock_nodes    = tmp_rf_object.get('nodes');
-                        %rf_shock_rates    = tmp_rf_object.getValue(tmp_value_type);
-                        % loop through all IR Curve nodes and get interpolated shock value from risk factor
+                        rf_shock_nodes    = tmp_rf_object.get('nodes');
+                        rf_shock_rates    = tmp_rf_object.getValue(tmp_value_type);
+						% 1. loop through all risk factor shock values and calculate
+						% sln values
+						shock_vec = [];
+						for jj = 1 : 1 : length(rf_shock_nodes)
+							tmp_node = rf_shock_nodes(jj);
+							tmp_shock = tmp_rf_object.getRate(tmp_value_type,tmp_node);
+							% in case of shifted log-normal: adjust shock and calculate absolute shock
+							if  ( strcmpi(tmp_rf_object.get('shocktype_mc'),'sln_relative'))
+								tmp_shocktype_mc = 'absolute';
+								sln_level_vector = tmp_rf_object.get('sln_level');
+								% interpolate sln level:
+								sln_level = interpolate_curve(rf_shock_nodes,sln_level_vector,tmp_node,tmp_rf_object.method_interpolation);
+								tmp_rate_base = tmp_object.getRate('base',tmp_node);
+								tmp_shock = (( tmp_rate_base + sln_level ) .* tmp_shock - sln_level) - tmp_rate_base;
+							end
+							shock_vec = horzcat(shock_vec,tmp_shock);
+						end
+                        % 2. loop through all IR Curve nodes and get interpolated shock value from risk factor
                         tmp_ir_shock_matrix = [];
 						
                         for ii = 1 : 1 : length(curve_nodes)
                             tmp_node = curve_nodes(ii);
                             % get interpolated shock vector at node
-						    tmp_shock = tmp_rf_object.getRate(tmp_value_type,tmp_node);
-							% in case of shifted log-normal: adjust shock
-							if  ( strcmpi(tmp_rf_object.get('shocktype_mc'),'sln_relative'))
-								tmp_shocktype_mc = 'absolute';
-								sln_level_vector = tmp_rf_object.get('sln_level');
-								rf_nodes = tmp_rf_object.get('nodes');
-								% interpolate sln level:
-								sln_level = interpolate_curve(rf_nodes,sln_level_vector,tmp_node,tmp_rf_object.method_interpolation);
-								tmp_rate_base = tmp_object.getRate('base',tmp_node);
-								% calculate absolute shifted log-normal shock:
-								% if ( tmp_node == 30 || tmp_node == 365 || tmp_node == 730)
-									% tmp_id
-									% tmp_shocktype_mc
-									% tmp_node
-									% tmp_shock
-									% tmp_rate_base
-									% sln_level_vector
-									% sln_level
-								% end
-								tmp_shock = (( tmp_rate_base + sln_level ) .* tmp_shock - sln_level) - tmp_rate_base;
-								% if ( tmp_node == 30 || tmp_node == 365  || tmp_node == 730 )
-									% tmp_shock
-								% end
-							end
+						    tmp_shock = interpolate_curve(rf_shock_nodes,shock_vec,tmp_node,tmp_rf_object.method_interpolation); 
                             % generate total shock matrix
-								tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock);
+							tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock);
                         end
                         if ( strcmp(tmp_shocktype_mc,'relative'))
                             curve_rates_mc = curve_rates_base .* tmp_ir_shock_matrix;
@@ -193,7 +187,7 @@ for ii = 1 : 1 : length(mktdata_struct)
             curve_struct( tmp_store_struct ).object  = tmp_object;
             index_curve_objects = index_curve_objects + 1;
         catch
-            fprintf('ERROR: update_mktdata_objects: There has been an error for new Curve object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
+            fprintf('ERROR: update_mktdata_objects: There has been an error for new Curve object:  >>%s<<. Message: >>%s<< in line >>%d<< \n',tmp_id,lasterr,lasterror.stack.line);
             id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
         end
     end % end class select

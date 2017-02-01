@@ -71,13 +71,6 @@ for kk = 1 : 1 : length(tmp_header)
 end   
 
 % B.2b) get unique risk factors in input cell (remove all other values except items starting with 'RF_')
-% cell_unique = unique([content{1,:}])   % get cell with unique entries only
-% cell_regexp = regexp(cell_unique,'^RF_');         % get cell with index values, where cell_unique entries start with 'RF_'
-% cell_nonrf = cellfun(@isempty,cell_regexp);       % get boolean vector with index values, where cell entries do not start with 'RF_'
-% cell_unique(cell_nonrf) = [];                    % remove all non-RF values
-% cell_unique
-
-% get unique entries
 cell_unique = {};
 for jj = 2 : 1 : length(content)
     tmp_cell = content{jj};
@@ -156,7 +149,7 @@ end  % next next row in specification
 number_rf       = length(cell_unique);
 number_theo_corr = (number_rf * (number_rf - 1 )) / 2;  % total number of correlations (lower triangular matrix elements)
 if ~( (number_theo_corr == number_set_corr) ) 
-    error('ERROR: Not enough correlations (>>%d<<)specified to total number of risk factors >>%d<<. Expected: >>%d<< \n',number_set_corr,number_rf,number_theo_corr);
+    error('ERROR: Not enough correlations (>>%d<<) specified to total number of risk factors >>%d<<. Expected: >>%d<< \n',number_set_corr,number_rf,number_theo_corr);
 end
 
 % C) return final matrix and cells  

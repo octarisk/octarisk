@@ -198,9 +198,9 @@ for ii = 1 : 1 : length(tmp_list_files)
                     error_flag = 1;
                 end
             end  % end for loop via all attributes
-            % B.3c) Error checking for riskfactor: 
+            % B.3c) Error checking for positions / portfolio: 
             if ( error_flag > 0 )
-                fprintf('ERROR: There has been an error for riskfactor: %s \n',tmp_cell_struct{1, jj - 1});
+                fprintf('ERROR: There has been an error for positions / portfolio: %s \n',tmp_cell_struct{1, jj - 1});
                 id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_cell_struct{1, jj - 1};
                 error_flag = 0;
             else
@@ -241,11 +241,22 @@ for kk = 1 : 1 : length(tmp_portfolio_struct)
     end   
 end
 
+% check for empty portfolios
+for kk = 1 : 1 : length(tmp_portfolio_struct)
+	tmp_port_id = tmp_portfolio_struct( kk ).id;
+	position_struct = struct();
+	position_struct = tmp_portfolio_struct( kk ).position;
+	if isempty(position_struct)
+		fprintf('ERROR: Portfolio >>%s<< has no positions.\n',tmp_port_id);
+		id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_port_id;
+	end
+end
+
 % C) return final position objects  
 fprintf('SUCCESS: loaded >>%d<< positions. \n',number_positions);
 fprintf('SUCCESS: loaded >>%d<< portfolios. \n',number_portfolios);
 if (length(id_failed_cell) > 0 )
-    fprintf('WARNING: >>%d<< positions failed: \n',length(id_failed_cell));
+    fprintf('WARNING: >>%d<< positions or portfolio failed: \n',length(id_failed_cell));
     id_failed_cell
 end
 

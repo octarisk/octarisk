@@ -24,6 +24,7 @@ classdef Riskfactor
       scenario_stress = [];
       scenario_mc = [];
       shift_type = [];
+	  shocktype_mc = '';	% either relative or absolute
       timestep_mc = {};
     end
  

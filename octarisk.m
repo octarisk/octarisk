@@ -196,7 +196,7 @@ input_filename_matrix = 'matrix_';
 plotting = 1;           % switch for plotting data (0/1)
 saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
 archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
-stable_seed = 0;        % switch for using stored random numbers (1) or drawing new random numbers (0)
+stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
 mc_scen_analysis = 0;   % switch for applying statistical tests on risk factor MC scenario values 
                         %   (compare target statistic parameters with actual values)
 % load packages
@@ -219,12 +219,11 @@ valuation_date = datenum('30-Sep-2016'); % valuation date
 para_struct.valuation_date = valuation_date;
 fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
 base_currency  = 'EUR'  % base reporting currency
-aggregation_key = {'asset_class','currency','id'}    % aggregation key
+aggregation_key = {'asset_class','currency','id','type'}    % aggregation key
 mc_timesteps    = {'250d'} %{'250d'}                % MC timesteps
 %mc_timesteps    = {} %{'250d'}                % MC timesteps
-scenario_set    = [mc_timesteps];   % %       % append stress scenarios ,'stress'
+scenario_set    = [mc_timesteps,'stress'];   % %       % append stress scenarios 
 %scenario_set    = {'stress'};   %{'stress'} %       % append stress scenarios
-gpd_confidence_levels = [0.9;0.95;0.975;0.99;0.995;0.999;0.9999];   % vector with confidence levels used in reporting of EVT VAR and ES
 
 % specify unique runcode and timestamp:
 runcode = '2016Q3'; %substr(md5sum(num2str(time()),true),-6)
@@ -308,11 +307,7 @@ end
 persistent instrument_struct;
 instrument_struct=struct();
 [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_input,input_filename_instruments,path_output_instruments,path_archive,timestamp,archive_flag);
-% for kk = 1 : 1 : min(10,length(instrument_struct))
-    % printf('>>%s<<\n',instrument_struct(kk).id)
-    % tmpobject = instrument_struct(kk).object;
-    % tmpobject
-% end
+
 % 2. Processing Riskfactor data
 persistent riskfactor_struct;
 riskfactor_struct=struct();
@@ -334,11 +329,7 @@ para_struct.no_stresstests = no_stresstests;
 persistent mktdata_struct;
 mktdata_struct=struct();
 [mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct,path_mktdata,input_filename_mktdata,path_output_mktdata,path_archive,timestamp,archive_flag);
-% for kk = 1 : 1 : length(mktdata_struct)
-    % printf('>>%s<<\n',mktdata_struct(kk).id)
-    % tmpobject = mktdata_struct(kk).object;
-    % tmpobject
-% end
+
 parseinput = toc;
 
 
@@ -393,10 +384,7 @@ end
 
 % 3.) Take Riskfactor Shiftvalues from Stressdefinition
 [riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
-% for kk = 1  : 1 : length(riskfactor_struct)
-   % riskfactor_struct(kk).id
-   % riskfactor_struct(kk).object
-% end
+
 
 scengen = toc;
 
@@ -417,10 +405,6 @@ tic;
 persistent curve_struct;
 curve_struct=struct();
 [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving,run_mc);
-% for kk = 1  : 1 : length(curve_struct)
-   % curve_struct(kk).id
-   % curve_struct(kk).object
-% end
 
 
 
@@ -432,41 +416,14 @@ surface_struct=struct();
 [index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests,run_mc);   
 
 % c) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
-
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir,input_filename_surf_stoch);
-% for kk = 1  : 1 : length(surface_struct)
-   % surface_struct(kk).id
-   % surface_struct(kk).object
-% end
-% tmp_obj = get_sub_object(surface_struct,'RF_VOLA_IR_EUR')
-% tmp_obj.shock_struct
-% tmp_obj.getValue('base',400,500,0)
-% tmp_obj.getValue('stress',400,500,0)
+
   
 % d) Loading matrix objects
 persistent matrix_struct;
 matrix_struct=struct();
 [matrix_struct matrix_failed_cell] = load_matrix_objects(matrix_struct,path_mktdata,input_filename_matrix);
  
- % for kk = 1  : 1 : length(matrix_struct)
-   % matrix_struct(kk).id
-   % matrix_struct(kk).object
-% end
-% for kk = 1  : 1 : length(index_struct)
-   % index_struct(kk).id
-   % index_struct(kk).object
-% end
- % for kk = 1  : 1 : length(curve_struct)
-    % curve_struct(kk).id
-    % curve_struct(kk).object
- % end
-
-% for kk = 1  : 1 : length(riskfactor_struct)
-   % riskfactor_struct(kk).object
-   % %riskfactor_struct(kk).object.getValue('stress')
-   % %riskfactor_struct(kk).object.getValue('base')
-% end
-
 
 curve_gen_time = toc;
 
@@ -567,22 +524,12 @@ for kk = 1:1:length(instrument_struct)
     obj = instrument_struct(kk).object;
     stressvec = obj.getValue('stress');
     if (length(stressvec) > 1)
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(4),obj.currency);
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(2),stressvec(3),stressvec(4),stressvec(5),obj.currency);
     else
         fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),obj.currency);
     end
 end
 
-% disp("Analysis BELGIUM_KINGDOM_76_FIX_19_2038")
-% b = get_sub_object(instrument_struct, 'BELGIUM_KINGDOM_76_FIX_19_2038');
-% stressvec = (b.getValue('250d') - b.getValue('base')) .* 6749320.46;
-% stressvec_sorted = sort(stressvec);
-% stressvec_sorted(248)
-% stressvec_sorted(249)
-% stressvec_sorted(250)
-% stressvec_sorted(251)
-% hd_vec = harrell_davis_weight(50000,1:50000,0.005)';
-% hd_pos_var = dot(hd_vec,stressvec_sorted)
 
 % --------------------------------------------------------------------------------------------------------------------
 % 6. Portfolio Aggregation
@@ -622,15 +569,18 @@ end
 for mm = 1 : 1 : length( portfolio_struct )
     %disp('Aggregation for Portfolio ');
     %mm
-    tmp_port_id = portfolio_struct( mm ).id;
-    tmp_port_name = portfolio_struct( mm ).name;
-    tmp_port_description = portfolio_struct( mm ).description;
-    fund_currency = portfolio_struct( mm ).currency;    
-    clear position_struct;
-    position_struct = struct();
-    position_struct = portfolio_struct( mm ).position;
-    portfolio_value = 0;
-    PositionStructlength = length( position_struct  );
+  tmp_port_id = portfolio_struct( mm ).id;
+  tmp_port_name = portfolio_struct( mm ).name;
+  tmp_port_description = portfolio_struct( mm ).description;
+  fund_currency = portfolio_struct( mm ).currency;    
+  clear position_struct;
+  position_struct = struct();
+  position_struct = portfolio_struct( mm ).position;
+  portfolio_value = 0;
+  PositionStructlength = length( position_struct  );
+  if isempty( position_struct )	% check for empty portfolios
+	fprintf('WARNING: Skipping empty portfolio >>%s<<\n',tmp_port_id);
+  else
     fprintf('=== Aggregation for Portfolio >>%s<< ===\n',tmp_port_id);
     fprintf('ID,BaseValue,Quantity,FX_Rate,Portfoliovalue\n');
     for ii = 1 : 1 : length( position_struct  )
@@ -742,22 +692,6 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   endstaende_sort_shock    = sort(endstaende_reldiff_shock);
   [portfolio_shock_sort scen_order_shock] = sort(portfolio_shock');
   p_l_absolut_shock        = portfolio_shock_sort - base_value;
-  % Preparing vector for extreme value theory VAR and ES
-  
-  % only apply EVT if there is some risk in MC data
-  % if ( abs(std(p_l_absolut_shock)) > 0)
-    % confi_scenario_evt_95   = round(0.025 * mc);
-    % evt_tail_shock          = p_l_absolut_shock(1:confi_scenario_evt_95)';
-    % % Calculate VAR and ES from GPD:
-    % u = min(-evt_tail_shock);
-    % [aa bb cc] = size(evt_tail_shock);
-    % [chi sigma] = calibrate_evt_gpd(-evt_tail_shock);
-    % nu = length(evt_tail_shock);   
-    % [VAR_EVT_shock ES_EVT_shock]        = get_gpd_var(chi, sigma, u, gpd_confidence_levels, mc, nu);        
-   % else % apply dummy values
-    % [VAR_EVT_shock]    = horzcat(zeros(length(gpd_confidence_levels),1), zeros(length(gpd_confidence_levels),1));
-    % ES_EVT_shock = VAR_EVT_shock;
-   % end
 
 
   % Preparing direct VAR measures:
@@ -845,12 +779,14 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 		octamat = position_struct( ii ).mc_scenarios.octamat;
         tmp_values_shock = sort(octamat);
 		tmp_value = tmp_instr_object.getValue('base');
+		
 		tmp_name = tmp_instr_object.get('name');
 		tmp_type = tmp_instr_object.get('type'); 
 		tmp_currency = tmp_instr_object.get('currency'); 
 		   
 		tmp_quantity            = position_struct( ii ).quantity;
 		tmp_basevalue           = position_struct( ii ).basevalue;
+		
 		tmp_decomp_var_shock     = -(octamat(confi_scenarionumber_shock) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 
 		% Get pos var
 		tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
@@ -911,7 +847,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 		pie_chart_values_pos_shock(ii) = (tmp_decomp_var_shock) ;
 		pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
     catch	% if instrument not found raise warning and populate cell
-		fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+		fprintf('Instrument ID %s not found for position. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);
 		position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
 	end
   end  % end loop for all positions
@@ -983,23 +919,13 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
   fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f %s|\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
   
-  % % print EVT VAR and ES to file
-  % fprintf(fid, '= GPD extreme value VAR and ES: \n');
-  % for jj = 1 : 1 : length( gpd_confidence_levels )
-    % fprintf(fid, '|Port EVT VAR  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,VAR_EVT_shock(jj),fund_currency);
-  % end
-  % for jj = 1 : 1 : length( gpd_confidence_levels )
-    % fprintf(fid, '|Port EVT ES  %s@%2.2f%%| \t |%9.2f %s|\n',tmp_scen_set,gpd_confidence_levels(jj).*100,ES_EVT_shock(jj),fund_currency);
-  % end
+
   
   % Output to stdout:
   fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
   fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
   fprintf('ES  %s@%2.1f%%: \t %9.2f %s\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
-  % fprintf('GPD extreme value VAR and ES: \n');
-  % fprintf('VaR EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,VAR_EVT_shock(end),fund_currency);
-  % fprintf('ES  EVT %s@%2.2f%%: \t %9.2f %s\n\n',tmp_scen_set,gpd_confidence_levels(end).*100,ES_EVT_shock(end),fund_currency);
   fprintf('Low tail VAR: \n');
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,50.0,-VAR50_shock,fund_currency);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,70.0,-VAR70_shock,fund_currency);
@@ -1190,6 +1116,7 @@ fprintf(fid, 'Total Runtime:  %6.2f s\n',totaltime);
 fprintf('Total Runtime:  %6.2f s\n',totaltime);
 % Close file
 fclose (fid);
+end	% close if case for empty portfolios
 end % closing main portfolioloop mm
 
 % Plot correlation mismatches:
@@ -1233,32 +1160,3 @@ fprintf('\n');
     end
 
 end     % ending MAIN function octarisk
-
-% III) %#%#%%#         HELPER FUNCTIONS              %#%#
-% function for extracting sub-structure from struct object according to id
-function  match_struct = get_sub_struct(input_struct, input_id)
- 	matches = 0;	
-	a = {input_struct.id};
-	b = 1:1:length(a);
-	c = strcmp(a, input_id);	
-    % correct for multiple matches:
-    if ( sum(c) > 1 )
-        summe = 0;
-        for ii=1:1:length(c)
-            if ( c(ii) == 1)
-                match_struct = input_struct(ii);
-                ii;
-                return;
-            end            
-            summe = summe + 1;
-        end       
-    end
-    matches = b * c';
-	if (matches > 0)
-	    	match_struct = input_struct(matches);
-		return;
-	else
-	    	error(' No matches found for input_id: >>%s<<',input_id);
-		return;
-	end
-end

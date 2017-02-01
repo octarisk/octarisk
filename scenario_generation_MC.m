@@ -48,6 +48,10 @@ if nargin < 8
     stable_seed = 0;
 end
 
+% overwrite stable_seed setting --> always draw new random numbers.
+% seed is set during octarisk startup, therefore the random numbers should be always the same automatically
+stable_seed = 0;
+
 % 2) Time horizon check
 factor_time_horizon = 256 / time_horizon;
 

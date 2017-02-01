@@ -471,7 +471,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);
             end                       
         end
-        bond = bond.calc_value (valuation_date,scenario,tmp_curve_object);  
+        bond = bond.calc_value (valuation_date,scenario,tmp_curve_object); 
     % e) store bond object:
     ret_instr_obj = bond;
 

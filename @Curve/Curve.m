@@ -15,7 +15,6 @@ classdef Curve
       increments = '';
       alpha = 0.19; % alpha parameter for Smith-Wilson interpolation method
       ufr = 0.042; % ultimate forward rate for Smith-Wilson interpolation method
-      % WARNING: american call or put option not implemented properly. Do not use!
       american_flag = 0; % specifying option type if used as call or put schedule
       curve_function = 'sum';   % required for aggregated curves
       curve_parameter = 1;      % required for aggregated curves

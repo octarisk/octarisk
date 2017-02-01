@@ -222,7 +222,7 @@ end
 function retvec = classify_pearson(mean,stddev,skewness,kurtosis)
 % function for classification of pearson distribution system and calculation 
 % of scale and shape parameters
-% Modified and apapted from Function 'pearsonFitM':
+% Modified and adapted from Function 'pearsonFitM':
 %   Martin Becker and Stefan Klößner (2013). 
 %   PearsonDS: Pearson Distribution System. 
 %   R package version 0.97. URL http://CRAN.R-project.org/package=PearsonDS

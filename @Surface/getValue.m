@@ -19,7 +19,7 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
             value_base = s.interpolate(xx,yy);
             zz = 0;
         elseif (nargin == 5)
-            value_base = s.interpolate(yy,xx,zz);   % transpose xx and yy
+            value_base = s.interpolate(xx,yy,zz);
         end
     else
         print_usage ();

@@ -37,10 +37,10 @@ for ii = 1 : 1 : length(riskfactor_cell)
 	
 	% print overview
 	fprintf('Stat. parameter:  \t| Target | Actual \n');
-	fprintf('Mean comparision: \t| %0.4f |  %0.4f \n',mean_target,mean_act);
-	fprintf('Vola comparision: \t| %0.4f |  %0.4f \n',sigma_target,sigma_act);
-	fprintf('Skewness comparision: \t| %0.4f |  %0.4f \n',skew_target,skew_act);
-	fprintf('Kurtosis comparision: \t| %0.4f |  %0.4f \n',kurt_target,kurt_act);
+	fprintf('Mean comparison: \t| %0.4f |  %0.4f \n',mean_target,mean_act);
+	fprintf('Vola comparison: \t| %0.4f |  %0.4f \n',sigma_target,sigma_act);
+	fprintf('Skewness comparison: \t| %0.4f |  %0.4f \n',skew_target,skew_act);
+	fprintf('Kurtosis comparison: \t| %0.4f |  %0.4f \n',kurt_target,kurt_act);
 	
 	% perform JB Test for normal distributed random numbers (dist_type == 0)
 	if ( distr_type(ii) == 0)
@@ -50,7 +50,7 @@ for ii = 1 : 1 : length(riskfactor_cell)
 			retcode = 255;
 		end
 	end
-	% test for bimodality -> fit polynomial and calculate parabola opening parameter sign
+	% test for bimodality -> fit polynomial and calculate sign of parabola opening parameter
 	[xx yy] = hist(RndMat(:,ii),80);
 	p = polyfit(yy,xx,2);
 	if ( p(1) > 0 )

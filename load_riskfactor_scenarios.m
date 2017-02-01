@@ -47,7 +47,7 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
             % Case Dependency:
                 % Geometric Brownian Motion Riskfactor Modeling
                     if ( strcmpi(tmp_model,'GBM') || strcmpi(tmp_model,'SLN')  )
-                        tmp_delta 	    = Y + ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(256)).^2) .* ts);
+                        tmp_delta 	    = Y + ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(250)).^2) .* ts);
                 % Brownian Motion Riskfactor Modeling
                     elseif ( strcmpi(tmp_model,'BM') )
                         tmp_delta 	    = Y + (tmp_drift * ts);

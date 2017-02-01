@@ -8,6 +8,9 @@
 # exclude oct files, since compilation is OE specific
 *.oct
 *.o
+# exclude seed of random number generator
+seed_rand.dat
+seed_randn.dat
 octave-workspace
 # exclude the following folders
 /working_folder/output/*
