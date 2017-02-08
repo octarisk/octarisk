@@ -59,8 +59,8 @@ if ( strcmp('html',type) == 1)
 elseif  ( strcmp('txt',type) == 1)  
     % Loop via all function names in cellstring, convert texinfo to plain text 
     % and print it to documentation.txt
-    %filename = strcat(path,'documentation.txt');
-    %fid = fopen (filename, 'w');
+    filename = strcat(path_documentation,'/documentation.txt');
+    fid = fopen (filename, 'w');
     for ii = 1:length(c)
 		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         [retval status] = __makeinfo__(get_help_text(c{ii}),'plain text');

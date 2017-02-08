@@ -94,7 +94,23 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
                             value_type, s, curve_object, vola_surface);
     accr_int = 0.0;
     last_coupon_date = 0.0;
-    
+	
+  elseif ( strcmpi(s.sub_type,'ILB'))
+    if ( nargin < 6 )
+        error ('rollout for sub_type ILB: expecting value_type, valuation_date,inflation expectation curve, historical curve, cpi index objects');
+    end
+	
+	valuation_date  = arg1;
+	iec_obj 		= arg2;
+	hist_obj 		= arg3;
+	cpi_obj 		= arg4;
+	
+    % call function for generating CF dates and values and accrued_interest
+    [ret_dates ret_values ret_interest_values ret_principal_values ...
+		accr_int last_coupon_date] = rollout_structured_cashflows(valuation_date, ...
+                            value_type,  s, iec_obj, hist_obj, cpi_obj);
+	accr_int = 0.0;
+	
   % type stochastic -> get cash flows from underlying surface and risk factor quantiles
   elseif ( strcmpi(s.sub_type,'STOCHASTICCF') )
     % arg1: riskfactor random variable -> cashflows drawn from surface

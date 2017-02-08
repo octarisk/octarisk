@@ -31,14 +31,22 @@ for ii = 1 : 1 : length(riskfactor_struct)
     tmp_rf_struct_obj = riskfactor_struct( ii ).object;
     tmp_rf_id = tmp_rf_struct_obj.id;
     tmp_rf_type = tmp_rf_struct_obj.type;
-    if ( strcmp(tmp_rf_type,'RF_IR') || strcmp(tmp_rf_type,'RF_SPREAD') )  
+    if ( strcmp(tmp_rf_type,'RF_IR') || strcmp(tmp_rf_type,'RF_SPREAD') ...
+			|| strcmp(tmp_rf_type,'RF_INFL'))  
         number_riskfactors = number_riskfactors + 1;
         tmp_rf_parts = strsplit(tmp_rf_id, '_');
         tmp_rf_curve = 'RF';
-        % concatenate the whole string except the last '_xY'
-        for jj = 2 : 1 : length(tmp_rf_parts) -1    
-            tmp_rf_curve = strcat(tmp_rf_curve,'_',tmp_rf_parts{jj});
-        end
+		if ( strcmp(tmp_rf_type,'RF_IR') || strcmp(tmp_rf_type,'RF_SPREAD'))
+			% concatenate the whole string except the last '_xY'
+			for jj = 2 : 1 : length(tmp_rf_parts) -1    
+				tmp_rf_curve = strcat(tmp_rf_curve,'_',tmp_rf_parts{jj});
+			end
+		else
+			% concatenate the whole string 
+			for jj = 2 : 1 : length(tmp_rf_parts)    
+				tmp_rf_curve = strcat(tmp_rf_curve,'_',tmp_rf_parts{jj});
+			end
+		end
         rf_ir_cur_cell = horzcat(rf_ir_cur_cell,tmp_rf_curve);
     end
     rf_ir_cur_cell = unique(rf_ir_cur_cell);
@@ -54,6 +62,8 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
             tmp_curve_type = 'Discount Curve';
         elseif ( regexp(tmp_curve_id,'SPREAD'))
             tmp_curve_type = 'Spread Curve';
+		elseif ( regexp(tmp_curve_id,'INFL'))
+            tmp_curve_type = 'Inflation Expectation Curve';
         else
             tmp_curve_type = 'Dummy Curve';
         end
@@ -151,7 +161,6 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
         end
         % store curve object in final struct
         curve_struct( ii ).object = curve_object;
-        
     catch   % catch errors in generating curves from risk factor nodes
         fprintf('WARNING: octarisk::load_yieldcurves: ');
         fprintf('There has been an error for curve: >>%s<<. ',tmp_curve_id);

@@ -160,6 +160,35 @@ end
 %! assert(b.getValue('stress'),[117.121568822210;117.415543267658],0.000000001);
 
 %!test 
+%! fprintf('\tdoc_instrument:\tPricing Inflation Linked Bond Object\n');
+%! valuation_date = '30-Dec-2016';
+%! cpi = Index();
+%! cpi = cpi.set('value_base',100.700,'name','CPI','id','CPI','currency','EUR');
+%! hist = Curve();
+%! hist = hist.set('id','HIST_CURVE', 'type', 'Historical Curve', 'nodes',[0, -91, -183, -274, -365, -730],'rates_base',[100.7,100.54,100.63,100.07,117.21,117.23],'method_interpolation','next');
+%! iec = Curve();
+%! iec = iec.set('id','IEC_CURVE', 'type', 'Inflation Expectation Curve', 'nodes',[365,730,1095,1460,1825,2190,2555,2920,3285,3650],'rates_base',[0.012167,0.01173,0.01168,0.01181,0.011965,0.01245,0.01292,0.01340,0.01391,0.01470],'method_interpolation','linear','compounding_type','continuous','day_count_convention','act/365');
+%! ref_curve = Curve();
+%! ref_curve = ref_curve.set('id','DISCOUNT','nodes',[365,3650], 'rates_base',[0.01,0.03],...
+%!       'method_interpolation','linear','compounding_type','continuous','day_count_convention','act/365');   
+%! % setup inflation linked bond
+%! % without indexation lag
+%! b = Bond();
+%! b = b.set('Name','Test_ILB','coupon_rate',0.01,'value_base',118.55231149,'clean_value_base',0,'coupon_generation_method','forward','day_count_convention','act/365');
+%! b = b.set('maturity_date','28-Dec-2026','notional',100,'compounding_type','simple','issue_date','30-Dec-2016','prorated',true);
+%! b = b.set('term',12,'last_reset_rate',-0.000,'sub_Type','ILB','spread',0.000,'cpi_index','CPI','infl_exp_curve','IEQ_CURVE','cpi_historical_curve','HIST_CURVE','infl_exp_lag',3,'use_indexation_lag',false);
+%! b = b.rollout('base',valuation_date,iec,hist,cpi);
+%! assert(b.get('cf_values')',[1.01224131905195;1.02373735043361;1.03566113441648;1.05128164675109;1.06169260131516;1.07760591930570;1.09470465600357;1.11631354182220;1.13349434479673;116.98740312101249],0.0000001);
+%! b = b.calc_value(valuation_date,'base',ref_curve);
+%! assert(b.getValue('base'),95.2798495349485,0.0000001);
+%! % wit indexation lag
+%! b = b.set('use_indexation_lag',true);
+%! b = b.rollout('base',valuation_date,iec,hist,cpi);
+%! assert(b.get('cf_values')',[1.01078143024810;1.02256728792277;1.03432850716808;1.04973080092635;1.06001514473101;1.07522746216490;1.09205553349275;1.11332488953232;1.13009251947925;116.52093880689021],0.0000001);
+%! b = b.calc_value(valuation_date,'base',ref_curve);
+%! assert(b.getValue('base'),94.9180150148461,0.0000001);
+
+%!test 
 %! fprintf('\tdoc_instrument:\tPricing Floating Rate Bond Object\n');
 %! b = Bond();
 %! b = b.set('Name','Test_FRN','coupon_rate',0.00,'value_base',99.7527,'coupon_generation_method','backward','compounding_type','simple');

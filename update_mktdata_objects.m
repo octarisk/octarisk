@@ -88,9 +88,14 @@ for ii = 1 : 1 : length(mktdata_struct)
                 curve_nodes      = tmp_object.get('nodes');
                 curve_rates_base = tmp_object.get('rates_base');
                 % sort nodes and accordingly base rates:
-                [curve_nodes tmp_indizes] = sort(curve_nodes);
-                curve_rates_base = curve_rates_base(:,tmp_indizes);
-                
+				if (curve_nodes >= 0 )
+					[curve_nodes tmp_indizes] = sort(curve_nodes);
+					curve_rates_base = curve_rates_base(:,tmp_indizes);
+				elseif (curve_nodes <= 0 )
+					[curve_nodes tmp_indizes] = sort(curve_nodes,'descend');
+					curve_rates_base = curve_rates_base(:,tmp_indizes);
+				end
+				
                 tmp_ir_shock_matrix = [];
                 
                 % get stress values of risk factor curve
@@ -175,8 +180,13 @@ for ii = 1 : 1 : length(mktdata_struct)
                 curve_nodes      = tmp_object.get('nodes');
                 curve_rates_base = tmp_object.get('rates_base');
                 % sort nodes and accordingly base rates:
-                [curve_nodes tmp_indizes] = sort(curve_nodes);
-                curve_rates_base = curve_rates_base(:,tmp_indizes);
+				if (curve_nodes >= 0 )
+					[curve_nodes tmp_indizes] = sort(curve_nodes);
+					curve_rates_base = curve_rates_base(:,tmp_indizes);
+				elseif (curve_nodes <= 0 )
+					[curve_nodes tmp_indizes] = sort(curve_nodes,'descend');
+					curve_rates_base = curve_rates_base(:,tmp_indizes);
+				end
                 tmp_object = tmp_object.set('rates_base',curve_rates_base); % restore rates base. Maybe they were unsorted.
                 tmp_object = tmp_object.set('nodes',curve_nodes); % restore nodes. Maybe they were unsorted.
             end	% no match found, market object has no attached risk factor -> just store in curve struct

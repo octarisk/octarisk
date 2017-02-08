@@ -44,8 +44,12 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
             if ( length(zz) < max_len)
                 zz = repmat(zz,max_len,1);
             end
-            interpoint = [xx,yy,zz];
-                
+			% distinguish between surface and cube
+			if (nargin == 5)
+				interpoint = [xx,yy,zz];
+            elseif (nargin == 4)
+				interpoint = [yy,zz];
+			end
             % calculate inverse distance weighted shock
             for ii = 1:1:columns(tmp_coordinates)
                 tmp_vektor = tmp_coordinates(:,ii);
@@ -67,11 +71,11 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
                 y_abs     =  shockvalue + value_base;
                 % combine both shocks
                 y = tmp_shift_types .* y_rel + (1 - tmp_shift_types) .* y_abs;
-            else    % all MC scenarios use model information
+            else    % all MC scenarios use model information			
                 y = Riskfactor.get_abs_values(struct_out.model,shockvalue,value_base);
             end
         catch
-            %fprintf('surface.getValue: Object has no risk factor values for >>%s<<.\n',value_type);
+            %fprintf('surface.getValue: Object has no risk factor values for >>%s<<.  ID: >>%s<< Message: >>%s<< in line >>%d<< \n',value_type,s.id,lasterr,lasterror.stack.line);
             y = value_base;
         end
     else    % value type 'base'

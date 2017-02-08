@@ -93,7 +93,7 @@ if ~( no_scen_nodes == no_scen_rates )
     error('Error: interpolate_curve: Number of columns must be equivalent');
 end
 
-if ~( issorted(nodes) == 1)
+if ~( issorted(abs(nodes)))
     error('Error: interpolate_curve: Nodes have to be sorted')
 end
 
@@ -107,11 +107,11 @@ if ( sum(eq_vec) > 0 )
 	return
 end
 
-dnodes = diff(nodes);
+dnodes = abs(diff(nodes));
 
 if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant 
 		% extrapolation only for methods except smith-wilson and monotone-convex
-    if ( timestep <= nodes(1) ) % constant or linear extrapolation
+    if ( timestep <= min(nodes) ) % constant or linear extrapolation
 		if ( strcmpi(method_extrapolation,'linear'))
 			y = interp1(nodes',rates',timestep,'linear','extrap')';
 			return
@@ -119,7 +119,7 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
 			y = rates(:,1);
 			return
 		end
-    elseif ( timestep >= nodes(end) ) % constant or linear extrapolation
+    elseif ( timestep >= max(nodes) ) % constant or linear extrapolation
 		if ( strcmpi(method_extrapolation,'linear'))
 			y = interp1(nodes',rates',timestep,'linear','extrap')';
 			return
@@ -131,7 +131,7 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
         % linear interpolation
         if (strcmpi(method,'linear'))          % linear interpolation
             for ii = 1 : 1 : (no_scen_nodes - 1)
-                if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
+                if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
                      y = ((1 - abs(timestep - nodes(ii)) ...
 							./ dnodes(ii)).* rates(:,ii) ...
 							+ (1 - abs(nodes(ii + 1) - timestep) ...
@@ -141,7 +141,7 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
 			
         elseif (strcmpi(method,'mm'))          % money market interpolation
             for ii = 1 : 1 : (no_scen_nodes - 1)
-                if ( timestep >= nodes(ii) && timestep <= nodes(ii+1 ) )
+                if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
                     alpha = (nodes(ii+1) - timestep) / ...
 							( nodes(ii+1 ) - nodes(ii) );
                     y = (alpha .* nodes(ii) .* rates(:,ii) ...
@@ -605,6 +605,7 @@ end
 %!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'monotone-convex' ),[0.012116882;0.007318077],0.000001)
 %!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'smith-wilson',0.05,0.12),[0.01201874447087881;0.00145313313347883],0.000000001)
 %!assert(interpolate_curve ([365,730,1095], [0.01,0.02,0.025;0.015,-0.02,0.04], 433, 'linear'),[0.01186301;0.00847945],0.000001)
+%!assert(interpolate_curve ([-365,-730,-1095], [0.01,0.02,0.025;0.015,-0.02,0.04], -433, 'linear'),[0.0118630;0.0084795],0.000001)
 %!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'linear'),0.004927301319,0.0000000001)
 %!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'mm'),0.00494794483,0.0000000001)
 %!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'exponential'),0.004927396730,0.0000000001)

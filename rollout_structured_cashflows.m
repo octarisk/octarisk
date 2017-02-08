@@ -351,60 +351,102 @@ if ( strcmpi(type,'FRB') || strcmpi(type,'SWAP_FIXED') )
 
 % Type Inflation Linked Bonds: Calculate CPI adjustedCF Values 
 elseif ( strcmpi(type,'ILB') )
+	% remap input objects: ref_curve, surface,riskfactor
+	iec 	= ref_curve;
+	hist 	= surface;
+	cpi 	= riskfactor;
+	notional_tmp = notional;
     cf_datesnum = datenum(cf_dates);
     %cf_datesnum = cf_datesnum((cf_datesnum-today)>0)
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
+	
+	% get current CPI level
+	cpi_level = cpi.getValue(value_type);
+	% without indexation lag initial and current level are equal
+	cpi_initial = cpi_level;
+		
+	% get historical index level for indexation lag > 0
+	if (instrument.use_indexation_lag == true)
+		adjust_for_month = instrument.infl_exp_lag;
+		if (adjust_for_month ~= 0) % adjust for lag
+			adjust_for_years = floor(adjust_for_month/12);
+			adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
+			% calculate indexation lag in days:
+			[valdate_yy valdate_mm valdate_dd] = datevec(valuation_date);
+			tmp_date = datenum(valdate_yy - adjust_for_years,valdate_mm - adjust_for_month, valdate_dd  );
+			%new_cf_day = check_day(valdate_yy,valdate_mm - adjust_for_month,valdate_dd - adjust_for_years )
+			diff_days = valuation_date - tmp_date	;
+			cpi_initial = hist.getRate(value_type,-diff_days);
+		end
+	end
     % preallocate memory
-    cf_values = zeros(1,length(d1));
-    cf_principal = zeros(1,length(d1));
+	no_scen = max(length(iec.getRate(value_type,0)),length(cpi_level));
+	cf_values = zeros(no_scen,length(d1));
+    cf_principal = zeros(no_scen,length(d1));
+	
     % calculate all cash flows (assume prorated == true --> deposit method
     for ii = 1: 1 : length(d2)
         % convert dates into years from valuation date with timefactor
-        [tf dip dib] = timefactor (d1(ii), d2(ii), dcc);
-        t1 = (d1(ii) - valuation_date);
-        t2 = (d2(ii) - valuation_date);
-  
-        if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rate
-            payment_date        = t2;
-            % adjust forward start and end date for in fine vs. in arrears
-            if ( instrument.in_arrears == 0)    % in fine
-                fsd  = t1;
-                fed  = t2;
-                timing_adjustment = 1; % no timing adjustment required for in fine
-            else    % in arrears
-                fsd  = t2;
-                fed  = t2 + (t2 - t1);
-            end
+		% check for indexation_lag and adjust timesteps accordingly
+		tmp_d1 = d1(ii);
+		tmp_d2 = d2(ii);
+		if (instrument.use_indexation_lag == true)
+			adjust_for_month = instrument.infl_exp_lag;
+			if (adjust_for_month ~= 0) % adjust for lag
+				adjust_for_years = floor(adjust_for_month/12);
+				adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
+				[d1_yy d1_mm d1_dd] = datevec(tmp_d1);
+				tmp_d1 = datenum(d1_yy - adjust_for_years,d1_mm - adjust_for_month, d1_dd );
+				[d2_yy d2_mm d2_dd] = datevec(tmp_d2);
+				tmp_d2 = datenum(d2_yy - adjust_for_years,d2_mm - adjust_for_month, d2_dd );
+			end
+		end
+		% get timefactors and cf dates
+        [tf dip dib] = timefactor (tmp_d1, tmp_d2, dcc);
+        t1 = (tmp_d1 - valuation_date);
+        t2 = (tmp_d2 - valuation_date);
+		
+        if ( t2 >= 0 && t2 >= t1 )        % future cash flows only
             % adjust notional according to CPI adjustment factor based on
             % interpolated inflation expectation curve rates
             % distinguish between t1 and t2
-            notional_tmp = notional .* 1;
-            cf_values(ii) = ((1 ./ discount_factor(d1(ii), d2(ii), coupon_rate, ...
+			iec_rate = iec.getRate(value_type,t2);
+			adj_cpi_factor = 1 ./ discount_factor(valuation_date, tmp_d2, iec_rate, ...
+                                            iec.compounding_type, iec.basis, ...
+                                            iec.compounding_freq);	
+			% take adjust cpi factor relativ to initial cpi value
+            notional_tmp = notional .* adj_cpi_factor .* cpi_level ./ cpi_initial;
+            cf_values(:,ii) = ((1 ./ discount_factor(d1(ii), d2(ii), coupon_rate, ...
                                             compounding_type, dcc, ...
                                             compounding_freq)) - 1) .* notional_tmp;
-        elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
-                                        % next is in future, use last reset rate
-            cf_values(:,ii) = ((1 ./ discount_factor(d1(ii), d2(ii), hist_rate, ...
-                                            compounding_type, dcc, ...
-                                            compounding_freq)) - 1) .* notional_tmp;
+			% prorated == false: adjust deposit method to bond method --> in case
+			% of leap year adjust time period length by adding one day and
+			% recalculate cash flow
+			if ( instrument.prorated == false) 
+				delta_coupon = cf_values(ii) - coupon_rate .* notional_tmp;
+				delta_prorated = notional_tmp .* coupon_rate / 365;
+				if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
+					cf_values(:,ii) = ((1 ./ discount_factor(d1(ii)+1, d2(ii), ...
+										coupon_rate, compounding_type, dcc, ...
+										compounding_freq)) - 1) .* notional_tmp;
+				end
+			end
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
             cf_values(:,ii)  = 0.0;
         end
-        cf_values(:,ii) = forward_rate;
     end
     ret_values = cf_values;
     cf_interest = cf_values;
     % Add CPI adjusted notional payments at end
     if ( notional_at_start == 1)    % At notional payment at start
-        ret_values(:,1) = ret_values(:,1) - notional;     
-        cf_principal(:,1) = - notional;
+        ret_values(:,1) = ret_values(:,1) - notional_tmp;     
+        cf_principal(:,1) = - notional_tmp;
     end
     if ( notional_at_end == true) % Add notional payment at end to cf vector:
-        ret_values(:,end) = ret_values(:,end) + notional;
-        cf_principal(:,end) = notional;
+        ret_values(:,end) = ret_values(:,end) + notional_tmp;
+        cf_principal(:,end) = notional_tmp;
     end
-    
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
 %           spot rate defined 
 elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))

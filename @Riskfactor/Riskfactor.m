@@ -91,8 +91,8 @@ classdef Riskfactor
       end % Set.model
       
       function obj = set.type(obj,type)
-         if ~(sum(strcmpi(type,{'RF_IR','RF_SPREAD','RF_COM','RF_EQ','RF_VOLA','RF_ALT','RF_RE','RF_FX'}))>0  )
-            error('Risk factor type must be either RF_IR, RF_SPREAD, RF_COM, RF_RE, RF_EQ, RF_VOLA, RF_ALT or RF_FX')
+         if ~(sum(strcmpi(type,{'RF_IR','RF_SPREAD','RF_COM','RF_EQ','RF_VOLA','RF_ALT','RF_RE','RF_FX','RF_INFL'}))>0  )
+            error('Risk factor type must be either RF_IR, RF_SPREAD, RF_COM, RF_RE, RF_EQ, RF_VOLA, RF_ALT, RF_INFL or RF_FX')
          end
          obj.type = type;
       end % Set.type

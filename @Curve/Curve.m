@@ -1,3 +1,15 @@
+%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
+
 classdef Curve
    % file: @Curve/Curve.m
     properties
@@ -6,7 +18,7 @@ classdef Curve
       description = '';
       type = '';  
       method_interpolation = 'linear'; %'monotone-convex'; 
-	  method_extrapolation = 'constant';
+	  method_extrapolation = 'constant'; %'linear'
       compounding_type = 'cont';
       compounding_freq = 'annual';               
       day_count_convention = 'act/365'; 
@@ -129,10 +141,12 @@ classdef Curve
       end % disp
       
       function obj = set.type(obj,type)
-         if ~(strcmpi(type,'Discount Curve') || strcmpi(type,'Spread Curve')  || strcmpi(type,'Dummy Curve') ...
-                    || strcmpi(type,'Aggregated Curve') || strcmpi(type,'Prepayment Curve') ...
-                    || strcmpi(type,'Call Schedule') || strcmpi(type,'Put Schedule'))
-            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve, Dummy Curve, Call or Put Schedule or Prepayment Curve')
+		 typecell = { 'Discount Curve', 'Spread Curve', 'Dummy Curve', ...
+						'Aggregated Curve', 'Prepayment Curve', ...
+						'Call Schedule', 'Put Schedule', ...
+						'Historical Curve', 'Inflation Expectation Curve', 'Shock Curve'};
+         if ~(strcmpi(type,typecell))
+            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve, Dummy Curve, Call or Put Schedule, Inflation Expectation Curve, Historical Curve or Prepayment Curve')
          end
          obj.type = type;
       end % Set.type
@@ -207,5 +221,168 @@ classdef Curve
       end % set.curve_function
       
    end
+   
+   % static methods: 
+   methods (Static = true)
+   
+	function retval = help (format,retflag)
+		formatcell = {'plain text','html','texinfo'};
+		% input checks
+		if ( nargin == 0 )
+			format = 'plain text';	
+		end
+		if ( nargin < 2 )
+			retflag = 0;	
+		end
+
+		% format check
+		if ~( strcmpi(format,formatcell))
+			fprintf('WARNING: Curve.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+			format = 'plain text';
+		end	
+
+% textstring in texinfo format (it is required to start at begin of line)
+textstring = "@deftypefn{Octarisk Class} {@var{object}} = Curve(@var{id})\n\
+@deftypefnx{Octarisk Class} {@var{object}} = Curve()\n\
+\n\
+Class for setting up Curve objects.\n\
+\n\
+This class contains all attributes and methods related to the following Curve types:\n\
+\n\
+Discount Curve, Spread Curve, Dummy Curve,\n\
+Aggregated Curve, Prepayment Curve,\n\
+Call Schedule, Put Schedule,\n\
+Historical Curve, Inflation Expectation Curve, Shock Curve.\n\
+\n\
+In the following, all methods and attributes are explained and code example is given.\n\
+\n\
+Methods for Curve object @var{obj}:\n\
+@itemize @bullet\n\
+@item Curve(@var{id}) or Curve(): Constructor of a Curve object. @var{id} is optional and specifies id and name of new object.\n\
+\n\
+@item obj.set(@var{attribute},@var{value}): Setter method. Provide pairs of attributes and values. Values are checked for format and constraints.\n\
+\n\
+@item obj.get(@var{attribute}): Getter method. Query the value of specified attribute.\n\
+\n\
+@item obj.getRate(@var{scenario},@var{node}): Return scenario curve values at given node (in days).\n\
+Interpolation or Extrapolation is performed according to specified methods.\n\
+@var{scenario} can be \'base\', \'stress\' or a certain MC timestep like \'250d\'\.\n\
+\n\
+@item obj.getValue(@var{scenario}): Return all scenario curve values. @var{scenario}\n\
+can be \'base\', \'stress\' or a certain MC timestep like \'250d\'\.\n\
+\n\
+@item obj.apply_rf_shocks(@var{scenario},@var{riskfactor_object}): Set shock curve values for @var{scenario}\n\
+Scenario shocks from provided @var{riskfactor_object} are used\n\
+\n\
+@item obj.isProp(@var{attribute}): Return true, if attribute is a property of Curve class. Return false otherwise.\n\
+\n\
+@item Curve.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
+If empty, defaults to plain text. Returnflag is boolean. True returns \n\
+documentation string, false (default) return empty string. [static method]\n\
+@end itemize\n\
+\n\
+Attributes of Curves:\n\
+@itemize @bullet\n\
+@item @var{id}: Curve id. Has to be unique identifier. Default: empty string.\n\
+@item @var{name}: Curve name. Default: empty string.\n\
+@item @var{description}: Curve description. Default: empty string.\n\
+@item @var{type}: Curve type. Can be [Discount Curve (default), Spread Curve, Dummy Curve,\n\
+Aggregated Curve, Prepayment Curve,\n\
+Call Schedule, Put Schedule,\n\
+Historical Curve, Inflation Expectation Curve, Shock Curve]\n\
+\n\
+@item @var{day_count_convention}: Day count convention of curve. See \'help get_basis\' \n\
+for details. Default: \'act/365'\\n\
+@item @var{basis}: Basis belonging to day count convention. Value is set automatically.\n\
+@item @var{compounding_type}: Compounding type. Can be continuous, discrete or simple. \n\
+Default: \'cont\'\n\
+@item @var{compounding_freq}: Compounding frequency used for discrete compounding.\n\
+Can be [daily, weekly, monthly, quarterly, semi-annual, annual]. Default: \'annual\'\n\
+\n\
+@item @var{curve_function}: Type Aggregated Curve only: Specifies how \n\
+to aggregated curves, which are specified in attribute increments.\n\
+Can be [sum, product, divide, factor]. [sum, product, divide] specifies\n\
+mathematical operation applied on all curve increments.\n\
+[factor] allows only one increment and uses @var{curve_parameter} for multiplication. Default: \'sum\'\n\
+@item @var{curve_parameter}: Type Aggregated Curve only: used as multiplication\n\
+parameter for factor @var{curve_function}.\n\
+@item @var{increments}: Type Aggregated Curve only: List of IDs of all\n\
+underlying curves. Use @var{curve_function} to specify how to aggregated curves.\n\
+\n\
+@item @var{method_extrapolation}: Extrapolation method. Can be \'constant\' (default) or \'linear\'.\n\
+@item @var{method_interpolation}: Interpolation method. See \'help interpolate_curve\' for details. Default: \'linear\'.\n\
+@item @var{ufr}: Smith-Wilson Ultimate Forward Rate. Used for Smith-Wilson interpolation and extrapolation. Defaults to 0.042.\n\
+@item @var{alpha}: Smith-Wilson Reversion parameter. Used for Smith-Wilson interpolation and extrapolation. Defaults to 0.19.\n\
+\n\
+@item @var{cap}: Cap rate. Cap rate is enforced on all set rates. Set to empty string for no cap rate. Default: empty string.\n\
+@item @var{floor}: Floor rate. Floor rate is enforced on all existing and future rates. Set to empty string for no floor rate. Default: empty string.\n\
+\n\
+@item @var{nodes}: Vector with curve nodes.\n\
+@item @var{rates_base}: Vector with curve rates. Has to be of same column size as @var{nodes}.\n\
+@item @var{rates_mc}: Matrix with curve rates. Has to be of same column size as @var{nodes}.\n\
+Columns: nodes, Lines: scenarios. MC rates for several MC timesteps are stored in layers.\n\
+@item @var{rates_stress}: Matrix with curve rates. Has to be of same  as @var{nodes}.\n\
+Columns correspond to nodes, lines correspond to scenarios.\n\
+@item @var{timestep_mc}: String Cell array with MC timesteps. Automatically appended if values for new timesteps are set.\n\
+\n\
+@item @var{shocktype_mc}: Specify how to apply risk factor shocks in Monte Carlo\n\
+scenarios and for method apply_rf_shocks. Can be [absolute, relative, sln_relative].\n\
+Automatically set by scripts. Default: absolute\n\
+@item @var{shocktype_stress}: Specify Stress risk factor shocks for method apply_rf_shocks.\n\
+Can be [absolute, relative]\n\
+by stree scenario configuration.\n\
+@item @var{sln_level}: Vector with term specific shift level for risk factors modelled with shifted log-normal model.\n\
+Automatically set by script during curve setup.\n\
+@item @var{american_flag}: Flag for American (true) or European (false) call feature on bonds. Valid only if Curve type is  call or put schedule. Default: false.\n\
+@end itemize\n\
+\n\
+\n\
+For illustration see the following example:\n\
+A discount curve c is specified. A shock curve s provides absolute shocks for stress\n\
+and relative shocks for MC scenarios, which are linearly interpolated and\n\
+subsequently applied to the discount curve c. In the end, stress and MC\n\
+discount rates are interpolated for given nodes with method getRate, while all curve rates are extracted\n\
+with getValue.\n\
+@example\n\
+@group\n\
+\n\
+c = Curve();\n\
+c = c.set('id','Discount_Curve','type','Discount Curve', ...\n\
+'nodes',[365,3650,7300],'rates_base',[0.01,0.02,0.04], ...\n\
+'method_interpolation','linear','compounding_type','continuous', ...\n\
+'day_count_convention','act/365');\n\
+s = Curve();\n\
+s = s.set('id','IR Shock','type','Shock Curve','nodes',[365,7300], ...\n\
+'rates_base',[],'rates_stress',[0.01,0.01;0.02,0.02;-0.01,-0.01;-0.01,0.01], ...\n\
+'rates_mc',[1.1,1.1;0.9,0.9;1.2,0.8;0.8,1.2],'timestep_mc','250d', ...\n\
+'method_interpolation','linear','shocktype_stress','absolute', ...\n\
+'shocktype_mc','relative');\n\
+c = c.apply_rf_shock('stress',s);\n\
+c = c.apply_rf_shock('250d',s);\n\
+c_base = c.getRate('base',1825)\n\
+c_rate_stress = c.getRate('stress',1825)\n\
+c_rate_250d = c.getRate('250d',1825)\n\
+c_rates_250d = c.getValue('250d')\n\
+@end group\n\
+@end example\n\
+\n\
+@end deftypefn";
+
+		% format help text
+		[retval status] = __makeinfo__(textstring,format);
+		% status
+		if (status == 0)
+			% depending on retflag, return textstring
+			if (retflag == 0)
+				% print formatted textstring
+				fprintf("\'Matrix\' is a class definition from the file /octarisk/@Matrix/Matrix.m\n");
+				fprintf("\n%s\n",retval);
+				retval = [];
+			end
+		end
+		
+	end % end of static method help
+	
+   end	% end of static methods
    
 end % classdef

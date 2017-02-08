@@ -386,6 +386,31 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 bond = bond.rollout('base',valuation_date);
             end
             bond = bond.rollout(scenario,valuation_date);
+		elseif (strcmpi(tmp_sub_type,'ILB') )
+			% get inflation expectation curve
+			iec_id  = bond.get('infl_exp_curve');
+			[iec_curve object_ret_code]    = get_sub_object(curve_struct, iec_id); 
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No inflation expectation curve_struct object found for id >>%s<<\n',iec_curve);
+			end
+			% get historical inflation curve
+			hist_id  = bond.get('cpi_historical_curve');
+			[hist_curve object_ret_code]    = get_sub_object(curve_struct, hist_id); 
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No historical inflation curve_struct object found for id >>%s<<\n',hist_id);
+			end
+			% get consumer price index
+			cpi_id  = bond.get('cpi_index');
+			[cpi_index object_ret_code]    = get_sub_object(index_struct, cpi_id); 
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No consumer price index_struct object found for id >>%s<<\n',cpi_id);
+			end
+			% cashflow rollout		
+			if ( first_eval == 1)
+                bond = bond.rollout('base',valuation_date,iec_curve,hist_curve,cpi_index);
+            end
+			bond = bond.rollout(scenario,valuation_date,iec_curve,hist_curve,cpi_index);
+			
         elseif ( strcmpi(tmp_sub_type,'FAB') )
             % cash flow rollout
             if ( bond.prepayment_flag == true  ) % fixed amortizing bond with prepayment
@@ -474,7 +499,6 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         bond = bond.calc_value (valuation_date,scenario,tmp_curve_object); 
     % e) store bond object:
     ret_instr_obj = bond;
-
 elseif ( strcmpi(tmp_type,'stochastic'))
     % Using Stochastic class
     stoch = instr_obj;

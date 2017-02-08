@@ -333,6 +333,7 @@ mktdata_struct=struct();
 parseinput = toc;
 
 
+
 % II) ##################            CALCULATION                ##################
 
  
@@ -393,6 +394,7 @@ if ( saving == 1 )
     [save_cell] = save_objects(path_output,riskfactor_struct,instrument_struct,portfolio_struct,stresstest_struct);
 end
 saving_time = toc;
+
 
     
 % --------------------------------------------------------------------------------------------------------------------

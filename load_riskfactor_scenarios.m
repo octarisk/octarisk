@@ -72,6 +72,9 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
                         tmp_mr_level    = rf_object.mr_level;
                         tmp_mr_rate     = rf_object.mr_rate;     
                         tmp_delta       = sqrt(tmp_start) .* Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
+						if (2 * tmp_mr_rate * tmp_mr_level < std(Y).^2)
+							fprintf('WARNING: load_riskfactor_scenarios: Square root diffusion process can lead to negative values for risk factor >>%s<<: 2*mr_rate*mr_level <= volatility^2.\n',tmp_id);
+						end
                     end     
             % store increment for actual riskfactor and scenario number
             rf_object = rf_object.set('scenario_mc',tmp_delta,'timestep_mc',tmp_ts);

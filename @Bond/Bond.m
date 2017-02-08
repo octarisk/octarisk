@@ -23,7 +23,7 @@ classdef Bond < Instrument
         vola_surface = '';
         spot_value = 0.0;
         ir_shock   = 0.01;      % shock used for calculation of effective duration
-        in_arrears = 0;         % flag: if set to 0, in fine is assumed
+        in_arrears = false;         % boolean flag: if set to 0, in fine is assumed
         fixed_annuity = 0;      % property only needed for fixed amortizing bond 
                % -> fixed annuity annuity flag (annuity loan or amortizable loan)
         annuity_amount = 0;     % fixed annnuity amount (only if fixed_annuity == 1)
@@ -62,15 +62,22 @@ classdef Bond < Instrument
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
         prorated                = true; % Bool: true means deposit method 
-        %  (adjust cash flows for leap year), false = bond method (fixed coupon)
+			%  (adjust cash flows for leap year), false = bond method (fixed coupon)
         rate_composition        = 'capitalize'; % function for CMS rates
                                     % ['capitalize', 'average', 'max', 'min']
+		% callable bond specific attributes
         embedded_option_flag    = false; % true: bond is call or putable
         alpha                   = 0.1; % callable bond mean reversion constant
         sigma                   = 0.01; % callable bond rate volatility
         treenodes               = 50; % callable bond tree nodes
         call_schedule           = ''; % callable bond call schedule curve
         put_schedule            = ''; % callable bond put schedule curve
+		% Inflation Linked bond specific attributes
+		cpi_index				= ''; % Consumer Price Index
+		infl_exp_curve			= ''; % Inflation Expectation Curve
+		cpi_historical_curve	= ''; % Curve with historical values for CPI
+		infl_exp_lag			= ''; % inflation expectation lag (in months)
+		use_indexation_lag		= false; % Bool: true -> use infl_exp_lag
     end
    
     properties (SetAccess = private)
@@ -149,6 +156,8 @@ classdef Bond < Instrument
          fprintf('principal_payment: %f\n',b.principal_payment); 
          fprintf('use_principal_pmt: %d\n',b.use_principal_pmt);
          fprintf('use_outstanding_balance: %d\n',b.use_outstanding_balance);
+		 fprintf('prorated: %s\n',any2str(b.prorated)); 
+		 fprintf('in_arrears: %s\n',any2str(b.in_arrears)); 
          if ( regexpi(b.sub_type,'CMS'))
             fprintf('vola_surface: %s\n',b.vola_surface); 
             fprintf('cms_model: %s\n',b.cms_model); 
@@ -185,6 +194,14 @@ classdef Bond < Instrument
                 fprintf('t_degree_freedom: %d\n',b.t_degree_freedom); 
             end
          end
+		 if ( strcmpi(b.sub_type,'ILB'))
+            fprintf('cpi_index: %s\n',b.cpi_index); 
+            fprintf('infl_exp_curve: %s\n',b.infl_exp_curve); 
+            fprintf('cpi_historical_curve: %s\n',b.cpi_historical_curve); 
+			fprintf('infl_exp_lag: %s\n',any2str(b.infl_exp_lag));
+			fprintf('use_indexation_lag: %s\n',any2str(b.use_indexation_lag));
+         end
+		
          %fprintf('spot_value: %f %s\n',b.spot_value,b.currency);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
@@ -244,8 +261,9 @@ classdef Bond < Instrument
                 || strcmpi(sub_type,'CASHFLOW') || strcmpi(sub_type,'FAB') ...
                 || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') ...
                 || strcmpi(sub_type,'ZCB')  || strcmpi(sub_type,'STOCHASTICCF') ...
-                || strcmpi(sub_type,'CMS_FLOATING') || strcmpi(sub_type,'FRN_SPECIAL'))
-            error('Bond sub_type must be either FRB, FRN, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL or CMS_FLOATING: %s',sub_type)
+                || strcmpi(sub_type,'CMS_FLOATING') || strcmpi(sub_type,'FRN_SPECIAL') ...
+				|| strcmpi(sub_type,'ILB'))
+            error('Bond sub_type must be either FRB, FRN, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL or CMS_FLOATING: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
