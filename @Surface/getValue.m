@@ -45,9 +45,9 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
                 zz = repmat(zz,max_len,1);
             end
 			% distinguish between surface and cube
-			if (nargin == 5)
+			if ( rows(tmp_coordinates) == 3 )
 				interpoint = [xx,yy,zz];
-            elseif (nargin == 4)
+            elseif (rows(tmp_coordinates) == 2)
 				interpoint = [yy,zz];
 			end
             % calculate inverse distance weighted shock

@@ -477,6 +477,30 @@ end
 %! cap = cap.calc_value('31-Dec-2015','base',c);
 %! assert(cap.getValue('base'),137.0063959386,0.0000001);
 
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Inflation Linked Floor Object\n');
+%! valuation_date = '31-Mar-2016';
+%! cpi = Index();
+%! cpi = cpi.set('value_base',99,'name','CPI','id','CPI','currency','EUR');
+%! hist = Curve();
+%! hist = hist.set('id','HIST_CURVE', 'type', 'Historical Curve', 'nodes',[0,-91, -183, -275, -366],'rates_base',[99,98.5,98.35,98.23,98.12],'method_interpolation','next');
+%! iec = Curve();
+%! iec = iec.set('id','IEC_CURVE', 'type', 'Inflation Expectation Curve', 'nodes',[365,730,1095],'rates_base',[0.0025,0.004,0.005],'rates_stress',[0.0025,0.004,0.005;0.0025,0.004,0.005],'method_interpolation','linear','compounding_type','continuous','day_count_convention','act/365');
+%! cap = CapFloor();
+%! cap = cap.set('id','TEST_CAP','name','TEST_CAP','issue_date',valuation_date,'maturity_date','31-Mar-2017','compounding_type','simple');
+%! cap = cap.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0,'prorated',true);
+%! cap = cap.set('strike',0.01,'model','Black','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR_INFL','in_arrears',0);
+%! cap = cap.set('cpi_index','CPI','infl_exp_curve','IEC_CURVE','cpi_historical_curve','HIST_CURVE','infl_exp_lag',12,'use_indexation_lag',false);
+%! cap = cap.rollout(valuation_date,'base',iec,hist,cpi);
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[0,365,730],'rates_base',[0.002,0.003,0.004],'method_interpolation','linear', ...
+%! 		'compounding_type','continuous','day_count_convention','act/365');
+%! cap = cap.calc_value(valuation_date,'base',c);
+%! assert(cap.getValue('base'),0.747441547923734,0.000000001);
+%! cap = cap.set('use_indexation_lag',true);
+%! cap = cap.rollout(valuation_date,'base',iec,hist,cpi);
+%! cap = cap.calc_value(valuation_date,'base',c);
+%! assert(cap.getValue('base'),0.102830060074336,0.000000001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing CMS Cap Object with Black Model\n');

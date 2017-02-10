@@ -1,0 +1,192 @@
+==================================================================== 
+=== Risk measures report for Portfolio FUND_AAA ===
+Portfolio name: Global Diversified 
+Portfolio description: Global diversified test portfolio 
+VaR calculated at 99.5% confidence intervall: 
+Number of Monte Carlo Scenarios: 50000 
+Valuation Date: 30-Sep-2016 
+Portfolio currency: EUR 
+Portfolio base value: 146217.12 EUR 
+
+=====    MC RESULTS    ===== 
+for time step: 250d 
+
+Test statistics on portfolio level:
+|MC 250d Tail scenario number	 |38341| 
+|MC 250d P&L skewness  			 |0.2| 
+|MC 250d P&L kurtosis  			 |3.5| 
+Risk factor scenario values: 
+|VaR 250d scenario delta |RF_ID|Scen-2|Scen-1|Base|Scen+1|Scen+2|
+|VaR 250d scenario values |RF_ALT_BC|-0.143|0.111|-1.127|-0.028|-0.315|
+|VaR 250d scenario values |RF_COM_DIV|-0.238|-0.172|-0.288|-0.089|-0.171|
+|VaR 250d scenario values |RF_COM_GOLD|-0.073|-0.304|-0.158|-0.035|-0.130|
+|VaR 250d scenario values |RF_COM_SILVER|-0.354|-0.474|-0.331|-0.074|-0.491|
+|VaR 250d scenario values |RF_EQ_AP|-0.472|-0.289|-0.306|-0.462|-0.342|
+|VaR 250d scenario values |RF_EQ_DE|-0.354|-0.456|-0.847|-0.527|-0.377|
+|VaR 250d scenario values |RF_EQ_EM|-0.537|-0.439|-0.602|-0.416|-0.573|
+|VaR 250d scenario values |RF_EQ_EU|-0.321|-0.245|-0.432|-0.425|-0.333|
+|VaR 250d scenario values |RF_EQ_EUR|-0.336|-0.425|-0.954|-0.478|-0.390|
+|VaR 250d scenario values |RF_EQ_NA|-0.309|-0.456|-0.683|-0.509|-0.324|
+|VaR 250d scenario values |RF_FX_EURUSD|0.206|0.177|0.126|0.204|0.105|
+|VaR 250d scenario values |RF_IR_EUR_10Y|0.004|0.004|-0.000|0.005|0.004|
+|VaR 250d scenario values |RF_IR_EUR_1Y|-0.001|-0.001|-0.001|-0.001|-0.002|
+|VaR 250d scenario values |RF_IR_EUR_20Y|0.007|0.008|0.002|0.013|0.008|
+|VaR 250d scenario values |RF_IR_USD_10Y|0.003|0.002|-0.011|0.001|0.004|
+|VaR 250d scenario values |RF_IR_USD_1Y|0.000|0.000|-0.004|0.001|0.001|
+|VaR 250d scenario values |RF_IR_USD_20Y|0.007|0.005|-0.009|0.002|0.009|
+|VaR 250d scenario values |RF_RE_DM|-0.477|-0.475|-0.149|-0.374|-0.655|
+|VaR 250d scenario values |RF_SPREAD_EUR_HY_5Y|-0.006|0.012|0.004|0.003|-0.009|
+|VaR 250d scenario values |RF_VOLA_COM_GOLD|0.234|0.198|0.215|0.113|0.217|
+|VaR 250d scenario values |RF_VOLA_EQ_DE|-0.697|-0.642|-0.622|-0.561|-0.602|
+
+Sensitivities on Positional Level: 
+
+=== Aggregation Key VAR === 
+ Risk aggregation for key: asset_class 
+|VaR 250d | Key value   | Basevalue 	 | Standalone VAR 	 | Decomp VAR|
+|VaR 250d | Fixed Income 	 | 53374.54 EUR 	|  4381.91 EUR 	 |  1245.36 EUR|
+|VaR 250d | Equity 	 | 59750.00 EUR 	| 23057.20 EUR 	 | 25330.20 EUR|
+|VaR 250d | REIT 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  3641.39 EUR|
+|VaR 250d | Commodity 	 | 15645.06 EUR 	|  4296.32 EUR 	 |  2786.79 EUR|
+|VaR 250d | Alternative 	 |   488.90 EUR 	|   394.00 EUR 	 |   330.47 EUR|
+|VaR 250d | Derivative 	 |   -19.73 EUR 	|   419.26 EUR 	 |   552.37 EUR|
+|VaR 250d | Diversified 	 |    12.11 EUR 	|    35.09 EUR 	 |    42.89 EUR|
+|VaR 250d | cash 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+ Risk aggregation for key: currency 
+|VaR 250d | Key value   | Basevalue 	 | Standalone VAR 	 | Decomp VAR|
+|VaR 250d | USD 	 | 35306.50 EUR 	| 11150.47 EUR 	 |  5297.39 EUR|
+|VaR 250d | EUR 	 |110910.62 EUR 	| 25403.90 EUR 	 | 28632.07 EUR|
+ Risk aggregation for key: id 
+|VaR 250d | Key value   | Basevalue 	 | Standalone VAR 	 | Decomp VAR|
+|VaR 250d | A0RFFT 	 |  6014.31 EUR 	|  1330.15 EUR 	 |   223.07 EUR|
+|VaR 250d | A1JB4Q 	 | 10829.50 EUR 	|   409.85 EUR 	 |  -340.92 EUR|
+|VaR 250d | A1J7CK 	 | 11997.50 EUR 	|  2843.33 EUR 	 |  1345.90 EUR|
+|VaR 250d | A1YC04 	 | 21077.28 EUR 	|   133.57 EUR 	 |   -65.74 EUR|
+|VaR 250d | A0RM43 	 |  1328.44 EUR 	|   259.91 EUR 	 |    87.03 EUR|
+|VaR 250d | ETF127 	 | 19281.93 EUR 	|  9284.79 EUR 	 |  8725.06 EUR|
+|VaR 250d | DBX1A7 	 |  1744.08 EUR 	|   666.18 EUR 	 |   611.37 EUR|
+|VaR 250d | 513700 	 |    78.76 EUR 	|    40.37 EUR 	 |    52.67 EUR|
+|VaR 250d | DBX1EU 	 |  1176.59 EUR 	|   449.42 EUR 	 |   412.44 EUR|
+|VaR 250d | ETF060 	 |  7791.74 EUR 	|  2976.19 EUR 	 |  2731.33 EUR|
+|VaR 250d | ETF114 	 |  7358.52 EUR 	|  3038.55 EUR 	 |  1941.06 EUR|
+|VaR 250d | LYX0BX 	 |  1153.92 EUR 	|   555.65 EUR 	 |   522.15 EUR|
+|VaR 250d | LYX0AG 	 |  3174.72 EUR 	|  1184.13 EUR 	 |  1310.02 EUR|
+|VaR 250d | ETF012 	 | 14195.74 EUR 	|  5697.44 EUR 	 |  7023.92 EUR|
+|VaR 250d | A0DPMW 	 |   738.74 EUR 	|   305.05 EUR 	 |   194.87 EUR|
+|VaR 250d | BASF11 	 |  3055.26 EUR 	|  1527.66 EUR 	 |  1805.31 EUR|
+|VaR 250d | A0LGQL 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  3641.39 EUR|
+|VaR 250d | ETF090 	 |  4817.70 EUR 	|  1644.42 EUR 	 |  1207.17 EUR|
+|VaR 250d | GOLDPHYS 	 | 10827.36 EUR 	|  3550.68 EUR 	 |  1579.62 EUR|
+|VaR 250d | BTCOIN 	 |   488.90 EUR 	|   394.00 EUR 	 |   330.47 EUR|
+|VaR 250d | ODAXC20160318 	 |   -11.31 EUR 	|   251.89 EUR 	 |   -11.31 EUR|
+|VaR 250d | EQFORW01 	 |    -8.41 EUR 	|   430.57 EUR 	 |   563.68 EUR|
+|VaR 250d | SYNTH01 	 |    12.11 EUR 	|    35.09 EUR 	 |    42.89 EUR|
+|VaR 250d | CASH_EUR 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+|VaR 250d | 114171 	 |  1017.07 EUR 	|    12.01 EUR 	 |    -3.98 EUR|
+|VaR 250d | 836791 	 |  1110.44 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+ Risk aggregation for key: type 
+|VaR 250d | Key value   | Basevalue 	 | Standalone VAR 	 | Decomp VAR|
+|VaR 250d | debt 	 | 30169.75 EUR 	|  4328.42 EUR 	 |  1315.08 EUR|
+|VaR 250d | bond 	 | 23204.79 EUR 	|   144.75 EUR 	 |   -69.72 EUR|
+|VaR 250d | sensitivity 	 | 91850.20 EUR 	| 30812.72 EUR 	 | 32088.84 EUR|
+|VaR 250d | option 	 |   -11.31 EUR 	|   251.89 EUR 	 |   -11.31 EUR|
+|VaR 250d | forward 	 |    -8.41 EUR 	|   430.57 EUR 	 |   563.68 EUR|
+|VaR 250d | synthetic 	 |    12.11 EUR 	|    35.09 EUR 	 |    42.89 EUR|
+|VaR 250d | cash 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+
+Total VaR undiversified: 
+|VaR 250d undiversified| | 44558.66 EUR|
+
+=== Total Portfolio HD-VaR === 
+|Portfolio VaR 250d@99.5%| 	 |   -23.30%|
+|Portfolio VaR 250d@99.5%| 	 | 34061.86 EUR|
+|Portfolio ES  250d@99.5%| 	 |   -26.47%|
+|Portfolio ES  250d@99.5%| 	 | 38703.42 EUR|
+
+
+Difference to HD-VaR 250d:     132.40 EUR
+
+Total Reduction in VaR via Diversification: 
+|Portfolio VaR 250d Diversification Effect| |    23.56%|
+====================================================================
+
+=====    STRESS RESULTS    ===== 
+
+Sensitivities on Positional Level: 
+|Sensi ModDuration 		 |iShares JPMorgan $ Emerging Markets Bond Fund|A0RFFT| = 	 |7.80%|
+|Sensi ModSpreadDur 	 |iShares JPMorgan $ Emerging Markets Bond Fund|A0RFFT| = 	 |0.00%|
+|Sensi ModDuration 		 |iShares Barclays Capital Emerging Market Local Govt Bond|A1JB4Q| = 	 |4.50%|
+|Sensi ModSpreadDur 	 |iShares Barclays Capital Emerging Market Local Govt Bond|A1JB4Q| = 	 |0.00%|
+|Sensi ModDuration 		 |iShares Global Corporate Bond|A1J7CK| = 	 |12.10%|
+|Sensi ModSpreadDur 	 |iShares Global Corporate Bond|A1J7CK| = 	 |0.00%|
+|Sensi ModDuration 		 |BASF SE MTN v.2014(2018/2019)|A1YC04| = 	 |2.27%|
+|Sensi ModSpreadDur 	 |BASF SE MTN v.2014(2018/2019)|A1YC04| = 	 |0.00%|
+|Sensi ModDuration 		 |iShares Citigroup Global Government Bond|A0RM43| = 	 |5.60%|
+|Sensi ModSpreadDur 	 |iShares Citigroup Global Government Bond|A0RM43| = 	 |0.00%|
+|Sensi ModDuration 		 |Comstage ETF MSCI Emerging Markets|ETF127| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |Comstage ETF MSCI Emerging Markets|ETF127| = 	 |0.00%|
+|Sensi ModDuration 		 |db x-trackers DJ STOXX 600|DBX1A7| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |db x-trackers DJ STOXX 600|DBX1A7| = 	 |0.00%|
+|Sensi ModDuration 		 |QSC AG|513700| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |QSC AG|513700| = 	 |0.00%|
+|Sensi ModDuration 		 |db x-trackers Dow Jones Euro STOXX50|DBX1EU| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |db x-trackers Dow Jones Euro STOXX50|DBX1EU| = 	 |0.00%|
+|Sensi ModDuration 		 |ComStage ETF DJ STOXX 600|ETF060| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |ComStage ETF DJ STOXX 600|ETF060| = 	 |0.00%|
+|Sensi ModDuration 		 |ComStage ETF MSCI Pacific|ETF114| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |ComStage ETF MSCI Pacific|ETF114| = 	 |0.00%|
+|Sensi ModDuration 		 |Lyxor ETF MSCI Emerging Markets|LYX0BX| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |Lyxor ETF MSCI Emerging Markets|LYX0BX| = 	 |0.00%|
+|Sensi ModDuration 		 |Lyxor ETF MSCI World|LYX0AG| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |Lyxor ETF MSCI World|LYX0AG| = 	 |0.00%|
+|Sensi ModDuration 		 |ComStage ETF S&P 500|ETF012| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |ComStage ETF S&P 500|ETF012| = 	 |0.00%|
+|Sensi ModDuration 		 |iShares MSCI Japan|A0DPMW| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |iShares MSCI Japan|A0DPMW| = 	 |0.00%|
+|Sensi ModDuration 		 |BASF SE|BASF11| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |BASF SE|BASF11| = 	 |0.00%|
+|Sensi ModDuration 		 |iShares FTSE EPRA/NAREIT Global Property|A0LGQL| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |iShares FTSE EPRA/NAREIT Global Property|A0LGQL| = 	 |0.00%|
+|Sensi ModDuration 		 |ComStage ETF Commerzbank Commodity EW Index|ETF090| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |ComStage ETF Commerzbank Commodity EW Index|ETF090| = 	 |0.00%|
+|Sensi ModDuration 		 |Goldmuenze 1 Unze|GOLDPHYS| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |Goldmuenze 1 Unze|GOLDPHYS| = 	 |0.00%|
+|Sensi ModDuration 		 |Bitcoins|BTCOIN| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |Bitcoins|BTCOIN| = 	 |0.00%|
+|Sensi ModDuration 		 |DAX Call Option|ODAXC20160318| = 	 |1.99%|
+|Sensi ModSpreadDur 	 |DAX Call Option|ODAXC20160318| = 	 |0.00%|
+|Sensi ModDuration 		 |EQForward_test|EQFORW01| = 	 |240.90%|
+|Sensi ModSpreadDur 	 |EQForward_test|EQFORW01| = 	 |0.00%|
+|Sensi ModDuration 		 |Synthetic_test|SYNTH01| = 	 |30.50%|
+|Sensi ModSpreadDur 	 |Synthetic_test|SYNTH01| = 	 |0.00%|
+|Sensi ModDuration 		 |Cash Account EUR|CASH_EUR| = 	 |0.00%|
+|Sensi ModSpreadDur 	 |Cash Account EUR|CASH_EUR| = 	 |0.00%|
+|Sensi ModDuration 		 |Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)|114171| = 	 |3.56%|
+|Sensi ModSpreadDur 	 |Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)|114171| = 	 |0.00%|
+|Sensi ModDuration 		 |BNP Paribas Fortis SA EMTN Fix 5.757% 04.10.2017|836791| = 	 |0.95%|
+|Sensi ModSpreadDur 	 |BNP Paribas Fortis SA EMTN Fix 5.757% 04.10.2017|836791| = 	 |0.00%|
+Stress test results:
+Relative PnL in Stresstest: |IR_100bpDOWN| 	 |2.05%|
+Relative PnL in Stresstest: |IR_100bpUP| 	 |-2.04%|
+Relative PnL in Stresstest: |SPREAD_100bpDOWN| 	 |-0.01%|
+Relative PnL in Stresstest: |SPREAD_100bpUP| 	 |-0.01%|
+Relative PnL in Stresstest: |EQ_30DOWN| 	 |-10.87%|
+Relative PnL in Stresstest: |EQ_30UP| 	 |14.56%|
+Relative PnL in Stresstest: |VOLA_100UP| 	 |-0.01%|
+Relative PnL in Stresstest: |RE_30DOWN| 	 |-2.84%|
+Relative PnL in Stresstest: |RE_30UP| 	 |3.81%|
+Relative PnL in Stresstest: |COM_30DOWN| 	 |-2.78%|
+Relative PnL in Stresstest: |COM_30UP| 	 |3.74%|
+Relative PnL in Stresstest: |EUR_USD_FX_30DOWN| 	 |10.34%|
+Relative PnL in Stresstest: |EUR_USD_FX_30UP| 	 |-5.58%|
+Relative PnL in Stresstest: |IR_EURTwistPos| 	 |-0.40%|
+Relative PnL in Stresstest: |IR_EURTwistNeg| 	 |-0.39%|
+Relative PnL in Stresstest: |IR_EURButterfly| 	 |-0.39%|
+Relative PnL in Stresstest: |BlackMonday1987| 	 |-12.32%|
+Relative PnL in Stresstest: |Terror2001-9-11| 	 |-7.36%|
+Relative PnL in Stresstest: |DotCom2000| 	 |-12.39%|
+Relative PnL in Stresstest: |AsianCurrencyCrisis1997| 	 |-2.82%|
+Relative PnL in Stresstest: |FinancialCrisis2008| 	 |-18.21%|
+Relative PnL in Stresstest: |Basescenario| 	 |-0.01%|
+
+Total Runtime:   10.00 s

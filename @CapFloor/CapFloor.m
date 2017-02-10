@@ -38,6 +38,12 @@ classdef CapFloor < Instrument
         cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
+		% Inflation Linked bond specific attributes
+		cpi_index				= ''; % Consumer Price Index
+		infl_exp_curve			= ''; % Inflation Expectation Curve
+		cpi_historical_curve	= ''; % Curve with historical values for CPI
+		infl_exp_lag			= ''; % inflation expectation lag (in months)
+		use_indexation_lag		= false; % Bool: true -> use infl_exp_lag
     end
    
     properties (SetAccess = private)
@@ -109,7 +115,14 @@ classdef CapFloor < Instrument
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
-         end  
+         end 
+		 if ( regexpi(b.sub_type,'INFL'))
+            fprintf('cpi_index: %s\n',b.cpi_index); 
+            fprintf('infl_exp_curve: %s\n',b.infl_exp_curve); 
+            fprintf('cpi_historical_curve: %s\n',b.cpi_historical_curve); 
+			fprintf('infl_exp_lag: %s\n',any2str(b.infl_exp_lag));
+			fprintf('use_indexation_lag: %s\n',any2str(b.use_indexation_lag));
+         end		 
          fprintf('ir_shock: %f \n',b.ir_shock);
          fprintf('eff_duration: %f \n',b.eff_duration);
          fprintf('eff_convexity: %f \n',b.eff_convexity);
@@ -165,8 +178,9 @@ classdef CapFloor < Instrument
       
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'CAP') || strcmpi(sub_type,'FLOOR') ...
-                || strcmpi(sub_type,'CAP_CMS') || strcmpi(sub_type,'FLOOR_CMS'))
-            error('CapFloor sub_type must be either CAP(_CMS), FLOOR(_CMS)')
+                || strcmpi(sub_type,'CAP_CMS') || strcmpi(sub_type,'FLOOR_CMS') ...
+				|| strcmpi(sub_type,'FLOOR_INFL') || strcmpi(sub_type,'CAP_INFL'))
+            error('CapFloor sub_type must be either CAP(_CMS / _INFL), FLOOR(_CMS / _INFL)')
          end
          obj.sub_type = sub_type;
          if regexpi(sub_type,'CAP') 

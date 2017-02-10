@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_structured_cashflows (@var{valuation_date},  @var{value_type}, @var{instrument}, @var{ref_curve}, @var{surface}, @var{vriskfactor})
+%# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_structured_cashflows (@var{valuation_date}, @var{value_type}, @var{instrument}, @var{ref_curve}, @var{surface}, @var{riskfactor})
 %#
 %# Compute the dates and values of cash flows (interest and principal and 
 %# accrued interests and last coupon date for fixed rate bonds, 
@@ -350,7 +350,7 @@ if ( strcmpi(type,'FRB') || strcmpi(type,'SWAP_FIXED') )
     end
 
 % Type Inflation Linked Bonds: Calculate CPI adjustedCF Values 
-elseif ( strcmpi(type,'ILB') )
+elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_INFL') )
 	% remap input objects: ref_curve, surface,riskfactor
 	iec 	= ref_curve;
 	hist 	= surface;
@@ -384,6 +384,7 @@ elseif ( strcmpi(type,'ILB') )
 	no_scen = max(length(iec.getRate(value_type,0)),length(cpi_level));
 	cf_values = zeros(no_scen,length(d1));
     cf_principal = zeros(no_scen,length(d1));
+	inflation_index = zeros(no_scen,length(d1));
 	
     % calculate all cash flows (assume prorated == true --> deposit method
     for ii = 1: 1 : length(d2)
@@ -417,6 +418,7 @@ elseif ( strcmpi(type,'ILB') )
                                             iec.compounding_freq);	
 			% take adjust cpi factor relativ to initial cpi value
             notional_tmp = notional .* adj_cpi_factor .* cpi_level ./ cpi_initial;
+			inflation_index(:,ii) = adj_cpi_factor .* cpi_level;
             cf_values(:,ii) = ((1 ./ discount_factor(d1(ii), d2(ii), coupon_rate, ...
                                             compounding_type, dcc, ...
                                             compounding_freq)) - 1) .* notional_tmp;
@@ -432,6 +434,23 @@ elseif ( strcmpi(type,'ILB') )
 										compounding_freq)) - 1) .* notional_tmp;
 				end
 			end
+			
+			% overwrite ILB cashflows in case of Caps or Floors
+            if (strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_INFL'))
+				% expand inflation index
+				inflation_index = [ones(rows(inflation_index),1) .* cpi_initial, inflation_index];
+                % calculate inflation rate derived from inflation_index
+				% allow only for discrete compounding
+				inflation_rate = inflation_index(:,ii+1) ./ inflation_index(:,ii) - 1;
+				strike_rate = instrument.strike;
+				% TODO: additional curve object with variable strike rate
+				%strike_rate = strike_curve.getRate(value_type,t2);
+				if ( instrument.CapFlag == true)
+					cf_values(:,ii) = notional .* (inflation_rate - strike_rate);
+				else
+					cf_values(:,ii) = notional .* (strike_rate - inflation_rate);
+				end
+            end
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
             cf_values(:,ii)  = 0.0;
         end
@@ -447,6 +466,7 @@ elseif ( strcmpi(type,'ILB') )
         ret_values(:,end) = ret_values(:,end) + notional_tmp;
         cf_principal(:,end) = notional_tmp;
     end
+
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
 %           spot rate defined 
 elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))

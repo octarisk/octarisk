@@ -1,14 +1,31 @@
-function s = rollout (capfloor, valuation_date, value_type, curve_object, vola_surface)
+function s = rollout (capfloor, valuation_date, value_type, arg1, arg2, arg3)
   s = capfloor;
     
   if ischar(valuation_date)
       valuation_date = datenum(valuation_date);
   end
 
-  % call function for generating CF dates and values and accrued_interest
-  [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
-                            value_type, s, curve_object, vola_surface);
-  
+  if ( regexpi(s.sub_type,'INFL'))
+		if ( nargin < 6 )
+			error ('rollout for sub_type CAP/FLOOR_INFL: expecting valuation_date, value_type,inflation expectation curve, historical curve, cpi index objects');
+		end
+		
+		iec_obj 	= arg1;
+		hist_obj 	= arg2;
+		cpi_obj 	= arg3;
+		% todo: add strike rate curve
+		
+		% call function for generating CF dates and values
+		[ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
+								value_type,  s, iec_obj, hist_obj, cpi_obj);
+								
+  else	% all other caps/floors on interest rates				
+	    % call function for generating CF dates and values and accrued_interest
+		curve_object  = arg1;
+		vola_surface  = arg2;
+	    [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
+								value_type, s, curve_object, vola_surface);
+  end
   % set property value pairs to object
   s = s.set('cf_dates',ret_dates);
   if ( strcmp(value_type,'stress'))
