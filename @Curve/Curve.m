@@ -249,12 +249,21 @@ Class for setting up Curve objects.\n\
 \n\
 This class contains all attributes and methods related to the following Curve types:\n\
 \n\
-Discount Curve, Spread Curve, Dummy Curve,\n\
-Aggregated Curve, Prepayment Curve,\n\
-Call Schedule, Put Schedule,\n\
-Historical Curve, Inflation Expectation Curve, Shock Curve.\n\
+@itemize @bullet\n\
+@item Discount Curve: specify discount rates. Can be used as underlying for aggregated curves.\n\
+@item Spread Curve: specify spread rates. Can be used as underlying for aggregated curves.\n\
+@item Dummy Curve: used as default curve with no special meaning\n\
+@item Aggregated Curve: stacked curve which combines underlying curves by aggregation functions (e.g. sum, factor)\n\
+@item Prepayment Curve: specify prepayment rates per node (e.g. PSA curves).\n\
+@item Call Schedule: curve used for Bonds with embedded call options\n\
+@item Put Schedule: curve used for Bonds with embedded put options\n\
+@item Historical Curve: curve with historical rates of index levels. Used for inflation linked or averaging instruments\n\
+@item Inflation Expectation Curve: specify inflation expectation rates used for inflation linked instrument pricing\n\
+@item Shock Curve: specify absolute or relative shocks per node, which can then be applied to other Curve types.\n\
+@end itemize\n\
 \n\
-In the following, all methods and attributes are explained and code example is given.\n\
+\n\
+In the following, all methods and attributes are explained and a code example is given.\n\
 \n\
 Methods for Curve object @var{obj}:\n\
 @itemize @bullet\n\
@@ -277,11 +286,11 @@ Scenario shocks from provided @var{riskfactor_object} are used\n\
 @item obj.isProp(@var{attribute}): Return true, if attribute is a property of Curve class. Return false otherwise.\n\
 \n\
 @item Curve.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
-If empty, defaults to plain text. Returnflag is boolean. True returns \n\
-documentation string, false (default) return empty string. [static method]\n\
+If empty, defaults to plain text. Returnflag is boolean: True returns \n\
+documentation string, false (default) returns empty string. [static method]\n\
 @end itemize\n\
 \n\
-Attributes of Curves:\n\
+Attributes of Curve objects:\n\
 @itemize @bullet\n\
 @item @var{id}: Curve id. Has to be unique identifier. Default: empty string.\n\
 @item @var{name}: Curve name. Default: empty string.\n\
@@ -299,7 +308,7 @@ Default: \'cont\'\n\
 @item @var{compounding_freq}: Compounding frequency used for discrete compounding.\n\
 Can be [daily, weekly, monthly, quarterly, semi-annual, annual]. Default: \'annual\'\n\
 \n\
-@item @var{curve_function}: Type Aggregated Curve only: Specifies how \n\
+@item @var{curve_function}: Type Aggregated Curve only: specifies how \n\
 to aggregated curves, which are specified in attribute increments.\n\
 Can be [sum, product, divide, factor]. [sum, product, divide] specifies\n\
 mathematical operation applied on all curve increments.\n\

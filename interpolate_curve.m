@@ -579,7 +579,7 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
         % Matlab adaption
         %mu=repmat(mu,1,columns(m));
         d_vec = (m - mu);
-        chi = inv(W) * d_vec;
+		chi = W\d_vec;	% solve equation system
     % calculate discount rate and discount factor
         [X,Y] = meshgrid(nodes_input_y,tt);     % set up meshgrid
         WW = Wilson_function(X,Y,ufrc,alpha); 

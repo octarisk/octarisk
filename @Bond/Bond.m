@@ -61,6 +61,10 @@ classdef Bond < Instrument
         cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
+		% attributes for Special FRN / SWAP_FLOATING
+		fwd_sliding_term        = 1825; % sliding term of forward float leg in days
+        fwd_term                = 365; % term of forward rates
+		
         prorated                = true; % Bool: true means deposit method 
 			%  (adjust cash flows for leap year), false = bond method (fixed coupon)
         rate_composition        = 'capitalize'; % function for CMS rates
@@ -186,6 +190,11 @@ classdef Bond < Instrument
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model);
          end 
+		 if ( regexpi(b.sub_type,'_FWD_SPECIAL'))
+			fprintf('rate_composition: %s\n',b.rate_composition);
+            fprintf('fwd_sliding_term: %s\n',any2str(b.fwd_sliding_term)); 
+            fprintf('fwd_term: %s\n',any2str(b.fwd_term)); 
+         end 
          if ( strcmpi(b.sub_type,'STOCHASTICCF'))
             fprintf('stochastic_riskfactor: %s\n',b.stochastic_riskfactor); 
             fprintf('stochastic_surface: %s\n',b.stochastic_surface); 
@@ -262,8 +271,9 @@ classdef Bond < Instrument
                 || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') ...
                 || strcmpi(sub_type,'ZCB')  || strcmpi(sub_type,'STOCHASTICCF') ...
                 || strcmpi(sub_type,'CMS_FLOATING') || strcmpi(sub_type,'FRN_SPECIAL') ...
-				|| strcmpi(sub_type,'ILB'))
-            error('Bond sub_type must be either FRB, FRN, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL or CMS_FLOATING: %s',sub_type)
+				|| strcmpi(sub_type,'ILB') || strcmpi(sub_type,'SWAP_FLOATING_FWD_SPECIAL') ...
+				|| strcmpi(sub_type,'FRN_FWD_SPECIAL') )
+            error('Bond sub_type must be either FRB, FRN, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL, CMS_FLOATING, FRN_FWD_SPECIAL or SWAP_FLOATING_FWD_SPECIAL: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type

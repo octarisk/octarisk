@@ -95,6 +95,22 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     accr_int = 0.0;
     last_coupon_date = 0.0;
 	
+  % type Averaging SWAP_FLOATING or averaging FRN
+  elseif ( strcmpi(s.sub_type,'SWAP_FLOATING_FWD_SPECIAL') || strcmpi(s.sub_type,'FRN_FWD_SPECIAL'))
+    if ( nargin < 5 )
+        error ('rollout for sub_type SWAP_FLOATING_FWD_SPECIAL or FRN_FWD_SPECIAL: expecting valuation_date,curve,ref_curve,hist_rates objects');
+    end
+    valuation_date  = arg1;
+	curve_object 	= arg2;
+	hist_obj 		= arg3;
+  
+    % call function for generating CF dates and values and accrued_interest
+    [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
+                            value_type, s, curve_object, hist_obj);
+    accr_int = 0.0;
+    last_coupon_date = 0.0;
+	
+ % type Inflation Linked Bonds
   elseif ( strcmpi(s.sub_type,'ILB'))
     if ( nargin < 6 )
         error ('rollout for sub_type ILB: expecting value_type, valuation_date,inflation expectation curve, historical curve, cpi index objects');

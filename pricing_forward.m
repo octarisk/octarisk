@@ -14,7 +14,7 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{valuation_date}, @var{forward}, @var{discount_curve_object}, @var{underlying_object}, @var{und_curve_object})
 %#
-%# Compute the theoretical value and price of equity and bond forwards and 
+%# Compute the theoretical value and price of FX, equity and bond forwards and 
 %# futures.@*
 %#
 %# Input and output variables:
@@ -63,7 +63,7 @@ if ( sum(strcmpi(type,{'Equity','EQFWD','BondFuture','EquityFuture'})) > 0 )
         tmp_underlying_sensitivity = forward.get('underlying_sensitivity');
         tmp_underlying_delta = underlying_object.getValue(value_type);
         underlying_price = Riskfactor.get_abs_values(underlying_object.model, ...
-            tmp_underlying_delta, obj.underlying_price_base, ...
+            tmp_underlying_delta, forward.underlying_price_base, ...
             tmp_underlying_sensitivity);
     else    % underlying is a index
         underlying_price = underlying_object.getValue(value_type);

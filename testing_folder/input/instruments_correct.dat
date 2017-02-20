@@ -1,4 +1,4 @@
-# Created by Octave 4.0.0, Mon Dec 19 18:06:18 2016 W. Europe Standard Time <unknown@T43NB067>
+# Created by Octave 4.2.0, Tue Feb 14 11:58:45 2017 GMT <unknown@unknown>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
@@ -649,7 +649,7 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 90
+# length: 98
 # name: accrued_interest
 # type: scalar
 0
@@ -658,6 +658,11 @@ cash
 # name: alpha
 # type: scalar
 0.1
+
+
+# name: annuity_amount
+# type: scalar
+0
 
 
 # name: asset_class
@@ -793,6 +798,16 @@ backward
 0
 
 
+# name: cpi_historical_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: cpi_index
+# type: null_sq_string
+# elements: 0
+
+
 # name: currency
 # type: sq_string
 # elements: 1
@@ -874,8 +889,18 @@ CFANLEIHE1
 
 
 # name: in_arrears
-# type: scalar
+# type: bool
 0
+
+
+# name: infl_exp_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: infl_exp_lag
+# type: null_sq_string
+# elements: 0
 
 
 # name: ir_shock
@@ -962,6 +987,11 @@ PSA-BASE
 # name: prepayment_flag
 # type: bool
 0
+
+
+# name: prepayment_procedure
+# type: null_sq_string
+# elements: 0
 
 
 # name: prepayment_rate
@@ -1116,6 +1146,16 @@ CASHFLOW
 # elements: 1
 # length: 4
 bond
+
+
+# name: use_annuity_amount
+# type: scalar
+0
+
+
+# name: use_indexation_lag
+# type: bool
+0
 
 
 # name: use_outstanding_balance
@@ -1515,7 +1555,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1587,6 +1627,11 @@ iShares Barclays Capital Emerging Market Local Govt Bond
 DBT
 
 
+# name: term
+# type: scalar
+4.5
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1624,7 +1669,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1696,6 +1741,11 @@ iShares Citigroup Global Government Bond
 DBT
 
 
+# name: term
+# type: scalar
+5.6
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1733,7 +1783,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1805,6 +1855,11 @@ iShares JPMorgan $ Emerging Markets Bond Fund
 DBT
 
 
+# name: term
+# type: scalar
+7.8
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1842,7 +1897,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1914,6 +1969,11 @@ iShares Global Corporate Bond
 DBT
 
 
+# name: term
+# type: scalar
+12.1
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1951,7 +2011,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 90
+# length: 98
 # name: accrued_interest
 # type: scalar
 0
@@ -1960,6 +2020,11 @@ debt
 # name: alpha
 # type: scalar
 0.1
+
+
+# name: annuity_amount
+# type: scalar
+0
 
 
 # name: asset_class
@@ -2093,6 +2158,16 @@ backward
 0.05757
 
 
+# name: cpi_historical_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: cpi_index
+# type: null_sq_string
+# elements: 0
+
+
 # name: currency
 # type: sq_string
 # elements: 1
@@ -2174,8 +2249,18 @@ AGGR_EUR_FIN_BBB
 
 
 # name: in_arrears
-# type: scalar
+# type: bool
 0
+
+
+# name: infl_exp_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: infl_exp_lag
+# type: null_sq_string
+# elements: 0
 
 
 # name: ir_shock
@@ -2264,6 +2349,11 @@ PSA-BASE
 # name: prepayment_flag
 # type: bool
 0
+
+
+# name: prepayment_procedure
+# type: null_sq_string
+# elements: 0
 
 
 # name: prepayment_rate
@@ -2420,6 +2510,16 @@ FRB
 bond
 
 
+# name: use_annuity_amount
+# type: scalar
+0
+
+
+# name: use_indexation_lag
+# type: bool
+0
+
+
 # name: use_outstanding_balance
 # type: scalar
 0
@@ -2469,7 +2569,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 90
+# length: 98
 # name: accrued_interest
 # type: scalar
 0
@@ -2478,6 +2578,11 @@ bond
 # name: alpha
 # type: scalar
 0.1
+
+
+# name: annuity_amount
+# type: scalar
+0
 
 
 # name: asset_class
@@ -2611,6 +2716,16 @@ backward
 0.01375
 
 
+# name: cpi_historical_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: cpi_index
+# type: null_sq_string
+# elements: 0
+
+
 # name: currency
 # type: sq_string
 # elements: 1
@@ -2692,8 +2807,18 @@ A1YC04
 
 
 # name: in_arrears
-# type: scalar
+# type: bool
 0
+
+
+# name: infl_exp_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: infl_exp_lag
+# type: null_sq_string
+# elements: 0
 
 
 # name: ir_shock
@@ -2782,6 +2907,11 @@ PSA-BASE
 # name: prepayment_flag
 # type: bool
 0
+
+
+# name: prepayment_procedure
+# type: null_sq_string
+# elements: 0
 
 
 # name: prepayment_rate
@@ -2938,6 +3068,16 @@ FRB
 bond
 
 
+# name: use_annuity_amount
+# type: scalar
+0
+
+
+# name: use_indexation_lag
+# type: bool
+0
+
+
 # name: use_outstanding_balance
 # type: scalar
 0
@@ -2987,7 +3127,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 90
+# length: 98
 # name: accrued_interest
 # type: scalar
 0
@@ -2996,6 +3136,11 @@ bond
 # name: alpha
 # type: scalar
 0.1
+
+
+# name: annuity_amount
+# type: scalar
+0
 
 
 # name: asset_class
@@ -3129,6 +3274,16 @@ backward
 0
 
 
+# name: cpi_historical_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: cpi_index
+# type: null_sq_string
+# elements: 0
+
+
 # name: currency
 # type: sq_string
 # elements: 1
@@ -3210,8 +3365,18 @@ A1ZKC4
 
 
 # name: in_arrears
-# type: scalar
+# type: bool
 0
+
+
+# name: infl_exp_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: infl_exp_lag
+# type: null_sq_string
+# elements: 0
 
 
 # name: ir_shock
@@ -3300,6 +3465,11 @@ PSA-BASE
 # name: prepayment_flag
 # type: bool
 0
+
+
+# name: prepayment_procedure
+# type: null_sq_string
+# elements: 0
 
 
 # name: prepayment_rate
@@ -3454,6 +3624,16 @@ FRN
 # elements: 1
 # length: 4
 bond
+
+
+# name: use_annuity_amount
+# type: scalar
+0
+
+
+# name: use_indexation_lag
+# type: bool
+0
 
 
 # name: use_outstanding_balance
@@ -5051,7 +5231,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 90
+# length: 98
 # name: accrued_interest
 # type: scalar
 0
@@ -5060,6 +5240,11 @@ sensitivity
 # name: alpha
 # type: scalar
 0.1
+
+
+# name: annuity_amount
+# type: scalar
+0
 
 
 # name: asset_class
@@ -5193,6 +5378,16 @@ backward
 0
 
 
+# name: cpi_historical_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: cpi_index
+# type: null_sq_string
+# elements: 0
+
+
 # name: currency
 # type: sq_string
 # elements: 1
@@ -5274,8 +5469,18 @@ IR_EUR
 
 
 # name: in_arrears
-# type: scalar
+# type: bool
 0
+
+
+# name: infl_exp_curve
+# type: null_sq_string
+# elements: 0
+
+
+# name: infl_exp_lag
+# type: null_sq_string
+# elements: 0
 
 
 # name: ir_shock
@@ -5364,6 +5569,11 @@ PSA-BASE
 # name: prepayment_flag
 # type: bool
 0
+
+
+# name: prepayment_procedure
+# type: null_sq_string
+# elements: 0
 
 
 # name: prepayment_rate
@@ -5518,6 +5728,16 @@ ZCB
 # elements: 1
 # length: 4
 bond
+
+
+# name: use_annuity_amount
+# type: scalar
+0
+
+
+# name: use_indexation_lag
+# type: bool
+0
 
 
 # name: use_outstanding_balance

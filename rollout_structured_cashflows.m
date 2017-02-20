@@ -349,6 +349,8 @@ if ( strcmpi(type,'FRB') || strcmpi(type,'SWAP_FIXED') )
         cf_principal(:,end) = notional;
     end
 
+% ##############################################################################
+
 % Type Inflation Linked Bonds: Calculate CPI adjustedCF Values 
 elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_INFL') )
 	% remap input objects: ref_curve, surface,riskfactor
@@ -467,6 +469,108 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
         cf_principal(:,end) = notional_tmp;
     end
 
+	% ##############################################################################
+
+% Type Averaging FRN: Average forward or historical rates of cms_sliding period
+elseif ( strcmpi(type,'FRN_FWD_SPECIAL') || strcmpi(type,'SWAP_FLOATING_FWD_SPECIAL'))
+    cf_datesnum = datenum(cf_dates);
+    %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
+    d1 = cf_datesnum(1:length(cf_datesnum)-1);
+    d2 = cf_datesnum(2:length(cf_datesnum));
+    notvec = zeros(1,length(d1));
+    notvec(length(notvec)) = 1;
+    cf_values = zeros(rows(tmp_rates),length(d1));
+    cf_principal = zeros(rows(tmp_rates),length(d1));
+    sliding_term = instrument.fwd_sliding_term;	% averaging period
+	und_term = instrument.fwd_term;		% term of averaging period
+	hist = surface;
+	if ~( mod(sliding_term,und_term) == 0 )
+		error('ERROR: rollout_structured_cashflow:FRN_FWD_SPECIAL: Sliding term and averaging term does not match! mod(sliding_term,und_term) = %s',any2str(mod(sliding_term,averaging_term)));
+	end
+		
+    for ii = 1 : 1 : length(d1)
+        % convert dates into years from valuation date with timefactor
+        [tf dip dib] = timefactor (d1(ii), d2(ii), dcc);
+        t1 = (d1(ii) - valuation_date);
+        t2 = (d2(ii) - valuation_date);
+  
+        if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rate
+            payment_date        = t2;
+            % adjust forward start and end date for in fine vs. in arrears
+            if ( instrument.in_arrears == 0)    % in fine
+                fsd  = t1;
+                fed  = t2;
+                timing_adjustment = 1; % no timing adjustment required for in fine
+            else    % in arrears
+                fsd  = t2;
+                fed  = t2 + (t2 - t1);
+            end
+                        
+            % calculate timing adjustment
+            timing_adjustment = 1;
+            if ( instrument.in_arrears == 0)    % in fine
+                fsd  = t1;
+                fed  = t2;
+            else    % in arrears
+                fsd  = t2;
+                fed  = t2 + (t2 - t1);
+            end
+			
+			% calculate forward rates and build average of historical rates 
+			% Loop via all dates in [fsd,fsd-sliding_term] and get rates
+			% from historical curve (if t<t0) and from forward rate (if t>t0)
+			avg_rate = zeros(1, sliding_term / und_term);
+			idx = 1;
+			for kk = sliding_term : -und_term : und_term
+				avg_date_begin 	= fed - kk;
+				avg_date_end 	= fed - kk + und_term;
+				% get rate depending on date
+				if (avg_date_begin < 0)	% take historical rates
+					rate_curve = hist.getRate(value_type,avg_date_begin);
+				else					% get forward rate for period
+					rate_curve = get_forward_rate(tmp_nodes,tmp_rates, ...
+                        avg_date_begin,avg_date_end - avg_date_begin,compounding_type,method_interpolation, ...
+                        compounding_freq, basis_curve, valuation_date, ...
+                        comp_type_curve, basis_curve, comp_freq_curve,floor_flag);
+				end
+				% store rate in array
+				avg_rate(idx) = rate_curve;
+				idx = idx + 1;
+			end
+			% apply function
+			if ( strcmpi(instrument.rate_composition,'average'))
+				forward_rate_curve = mean(avg_rate);
+			elseif ( strcmpi(instrument.rate_composition,'max'))
+				forward_rate_curve = max(avg_rate);
+			elseif ( strcmpi(instrument.rate_composition,'min'))
+				forward_rate_curve = min(avg_rate);
+			end 
+            
+            % calculate final floating cash flows
+            forward_rate = (spread + forward_rate_curve) .* tf;
+			
+        elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
+                                        % next is in future, use last reset rate
+            forward_rate = (spread + last_reset_rate) .* tf;
+        else    % if both cf dates t1 and t2 lie in the past omit cash flow
+            forward_rate = 0.0;
+        end
+        cf_values(:,ii) = forward_rate;
+    end
+    ret_values = cf_values .* notional;
+    cf_interest = ret_values;
+    % Add notional payments
+    if ( notional_at_start == true)    % At notional payment at start
+        ret_values(:,1) = ret_values(:,1) - notional;  
+        cf_principal(:,1) = - notional;
+    end
+    if ( notional_at_end == true) % Add notional payment at end to cf vector:
+        ret_values(:,end) = ret_values(:,end) + notional;
+        cf_principal(:,end) = notional;
+    end
+	
+% ##############################################################################
+
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
 %           spot rate defined 
 elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
@@ -478,7 +582,7 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
     notvec(length(notvec)) = 1;
     cf_values = zeros(rows(tmp_rates),length(d1));
     cf_principal = zeros(rows(tmp_rates),length(d1));
-    
+
     for ii = 1 : 1 : length(d1)
         % convert dates into years from valuation date with timefactor
         [tf dip dib] = timefactor (d1(ii), d2(ii), dcc);
@@ -593,8 +697,10 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
         cf_principal(:,end) = notional;
     end
 
-% Special floating types (capitalized, average, min, max)
-elseif ( strcmpi(type,'FRN_SPECIAL'))
+% ##############################################################################
+
+% Special floating types (capitalized, average, min, max) based on CMS rates
+elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
     % assume in fine -> fixing at forward start date -> use issue date as first
     cf_datesnum = [datenum(issue_date);datenum(cf_dates)];
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
@@ -728,6 +834,8 @@ elseif ( strcmpi(type,'FRN_SPECIAL'))
         ret_values = ret_values + notional;
         cf_principal = notional;
     end
+
+% ##############################################################################
 
 % Type CMS and CMS Caps/Floors: Calculate CF Values for all CF Periods with cms rates
 elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type,'FLOOR_CMS'))
@@ -866,13 +974,17 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
         ret_values(:,end) = ret_values(:,end) + notional;
         cf_principal(:,end) = notional;
     end
+
+% ##############################################################################
     
 % Type ZCB: Zero Coupon Bond has notional cash flow at maturity date
 elseif ( strcmp(type,'ZCB') == 1 )   
     ret_values = notional;
     cf_principal = notional;
     cf_interest = 0;
-    
+ 
+% ##############################################################################
+   
 % Type FAB: Calculate CF Values for all CF Periods for fixed amortizing bonds 
 %           (annuity loans and amortizable loans)
 
@@ -1156,6 +1268,9 @@ elseif ( strcmp(type,'FAB') == 1 )
         
     end % end prepayment procedure
 end
+% ##############################################################################
+% ##############################################################################
+
 %-------------------------------------------------------------------------------
 
 % special treatment for term == 0 (means all cash flows summed up at Maturity)

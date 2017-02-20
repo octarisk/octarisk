@@ -111,7 +111,7 @@ elseif ( strfind(tmp_type,'option') > 0 )
     % 1st try: find underlying in instrument_struct
     [tmp_underlying_obj  object_ret_code]  = get_sub_object(instrument_struct, option.get('underlying'));
     if ( object_ret_code == 0 )
-        % 2nd try: find underlying in instrument_struct
+        % 2nd try: find underlying in index
         [tmp_underlying_obj]  = get_sub_object(index_struct, option.get('underlying'));
     end
 
@@ -347,7 +347,7 @@ tmp_shift = 0;
 
     % Calculate new absolute scenario values from Riskfactor PnL depending on riskfactor model
     %   calling static method located in Riskfactor class:
-    theo_value   = Riskfactor.get_abs_values('GBM', tmp_shift, sensi.getValue('base'));
+    theo_value   = Riskfactor.get_abs_values(sensi.model, tmp_shift, sensi.getValue('base'));
 
     % store values in sensitivity object:
     if ( strcmpi(scenario,'stress'))

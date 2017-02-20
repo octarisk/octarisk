@@ -128,9 +128,11 @@ Class for setting up Matrix objects.\n\
 \n\
 This class contains all attributes and methods related to the following Matrix types:\n\
 \n\
-Correlation\n\
+@itemize @bullet\n\
+@item Correlation: specifies a symmetric correlation matrix.\n\
+@end itemize\n\
 \n\
-In the following, all methods and attributes are explained and code example is given.\n\
+In the following, all methods and attributes are explained and a code example is given.\n\
 \n\
 Methods for Matrix object @var{obj}:\n\
 @itemize @bullet\n\
@@ -144,11 +146,11 @@ Methods for Matrix object @var{obj}:\n\
 and component on y-Axis @var{yy}. Component values are recognized as strings.\n\
 \n\
 @item Matrix.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
-If empty, defaults to plain text. Returnflag is boolean. True returns \n\
-documentation string, false (default) return empty string. [static method]\n\
+If empty, defaults to plain text. Returnflag is boolean: True returns \n\
+documentation string, false (default) returns empty string. [static method]\n\
 @end itemize\n\
 \n\
-Attributes of Matrix:\n\
+Attributes of Matrix objects:\n\
 @itemize @bullet\n\
 @item @var{id}: Matrix id. Has to be unique identifier. Default: empty string.\n\
 @item @var{name}: Matrix name. Default: empty string.\n\

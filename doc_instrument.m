@@ -457,7 +457,7 @@ end
 %! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');
 %! c = c.set('rates_stress',[0.0101001034,0.0145624391,0.0162559362;0.0201001034,0.0245624391,0.0262559362],'method_interpolation','linear');
 %! d = Debt();
-%! d = d.set('duration',8.35,'convexity',18);
+%! d = d.set('duration',8.35,'convexity',18,'term',8.35);
 %! d = d.calc_value(c,'stress');
 %! assert(d.getValue('stress'),[91.83;84.02],0.01);
 
@@ -788,6 +788,25 @@ end
 
 
 %!test 
+%! fprintf('\tdoc_instrument:\tPricing Averaging Floating Leg (no CMS rates!)\n');
+%! valuation_date = datenum('31-Mar-2016');
+%! neg_curve = Curve();
+%! neg_curve = neg_curve.set('id','SWAP_DISCOUNT','nodes',[0,1,2,3,4,5,6,7,8,9,10,11] .* 365, ...
+%!       'rates_base',[0.04,0.03,0.02,0.01,0,-0.01,-0.02,-0.03,-0.04,-0.05,-0.06,-0.07],...
+%!      'method_interpolation','linear','compounding_type','continuous','day_count_convention','act/365'); 
+%! hist = Curve();
+%! hist = hist.set('id','HIST_CURVE', 'type', 'Historical Curve', 'nodes',[0,-365, -730, -1095, -1460, -1825, -2190],'rates_base',[0.0001,0.00064,0.00278,0.00177,0.01291,0.01042,0.01046],'method_interpolation','next');
+%! float = Bond();
+%! float = float.set('Name','SWAP_FLOATING_AVG_TEST','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','SWAP_FLOATING_FWD_SPECIAL','spread',0.00);
+%! float = float.set('maturity_date',datestr(valuation_date + 4015),'notional',100,'compounding_type','simple','issue_date',datestr(valuation_date + 365),'term',365,'notional_at_end',0);
+%! float = float.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'in_arrears',0,'rate_composition','average');
+%! value_type = 'base'; 
+%! float = float.rollout(value_type, valuation_date, neg_curve, hist);
+%! float = float.calc_value(valuation_date,value_type,neg_curve);
+%! assert(float.getValue('base'),-76.5598162194818,0.000001);
+
+
+%!test 
 %! fprintf('\tdoc_instrument:\tPricing CMS Floating Leg with Hull Convexity Adjustment\n');
 %! valuation_date = datenum('31-Mar-2016');
 %! cms_float = Bond();
@@ -908,6 +927,35 @@ end
 %! b = b.rollout(value_type,valuation_date);
 %! b = b.calc_value(valuation_date,value_type,curve,call_schedule,put_schedule);
 %! assert(b.getValue(value_type),[53.1857;53.1857],0.0001);
+
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Sensitivity Instrument\n');
+%! % Set up Sensitivity Instrument
+%! r1 = Riskfactor();
+%! r1 = r1.set('id','MSCI_WORLD','scenario_stress',[0.2;-0.1], ...
+%! 					'model','GBM','shift_type',[1;1]);
+%! r2 = Riskfactor();
+%! r2 = r2.set('id','MSCI_EM','scenario_stress',[0.1;-0.2], ...
+%! 					'model','GBM','shift_type',[1;1] );
+%! riskfactor_struct = struct();
+%! riskfactor_struct(1).id = r1.id;
+%! riskfactor_struct(1).object = r1;
+%! riskfactor_struct(2).id = r2.id;
+%! riskfactor_struct(2).object = r2;
+%! s = Sensitivity();
+%! s = s.set('id','MSCI_ACWI_ETF','sub_type','EQU', ...
+%! 					'asset_class','Equity', 'model', 'GBM', ...
+%! 					'riskfactors',cellstr(['MSCI_WORLD';'MSCI_EM']), ...
+%! 					'sensitivities',[0.8,0.2],'value_base',100.00);
+%! instrument_struct = struct();
+%! instrument_struct(1).id = s.id;
+%! instrument_struct(1).object = s;
+%! s = s.valuate('31-Dec-2016', 'stress', ...
+%! 					instrument_struct, [], [], ...
+%! 					[], [], riskfactor_struct);
+%! assert(s.getValue('stress'),[119.7217363121810;88.6920436717158],0.00000001);
+
 
 
 %!test 
