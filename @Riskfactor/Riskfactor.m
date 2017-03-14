@@ -60,6 +60,9 @@ classdef Riskfactor
             a.name,a.id,a.description,a.type,a.model);
          fprintf('mean: %f\nstandard deviation: %f\nskewness: %f\nkurtosis: %f\n', ... 
             a.mean,a.std,a.skew,a.kurt);
+		 if (strcmpi(a.model,'SLN'))
+			fprintf('sln_level: %f\n',a.sln_level); 	
+		 end
          if ( sum(strcmp(a.model,{'OU','BKM','SRD'})) > 0) 
             fprintf('mr_level: %f\n',a.mr_level); 
             fprintf('mr_rate: %f\n',a.mr_rate); 
@@ -70,6 +73,7 @@ classdef Riskfactor
          end
          if ( length(a.scenario_stress) > 0 ) 
             fprintf('Scenario stress: %8.5f \n',a.scenario_stress(1:scenario_stress_rows));
+			fprintf('Shifttype stress: %d \n',a.shift_type(1:scenario_stress_rows));
             fprintf('\n');
          end
          % looping via first 5 MC scenario values
@@ -120,6 +124,8 @@ classdef Riskfactor
       % end % Set.scenario_stress
 
     end
+	
+	% static methods:
     methods (Static = true)
     
       function basis = get_basis(dcc_string)
@@ -142,54 +148,148 @@ classdef Riskfactor
         end
       end % get_abs_values
       
-      function retval = get_doc(format,path)
-        if nargin < 1
-            format = 'plain text';
-        end
-        if nargin < 2
-            printflag = 0;
-        elseif nargin == 2
-            if (ischar(path) && length(path) > 1)
-                printflag = 1;
-            else
-                error('Insufficient path: %s \n',path);
-            end
-        end
-        % printing documentation for Class Riskfactor (outsourced to dummy function to use documentation behaviour)
-        scripts = ['doc_riskfactor'];
-        c = cellstr(scripts);
-        for ii = 1:length(c)
-            [retval status] = __makeinfo__(get_help_text(c{ii}),format);
-        end
-        if ( status == 0 )
-            if ( printflag == 1) % print to file
-                if (strcmp(format,'html'))
-                    ending = '.html';
-                    %replace html title
-                    repstring = strcat('<title>', c{ii} ,'</title>');
-                    retval = strrep( retval, '<title>Untitled</title>', repstring);
-                elseif (strcmp(format,'texinfo'))
-                    ending = '.texi';
-                else
-                    ending = '.txt';
-                end
-                filename = strcat(path,c{ii},ending);
-                fid = fopen (filename, 'w');
-                fprintf(fid, retval);
-                fprintf(fid, '\n');
-                fclose (fid); 
-            else    
-                fprintf('Documentation for Class %s: \n',c{ii}(4:end));
-                fprintf(retval);
-                fprintf('\n');
-            end
-                     
-        else
-            disp('There was a problem')
-        end
-        retval = status;
-      end
-            
-   end
+       
+
+      % print Help text
+	  function retval = help (format,retflag)
+		formatcell = {'plain text','html','texinfo'};
+		% input checks
+		if ( nargin == 0 )
+			format = 'plain text';	
+		end
+		if ( nargin < 2 )
+			retflag = 0;	
+		end
+
+		% format check
+		if ~( strcmpi(format,formatcell))
+			fprintf('WARNING: Riskfactor.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+			format = 'plain text';
+		end	
+
+% textstring in texinfo format (it is required to start at begin of line)
+textstring = "@deftypefn{Octarisk Class} {@var{object}} = Riskfactor(@var{id})\n\
+@deftypefnx{Octarisk Class} {@var{object}} = Riskfactor()\n\
+\n\
+Class for setting up Riskfactor objects.\n\
+\n\
+The mapping between e.g. curve or index objects and their corresponding risk factors\n\
+is automatically done by using regular expressions to match the names.\n\
+Riskfactors always have to begin with \'RF_\' followed by the object name.\n\
+If certain nodes of curves or surfaces are shocked, the name is followed by an additional node identifier,\n\
+e.g. \'RF_IR_EUR_SWAP_1Y\' for shocking an interest rate curve or \'RF_VOLA_IR_EUR_1825_3650\'\n\
+for shocking a certain point on the volatility tenor / term surface.\n\
+\n\
+Riskfactors can be either shocked during stresses, where custom absolute or relative shocks can be defined.\n\
+During Monte-Carlo scenario generation risk factor shocks are calculated by applying statistical processes\n\
+according to specified stochastic model. The random numbers follow a match of given\n\
+mean, standard deviation, skewness and kurtosis according to distributions selected by\n\
+the Pearson Type I-VII distribution system.\n\
+\n\
+This class contains all attributes and methods related to the following Riskfactor types:\n\
+\n\
+@itemize @bullet\n\
+@item RF_IR: Interest rate risk factor.\n\
+@item RF_SPREAD: Spread risk factor.\n\
+@item RF_COM: Commodity risk factor.\n\
+@item RF_RE: Real estate risk factor.\n\
+@item RF_EQ: Equity risk factor.\n\
+@item RF_VOLA: Volatility risk factor.\n\
+@item RF_ALT: Alternative investment risk factor.\n\
+@item RF_INFL: Inflation risk factor.\n\
+@item RF_FX: Forex risk factor.\n\
+@end itemize\n\
+\n\
+In the following, all methods and attributes are explained and a code example is given.\n\
+\n\
+Methods for Riskfactor object @var{obj}:\n\
+@itemize @bullet\n\
+@item Riskfactor(@var{id}) or Riskfactor(): Constructor of a Riskfactor object. @var{id} is optional and specifies id and name of new object.\n\
+\n\
+@item obj.set(@var{attribute},@var{value}): Setter method. Provide pairs of attributes and values. Values are checked for format and constraints.\n\
+\n\
+@item obj.get(@var{attribute}): Getter method. Query the value of specified attribute.\n\
+\n\
+@item obj.getValue(@var{scenario}, @var{abs_flag}, @var{sensitivity}): Return Riskfactor value\n\
+according to scenario type. If optional parameter abs_flag is true returns Riskfactor scenario values.\n\
+Therefore static method Riskfactor.get_abs_values will be called.\n\
+\n\
+@item Riskfactor.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
+If empty, defaults to plain text. Returnflag is boolean: True returns \n\
+documentation string, false (default) returns empty string. [static method]\n\
+@item Riskfactor.get_abs_values(@var{model}, @var{scen_deltavec}, @var{value_base}, @var{sensitivity}): Calculate absolute\n\
+scenario value for given base value, sensitivity, model and shock.  [static method]\n\
+@item Riskfactor.get_basis(@var{dcc_string}): Return basis integer value for given day count convention string.\n\
+@end itemize\n\
+\n\
+Attributes of Riskfactor objects:\n\
+@itemize @bullet\n\
+@item @var{id}: Riskfactor id. Has to be unique identifier. Default: empty string.\n\
+@item @var{name}: Riskfactor name. Default: empty string.\n\
+@item @var{description}: Riskfactor description. Default: empty string.\n\
+@item @var{type}: Riskfactor type. Can be [RF_IR, RF_SPREAD, RF_COM, RF_RE, RF_EQ, RF_VOLA, RF_ALT, RF_INFL or RF_FX]\n\
+\n\
+@item @var{model}: Stochastic risk factor model. Can be [Geometric Brownian Motion (GBM), Brownian Motioan (BM),\n\
+Black-Karasinsky Model (BKM), Shifted LogNormal (SLN), Ornstein-Uhlenbeck (OU), Square-Root Diffusion (SRD)]. Default: empty string.\n\
+@item @var{mean}: Annualized targeted marginal mean (drift) of risk factor. Default: 0.0\n\
+@item @var{std}: Annualized targeted marginal standard deviation of risk factor. Default: 0.0\n\
+@item @var{skew}: Targeted marginal skewness of risk factor. Default: 0.0\n\
+@item @var{kurt}: Targeted marginal kurtosis of risk factor. Default: 0.0\n\
+@item @var{value_base}:  Base value of risk factor (required for mean reverting stochastic models). Default: 0.0\n\
+@item @var{mr_level}: Mean reversion level. Default: 0.0\n\
+@item @var{mr_rate}: Mean reversion parameter. Default: 0.0\n\
+@item @var{node}:  Risk factor term value in first dimension (in days). For curves equals term in days at x-axis (term). Default: 0.0\n\
+@item @var{node2}:  Risk factor term value in second dimension. For interest rate surfaces equals term in days at y-axis (tenor or term).\n\
+For index surfaces equals moneyness. Default: 0.0\n\
+@item @var{node3}:  Risk factor term value in third dimension. For volatility cubes equals moneyness at z-axis. Default: 0.0\n\
+@item @var{sln_level}: Shift parameter (shift level) of shifted log-normal distribution. Default: 0.0\n\
+\n\
+@item @var{scenario_mc}: Vector with risk factor shock values. \n\
+MC rates for several MC timesteps are stored in layers.\n\
+@item @var{scenario_stress}: Vector with risk factor shock values. \n\
+@item @var{timestep_mc}: String Cell array with MC timesteps. Automatically appended if values for new timesteps are set.\n\
+\n\
+@item @var{shocktype_mc}: Specify how to apply risk factor shocks in Monte Carlo\n\
+scenarios. Can be [absolute, relative, sln_relative].\n\
+Automatically set by scripts. Default: absolute\n\
+@item @var{shift_type}: Specify a vector specifying stress risk factor shift type .\n\
+Can be either 0 (absolute) or 1 (relative) shift.\n\
+@end itemize\n\
+\n\
+\n\
+For illustration see the following example:\n\
+A swap risk factor modelled by a shifted log-normal model at the three year node\n\
+is set up and shifted in three stress scenarios (absolute up- and downshift, relative downshift):\n\
+@example\n\
+@group\n\
+\n\
+disp('Setting up Swap(3650) risk factor')\n\
+r = Riskfactor();\n\
+r = r.set('id','RF_EUR-SWAP_3Y','name','RF_EUR-SWAP_3Y', ...\n\
+    'scenario_stress',[0.02;-0.01;0.8], ...\n\
+    'type','RF_IR','model','SLN','shift_type',[0;0;1], ...\n\
+	'mean',0.0,'std',0.117,'skew',0.0,'kurt',3, ...\n\
+	'node',1095,'sln_level',0.03)\n\
+@end group\n\
+@end example\n\
+\n\
+@end deftypefn";
+
+		% format help text
+		[retval status] = __makeinfo__(textstring,format);
+		% status
+		if (status == 0)
+			% depending on retflag, return textstring
+			if (retflag == 0)
+				% print formatted textstring
+				fprintf("\'Riskfactor\' is a class definition from the file /octarisk/@Riskfactor/Riskfactor.m\n");
+				fprintf("\n%s\n",retval);
+				retval = [];
+			end
+		end
+
+	  end % end of static method help
+	
+    end	% end of static methods
    
 end % classdef

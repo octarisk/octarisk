@@ -24,7 +24,7 @@ function get_documentation_classes(type,path_octarisk,path_documentation)
 
 % set up cell with commands to Classes where help text is specified
 c = {'Matrix.help','Curve.help','Forward.help','Option.help','Cash.help', ...
-		'Debt.help','Sensitivity.help'}
+		'Debt.help','Sensitivity.help','Riskfactor.help', 'Index.help'}
 
 % printing functions:
 if ( strcmp('html',type) == 1)

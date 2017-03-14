@@ -1,5 +1,4 @@
-% Index Superclass, for documentation see dummy function doc_Index.m TODO
-classdef Index
+classdef Index		% Superclass
    % file: @Index/Index.m
    properties
       name = '';
@@ -128,7 +127,118 @@ classdef Index
         end
         retval = status;
       end
+
+      % print Help text
+	  function retval = help (format,retflag)
+		formatcell = {'plain text','html','texinfo'};
+		% input checks
+		if ( nargin == 0 )
+			format = 'plain text';	
+		end
+		if ( nargin < 2 )
+			retflag = 0;	
+		end
+
+		% format check
+		if ~( strcmpi(format,formatcell))
+			fprintf('WARNING: Index.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+			format = 'plain text';
+		end	
+
+% textstring in texinfo format (it is required to start at begin of line)
+textstring = "@deftypefn{Octarisk Class} {@var{object}} = Index(@var{id})\n\
+@deftypefnx{Octarisk Class} {@var{object}} = Index()\n\
+\n\
+Class for setting up Index objects.\n\
+\n\
+Index class is used for specifying asset indizes, exchange rates and consumer price\n\
+indizes. Indizes serve as underlyings for e.g. Options or Forwards, are used\n\
+to set up forex rates or CPI indizes for inflation linked products.\n\
+Indizes can be shocked with risk factors (e.g. risk factor types RF_EQ or RF_FX)\n\
+or in MC scenarios.\n\
+\n\
+This class contains all attributes and methods related to the following Index types:\n\
+\n\
+@itemize @bullet\n\
+@item EQUITY INDEX\n\
+@item BOND INDEX\n\
+@item VOLATILITY INDEX\n\
+@item COMMODITY INDEX\n\
+@item REAL ESTATE INDEX\n\
+@item EXCHANGE RATE\n\
+@item CPI (Consumer Price index)\n\
+@end itemize\n\
+\n\
+In the following, all methods and attributes are explained and a code example is given.\n\
+\n\
+Methods for Index object @var{obj}:\n\
+@itemize @bullet\n\
+@item Index(@var{id}) or Index(): Constructor of a Index object. @var{id} is optional and specifies id and name of new object.\n\
+\n\
+@item obj.set(@var{attribute},@var{value}): Setter method. Provide pairs of attributes and values. Values are checked for format and constraints.\n\
+\n\
+@item obj.get(@var{attribute}): Getter method. Query the value of specified attribute.\n\
+\n\
+@item obj.getValue(@var{scenario}): Return Index value according to scenario type.\n\
+\n\
+@item Index.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
+If empty, defaults to plain text. Returnflag is boolean: True returns \n\
+documentation string, false (default) returns empty string. [static method]\n\
+\n\
+@item Index.get_basis(@var{dcc_string}): Return basis integer value for \n\
+given day count convention string. [static method]\n\
+@end itemize\n\
+\n\
+Attributes of Index objects:\n\
+@itemize @bullet\n\
+@item @var{id}: Index id. Has to be unique identifier. Default: empty string.\n\
+@item @var{name}: Index name. Default: empty string.\n\
+@item @var{description}: Index description. Default: empty string.\n\
+@item @var{type}: Index type. Can be [EQUITY INDEX, BOND INDEX, VOLATILITY INDEX,\n\
+COMMODITY INDEX, REAL ESTATE INDEX, EXCHANGE RATE, CPI]. Default: empty string.\n\
+@item @var{value_base}:  Base value of index. Default: 1.0\n\
+@item @var{currency}: Index currency. Default: \'EUR\'\n\
+\n\
+@item @var{scenario_mc}: Vector with Monte Carlo index values. \n\\n\
+@item @var{scenario_stress}: Vector with Stress index values. \n\
+@item @var{timestep_mc}: String Cell array with MC timesteps. Automatically appended if values for new timesteps are set.\n\
+@item @var{shift_type}: (unused) Specify a vector specifying stress index shift type .\n\
+Can be either 0 (absolute) or 1 (relative) shift.\n\
+@end itemize\n\
+\n\
+\n\
+For illustration see the following example:\n\
+@example\n\
+@group\n\
+\n\
+disp('Setting up an equity index and Exchange Rate')\n\
+i = Index();\n\
+i = i.set('id','MSCIWORLD','value_base',1000, ...\n\
+	'scenario_stress',[2000;1333;800],'currency','USD');\n\
+fx = Index();\n\
+fx = fx.set('id','FX_EURUSD','value_base',1.1,  ...\n\
+	'scenario_stress',[1.2;1.18;1.23]);\n\
+@end group\n\
+@end example\n\
+\n\
+@end deftypefn";
+
+		% format help text
+		[retval status] = __makeinfo__(textstring,format);
+		% status
+		if (status == 0)
+			% depending on retflag, return textstring
+			if (retflag == 0)
+				% print formatted textstring
+				fprintf("\'Index\' is a class definition from the file /octarisk/@Index/Index.m\n");
+				fprintf("\n%s\n",retval);
+				retval = [];
+			end
+		end
+
+	  end % end of static method help
+	
+   end	% end of static methods
             
-   end
    
 end % classdef
