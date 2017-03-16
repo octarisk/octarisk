@@ -9,6 +9,7 @@ classdef Synthetic < Instrument
         instr_vol_surfaces  = {'INSTRUMENT_VOL'};
         discount_curve = '';
         correlation_matrix = '';
+		basket_vola_type = 'Levy'; % [Levy, VCV] approximation for basket volatility calculation
     end
    
     properties (SetAccess = private)
@@ -69,5 +70,13 @@ classdef Synthetic < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
+	  
+	  function obj = set.basket_vola_type(obj,basket_vola_type)
+		 if ~(strcmpi(basket_vola_type,{'Levy'}) || strcmpi(basket_vola_type,{'VCV'}) )
+            error('Synthetic Instrument basket_vola_type must be Levy or VCV')
+         end
+         obj.basket_vola_type = basket_vola_type;
+      end % set.basket_vola_type
+	  
    end 
 end 

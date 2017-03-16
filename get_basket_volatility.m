@@ -15,7 +15,17 @@
 %#
 %# Return diversified volatilities for synthetic basket instruments.
 %# The diversified volatility is dependent on the option maturity and strike,
-%# so the volatility has to be calculated during each basket option valuation.
+%# so the volatility has to be calculated for each basket option valuation.
+%# The following two methods are implemented:
+%# @itemize @bullet
+%# @item @var{Levy 1992}: Levy uses a log-normal density as a first-order 
+%# approximation to the true density. This holds for small maturities and \/ or
+%# volatilities only, since a weighted sum of log-normal distribution is not a log-normal
+%# distribution by itself.
+%# @item @var{VCV approach}: Assuming a normal distribution of underlying, the
+%# basket volatility is calculated by sigma = sqrt(w'*C*w) with Covariance Matrix C
+%# and the linear-combinations vector w.
+%# @end itemize
 %#
 %# @end deftypefn
 
@@ -42,6 +52,7 @@ end
 underlying_weights  = basket.get('weights');
 tmp_instruments     = basket.get('instruments');
 tmp_currency        = basket.get('currency');
+basket_vola_type    = basket.get('basket_vola_type');
 % summing up values over all underlying instruments
 for jj = 1 : 1 : length(tmp_instruments)
     % get underlying instrument:
@@ -105,14 +116,35 @@ for jj = 1 : 1 : length(tmp_vol_surfaces)
 end
 
 % 5. calculate diversified volatility:
-basket_vola = getvola(underlying_weights',underlying_values,tmp_instruments,...
-                                        underlying_volas,corr_matrix,tf,rf_rate);
+if (strcmpi(basket_vola_type,'Levy')) % Levy1992 (log-normal approximation)
+	basket_vola = getvola_levy(underlying_weights',underlying_values,tmp_instruments,...
+                                        underlying_volas,corr_matrix,tf,rf_rate)
+else % defaults to VCV approximation										
+	basket_vola = getvola_vcv(underlying_weights', underlying_volas, corr_matrix)						
+end
+		
 end
 
 
 %######################    Helper Function    ##################################
+function vola = getvola_vcv(w,sigma,corr_matrix)
+% Calculate Basket volatility assuming normal distributions of underlying prices
 
-function vola = getvola(w,S,underlying_ids,sigma,corr_matrix,TF,r_basket)
+corr = corr_matrix.get('matrix');
+
+variance = zeros(rows(sigma),1);
+for ii = 1:1:length(w)
+	for jj = 1:1:length(w)
+		variance = variance + sigma(:,ii)  .* sigma(:,jj) ...
+					.* corr(ii,jj,:) .* w(ii) .* w(jj);
+	end
+end
+vola = sqrt(variance);
+
+end
+
+% ------------------------------------------------------------------------------
+function vola = getvola_levy(w,S,underlying_ids,sigma,corr_matrix,TF,r_basket)
 % Calculate Basket underlying forward price
 F = S .* exp(r_basket .* TF); % Forwardprice of underlying
 M1 = (w' * F')';               % weighted Forwardprice of Basket
@@ -120,8 +152,6 @@ M1 = (w' * F')';               % weighted Forwardprice of Basket
 % Loop is easier to maintain than complex vectorizing in third dimension
 % and fast enough (there wont be more than a dozen underlyings)
 % all intermediate results are stored in matrizes
-% subsequently, a C++ script is called (long double precision is used to prevent
-% a precision overflow in extreme volatility shock cases for large time factors)
 M2 = 0.0;
 dimension 	     = length(underlying_ids);
 exp_matrix       = zeros(max(rows(F),rows(sigma)),dimension^2);
@@ -138,13 +168,17 @@ for ii = 1 : 1 : dimension
 		% store prefactors
 		exp_matrix(:,step) = tmp_exponent;
 		prefactor_matrix(:,step) = tmp_prefactor;
-
     end
 end
 
-% calculating final Basket Vola with c++ code (using long double precision)
-vola = calc_vola_basket_cpp(M1,TF,exp_matrix,prefactor_matrix);
+% calculating final Basket volatility:
+	% calculating constant C and subtract from exponent to avoid precision overflows
+	C = max(sigma.^2 .*TF,[],2);
+	D = zeros(rows(prefactor_matrix),1);
+	for ii = 1 : 1 : rows(prefactor_matrix)
+		D(ii) = D(ii) + sum(prefactor_matrix(ii,:) .* exp(exp_matrix(ii,:) - C(ii)));
+	end
+% add constant back	and take root
+vola = real(sqrt((C + log(D) - 2*log(M1))/TF));
 
 end
-
-
