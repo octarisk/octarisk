@@ -118,9 +118,9 @@ end
 % 5. calculate diversified volatility:
 if (strcmpi(basket_vola_type,'Levy')) % Levy1992 (log-normal approximation)
 	basket_vola = getvola_levy(underlying_weights',underlying_values,tmp_instruments,...
-                                        underlying_volas,corr_matrix,tf,rf_rate)
+                                        underlying_volas,corr_matrix,tf,rf_rate);
 else % defaults to VCV approximation										
-	basket_vola = getvola_vcv(underlying_weights', underlying_volas, corr_matrix)						
+	basket_vola = getvola_vcv(underlying_weights', underlying_volas, corr_matrix);						
 end
 		
 end
