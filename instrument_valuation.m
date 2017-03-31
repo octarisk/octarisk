@@ -96,6 +96,7 @@ if ( strcmpi(tmp_type,'debt') == 1 )
     % store debt object:
     ret_instr_obj = debt;
 
+% ==============================================================================
 % European Option Valuation according to Back-Scholes Model 
 elseif ( strfind(tmp_type,'option') > 0 )    
     % Valuation of Options: depending of underlying type (single underlying like
@@ -119,16 +120,27 @@ elseif ( strfind(tmp_type,'option') > 0 )
     %           vola and underlying value store values in generic objects 
     %           used for further calculation
     if ( strcmpi(class(tmp_underlying_obj),'Synthetic') && tmp_underlying_obj.is_basket )
+		% for Options on Baskets, valuation have to be distinguished between
+		% Levy, VCV and Beisser valuation methods. For Levy and VCV, a volatility
+		% for the whole basket is calculated. Afterwards, option pricing takes
+		% place viewing the basket as one underlying.
+		% In contrast to that, valuation with Beisser method is different:
+		% Each underlying of the basket gets his own volatility and a new strike
+		% for all underlyings and scenarios is calculated. This breaks somehow
+		% octarisk's pricing algorithm and requires an additional valuation method
+		% option.calc_value_basket_beisser. Please see the referenced paper
+		% for background to Beisser's method.
+		
         % valuation of Synthetic Basket
         tmp_underlying_obj = tmp_underlying_obj.calc_value(valuation_date,scenario,instrument_struct,index_struct);
         
         % calculate diversified vola for base scenario
-        basket_vola_base = get_basket_volatility(valuation_date,'base', ...
+        [basket_vola_base basket_dict_base] = get_basket_volatility(valuation_date,'base', ...
                   tmp_underlying_obj,option,instrument_struct,index_struct, ...
                   curve_struct, riskfactor_struct,matrix_struct,surface_struct);
                   
         % calculate diversified vola for scenario type
-        basket_vola = get_basket_volatility(valuation_date,scenario, ...
+        [basket_vola basket_dict] = get_basket_volatility(valuation_date,scenario, ...
                   tmp_underlying_obj,option,instrument_struct,index_struct, ...
                   curve_struct, riskfactor_struct,matrix_struct,surface_struct);
         % generate Vola object with base vola
@@ -138,26 +150,30 @@ elseif ( strfind(tmp_type,'option') > 0 )
         tmp_vola_surf_obj = tmp_vola_surf_obj.set('values_base',basket_vola_base);
         tmp_vola_surf_obj = tmp_vola_surf_obj.set('type','INDEX', ...
                                                 'riskfactors',{'BasketVolaRF'});
-        
-        % generate risk factor object with vola shocks
-        
-        tmp_rf_vola_obj = Riskfactor();
-        tmp_rf_vola_obj = tmp_rf_vola_obj.set('id','BasketVolaRF','model','GBM');
-        if ( strcmpi(scenario,'base'))
-            tmp_rf_vola_obj = tmp_rf_vola_obj.set('value_base',1);
-        elseif ( strcmpi(scenario,'stress'))
-            basket_vola_shocks = (basket_vola ./ basket_vola_base) - 1;% assuming relative shock
-            shift_type = ones(length(basket_vola_shocks),1);
-            tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_stress',basket_vola_shocks,'shift_type',shift_type);
-        else     
-            basket_vola_shocks = log(basket_vola ./ basket_vola_base);% assuming GBM
-            tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_mc',basket_vola_shocks, ...
-                                                    'timestep_mc',scenario);
-        end
-        % update basket volatilty for basket vola shock
-        tmp_rf_struct(1).id = tmp_rf_vola_obj.id;
-        tmp_rf_struct(1).object = tmp_rf_vola_obj;
-        tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
+		
+		% For Levy of VCV, the basket has his own volatility. Therefore a new
+		% vola object is generated:
+		if (any(strcmpi(tmp_underlying_obj.basket_vola_type,{'Levy','VCV'})))
+			% generate risk factor object with vola shocks
+			tmp_rf_vola_obj = Riskfactor();
+			tmp_rf_vola_obj = tmp_rf_vola_obj.set('id','BasketVolaRF','model','GBM');
+			if ( strcmpi(scenario,'base'))
+				tmp_rf_vola_obj = tmp_rf_vola_obj.set('value_base',1);
+			elseif ( strcmpi(scenario,'stress'))
+				basket_vola_shocks = (basket_vola ./ basket_vola_base) - 1;% assuming relative shock
+				shift_type = ones(length(basket_vola_shocks),1);
+				tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_stress',basket_vola_shocks,'shift_type',shift_type);
+			else     
+				basket_vola_shocks = log(basket_vola ./ basket_vola_base);% assuming GBM
+				tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_mc',basket_vola_shocks, ...
+														'timestep_mc',scenario);
+			end
+			% update basket volatilty for basket vola shock
+			tmp_rf_struct(1).id = tmp_rf_vola_obj.id;
+			tmp_rf_struct(1).object = tmp_rf_vola_obj;
+			tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
+		end
+
     else
     % 2nd Case: Option on single underlying, take real objects
         if ~( strcmpi(class(tmp_underlying_obj),'Index'))   % valuate instruments only
@@ -171,19 +187,53 @@ elseif ( strfind(tmp_type,'option') > 0 )
 
     % Calibration of Option vola spread 
     if ( option.get('vola_spread') == 0 )
-        option = option.calc_vola_spread(valuation_date,tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+		if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
+						&& tmp_underlying_obj.is_basket ...
+						&& strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
+			%option = option.calc_value_basket_beisser(valuation_date,'base',basket_vola_base,basket_dict_base);
+			%TODO: implement vola spread calculation for Beisser basket options
+		else	% basket option types Levy or VCV
+			option = option.calc_vola_spread(valuation_date,tmp_underlying_obj, ...
+								tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+		end
     end
     % calculate value
     if ( first_eval == 1)
         % calculate greeks
-        option = option.calc_value(valuation_date,'base',tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
-        option = option.calc_greeks(valuation_date,'base',tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
-    end
-    option = option.calc_value(valuation_date,scenario,tmp_underlying_obj,tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+		
+		% different pricing methods for Beisser Basket instruments or all other 
+		% options on baskets / underlyings
+		if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
+						&& tmp_underlying_obj.is_basket ...
+						&& strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
+			option = option.calc_greeks_basket_beisser(valuation_date,'base', ...
+													basket_vola_base,basket_dict_base);
 
+		else	% basket option types Levy or VCV
+			option = option.calc_value(valuation_date,'base',tmp_underlying_obj, ...
+								tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+			option = option.calc_greeks(valuation_date,'base',tmp_underlying_obj, ...
+								tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+		end
+		
+    end
+	% different pricing methods for Beisser Basket instruments or all other 
+	% options on baskets / underlyings
+	if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
+					&& tmp_underlying_obj.is_basket ...
+					&& strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
+		option = option.calc_value_basket_beisser(valuation_date,scenario, ...
+														basket_vola,basket_dict);
+		
+	else	% basket option types Levy or VCV
+		option = option.calc_value(valuation_date,scenario,tmp_underlying_obj, ...
+								tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+	end
+	
     % store option object:
     ret_instr_obj = option;
-    
+
+% ==============================================================================
 % European Swaption Valuation according to Back76 or Bachelier Model 
 elseif ( strfind(tmp_type,'swaption') > 0 )    
     % Using Swaption class
@@ -247,6 +297,7 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
         % swaption
     % end
 
+% ==============================================================================
 % European CapFloor Valuation according to Back76 or Bachelier Model 
 elseif ( strfind(tmp_type,'capfloor') > 0 )    
     % Using CapFloor class
@@ -278,7 +329,8 @@ elseif ( strfind(tmp_type,'capfloor') > 0 )
     capfloor = capfloor.calc_value(valuation_date,scenario,tmp_disc_curve_obj);
     % store capfloor object:
     ret_instr_obj = capfloor;
-    
+
+% ==============================================================================    
 %Equity Forward valuation
 elseif (strcmpi(tmp_type,'forward') )
     % Using forward class
@@ -313,7 +365,8 @@ elseif (strcmpi(tmp_type,'forward') )
 
     % store bond object:
     ret_instr_obj = forward;
-   
+	
+% ==============================================================================   
 % Equity Valuation: Sensitivity based Approach       
 elseif ( strcmpi(tmp_type,'sensitivity'))
 tmp_delta = 0;
@@ -358,6 +411,7 @@ tmp_shift = 0;
     % store sensi object:
     ret_instr_obj = sensi;
 
+	% ==============================================================================
 % Synthetic Instrument Valuation: synthetic value is linear combination of underlying instrument values      
 elseif ( strcmpi(tmp_type,'synthetic'))
     % Using Synthetic class
@@ -366,7 +420,8 @@ elseif ( strcmpi(tmp_type,'synthetic'))
     synth = synth.calc_value(valuation_date,scenario,instrument_struct,index_struct);
     % store bond object:
     ret_instr_obj = synth;
-        
+
+% ==============================================================================	
 % Cashflow Valuation: summing net present value of all cashflows according to cashflowdates
 elseif ( sum(strcmpi(tmp_type,'bond')) > 0 ) 
     % Using Bond class
@@ -499,6 +554,8 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         bond = bond.calc_value (valuation_date,scenario,tmp_curve_object); 
     % e) store bond object:
     ret_instr_obj = bond;
+	
+% ==============================================================================
 elseif ( strcmpi(tmp_type,'stochastic'))
     % Using Stochastic class
     stoch = instr_obj;
@@ -511,7 +568,8 @@ elseif ( strcmpi(tmp_type,'stochastic'))
     stoch = stoch.calc_value(valuation_date,scenario,tmp_rf_obj,tmp_surf_obj);
     % store Stochastic object:
     ret_instr_obj = stoch;
-    
+ 
+% ============================================================================== 
 % Cash  Valuation: Cash is riskless
 elseif ( strcmpi(tmp_type,'cash')) 
     % Using cash class

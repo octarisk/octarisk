@@ -959,7 +959,7 @@ end
 
 
 %!test 
-%! fprintf('\tdoc_instrument:\tPricing European Call Option on Basket\n');
+%! fprintf('\tdoc_instrument:\tPricing European Call Option on Basket with Levy method\n');
 %! % Set up Synthetic Basket instrument
 %! s = Synthetic();
 %! s = s.set('id','TestSynthetic','instruments',{'EURO_STOXX_50','MSCIWORLD'},'weights',[0.4,0.6],'currency','EUR');
@@ -1040,6 +1040,160 @@ end
 %!                     instrument_struct, surface_struct, matrix_struct, ...
 %!                     curve_struct, index_struct, riskfactor_struct);      
 %! assert(o.getValue('stress'),[198.460087766560;280.691637148358],0.00000001);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing European Call Option on Basket with Beisser method\n');
+%! a = [0.0004404901,0.11092258,0.038288027,0.3535180391,0.1075458489,0.3892850084]; % a = vector with weights
+%! S = [1000,1000,1000,817.51125859,1000,1000]; % s = Pricevector
+%! riskfree = 0.0123943401; % riskfree
+%! sigma = [0.5776204542,0.1732356803,0.2914372376,0.3733887173,0.1020327196,0.2889940433]; % sigma = vector with standard deviations
+%! maturity = 20; % maturity = mat in years
+%! K = 1359.7849; % K = strike
+%! correlation = [1.0000000000,0.8202264316,0.5472385032,0.7662997782,0.0345582159,0.8297024419;
+%! 0.8202264316,1.0000000000,0.4548504630,0.6816778843,0.0452805859,0.8202264316;
+%! 0.5472385032,0.4548504630,1.0000000000,0.4213455468,0.4356861070,0.5472385032;
+%! 0.7662997782,0.6816778843,0.4213455468,1.0000000000,-0.0420931614,0.7662997782;
+%! 0.0345582159,0.0452805859,0.4356861070,-0.0420931614,1.0000000000,0.0345582159;
+%! 0.8297024419,0.8202264316,0.5472385032,0.7662997782,0.0345582159,1
+%! ]; 
+%! % Set up Synthetic Basket instrument
+%! s = Synthetic();
+%! s = s.set('id','TestSynthetic','instruments',{'1','2','3','4','5','6'},'weights',a,'currency','EUR','basket_vola_type','Beisser');
+%! s = s.set('discount_curve','IR_EUR','instr_vol_surfaces',{'V1','V2','V3','V4','V5','V6'},'correlation_matrix','BASKET_CORR','sub_type','Basket');
+%! % Set up structure with Instrument and index objects
+%! i1 = Index();
+%! i1 = i1.set('id','1','value_base',S(1,1),'scenario_stress',S(:,1));
+%! i2 = Index();
+%! i2 = i2.set('id','2','value_base',S(1,2),'scenario_stress',S(:,2));
+%! i3 = Index();
+%! i3 = i3.set('id','3','value_base',S(1,3),'scenario_stress',S(:,3));
+%! i4 = Index();
+%! i4 = i4.set('id','4','value_base',S(1,4),'scenario_stress',S(:,4));
+%! i5 = Index();
+%! i5 = i5.set('id','5','value_base',S(1,5),'scenario_stress',S(:,5));
+%! i6 = Index();
+%! i6 = i6.set('id','6','value_base',S(1,6),'scenario_stress',S(:,6));
+%! fx = Index();
+%! fx = fx.set('id','FX_EURUSD','value_base',1.0);%,'scenario_stress',[1.0;1;1;1;1;1;1;1]);
+%! instrument_struct = struct();
+%! instrument_struct(1).id = s.id;
+%! instrument_struct(1).object = s;
+%! index_struct = struct();
+%! index_struct(1).id = fx.id;
+%! index_struct(1).object = fx;
+%! index_struct(2).id = i1.id;
+%! index_struct(2).object = i1;
+%! index_struct(3).id = i2.id;
+%! index_struct(3).object = i2;
+%! index_struct(4).id = i3.id;
+%! index_struct(4).object = i3;
+%! index_struct(5).id = i4.id;
+%! index_struct(5).object = i4;
+%! index_struct(6).id = i5.id;
+%! index_struct(6).object = i5;
+%! index_struct(7).id = i6.id;
+%! index_struct(7).object = i6;
+%! valuation_date = datenum('30-Dec-2016');
+%! s = s.calc_value(valuation_date,'base',instrument_struct,index_struct);
+%! % Set up structure with Riskfactor objects
+%! r1 = Riskfactor();
+%! r1 = r1.set('id','V1','scenario_stress',[0;1;5;40;100],'model','BM','shift_type',[1;1;1;1;1], 'node',730,'node2',1);
+%! r2 = Riskfactor();
+%! r2 = r1.set('id','V2');
+%! r3 = Riskfactor();
+%! r3 = r1.set('id','V3');
+%! r4 = Riskfactor();
+%! r4 = r1.set('id','V4');
+%! r5 = Riskfactor();
+%! r5 = r1.set('id','V5');
+%! r6 = Riskfactor();
+%! r6 = r1.set('id','V6');
+%! riskfactor_struct(1).id = r1.id;
+%! riskfactor_struct(1).object = r1;
+%! riskfactor_struct(2).id = r2.id;
+%! riskfactor_struct(2).object = r2;
+%! riskfactor_struct(3).id = r3.id;
+%! riskfactor_struct(3).object = r3;
+%! riskfactor_struct(4).id = r4.id;
+%! riskfactor_struct(4).object = r4;
+%! riskfactor_struct(5).id = r5.id;
+%! riskfactor_struct(5).object = r5;
+%! riskfactor_struct(6).id = r6.id;
+%! riskfactor_struct(6).object = r6;
+%! % Set up structure with discount curve object
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[7300], ...
+%!      'rates_base',[riskfree],'method_interpolation','linear');				
+%! curve_struct = struct();
+%! curve_struct(1).id = c.id;
+%! curve_struct(1).object = c;
+%! % Set up structure with volatlity surface objects
+%! v1 = Surface();
+%! v1 = v1.set('id','V1','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v1 = v1.set('values_base',sigma(1));
+%! v1 = v1.set('type','INDEX','riskfactors',{'V1'});
+%! v1 = v1.apply_rf_shocks(riskfactor_struct);
+%! v2 = Surface();
+%! v2 = v2.set('id','V2','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v2 = v2.set('values_base',sigma(2));
+%! v2 = v2.set('type','INDEX','riskfactors',{'V2'});
+%! v2 = v2.apply_rf_shocks(riskfactor_struct);
+%! v3 = Surface();
+%! v3 = v3.set('id','V3','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v3 = v3.set('values_base',sigma(3));
+%! v3 = v3.set('type','INDEX','riskfactors',{'V3'});
+%! v3 = v3.apply_rf_shocks(riskfactor_struct);
+%! v4 = Surface();
+%! v4 = v4.set('id','V4','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v4 = v4.set('values_base',sigma(4));
+%! v4 = v4.set('type','INDEX','riskfactors',{'V4'});
+%! v4 = v4.apply_rf_shocks(riskfactor_struct);
+%! v5 = Surface();
+%! v5 = v5.set('id','V5','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v5 = v5.set('values_base',sigma(5));
+%! v5 = v5.set('type','INDEX','riskfactors',{'V5'});
+%! v5 = v5.apply_rf_shocks(riskfactor_struct);
+%! v6 = Surface();
+%! v6 = v6.set('id','V6','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v6 = v6.set('values_base',sigma(6));
+%! v6 = v6.set('type','INDEX','riskfactors',{'V6'});
+%! v6 = v6.apply_rf_shocks(riskfactor_struct);
+%! surface_struct = struct();
+%! surface_struct(1).id = v1.id;
+%! surface_struct(1).object = v1;
+%! surface_struct(2).id = v2.id;
+%! surface_struct(2).object = v2;
+%! surface_struct(3).id = v3.id;
+%! surface_struct(3).object = v3;
+%! surface_struct(4).id = v4.id;
+%! surface_struct(4).object = v4;
+%! surface_struct(5).id = v5.id;
+%! surface_struct(5).object = v5;
+%! surface_struct(6).id = v6.id;
+%! surface_struct(6).object = v6;
+%! % Set up structure with matrix object
+%! m = Matrix();
+%! m = m.set('id','BASKET_CORR','components',{'1','2','3','4','5','6'});
+%! m = m.set('matrix',correlation);
+%! matrix_struct = struct();
+%! matrix_struct(1).id = m.id;
+%! matrix_struct(1).object = m;
+%! % Set up basket option objects to evaluate
+%! o = Option();
+%! o = o.set('maturity_date','25-Dec-2036','sub_type','OPT_EUR_C','discount_curve','IR_EUR');
+%! o = o.set('strike',K,'multiplier',1,'underlying','TestSynthetic','value_base',250,'vola_spread',0.0000000001);
+%! % Base valuation
+%! value_type = 'base';
+%! o = o.valuate (valuation_date, value_type, ...
+%!                     instrument_struct, surface_struct, matrix_struct, ...
+%!                     curve_struct, index_struct, riskfactor_struct);
+%! assert(o.getValue('base'),347.238282599760,sqrt(eps));
+%! % Stress valuation
+%! value_type = 'stress';
+%! o = o.valuate (valuation_date, value_type, ...
+%!                     instrument_struct, surface_struct, matrix_struct, ...
+%!                     curve_struct, index_struct, riskfactor_struct);
+%! assert(o.getValue('stress'),[347.238282599760;602.767484376531;811.214622007268;830.423521024289;889.507588641300],sqrt(eps));
 
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');

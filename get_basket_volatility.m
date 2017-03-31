@@ -11,9 +11,9 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{basket_vola} ] =} get_basket_volatility (@var{valuation_date}, @var{value_type}, @var{option}, @var{instrument_struct}, @var{index_struct}, @var{curve_struct}, @var{riskfactor_struct}, @var{matrix_struct}, @var{surface_struct})
+%# @deftypefn {Function File} {[@var{basket_vola}, @var{basket_dict} ] =} get_basket_volatility (@var{valuation_date}, @var{value_type}, @var{option}, @var{instrument_struct}, @var{index_struct}, @var{curve_struct}, @var{riskfactor_struct}, @var{matrix_struct}, @var{surface_struct})
 %#
-%# Return diversified volatilities for synthetic basket instruments.
+%# Return diversified volatility for synthetic basket instruments.
 %# The diversified volatility is dependent on the option maturity and strike,
 %# so the volatility has to be calculated for each basket option valuation.
 %# The following two methods are implemented:
@@ -25,11 +25,13 @@
 %# @item @var{VCV approach}: Assuming a normal distribution of underlying, the
 %# basket volatility is calculated by sigma = sqrt(w'*C*w) with Covariance Matrix C
 %# and the linear-combinations vector w.
+%# @item @var{Beisser}: Calculate lower limit of option prices by adjusting
+%# input volatilities and strikes. Also returns modified strike @var{basket_dict}.
 %# @end itemize
 %#
 %# @end deftypefn
 
-function basket_vola = get_basket_volatility(valuation_date,value_type,basket,option,instrument_struct,index_struct,curve_struct,riskfactor_struct,matrix_struct,surface_struct)
+function [basket_vola basket_dict] = get_basket_volatility(valuation_date,value_type,basket,option,instrument_struct,index_struct,curve_struct,riskfactor_struct,matrix_struct,surface_struct)
 
 if ( nargin < 9)
     error('Error: instrument_struct, curve_struct, matrix_struct, surface_struct and riskfactor_struct required. Aborting.');
@@ -41,7 +43,10 @@ basis_option = option.get('basis');
 tf          = timefactor(valuation_date,option.maturity_date,basis_option);
 option_type = option.option_type;
 strike      = option.strike;
-call_flag = option.call_flag;
+call_flag 	= option.call_flag;
+K_mod		= 0.0;	% modified strike, only required for Beisser model
+basket_dict = struct();
+
 if ( call_flag == 1 )
     moneyness_exponent = 1;
 else
@@ -119,14 +124,61 @@ end
 if (strcmpi(basket_vola_type,'Levy')) % Levy1992 (log-normal approximation)
 	basket_vola = getvola_levy(underlying_weights',underlying_values,tmp_instruments,...
                                         underlying_volas,corr_matrix,tf,rf_rate);
-else % defaults to VCV approximation										
-	basket_vola = getvola_vcv(underlying_weights', underlying_volas, corr_matrix);						
+										
+elseif (strcmpi(basket_vola_type,'Beisser')) % defaults to VCV approximation										
+	[basket_vola K_mod] = getvola_beisser(underlying_weights', underlying_values, ...
+							underlying_volas, corr_matrix,tf,rf_rate,strike);
+	% build basket_dict (input values required for option pricing)
+		basket_dict.strike = K_mod;
+		basket_dict.rf_rate = rf_rate;
+		basket_dict.timefactor = tf;
+		basket_dict.underlying_values = underlying_values;
+		basket_dict.underlying_weights = underlying_weights;
+	
+else   % defaults to VCV approximation										
+	basket_vola = getvola_vcv(underlying_weights', underlying_volas, corr_matrix);	
 end
 		
 end
 
 
 %######################    Helper Function    ##################################
+function [sigma_bar Kbar] = getvola_beisser(w,S,sigma,corr_matrix,tf,rf_rate,K)
+% Calculate Basket volatility assuming Beisser model (modify strike and volatility)
+% according to the Paper "Pricing of arithmetic basket options by conditioning" b
+% Deelstra et al., Insurance: Mathematics and Economics 34 (2004) 55–77
+	% specify value of correlation coefficients (equation 27)  +++++++++++
+	a = w;
+	denom = getvola_vcv(a,sigma,corr_matrix);
+	correlation = corr_matrix.get('matrix');
+	if ( rows(S) == 1 && rows(sigma) > 1)
+		S = repmat(S,rows(sigma),1);
+	end
+	if ( rows(sigma) == 1 && rows(S) > 1)
+		sigma = repmat(sigma,rows(S),1);
+	end
+	
+	ri = zeros(rows(S),length(a));
+	for jj=1:1:length(a)
+		for kk =1:1:length(a)
+			ri(:,jj) = ri(:,jj) + ( a(kk) .* sigma(:,kk) *	correlation(jj,kk) );
+		end
+	end
+	r = ri ./ denom;
+
+	% lower and upper bound, limit and maxiter for bisection method
+	lb = 0;
+	ub = 1;
+	maxiter = 300;
+	limit = sqrt(eps);
+	% optimize Forward price (equation 33)
+	Fsl_K = optimize_basket_forwardprice(a,S,rf_rate,r,sigma,tf,K,lb,ub,maxiter,limit);
+
+	% Calculate underlying dependent volatility and Strike
+	sigma_bar = sigma .* r;
+	Kbar = S .* exp( (rf_rate - 0.5 .* sigma_bar.^2) .* tf + sigma_bar .* sqrt(tf) .* norminv(Fsl_K));
+end
+
 function vola = getvola_vcv(w,sigma,corr_matrix)
 % Calculate Basket volatility assuming normal distributions of underlying prices
 

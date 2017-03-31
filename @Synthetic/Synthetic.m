@@ -52,7 +52,8 @@ classdef Synthetic < Instrument
          fprintf('basis: %s\n',any2str(b.basis)); 
          fprintf('correlation_matrix: %s\n',b.correlation_matrix); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
-         fprintf('Instrument Volatility Surface(s): %s \n',any2str(b.instr_vol_surfaces));            
+         fprintf('Instrument Volatility Surface(s): %s \n',any2str(b.instr_vol_surfaces));    
+		 fprintf('basket_vola_type: %s\n',b.basket_vola_type); 	
       end
       
       function obj = set.sub_type(obj,sub_type)
@@ -72,12 +73,12 @@ classdef Synthetic < Instrument
       end % set.day_count_convention
 	  
 	  function obj = set.basket_vola_type(obj,basket_vola_type)
-		 if ~(strcmpi(basket_vola_type,{'Levy'}) || strcmpi(basket_vola_type,{'VCV'}) )
-            error('Synthetic Instrument basket_vola_type must be Levy or VCV')
+		 if ~(strcmpi(basket_vola_type,{'Levy','VCV','Beisser'}) )
+            error('Synthetic Instrument basket_vola_type must be Levy, VCV or Beisser')
          end
          obj.basket_vola_type = basket_vola_type;
       end % set.basket_vola_type
-	  
+	 
    end % end of methods
    
    %static methods: 
