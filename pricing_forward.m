@@ -269,6 +269,11 @@ elseif ( sum(strcmpi(type,{'EquityFuture'})) > 0 )
     
 % #####  Calculate forward value for FX forwards    #####
 elseif ( sum(strcmpi(type,{'FX'})) > 0 )
+    % Pricing Formula: 
+	% FX_SPOT_PRICE quoted in units of domestic currency per unit of foreign
+	% FX_FWD_Price quoted in units of domestic currency per unit of foreign
+	% FX_FWD_Price = FX_SPOT_PRICE * DF_FOREIGN / DF_DOMESTIC
+	% Payoff is discounted difference between forward price and strike
     % extract rate from foreign curve
     foreign_rate_curve = und_curve_object.getRate(value_type,days_to_maturity);
     % Convert foreign rate from curve rate convention to instrument convention
@@ -281,8 +286,8 @@ elseif ( sum(strcmpi(type,{'FX'})) > 0 )
         foreign_rate_instr , comp_type, basis, comp_freq);
     df_discount     = discount_factor (valuation_date, maturity_date, ...
         discount_rate_instr, comp_type, basis, comp_freq);
-    % pricing reverse engineered
-    forward_price   = (1 ./ underlying_price) .* df_foreign ./ df_discount;
+    % pricing of forward
+    forward_price   = underlying_price .* df_foreign ./ df_discount;
     payoff          = (forward_price - strike ) .* df_discount;
 else
     error('pricing_forward: not a valid type: >>%s<<',type)

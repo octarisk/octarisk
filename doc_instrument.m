@@ -273,6 +273,10 @@ end
 %! i = i.set('scenario_stress',[350.00;300.00]);
 %! f = f.calc_value('31-Mar-2016','stress',c,i);
 %! assert(f.getValue('stress'),[-4.1118960639903;-54.1118960639903],0.00000001);
+%! f = f.calc_sensitivities('31-Mar-2016',c,i);
+%! assert(f.get('theo_delta'),1.00000000000000,sqrt(eps));
+%! assert(f.get('theo_theta'),-0.0137092477359975,sqrt(eps))
+%! assert(f.get('theo_rho'),70.8224264276957,sqrt(eps))
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing FX Forward Object\n');
@@ -281,7 +285,7 @@ end
 %! fc = Curve();
 %! fc = fc.set('id','IR_USD','nodes',[365,3650],'rates_base',[0.0063995279,0.01557504],'method_interpolation','linear');
 %! i = Index();
-%! i = i.set('value_base',1.139549999,'name','FX_USDEUR','id','FX_USDEUR');
+%! i = i.set('value_base',0.877539380349734,'name','FX_EURUSD','id','FX_EURUSD');
 %! f = Forward();
 %! f = f.set('name','FX_Forward_Domestic_EUR_Foreign_USD','maturity_date','29-Mar-2026','strike_price',0.00,'sub_type','FX');
 %! f = f.set('compounding_freq','annual');
@@ -640,6 +644,11 @@ end
 %! f = f.calc_value('31-Mar-2016','stress',c,b,c);
 %! assert(f.getValue('base'),21.9555751042,0.0005);
 %! assert(f.getValue('stress'),42.8245029271,0.0005);
+%! f = f.calc_sensitivities('31-Mar-2016',c,b,c);
+%! assert(f.get('theo_delta'),1.00000000000001,sqrt(eps));
+%! assert(f.get('theo_theta'),0.0124805207610592,sqrt(eps));
+%! assert(f.get('theo_domestic_rho'),4.76904397839206,sqrt(eps));
+%! assert(f.get('theo_foreign_rho'),0.338068744694908,sqrt(eps));
 
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Equity Future\n');

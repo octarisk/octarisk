@@ -47,6 +47,7 @@ function obj = calc_value (forward,valuation_date,value_type,discount_curve_obje
         obj = obj.set('value_stress',theo_value);
     elseif ( strcmp(value_type,'base'))
         obj = obj.set('value_base',theo_value(1));
+		obj = obj.set('theo_price',theo_price);
     else
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);

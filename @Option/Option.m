@@ -90,13 +90,14 @@ classdef Option < Instrument
          fprintf('compounding_type: %s\n',b.compounding_type);  
          fprintf('compounding_freq: %d\n',b.compounding_freq);    
          fprintf('day_count_convention: %s\n',b.day_count_convention);
-         if ( b.theo_delta ~= 0 )
-            fprintf('theo_delta:\t%8.4f\n',b.theo_delta);  
-            fprintf('theo_gamma:\t%8.4f\n',b.theo_gamma);  
-            fprintf('theo_vega:\t%8.4f\n',b.theo_vega);  
-            fprintf('theo_theta:\t%8.4f\n',b.theo_theta);  
-            fprintf('theo_rho:\t%8.4f\n',b.theo_rho);  
-            fprintf('theo_omega:\t%8.4f\n',b.theo_omega);  
+         if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
+										+ b.theo_rho + b.theo_omega) ~= 0 )
+            fprintf('theo_delta:\t%8.8f\n',b.theo_delta);  
+            fprintf('theo_gamma:\t%8.8f\n',b.theo_gamma);  
+            fprintf('theo_vega:\t%8.8f\n',b.theo_vega);  
+            fprintf('theo_theta:\t%8.8f\n',b.theo_theta);  
+            fprintf('theo_rho:\t%8.8f\n',b.theo_rho);  
+            fprintf('theo_omega:\t%8.8f\n',b.theo_omega);  
          end    
       end
       % converting object <-> struct for saving / loading purposes

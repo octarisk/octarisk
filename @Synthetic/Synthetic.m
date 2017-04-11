@@ -9,7 +9,7 @@ classdef Synthetic < Instrument
         instr_vol_surfaces  = {'INSTRUMENT_VOL'};
         discount_curve = '';
         correlation_matrix = '';
-		basket_vola_type = 'Levy'; % [Levy, VCV] approximation for basket volatility calculation
+		basket_vola_type = 'Levy'; % [Levy, VCV, Beisser] approximation for basket volatility calculation
     end
    
     properties (SetAccess = private)
@@ -105,13 +105,14 @@ textstring = "@deftypefn{Octarisk Class} {@var{object}} = Synthetic(@var{id})\n\
 @deftypefnx{Octarisk Class} {@var{object}} = Synthetic()\n\
 \n\
 Class for setting up Synthetic objects.\n\
-A Synthetic instrument is a linear combination of underlying instruments. Therefore the following Synthetic types\n\
+A Synthetic instrument is a linear combination of underlying instruments. The following Synthetic types\n\
 are introduced:\n\
 \n\
 @itemize @bullet\n\
-@item SYNTH: Synthetic instrument based on underlyings. The Synthetic price and sensitivity is based on the linear combination\n\
-of underlying instrument's prices and sensitivities.\n\
-@item Basket: The same as type SYNTH, but additionally underlying \n\
+@item SYNTH: Synthetic instrument with underlyings. The Synthetic price\n\
+is based on the linear combination of underlying instrument's prices.\n\
+@item Basket: The same as type SYNTH, but additional attributes for specifying\n\
+underlying volatility surface and volatility types are introduced to enable basket option valuation.\n\
 @end itemize\n\
 \n\
 In the following, all methods and attributes are explained and a code example is given.\n\
@@ -124,9 +125,9 @@ Methods for Synthetic object @var{obj}:\n\
 \n\
 @item obj.get(@var{attribute}): Getter method. Query the value of specified attribute.\n\
 \n\
-@item obj.calc_value(@var{valuation_date},@var{scenario}, @var{discount_curve_object}, @var{underlying_object}, @var{und_curve_object})\n\
-Calculate the value of Forwards based on valuation date, scenario type, discount curve and underlying instruments.\n\
-Underlying discount curve @var{und_curve_object} is used for Forwards on Bond or FX rates only.\n\
+@item obj.calc_value(@var{valuation_date},@var{scenario}, @var{instrument_struct}, @var{index_struct})\n\
+Calculate the value of Synthetic instruments based on valuation date, scenario type, underlying instruments and FX rates.\n\
+The provided structures have to contain the referenced underlying instrument objects and FX rates.\n\
 \n\
 @item obj.getValue(@var{scenario}): Return Synthetic value for given @var{scenario}.\n\
 Method inherited from Superclass @var{Instrument}\n\
@@ -151,6 +152,57 @@ During instrument valuation and aggregation, FX conversion takes place if corres
 MC values for several @var{timestep_mc} are stored in columns.\n\
 @item @var{timestep_mc}: String Cell array with MC timesteps. If new timesteps are set, values are automatically appended.\n\
 \n\
+@item @var{day_count_convention}: Day count convention of curve. See \'help get_basis\' \n\
+for details (Default: \'act/365\')\n\
+@item @var{compounding_type}: Compounding type. Can be continuous, discrete or simple. \n\
+(Default: \'cont\')\n\
+@item @var{compounding_freq}: Compounding frequency used for discrete compounding.\n\
+Can be [daily, weekly, monthly, quarterly, semi-annual, annual]. (Default: \'annual\')\n\
+@item @var{instruments}: Underlying instrument identifiers (Cellstring )\n\
+@item @var{weights}: Underlying instruments weights (Numeric vector)\n\
+@item @var{discount_curve}: Discount curve (Default: empty string)\n\
+@item @var{instr_vol_surfaces}: Required for Options on Baskets only:\n\
+Underlying instruments volatility surface identifiers (Cellstring )\n\
+@item @var{correlation_matrix}: Required for Options on Baskets only:\n\
+Correlation matrix object of Basket underlyings (Default: empty string)\n\
+@item @var{basket_vola_type}: Required for Options on Baskets only:\n\
+Approximation method for basket volatility calculation  [Levy, VCV, Beisser] (Default: \'Levy\')\n\
+@end itemize\n\
+\n\
+\n\
+For illustration see the following example:\n\
+A fund modelled as synthetic instrument with two underlying indizes (MSCI World and Euro Stoxx 50) is set up\n\
+and the synthetic value (1909.090909) is calculated and retrieved:\n\
+@example\n\
+@group\n\
+\n\
+fprintf('Pricing Synthetic Instrument');\n\
+s = Synthetic();\n\
+instrument_cell = cell;\n\
+instrument_cell(1) = 'EURO_STOXX_50';\n\
+instrument_cell(2) = 'MSCIWORLD';\n\
+s = s.set('id','TestSynthetic','instruments',instrument_cell);\n\
+s = s.set('weights',[1,1],'currency','EUR');\n\
+i1 = Index();\n\
+i1 = i1.set('id','EURO_STOXX_50','value_base',1000,'scenario_stress',2000);\n\
+i2 = Index();\n\
+i2 = i2.set('id','MSCIWORLD','value_base',1000);\n\
+i2 = i2.set('scenario_stress',2000,'currency','USD');\n\
+fx = Index();\n\
+fx = fx.set('id','FX_EURUSD','value_base',1.1,'scenario_stress',1.2);\n\
+instrument_struct = struct();\n\
+instrument_struct(1).id = i1.id;\n\
+instrument_struct(1).object = i1;\n\
+instrument_struct(2).id = i2.id;\n\
+instrument_struct(2).object = i2;\n\
+index_struct = struct();\n\
+index_struct(1).id = fx.id;\n\
+index_struct(1).object = fx;\n\
+valuation_date = datenum('31-Mar-2016');\n\
+s = s.calc_value(valuation_date,'base',instrument_struct,index_struct);\n\
+s.getValue('base')\n\
+@end group\n\
+@end example\n\
 @end deftypefn";
 
 		% format help text

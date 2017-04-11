@@ -13,7 +13,7 @@ classdef Swaption < Instrument
         vola_sensi = 1;
         strike = 0.025;
         spot = 0.025;
-        multiplier = 100;
+        multiplier = 100;			% only used if valued without underlyings
         tenor = 10;                 % Tenor of underlying swap in years
         no_payments = 1;
         und_fixed_leg = '';         % String: underlying fixed leg
@@ -33,6 +33,11 @@ classdef Swaption < Instrument
         und_float_value = 0.0;
         call_flag = false;
         implied_volatility = 0.0;
+		theo_delta = 0.0;
+		theo_gamma = 0.0;
+		theo_vega = 0.0;
+		theo_theta = 0.0;
+		theo_rho = 0.0;
     end
 
    methods
@@ -84,6 +89,14 @@ classdef Swaption < Instrument
          if ~(b.vola_spread == 0.0)
             fprintf('vola_spread: %f \n',b.vola_spread);
          end
+		 if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
+				+ b.theo_rho ) ~= 0 )
+            fprintf('theo_delta:\t%8.8f\n',b.theo_delta);  
+            fprintf('theo_gamma:\t%8.8f\n',b.theo_gamma);  
+            fprintf('theo_vega:\t%8.8f\n',b.theo_vega);  
+            fprintf('theo_theta:\t%8.8f\n',b.theo_theta);  
+            fprintf('theo_rho:\t%8.8f\n',b.theo_rho);   
+         end 
       end
       % converting object <-> struct for saving / loading purposes
       % function b = saveobj (a)

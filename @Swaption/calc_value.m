@@ -154,7 +154,7 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
             % call pricing function
             theo_value = swaption_underlyings(call_flag,tmp_strike,V_fix, ...
                                V_float,tmp_effdate,tmp_imp_vola_shock, ...
-                               tmp_model) .* tmp_multiplier;
+                               tmp_model);
         end
     end   % close loop if tmp_dtm < 0
     

@@ -26,6 +26,14 @@ classdef Forward < Instrument
     properties (SetAccess = private)
         sub_type = 'EQFWD';
         basis = 3;
+		theo_delta = 0.0;
+		theo_gamma = 0.0;
+		theo_vega = 0.0;
+		theo_theta = 0.0;
+		theo_rho = 0.0;
+		theo_domestic_rho = 0.0;
+		theo_foreign_rho = 0.0;
+		theo_price = 0.0;
     end
     
    methods
@@ -69,6 +77,17 @@ classdef Forward < Instrument
          fprintf('net_basis: %f\n',b.net_basis);
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('calc_price_from_netbasis: %d\n',b.calc_price_from_netbasis);
+		 fprintf('theo_price:\t%8.8f\n',b.theo_price);  
+		 if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
+				+ b.theo_rho + b.theo_domestic_rho + b.theo_foreign_rho) ~= 0 )
+            fprintf('theo_delta:\t%8.8f\n',b.theo_delta);  
+            fprintf('theo_gamma:\t%8.8f\n',b.theo_gamma);  
+            fprintf('theo_vega:\t%8.8f\n',b.theo_vega);  
+            fprintf('theo_theta:\t%8.8f\n',b.theo_theta);  
+            fprintf('theo_rho:\t%8.8f\n',b.theo_rho);  
+			fprintf('theo_domestic_rho:\t%8.8f\n',b.theo_domestic_rho);  
+			fprintf('theo_foreign_rho:\t%8.8f\n',b.theo_foreign_rho);  
+         end 
       end
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') ...
@@ -137,6 +156,9 @@ Underlying discount curve @var{und_curve_object} is used for Forwards on Bond or
 @item obj.getValue(@var{scenario}): Return Forward value for given @var{scenario}.\n\
 Method inherited from Superclass @var{Instrument}\n\
 \n\
+@item obj.calc_sensitivities(@var{valuation_date}, @var{discount_curve_object}, @var{underlying_object}, @var{und_curve_object})\n\
+Calculate sensitivities (the Greeks) of all Forward and Future by numeric approximation.\n\
+\n\
 @item Forward.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
 If empty, defaults to plain text. Returnflag is boolean: True returns \n\
 documentation string, false (default) returns empty string. [static method]\n\
@@ -166,8 +188,8 @@ for details (Default: \'act/365\')\n\
 @item @var{compounding_freq}: Compounding frequency used for discrete compounding.\n\
 Can be [daily, weekly, monthly, quarterly, semi-annual, annual]. (Default: \'annual\')\n\
 @item @var{strike_price}: Strike price (Default: 0.0)\n\
-@item @var{underlying_id}:ID of underlying object. Default: '')\n\
-@item @var{underlying_price_base}:  Underlying base price used only,\n\
+@item @var{underlying_id}:ID of underlying object. (Default: '')\n\
+@item @var{underlying_price_base}:  Underlying base price. Used only\n\
 if underlying object is a risk factor. Risk factor shocks are applied to underlying base price. (Default: 0.0)\n\
 @item @var{underlying_sensitivity}:  Underlying sensitivity used only,\n\
 if underlying object is a risk factor. Risk factor shocks are scaled by this sensitivity (Default: 1.0)\n\
@@ -183,6 +205,15 @@ if underlying object is a risk factor. Risk factor shocks are scaled by this sen
 @item @var{component_weight}:  Used for Bond futures only. Scale future future price.\n\
 @item @var{net_basis}:  Net basis of futures. Used only, if @var{calc_price_from_netbasis} is set to true.\n\
 @item @var{calc_price_from_netbasis}: Boolean Flag. True: use @var{net_basis} to calculate future price. (Default: false).\n\
+\n\
+@item @var{theo_delta}: Sensitivity to changes in underlying's price. Calculated by method @var{calc_sensitivities}.\n\
+@item @var{theo_gamma}: Sensitivity to changes in changes of underlying's price. Calculated by method @var{calc_sensitivities}.\n\
+@item @var{theo_vega}: Sensitivity to changes in volatility. Calculated by method @var{calc_sensitivities}.\n\
+@item @var{theo_theta}: Sensitivity to changes in remaining days to maturity. Calculated by method @var{calc_sensitivities}.\n\
+@item @var{theo_rho}: Sensitivity to changes in risk free rate. Calculated by method @var{calc_sensitivities}.\n\
+@item @var{theo_domestic_rho}: Sensitivity to changes in domestic interest rate. Calculated by method @var{calc_sensitivities}.\n\
+@item @var{theo_foreign_rho}: Sensitivity to changes in foreign interest rate. Calculated by method @var{calc_sensitivities}.\n\
+@item @var{theo_price}: Forward price. Calculated by method @var{calc_value}.\n\
 @end itemize\n\
 \n\
 \n\
@@ -193,11 +224,14 @@ and the forward value (-27.2118960639903) is calculated and retrieved:\n\
 @group\n\
 \n\
 c = Curve();\n\
-c = c.set('id','IR_EUR','nodes',[365,3650,7300],'rates_base',[0.0001002070,0.0045624391,0.009346842],'method_interpolation','linear');\n\
+c = c.set('id','IR_EUR','nodes',[365,3650,7300]);\n\
+c = c.set('rates_base',[0.0001002070,0.0045624391,0.009346842]);\n\
+c = c.set('method_interpolation','linear');\n\
 i = Index();\n\
 i = i.set('value_base',326.900);\n\
 f = Forward();\n\
-f = f.set('name','EQ_Forward_Index_Test','maturity_date','26-Mar-2036','strike_price',426.900);\n\
+f = f.set('name','EQ_Forward_Index_Test','maturity_date','26-Mar-2036');\n\
+f = f.set('strike_price',426.900);\n\
 f = f.set('compounding_freq','annual');\n\
 f = f.calc_value('31-Mar-2016','base',c,i);\n\
 f.getValue('base')\n\

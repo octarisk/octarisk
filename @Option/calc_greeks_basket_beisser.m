@@ -45,8 +45,8 @@ function obj = calc_greeks_basket_beisser(option,valuation_date,value_type,sigma
 		vola_down	    = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar - 0.01,rf,TF);         
 		vola_up	        = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar + 0.01,rf,TF);
 		
-		time_down	    = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf,TF - 1/365)
-		time_up	        = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf,TF + 1/365)
+		time_down	    = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf,TF - 1/365);
+		time_up	        = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf,TF + 1/365);
 		
 		theo_delta  = (undvalue_up - undvalue_down) / 2;
 		theo_gamma  = (undvalue_up + undvalue_down - 2 * theo_value_base);

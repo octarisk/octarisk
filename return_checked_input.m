@@ -161,7 +161,7 @@ if ( strcmpi(type,'special'))
     % ====================== set scenario_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'scenario_stress'))   
       
-      if (isvector (val) && isreal (val))
+      if (isvector (val) && isreal (val))	% append to existing stress vector
         retval = [obj.scenario_stress; val];
       else
         if ( isempty(val))

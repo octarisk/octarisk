@@ -3,7 +3,7 @@ function rate = getRate (curve, value_type, node)
   
 % input checks
     if ( nargin < 3 )
-        error ('Curve interpolation requires value_type and node.');
+        error ('Curve.getRate method requires value_type and node.');
     end
     
 % Curve variables
