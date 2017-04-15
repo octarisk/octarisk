@@ -19,7 +19,7 @@
 %# The following two methods are implemented:
 %# @itemize @bullet
 %# @item @var{Levy 1992}: Levy uses a log-normal density as a first-order 
-%# approximation to the true density. This holds for small maturities and \/ or
+%# approximation to the true density. This holds for small maturities or
 %# volatilities only, since a weighted sum of log-normal distribution is not a log-normal
 %# distribution by itself.
 %# @item @var{VCV approach}: Assuming a normal distribution of underlying, the

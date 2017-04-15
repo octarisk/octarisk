@@ -355,6 +355,8 @@ disp('Calibrating volatility spread over yield:')\n\
 o = o.set('value_base',100);\n\
 o = o.calc_vola_spread('31-Mar-2016',i,c,v);\n\
 o.getValue('base')\n\
+@end group\n\
+@end example\n\
 \n\
 @end deftypefn";
 
