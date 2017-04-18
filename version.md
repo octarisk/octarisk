@@ -3,8 +3,36 @@
 ### next versions
 Possible new Features:
 - calculation of key rate durations for Bonds
-- Asian Options (geometric and arithmetic averaging), closed form solutions only
-- callable bonds (construct Willowtree for IR, incorporate call/put schedules)
+
+### 0.3.5-rc1, 2017/03/25
+Release candidate of the upcoming octarisk v0.3.5 release. The final release 
+will contain extended documentation for classes and some new pricing methods for Baskets.
+
+- Extended in-code documentation functionality (.help method) for several classes
+- Introduction of new instruments: Averaging floating rate note
+- Introduction of new pricing function for basket volatilities and option prices
+- Introduction of sensitivity calculation for Forwards and Swaptions
+
+### 0.3.4, 2017/02/11
+Version v0.3.4 is a minor release with bugfixes, performance improvements and new instruments.
+
+- Extended class and object documentation.
+- Introduction of new instruments: Inflation Linked Bonds and Inflation Linked Caps/Floors
+	
+### 0.3.3, 2016/12/03
+Version v0.3.3 is a minor release with additional instrument and reworked volatility framework.
+
+- Introduction of new instruments: Bonds with embedded options, CM Swaps, CMS Caps and Floors
+- Introduction of new pricing function for callable bonds in c++ code (compiled as oct file)
+- several minor bugfixes
+
+### 0.3.2, 2016/10/20
+Version v0.3.2 is a minor release introducing a new session-like instrument valuation interface.
+
+- Introduction of new instruments: Asian Options, Basket, Options on Baskets
+- Introduciton of a new Class: Matrix
+- several minor bugfixes and new test cases
+- Introduction of a new framework for oct files compiled from c++ code
 
 ### 0.3.1, 2016/08/21
 Version v0.3.1 is a minor version with new testing features, more validated pricing functions and several minor bugfixes.
