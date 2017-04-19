@@ -82,6 +82,11 @@ classdef Bond < Instrument
 		cpi_historical_curve	= ''; % Curve with historical values for CPI
 		infl_exp_lag			= ''; % inflation expectation lag (in months)
 		use_indexation_lag		= false; % Bool: true -> use infl_exp_lag
+		
+		% Key rate duration specific attributes
+		key_term 				= [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
+		key_rate_shock 			= 0.01; % key rate shock size (cont, act/365)
+		key_rate_width 			= 365;% width of key rate shocks
     end
    
     properties (SetAccess = private)
@@ -107,6 +112,10 @@ classdef Bond < Instrument
         accrued_interest = 0.0;
         last_coupon_date = 0;
         embedded_option_value = 0.0;
+		key_rate_eff_dur = [];
+		key_rate_mon_dur = [];
+		key_rate_eff_convex = [];
+		key_rate_mon_convex = [];
     end
    
    methods
@@ -162,6 +171,13 @@ classdef Bond < Instrument
          fprintf('use_outstanding_balance: %d\n',b.use_outstanding_balance);
 		 fprintf('prorated: %s\n',any2str(b.prorated)); 
 		 fprintf('in_arrears: %s\n',any2str(b.in_arrears)); 
+		 if ~( isempty(b.key_rate_eff_dur))
+			fprintf('Key rate term: %s\n',any2str(b.key_term)); 
+			fprintf('Key rate Effective Duration: %s\n',any2str(b.key_rate_eff_dur));
+			fprintf('Key rate Monetary Duration: %s\n',any2str(b.key_rate_mon_dur));
+			fprintf('Key rate Effective Convexity: %s\n',any2str(b.key_rate_eff_convex));
+			fprintf('Key rate Monetary Convexity: %s\n',any2str(b.key_rate_mon_convex));
+		 end
          if ( regexpi(b.sub_type,'CMS'))
             fprintf('vola_surface: %s\n',b.vola_surface); 
             fprintf('cms_model: %s\n',b.cms_model); 

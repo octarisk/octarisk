@@ -549,7 +549,9 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object,tmp_ref_object);
             else
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);
-            end                       
+            end    
+			% calculate key rate durations and convexities
+			bond = bond.calc_key_rates(valuation_date,tmp_curve_object);
         end
         bond = bond.calc_value (valuation_date,scenario,tmp_curve_object); 
     % e) store bond object:

@@ -160,6 +160,21 @@ end
 %! assert(b.getValue('stress'),[117.121568822210;117.415543267658],0.000000001);
 
 %!test 
+%! fprintf('\tdoc_instrument:\tCalculating Key Rate Durations and Convexity\n');
+%! b = Bond();
+%! b = b.set('Name','Test_FRB','coupon_rate',0.01,'value_base',100,'clean_value_base',0,'coupon_generation_method','backward','term',365);
+%! b = b.set('maturity_date','30-Dec-2019','notional',100,'compounding_type','simple','issue_date','30-Dec-2016');
+%! b = b.set('key_term',[365,730,1095],'key_rate_shock',0.01,'key_rate_width',365);
+%! b = b.rollout('base','30-Dec-2016');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[0.01,0.01],'method_interpolation','linear');
+%! b = b.calc_value('30-Dec-2016','base',c);
+%! b = b.calc_key_rates('30-Dec-2016',c);
+%! b = b.calc_sensitivities('30-Dec-2016',c);
+%! assert(sum(b.get('key_rate_eff_dur')),b.get('eff_duration'),sqrt(eps));
+%! assert(sum(b.get('key_rate_eff_convex')),b.get('eff_convexity'),sqrt(eps));
+
+%!test 
 %! fprintf('\tdoc_instrument:\tPricing Inflation Linked Bond Object\n');
 %! valuation_date = '30-Dec-2016';
 %! cpi = Index();

@@ -96,10 +96,16 @@ a Matlab version will be released.
 However, further code development will be still accomplished with Octave (because 
 it is *free* and everybody can contribute and run the code.)
 Write me an Email if you need assistance in porting the code basis to Matlab.
+Octave's oct-files with c++ pricing functions needs to be ported to mex-files
+in order to provide full Matlab compatibility.
 
 ## Version history
 
-- Version 0.3.0  independent validation of all pricing functions, unittests, bug fixes
+- Version 0.3.4   various performance improvements, enhanced documentation
+- Version 0.3.3   introduction of c++ pricing functions, enhanced volatility framework
+- Version 0.3.2   Introduction of a session-like instrument valuation interface, new instruments
+- Version 0.3.1   enhanced testing features for regression and integration tests 
+- Version 0.3.0   independent validation of all pricing functions, unittests, bug fixes
 - Version 0.3.0-rc1 further enhanced file interface, aggregated curves introduced, bug fixes
 - Version 0.2.0   enhanced file interface and bug fixes
 - Version 0.1.0   first public release
@@ -117,8 +123,8 @@ instrument pricing. The QuantLib repository could serve as a basis for Octave
 code adaptions
 
 Up to my knowledge, there is only one free and open solution for measuring market risk
-- [OpenGamma](http://www.opengamma.com/solutions/market-risk) with tools for 
-measuring market risk and a margining toolset
+- [OpenGamma](http://www.opengamma.com/solutions/market-risk) including tools for 
+measuring market risk and a margining toolset.
 
 You can also download the code of the OpenGamma platform from 
 [Github](https://github.com/OpenGamma/Strata). 
@@ -131,14 +137,12 @@ which are in use by financial institutions.
 
 Nevertheless, Octarisk can be used for portfolios with several thousands instruments 
 and risk factors. Therefore it is best suited to use it as an independent
-tool to validate the results of proprietary solutions or as a starting point for 
-in-house market risk measurement solution.
+tool to validate the results of proprietary solutions or as a (starting) point for 
+a full in-house market risk measurement solution.
 
-The initial costs of trying Octarisk are low (only few days for an IT affine 
-person are required to set up Octarisk and to provide input of a particular test 
-portfolio). Since the licensing costs
-are zero, the money can be spent on in-house or external support for bug-fixing 
-and development of new features. 
+The costs of using Octarisk are low, since the licensing costs
+both for Octave and Octarisk are zero. The money can be spent on in-house 
+or external support for development of new features and maintenance. 
 As a result you do not face vendor lock-in and have full transparency - forever.
 
 
