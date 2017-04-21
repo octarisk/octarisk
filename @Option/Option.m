@@ -26,6 +26,7 @@ classdef Option < Instrument
         averaging_rule = 'geometric'; % underlying distribution of average
                                       % either {'geometric','arithmetic'}
         averaging_monitoring = 'continuous'; % continuous or discrete averaging
+		calibration_flag = 1;       % BOOL: if true, no calibration will be done
     end
  
     properties (SetAccess = private)

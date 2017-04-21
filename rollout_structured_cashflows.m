@@ -653,7 +653,9 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
                 tenor   = fsd; % days until foward start date
                 term    = fed-fsd; % days of caplet / floorlet
                 sigma = surface.getValue(value_type,tenor,term,moneyness);
-                            
+				% account for vola spread (set by e.g. calibration)
+                sigma   = sigma + instrument.vola_spread; 
+				
                 % add convexity adjustment to forward rate
                 if ( instrument.convex_adj == true )
                     [adj_rate ca] = calcConvexityAdjustment(valuation_date, ...
@@ -888,7 +890,7 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
             end
             tenor   = fixing_start_date; % days until foward start date
             sigma   = surface.getValue(value_type,tenor,sliding_term,moneyness); 
-            
+				
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
             if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
@@ -933,6 +935,9 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
 				% current implementation: option term is term of cap
 				% in principle one could use cms_sliding term to get appropriate volatility
                 sigma   = surface.getValue(value_type,tenor,term,moneyness);
+				% account for vola spread (set by e.g. calibration)
+				sigma   = sigma + instrument.vola_spread; 
+			
                 % calculate CAP/FLOOR rate according to model based on cms rate
                 cms_rate = getCapFloorRate(instrument.CapFlag, ...
                         cms_rate, X, tf_fsd, sigma, instrument.model);

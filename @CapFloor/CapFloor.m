@@ -25,7 +25,6 @@ classdef CapFloor < Instrument
         coupon_rate = 0.0;
         prorated = true; % Bool: true means deposit method 
         %  (adjust cash flows for leap year), false = bond method (fixed coupon)
-        calibration_flag = 0;   % flag set to true, if calibration 
                                 %(mark to market) successful            
         vola_surface = 'RF_VOLA_IR_EUR';
         strike = 0.005;
@@ -44,6 +43,7 @@ classdef CapFloor < Instrument
 		cpi_historical_curve	= ''; % Curve with historical values for CPI
 		infl_exp_lag			= ''; % inflation expectation lag (in months)
 		use_indexation_lag		= false; % Bool: true -> use infl_exp_lag
+		calibration_flag = 1;       % BOOL: if true, no calibration will be done
     end
    
     properties (SetAccess = private)
@@ -67,7 +67,6 @@ classdef CapFloor < Instrument
         pv01 = 0.0;
         accrued_interest = 0.0;
         basis = 3;
-        vola_spread = 0.0;
         model = 'Black';
         CapFlag = true;
     end
@@ -124,6 +123,7 @@ classdef CapFloor < Instrument
 			fprintf('use_indexation_lag: %s\n',any2str(b.use_indexation_lag));
          end		 
          fprintf('ir_shock: %f \n',b.ir_shock);
+		 fprintf('vola_spread: %f \n',b.vola_spread);
          fprintf('eff_duration: %f \n',b.eff_duration);
          fprintf('eff_convexity: %f \n',b.eff_convexity);
          % display all mc values and cf values

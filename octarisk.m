@@ -520,8 +520,8 @@ end
 
 
 % print all base values
-fprintf('Instrument Base and IR stress Values: \n');
-fprintf('ID,Base,IR-50bp,IR+50bp,IR-100bp,IR+100bp,Currency\n');
+fprintf('Instrument Base and stress Values: \n');
+fprintf('ID,Base,%s,%s,%s,%s,Currency\n',stresstest_struct(2).id,stresstest_struct(3).id,stresstest_struct(4).id,stresstest_struct(5).id);
 for kk = 1:1:length(instrument_struct)
     obj = instrument_struct(kk).object;
     stressvec = obj.getValue('stress');

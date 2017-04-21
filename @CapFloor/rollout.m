@@ -19,8 +19,11 @@ function s = rollout (capfloor, valuation_date, value_type, arg1, arg2, arg3)
 		[ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
 								value_type,  s, iec_obj, hist_obj, cpi_obj);
 								
-  else	% all other caps/floors on interest rates				
-	    % call function for generating CF dates and values and accrued_interest
+  else	% all other caps/floors on interest rates	
+		if ( nargin < 5 )
+			error ('rollout for sub_type CAP/FLOOR: expecting valuation_date, value_type, curve_object, vola_surface');
+		end
+	    % call function for generating CF dates and values
 		curve_object  = arg1;
 		vola_surface  = arg2;
 	    [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...

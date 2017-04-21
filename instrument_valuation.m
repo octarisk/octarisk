@@ -186,7 +186,7 @@ elseif ( strfind(tmp_type,'option') > 0 )
     end
 
     % Calibration of Option vola spread 
-    if ( option.get('vola_spread') == 0 )
+    if ( option.get('calibration_flag') == false ) 
 		if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
 						&& tmp_underlying_obj.is_basket ...
 						&& strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
@@ -318,10 +318,10 @@ elseif ( strfind(tmp_type,'capfloor') > 0 )
         fprintf('WARNING: instrument_valuation: No surface_struct object found for id >>%s<<\n',capfloor.get('vola_surface'));
     end
     
-    % TODO: Calibration of capfloor vola spread            
-    %if ( capfloor.get('vola_spread') == 0 )
-    %    capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
-    %end
+    % Calibration of capfloor vola spread            
+    if ( capfloor.get('calibration_flag') == false ) 
+        capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
+    end
     capfloor = capfloor.rollout(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj);
     if ( first_eval == 1)
         capfloor = capfloor.calc_sensitivities(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_disc_curve_obj);

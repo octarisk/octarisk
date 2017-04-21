@@ -1,10 +1,11 @@
 # Version History 
 
 ### next versions
-Possible new Features:
+Possible new features:
 
 New Features:
 - calculation of key rate durations and convexities for bonds
+- volatility calibration for caps and floors
 
 ### 0.3.5-rc1, 2017/03/25
 Release candidate of the upcoming octarisk v0.3.5 release. The final release 

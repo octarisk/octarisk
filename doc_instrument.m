@@ -495,6 +495,12 @@ end
 %! cap = cap.rollout('31-Dec-2015','base',c,v);
 %! cap = cap.calc_value('31-Dec-2015','base',c);
 %! assert(cap.getValue('base'),137.0063959386,0.0000001);
+%! cap = cap.set('value_base',135.000);
+%! cap = cap.calc_vola_spread('31-Dec-2015',c,v);
+%! cap = cap.rollout('31-Dec-2015','base',c,v);
+%! cap = cap.calc_value('31-Dec-2015','base',c);
+%! assert(cap.vola_spread, -0.0256826614604929,0.00001)
+%! assert(cap.getValue('base'),135.00,0.00001)
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Inflation Linked Floor Object\n');
@@ -558,6 +564,12 @@ end
 %! floor = floor.calc_value('31-Dec-2015','stress',c);
 %! stress_values = floor.getValue('stress');
 %! assert(stress_values,[13.629274436848439;6.092263070602667;0.463877763957439],0.0000001);
+%! floor = floor.set('value_base',45.00);
+%! floor = floor.calc_vola_spread('31-Dec-2015',c,v);
+%! floor = floor.rollout('31-Dec-2015','base',c,v);
+%! floor = floor.calc_value('31-Dec-2015','base',c);
+%! assert(floor.vola_spread, 0.000397094400016290,0.000001);
+%! assert(floor.getValue('base'),45.00,0.00001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing 2nd Floor Object with Normal Model\n');
@@ -892,7 +904,12 @@ end
 %! cap_cms = cap_cms.calc_value('31-Mar-2016','stress',c);
 %! assert(cap_cms.getValue('base'),0.531866524532582,0.00000001);
 %! assert(cap_cms.getValue('stress'),[0.531866524532582;0.531866524532582],0.00000001);
-
+%! cap_cms = cap_cms.set('value_base',0.60);
+%! cap_cms = cap_cms.calc_vola_spread('31-Mar-2016',c,v);
+%! cap_cms = cap_cms.rollout('31-Mar-2016','base',c,v);
+%! cap_cms = cap_cms.calc_value('31-Mar-2016','base',c);
+%! assert(cap_cms.vola_spread, 0.00120662817963940,0.000001);
+%! assert(cap_cms.getValue('base'),0.600000004884487,0.00001);
 
    
 %!test 
