@@ -19,6 +19,7 @@ classdef CapFloor < Instrument
         discount_curve = 'IR_EUR';
         reference_curve = 'IR_EUR';
         ir_shock   = 0.01;      % shock used for calculation of effective duration
+		vola_shock = 0.0001;	% shock used for calculation of vega
         in_arrears = 0;
         notional_at_start = 0; 
         notional_at_end = 0;
@@ -61,6 +62,8 @@ classdef CapFloor < Instrument
         mac_duration = 0.0;
         mod_duration = 0.0;
         eff_duration = 0.0;
+		vega = 0.0;
+		theta = 0.0;
         spread_duration = 0.0;
         dollar_duration = 0.0;
         dv01 = 0.0;
@@ -126,6 +129,8 @@ classdef CapFloor < Instrument
 		 fprintf('vola_spread: %f \n',b.vola_spread);
          fprintf('eff_duration: %f \n',b.eff_duration);
          fprintf('eff_convexity: %f \n',b.eff_convexity);
+		 fprintf('vega: %f \n',b.vega);
+		 fprintf('theta: %f \n',b.theta);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
          [mc_rows mc_cols mc_stack] = size(b.cf_values_mc);

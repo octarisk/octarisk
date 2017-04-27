@@ -1,9 +1,9 @@
 function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
   s = bond;
 
-  if ( strcmpi(s.sub_type,'FRN') || strcmpi(s.sub_type,'SWAP_FLOATING'))
+  if ( strcmpi(s.sub_type,'FRN') || strcmpi(s.sub_type,'SWAP_FLOATING') || strcmpi(s.sub_type,'FRA') || strcmpi(s.sub_type,'FVA'))
     if ( nargin < 3 )
-        error ('rollout for sub_type FRN or SWAP_FLOATING: expecting reference curve object');
+        error ('rollout for sub_type FRA, FRN or SWAP_FLOATING: expecting reference curve / surface object');
     elseif ( nargin == 3)
         tmp_curve_object = arg1;
         valuation_date = datestr(today);
@@ -28,9 +28,9 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
 
     % call function for generating CF dates and values and accrued_interest
     if ( nargin <= 4)
-        % no vola surface set
-        [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
-                valuation_date,value_type,s,tmp_curve_object);
+			% no vola surface set
+			[ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
+					valuation_date,value_type,s,tmp_curve_object);
     elseif ( nargin > 4)
         [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
                 valuation_date,value_type,s,tmp_curve_object, vola_surface);

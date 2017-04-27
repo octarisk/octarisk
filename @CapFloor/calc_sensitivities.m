@@ -31,8 +31,8 @@ end
     comp_freq_discount = discount_curve.get('compounding_freq');    
         
 % c) Calculate instrument values under shifted input data
-    % downshock
-        rates_ref_sensi  = rates_ref .- obj.ir_shock;
+    % IR downshock
+        rates_ref_sensi  = rates_ref - obj.ir_shock;
         if ( isnumeric(floor_ref) )
             rates_ref_sensi = max(rates_ref_sensi,floor_ref);
         end
@@ -40,9 +40,9 @@ end
             rates_ref_sensi = min(rates_ref_sensirates_ref,cap_ref);
         end
         % set adjusted curve rates in reference curve
-        reference_curve = reference_curve.set('rates_base',rates_ref_sensi);
+        reference_curve_shock = reference_curve.set('rates_base',rates_ref_sensi);
         [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
-                             'base', obj, reference_curve, vola_surface);
+                             'base', obj, reference_curve_shock, vola_surface);
 
         theo_value_ir_down = pricing_npv(valuation_date, ret_dates, ...
                                     ret_values, obj.soy - obj.ir_shock, ...
@@ -50,8 +50,8 @@ end
                                     comp_type_obj, comp_freq_obj, interp_discount, ...
                                     comp_type_discount, basis_discount, ...
                                     comp_freq_discount);
-    % upshock
-        rates_ref_sensi  = rates_ref .+ obj.ir_shock;
+    % IR upshock
+        rates_ref_sensi  = rates_ref + obj.ir_shock;
         if ( isnumeric(floor_ref) )
             rates_ref_sensi = max(rates_ref_sensi,floor_ref);
         end
@@ -59,9 +59,9 @@ end
             rates_ref_sensi = min(rates_ref_sensirates_ref,cap_ref);
         end
         % set adjusted curve rates in reference curve
-        reference_curve = reference_curve.set('rates_base',rates_ref_sensi);
+        reference_curve_shock = reference_curve.set('rates_base',rates_ref_sensi);
         [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
-                             'base', obj, reference_curve, vola_surface);
+                             'base', obj, reference_curve_shock, vola_surface);
 
         theo_value_ir_up = pricing_npv(valuation_date, ret_dates, ...
                                     ret_values, obj.soy + obj.ir_shock, ...
@@ -69,17 +69,63 @@ end
                                     comp_type_obj, comp_freq_obj, interp_discount, ...
                                     comp_type_discount, basis_discount, ...
                                     comp_freq_discount);
+									
+	% Vola downshock (applied to spread)
+        vola_spread  = obj.vola_spread - obj.vola_shock;
+
+        % set adjusted volatilities 
+        obj_shock = obj.set('vola_spread',vola_spread);
+        [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
+                             'base', obj_shock, reference_curve, vola_surface);
+
+        theo_value_vola_down = pricing_npv(valuation_date, ret_dates, ...
+                                    ret_values, obj_shock.soy, ...
+                                    nodes_discount, rates_discount, basis_obj, ...
+                                    comp_type_obj, comp_freq_obj, interp_discount, ...
+                                    comp_type_discount, basis_discount, ...
+                                    comp_freq_discount);
+	% Vola upshock (applied to spread)
+        vola_spread  = obj.vola_spread + obj.vola_shock;
+
+        % set adjusted volatilities 
+        obj_shock = obj.set('vola_spread',vola_spread);
+        [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
+                             'base', obj_shock, reference_curve, vola_surface);
+
+        theo_value_vola_up = pricing_npv(valuation_date, ret_dates, ...
+                                    ret_values, obj_shock.soy, ...
+                                    nodes_discount, rates_discount, basis_obj, ...
+                                    comp_type_obj, comp_freq_obj, interp_discount, ...
+                                    comp_type_discount, basis_discount, ...
+                                    comp_freq_discount);
+									
+    % Time upshock 
+        % set adjusted maturity
+        obj_shock = obj.set('maturity_date',datestr(datenum(obj.maturity_date) + 1));
+        [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
+                             'base', obj_shock, reference_curve, vola_surface);
+
+        theo_value_time_up = pricing_npv(valuation_date, ret_dates, ...
+                                    ret_values, obj_shock.soy, ...
+                                    nodes_discount, rates_discount, basis_obj, ...
+                                    comp_type_obj, comp_freq_obj, interp_discount, ...
+                                    comp_type_discount, basis_discount, ...
+                                    comp_freq_discount);									
 % d) calculate and set sensitivities    
     % effective duration
-        eff_duration = ( theo_value_ir_down - theo_value_ir_up ) ...
-                        / ( 2 * theo_value * obj.ir_shock );
-        obj.eff_duration = eff_duration;  
+        obj.eff_duration = ( theo_value_ir_down - theo_value_ir_up ) ...
+                        / ( 2 * theo_value * obj.ir_shock ); 
     
     % effective convexity
-        eff_convexity = ( theo_value_ir_down + theo_value_ir_up - 2 * theo_value ) ...
+        obj.eff_convexity = ( theo_value_ir_down + theo_value_ir_up - 2 * theo_value ) ...
                         / ( theo_value * obj.ir_shock^2  );
-        obj.eff_convexity = eff_convexity;  
-        
+		
+    % effective vega
+        obj.vega = ( theo_value_vola_up - theo_value_vola_down ) ...
+                        / ( 2 * theo_value * obj.vola_shock );
+						
+    % effective theta
+	    obj.theta = theo_value_time_up - theo_value;
         
 end
 

@@ -143,7 +143,7 @@ end
 if ischar(comp_type)
     if ( strcmpi(comp_type,'simple') )
         compounding_type = 1;
-    elseif ( strcmpi(comp_type,'disc'))
+    elseif ( regexpi(comp_type,'disc'))
         compounding_type = 2;
     elseif ( strcmpi(comp_type,'cont')  || strcmpi(comp_type,'continuous') )
         compounding_type = 3;
