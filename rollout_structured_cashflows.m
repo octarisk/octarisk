@@ -78,7 +78,7 @@ if nargin > 3
 % --- Checking mandatory structure field items --- 
 
     type = instrument.sub_type;
-    if (  strcmpi(type,'ZCB') )
+    if (  strcmpi(type,'ZCB') || strcmpi(type,'FRA') || strcmpi(type,'FVA'))
         coupon_generation_method = 'zero';
     elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
             last_reset_rate = instrument.last_reset_rate;
@@ -349,6 +349,122 @@ if ( strcmpi(type,'FRB') || strcmpi(type,'SWAP_FIXED') )
         cf_principal(:,end) = notional;
     end
 
+% ##############################################################################
+%
+% Type FRA: Calculate CF Value for Forward Rate Agreements
+% Forward Rate Agreement has following times and discount factors
+% -----X------------------------X---------------------------X----
+%      T0		    Tt (maturity date FRA)           Tu (underlying mat date)
+% Discount Factors:             |---------------------------|
+%                                    forward rate ---> du   
+%                                    strike rate  ---> dk
+% Calculate cashflow as forward discounting of difference of compounded strike 
+% and compounded forward rates:
+% Cashflow = notional * (1/du - 1/dk) * du = notional * (1 - du / dk)
+% Value <---------  discounting  ------    Cashflow at Tt    
+elseif ( strcmpi(type,'FRA') )
+    cf_datesnum = datenum(cf_dates);
+    T0 = valuation_date;	% valuation_date
+    Tt = cf_datesnum(2) - T0; % cash flow date = maturity date of FRA
+	Tu = datenum(instrument.underlying_maturity_date) - T0; % underlyings maturity date
+	% preallocate memory
+	cf_values = zeros(rows(tmp_rates),1);
+		
+	% only future cashflows, underlying > instrument mat date
+	if ( Tu >= Tt && Tt >= 0)	
+		% get forward rate from Tt -> Tu
+		forward_rate = get_forward_rate(tmp_nodes,tmp_rates, ...
+					Tt,Tu-Tt,compounding_type,method_interpolation, ...
+                    compounding_freq, basis_curve, valuation_date, ...
+					comp_type_curve, basis_curve, comp_freq_curve,floor_flag);
+
+		% get discount factors
+		% underlying forward rate discount factor
+		du = discount_factor(Tt, Tu, forward_rate, ...
+								comp_type_curve, basis_curve, comp_freq_curve);
+		
+		% strike discount factor	
+		strike_rate_conv = convert_curve_rates(Tt,Tu,instrument.strike_rate, ...
+				'cont','annual',3,comp_type_curve,comp_freq_curve,basis_curve);
+		dk_strike = discount_factor(Tt, Tu, strike_rate_conv, ...
+								comp_type_curve, basis_curve, comp_freq_curve);
+										   
+		% calculate cash flow
+		if ( strcmpi(instrument.coupon_prepay,'discount')) % Coupon Prepay = Discount
+			cf_values(:,1) = notional .* ( 1 - du ./ dk_strike );
+		else	% in fine
+			cf_values(:,1) = notional .* ( 1 - du ./ dk_strike ) ./ du;
+		end
+	else	% past cash flows or invalid cash flows
+		fprintf('rollout_structured_cashflows: FRA >>%s<< has invalid cash flow dates or invalid (underlyings) maturity date. cf_values = 0.0.\n', instrument.id);
+		cf_values = 0.0;
+	end
+    ret_values = cf_values;
+	cf_principal = cf_values;
+    cf_interest = 0.0;
+
+% ##############################################################################
+%
+% Type FVA: Calculate CF Value for Forward Volatility Agreements
+% Forward Volatility Agreement has following times steps and discount factors
+% -----X------------------------X---------------------------X----
+%      T0		    Tt (maturity date FVA)           Tu (underlying mat date)
+% Discount Factors:             |---------------------------|
+%                                    volatility at Tu ---> Tu_vol 
+%                                    volatility at Tt ---> Tt_vol   
+%                                    strike volatility  ---> K_vol
+% Calculate cashflow as square root of difference between standardized variances 
+% and strike volatility:
+% Cashflow = notional * (sqrt( (Tu_vol^2 - Tt_vol^2) / TF_Tu) - K_vol)
+% Value <---------  discounting  ------    Cashflow at Tt    
+elseif ( strcmpi(type,'FVA') )
+    cf_datesnum = datenum(cf_dates);
+    T0 = valuation_date;	% valuation_date
+    Tt = cf_datesnum(2) - T0; % cash flow date = maturity date of FRA
+	Tu = datenum(instrument.underlying_maturity_date) - T0; % underlyings maturity date
+	
+		
+	% only future cashflows, underlying > instrument mat date
+	if ( Tu >= Tt && Tt >= 0)	
+		if ( strcmpi(surface.type,'IR')) % Surface type IR
+			% get volatility according to term, tenor and moneyness 1
+			term    = Tu-Tt; % underlying tenor
+			Tu_vol  = surface.getValue(value_type,Tu,term,1);
+			Tt_vol  = surface.getValue(value_type,Tt,term,1);
+		else % Surface type INDEX
+			% get volatility according to term and moneyness 1
+			Tu_vol  = surface.getValue(value_type,Tu,1);
+			Tt_vol  = surface.getValue(value_type,Tt,1);
+		end
+		% get time factors
+		TF_Tu 		= timefactor(0,Tu,dcc);
+		TF_Tt 		= timefactor(0,Tt,dcc);
+		TF_Tt_Tu 	= timefactor(Tt,Tu,dcc);
+		% calculate forward variance
+		fwd_var = (Tu_vol.^2 .* TF_Tu - Tt_vol.^2 .* TF_Tt);
+		% preallocate memory
+		cf_values = zeros(rows(fwd_var),1);
+		% calculate final cashflows
+		if ( fwd_var > 0.0)
+			if ( strcmpi(instrument.fva_type,'volatility'))
+				cf_values(:,1) = notional .* (sqrt( fwd_var ./ TF_Tt_Tu) - instrument.strike_rate);
+			elseif ( strcmpi(instrument.fva_type,'variance'))
+				cf_values(:,1) = notional .* ( fwd_var ./ TF_Tt_Tu - instrument.strike_rate.^2);
+			else
+				fprintf('rollout_structured_cashflows: FRV >>%s<< has unknown fva_type >>%s<<\n', instrument.id, instrument.fva_type);
+			end
+		else	% prevent complex cf values
+			fprintf('rollout_structured_cashflows: FRV >>%s<< has negative forward variance. cf_values = 0.0.\n', instrument.id);
+			cf_values(:,1) = 0.0;
+		end
+	else	% past cash flows or invalid cash flows
+		fprintf('rollout_structured_cashflows: FRV >>%s<< has invalid cash flow dates or invalid (underlyings) maturity date. cf_values = 0.0.\n', instrument.id);
+		cf_values = 0.0;
+	end
+    ret_values = cf_values;
+	cf_principal = cf_values;
+    cf_interest = 0.0;
+	
 % ##############################################################################
 
 % Type Inflation Linked Bonds: Calculate CPI adjustedCF Values 

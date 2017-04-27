@@ -10,9 +10,21 @@ function obj = calc_vola_spread (capfloor,valuation_date,discount_curve,vola_sur
 
 	% get market value
 	market_value = obj.getValue('base');
-	% - call calibrate_capfloor_volaspread script
-	[vola_spread retcode] = calibrate_capfloor_volaspread(obj,valuation_date, ...
-								discount_curve,vola_surface, market_value);
+	
+	% Start parameter
+	x0 = -0.0001;
+
+	% Setting lower bound to minimum of volatility value
+	sigma = min(min(min((vola_surface.values_base))));
+	lb = -sigma + 0.00001;
+	ub = [];
+	
+	% set up objective function
+	objfunc = @ (x) phi(x,obj,valuation_date,discount_curve,vola_surface,market_value);
+	
+	% calibrate with generic script	
+    [vola_spread retcode] = calibrate_generic(objfunc,x0,lb,ub);
+
 	
 	% - get return code and set base value / volaspread accordingly    
     if ( retcode > 0 ) %failed calibration
@@ -58,3 +70,17 @@ function obj = calc_vola_spread (capfloor,valuation_date,discount_curve,vola_sur
 end
 
 
+%-------------------------------------------------------------------------------
+%------------------- Begin Subfunction -----------------------------------------
+ 
+% Definition Objective Function:	    
+function obj = phi (x,capfloor,valuation_date,discount_curve,vola_surface, market_value)
+        obj = capfloor;
+		obj.vola_spread = x;
+		% cash flow rollout
+		obj = obj.rollout(valuation_date,'base',discount_curve,vola_surface);
+		% instrument prices
+		obj = obj.calc_value(valuation_date,'base',discount_curve);
+		% objective function
+        obj = abs( obj.getValue('base')  - market_value)^2;
+end

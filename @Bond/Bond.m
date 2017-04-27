@@ -76,6 +76,7 @@ classdef Bond < Instrument
         treenodes               = 50; % callable bond tree nodes
         call_schedule           = ''; % callable bond call schedule curve
         put_schedule            = ''; % callable bond put schedule curve
+		
 		% Inflation Linked bond specific attributes
 		cpi_index				= ''; % Consumer Price Index
 		infl_exp_curve			= ''; % Inflation Expectation Curve
@@ -87,6 +88,14 @@ classdef Bond < Instrument
 		key_term 				= [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
 		key_rate_shock 			= 0.01; % key rate shock size (cont, act/365)
 		key_rate_width 			= 365;% width of key rate shocks
+		
+		% Forward rate agreement
+		strike_rate				= 0.0; % strike rate (cont, act/365)
+		underlying_maturity_date = '01-Jan-1900';
+		coupon_prepay			= 'discount'; % in ['discount','in fine'];
+		
+		% Forward volatility / variance agreement
+		fva_type				= 'volatility'; % in ['volatility','variance']
     end
    
     properties (SetAccess = private)
@@ -206,6 +215,17 @@ classdef Bond < Instrument
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model);
          end 
+		 if ( strcmpi(b.sub_type,'FRA'))
+			fprintf('strike_rate (cont, act/365): %s\n',any2str(b.strike_rate));
+            fprintf('underlying_maturity_date: %s\n',any2str(b.underlying_maturity_date)); 
+            fprintf('coupon_prepay: %s\n',any2str(b.coupon_prepay));
+			fprintf('fva_type: %s\n',any2str(b.fva_type));
+         end 
+		 if ( strcmpi(b.sub_type,'FVA'))
+			fprintf('strike_rate (cont, act/365): %s\n',any2str(b.strike_rate));
+            fprintf('underlying_maturity_date: %s\n',any2str(b.underlying_maturity_date)); 
+            fprintf('vola_surface: %s\n',any2str(b.vola_surface)); 
+         end 
 		 if ( regexpi(b.sub_type,'_FWD_SPECIAL'))
 			fprintf('rate_composition: %s\n',b.rate_composition);
             fprintf('fwd_sliding_term: %s\n',any2str(b.fwd_sliding_term)); 
@@ -288,8 +308,9 @@ classdef Bond < Instrument
                 || strcmpi(sub_type,'ZCB')  || strcmpi(sub_type,'STOCHASTICCF') ...
                 || strcmpi(sub_type,'CMS_FLOATING') || strcmpi(sub_type,'FRN_SPECIAL') ...
 				|| strcmpi(sub_type,'ILB') || strcmpi(sub_type,'SWAP_FLOATING_FWD_SPECIAL') ...
-				|| strcmpi(sub_type,'FRN_FWD_SPECIAL') )
-            error('Bond sub_type must be either FRB, FRN, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL, CMS_FLOATING, FRN_FWD_SPECIAL or SWAP_FLOATING_FWD_SPECIAL: %s',sub_type)
+				|| strcmpi(sub_type,'FRN_FWD_SPECIAL')  || strcmpi(sub_type,'FRA') ...
+				|| strcmpi(sub_type,'FVA'))
+            error('Bond sub_type must be either FRB, FRN, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL, CMS_FLOATING, FRA, FVA, FRN_FWD_SPECIAL or SWAP_FLOATING_FWD_SPECIAL: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
@@ -375,10 +396,17 @@ classdef Bond < Instrument
       function obj = set.rate_composition(obj,rate_composition)
          if ~(strcmpi(rate_composition,'capitalized') || strcmpi(rate_composition,'average') ...
                 || strcmpi(rate_composition,'min') || strcmpi(rate_composition,'max'))
-            error('Bond rate_composition must be either capitalized, average, min, max : %s for id >>%s<<.\n',rate_composition,obj.id);
+            error('Bond rate_composition must be either capitalized, average, min, max : >>%s<< for id >>%s<<.\n',rate_composition,obj.id);
          end
          obj.rate_composition = tolower(rate_composition);
       end % set.rate_composition
+  
+      function obj = set.coupon_prepay(obj,coupon_prepay)
+         if ~(strcmpi(coupon_prepay,'discount') || strcmpi(coupon_prepay,'in fine'))
+            error('Bond coupon_prepay must be in [Discount,in Fine] : >>%s<< for id >>%s<<.\n',coupon_prepay,obj.id);
+         end
+         obj.coupon_prepay = tolower(coupon_prepay);
+      end % set.coupon_prepay
   
    end % end static methods
    

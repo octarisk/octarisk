@@ -607,6 +607,8 @@ end
 %! assert(floor.getValue('base'),1.44201131641819,0.000000001);
 %! assert(floor.get('eff_duration'),75.3761329917373,0.000000001);
 %! assert(floor.get('eff_convexity'),802.649265026805,0.000000001);
+%! assert(floor.get('vega'),0.00254896021660968,0.000000001);
+%! assert(floor.get('theta'),0.00327523346664615,0.000000001);
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Bond Future and underlying FRB\n');
@@ -969,6 +971,33 @@ end
 %! b = b.calc_value(valuation_date,value_type,curve,call_schedule,put_schedule);
 %! assert(b.getValue(value_type),[53.1857;53.1857],0.0001);
 
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Forward Rate Agreement\n');
+%! b = Bond();
+%! b = b.set('Name','Test_FRA','coupon_rate',0.01,'value_base',100,'clean_value_base',0,'coupon_generation_method','backward','term',365);
+%! b = b.set('maturity_date','30-Dec-2017','notional',100,'compounding_type','simple','issue_date','30-Dec-2016','sub_type','FRA','day_count_convention','act/365');
+%! b = b.set('strike_rate',0.0000,'underlying_maturity_date','30-Dec-2018','coupon_prepay','Discount');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,730],'rates_base',[-0.00302461,-0.00261397],'method_interpolation','linear','compounding_type','continuous','day_count_convention','act/365');
+%! b = b.rollout('base',c,'30-Dec-2016');
+%! b = b.calc_value('30-Dec-2016','base',c);
+%! assert(b.getValue('base'),-0.2210007876,0.000001)
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Forward Volatility Agreement\n');
+%! b = Bond();
+%! b = b.set('Name','Test_FVA','value_base',100,'coupon_generation_method','backward','term',365);
+%! b = b.set('maturity_date','21-Jun-2013','notional',1000,'compounding_type','simple','issue_date','22-Jun-2010','sub_type','FVA','day_count_convention','act/365');
+%! b = b.set('strike_rate',0.12,'underlying_maturity_date','21-Jun-2014','fva_type','volatility');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,730],'rates_base',[0,0],'method_interpolation','linear','compounding_type','continuous','day_count_convention','act/365');
+%! v2 = Surface();
+%! v2 = v2.set('id','V2','axis_x',[730,1095,1460],'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v2 = v2.set('values_base',[0.1,0.02,0.1]);
+%! v2 = v2.set('type','INDEX');
+%! b = b.rollout('base',c,'22-Jun-2010',v2);
+%! b = b.calc_value('22-Jun-2010','base',c);
+%! assert(b.getValue('base'),76.9771560359221,sqrt(eps))
 
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Sensitivity Instrument\n');
