@@ -2,6 +2,7 @@
 <p align="center">
   <img src="http://www.octarisk.com/images/OCTARISK_logo_standard.svg" width="150" >
 </p>
+
 ## Market Risk Measurement in Octave
 
 This project aims to provide a framework for quantifying and analysing
