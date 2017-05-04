@@ -103,7 +103,7 @@ x2 = log(S0./H)./(sigma.*sqrt(T)) + (1+mu).*sigma.*sqrt(T);
 y1 = log((H.^2)./(S0.*X))./(sigma.*sqrt(T)) + (1+mu).*sigma.*sqrt(T);
 y2 = log(H./S0)./(sigma.*sqrt(T)) + (1+mu).*sigma.*sqrt(T);
 
-z = log(H./S0)./(sigma.*sqrt(T)) + lambda.*sigma*sqrt(T);
+z = log(H./S0)./(sigma.*sqrt(T)) + lambda.*sigma.*sqrt(T);
 
 
 % ##########    in barrier options   ###############

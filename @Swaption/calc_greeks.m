@@ -197,12 +197,6 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
                                         tmp_swap_tenor);
 				dVola = 0.01;
             end
-			% calculate sensitivities
-			theo_delta  = (undvalue_up - undvalue_down) / (2 * dY_u);
-			theo_gamma  = (undvalue_up + undvalue_down - 2 * theo_value_base)  / (dY_u).^2;
-			theo_vega   = (vola_up - vola_down) / (200 * dVola);
-			theo_theta  = -(time_up - time_down) / 2;
-			theo_rho    = -(rfrate_up - rfrate_down) / 2;
 			
         else    % pricing with underlying float and fixed leg
             % make sure underlying objects are existing
@@ -274,13 +268,15 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
 			time_up	        = swaption_underlyings(call_flag,tmp_strike,V_fix, ...
                                V_float,tmp_effdate + 1,tmp_imp_vola_shock, ...
                                tmp_model);
-			% calculate sensitivities
-			theo_delta  = (undvalue_up - undvalue_down) / (2 * dY_u);
-			theo_gamma  = (undvalue_up + undvalue_down - 2 * theo_value_base) / (dY_u).^2;
-			theo_vega   = (vola_up - vola_down) / 2;
-			theo_theta  = -(time_up - time_down) / 2;
-			theo_rho    = -(rfrate_up - rfrate_down) / 2;				   
+		   
         end
+		% calculate sensitivities
+		theo_delta  = (undvalue_up - undvalue_down) / (2 * dY_u);
+		theo_gamma  = (undvalue_up + undvalue_down - 2 * theo_value_base)  / (dY_u).^2;
+		theo_vega   = (vola_up - vola_down) / (200 * dVola);
+		theo_theta  = -(time_up - time_down) / 2;
+		theo_rho    = -(rfrate_up - rfrate_down) / 2;
+			
     end   % close loop if tmp_dtm < 0
 			
  

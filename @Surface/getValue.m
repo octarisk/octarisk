@@ -1,6 +1,9 @@
 % method of class @Surface
 function [y value_base] = getValue (s, value_type, xx,yy,zz)
     % get interpolated market value from Surface/Cube
+	% apply provided interpolation method for base value.
+	% Stress / MC value: calculate inverse distance weighted shock from shock 
+	% factors and applythese shocks directly to the base value.
     if ~(ischar(value_type))
         fprintf('Surface.getValue: >>%s<< needs to be a char.\n',any2str(value_type));
         error('Correct call: Surface.getValue(value_type,xx,[yy,[zz]])');
