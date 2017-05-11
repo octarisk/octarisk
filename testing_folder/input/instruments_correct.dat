@@ -1,4 +1,4 @@
-# Created by Octave 4.2.0, Tue Feb 14 11:58:45 2017 GMT <unknown@unknown>
+# Created by Octave 4.2.0, Tue May 09 19:29:32 2017 GMT <unknown@unknown>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
@@ -649,7 +649,7 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 98
+# length: 111
 # name: accrued_interest
 # type: scalar
 0
@@ -793,6 +793,13 @@ disc
 backward
 
 
+# name: coupon_prepay
+# type: sq_string
+# elements: 1
+# length: 8
+discount
+
+
 # name: coupon_rate
 # type: scalar
 0
@@ -881,6 +888,23 @@ IR_EUR
 0
 
 
+# name: fva_type
+# type: sq_string
+# elements: 1
+# length: 10
+volatility
+
+
+# name: fwd_sliding_term
+# type: scalar
+1825
+
+
+# name: fwd_term
+# type: scalar
+365
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -913,6 +937,47 @@ CFANLEIHE1
 # elements: 1
 # length: 11
 01-Jan-1900
+
+
+# name: key_rate_eff_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_eff_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_shock
+# type: scalar
+0.01
+
+
+# name: key_rate_width
+# type: scalar
+365
+
+
+# name: key_term
+# type: matrix
+# rows: 1
+# columns: 10
+ 365 730 1095 1460 1825 2190 2555 2920 3285 3650
 
 
 # name: last_coupon_date
@@ -1107,6 +1172,11 @@ RF_MATRIX
 SURFACE_MATRIX
 
 
+# name: strike_rate
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -1146,6 +1216,13 @@ CASHFLOW
 # elements: 1
 # length: 4
 bond
+
+
+# name: underlying_maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+01-Jan-1900
 
 
 # name: use_annuity_amount
@@ -1207,7 +1284,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1251,6 +1328,13 @@ ETF090
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -1323,7 +1407,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1367,6 +1451,13 @@ GOLDPHYS
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -1439,7 +1530,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -1483,6 +1574,13 @@ SILVERPHYS
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -2011,7 +2109,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 98
+# length: 111
 # name: accrued_interest
 # type: scalar
 0
@@ -2153,6 +2251,13 @@ simple
 backward
 
 
+# name: coupon_prepay
+# type: sq_string
+# elements: 1
+# length: 8
+discount
+
+
 # name: coupon_rate
 # type: scalar
 0.05757
@@ -2241,6 +2346,23 @@ AGGR_EUR_FIN_BBB
 0
 
 
+# name: fva_type
+# type: sq_string
+# elements: 1
+# length: 10
+volatility
+
+
+# name: fwd_sliding_term
+# type: scalar
+1825
+
+
+# name: fwd_term
+# type: scalar
+365
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -2273,6 +2395,47 @@ AGGR_EUR_FIN_BBB
 # elements: 1
 # length: 11
 22-Nov-2011
+
+
+# name: key_rate_eff_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_eff_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_shock
+# type: scalar
+0.01
+
+
+# name: key_rate_width
+# type: scalar
+365
+
+
+# name: key_term
+# type: matrix
+# rows: 1
+# columns: 10
+ 365 730 1095 1460 1825 2190 2555 2920 3285 3650
 
 
 # name: last_coupon_date
@@ -2469,6 +2632,11 @@ RF_MATRIX
 SURFACE_MATRIX
 
 
+# name: strike_rate
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -2508,6 +2676,13 @@ FRB
 # elements: 1
 # length: 4
 bond
+
+
+# name: underlying_maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+01-Jan-1900
 
 
 # name: use_annuity_amount
@@ -2569,7 +2744,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 98
+# length: 111
 # name: accrued_interest
 # type: scalar
 0
@@ -2711,6 +2886,13 @@ disc
 backward
 
 
+# name: coupon_prepay
+# type: sq_string
+# elements: 1
+# length: 8
+discount
+
+
 # name: coupon_rate
 # type: scalar
 0.01375
@@ -2799,6 +2981,23 @@ IR_EUR
 0
 
 
+# name: fva_type
+# type: sq_string
+# elements: 1
+# length: 10
+volatility
+
+
+# name: fwd_sliding_term
+# type: scalar
+1825
+
+
+# name: fwd_term
+# type: scalar
+365
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -2831,6 +3030,47 @@ A1YC04
 # elements: 1
 # length: 11
 22-Jan-2014
+
+
+# name: key_rate_eff_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_eff_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_shock
+# type: scalar
+0.01
+
+
+# name: key_rate_width
+# type: scalar
+365
+
+
+# name: key_term
+# type: matrix
+# rows: 1
+# columns: 10
+ 365 730 1095 1460 1825 2190 2555 2920 3285 3650
 
 
 # name: last_coupon_date
@@ -3027,6 +3267,11 @@ RF_MATRIX
 SURFACE_MATRIX
 
 
+# name: strike_rate
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -3066,6 +3311,13 @@ FRB
 # elements: 1
 # length: 4
 bond
+
+
+# name: underlying_maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+01-Jan-1900
 
 
 # name: use_annuity_amount
@@ -3127,7 +3379,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 98
+# length: 111
 # name: accrued_interest
 # type: scalar
 0
@@ -3269,6 +3521,13 @@ disc
 backward
 
 
+# name: coupon_prepay
+# type: sq_string
+# elements: 1
+# length: 8
+discount
+
+
 # name: coupon_rate
 # type: scalar
 0
@@ -3357,6 +3616,23 @@ IR_EUR
 0
 
 
+# name: fva_type
+# type: sq_string
+# elements: 1
+# length: 10
+volatility
+
+
+# name: fwd_sliding_term
+# type: scalar
+1825
+
+
+# name: fwd_term
+# type: scalar
+365
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -3389,6 +3665,47 @@ A1ZKC4
 # elements: 1
 # length: 11
 04-Dec-2014
+
+
+# name: key_rate_eff_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_eff_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_shock
+# type: scalar
+0.01
+
+
+# name: key_rate_width
+# type: scalar
+365
+
+
+# name: key_term
+# type: matrix
+# rows: 1
+# columns: 10
+ 365 730 1095 1460 1825 2190 2555 2920 3285 3650
 
 
 # name: last_coupon_date
@@ -3585,6 +3902,11 @@ RF_MATRIX
 SURFACE_MATRIX
 
 
+# name: strike_rate
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -3624,6 +3946,13 @@ FRN
 # elements: 1
 # length: 4
 bond
+
+
+# name: underlying_maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+01-Jan-1900
 
 
 # name: use_annuity_amount
@@ -3685,7 +4014,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3729,6 +4058,13 @@ ETF012
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -3801,7 +4137,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3845,6 +4181,13 @@ DBX1EU
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -3917,7 +4260,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -3961,6 +4304,13 @@ ETF114
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4033,7 +4383,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4077,6 +4427,13 @@ A0DPMW
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4149,7 +4506,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4193,6 +4550,13 @@ ETF127
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4265,7 +4629,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4309,6 +4673,13 @@ DBX1A7
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4381,7 +4752,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4425,6 +4796,13 @@ LYX0BX
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4497,7 +4875,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4541,6 +4919,13 @@ ETF060
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4613,7 +4998,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4657,6 +5042,13 @@ LYX0AG
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4747,7 +5139,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4791,6 +5183,13 @@ A0LGQL
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4863,7 +5262,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -4907,6 +5306,13 @@ QSC AG
 # name: idio_vola
 # type: scalar
 0.35
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -4989,7 +5395,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5033,6 +5439,13 @@ BASF11
 # name: idio_vola
 # type: scalar
 0.35
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -5115,7 +5528,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 16
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5159,6 +5572,13 @@ BTCOIN
 # name: idio_vola
 # type: scalar
 0
+
+
+# name: model
+# type: sq_string
+# elements: 1
+# length: 3
+GBM
 
 
 # name: name
@@ -5231,7 +5651,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 98
+# length: 111
 # name: accrued_interest
 # type: scalar
 0
@@ -5373,6 +5793,13 @@ disc
 backward
 
 
+# name: coupon_prepay
+# type: sq_string
+# elements: 1
+# length: 8
+discount
+
+
 # name: coupon_rate
 # type: scalar
 0
@@ -5461,6 +5888,23 @@ IR_EUR
 0
 
 
+# name: fva_type
+# type: sq_string
+# elements: 1
+# length: 10
+volatility
+
+
+# name: fwd_sliding_term
+# type: scalar
+1825
+
+
+# name: fwd_term
+# type: scalar
+365
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -5493,6 +5937,47 @@ IR_EUR
 # elements: 1
 # length: 11
 21-Apr-2015
+
+
+# name: key_rate_eff_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_eff_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_convex
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_mon_dur
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: key_rate_shock
+# type: scalar
+0.01
+
+
+# name: key_rate_width
+# type: scalar
+365
+
+
+# name: key_term
+# type: matrix
+# rows: 1
+# columns: 10
+ 365 730 1095 1460 1825 2190 2555 2920 3285 3650
 
 
 # name: last_coupon_date
@@ -5689,6 +6174,11 @@ RF_MATRIX
 SURFACE_MATRIX
 
 
+# name: strike_rate
+# type: scalar
+0
+
+
 # name: sub_type
 # type: sq_string
 # elements: 1
@@ -5728,6 +6218,13 @@ ZCB
 # elements: 1
 # length: 4
 bond
+
+
+# name: underlying_maturity_date
+# type: sq_string
+# elements: 1
+# length: 11
+01-Jan-1900
 
 
 # name: use_annuity_amount
@@ -5789,7 +6286,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 39
+# length: 44
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5939,6 +6436,31 @@ SWAPT_PAY
 10
 
 
+# name: theo_delta
+# type: scalar
+0
+
+
+# name: theo_gamma
+# type: scalar
+0
+
+
+# name: theo_rho
+# type: scalar
+0
+
+
+# name: theo_theta
+# type: scalar
+0
+
+
+# name: theo_vega
+# type: scalar
+0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -6025,7 +6547,7 @@ RF_VOLA_IR_EUR
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 46
+# length: 49
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6062,6 +6584,18 @@ rate
 # name: basis
 # type: scalar
 3
+
+
+# name: binary_type
+# type: sq_string
+# elements: 1
+# length: 4
+cash
+
+
+# name: calibration_flag
+# type: scalar
+1
 
 
 # name: call_flag
@@ -6131,6 +6665,13 @@ IR_EUR
 # elements: 1
 # length: 13
 ODAXC20160318
+
+
+# name: lookback_type
+# type: sq_string
+# elements: 1
+# length: 15
+floating_strike
 
 
 # name: maturity_date
@@ -6308,7 +6849,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 46
+# length: 49
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6345,6 +6886,18 @@ rate
 # name: basis
 # type: scalar
 3
+
+
+# name: binary_type
+# type: sq_string
+# elements: 1
+# length: 4
+cash
+
+
+# name: calibration_flag
+# type: scalar
+1
 
 
 # name: call_flag
@@ -6414,6 +6967,13 @@ IR_EUR
 # elements: 1
 # length: 13
 ADAXC20161118
+
+
+# name: lookback_type
+# type: sq_string
+# elements: 1
+# length: 15
+floating_strike
 
 
 # name: maturity_date
@@ -6591,7 +7151,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 46
+# length: 49
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6628,6 +7188,18 @@ rate
 # name: basis
 # type: scalar
 3
+
+
+# name: binary_type
+# type: sq_string
+# elements: 1
+# length: 4
+cash
+
+
+# name: calibration_flag
+# type: scalar
+1
 
 
 # name: call_flag
@@ -6697,6 +7269,13 @@ IR_EUR
 # elements: 1
 # length: 13
 BDACC20160929
+
+
+# name: lookback_type
+# type: sq_string
+# elements: 1
+# length: 15
+floating_strike
 
 
 # name: maturity_date
@@ -6874,7 +7453,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 46
+# length: 49
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6911,6 +7490,18 @@ rate
 # name: basis
 # type: scalar
 3
+
+
+# name: binary_type
+# type: sq_string
+# elements: 1
+# length: 4
+cash
+
+
+# name: calibration_flag
+# type: scalar
+1
 
 
 # name: call_flag
@@ -6980,6 +7571,13 @@ IR_EUR
 # elements: 1
 # length: 14
 GCFUTC20160126
+
+
+# name: lookback_type
+# type: sq_string
+# elements: 1
+# length: 15
+floating_strike
 
 
 # name: maturity_date
@@ -7157,7 +7755,7 @@ RF_VOLA_COM_GOLD
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 33
+# length: 41
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -7311,6 +7909,46 @@ EQForward_test
 EQFWD
 
 
+# name: theo_delta
+# type: scalar
+0
+
+
+# name: theo_domestic_rho
+# type: scalar
+0
+
+
+# name: theo_foreign_rho
+# type: scalar
+0
+
+
+# name: theo_gamma
+# type: scalar
+0
+
+
+# name: theo_price
+# type: scalar
+0
+
+
+# name: theo_rho
+# type: scalar
+0
+
+
+# name: theo_theta
+# type: scalar
+0
+
+
+# name: theo_vega
+# type: scalar
+0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -7365,7 +8003,7 @@ EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 23
+# length: 24
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -7376,6 +8014,13 @@ Diversified
 # name: basis
 # type: scalar
 3
+
+
+# name: basket_vola_type
+# type: sq_string
+# elements: 1
+# length: 4
+Levy
 
 
 # name: cf_dates

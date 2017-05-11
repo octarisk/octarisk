@@ -1,4 +1,4 @@
-%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2016,2017 Stefan Schloegl <schinzilord@octarisk.com>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
 %# the terms of the GNU General Public License as published by the Free Software
@@ -437,9 +437,99 @@ end
 %! assert(o.get('theo_gamma'),0.0519774521673497,0.00001);
 %! assert(o.get('theo_vega'),0.0486623709116500,0.00001);
 %! assert(o.get('theo_theta'),-0.00214199425543171,0.00001);
-%! assert(o.get('theo_rho'),0.0980383964370191,0.00001);
+%! assert(o.get('theo_rho'),-0.0980383964370191,0.00001);
 %! assert(o.get('theo_omega'),-13.7246022124715,0.0001);
 
+%!test
+%! fprintf('\tdoc_instrument:\tPricing European Binary Gap Option Object\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365],'rates_base',[0.09],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.2000);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',50);
+%! o = Option();
+%! o = o.set('maturity_date','31-Mar-2017','sub_type','OPT_BIN_C');
+%! o = o.set('strike',50,'payoff_strike',57,'multiplier',1,'div_yield',0.00,'binary_type','gap');
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
+%! assert(o.getValue('base'),2.26691032536174,sqrt(eps))
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.1700);
+%! v = v.set('type','INDEX');
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
+%! assert(o.get('vola_spread'),0.030000,0.00001);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
+%! assert(o.get('theo_delta'),0.4685867,0.00001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing European Binary Asset Option Object\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365],'rates_base',[0.08],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.5000);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',100);
+%! o = Option();
+%! o = o.set('maturity_date','19-Apr-2004','sub_type','OPT_BIN_C');
+%! o = o.set('strike',95,'payoff_strike',95,'multiplier',1,'div_yield',0.05,'binary_type','asset');
+%! o = o.calc_value('20-Mar-2004','base',i,c,v);
+%! assert(o.getValue('base'),66.9697738223540,sqrt(eps))
+%! o = o.calc_greeks('20-Mar-2004','base',i,c,v);
+%! assert(o.get('theo_delta'),3.17650731294174,0.00001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing European Lookback fixed strike Option Object\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365],'rates_base',[0.1],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.3000);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',100);
+%! o = Option();
+%! o = o.set('maturity_date','31-Mar-2017','sub_type','OPT_LBK_C');
+%! o = o.set('strike',100,'payoff_strike',95,'multiplier',1,'div_yield',0.00,'lookback_type','fixed_strike');
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
+%! assert(o.getValue('base'),34.7116183413683,sqrt(eps))
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.2700);
+%! v = v.set('type','INDEX');
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
+%! assert(o.get('vola_spread'),0.030000,0.00001);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
+%! assert(o.get('theo_delta'),1.20661004,0.00001);
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing European Lookback floating strike Option Object\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365],'rates_base',[0.1],'method_interpolation','linear');
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.3000);
+%! v = v.set('type','INDEX');
+%! i = Index();
+%! i = i.set('value_base',120);
+%! o = Option();
+%! o = o.set('maturity_date','31-Mar-2017','sub_type','OPT_LBK_P');
+%! o = o.set('strike',100,'payoff_strike',[],'multiplier',1,'div_yield',0.06,'lookback_type','floating_strike');
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
+%! assert(o.getValue('base'),31.2215211726344,sqrt(eps))
+%! v = Surface();
+%! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v = v.set('values_base',0.2700);
+%! v = v.set('type','INDEX');
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
+%! assert(o.get('vola_spread'),0.030000,0.00001);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
+%! assert(o.get('theo_delta'),0.615703060831976,0.00001);
+ 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing American Option Object (Willowtree and Bjerksund and Stensland)\n');
 %! c = Curve();

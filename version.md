@@ -6,7 +6,8 @@ Possible new features:
 - Introduction of Total Return Swaps
 - Introduction of FX Swaps
 
-New Features:
+Introduced Features:
+- Introduction of Binary and Lookback options
 - calculation of key rate durations and convexities for bonds
 - volatility calibration for caps and floors
 - Introduction of Forward Rate / Volatility / Variance Agreements

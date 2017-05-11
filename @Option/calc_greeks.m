@@ -81,9 +81,8 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,discount_
 										tmp_dtm_pricing - 1; ...
 										tmp_dtm_pricing + 1];
 		sensi_vec				= ones(9,1);	  
-      % Valuation for: Black-Scholes Modell (EU) or Willowtreemodel (AM):          
+      % Valuation for all Option types:          
         if ( strcmpi(option_type,'American') )   
-            % because of performance reasons calculate greeks with Berksund-Stensland model
             % calculating effective greeks -> imply from derivatives
             sensi_vec	= option_bjsten(call_flag, underlying_value_vec, ...
                                 tmp_strike, dtm_pricing_vec, rf_rate_conv_vec, ...
@@ -111,6 +110,17 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,discount_
             else
                 error('Unknown Asian averaging rule >>%s<< or monitoring >>%s<<',avg_rule,avg_monitoring);
             end
+			
+		elseif ( strcmpi(option_type,'Binary'))   % calling Binary option pricing model
+            sensi_vec	= option_binary(call_flag, obj.binary_type, underlying_value_vec, ...
+                            tmp_strike, obj.payoff_strike, dtm_pricing_vec, rf_rate_conv_vec, ...
+                            imp_vola_shock_vec, divyield) .* tmp_multiplier;
+							
+		elseif ( strcmpi(option_type,'Lookback'))   % calling lookback option pricing model
+            sensi_vec	= option_lookback(call_flag, obj.lookback_type, underlying_value_vec, ...
+                            tmp_strike, obj.payoff_strike, dtm_pricing_vec, rf_rate_conv_vec, ...
+                            imp_vola_shock_vec, divyield) .* tmp_multiplier;
+							
         end
 		% calculate numeric derivatives
 		%sensi_vec = [theo_value_base;undvalue_down;undvalue_up;rfrate_down;rfrate_up;vola_down;vola_up;time_down;time_up]
@@ -118,7 +128,7 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,discount_
         theo_gamma  = (sensi_vec(3) + sensi_vec(2) - 2 * sensi_vec(1));
         theo_vega   = (sensi_vec(7) - sensi_vec(6)) / 2;
         theo_theta  = -(sensi_vec(9) - sensi_vec(8)) / 2;
-        theo_rho    = -(sensi_vec(5) - sensi_vec(4)) / 2;
+        theo_rho    = (sensi_vec(5) - sensi_vec(4)) / 2;
         theo_omega  = theo_delta .* tmp_underlying_value ./ sensi_vec(1);
 		
 		% special case European Options: take BS Sensitivities

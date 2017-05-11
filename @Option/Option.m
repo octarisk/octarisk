@@ -10,7 +10,8 @@ classdef Option < Instrument
         underlying = 'DAX30';
         vola_surface = 'vol_index_DAX30';
         vola_sensi = 1;
-        strike = 100;
+        strike = 100;			 % used as first strike for Binary options
+		payoff_strike = 100;	 % Binary Option payoff strike (used as upper bound)
         spot = 100;
         multiplier = 5;
         timesteps_size = 5;      % size of one timestep in path dependent valuations
@@ -27,6 +28,8 @@ classdef Option < Instrument
                                       % either {'geometric','arithmetic'}
         averaging_monitoring = 'continuous'; % continuous or discrete averaging
 		calibration_flag = 1;       % BOOL: if true, no calibration will be done
+		binary_type		= 'cash'; % ['gap','cash','asset','supershare']
+		lookback_type	= 'floating_strike'; % ['floating_strike','fixed_strike']
     end
  
     properties (SetAccess = private)
@@ -68,6 +71,8 @@ classdef Option < Instrument
          fprintf('sub_type: %s\n',b.sub_type); 
          fprintf('option_type: %s\n',b.option_type); 
          fprintf('call_flag: %d\n',b.call_flag);
+		 fprintf('maturity_date: %s\n',b.maturity_date);      
+         fprintf('strike: %f \n',b.strike);
          if ( strcmpi(b.option_type,'Barrier') )
             fprintf('Barrier Level: %f\n',b.barrierlevel);
             fprintf('Rebate: %f\n',b.rebate);
@@ -79,8 +84,13 @@ classdef Option < Instrument
             fprintf('averaging_rule: %s\n',b.averaging_rule);
             fprintf('averaging_monitoring: %s\n',b.averaging_monitoring);
          end
-         fprintf('maturity_date: %s\n',b.maturity_date);      
-         fprintf('strike: %f \n',b.strike);
+		 if ( strcmpi(b.option_type,'Binary') )
+            fprintf('binary_type: %s\n',b.binary_type);
+			fprintf('payoff_strike: %f\n',b.payoff_strike);
+         end
+		 if ( strcmpi(b.option_type,'Lookback') )
+            fprintf('lookback_type: %s\n',b.lookback_type);
+         end
          fprintf('multiplier: %f \n',b.multiplier);         
          fprintf('underlying: %s\n',b.underlying);  
          fprintf('vola_surface: %s\n',b.vola_surface ); 
@@ -101,44 +111,14 @@ classdef Option < Instrument
             fprintf('theo_omega:\t%8.8f\n',b.theo_omega);  
          end    
       end
-      % converting object <-> struct for saving / loading purposes
-      % function b = saveobj (a)
-          % disp('Converting object to struct');
-          % b = struct(a);       
-      % end
-      function b = loadobj (t,a)
-          disp('Converting stuct to object');
-          b = Option();
-          b.id          = a.id;
-          b.name        = a.name; 
-          b.description = a.description;  
-          b = b.set('timestep_mc',a.timestep_mc);
-          b = b.set('value_mc',a.value_mc);
-          b.spot            = a.spot;
-          b.strike          = a.strike;
-          b.maturity_date   = a.maturity_date;
-          b.discount_curve  = a.discount_curve;
-          b.compounding_type = a.compounding_type;
-          b.compounding_freq = a.compounding_freq;               
-          b.day_count_convention = a.day_count_convention;
-          b.spread          = a.spread;             
-          b.underlying      = a.underlying;
-          b.vola_surface    = a.vola_surface;
-          b.vola_sensi      = a.vola_sensi;
-          b.multiplier      = a.multiplier;
-          b.basis           = a.basis;
-          b.cf_dates        = a.cf_dates;
-          b.cf_values       = a.cf_values;
-          b.vola_surf       = a.vola_surf;
-          b.vola_surf_mc    = a.vola_surf_mc;
-          b.vola_surf_stress = a.vola_surf_stress;
-          b.vola_spread     = a.vola_spread;
-          b.sub_type        = a.sub_type;
-      end  
+      
+	  % automatic call of function if setting object attributes
       function obj = set.sub_type(obj,sub_type)
-         if ~(any(strcmpi(sub_type,{'OPT_EUR_C','OPT_EUR_P','OPT_AM_C', ...
-                  'OPT_AM_P','OPT_BAR_P','OPT_BAR_C','OPT_ASN_P','OPT_ASN_C'})))
-            error('Option sub_type must be either OPT_EUR_C, OPT_EUR_P, OPT_AM_C, OPT_AM_P, OPT_BAR_P or OPT_BAR_C','OPT_ASN_P','OPT_ASN_C')
+		 subtype_cell = {'OPT_EUR_C','OPT_EUR_P','OPT_AM_C', ...
+                  'OPT_AM_P','OPT_BAR_P','OPT_BAR_C','OPT_ASN_P','OPT_ASN_C', ...
+				  'OPT_BIN_P','OPT_BIN_C','OPT_LBK_P','OPT_LBK_C'};
+         if ~(any(strcmpi(sub_type,subtype_cell)))
+            error('Option sub_type must be either >>%s<<',any2str(subtype_cell));
          end
          obj.sub_type = sub_type;
          % set call_flag
@@ -156,6 +136,10 @@ classdef Option < Instrument
             obj.option_type = 'Barrier';
          elseif ( regexpi(sub_type,'_ASN_'))    % (European) Asian option
             obj.option_type = 'Asian';
+		 elseif ( regexpi(sub_type,'_LBK_'))    % (European) Lookback option
+            obj.option_type = 'Lookback';
+		 elseif ( regexpi(sub_type,'_BIN_'))    % (European) Binary option
+            obj.option_type = 'Binary';
          end
       end % set.sub_type
       
@@ -181,6 +165,23 @@ classdef Option < Instrument
          obj.averaging_monitoring = lower(averaging_monitoring);
       end % set.averaging_monitoring
   
+      % restrictions for Lookback Options
+      function obj = set.lookback_type(obj,lookback_type)
+         if ~(any(strcmpi(lookback_type,{'floating_strike','fixed_strike'})))
+            error('Option lookback_type must be either floating_strike or fixed_strike')
+         end
+         obj.lookback_type = lower(lookback_type);
+      end % set.lookback_type
+	  
+	  % restrictions for Binary Options
+      function obj = set.binary_type(obj,binary_type)
+		 binary_type_cell = {'gap','cash','asset','supershare'};
+         if ~(any(strcmpi(binary_type,binary_type_cell)))
+            error('Option binary_type must be either >>%s<<',binary_type_cell)
+         end
+         obj.binary_type = lower(binary_type);
+      end % set.binary_type
+	  
       % restrictions for Barrier Options
       function obj = set.upordown(obj,upordown)
          if ~(any(strcmpi(upordown,{'U','D'})))
@@ -229,15 +230,20 @@ Possible underlyings are financial instruments or indizes. Therefore the followi
 are introduced:\n\
 \n\
 @itemize @bullet\n\
-@item OPT_EUR_C: European Call option priced by Black-Scholes model\n\
-@item OPT_EUR_P: European Put option priced by Black-Scholes model\n\
-@item OPT_AM_C: American Call option priced by Willow tree model or Bjerksund-Stensland approximation\n\
-@item OPT_AM_P: European Put option priced by Willow tree model or Bjerksund-Stensland approximation\n\
+@item OPT_EUR_C: European Call option priced by Black-Scholes model.\n\
+@item OPT_EUR_P: European Put option priced by Black-Scholes model.\n\
+@item OPT_AM_C: American Call option priced by Willow tree model or Bjerksund-Stensland approximation.\n\
+@item OPT_AM_P: European Put option priced by Willow tree model or Bjerksund-Stensland approximation.\n\
 @item OPT_BAR_C: European Barrier Call option. Can have all combinations of out or in and up or down barrier types. Priced with Merton, Reiner, Rubinstein model.\n\
 @item OPT_BAR_P: European Barrier Put option. Same restrictions as Barrier Call options.\n\
 @item OPT_ASN_C: European Asian Call option. Average rate only. The following compounding types can be used:\n\
 geometric continuous (Kemna-Vorst90 pricing model) or arithmetic continuous (Levy pricing model)\n\
 @item OPT_ASN_P: European Asian Put option. Same restrictions as Asian Call options.\n\
+@item OPT_BIN_C: European Binary Call option. Binary types gap, supershare, asset-or-nothing or cash-or-nothing. Priced with Reiner-Rubinstein model.\n\
+@item OPT_BIN_P: European Binary Put option. Same restrictions as Binary Call options.\n\
+@item OPT_LBK_C: European Lookback Call option. Lookback types floating_strike or fixed_strike.\n\
+Priced with Conze and Viswanathan or Goldman, Sosin and Gatto model.\n\
+@item OPT_LBP_P: European Lookback Put option. Same restrictions as Lookback Call options.\n\
 @end itemize\n\
 \n\
 In the following, all methods and attributes are explained and a code example is given.\n\
@@ -298,7 +304,7 @@ Can be [daily, weekly, monthly, quarterly, semi-annual, annual]. (Default: \'ann
 @item @var{underlying}: ID of underlying object (instrument or risk factor). Default: empty string\n\
 @item @var{vola_surface}: ID of volatility surface. Default: empty string\n\
 @item @var{vola_sensi}: Sensitivity scaling factor for volatility. Default: 1\n\
-@item @var{strike}: Strike value of Option. Default: 100\n\
+@item @var{strike}: Strike value of Option (used to set maximum and minimum values for lookback options). Default: 100\n\
 @item @var{spot}: Spot value of underlying instrment. Only used, if underlying is risk factor.\n\
 @item @var{multiplier}: Multiplier of Option. Resulting Option price is scales by this multiplier. Default: 5\n\
 @item @var{div_yield}: Continuous dividend yield of underlying (act/365 day count convention assumed). Default: 0.0\n\
@@ -306,6 +312,10 @@ Can be [daily, weekly, monthly, quarterly, semi-annual, annual]. (Default: \'ann
 @item @var{timesteps_size}: American Willow Tree timestep size (in days). Default: 5\n\
 @item @var{willowtree_nodes}: American Willow Tree nodes per timestep. Default: 20\n\
 @item @var{pricing_function_american}: American pricing model [Willowtree,BjSten]. Default: \'BjSten\'\n\
+\n\
+@item @var{binary_type}: Binary option type. Can be [\'cash\',\'gap\',\'asset\',\'supershare\']. Defaults to \'cash\'.\n\
+@item @var{lookback_type}: Lookback option type. Can be [\'floating_strike\',\'fixed_strike\']. Defaults to \'floating_strike\'.\n\
+@item @var{payoff_strike}: Binary Option payoff strike (used as e.g. upper bound or strike). Default: 100\n\
 \n\
 @item @var{upordown}: Barrier Up or Down description. Default: \'U\'\n\
 @item @var{outorin}: Barrier In or Out description. Default: \'out\'\n\
