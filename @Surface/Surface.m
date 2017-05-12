@@ -145,4 +145,145 @@ classdef Surface
       
    end
    
+   methods (Static = true)
+
+      % print Help text
+	  function retval = help (format,retflag)
+		formatcell = {'plain text','html','texinfo'};
+		% input checks
+		if ( nargin == 0 )
+			format = 'plain text';	
+		end
+		if ( nargin < 2 )
+			retflag = 0;	
+		end
+
+		% format check
+		if ~( strcmpi(format,formatcell))
+			fprintf('WARNING: Surface.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+			format = 'plain text';
+		end	
+
+% textstring in texinfo format (it is required to start at begin of line)
+textstring = "@deftypefn{Octarisk Class} {@var{object}} = Surface(@var{id})\n\
+@deftypefnx{Octarisk Class} {@var{object}} = Surface()\n\
+\n\
+Class for setting up Surface objects.\n\
+\n\
+Surface class is used for specifying Index, IR, Stochastic, Prepayment or Dummy Surfaces.\n\
+A Surface (or Cube) stores two- or three-dimensional values (e.g. term, tenor and/or\n\
+moneyness dependent volatility values.\n\
+Surfaces can be shocked with risk factors (e.g. risk factor types RF_VOLA_EQ or RF_VOLA_IR)\n\
+at any coordinates of the multi-dimensional space in MC or stress scenarios.\n\
+\n\
+This class contains all attributes and methods related to the following Surface types:\n\
+\n\
+@itemize @bullet\n\
+@item @var{Index} two-dimensional surface (term vs. moneyness) for setting up Equity volatility values.\n\
+@item @var{IR} two- or three-dimensional surface (term vs. moneyness) / cube (term vs. tenor vs. moneyness)\n\
+for setting up Interest rate volatility values.\n\
+@item @var{Stochastic} one- or two-dimensional curve / surface to store scenario dependent values\n\
+(e.g. stochastic cash flow surface with values dependent on date and quantile)\n\
+@item @var{Prepayment} two-dimensional prepayment surface with prepayment factors dependent\n\
+on e.g. interest rate shock and coupon rates.\n\
+@item @var{Dummy} Dummy curve for various purposes.\n\
+@end itemize\n\
+\n\
+In the following, all methods and attributes are explained and a code example is given.\n\
+\n\
+Methods for Surface object @var{obj}:\n\
+@itemize @bullet\n\
+@item Surface(@var{id}) or Surface(): Constructor of a Surface object. @var{id} is optional and specifies id and name of new object.\n\
+\n\
+@item obj.set(@var{attribute},@var{value}): Setter method. Provide pairs of attributes and values. Values are checked for format and constraints.\n\
+\n\
+@item obj.get(@var{attribute}): Getter method. Query the value of specified attribute.\n\
+\n\
+@item obj.getValue(@var{scenario}, @var{x}, @var{y}, @var{z}): Return Surface value at given coordinates according to scenario type.\n\
+Interpolate surface base value and risk factor shock (only possible after call of method @var{apply_rf_shocks} )\n\
+\n\
+@item Surface.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
+If empty, defaults to plain text. Returnflag is boolean: True returns \n\
+documentation string, false (default) returns empty string. [static method]\n\
+\n\
+@item obj.apply_rf_shocks(@var{riskfactor_struct}): Apply risk factor shocks to Surface base values and store\n\
+the shocks for later use in attribute @var{shock_struct}. These shocks are then applied to the surface base value with method getValue.\n\
+The risk factors are taken from the provided structure according to the surface risk factor IDs given by the attribute @var{riskfactors}.\n\
+\n\
+@item Surface.interpolate(@var{x}, @var{y}, @var{z}): Return Surface base value at given coordinates.\n\
+@end itemize\n\
+\n\
+Attributes of Surface objects:\n\
+@itemize @bullet\n\
+@item @var{id}: Surface id. Has to be unique identifier. Default: empty string.\n\
+@item @var{name}: Surface name. Default: empty string.\n\
+@item @var{description}: Surface description. Default: empty string.\n\
+@item @var{type}: Surface type. Can be [Index, IR, Stochastic, Prepayment, Dummy Surfaces]. Default: Index.\n\
+@item @var{day_count_convention}: Day count convention of curve. See \'help get_basis\' \n\
+for details (Default: \'act/365\')\n\
+@item @var{compounding_type}: Compounding type. Can be continuous, discrete or simple. \n\
+(Default: \'cont\')\n\
+@item @var{compounding_freq}: Compounding frequency used for discrete compounding.\n\
+Can be [daily, weekly, monthly, quarterly, semi-annual, annual]. (Default: \'annual\')\n\
+@item @var{values_base}:  Base values of Surface.\n\
+@item @var{moneyness_type}:  Moneyness type. Can be K/S for relative moneyness\n\
+or K-S for absolute moneyness. (Default: \'K/S'\).\n\
+@item @var{shock_struct}: Structure containing all risk factor shock specifications\n\
+(e.g. model, risk factor coordinates, shock values and shift type)\n\
+@item @var{riskfactors}: Cell specifying all risk factor IDs\n\
+@item @var{axis_x}: x-axis coordinates\n\
+@item @var{axis_y}: y-axis coordinates\n\
+@item @var{axis_z}: z-axis coordinates\n\
+@item @var{axis_x_name}: x-axis name\n\
+@item @var{axis_y_name}: y-axis name\n\
+@item @var{axis_z_name}: z-axis name\n\
+\n\
+@end itemize\n\
+\n\
+\n\
+For illustration see the following example:\n\
+@example\n\
+@group\n\
+\n\
+disp('Setting up an Index Surface and Risk factor, apply shocks and retrieve values:')\n\
+r1 = Riskfactor();\n\
+r1 = r1.set('id','V1','scenario_stress',[1.0;-0.5], ...\n\
+'model','GBM','shift_type',[1;1], ...\n\
+'node',730,'node2',1);\n\
+riskfactor_struct(1).id = r1.id;\n\
+riskfactor_struct(1).object = r1;\n\
+v = Surface();\n\
+v = v.set('id','V1','axis_x',[365,3650], ...\n\
+'axis_x_name','TERM','axis_y',[0.9,1.0,1.1], ...\n\
+'axis_y_name','MONEYNESS');\n\
+v = v.set('values_base',[0.25,0.36;0.22,0.32;0.26,0.34]);\n\
+riskfactor_cell = cell;\n\
+riskfactor_cell(1) = 'V1';\n\
+v = v.set('type','INDEX','riskfactors',riskfactor_cell);\n\
+v = v.apply_rf_shocks(riskfactor_struct);\n\
+base_value = v.interpolate(365,0.9)\n\
+base_value = v.getValue('base',365,0.9)\n\
+stress_value = v.getValue('stress',365,0.9)\n\
+@end group\n\
+@end example\n\
+\n\
+@end deftypefn";
+
+		% format help text
+		[retval status] = __makeinfo__(textstring,format);
+		% status
+		if (status == 0)
+			% depending on retflag, return textstring
+			if (retflag == 0)
+				% print formatted textstring
+				fprintf("\'Surface\' is a class definition from the file /octarisk/@Surface/Surface.m\n");
+				fprintf("\n%s\n",retval);
+				retval = [];
+			end
+		end
+
+	  end % end of static method help
+	
+   end	% end of static methods
+   
 end % classdef

@@ -102,6 +102,7 @@ in order to provide full Matlab compatibility.
 
 ## Version history
 
+- Version 0.3.5   more instruments, refactored code, enhanced documentation
 - Version 0.3.4   various performance improvements, enhanced documentation
 - Version 0.3.3   introduction of c++ pricing functions, enhanced volatility framework
 - Version 0.3.2   Introduction of a session-like instrument valuation interface, new instruments

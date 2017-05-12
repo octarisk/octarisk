@@ -90,77 +90,78 @@ classdef Instrument
       end % Set.type
       
     end
+	
     methods (Static = true)
       function basis = get_basis(dcc_string)
             % provide static method for converting dcc string into basis value
             basis = get_basis(dcc_string);
       end %get_basis
       
-      function retval = get_doc(format,path)
-        if nargin < 1
-            format = 'plain text';
-        end
-        if nargin < 2
-            printflag = 0;
-        elseif nargin == 2
-            if (ischar(path) && length(path) > 1)
-                printflag = 1;
-            else
-                error('Insufficient path: %s \n',path);
-            end
-        end
-        % printing documentation for Class Instrument (ousourced to dummy function to use documentation behaviour)
-        scripts = ['doc_instrument'];
-        c = cellstr(scripts);
-        for ii = 1:length(c)
-            [retval status] = __makeinfo__(get_help_text(c{ii}),format);
-        end
-        if ( status == 0 )
-            if ( printflag == 1) % print to file
-                
-                if (strcmp(format,'html'))
-                    ending = '.html';
-                    filename = strcat(path,'functions',ending);
-					fid = fopen (filename, 'a');
-					retval = strrep( retval, '\', '\\');
-                    %replace html title
-                    repstring = strcat('<title>', c{ii} ,'</title>');
-                    retval = strrep( retval, '<title>Untitled</title>', repstring);
-                    % print formatted documentation
-					fprintf(fid, retval);
-					fprintf(fid, '\n');
-					fclose (fid);
-                elseif (strcmp(format,'texinfo'))
-                    ending = '.texi';
-                    filename = strcat(path,'functions',ending);
-					fid = fopen (filename, 'a');
-					retval = strrep( retval, '\', '\\');
-                    % Print texinfo header
-					nodestring = strcat('\@node \t', c{ii},'\n')
-					fprintf(fid, nodestring);
-					sectionstring = strcat('\@section \t', c{ii},'\n')
-					fprintf(fid, sectionstring); 
-					indexstring = strcat('@cindex \t Function \t', c{ii},'\n');
-					fprintf(fid, indexstring);
-					% print formatted documentation
-					fprintf(fid, retval);
-					fprintf(fid, '\n');
-					fclose (fid);
-                else
-                    ending = '.txt';
-                end
-                 
-            else    
-                printf('Documentation for Class %s: \n',c{ii}(4:end));
-                printf(retval);
-                printf('\n');
-            end
-                     
-        else
-            disp('There was a problem')
-        end
-        retval = status;
-      end
-   end
-   
+       % print Help text
+	  function retval = help (format,retflag)
+		formatcell = {'plain text','html','texinfo'};
+		% input checks
+		if ( nargin == 0 )
+			format = 'plain text';	
+		end
+		if ( nargin < 2 )
+			retflag = 0;	
+		end
+
+		% format check
+		if ~( strcmpi(format,formatcell))
+			fprintf('WARNING: Instrument.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+			format = 'plain text';
+		end	
+
+% textstring in texinfo format (it is required to start at begin of line)
+textstring = "@deftypefn{Octarisk Class} { @var{object} =} Instrument (@var{name}, @var{id}, @var{description}, @var{type}, @var{currency}, @var{base_value}, @var{asset_class})\n\
+\n\
+Superclass for all instrument objects.\n\
+\n\
+@itemize @bullet\n\
+@item @var{name} (string): name of object\n\
+@item @var{id} (string): id of object\n\
+@item @var{description} (string): description of object\n\
+@item @var{type} (string): instrument type in list [cash, bond, debt, forward,\n\
+option, sensitivity, synthetic, capfloor, stochastic, swaption]\n\
+@item @var{currency} (string): ISO code of currency\n\
+@item @var{base_value} (float): actual base (spot) value of object\n\
+@item @var{asset_class} (sring): instrument asset class\n\
+@end itemize\n\
+@*\n\
+The constructor of the instrument class constructs an object with the \n\
+following properties and inherits them to all sub classes: @*\n\
+@itemize @bullet\n\
+@item name: name of object\n\
+@item id: id of object\n\
+@item description: description of object\n\
+@item value_base: actual base (spot) value of object\n\
+@item currency: ISO code of currency\n\
+@item asset_class: instrument asset class\n\
+@item type: type of instrument class (Bond,Forward,...) \n\
+@item value_stress: vector with values under stress scenarios\n\
+@item value_mc: matrix with values under MC scenarios (values per timestep\n\
+per column)\n\
+@item timestep_mc: MC timestep per column (cell string)\n\
+@end itemize\n\
+\n\
+@end deftypefn";
+
+		% format help text
+		[retval status] = __makeinfo__(textstring,format);
+		% status
+		if (status == 0)
+			% depending on retflag, return textstring
+			if (retflag == 0)
+				% print formatted textstring
+				fprintf("\'Instrument\' is a superclass definition from the file /octarisk/@Instrument/Instrument.m\n");
+				fprintf("\n%s\n",retval);
+				retval = [];
+			end
+		end
+
+	  end % end of static method help
+	end % end of static methods
+
 end % classdef

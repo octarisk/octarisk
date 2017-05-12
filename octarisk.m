@@ -1,4 +1,4 @@
-%# Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2015,2016,2017 Stefan Schloegl <schinzilord@octarisk.com>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
 %# the terms of the GNU General Public License as published by the Free Software
@@ -13,75 +13,10 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} octarisk (@var{path_working_folder})
 %#
-%# Version: 0.0.0, 2015/11/24, Stefan Schloegl:   initial version @* 
-%#          0.0.1, 2015/12/16, Stefan Schloegl:   added Willow Tree model for pricing american equity options, @*
-%#                                              added volatility surface model for term / moneyness structure of volatility for index vol @*
-%#          0.0.2, 2016/01/19, Stefan Schloegl:   added new instrument types FRB, FRN, FAB, ZCB @*
-%#                                              added synthetic instruments (linear combinations of other instruments) @*
-%#                                              added equity forwards and Black-Karasinski stochastic process @*
-%#			0.0.3, 2016/02/05, Stefan Schloegl:	  added spread risk factors, general cash flow pricing  @*
-%#			0.0.4, 2016/03/28, Stefan Schloegl:   changed the implementation to object oriented approach (introduced instrument, risk factor classes) @*
-%#          0.1.0, 2016/04/02, Stefan Schloegl:   added volatility cube model (Surface class) for tenor / term / moneyness structure of volatility for ir vol @*
-%#          0.2.0, 2016/04/19, Stefan Schloegl:   improved the file interface and format for input files (market data, risk factors, instruments, positions, stresstests)  @*
-%#          0.4.0, 2016/10/08, Stefan Schloegl:   transfered instrument full valuation part into separate function. @*
-%# @*
-%# Calculate Monte-Carlo Value-at-Risk (VAR) and Expected Shortfall (ES) for instruments, positions and portfolios at a given confidence level on 
-%# 1D and 250D time horizon with a full valuation approach.
+%# Full valuation Monte-Carlo risk calculation framework.
 %#
-%# See octarisk documentation for further information.
+%# See www.octarisk.com for further information.
 %#
-%# @*
-%# Input files in csv format:
-%# @itemize @bullet
-%# @item Instruments data: specification of instrument universe (name, id, market value, underlying risk factor, cash flows etc.)
-%# @item Riskfactors data: specification of risk factors (name, id, stochastic model, statistic parameters)
-%# @item Positions data: specification of portfolio and position data (portfolio id, instrument id, position size)
-%# @item Stresstest data: specification of stresstest risk factor shocks (stresstest name, risk factor shock values and types)
-%# @item Covariance matrix: covariance matrix of all risk factors
-%# @item Volatility surfaces (index volatility: term vs. moneyness, call moneyness spot / strike, linear interpolation and constant extrapolation)
-%# @end itemize
-%# @*
-%# Output data:
-%# @itemize @bullet
-%# @item portfolio report: instruments and position VAR and ES, diversification effects
-%# @item profit and loss distributions: plot of profit and loss histogramm and distribution, most important positions and instruments
-%# @end itemize
-%# @*
-%# Supported instrument types:
-%# @itemize @bullet
-%# @item equity (stocks and funds priced via multi-factor model and idiosyncratic risk)
-%# @item commodity (physical and funds priced via multi-factor model and idiosyncratic risk)
-%# @item real estate (stocks and funds priced via multi-factor model and idiosyncratic risk)
-%# @item custom cash flow instruments (NPV of all custom CFs) 
-%# @item bond funds priced via duration-based sensitivity approach
-%# @item fixed rate bonds (NPV of all CFs)
-%# @item floating rate notes (scenario dependent cash flow values, NPV of all CFs)
-%# @item fixed amortizing bonds (either annuity bonds or amortizable bonds, NPV of all CFs)
-%# @item zero coupon bonds (NPV of notional)
-%# @item European equity options (Black-Scholes model)
-%# @item American equity options (Willow Tree model)
-%# @item European swaptions (Black76 and Bachelier model)
-%# @item Equity forward
-%# @item Synthetic instruments (linear combinations of other valuated instruments)
-%# @end itemize
-%# @*
-%# Supported stochastic processes for risk factors:
-%# @itemize @bullet
-%# @item Geometric Brownian Motion 
-%# @item Black-Karasinski process
-%# @item Brownian Motion 
-%# @item Ornstein-Uhlenbeck process
-%# @item Square-root diffusion process 
-%# @end itemize
-%# @*
-%# Supported copulas for MC scenario generation:
-%# @itemize @bullet
-%# @item Gaussian copula
-%# @item t-copula with one parameter specification for common degrees of freedom
-%# @end itemize
-%# @*
-%# Further functionality will be implemented in the future (e.g. inflation linked instruments)
-%# @seealso{option_willowtree, option_bs, harrell_davis_weight, swaption_black76, pricing_forward, rollout_cashflows, scenario_generation_MC}
 %# @end deftypefn
 
 function octarisk(path_working_folder)

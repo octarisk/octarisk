@@ -6,16 +6,18 @@ Possible new features:
 - Introduction of Total Return Swaps
 - Introduction of FX Swaps
 
-Introduced Features:
-- Introduction of Binary and Lookback options
+### 0.3.5, 2017/05/12
+Version v0.3.5 is a minor release with new instruments, refactored code and
+extended documentation.
+
+- introduction of Binary and Lookback options
+- introduction of Forward Rate / Volatility / Variance Agreements
 - calculation of key rate durations and convexities for bonds
 - volatility calibration for caps and floors
-- Introduction of Forward Rate / Volatility / Variance Agreements
-- Consolidation of calibration scripts (generic approach)
+- consolidation of calibration scripts (generic approach)
 
 ### 0.3.5-rc1, 2017/03/25
-Release candidate of the upcoming octarisk v0.3.5 release. The final release 
-will contain extended documentation for classes and some new pricing methods for Baskets.
+Release candidate of the upcoming octarisk v0.3.5 release. 
 
 - Extended in-code documentation functionality (.help method) for several classes
 - Introduction of new instruments: Averaging floating rate note
