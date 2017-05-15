@@ -41,7 +41,11 @@ end
         % append coordinates of risk factor
         tmp_xyz = [tmp_rf_obj.node;tmp_rf_obj.node2;tmp_rf_obj.node3];
         tmp_coordinates = cat(2,tmp_coordinates,tmp_xyz);
-        tmp_shock = tmp_rf_obj.getValue('stress');      
+        tmp_shock = tmp_rf_obj.getValue('stress');  
+		if ( columns(tmp_shock) > rows(tmp_shock) )
+			fprintf('Surface.apply_rf_shocks: Shock needs to be column vector. Transposing shock vector.\n');
+			tmp_shock = tmp_shock';	% shock needs to be column vector
+		end
         % check models are equal for all risk factors
         if ( ii > 1)
             if ~( strcmpi(tmp_model, tmp_rf_obj.model))

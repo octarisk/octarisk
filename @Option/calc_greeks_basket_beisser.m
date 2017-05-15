@@ -33,27 +33,25 @@ function obj = calc_greeks_basket_beisser(option,valuation_date,value_type,sigma
         theo_omega  = 0.0; 
         tmp_multiplier = 0.0;
     else
+		% set up sensi scenario vector with shocks to all input parameter
+	    S_vec 		= [S.*ones(1,1); S - 1; S + 1; S.*ones(6,1)];
+		rf_vec 		= [rf.*ones(3,1); rf - 0.01; rf + 0.01; rf.*ones(4,1)];
+		sigma_vec 	= [sigma_bar.*ones(5,1); sigma_bar - 0.01; ...
+										sigma_bar + 0.01; ...
+										sigma_bar.*ones(2,1)];
+		TF_vec 		= [TF.*ones(7,1); TF - 1/365; TF + 1/365];	  
+  
 		% calculating effective greeks -> imply from derivatives
-		theo_value_base	= option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf,TF);
+		sensi_vec	= option_basket_beisser(option.call_flag,S_vec,w,Kbar,sigma_vec,rf_vec,TF_vec);
 		
-		undvalue_down	= option_basket_beisser(option.call_flag,S - 1,w,Kbar,sigma_bar,rf,TF);
-		undvalue_up	    = option_basket_beisser(option.call_flag,S + 1,w,Kbar,sigma_bar,rf,TF);
-		
-		rfrate_down     = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf - 0.01,TF);
-		rfrate_up	    = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf + 0.01,TF);
-		
-		vola_down	    = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar - 0.01,rf,TF);         
-		vola_up	        = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar + 0.01,rf,TF);
-		
-		time_down	    = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf,TF - 1/365);
-		time_up	        = option_basket_beisser(option.call_flag,S,w,Kbar,sigma_bar,rf,TF + 1/365);
-		
-		theo_delta  = (undvalue_up - undvalue_down) / 2;
-		theo_gamma  = (undvalue_up + undvalue_down - 2 * theo_value_base);
-		theo_vega   = (vola_up - vola_down) / 2;
-		theo_theta  = -(time_up - time_down) / 2;
-		theo_rho    = -(rfrate_up - rfrate_down) / 2;
-		theo_omega  = theo_delta .* basket_value ./ theo_value_base;
+		% calculate numeric derivatives
+		%sensi_vec = [theo_value_base;undvalue_down;undvalue_up;rfrate_down;rfrate_up;vola_down;vola_up;time_down;time_up]
+		theo_delta  = (sensi_vec(3) - sensi_vec(2)) / 2;
+        theo_gamma  = (sensi_vec(3) + sensi_vec(2) - 2 * sensi_vec(1));
+        theo_vega   = (sensi_vec(7) - sensi_vec(6)) / 2;
+        theo_theta  = -(sensi_vec(9) - sensi_vec(8)) / 2;
+        theo_rho    = (sensi_vec(5) - sensi_vec(4)) / 2;
+        theo_omega  = theo_delta .* basket_value ./ sensi_vec(1);
 	end
 	
     % store theo_value vector in appropriate class property   
