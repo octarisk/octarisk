@@ -106,7 +106,10 @@ rf_rate          = discount_curve.getRate(value_type,dtm);
 
 % 4. get underlying volatility surfaces
 tmp_vol_surfaces  = basket.get('instr_vol_surfaces');
-
+% check for consistency of length
+if ~( length(tmp_vol_surfaces) == length(tmp_instruments) )
+	error('WARNING: get_basket_volatility: Number of volatility surfaces >>%s<< and instruments >>%s<< does not match.\n',any2str(length(tmp_vol_surfaces)),any2str(length(tmp_instruments)));
+end
 tmp_moneyness   = (basket_value ./ strike).^ moneyness_exponent;                      
 for jj = 1 : 1 : length(tmp_vol_surfaces)
     % get underlying volatility surface:
@@ -135,10 +138,14 @@ elseif (strcmpi(basket_vola_type,'Beisser')) % defaults to VCV approximation
 		basket_dict.underlying_values = underlying_values;
 		basket_dict.underlying_weights = underlying_weights;
 	
-else   % defaults to VCV approximation										
+else   % defaults to VCV approximation
+	% value weights: take values of index in basket and take these weights for volas
+	weighted_spotvalues = underlying_weights .* underlying_values;
+	underlying_weights = weighted_spotvalues ./ sum(weighted_spotvalues)';
+	% calculate VCV basket vola
 	basket_vola = getvola_vcv(underlying_weights', underlying_volas, corr_matrix);	
 end
-		
+	
 end
 
 
@@ -179,6 +186,7 @@ function [sigma_bar Kbar] = getvola_beisser(w,S,sigma,corr_matrix,tf,rf_rate,K)
 	Kbar = S .* exp( (rf_rate - 0.5 .* sigma_bar.^2) .* tf + sigma_bar .* sqrt(tf) .* norminv(Fsl_K));
 end
 
+% ------------------------------------------------------------------------------
 function vola = getvola_vcv(w,sigma,corr_matrix)
 % Calculate Basket volatility assuming normal distributions of underlying prices
 

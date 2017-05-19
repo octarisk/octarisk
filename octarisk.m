@@ -499,6 +499,9 @@ if (run_mc == true)
             save ('-v7',tmp_filename,'hd_vec');
         end
         %size_hdvec = size(hd_vec);
+	else  % make dummy hdvec with weight 1 at confidence scenario
+		hd_vec = zeros(mc,1);
+		hd_vec(confi_scenario) = 1.0;		
     end
 end
 
@@ -513,45 +516,19 @@ for mm = 1 : 1 : length( portfolio_struct )
   clear position_struct;
   position_struct = struct();
   position_struct = portfolio_struct( mm ).position;
-  portfolio_value = 0;
   PositionStructlength = length( position_struct  );
+  
+			
   if isempty( position_struct )	% check for empty portfolios
 	fprintf('WARNING: Skipping empty portfolio >>%s<<\n',tmp_port_id);
   else
-    fprintf('=== Aggregation for Portfolio >>%s<< ===\n',tmp_port_id);
-    fprintf('ID,BaseValue,Quantity,FX_Rate,Portfoliovalue\n');
-    for ii = 1 : 1 : length( position_struct  )
-        tmp_id = position_struct( ii ).id;
-        tmp_quantity = position_struct( ii ).quantity;
-        try	% trying to find position in valuated instruments
-            [tmp_instr_object object_ret_code]  = get_sub_object(instrument_struct, tmp_id);
-            if ( object_ret_code == 0 )
-                error('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_id);
-            end	
-			tmp_value = tmp_instr_object.getValue('base');
-			tmp_currency = tmp_instr_object.get('currency'); 
-
-			% conversion of position to fund_currency
-			if ( strcmp(tmp_currency,fund_currency) == 1 )
-					tmp_fx_rate = 1;
-			else
-					tmp_fx_index = strcat('FX_',fund_currency, tmp_currency);
-                    [tmp_fx_struct_obj object_ret_code]  = get_sub_object(index_struct, tmp_fx_index);
-                    if ( object_ret_code == 0 )
-                        error('octarisk: WARNING: No index_struct object found for FX id >>%s<<\n',tmp_fx_index);
-                    end	
-					tmp_fx_rate = tmp_fx_struct_obj.getValue('base');
-			end              
-			position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate;
-			portfolio_value = portfolio_value + tmp_value .* tmp_quantity  ./ tmp_fx_rate;
-            fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f\n',tmp_id,tmp_value,tmp_quantity,tmp_fx_rate,portfolio_value);
-		catch	% if instrument not found raise warning and populate cell
-			fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
-			position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
-		end
-    end
-    
-    base_value = portfolio_value
+  
+    %  Loop via all positions and aggregate Position MC vector and get portfolio shock values
+	printflag = false;	% print information about aggregated instruments (quantity, ...
+	%	instrument base value, FX conversion rate, accumulated portfolio value)
+    [position_struct position_failed_cell base_value] = aggregate_positions(position_struct, ...
+			position_failed_cell,instrument_struct,index_struct,mc,'base',fund_currency,tmp_port_id,printflag);
+  
 
     % Fileoutput:
     filename = strcat(path_reports,'/VaR_report_',runcode,'_',tmp_port_id,'.txt');
@@ -585,43 +562,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     fprintf('Aggregation for scenario set: %s \n',tmp_scen_set);     
     fprintf(fid, 'for time step: %s \n',tmp_scen_set);
     fprintf(fid, '\n');    
-    portfolio_shock      = zeros(mc,1);
-    %  Loop via all positions
-        for ii = 1 : 1 : length( position_struct )
-            tmp_id = position_struct( ii ).id;
-            tmp_quantity = position_struct( ii ).quantity;
-			try
-				% get instrument data: get Position's Riskfactors and Sensitivities
-				tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-				tmp_value = tmp_instr_object.getValue('base');
-				tmp_currency = tmp_instr_object.get('currency');
-				% Get instrument Value from full valuation instrument_struct:
-				% absolute values from full valuation
-				new_value_vec_shock      = tmp_instr_object.getValue(tmp_scen_set);              
-			   
-                
-				% Get FX rate:
-				if ( strcmp(fund_currency,tmp_currency) == 1 )
-					tmp_fx_value_shock   = 1;
-				else
-					%disp( ' Conversion of currency: ');
-					tmp_fx_index   		= strcat('FX_', fund_currency, tmp_currency);
-					tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
-					tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-					tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(tmp_scen_set);   
-				end
-				  
-				% Store new Values in Position's struct
-				pos_vec_shock 	= new_value_vec_shock .* sign(tmp_quantity) ./ tmp_fx_value_shock; % convert position PnL into fund currency
-				octamat = [  pos_vec_shock ] ;
-				position_struct( ii ).mc_scenarios.octamat = octamat; 
-				portfolio_shock = portfolio_shock +  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
-            catch	% if instrument not found raise warning and populate cell
-				fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
-				position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
-			end
-        end
-
+    
+    %  Loop via all positions and aggregate Position MC vector and get portfolio shock values
+	[position_struct position_failed_cell portfolio_shock] = aggregate_positions(position_struct, ...
+			position_failed_cell,instrument_struct,index_struct,mc,tmp_scen_set,fund_currency,tmp_port_id,'false');
+	
 
   % b.) VaR Calculation
   %  i.) sort arrays
@@ -724,9 +669,13 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 		tmp_quantity            = position_struct( ii ).quantity;
 		tmp_basevalue           = position_struct( ii ).basevalue;
 		
+		% calculate pos var
 		tmp_decomp_var_shock     = -(octamat(confi_scenarionumber_shock) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 
-		% Get pos var
 		tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
+		
+		% calculate HD pos var
+	    tmp_pos_var_hd = (tmp_basevalue ) -  (sum(octamat(scen_order_shock) .* hd_vec) * tmp_quantity  * sign(tmp_quantity));	
+		tmp_decomp_var_shock_hd   = -((sum(octamat(scen_order_shock) .* hd_vec)) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 	
 		
 		% Aggregate positional data according to aggregation keys:
 		for jj = 1 : 1 : length(aggregation_key)
@@ -754,13 +703,13 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 						tmp_aggr_key_index = strcmp(tmp_aggr_cell,tmp_aggr_key_value)*tmp_vec_xx';
 						aggregation_basevalue(:,tmp_aggr_key_index) = aggregation_basevalue(:,tmp_aggr_key_index) + tmp_basevalue;
 						aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) + (octamat .* tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);
-						aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + tmp_decomp_var_shock;
+						aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + tmp_decomp_var_shock_hd;
 					else    % aggregation key not found -> set value for first time
 						tmp_aggr_cell{end+1} = tmp_aggr_key_value;
 						tmp_aggr_key_index = length(tmp_aggr_cell);
 						aggregation_basevalue(:,tmp_aggr_key_index) = tmp_basevalue;
 						aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  - tmp_basevalue);
-						aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock;
+						aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock_hd;
 					end
 				else
 					disp('Aggregation key not valid');
@@ -818,10 +767,19 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     tmp_aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
 	tmp_aggregation_basevalue   = [aggr_key_struct( jj ).aggregation_basevalue];
     tmp_aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
-    fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-    fprintf('|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
-    fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-    fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
+	if ( mc < hd_limit )	% print HD VaR figures
+		fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+		fprintf('|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp HD VAR|\n',tmp_scen_set);
+		fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+		fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp HD VAR|\n',tmp_scen_set);
+	else
+		fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+		fprintf('|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
+		fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+		fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
+	end
+		
+    
     for ii = 1 : 1 : length(tmp_aggr_cell)
         tmp_aggr_key_value          = tmp_aggr_cell{ii};
         tmp_sorted_aggr_mat			= sort(tmp_aggregation_mat(:,ii));	
@@ -933,42 +891,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 elseif ( strcmpi(tmp_scen_set,'stress') )     % Stress scenario
     % prepare stresstest plotting and report output
     stresstest_plot_desc = {stresstest_struct.id};
-    portfolio_stress    = zeros(no_stresstests,1);
-    %  Loop via all positions
-    for ii = 1 : 1 : length( position_struct )
-        tmp_id = position_struct( ii ).id;
-        tmp_quantity = position_struct( ii ).quantity;
-        try
-			% get instrument data: get Position's Riskfactors and Sensitivities
-			tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-			tmp_value = tmp_instr_object.getValue('base');
-			tmp_currency = tmp_instr_object.get('currency');
-			tmp_name = tmp_instr_object.get('name');
-			% Get instrument Value from full valuation instrument_struct:
-			% absolute values from full valuation
-			new_value_vec_stress    = tmp_instr_object.getValue('stress');
-
-			% Get FX rate:
-			if ( strcmp(tmp_currency,fund_currency) == 1 )
-				tmp_fx_value_stress = 1;
-			else
-				%disp( ' Conversion of currency: ');
-				tmp_fx_index   = strcat('FX_', fund_currency, tmp_currency);
-				tmp_fx_struct_obj   = get_sub_object(index_struct, tmp_fx_index);
-				tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-				tmp_fx_value_stress = tmp_fx_struct_obj.getValue('stress');                       
-			end
-			  
-			% Store new Values in Position's struct
-			pos_vec_stress  = new_value_vec_stress .*  sign(tmp_quantity) ./ tmp_fx_value_stress;
-			%octamat = [  pos_vec_stress ] ;
-			position_struct( ii ).stresstests = pos_vec_stress;
-			portfolio_stress = portfolio_stress + new_value_vec_stress .*  tmp_quantity ./ tmp_fx_value_stress;
-		catch	% if instrument not found raise warning and populate cell
-			fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
-			position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
-		end	
-    end
+    
+	 %  Loop via all positions and aggregate Position Stress vector and get portfolio stress values
+	[position_struct position_failed_cell portfolio_stress] = aggregate_positions(position_struct, ...
+			position_failed_cell,instrument_struct,index_struct,no_stresstests,tmp_scen_set,fund_currency,tmp_port_id,'false');
+			
     % Calc absolute and relative stress values
     p_l_absolut_stress      = portfolio_stress - base_value;
     p_l_relativ_stress      = (portfolio_stress - base_value )./ base_value;
