@@ -57,6 +57,11 @@ end
         % append shock values
         tmp_shock_values = cat(2,tmp_shock_values,tmp_shock); 
         tmp_shift_type = tmp_rf_obj.shift_type;
+		if ~(isempty(tmp_shift_type))
+			if (length(tmp_shock_values) ~= length(tmp_shift_type))
+				error('Surface.apply_rf_sohcks: Length of shift_types definition and shock values does not match for riskfactor id >>%s<<.',any2str(tmp_rf_obj.id));
+			end
+		end
        % store MC timesteps for later use
         tmp_timestep_mc = tmp_rf_obj.get('timestep_mc');
     end

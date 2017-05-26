@@ -170,7 +170,7 @@ function y = interpolate (surface, xx,yy,zz)
 
             % expand vectors and matrizes for constant extrapolation 
             % (add additional time steps and moneynesses, duplicate rows and cols)
-            xx_structure = [0,xx_structure,21900];
+            xx_structure = [0,xx_structure,1000000];
             yy_structure = [0,yy_structure,1000000];
             vola_matrix = horzcat(vola_matrix,vola_matrix(:,end));
             vola_matrix = horzcat(vola_matrix(:,1),vola_matrix);
@@ -201,7 +201,7 @@ function y = interpolate (surface, xx,yy,zz)
 
             % expand vectors and matrizes for constant extrapolation 
             % (add additional time steps and moneynesses, duplicate rows and cols)
-            xx_structure = [0,xx_structure,21900];
+            xx_structure = [0,xx_structure,1000000];
             yy_structure = [0,yy_structure,1000000];
             vola_matrix = horzcat(vola_matrix,vola_matrix(:,end));
             vola_matrix = horzcat(vola_matrix(:,1),vola_matrix);
