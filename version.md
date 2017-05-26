@@ -6,7 +6,7 @@ Possible new features:
 - Introduction of Total Return Swaps
 - Introduction of FX Swaps
 
-### 0.3.5, 2017/05/12
+### 0.3.5, 2017/05/26
 Version v0.3.5 is a minor release with new instruments, refactored code and
 extended documentation.
 
@@ -15,6 +15,7 @@ extended documentation.
 - calculation of key rate durations and convexities for bonds
 - volatility calibration for caps and floors
 - consolidation of calibration scripts (generic approach)
+- refactored portfolio aggregation
 
 ### 0.3.5-rc1, 2017/03/25
 Release candidate of the upcoming octarisk v0.3.5 release. 

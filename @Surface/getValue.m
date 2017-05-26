@@ -67,6 +67,9 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
             % get model dependent shocked values
             if (strcmpi(value_type,'stress'))
                 tmp_shift_types = [struct_out.shift_type];
+				if (length(tmp_shift_types) ~= length(shockvalue))
+					fprintf('WARNING: Surface.getValue: Length of shift_types definition and shock values does not match for id >>%s<<. No stresses applied.',any2str(s.id));
+				end
                 % distinguish between absolute and relative Stress shock
                 % calculate relative stress shocks
                 y_rel     =  (1 + shockvalue ) .* value_base;
