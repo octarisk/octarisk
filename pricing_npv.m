@@ -207,7 +207,7 @@ end
 % Return NPV and MacDur
 npv = tmp_npv;
 % calculate sensitivities only if flag is set
-if  (~( npv == 0.0) && sensi_flag == true)
+if  (~( npv == 0.0) & sensi_flag == true)
     MacDur = MacDur ./ npv;
     Convexity = Convexity ./ npv;    
     Convexity_alt = Convexity_alt ./ npv;

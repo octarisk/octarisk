@@ -67,7 +67,6 @@ classdef CapFloor < Instrument
         pv01 = 0.0;
         accrued_interest = 0.0;
         basis = 3;
-        vola_spread = 0.0;
         model = 'Black';
         CapFlag = true;
     end

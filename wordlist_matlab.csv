@@ -26,7 +26,7 @@ pricing_function_american \= 'Willowtree'§pricing_function_american = 'BjSten'§O
 lookup(§lookupfn(§all files
 lasterr,lasterror.stack.file,lasterror.stack.line§lasterr§octarisk.m
 %nodesinput_y_tmp \= repmat(nodes_input_y,1,columns(rates_input\)\)§nodesinput_y_tmp = repmat(nodes_input_y,1,columns(rates_input))§interpolate_curve.m
-%rates_x_nodes \= rates_input \.\*nodesinput_y_tmp§rates_x_nodes = rates_input .*nodesinput_y_tmp§interpolate_curve.m
+rates_x_nodes \= log(1+rates_input\) \.\*nodes_input_y§%rates_x_nodes = log(1+rates_input) .*nodes_input_y§interpolate_curve.m
+%rates_x_nodes \= log(1+rates_input\) \.\*nodesinput_y_tmp§rates_x_nodes = log(1+rates_input) .*nodesinput_y_tmp§interpolate_curve.m
 %mu\=repmat(mu,1,columns(m\)\)§mu=repmat(mu,1,columns(m))§interpolate_curve.m
 %WW\=repmat(WW,rows(chi_mat\),1\)§WW=repmat(WW,rows(chi_mat),1)§interpolate_curve.m
-rates_x_nodes \= rates_input \.\*nodes_input_y§%rates_x_nodes = rates_input .*nodes_input_y§interpolate_curve.m

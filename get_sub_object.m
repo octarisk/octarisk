@@ -30,7 +30,7 @@ function  [match_obj ret_code matches] = get_sub_object(input_struct, input_id)
 	c = strcmpi(a, input_id);	
     % correct for multiple matches:
     if ( sum(c) > 1 )
-        printf('WARNING: %d ids matching in struct. Returning first object.\n',sum(c));
+        sprintf('WARNING: %d ids matching in struct. Returning first object.\n',sum(c));
         summe = 0;
         for ii=1:1:length(c)
             if ( c(ii) == 1)

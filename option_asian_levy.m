@@ -45,28 +45,28 @@ function Value = option_asian_levy(CallPutFlag,S,X,T,r,sigma,divrate)
     divrate = 0.00;
   end  
    
-  if ! isnumeric (CallPutFlag)
-    error ("CallPutFlag must be either 1 or 0 ")
-  elseif ! isnumeric (S)
-    error ("Underlying price S must be numeric ")
-  elseif ! isnumeric (X)
-    error ("Strike X must be numeric ")
+  if ~ isnumeric (CallPutFlag)
+    error ('CallPutFlag must be either 1 or 0 ')
+  elseif ~ isnumeric (S)
+    error ('Underlying price S must be numeric ')
+  elseif ~ isnumeric (X)
+    error ('Strike X must be numeric ')
   elseif X < 0
-    error ("Strike X must be positive ")
+    error ('Strike X must be positive ')
   elseif S < 0
-    error ("Price S must be positive ")    
-  elseif ! isnumeric (T)
-    error ("Time T in years must be numeric ")
+    error ('Price S must be positive ')    
+  elseif ~ isnumeric (T)
+    error ('Time T in years must be numeric ')
   elseif ( T < 0)
-    error ("Time T must be positive ")    
-  elseif ! isnumeric (r)
-    error ("Riskfree rate r must be numeric ")    
-  elseif ! isnumeric (sigma)
-    error ("Implicit volatility sigma must be numeric ")
-  elseif ! isnumeric (divrate)
-    error ("Dividend rate must be numeric ")     
+    error ('Time T must be positive ')    
+  elseif ~ isnumeric (r)
+    error ('Riskfree rate r must be numeric ')    
+  elseif ~ isnumeric (sigma)
+    error ('Implicit volatility sigma must be numeric ')
+  elseif ~ isnumeric (divrate)
+    error ('Dividend rate must be numeric ')     
   elseif ( sigma < 0)
-    error ("Volatility sigma must be positive ")        
+    error ('Volatility sigma must be positive ')        
   end
   
 
@@ -100,9 +100,9 @@ end
 end
 
 % Test cases from Haug, page 191ff:
-%!assert(option_asian_levy(1,100,[95;100;105],0.75*365,0.1,0.15,0.05),[7.05435649933824;3.78453158217341;1.67287495614393],0.0000001)
-%!assert(option_asian_levy(1,100,[95;100;105],0.75*365,0.1,0.35,0.05),[10.12128991523418;7.50377214245155;5.40712811308192],0.0000001)
-%!assert(option_asian_levy(1,6.8,6.9,0.5*365,0.07,0.14,0.09),0.0944157786932514,0.0000001) 
-%!assert(option_asian_levy(0,6.8,6.9,0.5*365,0.07,0.14,0.09),0.223697742233234,0.0000001)
+%~assert(option_asian_levy(1,100,[95;100;105],0.75*365,0.1,0.15,0.05),[7.05435649933824;3.78453158217341;1.67287495614393],0.0000001)
+%~assert(option_asian_levy(1,100,[95;100;105],0.75*365,0.1,0.35,0.05),[10.12128991523418;7.50377214245155;5.40712811308192],0.0000001)
+%~assert(option_asian_levy(1,6.8,6.9,0.5*365,0.07,0.14,0.09),0.0944157786932514,0.0000001) 
+%~assert(option_asian_levy(0,6.8,6.9,0.5*365,0.07,0.14,0.09),0.223697742233234,0.0000001)
 % Test case from Hull "Options, Future and other Derivatives", 7th Edition, page 565
-%!assert(option_asian_levy(1,50,50,1*365,0.1,0.4,0.00),5.6168,0.001) 
+%~assert(option_asian_levy(1,50,50,1*365,0.1,0.4,0.00),5.6168,0.001) 
