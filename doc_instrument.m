@@ -265,7 +265,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',30,'axis_x_name','TENOR','axis_y',45,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.007814230);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! s = Swaption();
 %! s = s.set('maturity_date','28-Mar-2026','effective_date','28-Mar-2026');
 %! s = s.set('strike',0.0153,'multiplier',100,'sub_type','SWAPT_PAY','model','normal','tenor',10);
@@ -285,7 +285,7 @@ end
 % %! v = Surface();
 % %! v = v.set('axis_x',30,'axis_x_name','TENOR','axis_y',45,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 % %! v = v.set('values_base',0.659802);
-% %! v = v.set('type','IR');
+% %! v = v.set('type','IRVol');
 % %! s = Swaption();
 % %! s = s.set('maturity_date','31-Mar-2018');
 % %! s = s.set('strike',0.0175,'multiplier',100);
@@ -303,7 +303,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',3650,'axis_x_name','TERM','axis_y',1.1,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.210360082233);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',326.9);
 %! o = Option();
@@ -323,7 +323,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.2500);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',100);
 %! o = Option();
@@ -335,7 +335,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.2200);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),0.030000,0.00001);
 %! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
@@ -348,7 +348,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.200);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',80);
 %! o = Option();
@@ -368,7 +368,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.200);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',80);
 %! o = Option();
@@ -395,7 +395,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.2000);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',50);
 %! o = Option();
@@ -406,7 +406,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.1700);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),0.030000,0.00001);
 %! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
@@ -419,7 +419,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.5000);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',100);
 %! o = Option();
@@ -437,7 +437,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.3000);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',100);
 %! o = Option();
@@ -448,7 +448,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.2700);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),0.030000,0.00001);
 %! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
@@ -461,7 +461,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.3000);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',120);
 %! o = Option();
@@ -472,7 +472,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.2700);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),0.030000,0.00001);
 %! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
@@ -485,7 +485,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',3650,'axis_x_name','TERM','axis_y',1.1,'axis_y_name','MONEYNESS');
 %! v = v.set('values_base',0.210360082233);
-%! v = v.set('type','INDEX');
+%! v = v.set('type','INDEXVol');
 %! i = Index();
 %! i = i.set('value_base',286.867623322,'currency','USD');
 %! o = Option();
@@ -529,7 +529,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.8);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! cap = cap.rollout('31-Dec-2015','base',c,v);
 %! cap = cap.calc_value('31-Dec-2015','base',c);
 %! assert(cap.getValue('base'),137.0063959386,0.0000001);
@@ -572,7 +572,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.8);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! cap_cms = CapFloor();
 %! cap_cms = cap_cms.set('id','TEST_CAP','name','TEST_CAP','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
 %! cap_cms = cap_cms.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
@@ -594,7 +594,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.00555);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! floor = floor.rollout('31-Dec-2015','base',c,v);
 %! floor = floor.calc_value('31-Dec-2015','base',c);
 %! assert(floor.getValue('base'),39.9458733223202,0.0000001);
@@ -620,7 +620,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.00059707);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! floor = floor.rollout('30-Jun-2016','base',c,v);
 %! floor = floor.calc_value('30-Dec-2016','base',c);
 %! assert(floor.getValue('base'),5.0503156821,0.0000001);
@@ -638,7 +638,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',1825,'axis_x_name','TENOR','axis_y',365,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.0014240366);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! floor = floor.rollout('30-Jun-2016','base',c,v);
 %! floor = floor.calc_value('30-Dec-2016','base',c);
 %! floor = floor.calc_sensitivities('30-Jun-2016','base',c,v,c);
@@ -821,7 +821,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',30,'axis_x_name','TENOR','axis_y',45,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.376563388);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! s = Swaption();
 %! s = s.set('maturity_date','26-Mar-2036','effective_date','31-Mar-2016');
 %! s = s.set('strike',0.045,'multiplier',1,'sub_type','SWAPT_PAY','model','normal','tenor',10);
@@ -904,7 +904,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.8);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! value_type = 'base'; 
 %! cms_float = cms_float.rollout(value_type, valuation_date, ref_curve, v);
 %! cms_float = cms_float.calc_value(valuation_date,value_type,ref_curve);
@@ -931,7 +931,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.009988);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! value_type = 'base'; 
 %! cap_cms = CapFloor();
 %! cap_cms = cap_cms.set('id','TEST_CAP','name','TEST_CAP','issue_date','31-Mar-2018','maturity_date','31-Mar-2019','compounding_type','simple');
@@ -974,7 +974,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.8);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! value_type = 'base';
 %! float = float.rollout(value_type, ref_curve , valuation_date, v);
 %! float = float.calc_value(valuation_date,value_type,ref_curve);
@@ -1032,7 +1032,7 @@ end
 %! v2 = Surface();
 %! v2 = v2.set('id','V2','axis_x',[730,1095,1460],'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v2 = v2.set('values_base',[0.1,0.02,0.1]);
-%! v2 = v2.set('type','INDEX');
+%! v2 = v2.set('type','INDEXVol');
 %! b = b.rollout('base',c,'22-Jun-2010',v2);
 %! b = b.calc_value('22-Jun-2010','base',c);
 %! assert(b.getValue('base'),76.9771560359221,sqrt(eps))
@@ -1112,12 +1112,12 @@ end
 %! v1 = Surface();
 %! v1 = v1.set('id','V1','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v1 = v1.set('values_base',0.269944411);
-%! v1 = v1.set('type','INDEX','riskfactors',{'V1'});
+%! v1 = v1.set('type','INDEXVol','riskfactors',{'V1'});
 %! v1 = v1.apply_rf_shocks(riskfactor_struct);
 %! v2 = Surface();
 %! v2 = v2.set('id','V2','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v2 = v2.set('values_base',0.1586683369);
-%! v2 = v2.set('type','INDEX');
+%! v2 = v2.set('type','INDEXVol');
 %! v2 = v2.apply_rf_shocks(riskfactor_struct);
 %! surface_struct = struct();
 %! surface_struct(1).id = v1.id;
@@ -1239,32 +1239,32 @@ end
 %! v1 = Surface();
 %! v1 = v1.set('id','V1','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v1 = v1.set('values_base',sigma(1));
-%! v1 = v1.set('type','INDEX','riskfactors',{'V1'});
+%! v1 = v1.set('type','INDEXVol','riskfactors',{'V1'});
 %! v1 = v1.apply_rf_shocks(riskfactor_struct);
 %! v2 = Surface();
 %! v2 = v2.set('id','V2','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v2 = v2.set('values_base',sigma(2));
-%! v2 = v2.set('type','INDEX','riskfactors',{'V2'});
+%! v2 = v2.set('type','INDEXVol','riskfactors',{'V2'});
 %! v2 = v2.apply_rf_shocks(riskfactor_struct);
 %! v3 = Surface();
 %! v3 = v3.set('id','V3','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v3 = v3.set('values_base',sigma(3));
-%! v3 = v3.set('type','INDEX','riskfactors',{'V3'});
+%! v3 = v3.set('type','INDEXVol','riskfactors',{'V3'});
 %! v3 = v3.apply_rf_shocks(riskfactor_struct);
 %! v4 = Surface();
 %! v4 = v4.set('id','V4','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v4 = v4.set('values_base',sigma(4));
-%! v4 = v4.set('type','INDEX','riskfactors',{'V4'});
+%! v4 = v4.set('type','INDEXVol','riskfactors',{'V4'});
 %! v4 = v4.apply_rf_shocks(riskfactor_struct);
 %! v5 = Surface();
 %! v5 = v5.set('id','V5','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v5 = v5.set('values_base',sigma(5));
-%! v5 = v5.set('type','INDEX','riskfactors',{'V5'});
+%! v5 = v5.set('type','INDEXVol','riskfactors',{'V5'});
 %! v5 = v5.apply_rf_shocks(riskfactor_struct);
 %! v6 = Surface();
 %! v6 = v6.set('id','V6','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v6 = v6.set('values_base',sigma(6));
-%! v6 = v6.set('type','INDEX','riskfactors',{'V6'});
+%! v6 = v6.set('type','INDEXVol','riskfactors',{'V6'});
 %! v6 = v6.apply_rf_shocks(riskfactor_struct);
 %! surface_struct = struct();
 %! surface_struct(1).id = v1.id;
@@ -1351,7 +1351,7 @@ end
 %! vv = Surface();
 %! vv = vv.set('id','TEST_CUBE','axis_x',[365,730,1825,2555,3650,4380],'axis_x_name','TENOR','axis_y',[365,730,1095,1460,1825,2555,3650],'axis_y_name','TERM','axis_z',[-0.005,0.0,0.005],'axis_z_name','MONEYNESS');
 %! vv = vv.set('values_base',vola_cube,'method_interpolation','linear');
-%! vv = vv.set('type','IR');
+%! vv = vv.set('type','IRVol');
 %! assert(vv.interpolate(1095,1700,0.000),0.00283819035616438,0.000001)
 %! assert(vv.interpolate(1460,1700,0.002),0.00450785873150685,0.000001)
 %! assert(vv.interpolate(1825,1700,-0.001),0.00476692691780822,0.000001)

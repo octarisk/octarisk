@@ -1726,7 +1726,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.2);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',cap_struct,c,v);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,456,0.000000001);
@@ -1768,7 +1768,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',sigma);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
@@ -1810,7 +1810,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',sigma);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
@@ -1852,7 +1852,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',sigma);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Dec-2015','base',cap_struct,c,v);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
 %! assert(ret_dates,[1460,1825]);
@@ -2004,7 +2004,7 @@ end
 %! v = Surface();
 %! v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
 %! v = v.set('values_base',0.001);
-%! v = v.set('type','IR');
+%! v = v.set('type','IRVol');
 %! value_type = 'base'; 
 % average, in fine, CA false
 %! cap_float = cap_float.set('rate_composition','average');

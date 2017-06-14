@@ -59,7 +59,7 @@ case 'capfloor'
 case 'debt'
     obj = Debt();
 case 'surface'
-    obj = surface();
+    obj = Surface();
 case 'sensitivity'
     obj = Sensitivity();
 case 'synthetic'
@@ -68,6 +68,14 @@ case 'swaption'
     obj = Swaption();
 case 'discount curve'
     obj = Curve();
+case 'spread curve'
+    obj = Curve();
+case 'cpi'
+    obj = Index();
+case 'irvol'
+    obj = Surface();
+case 'indexvol'
+    obj = Surface();
 otherwise
     fprintf('No constructor found for class >>%s<<. Returning struct.\n',object_class);
     obj = s;

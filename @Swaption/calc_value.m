@@ -7,7 +7,7 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
     % Get discount curve nodes and rate
         tmp_nodes        = discount_curve.get('nodes');
         tmp_rates        = discount_curve.getValue(value_type);
-    tmp_type = obj.sub_type;
+        tmp_type = obj.sub_type;
     % Get Call or Putflag
     if ( obj.call_flag == true)
         call_flag = 1;
@@ -23,10 +23,10 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
     
     % Get input variables
     
-    % ??Convert tmp_effdate timefactor from Instrument basis to pricing basis (act/365)??
     % get days in period
     [tmp_tf tmp_effdate dib]  = timefactor (valuation_date, ...
                                 datenum(obj.maturity_date), obj.basis);
+	tmp_effdate = datenum(obj.maturity_date) - valuation_date;
     % calculating swaption maturity date: effdate + tenor
     tmp_dtm          = tmp_effdate + 365 * obj.tenor; % unit years is assumed
     tmp_effdate = max(tmp_effdate,1);

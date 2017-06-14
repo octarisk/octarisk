@@ -44,6 +44,6 @@ Index,FX_EURRUB,EUR_RUB,Exchange Rate,EUR,EUR RUB Exchange rate,1.32
 Index,FX_EURZAR,EUR_ZAR,Exchange Rate,EUR,EUR ZAR Exchange rate,1.32
 Index,FX_EURARS,EUR_ARS,Exchange Rate,EUR,EUR ARS Exchange rate,1.32
 HeaderSURFACE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,moneyness_typeCHAR,method_interpolationCHAR,riskfactorsCHAR
-Surface,RF_VOLA_EQ_DE,RF_VOLA_EQ_DE,Index,Test description,K/S,linear,RF_VOLA_EQ_DE
+Surface,RF_VOLA_EQ_DE,RF_VOLA_EQ_DE,IndexVol,Test description,K/S,linear,RF_VOLA_EQ_DE
 HeaderCUBE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,moneyness_typeCHAR,method_interpolationCHAR,riskfactorsCHAR
-Surface,RF_VOLA_IR_EUR,RF_VOLA_IR_EUR,IR,Test description,K-S,linear,RF_VOLA_IR_EUR_730_365|RF_VOLA_IR_EUR_1825_3650
+Surface,RF_VOLA_IR_EUR,RF_VOLA_IR_EUR,IRVol,Test description,K-S,linear,RF_VOLA_IR_EUR_730_365|RF_VOLA_IR_EUR_1825_3650

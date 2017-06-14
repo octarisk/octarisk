@@ -37,7 +37,7 @@ classdef Surface
             tmp_id      = tmp_name;
         end
         tmp_description = 'Test Dummy Surface';
-        tmp_type        = 'INDEX';
+        tmp_type        = 'INDEXVol';
         a.name          = name;
         a.id            = tmp_id;
         a.description   = tmp_description;
@@ -93,10 +93,10 @@ classdef Surface
       end % disp
       
       function obj = set.type(obj,type)
-         if ~(strcmpi(type,'Index') || strcmpi(type,'IR')  ...
+         if ~(strcmpi(type,'IndexVol') || strcmpi(type,'IRVol')  ...
                 || strcmpi(type,'Dummy')  || strcmpi(type,'Prepayment') ...
                 || strcmpi(type,'Stochastic')                 )
-            error('Type must be either Index, IR, Stochastic, Prepayment or Dummy Surface')
+            error('Type must be either IndexVol, IRVol, Stochastic, Prepayment or Dummy Surface')
          end
          obj.type = type;
       end % Set.type
@@ -170,7 +170,7 @@ textstring = "@deftypefn{Octarisk Class} {@var{object}} = Surface(@var{id})\n\
 \n\
 Class for setting up Surface objects.\n\
 \n\
-Surface class is used for specifying Index, IR, Stochastic, Prepayment or Dummy Surfaces.\n\
+Surface class is used for specifying IndexVol, IRVol, Stochastic, Prepayment or Dummy Surfaces.\n\
 A Surface (or Cube) stores two- or three-dimensional values (e.g. term, tenor and/or\n\
 moneyness dependent volatility values.\n\
 Surfaces can be shocked with risk factors (e.g. risk factor types RF_VOLA_EQ or RF_VOLA_IR)\n\
@@ -179,8 +179,8 @@ at any coordinates of the multi-dimensional space in MC or stress scenarios.\n\
 This class contains all attributes and methods related to the following Surface types:\n\
 \n\
 @itemize @bullet\n\
-@item @var{Index} two-dimensional surface (term vs. moneyness) for setting up Equity volatility values.\n\
-@item @var{IR} two- or three-dimensional surface (term vs. moneyness) / cube (term vs. tenor vs. moneyness)\n\
+@item @var{IndexVol} two-dimensional surface (term vs. moneyness) for setting up Equity volatility values.\n\
+@item @var{IRVol} two- or three-dimensional surface (term vs. moneyness) / cube (term vs. tenor vs. moneyness)\n\
 for setting up Interest rate volatility values.\n\
 @item @var{Stochastic} one- or two-dimensional curve / surface to store scenario dependent values\n\
 (e.g. stochastic cash flow surface with values dependent on date and quantile)\n\

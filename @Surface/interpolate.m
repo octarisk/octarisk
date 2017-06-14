@@ -26,7 +26,7 @@ function y = interpolate (surface, xx,yy,zz)
         end         
     end
     % #################      A) type ir      ###################################
-    if ( strcmpi(s.type,'IR'))           
+    if ( strcmpi(s.type,'IRVol'))           
         if (len == 1 && length(s.axis_x) > 0 && length(s.axis_y) == 0 && length(s.axis_z) == 0 )                    %first case: object is curve
           if ( strcmpi(s.axis_x_name,'TERM') )
             y = interpolate_curve(s.axis_x,s.values_base,xx,s.method_interpolation);
@@ -160,7 +160,7 @@ function y = interpolate (surface, xx,yy,zz)
         end
         
     % #################      B) type index      ###################################
-    elseif ( strcmpi(s.type,'INDEX'))
+    elseif ( strcmpi(s.type,'INDEXVol'))
         if (len == 2 && length(s.axis_x) > 0 && length(s.axis_y) > 0 && length(s.axis_z) == 0  )         %second case: object is surface
           if ( strcmpi(s.axis_x_name,'TERM') && strcmpi(s.axis_y_name,'MONEYNESS')  )
             xx_structure = s.axis_x;    % first row equals structure of axis xx

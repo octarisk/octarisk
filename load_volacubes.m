@@ -27,14 +27,14 @@ tmp_list_files = dir(path_mktdata);
 % Set dummy surface for VOLA_INDEX
 tmp_len_struct = length(surface_struct);    %overwrite first surface (always empty)
 tmp_surface_object = Surface('RF_VOLA_INDEX_DUMMY');
-tmp_surface_object = tmp_surface_object.set('type','INDEX','description','Generic');                                 
+tmp_surface_object = tmp_surface_object.set('type','INDEXVol','description','Generic');                                 
 tmp_surface_object = tmp_surface_object.set('axis_x_name','TERM','axis_y_name', ...
                     'MONEYNESS','axis_x',[365],'axis_y',[1],'values_base',[0.0]);
 surface_struct(1).id = 'RF_VOLA_INDEX_DUMMY';
 surface_struct(1).object = tmp_surface_object;
 % Set dummy surface for VOLA_IR
 tmp_surface_object = Surface('RF_VOLA_IR_DUMMY');
- tmp_surface_object = tmp_surface_object.set('type','IR','description','Generic'); 
+ tmp_surface_object = tmp_surface_object.set('type','IRVol','description','Generic'); 
 tmp_surface_object = tmp_surface_object.set('axis_x_name','TENOR','axis_y_name', ...
                                 'TERM','axis_z_name','MONEYNESS','axis_x',[365], ...
                                 'axis_y',[365],'axis_z',[1],'values_base',[0.0]);
@@ -71,7 +71,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             if ( object_ret_code == 0 )
                 % otherwise generate new object
                 tmp_surface_object = Surface(tmp_id);
-                tmp_surface_object = tmp_surface_object.set('type','INDEX', ...
+                tmp_surface_object = tmp_surface_object.set('type','INDEXVol', ...
                                             'description','INDEX Vola Surface'); 
             end
             % in any case set imported values
@@ -139,7 +139,7 @@ for ii = 1 : 1 : length(tmp_list_files)
             if ( object_ret_code == 0 )
                 % otherwise generate new object
                 tmp_surface_object =  Surface(tmp_id);
-                tmp_surface_object = tmp_surface_object.set('type','IR', ...
+                tmp_surface_object = tmp_surface_object.set('type','IRVol', ...
                                             'description','IR Vola Surface');   
             end
             % in any case set imported values   

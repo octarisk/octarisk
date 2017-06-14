@@ -60,6 +60,11 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
                     tmp_vektor = tmp_vektor';
                 end
                 distance = calc_distance(interpoint,tmp_vektor,2);
+				if ( distance == 0)
+				    shockvalue = shockvalue +  tmp_values(:,ii);
+					idw_weight = 1;
+					break;
+				end
                 shockvalue = shockvalue +  tmp_values(:,ii) ./ distance;
                 idw_weight = idw_weight + distance.^(-1);
             end

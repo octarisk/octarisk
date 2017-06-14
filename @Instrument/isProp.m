@@ -1,13 +1,11 @@
-% Instrument Class @Instrument
-function ret = isProp (instrument, property)
-  obj = instrument;
+function ret = isProp (obj, property)
   if (nargin == 1)
     s = obj.name;
     ret = 0;
   elseif (nargin == 2)
     if (ischar(property))
         try
-            val = getfield(instrument,property);
+            val = getfield(obj,property);
             ret = 1;
         catch
             ret = 0;
