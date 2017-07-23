@@ -83,7 +83,7 @@ new_corr = false;
         fprintf('scenario_generation_MC: New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
         if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
             % draw random variables from multivariate normal distribution
-            Y   = mvnrnd(0,corr_matrix,mc);      
+            Y   = mvnrnd(zeros(1,length(corr_matrix)),corr_matrix,mc);      
         elseif ( strcmp(copulatype, 't') == 1) % t-copula 
             % draw random variables from multivariate student-t distribution
             Y   = mvtrnd(corr_matrix,nu,mc);     

@@ -38,34 +38,34 @@ function [value] = option_asian_vorst90(CallPutFlag,S,X,T,r,sigma,divrate)
  
  if nargin < 6 || nargin > 8
     print_usage ();
-  endif
+  end
   if nargin == 6
     divrate = 0.00;
-  endif   
+  end
    
-  if ! isnumeric (CallPutFlag)
-    error ("CallPutFlag must be either 1 or 0 ")
-  elseif ! isnumeric (S)
-    error ("Underlying price S must be numeric ")
-  elseif ! isnumeric (X)
-    error ("Strike X must be numeric ")
+  if ~ isnumeric (CallPutFlag)
+    error ('CallPutFlag must be either 1 or 0 ')
+  elseif ~ isnumeric (S)
+    error ('Underlying price S must be numeric ')
+  elseif ~ isnumeric (X)
+    error ('Strike X must be numeric ')
   elseif X < 0
-    error ("Strike X must be positive ")
+    error ('Strike X must be positive ')
   elseif S < 0
-    error ("Price S must be positive ")    
-  elseif ! isnumeric (T)
-    error ("Time T in years must be numeric ")
+    error ('Price S must be positive ')    
+  elseif ~ isnumeric (T)
+    error ('Time T in years must be numeric ')
   elseif ( T < 0)
-    error ("Time T must be positive ")    
-  elseif ! isnumeric (r)
-    error ("Riskfree rate r must be numeric ")    
-  elseif ! isnumeric (sigma)
-    error ("Implicit volatility sigma must be numeric ")
-  elseif ! isnumeric (divrate)
-    error ("Dividend rate must be numeric ")     
+    error ('Time T must be positive ')    
+  elseif ~ isnumeric (r)
+    error ('Riskfree rate r must be numeric ')    
+  elseif ~ isnumeric (sigma)
+    error ('Implicit volatility sigma must be numeric ')
+  elseif ~ isnumeric (divrate)
+    error ('Dividend rate must be numeric ')     
   elseif ( sigma < 0)
-    error ("Volatility sigma must be positive ")        
-  endif
+    error ('Volatility sigma must be positive ')        
+  end
   
 % convert days to maturity in timefactor (assuming act/365)
 T = T ./ 365;

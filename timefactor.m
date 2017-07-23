@@ -79,20 +79,20 @@ elseif (basis == 1)                    % 30/360 SIA
    % 1. If the last date of the accrual period is the last day of February 
     %    and the first date of the period is the last day of February, then the 
     %    last date of the period will be changed to the 30th.
-    days2(d2 == eomdate(years2,2) && d1 == eomdate(years1,2)) = 30;
+    days2(d2 == eomdate(years2,2) & d1 == eomdate(years1,2)) = 30;
 
     % 2. If the first date of the accrual period falls on the 31st of a month 
     %    or is the last day of February, that date will be changed to the 
     %    30th of the month.   
     days1_orig = days1;
-    days1(31 == days1 && d1 == eomdate(years1,2)) = 30;
+    days1(31 == days1 & d1 == eomdate(years1,2)) = 30;
     step2_adjusted = ~(days1_orig == days1);
     
     % 3. If the first date of the accrual period falls on the 30th of a month 
     %    after applying (2) above, and the last date of the period falls on 
     %    the 31st of a month, the last date will be changed to the 30th of 
     %    the month.
-    days2(days1 == 30 && days2 == 31 && step2_adjusted) = 30;
+    days2(days1 == 30 & days2 == 31 & step2_adjusted) = 30;
     
     % calculation
     dip = (years2 - years1) .* 360 + ( months2 - months1 ) .* 30 + ( days2 - days1 );

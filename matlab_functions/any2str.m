@@ -72,10 +72,18 @@ elseif ( regexp(type,'logical'))
 elseif ( strcmp(type,'struct'))
     tmp_fields = fieldnames(value);
     output = '';
-    for jj = 1:1:length(tmp_fields)
-        output = strcat(output,' |',tmp_fields{jj},'->',any2str(getfield(value,tmp_fields{jj})));
+    if size(value,2)==1
+        for jj = 1:1:length(tmp_fields)
+            output = strcat(output,' |',tmp_fields{jj},'->',any2str(getfield(value,tmp_fields{jj})));
+        end
+        output = output(3:end);
+    else
+        output = '';
+        for jj = 1:1:length(value)
+            output = strcat(output,' (',int2str(jj),')',any2str(value(jj)));
+        end
+        output = output(2:end);
     end
-    output = output(3:end);
 else
     fprintf('WARNING: Unknown type: >>%s<<. It was not possible to convert value into string. Return input value.\n',type);
     output = value;

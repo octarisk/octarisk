@@ -28,10 +28,10 @@ function value = swaption_underlyings(PayerReceiverFlag,K,V_fix,V_float,T,sigma,
 T = T ./ 365;
 
 % calculate Y
-if (V_fix == 0.0 || K == 0.0)
+if (V_fix == 0.0 | K == 0.0)
     value = 0.0;
     fprintf('swaption_underlyings: WARNING: V_fix or Strike K is zero. Returning value of 0.0.\n');
-    break
+    return
 end
 Y = K .* V_float ./ V_fix;
 

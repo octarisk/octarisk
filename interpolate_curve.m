@@ -566,7 +566,7 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
         mu = exp(- ufrc .* nodes_input_y);
         % Matlab adaption
         %nodesinput_y_tmp = repmat(nodes_input_y,1,columns(rates_input));
-        %rates_x_nodes = rates_input .*nodesinput_y_tmp;
+        %rates_x_nodes = log(1+rates_input) .*nodesinput_y_tmp;
         rates_x_nodes = log(1+rates_input) .*nodes_input_y;
         m  = 1 ./ exp(rates_x_nodes);
         

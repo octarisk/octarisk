@@ -1,4 +1,4 @@
-﻿%# Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2015 Stefan Schloegl <schinzilord@octarisk.com>
 %# Copyright (C) 2016 IRRer-Zins <IRRer-Zins@t-online.de>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
