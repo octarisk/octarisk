@@ -74,7 +74,7 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
         % loop via all base and stress scenarios:
         tmp_nodes = [];
         tmp_rates_original = [];
-        tmp_rates_stress = [];
+        %tmp_rates_stress = [];
 		sln_level = [];
         for jj = 1 : 1 : length( riskfactor_struct )
             tmp_rf_struct_obj = riskfactor_struct( jj ).object;
@@ -82,28 +82,29 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
             if ( regexp(tmp_rf_id,tmp_curve_id) == 1 ) 
                 tmp_node            = tmp_rf_struct_obj.get('node');
                 tmp_nodes 		    = cat(2,tmp_nodes,tmp_node); 
-                tmp_delta_stress    = tmp_rf_struct_obj.getValue('stress') ;
+                %tmp_delta_stress    = tmp_rf_struct_obj.getValue('stress') ;
                 % distinguish between absolute shocks (in bp) and relative shocks
                 tmp_shift_type      = tmp_rf_struct_obj.get('shift_type');  
                 %tmp_shift_type_inv  = 1 - tmp_shift_type;
                 % set rate original according to shifttype: 
                 %             0 absolute shift, 1 relative shift 
-                tmp_rate_original   = tmp_shift_type;   
+				% set dummy values
+                tmp_rate_original   = [0]; %tmp_shift_type   
                 tmp_rates_original  = cat(2,tmp_rates_original,tmp_rate_original);
-                tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_delta_stress);
+                %tmp_rates_stress 	= cat(2,tmp_rates_stress,tmp_delta_stress);
             end 
         end 
         % sort nodes and accordingly original and stress rates:
             [tmp_nodes tmp_indizes] = sort(tmp_nodes);
             tmp_rates_original = tmp_rates_original(:,tmp_indizes);
-            tmp_rates_stress = tmp_rates_stress(:,tmp_indizes);
+            %tmp_rates_stress = tmp_rates_stress(:,tmp_indizes);
         % store values in struct
         curve_object = curve_object.set('nodes',tmp_nodes);
         % contains matrix: rows     = stress shift type values (0 or 1), 
         %                  columns  = nodes of curve
         curve_object = curve_object.set('rates_base',tmp_rates_original);          
         % contains matrix with delta of stress:
-        curve_object = curve_object.set('rates_stress',tmp_rates_stress);   
+        %curve_object = curve_object.set('rates_stress',tmp_rates_stress);   
         % loop via all mc timesteps
         if ( run_mc == true )
             for kk = 1:1:length(mc_timesteps)

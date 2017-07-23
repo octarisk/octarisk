@@ -49,8 +49,9 @@ function  [match_struct ret_code matches] = get_sub_struct(input_struct, input_i
 			ret_code = 1;
 		return;
 	else
-	    error(' No matches found for input_id: >>%s<<',input_id);
-		ret_code = 0;
+	    %fprintf('octarisk::get_sub_struct: WARNING: No struct found for input_id: >>%s<<\n',input_id);
+		match_struct = '';
+	    ret_code = 0;
 		return;
 	end
 end

@@ -18,9 +18,9 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,discount_
         comp_type_curve = discount_curve.get('compounding_type');
         comp_freq_curve = discount_curve.get('compounding_freq');
         basis_curve     = discount_curve.get('basis');
-    tmp_type = obj.sub_type;
-    option_type = obj.option_type;
-    call_flag = obj.call_flag;
+		tmp_type = obj.sub_type;
+		option_type = obj.option_type;
+		call_flag = obj.call_flag;
     if ( call_flag == 1 )
         moneyness_exponent = 1;
     else

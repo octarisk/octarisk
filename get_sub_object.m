@@ -36,7 +36,7 @@ function  [match_obj ret_code matches] = get_sub_object(input_struct, input_id)
             if ( c(ii) == 1)
                 % return object if possible
                 if ( isfield(input_struct(ii),'object'))
-                    match_obj = input_struct(ii).object;        
+                    match_obj = input_struct(ii).object;      
                     ret_code = 1;
                     return;
                 else

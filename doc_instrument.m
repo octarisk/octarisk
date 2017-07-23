@@ -1108,17 +1108,36 @@ end
 %! curve_struct = struct();
 %! curve_struct(1).id = c.id;
 %! curve_struct(1).object = c;
+%! % Set up stress struct with shocks to volatility objects
+%! stress_struct(1).id = 'STRESS01';
+%! stress_struct(2).id = 'STRESS02';
+%! stress_struct(1).objects(1).id = 'V1';
+%! stress_struct(1).objects(1).type = 'surface';
+%! stress_struct(1).objects(1).shock_type = 'relative';
+%! stress_struct(1).objects(1).shock_value = 1.2;
+%! stress_struct(2).objects(1).id = 'V1';
+%! stress_struct(2).objects(1).type = 'surface';
+%! stress_struct(2).objects(1).shock_type = 'relative';
+%! stress_struct(2).objects(1).shock_value = 0.9;
+%! stress_struct(1).objects(2).id = 'V2';
+%! stress_struct(1).objects(2).type = 'surface';
+%! stress_struct(1).objects(2).shock_type = 'relative';
+%! stress_struct(1).objects(2).shock_value = 1.2;
+%! stress_struct(2).objects(2).id = 'V2';
+%! stress_struct(2).objects(2).type = 'surface';
+%! stress_struct(2).objects(2).shock_type = 'relative';
+%! stress_struct(2).objects(2).shock_value = 0.9;
 %! % Set up structure with volatlity surface objects
 %! v1 = Surface();
 %! v1 = v1.set('id','V1','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v1 = v1.set('values_base',0.269944411);
 %! v1 = v1.set('type','INDEXVol','riskfactors',{'V1'});
-%! v1 = v1.apply_rf_shocks(riskfactor_struct);
+%! v1 = v1.apply_stress_shocks(stress_struct);
 %! v2 = Surface();
 %! v2 = v2.set('id','V2','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v2 = v2.set('values_base',0.1586683369);
 %! v2 = v2.set('type','INDEXVol');
-%! v2 = v2.apply_rf_shocks(riskfactor_struct);
+%! v2 = v2.apply_stress_shocks(stress_struct);
 %! surface_struct = struct();
 %! surface_struct(1).id = v1.id;
 %! surface_struct(1).object = v1;
@@ -1140,15 +1159,15 @@ end
 %! o = o.valuate (valuation_date, value_type, ...
 %!                     instrument_struct, surface_struct, matrix_struct, ...
 %!                     curve_struct, index_struct, riskfactor_struct);
-%! assert(o.getValue('base'),228.057832164390,0.00000001);
+%! assert(o.getValue('base'),228.057832283511,sqrt(eps));
 %! % Stress valuation
 %! value_type = 'stress';
 %! % valuation with instrument function
 %! o = o.valuate (valuation_date, value_type, ...
 %!                     instrument_struct, surface_struct, matrix_struct, ...
-%!                     curve_struct, index_struct, riskfactor_struct);      
-%! assert(o.getValue('stress'),[198.460087766560;280.691637148358],0.00000001);
-
+%!                     curve_struct, index_struct, riskfactor_struct);   
+%! assert(o.getValue('stress'),[211.348256702480;272.213027434707],sqrt(eps));
+   
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing European Call Option on Basket with Beisser method\n');
 %! a = [0.0004404901,0.11092258,0.038288027,0.3535180391,0.1075458489,0.3892850084]; % a = vector with weights
@@ -1203,31 +1222,21 @@ end
 %! index_struct(7).object = i6;
 %! valuation_date = datenum('30-Dec-2016');
 %! s = s.calc_value(valuation_date,'base',instrument_struct,index_struct);
+%! % Set up stress struct with volatility shocks
+%! stress_struct = struct();
+%! id_cell = {'V1','V2','V3','V4','V5','V6'};
+%! vola_shock_vec = [1;2;6;41;101];
+%! for kk=1:1:length(vola_shock_vec)
+%!      for jj=1:1:length(id_cell)
+%! 		   stress_struct(kk).id = 'STRESS';	
+%!         stress_struct(kk).objects(jj).id = id_cell{jj};
+%!         stress_struct(kk).objects(jj).type = 'surface';
+%!         stress_struct(kk).objects(jj).shock_type = 'relative';
+%!         stress_struct(kk).objects(jj).shock_value = vola_shock_vec(kk);
+%!      end
+%!  end
 %! % Set up structure with Riskfactor objects
-%! r1 = Riskfactor();
-%! r1 = r1.set('id','V1','scenario_stress',[0;1;5;40;100],'model','BM','shift_type',[1;1;1;1;1], 'node',730,'node2',1);
-%! r2 = Riskfactor();
-%! r2 = r1.set('id','V2');
-%! r3 = Riskfactor();
-%! r3 = r1.set('id','V3');
-%! r4 = Riskfactor();
-%! r4 = r1.set('id','V4');
-%! r5 = Riskfactor();
-%! r5 = r1.set('id','V5');
-%! r6 = Riskfactor();
-%! r6 = r1.set('id','V6');
-%! riskfactor_struct(1).id = r1.id;
-%! riskfactor_struct(1).object = r1;
-%! riskfactor_struct(2).id = r2.id;
-%! riskfactor_struct(2).object = r2;
-%! riskfactor_struct(3).id = r3.id;
-%! riskfactor_struct(3).object = r3;
-%! riskfactor_struct(4).id = r4.id;
-%! riskfactor_struct(4).object = r4;
-%! riskfactor_struct(5).id = r5.id;
-%! riskfactor_struct(5).object = r5;
-%! riskfactor_struct(6).id = r6.id;
-%! riskfactor_struct(6).object = r6;
+%! riskfactor_struct = struct();
 %! % Set up structure with discount curve object
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[7300], ...
@@ -1240,32 +1249,32 @@ end
 %! v1 = v1.set('id','V1','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v1 = v1.set('values_base',sigma(1));
 %! v1 = v1.set('type','INDEXVol','riskfactors',{'V1'});
-%! v1 = v1.apply_rf_shocks(riskfactor_struct);
+%! v1 = v1.apply_stress_shocks(stress_struct);
 %! v2 = Surface();
 %! v2 = v2.set('id','V2','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v2 = v2.set('values_base',sigma(2));
 %! v2 = v2.set('type','INDEXVol','riskfactors',{'V2'});
-%! v2 = v2.apply_rf_shocks(riskfactor_struct);
+%! v2 = v2.apply_stress_shocks(stress_struct);
 %! v3 = Surface();
 %! v3 = v3.set('id','V3','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v3 = v3.set('values_base',sigma(3));
 %! v3 = v3.set('type','INDEXVol','riskfactors',{'V3'});
-%! v3 = v3.apply_rf_shocks(riskfactor_struct);
+%! v3 = v3.apply_stress_shocks(stress_struct);
 %! v4 = Surface();
 %! v4 = v4.set('id','V4','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v4 = v4.set('values_base',sigma(4));
 %! v4 = v4.set('type','INDEXVol','riskfactors',{'V4'});
-%! v4 = v4.apply_rf_shocks(riskfactor_struct);
+%! v4 = v4.apply_stress_shocks(stress_struct);
 %! v5 = Surface();
 %! v5 = v5.set('id','V5','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v5 = v5.set('values_base',sigma(5));
 %! v5 = v5.set('type','INDEXVol','riskfactors',{'V5'});
-%! v5 = v5.apply_rf_shocks(riskfactor_struct);
+%! v5 = v5.apply_stress_shocks(stress_struct);
 %! v6 = Surface();
 %! v6 = v6.set('id','V6','axis_x',3650,'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
 %! v6 = v6.set('values_base',sigma(6));
 %! v6 = v6.set('type','INDEXVol','riskfactors',{'V6'});
-%! v6 = v6.apply_rf_shocks(riskfactor_struct);
+%! v6 = v6.apply_stress_shocks(stress_struct);
 %! surface_struct = struct();
 %! surface_struct(1).id = v1.id;
 %! surface_struct(1).object = v1;

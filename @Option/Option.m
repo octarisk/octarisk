@@ -96,6 +96,7 @@ classdef Option < Instrument
          fprintf('vola_surface: %s\n',b.vola_surface ); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('spread: %f\n',b.spread); 
+		 fprintf('vola_spread: %f\n',b.vola_spread); 
          fprintf('div_yield (cont, act/365): %f \n',b.div_yield);
          fprintf('vola_sensi: %f\n',b.vola_sensi); 
          fprintf('compounding_type: %s\n',b.compounding_type);  
@@ -350,7 +351,7 @@ v = Surface();\n\
 v = v.set('axis_x',3650,'axis_x_name','TERM','axis_y',1.1, ...\n\
 'axis_y_name','MONEYNESS');\n\
 v = v.set('values_base',0.210360082233);\n\
-v = v.set('type','INDEX');\n\
+v = v.set('type','IndexVol');\n\
 i = Index();\n\
 i = i.set('value_base',286.867623322,'currency','USD');\n\
 o = Option();\n\

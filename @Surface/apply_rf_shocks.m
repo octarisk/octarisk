@@ -16,9 +16,8 @@ elseif (length(surface.riskfactors) == 1)
 end
 % what is done here:
 % - get all underlying risk factors
-% - get all shock values of each risk factor (for stress and MC scenarios)
-% - combine these shocks and store them in separate stress and MC sub-structs
-% - combine both sub-structs into one shock_struct
+% - get all shock values of each risk factor (for  MC scenarios only)
+% - combine these shocks and store them in MC sub-structs in one shock_struct
 % - store these structs in the surface attribute "shock_struct" and return object
 
 % get risk factors of surface
@@ -29,7 +28,7 @@ end
     tmp_model = '';
     tmp_shift_type = [];
     tmp_timestep_mc = {};
-% update stress values
+% update values
     for ii = 1:1:length(tmp_riskfactors)
         tmp_rf = tmp_riskfactors{ii};
         [tmp_rf_obj  object_ret_code] = get_sub_object(riskfactor_struct,tmp_rf);
@@ -37,15 +36,10 @@ end
             error('Surface.apply_rf_shocks: risk factor >>%s<< not found for surface >>%s<<',tmp_rf,surface.id);  
         end
         % loop through all value types and set struct
-        % loop through stress values
         % append coordinates of risk factor
         tmp_xyz = [tmp_rf_obj.node;tmp_rf_obj.node2;tmp_rf_obj.node3];
         tmp_coordinates = cat(2,tmp_coordinates,tmp_xyz);
-        tmp_shock = tmp_rf_obj.getValue('stress');  
-		if ( columns(tmp_shock) > rows(tmp_shock) )
-			fprintf('Surface.apply_rf_shocks: Shock needs to be column vector. Transposing shock vector.\n');
-			tmp_shock = tmp_shock';	% shock needs to be column vector
-		end
+
         % check models are equal for all risk factors
         if ( ii > 1)
             if ~( strcmpi(tmp_model, tmp_rf_obj.model))
@@ -54,26 +48,8 @@ end
         else
             tmp_model = tmp_rf_obj.model; 
         end
-        % append shock values
-        tmp_shock_values = cat(2,tmp_shock_values,tmp_shock); 
-        tmp_shift_type = tmp_rf_obj.shift_type;
-		if ~(isempty(tmp_shift_type))
-			if (length(tmp_shock_values) ~= length(tmp_shift_type))
-				error('Surface.apply_rf_sohcks: Length of shift_types definition and shock values does not match for riskfactor id >>%s<<.',any2str(tmp_rf_obj.id));
-			end
-		end
-       % store MC timesteps for later use
+        % store MC timesteps for later use
         tmp_timestep_mc = tmp_rf_obj.get('timestep_mc');
-    end
-    if (length(tmp_riskfactors)>0)
-         % generate temporary struct with stress values
-        tmp_s               = struct();
-        tmp_s.model         = tmp_model;
-        tmp_s.coordinates   = tmp_coordinates;
-        tmp_s.values        = tmp_shock_values;
-        tmp_s.shift_type    = tmp_shift_type;
-        % store stress struct
-        shock_struct = setfield(shock_struct,'stress',tmp_s);
     end
         
 % loop through all MC timesteps (with inner loop via all Riskfactors)

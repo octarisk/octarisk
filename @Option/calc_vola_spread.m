@@ -267,6 +267,7 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
     % store theo_value vector in appropriate class property
     obj.vola_spread = tmp_impl_vola_spread;
     obj.value_base = theo_value_base;
+	obj.calibration_flag = true;
 end
 
 

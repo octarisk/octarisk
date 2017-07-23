@@ -160,20 +160,28 @@ elseif ( strfind(tmp_type,'option') > 0 )
 			if ( strcmpi(scenario,'base'))
 				tmp_rf_vola_obj = tmp_rf_vola_obj.set('value_base',1);
 			elseif ( strcmpi(scenario,'stress'))
-				basket_vola_shocks = (basket_vola ./ basket_vola_base) - 1;% assuming relative shock
-				shift_type = ones(length(basket_vola_shocks),1);
-				tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_stress',basket_vola_shocks,'shift_type',shift_type);
+				basket_vola_shocks = (basket_vola ./ basket_vola_base);% assuming relative shock factors
+				% update basket volatilty for STRESS basket vola shock
+				% set up stress struct and apply stress shocks
+				basket_stress_struct = struct();
+				for pp = 1:1:length(basket_vola_shocks)
+					basket_stress_struct(pp).id = 'STRESS';
+					basket_stress_struct(pp).objects(1).id = tmp_vola_surf_obj.id;
+					basket_stress_struct(pp).objects(1).type = 'surface';
+					basket_stress_struct(pp).objects(1).shock_type = 'relative';
+					basket_stress_struct(pp).objects(1).shock_value = basket_vola_shocks(pp);
+				end
+				tmp_vola_surf_obj = tmp_vola_surf_obj.apply_stress_shocks(basket_stress_struct);
 			else     
 				basket_vola_shocks = log(basket_vola ./ basket_vola_base);% assuming GBM
 				tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_mc',basket_vola_shocks, ...
 														'timestep_mc',scenario);
+				% update basket volatilty for MC basket vola shock
+				tmp_rf_struct(1).id = tmp_rf_vola_obj.id;
+				tmp_rf_struct(1).object = tmp_rf_vola_obj;
+				tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
 			end
-			% update basket volatilty for basket vola shock
-			tmp_rf_struct(1).id = tmp_rf_vola_obj.id;
-			tmp_rf_struct(1).object = tmp_rf_vola_obj;
-			tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
 		end
-
     else
     % 2nd Case: Option on single underlying, take real objects
         if ~( strcmpi(class(tmp_underlying_obj),'Index'))   % valuate instruments only
@@ -339,15 +347,21 @@ elseif (strcmpi(tmp_type,'forward') )
         tmp_underlying = forward.get('underlying_id');
         [tmp_underlying_object object_ret_code]  = get_sub_object(index_struct, tmp_underlying);
         if ( object_ret_code == 0 )
-            fprintf('WARNING: instrument_valuation: No index_struct object found for id >>%s<<\n',tmp_underlying_object);
-        end
-    % calculate underlying values
-        if ~( strcmpi(class(tmp_underlying_object),'Index'))   % valuate instruments only
-            tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
-                                instrument_struct, surface_struct, ...
-                                matrix_struct, curve_struct, index_struct, ...
-                                riskfactor_struct, para_struct); 
-        end
+			% assuming underlying is instrument
+			[tmp_underlying_object object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation of id >>%s<<: No index_struct object found for id >>%s<<\n',forward.id,any2str(tmp_underlying));
+				fprintf('WARNING: instrument_valuation of id >>%s<<: No instrument_struct object found for id >>%s<<\n',forward.id,any2str(tmp_underlying));
+			else
+			% calculate underlying values
+				if ~( strcmpi(class(tmp_underlying_object),'Index'))   % valuate instruments only
+					tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
+										instrument_struct, surface_struct, ...
+										matrix_struct, curve_struct, index_struct, ...
+										riskfactor_struct, para_struct); 
+				end
+			end
+		end
     % Get discount curve
         tmp_discount_curve                  = forward.get('discount_curve');            
         [tmp_curve_object object_ret_code]  = get_sub_object(curve_struct, tmp_discount_curve);	

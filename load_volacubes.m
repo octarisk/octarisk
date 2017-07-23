@@ -19,7 +19,7 @@
 
 function [surface_struct vola_failed_cell] = load_volacubes(surface_struct, ...
                   path_mktdata,input_filename_vola_index,input_filename_vola_ir, ...
-                  input_filename_surf_stochastic)
+                  input_filename_surf_stochastic,stress_struct,riskfactor_struct,run_mc)
 
 % Get list of all files in mktdata folder
 tmp_list_files = dir(path_mktdata);
@@ -172,4 +172,39 @@ for ii = 1 : 1 : length(tmp_list_files)
     end  % end try catch
 end % end of for loop of all files
 
+
+
+% ##############################################################################
+% loop through all Surface objects and update STRESS and MC scenario shocks
+for ii = 1 : 1 : length(surface_struct)
+% update volatility surfaces and cubes with stress and MC scenario shocks
+% Surfaces
+	tmp_object = surface_struct(ii).object;
+	tmp_class = lower(class(tmp_object));
+    if ( strcmpi(tmp_class,'surface'))
+        tmp_id = tmp_object.id;
+        try  
+			% a) apply Stress scenario shocks
+			tmp_object = tmp_object.apply_stress_shocks(stress_struct);
+			% b) apply MC scenario shocks
+			if ( run_mc == true)
+				% Update MC risk factor shock values
+				tmp_object = tmp_object.apply_rf_shocks(riskfactor_struct);
+			end
+
+            % store surface object in struct
+            a = {surface_struct.id};
+            b = 1:1:length(a);
+            c = strcmp(a, tmp_object.id);
+            match_index = b * c';
+            surface_struct( match_index).id = tmp_object.id;
+            surface_struct( match_index).object = tmp_object;
+        catch
+            fprintf('ERROR: There has been an error for new Surface object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
+            vola_failed_cell{ length(vola_failed_cell) + 1 } =  tmp_id;
+        end
+	end
+end
+
+	
 end % end of function

@@ -3,7 +3,7 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
     % get interpolated market value from Surface/Cube
 	% apply provided interpolation method for base value.
 	% Stress / MC value: calculate inverse distance weighted shock from shock 
-	% factors and applythese shocks directly to the base value.
+	% factors and apply these shocks directly to the base value.
     if ~(ischar(value_type))
         fprintf('Surface.getValue: >>%s<< needs to be a char.\n',any2str(value_type));
         error('Correct call: Surface.getValue(value_type,xx,[yy,[zz]])');
@@ -27,8 +27,8 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
     else
         print_usage ();
     end
-    % get shock value and calculate model dependent shocked base value
-    if ~(strcmpi(value_type,'base'))
+    % get MC shock value and calculate model dependent shocked base value
+    if ~(strcmpi(value_type,'base') || strcmpi(value_type,'stress'))
         shockvalue = 0.0;
         idw_weight = 0.0;
         try
@@ -70,24 +70,28 @@ function [y value_base] = getValue (s, value_type, xx,yy,zz)
             end
             shockvalue = shockvalue ./ idw_weight;
             % get model dependent shocked values
-            if (strcmpi(value_type,'stress'))
-                tmp_shift_types = [struct_out.shift_type];
-				if (length(tmp_shift_types) ~= length(shockvalue))
-					fprintf('WARNING: Surface.getValue: Length of shift_types definition and shock values does not match for id >>%s<<. No stresses applied.',any2str(s.id));
-				end
-                % distinguish between absolute and relative Stress shock
-                % calculate relative stress shocks
-                y_rel     =  (1 + shockvalue ) .* value_base;
-                % calculate absolute stress shocks
-                y_abs     =  shockvalue + value_base;
-                % combine both shocks
-                y = tmp_shift_types .* y_rel + (1 - tmp_shift_types) .* y_abs;
-            else    % all MC scenarios use model information			
-                y = Riskfactor.get_abs_values(struct_out.model,shockvalue,value_base);
-            end
+          
+            % all MC scenarios use model information			
+            y = Riskfactor.get_abs_values(struct_out.model,shockvalue,value_base);
         catch
             %fprintf('surface.getValue: Object has no risk factor values for >>%s<<.  ID: >>%s<< Message: >>%s<< in line >>%d<< \n',value_type,s.id,lasterr,lasterror.stack.line);
             y = value_base;
+        end
+	elseif (strcmpi(value_type,'stress'))
+		try
+			% get stress shock struct with all stress scenario vola cube values
+			surface_stress_struct = s.shock_struct.stress;
+			if (strcmpi(s.type,'IRVol'))
+				% call cpp function: interpolation cube values for each stress scenario
+				
+				y = interpolate_cubestruct(surface_stress_struct,xx,yy,zz);
+			else
+				% call cpp function: interpolation surface values for each stress scenario
+				y = interpolate_surfacestruct(surface_stress_struct,xx,yy);
+			end
+		catch
+           %fprintf('surface.getValue: Object has no risk factor values for >>%s<<.  ID: >>%s<< Message: >>%s<< in line >>%d<< \n',value_type,s.id,lasterr,lasterror.stack.line);
+           y = value_base;
         end
     else    % value type 'base'
         y = value_base;

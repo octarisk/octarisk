@@ -21,6 +21,7 @@ Curve,AGGR_IR_USD_EUR,AGGR_IR_USD_EUR,Aggregated Curve,Aggregated Spread Curve E
 Curve,AGGR_EUR_FIN_BBB,AGGR_EUR_FIN_BBB,Aggregated Curve,Aggregated Spread Curve EUR USD,monotone-convex,30|91|365|730|1095,IR_SWAP_EUR|SPREAD_EUR_FIN_BBB,simple,annual,act/365,,
 HeaderINDEX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR
 Index,EQ_DE,DAX30,Equity Index,EUR,DAX Equity Index German Blue Chips,9820
+Index,REIT_GLOBAL,EPRANAREIT Global Dev,Real Estate Index,EUR,Real Estate Index,1236
 Index,COM_GOLD,Gold,Commodity Index,USD,Gold 1 Ounce USD,1073
 Index,CPI_INDEX,CPI_INDEX,CPI,EUR,Consumer Price Index,103.234
 HeaderFX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR

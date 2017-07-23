@@ -318,10 +318,6 @@ if (run_mc == true)
     [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
 end
 
-% 3.) Take Riskfactor Shiftvalues from Stressdefinition
-[riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
-
-
 scengen = toc;
 
 tic;
@@ -343,20 +339,19 @@ persistent curve_struct;
 curve_struct=struct();
 [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving,run_mc);
 
-
-
+		
 % b) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
 index_struct=struct();
 persistent surface_struct;
 surface_struct=struct();
-[index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests,run_mc);   
+[index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests,run_mc,stresstest_struct);   
 
 % c) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
-[surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir,input_filename_surf_stoch);
+[surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir,input_filename_surf_stoch,stresstest_struct,riskfactor_struct,run_mc);
 
-  
-% d) Loading matrix objects
+
+% e) Loading matrix objects
 persistent matrix_struct;
 matrix_struct=struct();
 [matrix_struct matrix_failed_cell] = load_matrix_objects(matrix_struct,path_mktdata,input_filename_matrix);
@@ -456,12 +451,12 @@ end
 
 % print all base values
 fprintf('Instrument Base and stress Values: \n');
-fprintf('ID,Base,%s,%s,%s,%s,Currency\n',stresstest_struct(2).id,stresstest_struct(3).id,stresstest_struct(4).id,stresstest_struct(5).id);
+fprintf('ID,Base,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(8).name,stresstest_struct(14).name);
 for kk = 1:1:length(instrument_struct)
     obj = instrument_struct(kk).object;
     stressvec = obj.getValue('stress');
     if (length(stressvec) > 1)
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(2),stressvec(3),stressvec(4),stressvec(5),obj.currency);
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(2),stressvec(3),stressvec(8),stressvec(14),obj.currency);
     else
         fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),obj.currency);
     end
@@ -903,32 +898,33 @@ elseif ( strcmpi(tmp_scen_set,'stress') )     % Stress scenario
     fprintf(fid, '\n');
     fprintf(fid, '=====    STRESS RESULTS    ===== \n');
     fprintf(fid, '\n');
-    fprintf(fid, 'Sensitivities on Positional Level: \n');
-    for ii = 1 : 1 : length( position_struct )  
-        tmp_id = position_struct( ii ).id;
-        try
-			% get instrument data: get Position's Riskfactors and Sensitivities
-			tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-			tmp_values_stress = [position_struct( ii ).stresstests];
-			% tmp_value = tmp_instr_object.getValue('base');
-			% tmp_currency = tmp_instr_object.get('currency');
-			tmp_name = tmp_instr_object.get('name');
+    % fprintf(fid, 'Sensitivities on Positional Level: \n');
+    % for ii = 1 : 1 : length( position_struct )  
+        % tmp_id = position_struct( ii ).id
+        % try
+			% % get instrument data: get Position's Riskfactors and Sensitivities
+			% tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
+			% tmp_values_stress = [position_struct( ii ).stresstests];
+			% % tmp_value = tmp_instr_object.getValue('base');
+			% % tmp_currency = tmp_instr_object.get('currency');
+			% tmp_name = tmp_instr_object.get('name');
 
-			% Get instrument IR and Spread sensitivity from stresstests 1-4:
-			if ~( tmp_values_stress(end) == 0 ) % test for base values 0 (e.g. matured option )
-				tmp_values_stress_rel = 100.*(tmp_values_stress - tmp_values_stress(end)) ./ tmp_values_stress(end);
-			else
-				tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
-			end
-			tmp_ir_sensitivity = (abs(tmp_values_stress_rel(1)) + abs(tmp_values_stress_rel(2)))/2;
-			tmp_spread_sensitivity = (abs(tmp_values_stress_rel(3)) + abs(tmp_values_stress_rel(4)))/2;
-			fprintf(fid, '|Sensi ModDuration \t\t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_ir_sensitivity);
-			fprintf(fid, '|Sensi ModSpreadDur \t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_spread_sensitivity);
-        catch	% if instrument not found raise warning and populate cell
-			fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
-			position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
-		end	
-    end 
+			% % Get instrument IR and Spread sensitivity from stresstests 1-4:
+			% if ~( tmp_values_stress(end) == 0 ) % test for base values 0 (e.g. matured option )
+				% tmp_values_stress_rel = 100 .*(tmp_values_stress - tmp_values_stress(end)) ./ tmp_values_stress(end);
+			% else
+				% tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
+			% end
+			% tmp_values_stress_rel
+			% tmp_ir_sensitivity = (abs(tmp_values_stress_rel(1)) + abs(tmp_values_stress_rel(2)))/2;
+			% tmp_spread_sensitivity = (abs(tmp_values_stress_rel(3)) + abs(tmp_values_stress_rel(4)))/2;
+			% fprintf(fid, '|Sensi ModDuration \t\t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_ir_sensitivity);
+			% fprintf(fid, '|Sensi ModSpreadDur \t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_spread_sensitivity);
+        % catch	% if instrument not found raise warning and populate cell
+			% %fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+			% %position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+		% end	
+    % end 
  
     fprintf(fid, 'Stress test results:\n');
     for xx=1:1:no_stresstests

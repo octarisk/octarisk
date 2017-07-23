@@ -1,53 +1,265 @@
-# Created by Octave 4.0.0, Fri Jul 15 15:14:07 2016 W. Europe Daylight Time <unknown@T43NB067>
+# Created by Octave 4.2.0, Wed Jul 05 16:32:25 2017 GMT <unknown@unknown>
 # name: tmp_stresstest_struct
 # type: struct
 # ndims: 2
- 22 1
-# length: 5
+ 1 22
+# length: 3
 # name: id
 # type: cell
-# rows: 22
-# columns: 1
+# rows: 1
+# columns: 22
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 4
+Base
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS01
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS02
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS03
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS04
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS05
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS06
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS07
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS08
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS09
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS10
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS11
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS12
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS13
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS14
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS15
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS16
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS17
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS18
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS19
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS20
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+STRESS21
+
+
+
+
+
+# name: name
+# type: cell
+# rows: 1
+# columns: 22
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 4
+Base
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+IR-100bp
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+IR+100bp
+
+
+
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 12
-IR_100bpDOWN
+SPREAD-100bp
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 12
+SPREAD+100bp
+
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 10
-IR_100bpUP
+INFL-100bp
 
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 16
-SPREAD_100bpDOWN
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 14
-SPREAD_100bpUP
+# length: 10
+INFL+100bp
+
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 9
-EQ_30DOWN
+# length: 8
+EQ-30Pct
+
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 7
-EQ_30UP
+EQ+30Pc
+
 
 
 # name: <cell-element>
@@ -57,81 +269,53 @@ EQ_30UP
 VOLA_100UP
 
 
+
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 9
-RE_30DOWN
+# length: 8
+RE-30Pct
+
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 7
-RE_30UP
+RE+30Pc
+
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 10
-COM_30DOWN
+# length: 9
+COM-30Pct
+
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 8
-COM_30UP
+COM+30Pc
 
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 17
-EUR_USD_FX_30DOWN
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 15
-EUR_USD_FX_30UP
+# length: 8
+FX-30Pct
 
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 14
-IR_EURTwistPos
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 14
-IR_EURTwistNeg
+# length: 7
+FX+30Pc
 
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 15
-IR_EURButterfly
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 15
-BlackMonday1987
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 15
-Terror2001-9-11
 
 
 # name: <cell-element>
@@ -141,508 +325,73 @@ Terror2001-9-11
 DotCom2000
 
 
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 23
-AsianCurrencyCrisis1997
-
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 19
-FinancialCrisis2008
+# length: 8
+ASIANFLU
 
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 12
-Basescenario
-
-
-
-
-
-# name: name
-# type: cell
-# rows: 22
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 10
-IR - 100bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 10
-IR + 100bp
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 14
-Spread - 100bp
+IR_EURTwistPos
 
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 14
-Spread + 100bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 15
-Equity - 3000bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 15
-Equity + 3000bp
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 14
-VOLA + 10000bp
+IR_EURTwistNeg
 
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 20
-Real Estate - 3000bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 20
-Real Estate + 3000bp
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 18
-Commodity - 3000bp
+IR_EURButterflyPos
+
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 18
-Commodity + 3000bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 11
-FX - 3000bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 11
-FX + 3000bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 24
-IR 1Y - 200bp 10Y +200bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 24
-IR 1Y + 200bp 10Y -200bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 35
-IR 1Y +200bp 10Y -100bp 200Y +200bp
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 17
-Black Monday 1987
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 16
-Terror 2001-9-11
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 24
-DotCom bubble burst 2000
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 26
-Asian Currency Crisis 1997
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 21
-Financial Crisis 2008
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 12
-Basescenario
+IR_EURButterflyNeg
 
 
 
 
 
-# name: risktype
-# type: cell
-# rows: 22
-# columns: 1
-# name: <cell-element>
+# name: objects
 # type: cell
 # rows: 1
-# columns: 1
+# columns: 22
 # name: <cell-element>
 # type: sq_string
-# elements: 1
-# length: 5
-RF_IR
-
-
+# elements: 0
 
 
 
 # name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_IR
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
+# type: struct
+# ndims: 2
+ 1 2
 # length: 9
-RF_SPREAD
-
-
-
-
-
-# name: <cell-element>
+# name: id
 # type: cell
 # rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 9
-RF_SPREAD
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_EQ
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_EQ
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 7
-RF_VOLA
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_RE
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_RE
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
+# columns: 2
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 6
-RF_COM
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 6
-RF_COM
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_FX
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 1
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_FX
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 3
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 12
-RF_IR_EUR_1Y
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 13
-RF_IR_EUR_10Y
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 13
-RF_IR_EUR_20Y
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 3
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 12
-RF_IR_EUR_1Y
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 13
-RF_IR_EUR_10Y
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 13
-RF_IR_EUR_20Y
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 3
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 12
-RF_IR_EUR_1Y
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 13
-RF_IR_EUR_10Y
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 13
-RF_IR_EUR_20Y
-
-
-
-
-
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 7
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_EQ
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 10
-RF_VOLA_EQ
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 12
-RF_IR_USD_1Y
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 13
-RF_IR_USD_10Y
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 13
-RF_IR_USD_10Y
+IR_EUR
 
 
 
@@ -650,29 +399,21 @@ RF_IR_USD_10Y
 # type: sq_string
 # elements: 1
 # length: 6
-RF_COM
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_FX
+IR_USD
 
 
 
 
 
-# name: <cell-element>
+# name: type
 # type: cell
 # rows: 1
-# columns: 3
+# columns: 2
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 5
-RF_EQ
+curve
 
 
 
@@ -680,51 +421,13 @@ RF_EQ
 # type: sq_string
 # elements: 1
 # length: 5
-RF_RE
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 10
-RF_VOLA_EQ
+curve
 
 
 
 
 
-# name: <cell-element>
-# type: cell
-# rows: 1
-# columns: 3
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_EQ
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 10
-RF_VOLA_EQ
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 9
-RF_SPREAD
-
-
-
-
-
-# name: <cell-element>
+# name: shock_type
 # type: cell
 # rows: 1
 # columns: 2
@@ -732,37 +435,107 @@ RF_SPREAD
 # type: sq_string
 # elements: 1
 # length: 8
-RF_EQ_EM
+absolute
 
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 5
-RF_FX
+# length: 8
+absolute
 
 
 
 
 
-# name: <cell-element>
+# name: term
 # type: cell
 # rows: 1
-# columns: 6
+# columns: 2
 # name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 5
-RF_IR
+# type: scalar
+365
 
 
 
 # name: <cell-element>
+# type: scalar
+365
+
+
+
+
+
+# name: axis_x
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_y
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_z
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: method_interpolation
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 5
-RF_EQ
+# length: 6
+linear
 
 
 
@@ -770,7 +543,69 @@ RF_EQ
 # type: sq_string
 # elements: 1
 # length: 6
-RF_COM
+linear
+
+
+
+
+
+# name: shock_value
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: scalar
+-0.01
+
+
+
+# name: <cell-element>
+# type: scalar
+-0.01
+
+
+
+
+
+
+
+
+# name: <cell-element>
+# type: struct
+# ndims: 2
+ 1 2
+# length: 9
+# name: id
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+IR_USD
+
+
+
+
+
+# name: type
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+curve
 
 
 
@@ -778,7 +613,577 @@ RF_COM
 # type: sq_string
 # elements: 1
 # length: 5
-RF_RE
+curve
+
+
+
+
+
+# name: shock_type
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+
+
+
+# name: term
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: scalar
+365
+
+
+
+# name: <cell-element>
+# type: scalar
+365
+
+
+
+
+
+# name: axis_x
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_y
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_z
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: method_interpolation
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+
+
+
+# name: shock_value
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: scalar
+0.01
+
+
+
+# name: <cell-element>
+# type: scalar
+0.01
+
+
+
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 16
+SPREAD_EUR_FIN_A
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: term
+# type: scalar
+365
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+-0.01
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 16
+SPREAD_EUR_FIN_A
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: term
+# type: scalar
+365
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+0.01
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 14
+INFL_EXP_CURVE
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: term
+# type: scalar
+365
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+-0.01
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 14
+INFL_EXP_CURVE
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: term
+# type: scalar
+365
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+0.01
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+# name: term
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+0.7
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+# name: term
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+1.3
+
+
+
+
+
+# name: <cell-element>
+# type: struct
+# ndims: 2
+ 1 2
+# length: 9
+# name: id
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 14
+RF_VOLA_IR_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
+
+
+
+
+
+# name: type
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+surface
 
 
 
@@ -786,298 +1191,1681 @@ RF_RE
 # type: sq_string
 # elements: 1
 # length: 7
-RF_VOLA
+surface
+
+
+
+
+
+# name: shock_type
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
 
 
 
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 15
-RF_SPREAD_.*_HY
+# length: 8
+absolute
+
+
+
+
+
+# name: term
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_x
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_y
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_z
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: method_interpolation
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+
+
+# name: shock_value
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: scalar
+1
+
+
+
+# name: <cell-element>
+# type: scalar
+1
+
+
+
 
 
 
 
 
 # name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 11
+REIT_GLOBAL
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+# name: term
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+0.7
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 11
+REIT_GLOBAL
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+# name: term
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+1.3
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+COM_GOLD
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+# name: term
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+0.7
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+COM_GOLD
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+# name: term
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+1.3
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 9
+FX_EURUSD
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+# name: term
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+0.7
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 9
+FX_EURUSD
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+# name: term
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: scalar
+1.3
+
+
+
+
+
+# name: <cell-element>
+# type: struct
+# ndims: 2
+ 1 3
+# length: 9
+# name: id
 # type: cell
 # rows: 1
-# columns: 1
+# columns: 3
 # name: <cell-element>
 # type: sq_string
 # elements: 1
 # length: 5
-RF_IR
+EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 16
+SPREAD_EUR_FIN_A
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 13
+RF_VOLA_EQ_DE
 
 
 
 
 
-
-
-
-# name: shiftvalue
+# name: type
 # type: cell
-# rows: 22
-# columns: 1
+# rows: 1
+# columns: 3
 # name: <cell-element>
-# type: scalar
--100
+# type: sq_string
+# elements: 1
+# length: 5
+index
 
-
-# name: <cell-element>
-# type: scalar
-100
 
 
 # name: <cell-element>
-# type: scalar
--100
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+surface
+
+
+
+
+
+# name: shock_type
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+
+
+
+# name: term
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
 
 
 # name: <cell-element>
 # type: scalar
-100
+365
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_x
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_y
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_z
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: method_interpolation
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+
+
+# name: shock_value
+# type: cell
+# rows: 1
+# columns: 3
+# name: <cell-element>
+# type: scalar
+0.65
+
 
 
 # name: <cell-element>
 # type: scalar
--0.3
+0.05
 
-
-# name: <cell-element>
-# type: scalar
-0.3
 
 
 # name: <cell-element>
 # type: scalar
-1
+3
+
+
+
+
+
+
 
 
 # name: <cell-element>
-# type: scalar
--0.3
+# type: struct
+# ndims: 2
+ 1 8
+# length: 9
+# name: id
+# type: cell
+# rows: 1
+# columns: 8
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+EUR-INDEX-EQ-STOXX
+
 
 
 # name: <cell-element>
-# type: scalar
-0.3
+# type: sq_string
+# elements: 1
+# length: 9
+FX_EURUSD
 
-
-# name: <cell-element>
-# type: scalar
--0.3
 
 
 # name: <cell-element>
-# type: scalar
-0.3
+# type: sq_string
+# elements: 1
+# length: 14
+RF_VOLA_IR_EUR
 
-
-# name: <cell-element>
-# type: scalar
--0.3
 
 
 # name: <cell-element>
-# type: scalar
-0.3
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+VOLA_IR_EUR_0.0002
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 18
+VOLA_IR_EUR_0.0000
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 19
+VOLA_IR_EUR_-0.0002
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+VOLA_IR_EUR
+
+
+
+
+
+# name: type
+# type: cell
+# rows: 1
+# columns: 8
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+index
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+surface
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+surface
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+surface
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+surface
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 7
+surface
+
+
+
+
+
+# name: shock_type
+# type: cell
+# rows: 1
+# columns: 8
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+relative
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+value
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+value
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+value
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+value
+
+
+
+
+
+# name: term
+# type: cell
+# rows: 1
+# columns: 8
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
 
 
 # name: <cell-element>
 # type: matrix
 # rows: 1
 # columns: 3
- -200 50 200
+ 365 3650 7300
 
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 3
- 200 50 -200
 
 
 # name: <cell-element>
 # type: matrix
-# rows: 1
-# columns: 3
- 200 -100 200
+# rows: 0
+# columns: 0
 
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 7
- -0.33 5 -200 -100 -100 0.1 0.1
 
 
 # name: <cell-element>
 # type: matrix
-# rows: 1
-# columns: 3
- -0.15 -0.15 0.3
+# rows: 0
+# columns: 0
+
 
 
 # name: <cell-element>
 # type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+
+
+# name: axis_x
+# type: cell
 # rows: 1
-# columns: 3
- -0.35 0.5 150
+# columns: 8
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
 
 
 # name: <cell-element>
 # type: matrix
 # rows: 1
 # columns: 2
- -0.5 -0.1
+ 365 3650
 
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 6
- -200 -0.4 -0.5 -0.5 1.5 300
-
-
-# name: <cell-element>
-# type: scalar
-0
-
-
-
-
-
-# name: shifttype
-# type: cell
-# rows: 22
-# columns: 1
-# name: <cell-element>
-# type: scalar
-0
-
-
-# name: <cell-element>
-# type: scalar
-0
-
-
-# name: <cell-element>
-# type: scalar
-0
-
-
-# name: <cell-element>
-# type: scalar
-0
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: scalar
-1
-
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 3
- 0 0 0
-
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 3
- 0 0 0
-
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 3
- 0 0 0
-
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 7
- 1 1 0 0 0 1 1
-
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 3
- 1 1 1
-
-
-# name: <cell-element>
-# type: matrix
-# rows: 1
-# columns: 3
- 1 1 0
 
 
 # name: <cell-element>
 # type: matrix
 # rows: 1
 # columns: 2
+ 365 3650
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 3650
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 3650
+
+
+
+
+
+# name: axis_y
+# type: cell
+# rows: 1
+# columns: 8
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 3650
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 3650
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 3650
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 2
+ 365 3650
+
+
+
+
+
+# name: axis_z
+# type: cell
+# rows: 1
+# columns: 8
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ -0.0002 0 0.0002
+
+
+
+
+
+# name: method_interpolation
+# type: cell
+# rows: 1
+# columns: 8
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+# name: <cell-element>
+# type: string
+# elements: 0
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+
+
+
+# name: shock_value
+# type: cell
+# rows: 1
+# columns: 8
+# name: <cell-element>
+# type: scalar
+345
+
+
+
+# name: <cell-element>
+# type: scalar
+0.9
+
+
+
+# name: <cell-element>
+# type: scalar
+2
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 0.03 0.02 0.015
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 2
+# columns: 2
+ 0.015 0.025
+ 0.01 0.03
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 2
+# columns: 2
+ 0.013 0.021
+ 0.011 0.028
+
+
+
+# name: <cell-element>
+# type: matrix
+# rows: 2
+# columns: 2
+ 0.003 0.011
+ 0.0081 0.0198
+
+
+
+# name: <cell-element>
+# type: matrix
+# ndims: 3
+ 2 2 3
+ 0.003
+ 0.0081
+ 0.011
+ 0.0198
+ 0.013
+ 0.011
+ 0.021
+ 0.028
+ 0.015
+ 0.01
+ 0.025
+ 0.03
+
+
+
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
  1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
 
 
-# name: <cell-element>
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: term
 # type: matrix
 # rows: 1
-# columns: 6
- 0 1 1 1 1 0
+# columns: 3
+ 365 3650 7300
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: matrix
+# rows: 1
+# columns: 3
+ -0.01 0.01 0.03
+
+
+
 
 
 # name: <cell-element>
-# type: scalar
-0
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: term
+# type: matrix
+# rows: 1
+# columns: 3
+ 365 3650 7300
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: matrix
+# rows: 1
+# columns: 3
+ 0.01 -0.01 -0.03
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: term
+# type: matrix
+# rows: 1
+# columns: 3
+ 365 3650 7300
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: matrix
+# rows: 1
+# columns: 3
+ 0.02 -0.01 0.02
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 9
+# name: id
+# type: sq_string
+# elements: 1
+# length: 6
+IR_EUR
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 5
+curve
+
+
+# name: shock_type
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: term
+# type: matrix
+# rows: 1
+# columns: 3
+ 365 3650 7300
+
+
+# name: axis_x
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_y
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: axis_z
+# type: matrix
+# rows: 0
+# columns: 0
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: shock_value
+# type: matrix
+# rows: 1
+# columns: 3
+ -0.02 0.01 -0.02
+
+
 
 
 
