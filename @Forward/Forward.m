@@ -92,8 +92,9 @@ classdef Forward < Instrument
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') ...
                 || strcmpi(sub_type,'EQFWD') || strcmpi(sub_type,'FX') ...
-                || strcmpi(sub_type,'BondFuture')  || strcmpi(sub_type,'EquityFuture'))
-            error('Forward sub_type must be either Equity, EquityFuture, EQFWD, Bond, FX or BondFuture')
+                || strcmpi(sub_type,'BondFuture')  || strcmpi(sub_type,'EquityFuture') ...
+				|| strcmpi(sub_type,'BONDFWD'))
+            error('Forward sub_type must be either EquityFuture, EQFWD, BONDFWD, FX or BondFuture')
          end
          obj.sub_type = sub_type;
       end % set.sub_type

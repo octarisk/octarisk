@@ -310,7 +310,7 @@ classdef Bond < Instrument
 				|| strcmpi(sub_type,'ILB') || strcmpi(sub_type,'SWAP_FLOATING_FWD_SPECIAL') ...
 				|| strcmpi(sub_type,'FRN_FWD_SPECIAL')  || strcmpi(sub_type,'FRA') ...
 				|| strcmpi(sub_type,'FVA'))
-            error('Bond sub_type must be either FRB, FRN, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL, CMS_FLOATING, FRA, FVA, FRN_FWD_SPECIAL or SWAP_FLOATING_FWD_SPECIAL: %s',sub_type)
+            error('Bond sub_type must be either FRB, FRN, ZCB, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL, CMS_FLOATING, FRA, FVA, FRN_FWD_SPECIAL or SWAP_FLOATING_FWD_SPECIAL: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type

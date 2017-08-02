@@ -664,13 +664,21 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 		tmp_quantity            = position_struct( ii ).quantity;
 		tmp_basevalue           = position_struct( ii ).basevalue;
 		
-		% calculate pos var
-		tmp_decomp_var_shock     = -(octamat(confi_scenarionumber_shock) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 
-		tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
-		
-		% calculate HD pos var
-	    tmp_pos_var_hd = (tmp_basevalue ) -  (sum(octamat(scen_order_shock) .* hd_vec) * tmp_quantity  * sign(tmp_quantity));	
-		tmp_decomp_var_shock_hd   = -((sum(octamat(scen_order_shock) .* hd_vec)) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 	
+		% take only shocked positions into account (MC shock vectors requires to contain MC scenario)
+		if (length(tmp_values_shock) > confi_scenario)
+			% calculate pos var
+			tmp_decomp_var_shock     = -(octamat(confi_scenarionumber_shock) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 
+			tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
+			
+			% calculate HD pos var
+			tmp_pos_var_hd = (tmp_basevalue ) -  (sum(octamat(scen_order_shock) .* hd_vec) * tmp_quantity  * sign(tmp_quantity));	
+			tmp_decomp_var_shock_hd   = -((sum(octamat(scen_order_shock) .* hd_vec)) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 	
+		else
+			tmp_decomp_var_shock   	= 0.0;
+			tmp_pos_var   			= 0.0;
+			tmp_pos_var_hd   		= 0.0;
+			tmp_decomp_var_shock_hd = 0.0;
+		end
 		
 		% Aggregate positional data according to aggregation keys:
 		for jj = 1 : 1 : length(aggregation_key)

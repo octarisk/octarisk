@@ -7,6 +7,10 @@ classdef Index		% Superclass
       currency = 'EUR';
       value_base = 1;
       type = ''; 
+	  % required for aggregated indexes
+	  index_function = 'sum';   
+      index_parameter = 1;
+	  increments = {};
    end
    
     properties (SetAccess = protected )
@@ -65,8 +69,8 @@ classdef Index		% Superclass
       end % disp
            
       function obj = set.type(obj,type)
-         if ~(sum(strcmpi(upper(type),{'EQUITY INDEX','BOND INDEX','VOLATILITY INDEX','COMMODITY INDEX','REAL ESTATE INDEX','EXCHANGE RATE','CPI'}))>0  )
-            error('Risk factor type must be either EQUITY INDEX, BOND INDEX, VOLATILITY INDEX, COMMODITY INDEX, REAL ESTATE INDEX,EXCHANGE RATE,CPI')
+         if ~(sum(strcmpi(upper(type),{'EQUITY INDEX','BOND INDEX','VOLATILITY INDEX','COMMODITY INDEX','REAL ESTATE INDEX','EXCHANGE RATE','CPI','AGGREGATED INDEX'}))>0  )
+            error('Risk factor type must be either EQUITY INDEX, BOND INDEX, VOLATILITY INDEX, COMMODITY INDEX, REAL ESTATE INDEX,EXCHANGE RATE,CPI or AGGREGATED INDEX')
          end
          obj.type = type;
       end % Set.type
@@ -167,6 +171,7 @@ This class contains all attributes and methods related to the following Index ty
 @item REAL ESTATE INDEX\n\
 @item EXCHANGE RATE\n\
 @item CPI (Consumer Price index)\n\
+@item AGGREGATED INDEX (consists of underlying indexes)\n\
 @end itemize\n\
 \n\
 In the following, all methods and attributes are explained and a code example is given.\n\
@@ -198,6 +203,16 @@ Attributes of Index objects:\n\
 COMMODITY INDEX, REAL ESTATE INDEX, EXCHANGE RATE, CPI]. Default: empty string.\n\
 @item @var{value_base}:  Base value of index. Default: 1.0\n\
 @item @var{currency}: Index currency. Default: \'EUR\'\n\
+\n\
+@item @var{index_function}: Type Aggregated Index only: specifies how \n\
+to aggregated indexes, which are specified in attribute increments.\n\
+Can be [sum, product, divide, factor]. [sum, product, divide] specifies\n\
+mathematical operation applied on all curve increments.\n\
+[factor] allows only one increment and uses @var{curve_parameter} for multiplication. Default: \'sum\'\n\
+@item @var{index_parameter}: Type Aggregated indexes only: used as multiplication\n\
+parameter for factor @var{curve_function}.\n\
+@item @var{increments}: Type Aggregated indexes only: List of IDs of all\n\
+underlying indexes. Use @var{index_function} to specify how to aggregated indexes.\n\
 \n\
 @item @var{scenario_mc}: Vector with Monte Carlo index values. \n\\n\
 @item @var{scenario_stress}: Vector with Stress index values. \n\

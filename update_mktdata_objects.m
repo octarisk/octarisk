@@ -29,7 +29,7 @@ for ii = 1 : 1 : length(mktdata_struct)
     % get class -> switch between curve, index, surface
     tmp_object = mktdata_struct(ii).object;
     tmp_class = lower(class(tmp_object));
-    if ( strcmp(tmp_class,'index'))
+    if ( strcmp(tmp_class,'index') && ~strcmpi(tmp_object.type,'aggregated index'))
         tmp_id = tmp_object.id;
         try
 			% a) apply Stress scenario shocks
@@ -147,7 +147,6 @@ for ii = 1 : 1 : length(mktdata_struct)
 				tmp_rf_id = strcat('RF_',tmp_id);
 				[tmp_rf_object ret_code] = get_sub_object(curve_struct, tmp_rf_id);
 				if (ret_code == 1)	% match found -> market object has attached risk factor -> calculate appropriate scenario values
-					tmp_ir_shock_matrix = [];
                 
                     tmp_timestep_mc = tmp_rf_object.get('timestep_mc');
                     tmp_shocktype_mc = tmp_rf_object.get('shocktype_mc');
@@ -158,30 +157,31 @@ for ii = 1 : 1 : length(mktdata_struct)
                         rf_shock_rates    = tmp_rf_object.getValue(tmp_value_type);
 						% 1. loop through all risk factor shock values and calculate
 						% sln values
-						shock_vec = [];
-						for jj = 1 : 1 : length(rf_shock_nodes)
-							tmp_node = rf_shock_nodes(jj);
-							tmp_shock = tmp_rf_object.getRate(tmp_value_type,tmp_node);
-							% in case of shifted log-normal: adjust shock and calculate absolute shock
-							if  ( strcmpi(tmp_rf_object.get('shocktype_mc'),'sln_relative'))
-								tmp_shocktype_mc = 'absolute';
-								sln_level_vector = tmp_rf_object.get('sln_level');
-								% interpolate sln level:
-								sln_level = interpolate_curve(rf_shock_nodes,sln_level_vector,tmp_node,tmp_rf_object.method_interpolation);
-								tmp_rate_base = tmp_object.getRate('base',tmp_node);
-								tmp_shock = (( tmp_rate_base + sln_level ) .* tmp_shock - sln_level) - tmp_rate_base;
+						if  ( strcmpi(tmp_rf_object.get('shocktype_mc'),'sln_relative'))
+							shock_vec = [];
+							for jj = 1 : 1 : length(rf_shock_nodes)
+								tmp_node = rf_shock_nodes(jj);
+								tmp_shock = tmp_rf_object.getRate(tmp_value_type,tmp_node);
+								% in case of shifted log-normal: adjust shock and calculate absolute shock
+									tmp_shocktype_mc = 'absolute';
+									sln_level_vector = tmp_rf_object.get('sln_level');
+									% interpolate sln level:
+									sln_level = interpolate_curve(rf_shock_nodes,sln_level_vector,tmp_node,tmp_rf_object.method_interpolation);
+									tmp_rate_base = tmp_object.getRate('base',tmp_node);
+									tmp_shock = (( tmp_rate_base + sln_level ) .* tmp_shock - sln_level) - tmp_rate_base;
+								
+								shock_vec = horzcat(shock_vec,tmp_shock);
 							end
-							shock_vec = horzcat(shock_vec,tmp_shock);
+							rf_shock_rates = shock_vec;
 						end
                         % 2. loop through all IR Curve nodes and get interpolated shock value from risk factor
-                        tmp_ir_shock_matrix = [];
+                        tmp_ir_shock_matrix = zeros(rows(rf_shock_rates),length(curve_nodes));
 						
                         for ii = 1 : 1 : length(curve_nodes)
                             tmp_node = curve_nodes(ii);
-                            % get interpolated shock vector at node
-						    tmp_shock = interpolate_curve(rf_shock_nodes,shock_vec,tmp_node,tmp_rf_object.method_interpolation); 
-                            % generate total shock matrix
-							tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock);
+                            % get interpolated shock vector at node and generate total shock matrix
+							tmp_ir_shock_matrix(:,ii) = interpolate_curve(rf_shock_nodes, ...
+								rf_shock_rates,tmp_node,tmp_rf_object.method_interpolation);
                         end
                         if ( strcmp(tmp_shocktype_mc,'relative'))
                             curve_rates_mc = curve_rates_base .* tmp_ir_shock_matrix;
@@ -194,7 +194,6 @@ for ii = 1 : 1 : length(mktdata_struct)
                         else
                             fprintf('No valid shock type defined [relative,absolute,sln_relative]: >>%s<< \n',tmp_shocktype_mc);
                         end
-                        clear tmp_ir_shock_matrix;
                         tmp_object = tmp_object.set('timestep_mc',tmp_value_type);
                         tmp_object = tmp_object.set('rates_mc',curve_rates_mc);
                         
@@ -217,7 +216,7 @@ end % end for loop through all mktdata objects
 fprintf('SUCCESS: generated >>%d<< index and curve objects from marketdata. \n',index_curve_objects);
 
 % ##################              Curve Stacking         #######################
-% TODO: get all curves from instrument_struct and stack these curves only (reduce memory consumption)
+% get all curves from instrument_struct and stack these curves only (reduce memory consumption)
 used_curved_list = get_used_curves_from_instruments(instrument_struct);
 aggr_curve_objects = 0;
 for ii = 1 : 1 : length(mktdata_struct)
@@ -227,28 +226,35 @@ for ii = 1 : 1 : length(mktdata_struct)
     if ( strcmpi(tmp_class,'curve') && strcmpi(tmp_object.type,'aggregated curve'))
         tmp_id = tmp_object.id;
         if ( sum(strcmpi(tmp_id,used_curved_list))>0)   % curve used for instruments
-            try
+          try
+            % check whether aggregated index was not already generated
+            [tmp_obj ret_code] = get_sub_object(curve_struct,tmp_id);
+            if (ret_code == 1)
+                fprintf('octarisk::update_mktdata_objects: Curve >>%s<< already aggregated. Skipping.\n',any2str(tmp_id));
+            else
                 % call helper function for aggregating curve objects
                 [tmp_object curve_struct] = aggregate_curve_ojects(tmp_object,valuation_date, ...
                                 mktdata_struct,index_struct,riskfactor_struct, ...
                                 curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc);
-                
+
                 aggr_curve_objects = aggr_curve_objects + 1;
                 % store everything in curve struct
                 tmp_store_struct = length(curve_struct) + 1;
                 curve_struct( tmp_store_struct ).id      = tmp_object.id;
                 curve_struct( tmp_store_struct ).name    = tmp_object.name;
                 curve_struct( tmp_store_struct ).object  = tmp_object;
-            catch
+            end
+          catch
                 fprintf('WARNING: octarisk::update_mktdata_objects: There has been an error for new Curve object:  >>%s<<. Message: >>%s<< in line >>%d<< \n',any2str(tmp_id),lasterr,lasterror.stack.line);
                 id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
-            end
+          end
         end % else unused curve -> do nothing, no stacking at all
     end
 end
 fprintf('SUCCESS: generated >>%d<< aggregated curve objects from marketdata. \n',aggr_curve_objects);
 
-% Caculate reciprocal FX conversion factors (it is only required to define one conversion factor for each currency.
+
+% Calculate reciprocal FX conversion factors (it is only required to define one conversion factor for each currency.
 % regardless, whether there is an attached risk factor, the reciprocal base (and scenario) values are taken
 % for the corresponding FX exchange rate
 new_fx_reciprocal_objects = 0;
@@ -298,6 +304,42 @@ for ii = 1 : 1 : length(index_struct)
 end % end for loop for FX conversion factors
 
 fprintf('SUCCESS: generated >>%d<< reciprocal FX index objects. \n',new_fx_reciprocal_objects);
+
+% ##################              Index Stacking         #######################
+aggr_index_objects = 0;
+for ii = 1 : 1 : length(mktdata_struct)
+    % get class -> switch between curve, index
+    tmp_object = mktdata_struct(ii).object;
+    tmp_class = lower(class(tmp_object));
+    if ( strcmpi(tmp_class,'index') && strcmpi(tmp_object.type,'aggregated index'))
+        tmp_id = tmp_object.id;
+		try
+			% call helper function for aggregating curve objects
+            % check whether aggregated index was not already generated
+            [tmp_obj ret_code] = get_sub_object(index_struct,tmp_id);
+            if (ret_code == 1)
+                fprintf('octarisk::update_mktdata_objects: Index >>%s<< already aggregated. Skipping.\n',any2str(tmp_id));
+            else
+                [tmp_object index_struct] = aggregate_index_ojects(tmp_object,valuation_date, ...
+                                       mktdata_struct,index_struct,riskfactor_struct, ...
+                                       index_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc);
+
+                aggr_index_objects = aggr_index_objects + 1;
+                % store everything in curve struct
+                tmp_store_struct = length(index_struct) + 1;
+                index_struct( tmp_store_struct ).id      = tmp_object.id;
+                index_struct( tmp_store_struct ).name    = tmp_object.name;
+                index_struct( tmp_store_struct ).object  = tmp_object;
+            end
+		catch
+			fprintf('WARNING: octarisk::update_mktdata_objects: There has been an error for new Curve object:  >>%s<<. Message: >>%s<< in line >>%d<< \n',any2str(tmp_id),lasterr,lasterror.stack.line);
+			id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
+		end
+    end
+end
+fprintf('SUCCESS: generated >>%d<< aggregated index objects from marketdata. \n',aggr_index_objects);
+
+
 if (length(id_failed_cell) > 0 )
     fprintf('WARNING: >>%d<< mktdata objects failed: \n',length(id_failed_cell));
     id_failed_cell
@@ -380,13 +422,16 @@ function retval = return_stress_shocks(obj,mktstruct)
 	end
 end
 
-
+% ==============================================================================
 % Helper Function for stacking curves
-function [tmp_object curve_struct] = aggregate_curve_ojects(tmp_object,valuation_date,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc)
+function [tmp_object curve_struct] = aggregate_curve_ojects(tmp_object, ...
+				valuation_date,mktdata_struct,index_struct,riskfactor_struct, ...
+				curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc)
 
 %fprintf('New type aggregated object: %s \n',tmp_id);
 % get nodes of aggr curve and set rates
 %disp("make empty containers")
+nestedaggregation = false;
 aggr_curve_nodes      = tmp_object.get('nodes');
 aggr_curve_function   = tmp_object.get('curve_function');
 aggr_curve_parameter  = tmp_object.get('curve_parameter');
@@ -501,6 +546,8 @@ for kk = 1 : 1 : length(aggr_curve_increments)
                 aggr_curve_rates_mc = aggr_curve_rates_mc .* tmp_aggr_curve_rates_mc;
             elseif ( strcmpi(aggr_curve_function,'divide'))
                 aggr_curve_rates_mc = aggr_curve_rates_mc ./ tmp_aggr_curve_rates_mc;
+			else
+				error('ERROR: update_mktdata_objects: unknown curve function >>%s<<',any2str(aggr_curve_function));
             end
         end
     else
@@ -517,21 +564,146 @@ for kk = 1 : 1 : length(aggr_curve_increments)
             curve_struct( tmp_store_struct ).id      = tmp_incr_object.id;
             curve_struct( tmp_store_struct ).name    = tmp_incr_object.name;
             curve_struct( tmp_store_struct ).object  = tmp_incr_object;
+
+            nestedaggregation = true;
+            % and now try to aggregate the initial index again with aggregated subindex...
+            [tmp_object curve_struct] = aggregate_curve_ojects(tmp_object,valuation_date, ...
+                            mktdata_struct,index_struct,riskfactor_struct, ...
+                            curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc);
         else
             error('WARNING: Curve increment not found in mktdata: >>%s<<.',tmp_incr_id);
         end
     end % retcode 1
     % loop throug all mc timesteps
-    
+
 end
-% store rates in object
-if ( run_mc == true)
+
+if (nestedaggregation == false)
+  % store rates in object
+  if ( run_mc == true)
     tmp_object = tmp_object.set('timestep_mc',timesteps_mc);
     tmp_object = tmp_object.set('rates_mc',aggr_curve_rates_mc);
+  end
+  tmp_object = tmp_object.set('rates_stress',aggr_curve_rates_stress);
+  tmp_object = tmp_object.set('rates_base',aggr_curve_rates_base); % restore rates base. Maybe they were unsorted.
+  tmp_object = tmp_object.set('nodes',aggr_curve_nodes); % restore nodes. Maybe they were unsorted.
 end
-tmp_object = tmp_object.set('rates_stress',aggr_curve_rates_stress);
-tmp_object = tmp_object.set('rates_base',aggr_curve_rates_base); % restore rates base. Maybe they were unsorted.
-tmp_object = tmp_object.set('nodes',aggr_curve_nodes); % restore nodes. Maybe they were unsorted.
 
+end % end function
+
+% ==============================================================================
+% Helper function for aggregation of index curves
+function [tmp_object index_struct] = aggregate_index_ojects(tmp_object, ...
+                                        valuation_date,mktdata_struct,index_struct,riskfactor_struct, ...
+                                        curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc)
+
+nestedaggregation = false;
+aggr_index_function   = tmp_object.get('index_function');
+aggr_index_parameter  = tmp_object.get('index_parameter');
+aggr_index_base    = 1.0;
+aggr_index_stress = ones(no_stresstests,1);
+aggr_index_mc = ones(mc,1);
+
+% get increments of aggr index
+aggr_index_increments = tmp_object.get('increments');
+% loop through all increments
+for kk = 1 : 1 : length(aggr_index_increments)
+    tmp_incr_id = aggr_index_increments{kk};
+    % searching for index increment in index_struct
+    [tmp_incr_object ret_code] = get_sub_object(index_struct, tmp_incr_id);
+        if (ret_code == 0) % search for underlying risk factor
+                [tmp_incr_object ret_code] = get_sub_object(riskfactor_struct, tmp_incr_id);
+        end
+    if (ret_code == 1)  % match found -> market object has underlying index increment -> calculate appropriate scenario values
+        tmp_incr_stress_rate     = tmp_incr_object.getValue('stress');
+        tmp_incr_base_rate       = tmp_incr_object.getValue('base');
+
+        % combine all increment rates depending on function
+        if ( strcmpi(aggr_index_function,'sum'))
+            if ( kk == 1)   % first increment: aggr_index_mc = zeros(mc,1);
+                aggr_index_stress = zeros(no_stresstests,1);
+                aggr_index_base = 0.0;
+            end
+            aggr_index_stress = aggr_index_stress + tmp_incr_stress_rate;
+            aggr_index_base = aggr_index_base + tmp_incr_base_rate;
+        elseif ( strcmpi(aggr_index_function,'factor'))
+            if (length(aggr_index_increments) > 1)
+                error('ERROR: update_mktdata_objects: curve function factor only allows one increment.\n');
+            end
+            aggr_index_stress = aggr_index_parameter .* tmp_incr_stress_rate;
+            aggr_index_base   = aggr_index_parameter .* tmp_incr_base_rate;
+        elseif ( strcmpi(aggr_index_function,'product'))
+            aggr_index_stress = aggr_index_stress .* tmp_incr_stress_rate;
+            aggr_index_base   = aggr_index_base .* tmp_incr_base_rate;
+        elseif ( strcmpi(aggr_index_function,'divide'))
+            aggr_index_stress = aggr_index_stress ./ tmp_incr_stress_rate;
+            aggr_index_base   = aggr_index_base ./ tmp_incr_base_rate;
+        else
+            error('ERROR: update_mktdata_objects: unknown index function >>%s<<\n',any2str(aggr_index_function));
+        end
+
+        % loop through all timesteps_mc
+        if ( run_mc == true)
+            tmp_aggr_index_rates_mc = [];
+            % get increment scenario shock values
+            for jj = 1 : 1 : length(timesteps_mc)
+                tmp_value_type = timesteps_mc{jj};
+                tmp_aggr_index_col = tmp_incr_object.getValue(tmp_value_type);
+                tmp_aggr_index_rates_mc = cat(2,tmp_aggr_index_rates_mc,tmp_aggr_index_col);
+            end
+            % combine all increment rates depending on function
+            if ( strcmpi(aggr_index_function,'sum'))
+                if ( kk == 1)   % first increment: aggr_index_mc = zeros(mc,1);
+                    aggr_index_mc = zeros(mc,1);
+                end
+                aggr_index_mc =  aggr_index_mc + tmp_aggr_index_rates_mc;
+            elseif ( strcmpi(aggr_index_function,'factor'))
+                if (length(aggr_index_increments) > 1)
+                    error('ERROR: update_mktdata_objects: index function factor only allows one increment.\n');
+                end
+                aggr_index_mc =  aggr_index_parameter .*  tmp_aggr_index_rates_mc;
+            elseif ( strcmpi(aggr_index_function,'product'))
+                aggr_index_mc = aggr_index_mc .* tmp_aggr_index_rates_mc;
+            elseif ( strcmpi(aggr_index_function,'divide'))
+                aggr_index_mc = aggr_index_mc ./ tmp_aggr_index_rates_mc;
+            else
+                error('ERROR: update_mktdata_objects: unknown index function >>%s<<\n',any2str(aggr_index_function));
+            end
+
+        end
+    else
+        fprintf('WARNING: Index increment not yet found: >>%s<<. Updating index data for this id.\n',tmp_incr_id);
+        % call helper function for aggregating increment curve object
+        [tmp_incr_object ret_code] = get_sub_object(mktdata_struct, tmp_incr_id);
+        if (ret_code == 1)
+            fprintf('Updating increment >>%s<<.\n',any2str(tmp_incr_id) );
+            tmp_incr_object = aggregate_index_ojects(tmp_incr_object,valuation_date, ...
+                            mktdata_struct,index_struct,riskfactor_struct, ...
+                            curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc);
+            % store everything in curve struct
+            tmp_store_struct = length(index_struct) + 1;
+            index_struct( tmp_store_struct ).id      = tmp_incr_object.id;
+            index_struct( tmp_store_struct ).name    = tmp_incr_object.name;
+            index_struct( tmp_store_struct ).object  = tmp_incr_object;
+
+            % and now try to aggregate the initial index again with aggregated subindex...
+            [tmp_object index_struct] = aggregate_index_ojects(tmp_object,valuation_date, ...
+                                       mktdata_struct,index_struct,riskfactor_struct, ...
+                                       index_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc);
+            nestedaggregation = true;
+        else
+            error('WARNING: Index increment not found in mktdata struct: >>%s<<.\n',tmp_incr_id);
+        end
+    end % retcode 1
+
+end
+
+if (nestedaggregation == false)
+    % store base and stress values
+    tmp_object = tmp_object.set('scenario_stress',aggr_index_stress);
+    tmp_object = tmp_object.set('value_base',aggr_index_base);
+    tmp_object = tmp_object.set('timestep_mc',timesteps_mc);
+    tmp_object = tmp_object.set('scenario_mc',aggr_index_mc);
+end
 end
 % ##############################################################################

@@ -123,7 +123,7 @@ for ii = 1 : 1 : length(tmp_list_files)
           error_flag = 0;
           if (length(content{jj}) > 3)  % parse row only if it contains some meaningful data
             % B.3a) Generate object of appropriate class
-            if ( sum(strcmp(tmp_mktdata_type,{'INDEX','FX'})) > 0)        % store data in Class INDEX
+            if ( sum(strcmp(tmp_mktdata_type,{'INDEX','FX','AGGREGATEDINDEX'})) > 0)        % store data in Class INDEX
                 i = Index(); 
             elseif ( sum(strcmp(tmp_mktdata_type,{'CURVE','AGGREGATEDCURVE'}))  > 0)        % store data in Class CURVE
                 i = Curve(); 
@@ -195,26 +195,21 @@ for ii = 1 : 1 : length(tmp_list_files)
                 try
                     % special case: some attributes come as vectors
                     if ( strcmp(tmp_columnname,'nodes'))
-                        tmp_entry_split = strsplit(tmp_entry, '|');
-                        tmp_entry = [];
-                        %lsplit = tmp_entry_split{1}
-                        %isempty(tmp_entry_split{1})
-                        if ~( isempty(tmp_entry_split{1}))
-                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all cash flows and convert it to numbers
-                                tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
-                            end
-                            i = i.set(tmp_columnname,tmp_entry);
-                        end
+					    if ~( isempty(tmp_entry))
+							%replace | with , and apply str2num
+							tmp_entry = str2num( strrep(tmp_entry,'|',','));
+						else
+							tmp_entry = [];
+						end
+						i = i.set(tmp_columnname,tmp_entry);
                     elseif ( strcmp(tmp_columnname,'rates_base'))
-                        tmp_entry_split = strsplit(tmp_entry, '|');
-                        tmp_entry = [];
-                        %lsplit = tmp_entry_split{1};
-                        if ~( isempty(tmp_entry_split{1}))
-                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all cash flows and convert it to numbers
-                                tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
-                            end
-                            i = i.set(tmp_columnname,tmp_entry);
-                        end
+                        if ~( isempty(tmp_entry))
+							%replace | with , and apply str2num
+							tmp_entry = str2num( strrep(tmp_entry,'|',','));
+						else
+							tmp_entry = [];
+						end
+						i = i.set(tmp_columnname,tmp_entry);
                     elseif ( strcmp(tmp_columnname,'increments') || ...
                                             strcmp(tmp_columnname,'riskfactors'))  % split into cell
                         try

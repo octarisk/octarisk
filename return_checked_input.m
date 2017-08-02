@@ -132,7 +132,11 @@ if ( strcmpi(type,'special'))
             retval = cellstr(val);
         end 
       else
-        error ('set: expecting timestep_mc to be a cell vector');
+	    if (iscell(val) && length(val) == 0)
+			retval = {};
+		else
+            error ('set: expecting timestep_mc to be a cell vector');
+		end
       end
     % =========== set timestep_mc_cf: appending or setting timestep vector =====
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc_cf'))   
@@ -156,7 +160,11 @@ if ( strcmpi(type,'special'))
             retval = cellstr(val);
         end 
       else
-        error ('set: expecting the cell value to be a cell vector');
+	    if (iscell(val) && length(val) == 0)
+			retval = {};
+		else
+            error ('set: expecting the cell value to be a cell vector');
+		end
      end
     % ====================== set scenario_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'scenario_stress'))   
@@ -181,7 +189,11 @@ if ( strcmpi(type,'special'))
                 tmp_cell(:,:,mc_stack + 1) = val;
                 retval = tmp_cell;
             else
-                error('set: expecting length of new input vector for cf_values_mc to equal length of already existing rate vector');
+				if isempty(val)
+				    retval = [];
+				else
+                    error('set: expecting length of new input vector for cf_values_mc to equal length of already existing rate vector');
+			    end
             end
         else    % setting vector
             tmp_cell(:,:,1) = val;

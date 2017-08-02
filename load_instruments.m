@@ -288,36 +288,37 @@ for ii = 1 : 1 : length(tmp_list_files)
                             tmp_entry = [];
                         end
                     elseif ( strcmp(tmp_columnname,'cf_values'))
-                        tmp_entry_split = strsplit(tmp_entry, '|');
-                        tmp_entry = [];
-                        %lsplit = tmp_entry_split{1}
-                        %isempty(tmp_entry_split{1})
-                        if ~( isempty(tmp_entry_split{1}))
-                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all cash flows and convert it to numbers
-                                tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
-                            end
-                            i = i.set(tmp_columnname,tmp_entry);
-                        end
+                        if ~( isempty(tmp_entry))
+							%replace | with , and apply str2num
+							tmp_entry = str2num( strrep(tmp_entry,'|',','));
+						else
+							tmp_entry = [];
+						end
+						i = i.set(tmp_columnname,tmp_entry);
                     elseif ( strcmp(tmp_columnname,'sensitivities'))
-                        tmp_entry_split = strsplit(tmp_entry, '|');
-                        tmp_entry = [];
-                        %lsplit = tmp_entry_split{1};
-                        if ~( isempty(tmp_entry_split{1}))
-                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all cashf lows and convert it to numbers
-                                tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
-                            end
-                            i = i.set(tmp_columnname,tmp_entry);
-                        end
+                        if ~( isempty(tmp_entry))
+							%replace | with , and apply str2num
+							tmp_entry = str2num( strrep(tmp_entry,'|',','));
+						else
+							tmp_entry = [];
+						end
+						i = i.set(tmp_columnname,tmp_entry);
+					elseif ( strcmp(tmp_columnname,'principal_payment'))
+                        if ~( isempty(tmp_entry))
+							%replace | with , and apply str2num
+							tmp_entry = str2num( strrep(tmp_entry,'|',','));
+						else
+							tmp_entry = [];
+						end
+						i = i.set(tmp_columnname,tmp_entry);
                     elseif ( strcmp(tmp_columnname,'weights'))
-                        tmp_entry_split = strsplit(tmp_entry, '|');
-                        tmp_entry = [];
-                        %lsplit = tmp_entry_split{1};
-                        if ~( isempty(tmp_entry_split{1}))
-                            for ll = 1 : 1 : length(tmp_entry_split)    % loop through all cashf lows and convert it to numbers
-                                tmp_entry = [tmp_entry, str2num(tmp_entry_split{ll}) ];
-                            end
-                            i = i.set(tmp_columnname,tmp_entry);
-                        end    
+                        if ~( isempty(tmp_entry))
+							%replace | with , and apply str2num
+							tmp_entry = str2num( strrep(tmp_entry,'|',','));
+						else
+							tmp_entry = [];
+						end
+						i = i.set(tmp_columnname,tmp_entry);    
                     elseif ( strcmp(tmp_columnname,'riskfactors'))  % split into cell
                         try
                             tmp_entry = strsplit( tmp_entry, '|');
