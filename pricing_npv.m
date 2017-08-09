@@ -149,33 +149,44 @@ MacDur = 0;
 Convexity = 0;
 Convexity_alt = 0;
 MonDur = 0.0;
+% precalculate time factors of instrument cash flows for duration calculation
+if ( sensi_flag == true )
+	 tf_vec  = timefactor(valuation_date,valuation_date + cashflow_dates,basis)'; 
+end
+   
+% convert spread rate convention (cont, act/365) to curve conv
+spread_constant_vec = convert_curve_rates(valuation_date,cashflow_dates', ...
+                        spread_constant,'continuous','annual',3, ...
+                        comp_type_curve,comp_freq_curve,basis_curve);
 
-                        
+% get discount rate from discount curve
+% distinguish between interpolation methods
+if ( strcmpi(interp_discount,'linear'))
+	rate_curve_vec = interpolate_curve_vectorized(discount_nodes, ...
+						discount_rates, cashflow_dates);
+else
+	rate_curve_vec = zeros(rows(discount_rates),length(cashflow_dates));
+	for zz = 1 : 1 : columns(cashflow_dates);
+		tmp_dtm = cashflow_dates(zz);
+		if ( tmp_dtm > 0 )
+				rate_curve_vec(:,zz) = interpolate_curve(discount_nodes,discount_rates, ...
+                                            tmp_dtm,interp_discount);
+		end
+	end
+end 
+rate_curve_vec = max(rate_curve_vec,-0.99999);
+
+yield_total 	= rate_curve_vec'  + spread_constant_vec ;
+% get discount factors
+df_vec 			= discount_factor (valuation_date, (valuation_date + cashflow_dates)', ...
+                            yield_total, comp_type_curve, ...
+                            basis_curve, comp_freq_curve)';									
+											   
 for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows  
     tmp_dtm = cashflow_dates(zz);
     tmp_cf_value = cashflow_values(:,zz);
     if ( tmp_dtm > 0 )  % discount only future cashflows
-        % Get yield at actual spot value
-            % get discount rate from discount curve
-			rate_curve = interpolate_curve(discount_nodes,discount_rates, ...
-                                            tmp_dtm,interp_discount);
-        % The optimizer sometimes applies a rate of -1,
-        %  which leads to a division by zero:
-            if ( rate_curve == -1)
-                rate_curve = -0.99999;
-                fprintf('pricing_npv: WARNING: rate is -1. setting to -0.99999\n');
-            end   
-        % convert spread rate convention (cont, act/365) to curve conv
-            spread_constant_conv = convert_curve_rates(valuation_date,tmp_dtm, ...
-                        spread_constant,'continuous','annual',3, ...
-                        comp_type_curve,comp_freq_curve,basis_curve);
-        % combine with constant spread (e.g. spread over yield)
-			yield_total 	= rate_curve  + spread_constant_conv;        
-			tmp_cf_date 	= valuation_date + tmp_dtm;
-        % Get actual discount factor and time factor acc. to curve convention
-			tmp_df 			= discount_factor (valuation_date, tmp_cf_date, ...
-                                               yield_total, comp_type_curve, ...
-                                               basis_curve, comp_freq_curve); 
+		tmp_df		= df_vec(:,zz);
         % Calculate actual NPV of cash flows    
 			tmp_npv_cashflow = tmp_cf_value .* tmp_df;
         % Add actual cash flow npv to total npv
@@ -183,22 +194,20 @@ for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows
         
         % calculate sensitivities only if flag is set        
         if ( sensi_flag == true )
-            % Get timefactor of instrument cash flows for duration calculation
-			tmp_tf          = timefactor(valuation_date,tmp_cf_date,basis); 
-            MacDur = MacDur + tmp_tf .* tmp_npv_cashflow;
-            MonDur = MonDur + tmp_tf .* tmp_df.^2 .* tmp_cf_value;
+            MacDur = MacDur + tf_vec(zz) .* tmp_npv_cashflow;
+            MonDur = MonDur + tf_vec(zz) .* tmp_df.^2 .* tmp_cf_value;
             % calculating convexity depending on compounding type
             if ( regexpi(comp_type_curve,'disc'))
-                Convexity = Convexity + tmp_npv_cashflow .* (tmp_tf + 1/comp_freq ) ...
-                        .* tmp_tf ./ ( 1 + yield_total/comp_freq).^2;
+                Convexity = Convexity + tmp_npv_cashflow .* (tf_vec(zz) + 1/comp_freq ) ...
+                        .* tf_vec(zz) ./ ( 1 + yield_total(zz)/comp_freq).^2;
             elseif ( regexpi(comp_type_curve,'cont')) 
-                Convexity = Convexity + tmp_npv_cashflow .* tmp_tf.^2;
+                Convexity = Convexity + tmp_npv_cashflow .* tf_vec(zz).^2;
             else    % in case of simple compounding
-                Convexity = Convexity + 2 .* tmp_tf.^2 .* tmp_cf_value .* tmp_df.^3;
+                Convexity = Convexity + 2 .* tf_vec(zz).^2 .* tmp_cf_value .* tmp_df.^3;
             end
             % calculating alternative Convexity
-            Convexity_alt = Convexity_alt + tmp_npv_cashflow .* (tmp_tf.^2 + tmp_tf) ...
-                            ./ ( 1 + yield_total);
+            Convexity_alt = Convexity_alt + tmp_npv_cashflow .* (tf_vec(zz).^2 + tf_vec(zz)) ...
+                            ./ ( 1 + yield_total(zz));
         end
     end
 end 

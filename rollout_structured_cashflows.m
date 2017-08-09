@@ -101,8 +101,6 @@ if nargin > 3
         term_factor = 2; 
     elseif ( term == 3)
         term_factor = 4; 
-    elseif ( term == 2)
-        term_factor = 6; 
     elseif ( term == 1)
         term_factor = 12;
     elseif ( term == 0) % All cash flows are paid at maturity
@@ -110,7 +108,7 @@ if nargin > 3
     else    
         term_factor = 1;
     end
-
+    comp_freq = term_factor;
 % check for existing interest rate curve for FRN
 if (nargin < 2 && strcmp(type,'FRN') == 1)
     error('Too few arguments. No existing IR curve for type FRN.');
@@ -119,10 +117,12 @@ end
 if (nargin < 2 && strcmp(type,'SWAP_FLOATING') == 1)
     error('Too few arguments. No existing IR curve for type FRN.');
 end
-
-if ( datenum(issue_date) > datenum(maturity_date ))
+maturitydatenum = datenum(maturity_date);
+issuedatenum = datenum(issue_date);
+if ( issuedatenum > maturitydatenum)
     error('Error: Issue date later than maturity date');
 end
+
 
 % ------------------------------------------------------------------------------
 % Start Calculation:
@@ -134,142 +134,140 @@ matvec = datevec(maturity_date);
 floor_flag = false;
 % cashflow rollout: method backwards
 if ( strcmpi(coupon_generation_method,'backward') )
-cf_date = matvec;
-cf_dates = cf_date;
-
-while datenum(cf_date) >= datenum(issue_date)
-    cf_year = cf_date(:,1);
-    cf_month = cf_date(:,2);
-    cf_day  = cf_date(:,3);
-    cf_original_day  = matvec(:,3);
-    
-    % depending on frequency, adjust year, month or day
-    % rollout for annual (compounding frequency = 1 payment per year)
-    if ( term == 12)
-        new_cf_year = cf_year - 1;
-        new_cf_month = cf_month;
-        new_cf_day = cf_day;
-        comp_freq = 1;
-    % rollout for annual 365 days (compounding frequency = 1 payment per year)
-    elseif ( term == 365 || term == 52 || term == 0)
-        new_cf_date = datenum(cf_date)-365;
-        new_cf_date = datevec(new_cf_date);
-        new_cf_year = new_cf_date(:,1);
-        new_cf_month = new_cf_date(:,2);
-        new_cf_day = new_cf_date(:,3);    
-        comp_freq = 1;
-    % rollout for semi-annual (compounding frequency = 2 payments per year)
-    elseif ( term == 6)
-        new_cf_year = cf_year;
-        new_cf_month = cf_month - 6;
-        if ( new_cf_month <= 0 )
-            new_cf_month = cf_month + 6;
-            new_cf_year = cf_year - 1;
-        end
-        comp_freq = 2;
-        % error checking for end of month
-        new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-    % rollout for quarter (compounding frequency = 4 payments per year)
-    elseif ( term == 3)
-        new_cf_year = cf_year;
-        new_cf_month = cf_month - 3;
-        if ( new_cf_month <= 0 )
-            new_cf_month = cf_month + 9;
-            new_cf_year = cf_year - 1;
-        end
-        comp_freq = 4;
-        % error checking for end of month
-        new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-    % rollout for monthly (compounding frequency = 12 payments per year)
-    elseif ( term == 1)
-        cf_day = cf_original_day;
-        new_cf_year = cf_year;
-        new_cf_month = cf_month - 1;
-        if ( new_cf_month <= 0 )
-            new_cf_month = cf_month + 11;
-            new_cf_year = cf_year - 1;
-        end
-        comp_freq = 12;
-        % error checking for end of month
-        new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-    end
-        
-    cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
-    if datenum(cf_date) >= datenum(issue_date) 
-        cf_dates = [cf_dates ; cf_date];
-    end
-end % end coupon generation backward
-
+	cf_date = matvec;
+	cf_dates = cf_date;
+    cfdatenum = maturitydatenum;
+	while cfdatenum >= issuedatenum
+		cf_year = cf_date(:,1);
+		cf_month = cf_date(:,2);
+		cf_day  = cf_date(:,3);
+		cf_original_day  = matvec(:,3);
+		
+		% depending on frequency, adjust year, month or day
+		% rollout for annual (compounding frequency = 1 payment per year)
+		if ( term == 12)
+			new_cf_year = cf_year - 1;
+			new_cf_month = cf_month;
+			new_cf_day = cf_day;
+			
+		% rollout for annual 365 days (compounding frequency = 1 payment per year)
+		elseif ( term == 365 || term == 52 || term == 0)
+			new_cf_date = cfdatenum-365;
+			new_cf_date = datevec(new_cf_date);
+			new_cf_year = new_cf_date(:,1);
+			new_cf_month = new_cf_date(:,2);
+			new_cf_day = new_cf_date(:,3);    
+			
+		% rollout for semi-annual (compounding frequency = 2 payments per year)
+		elseif ( term == 6)
+			new_cf_year = cf_year;
+			new_cf_month = cf_month - 6;
+			if ( new_cf_month <= 0 )
+				new_cf_month = cf_month + 6;
+				new_cf_year = cf_year - 1;
+			end
+			
+			% error checking for end of month
+			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
+		% rollout for quarter (compounding frequency = 4 payments per year)
+		elseif ( term == 3)
+			new_cf_year = cf_year;
+			new_cf_month = cf_month - 3;
+			if ( new_cf_month <= 0 )
+				new_cf_month = cf_month + 9;
+				new_cf_year = cf_year - 1;
+			end
+			
+			% error checking for end of month
+			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
+		% rollout for monthly (compounding frequency = 12 payments per year)
+		elseif ( term == 1)
+			cf_day = cf_original_day;
+			new_cf_year = cf_year;
+			new_cf_month = cf_month - 1;
+			if ( new_cf_month <= 0 )
+				new_cf_month = cf_month + 11;
+				new_cf_year = cf_year - 1;
+			end
+			
+			% error checking for end of month
+			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
+		end
+		% update cf_date
+		cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
+		cfdatenum = datenum(cf_date);
+		if cfdatenum >= issuedatenum
+			cf_dates = [cf_dates ; cf_date];
+		end
+	end % end coupon generation backward
+    % flip cf_date vector (since backward has reverse order)
+	cf_dates = flipud(cf_dates);
 
 % cashflow rollout: method forward
 elseif ( strcmpi(coupon_generation_method,'forward') )
-cf_date = issuevec;
-cf_dates = cf_date;
-
-while datenum(cf_date) <= datenum(maturity_date)
-    cf_year = cf_date(:,1);
-    cf_month = cf_date(:,2);
-    cf_day  = cf_date(:,3);
-    cf_original_day  = issuevec(:,3);
-    
-    % depending on frequency, adjust year, month or day
-    % rollout for annual (compounding frequency = 1 payment per year)
-    if ( term == 12)
-        new_cf_year = cf_year + 1;
-        new_cf_month = cf_month;
-        new_cf_day = cf_day;
-        comp_freq = 1;
-    % rollout for annual 365 days (compounding frequency = 1 payment per year)
-    elseif ( term == 365 || term == 52 || term == 0)
-        new_cf_date = datenum(cf_date) + 365;
-        new_cf_date = datevec(new_cf_date);
-        new_cf_year = new_cf_date(:,1);
-        new_cf_month = new_cf_date(:,2);
-        new_cf_day = new_cf_date(:,3);   
-        comp_freq = 1;
-    % rollout for semi-annual (compounding frequency = 2 payments per year)
-    elseif ( term == 6)
-        new_cf_year = cf_year;
-        new_cf_month = cf_month + 6;
-        if ( new_cf_month >= 13 )
-            new_cf_month = cf_month - 6;
-            new_cf_year = cf_year + 1;
-        end
-        comp_freq = 2;
-        % error checking for end of month
-        new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-    % rollout for quarter (compounding frequency = 4 payments per year)
-    elseif ( term == 3)
-        new_cf_year = cf_year;
-        new_cf_month = cf_month + 3;
-        if ( new_cf_month >= 13 )
-            new_cf_month = cf_month - 9;
-            new_cf_year = cf_year + 1;
-        end
-        comp_freq = 4;
-        % error checking for end of month
-        new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-    % rollout for monthly (compounding frequency = 12 payments per year)
-    elseif ( term == 1)
-        cf_day = cf_original_day;
-        new_cf_year = cf_year;
-        new_cf_month = cf_month + 1;
-        if ( new_cf_month >= 13 )
-            new_cf_month = cf_month - 11;
-            new_cf_year = cf_year + 1;
-        end
-        comp_freq = 12;
-        % error checking for end of month
-        new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-    else
-        error('rollout_cashflows_oop: unknown term >>%s<<',any2str(term));
-    end
-        
-    cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
-    if datenum(cf_date) <= datenum(maturity_date) 
-        cf_dates = [cf_dates ; cf_date];
-    end
-end        % end coupon generation forward
+	cf_date = issuevec;
+	cf_dates = cf_date;
+	cfdatenum = issuedatenum;
+	while cfdatenum <= maturitydatenum
+		cf_year = cf_date(:,1);
+		cf_month = cf_date(:,2);
+		cf_day  = cf_date(:,3);
+		cf_original_day  = issuevec(:,3);
+		
+		% depending on frequency, adjust year, month or day
+		% rollout for annual (compounding frequency = 1 payment per year)
+		if ( term == 12)
+			new_cf_year = cf_year + 1;
+			new_cf_month = cf_month;
+			new_cf_day = cf_day;
+		% rollout for annual 365 days (compounding frequency = 1 payment per year)
+		elseif ( term == 365 || term == 52 || term == 0)
+			new_cf_date = cfdatenum + 365;
+			new_cf_date = datevec(new_cf_date);
+			new_cf_year = new_cf_date(:,1);
+			new_cf_month = new_cf_date(:,2);
+			new_cf_day = new_cf_date(:,3);   
+		% rollout for semi-annual (compounding frequency = 2 payments per year)
+		elseif ( term == 6)
+			new_cf_year = cf_year;
+			new_cf_month = cf_month + 6;
+			if ( new_cf_month >= 13 )
+				new_cf_month = cf_month - 6;
+				new_cf_year = cf_year + 1;
+			end
+			% error checking for end of month
+			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
+		% rollout for quarter (compounding frequency = 4 payments per year)
+		elseif ( term == 3)
+			new_cf_year = cf_year;
+			new_cf_month = cf_month + 3;
+			if ( new_cf_month >= 13 )
+				new_cf_month = cf_month - 9;
+				new_cf_year = cf_year + 1;
+			end
+			% error checking for end of month
+			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
+		% rollout for monthly (compounding frequency = 12 payments per year)
+		elseif ( term == 1)
+			cf_day = cf_original_day;
+			new_cf_year = cf_year;
+			new_cf_month = cf_month + 1;
+			if ( new_cf_month >= 13 )
+				new_cf_month = cf_month - 11;
+				new_cf_year = cf_year + 1;
+			end
+			% error checking for end of month
+			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
+		else
+			error('rollout_cashflows_oop: unknown term >>%s<<',any2str(term));
+		end
+		% update cf_date
+		cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
+		cfdatenum = datenum(cf_date);
+		if ( cfdatenum <= maturitydatenum)
+			cf_dates = [cf_dates ; cf_date];
+		end
+	end        % end coupon generation forward
 
 %-------------------------------------------------------------------------------
 % cashflow rollout: method zero
@@ -279,64 +277,64 @@ elseif ( strcmpi(coupon_generation_method,'zero'))
 end 
 %-------------------------------------------------------------------------------    
 
-% Sort CF Dates:
-cf_dates = datevec(sort(datenum(cf_dates)));
-
 %-------------------------------------------------------------------------------
 % Adjust first and last coupon period to implement issue date:
 if (long_first_period == true)
-    if ( datenum(cf_dates(1,:)) > datenum(issue_date) )
+    if ( datenum(cf_dates(1,:)) > issuedatenum )
         cf_dates(1,:) = issuevec;
     end
 else
-    if ( datenum(cf_dates(1,:)) > datenum(issue_date) )
+    if ( datenum(cf_dates(1,:)) > issuedatenum )
         cf_dates = [issuevec;cf_dates];
-    end    
+    end
 end
 if (long_last_period == true)
-    if ( datenum(cf_dates(rows(cf_dates),:)) < datenum(maturity_date) )
+    if ( datenum(cf_dates(rows(cf_dates),:)) < maturitydatenum )
         cf_dates(rows(cf_dates),:) = matvec;
     end
 else
-    if ( datenum(cf_dates(rows(cf_dates),:)) < datenum(maturity_date) )
+    if ( datenum(cf_dates(rows(cf_dates),:)) < maturitydatenum )
         cf_dates = [cf_dates;matvec];
     end
 end
-cf_business_dates = datevec(busdate(datenum(cf_dates)-1 + business_day_rule, ...
-                                    business_day_direction));
+%special case: long_last_period == long_first_period == true || only one cashflow (e.g. monthly term):
+if (rows(cf_dates) == 1)
+   cf_dates = [issuevec;matvec];
+end
+% one time and forever: get datenum of cf_dates
+cf_datesnum = datenum(cf_dates);
+cf_business_datesnum = busdate(cf_datesnum-1 + business_day_rule, ...
+                                    business_day_direction);
+cf_business_dates = datevec(cf_business_datesnum);
 %-------------------------------------------------------------------------------
-
 
 %-------------------------------------------------------------------------------
 % ############   Calculate Cash Flow values depending on type   ################   
 %
 % Type FRB: Calculate CF Values for all CF Periods
 if ( strcmpi(type,'FRB') || strcmpi(type,'SWAP_FIXED') )
-    cf_datesnum = datenum(cf_dates);
-    %cf_datesnum = cf_datesnum((cf_datesnum-today)>0)
+
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
     % preallocate memory
-    cf_values = zeros(1,length(d1));
     cf_principal = zeros(1,length(d1));
     % calculate all cash flows (assume prorated == true --> deposit method
-    for ii = 1: 1 : length(d2)
-        cf_values(ii) = ((1 ./ discount_factor(d1(ii), d2(ii), coupon_rate, ...
-                                            compounding_type, dcc, ...
-                                            compounding_freq)) - 1) .* notional;
-        % prorated == false: adjust deposit method to bond method --> in case
-        % of leap year adjust time period length by adding one day and
-        % recalculate cash flow
-        if ( instrument.prorated == false) 
-            delta_coupon = cf_values(ii) - coupon_rate .* notional;
-            delta_prorated = notional .* coupon_rate / 365;
-            if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
-                cf_values(ii) = ((1 ./ discount_factor(d1(ii)+1, d2(ii), ...
-                                    coupon_rate, compounding_type, dcc, ...
-                                    compounding_freq)) - 1) .* notional;
-            end
-        end
-    end
+	cf_values = ((1 ./ discount_factor(d1, d2, coupon_rate, ...
+										compounding_type, dcc, ...
+										compounding_freq)) - 1)' .* notional;
+	% prorated == false: adjust deposit method to bond method --> in case
+	% of leap year adjust time period length by adding one day and
+	% recalculate cash flow
+	if ( instrument.prorated == false) 
+		delta_coupon = cf_values - coupon_rate .* notional;
+		delta_prorated = notional .* coupon_rate / 365;
+		if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
+			cf_values = ((1 ./ discount_factor(d1+1, d2, ...
+								coupon_rate, compounding_type, dcc, ...
+								compounding_freq)) - 1)' .* notional;
+		end
+	end
+
     ret_values = cf_values;
     cf_interest = cf_values;
     % Add notional payments
@@ -363,7 +361,6 @@ if ( strcmpi(type,'FRB') || strcmpi(type,'SWAP_FIXED') )
 % Cashflow = notional * (1/du - 1/dk) * du = notional * (1 - du / dk)
 % Value <---------  discounting  ------    Cashflow at Tt    
 elseif ( strcmpi(type,'FRA') )
-    cf_datesnum = datenum(cf_dates);
     T0 = valuation_date;	% valuation_date
     Tt = cf_datesnum(2) - T0; % cash flow date = maturity date of FRA
 	Tu = datenum(instrument.underlying_maturity_date) - T0; % underlyings maturity date
@@ -418,7 +415,6 @@ elseif ( strcmpi(type,'FRA') )
 % Cashflow = notional * (sqrt( (Tu_vol^2 - Tt_vol^2) / TF_Tu) - K_vol)
 % Value <---------  discounting  ------    Cashflow at Tt    
 elseif ( strcmpi(type,'FVA') )
-    cf_datesnum = datenum(cf_dates);
     T0 = valuation_date;	% valuation_date
     Tt = cf_datesnum(2) - T0; % cash flow date = maturity date of FRA
 	Tu = datenum(instrument.underlying_maturity_date) - T0; % underlyings maturity date
@@ -474,7 +470,6 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 	hist 	= surface;
 	cpi 	= riskfactor;
 	notional_tmp = notional;
-    cf_datesnum = datenum(cf_dates);
     %cf_datesnum = cf_datesnum((cf_datesnum-today)>0)
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
@@ -504,6 +499,11 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
     cf_principal = zeros(no_scen,length(d1));
 	inflation_index = zeros(no_scen,length(d1));
 	
+	% precalculate rates at nodes
+	rates_interest = ((1 ./ discount_factor(d1, d2, coupon_rate, ...
+                                            compounding_type, dcc, ...
+                                            compounding_freq)) - 1)';
+											
     % calculate all cash flows (assume prorated == true --> deposit method
     for ii = 1: 1 : length(d2)
         % convert dates into years from valuation date with timefactor
@@ -537,9 +537,7 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 			% take adjust cpi factor relativ to initial cpi value
             notional_tmp = notional .* adj_cpi_factor .* cpi_level ./ cpi_initial;
 			inflation_index(:,ii) = adj_cpi_factor .* cpi_level;
-            cf_values(:,ii) = ((1 ./ discount_factor(d1(ii), d2(ii), coupon_rate, ...
-                                            compounding_type, dcc, ...
-                                            compounding_freq)) - 1) .* notional_tmp;
+            cf_values(:,ii) = rates_interest(ii) .* notional_tmp;
 			% prorated == false: adjust deposit method to bond method --> in case
 			% of leap year adjust time period length by adding one day and
 			% recalculate cash flow
@@ -589,7 +587,6 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 
 % Type Averaging FRN: Average forward or historical rates of cms_sliding period
 elseif ( strcmpi(type,'FRN_FWD_SPECIAL') || strcmpi(type,'SWAP_FLOATING_FWD_SPECIAL'))
-    cf_datesnum = datenum(cf_dates);
     %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
@@ -690,7 +687,6 @@ elseif ( strcmpi(type,'FRN_FWD_SPECIAL') || strcmpi(type,'SWAP_FLOATING_FWD_SPEC
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
 %           spot rate defined 
 elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
-    cf_datesnum = datenum(cf_dates);
     %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
@@ -698,10 +694,9 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
     notvec(length(notvec)) = 1;
     cf_values = zeros(rows(tmp_rates),length(d1));
     cf_principal = zeros(rows(tmp_rates),length(d1));
-
+	[tf dip dib] = timefactor (d1, d2, dcc);
     for ii = 1 : 1 : length(d1)
         % convert dates into years from valuation date with timefactor
-        [tf dip dib] = timefactor (d1(ii), d2(ii), dcc);
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
   
@@ -783,20 +778,20 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
                 forward_rate = getCapFloorRate(instrument.CapFlag, ...
                         adj_rate, X, tf_fsd, sigma, instrument.model);
                 % adjust forward rate to term of caplet / floorlet
-                forward_rate = forward_rate .* tf;
+                forward_rate = forward_rate .* tf(ii);
             else % all other floating swap legs and floater
-                forward_rate = (spread + forward_rate_curve) .* tf;
+                forward_rate = (spread + forward_rate_curve) .* tf(ii);
             end
         elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
                                         % next is in future, use last reset rate
             if (strcmpi(type,'CAP') || strcmpi(type,'FLOOR'))
                 if instrument.CapFlag == true
-                    forward_rate = max(last_reset_rate - instrument.strike,0) .* tf;
+                    forward_rate = max(last_reset_rate - instrument.strike,0) .* tf(ii);
                 else
-                    forward_rate = max(instrument.strike - last_reset_rate,0) .* tf;
+                    forward_rate = max(instrument.strike - last_reset_rate,0) .* tf(ii);
                 end
             else
-                forward_rate = (spread + last_reset_rate) .* tf;
+                forward_rate = (spread + last_reset_rate) .* tf(ii);
             end
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
             forward_rate = 0.0;
@@ -828,11 +823,10 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
     cms_rates = zeros(rows(tmp_rates),length(d1));
     cms_tf    = zeros(rows(tmp_rates),length(d1));
     cf_principal = zeros(rows(tmp_rates),length(d1));
-    
+    [tf dip dib] = timefactor (d1, d2, dcc);
     for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
-        [tf dip dib] = timefactor (t1, t2, dcc);
         if ( t1 >= 0 && t2 >= t1 )    % for future cash flows use forward rates
         % (I) Calculate CMS x-let value with or without convexity adjustment and 
         %   distinguish between swaplets, caplets and floorlets 
@@ -885,16 +879,16 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
                 convex_adj = 0.0;
             end 
             % get final capitalized rate
-            final_rate = (spread + cms_rate + convex_adj) .* tf;
+            final_rate = (spread + cms_rate + convex_adj) .* tf(ii);
             
         elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
                                         % next is in future, use last reset rate
-            final_rate = (spread + last_reset_rate) .* tf;
+            final_rate = (spread + last_reset_rate) .* tf(ii);
             
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
             final_rate = 0.0;
         end 
-        cms_tf(:,ii) = tf;  % store timefactor of cms rate        
+        cms_tf(:,ii) = tf(ii);  % store timefactor of cms rate        
         cms_rates(:,ii) = final_rate;
     end
     cms_rates(:,1)=[];  % remove first cms_rates
@@ -902,10 +896,11 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
     % Capitalized Floater adjustments:
     % 1. only final cash flow at maturity date
     cf_dates    = [issuevec;matvec];
+	cf_datesnum = datenum(cf_dates);
     % update business date
-    cf_business_dates = datevec(busdate(datenum(cf_dates)-1 + business_day_rule, ...
+    cf_business_dates = datevec(busdate(cf_datesnum-1 + business_day_rule, ...
                                     business_day_direction));
-                                    
+    cf_business_datesnum = datenum(cf_business_dates);                              
     % 2. adjust cms rates according to rate composition function
     if ( strcmpi(instrument.rate_composition,'capitalized'))
         tmp_rates = prod(1+cms_rates,2) - 1;
@@ -965,11 +960,11 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
     notvec(length(notvec)) = 1;
     cf_values = zeros(rows(tmp_rates),length(d1));
     cf_principal = zeros(rows(tmp_rates),length(d1));
-    
+    [tf dip dib] = timefactor (d1, d2, dcc);
     for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
-        [tf dip dib] = timefactor (t1, t2, dcc);
+        
         if ( t1 >= 0 && t2 >= t1 )    % for future cash flows use forward rates
         % (I) Calculate CMS x-let value with or without convexity adjustment and 
         %   distinguish between swaplets, caplets and floorlets 
@@ -1061,23 +1056,23 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 % adjust cms rate to term of caplet / floorlet and add back
                 % convexity adjustment in case of Hagan
                 if ( strcmpi( instrument.cms_convex_model,'Hagan' ) )
-                    cms_rate = (cms_rate + convex_adj) .* tf;
+                    cms_rate = (cms_rate + convex_adj) .* tf(ii);
                 else
-                    cms_rate = cms_rate .* tf;
+                    cms_rate = cms_rate .* tf(ii);
                 end
             else % all other CMS floating swap legs
-                cms_rate = (spread + cms_rate + convex_adj) .* tf;
+                cms_rate = (spread + cms_rate + convex_adj) .* tf(ii);
             end
         elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
                                         % next is in future, use last reset rate
             if (strcmpi(type,'CAP_CMS') || strcmpi(type,'FLOOR_CMS'))
                 if instrument.CapFlag == true
-                    cms_rate = max(last_reset_rate - instrument.strike,0) .* tf;
+                    cms_rate = max(last_reset_rate - instrument.strike,0) .* tf(ii);
                 else
-                    cms_rate = max(instrument.strike - last_reset_rate,0) .* tf;
+                    cms_rate = max(instrument.strike - last_reset_rate,0) .* tf(ii);
                 end
             else
-                cms_rate = (spread + last_reset_rate) .* tf;
+                cms_rate = (spread + last_reset_rate) .* tf(ii);
             end
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
             cms_rate = 0.0;
@@ -1115,58 +1110,67 @@ elseif ( strcmp(type,'FAB') == 1 )
     % amount outstanding, remove all cf_dates < 0, make new attribute specifying
     % is outstanding amount shall be used
     % fixed annuity: fixed total payments 
-    if ( fixed_annuity_flag == 1)    
+    if ( fixed_annuity_flag == 1)
         if ( use_annuity_amount == 0)   % calculate annuity from coupon rate and notional
-            number_payments = length(cf_dates) -1;
+            number_payments = rows(cf_dates) -1;
             m = comp_freq;
-            total_term = number_payments / m ; % total term of annuity in years      
+            total_term = number_payments / m;  % total term of annuity in years
             % Discrete compounding only with act/365 day count convention
-            % TODO: implement simple and continuous compounding for annuity 
+            % TODO: implement simple and continuous compounding for annuity
             %       calculation
-            if ( in_arrears_flag == 1)  % in arrears payments (at end of period)    
-                rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) ... 
-                                    / (( 1 + coupon_rate  )^total_term - 1) ) ...
-                                    / (m + coupon_rate / 2 * ( m + 1 ));            
-            else                        % in advance payments
-                rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) ...
-                                    / (( 1 + coupon_rate )^total_term - 1) ) ...
-                                    / (m + coupon_rate / 2 * ( m - 1 ));   
-            end
-            ret_values = ones(1,number_payments) .* rate;
-            
-            % calculate principal and interest cf
-            cf_datesnum = datenum(cf_dates);
             d1 = cf_datesnum(1:length(cf_datesnum)-1);
             d2 = cf_datesnum(2:length(cf_datesnum));
             cf_interest = zeros(1,number_payments);
             amount_outstanding_vec = zeros(1,number_payments);
-            amount_outstanding_vec(1) = notional;
-            % cashflows of first date
-            cf_interest(1) = notional.* ((1 ./ discount_factor (d1(1), d2(1), ...
-                        coupon_rate, compounding_type, dcc, compounding_freq)) - 1); 
-            % cashflows of remaining dates
-            for ii = 2 : 1 : number_payments
-                amount_outstanding_vec(ii) = amount_outstanding_vec(ii - 1) ... 
+            if ( coupon_rate == 0) % special treatment: pay back notional at maturity
+              rate = 0.0;
+              amount_outstanding_vec(1) = notional;
+              cf_principal = zeros(1,number_payments);
+              cf_principal(end) = notional;    % pay back notional at maturity
+              ret_values = cf_principal;
+            else
+              if ( in_arrears_flag == 1)  % in arrears payments (at end of period)
+                rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) ...
+                                    / (( 1 + coupon_rate  )^total_term - 1) ) ...
+                                    / (m + coupon_rate / 2 * ( m + 1 ));
+              else                        % in advance payments
+                rate = (notional * (( 1 + coupon_rate )^total_term * coupon_rate ) ...
+                                    / (( 1 + coupon_rate )^total_term - 1) ) ...
+                                    / (m + coupon_rate / 2 * ( m - 1 ));
+              end
+              ret_values = ones(1,number_payments) .* rate;
+
+              % calculate principal and interest cf
+              amount_outstanding_vec(1) = notional;
+			  % get interest rates at nodes
+			  rate_interest = ((1 ./ discount_factor (d1, d2, ...
+                                      coupon_rate, compounding_type, dcc, ...
+                                      compounding_freq)) - 1)';
+									  
+              % cashflows of first date
+              cf_interest(1) = notional.* rate_interest(1);
+              % cashflows of remaining dates
+              for ii = 2 : 1 : number_payments
+                amount_outstanding_vec(ii) = amount_outstanding_vec(ii - 1) ...
                                             - ( rate -  cf_interest(ii-1) );
-                cf_interest(ii) = amount_outstanding_vec(ii) .* ((1 ./ ...
-                                discount_factor (d1(ii), d2(ii), coupon_rate, ...
-                                     compounding_type, dcc, compounding_freq)) - 1);          
-            end
-            cf_principal = rate - cf_interest;
-        else    % use fixed given annuity_amount
+                cf_interest(ii) = amount_outstanding_vec(ii) .* rate_interest(ii);
+              end
+              cf_principal = ret_values - cf_interest;
+            end   % end coupon_rate <> 0.0
+	else    % use fixed given annuity_amount
             annuity_amt = instrument.annuity_amount;
-            number_payments = length(cf_dates) -1;
+            number_payments = rows(cf_dates) -1;
             m = comp_freq;
-            cf_datesnum = datenum(cf_dates);
             d1 = cf_datesnum(1:length(cf_datesnum)-1);
             d2 = cf_datesnum(2:length(cf_datesnum));
-            cf_interest = zeros(1,number_payments);
+			cf_interest = zeros(1,number_payments);
+            rate_interest = ((1 ./ discount_factor (d1, d2, ...
+                                      coupon_rate, compounding_type, dcc, ...
+                                      compounding_freq)) - 1)';
             amount_outstanding = notional;
             %amount_outstanding_vec = zeros(number_payments,1);
             for ii = 1: 1 : number_payments
-                cf_interest(ii) = ((1 ./ discount_factor (d1(ii), d2(ii), ...
-                                      coupon_rate, compounding_type, dcc, ...
-                                      compounding_freq)) - 1) .* amount_outstanding;
+                cf_interest(ii) = rate_interest(ii) .* amount_outstanding;
                 % deduct annuity amount and add back interest cash flows:
                 amount_outstanding = amount_outstanding - annuity_amt + cf_interest(ii);
                 %amount_outstanding_vec(ii) = amount_outstanding;
@@ -1174,41 +1178,40 @@ elseif ( strcmp(type,'FAB') == 1 )
             ret_values = annuity_amt .* ones(1,number_payments);
             ret_values(end) = ret_values(end) + amount_outstanding;
             cf_principal = ret_values - cf_interest;
-            cf_interest;
-        end
+    end
     % fixed amortization: only amortization is fixed, coupon payments are 
     %                       variable
     else
         % given principal payments, used at each cash flow date for amortization
         if ( use_principal_pmt_flag == 1)
-            number_payments = length(cf_dates) -1;
+            number_payments = rows(cf_dates) -1;
             m = comp_freq;
             princ_pmt = instrument.principal_payment;
+            % trim length of principal payments to length of total payments (fill with 0)
+            if length(princ_pmt) < number_payments
+                princ_pmt = [princ_pmt, zeros(1,number_payments - length(princ_pmt))];
+                %fprintf('WARNING: rollout_structured_cashflow: FAB >>%s<< with given principal payments has less cash flows values than dates. Filling with 0.0.\n',instrument.id);
+            elseif length(princ_pmt) > number_payments
+                princ_pmt = princ_pmt(1:number_payments);
+                %fprintf('WARNING: rollout_structured_cashflow: FAB >>%s<< with given principal payments has more cash flows values than dates. Skipping cash flows.\n',instrument.id);
+            end
+
             % calculate principal and interest cf
-            cf_datesnum = datenum(cf_dates);
             d1 = cf_datesnum(1:length(cf_datesnum)-1);
             d2 = cf_datesnum(2:length(cf_datesnum));
-            cf_interest = zeros(1,number_payments);
-            amount_outstanding_vec = zeros(1,number_payments);
-            amount_outstanding_vec(1) = notional;
-            % cashflows of first date
-            cf_interest(1) = notional.* ((1 ./ discount_factor (d1(1), d2(1), ...
-                        coupon_rate, compounding_type, dcc, compounding_freq)) - 1); 
-            % cashflows of remaining dates
-            for ii = 2 : 1 : number_payments
-                amount_outstanding_vec(ii) = amount_outstanding_vec(ii - 1) ... 
-                                            - princ_pmt;
-                cf_interest(ii) = amount_outstanding_vec(ii) .* ((1 ./ ...
-                                discount_factor (d1(ii), d2(ii), coupon_rate, ...
-                                     compounding_type, dcc, compounding_freq)) - 1);          
-            end
+            %cf_interest = zeros(1,number_payments);
+			amount_outstanding_vec = notional - cumsum(princ_pmt);
+			cf_interest = amount_outstanding_vec .* ((1 ./ ...
+                            discount_factor (d1, d2, coupon_rate, ...
+                                compounding_type, dcc, compounding_freq))' - 1);
+
             cf_principal = princ_pmt .* ones(1,number_payments);
             % add outstanding amount at maturity to principal cashflows
             cf_principal(end) = amount_outstanding_vec(end);
             ret_values = cf_principal + cf_interest;
         % fixed amortization rate, total amortization of bond until maturity
         else 
-            number_payments = length(cf_dates) -1;
+            number_payments = rows(cf_dates) -1;
             m = comp_freq;
             total_term = number_payments / m;   % total term of annuity in years
             amortization_rate = notional / number_payments;  
@@ -1216,17 +1219,18 @@ elseif ( strcmp(type,'FAB') == 1 )
             d1 = cf_datesnum(1:length(cf_datesnum)-1);
             d2 = cf_datesnum(2:length(cf_datesnum));
             cf_values = zeros(1,number_payments);
+			rate_interest = ((1 ./ discount_factor (d1, d2, ...
+                                      coupon_rate, compounding_type, dcc, ...
+                                      compounding_freq)) - 1)';
             amount_outstanding = notional;
             amount_outstanding_vec = zeros(number_payments,1);
             for ii = 1: 1 : number_payments
-                cf_values(ii) = ((1 ./ discount_factor (d1(ii), d2(ii), ...
-                                      coupon_rate, compounding_type, dcc, ...
-                                      compounding_freq)) - 1) .* amount_outstanding;
+                cf_values(ii) = rate_interest(ii) .* amount_outstanding;
                 amount_outstanding = amount_outstanding - amortization_rate;
                 amount_outstanding_vec(ii) = amount_outstanding;
             end
             ret_values = cf_values + amortization_rate;
-            cf_principal = amortization_rate;
+            cf_principal = ret_values - cf_values;
             cf_interest = cf_values;
         %amount_outstanding_vec
         end
@@ -1404,15 +1408,15 @@ if ( term == 0 )
 end
 % end special treatment
 
-ret_dates_tmp = datenum(cf_business_dates);
+ret_dates_tmp = cf_business_datesnum;
 ret_dates = ret_dates_tmp(2:rows(cf_business_dates));
 if enable_business_day_rule == 1
-    pay_dates = cf_business_dates;
+    pay_dates_num = cf_business_datesnum;
 else
-    pay_dates = cf_dates;
+    pay_dates_num = cf_datesnum;
 end
-pay_dates(1,:)=[];
-ret_dates = datenum(pay_dates)' - valuation_date;
+pay_dates_num(1,:)=[];
+ret_dates = pay_dates_num' - valuation_date;
 ret_dates_tmp = ret_dates;              % store all cf dates for later use
 ret_dates = ret_dates(ret_dates>0);
 
@@ -1459,13 +1463,13 @@ else
     % last coupon date is first coupon date for Cases B and C:
     last_coupon_date = ret_dates(1);
     % if valuation date before issue date -> tf = 0
-    if ( valuation_date <= datenum(issue_date) )    % CASE B
+    if ( valuation_date <= issuedatenum )    % CASE B
         tf = 0;
         
     % valuation date after issue date, but before first cf payment date
     else                                            % CASE C
         [tf dip dib] = timefactor (issue_date, valuation_date, dcc);
-        days_from_last_coupon = valuation_date - datenum(issue_date);
+        days_from_last_coupon = valuation_date - issuedatenum;
         days_to_next_coupon = ret_dates(1) ; 
         adj_factor = dib / (days_from_last_coupon + days_to_next_coupon);
         if ~( term == 365)
@@ -1482,7 +1486,7 @@ if ~( term == 365 || term == 0)
     tf = tf * 12 / term;
 % term = maturity --> special calculation for accrued int
 elseif ( term == 0) 
-    if ( valuation_date <= datenum(issue_date) )    % CASE B
+    if ( valuation_date <= issuedatenum )    % CASE B
         tf = 0;
     else                                            % CASE A/C
         tf_id_md = timefactor(issue_date, maturity_date, dcc);
@@ -1958,6 +1962,7 @@ end
 
 %!test
 %! bond_struct=struct();
+%! bond_struct.id						= 'TestFAB';
 %! bond_struct.sub_type                 = 'FAB';
 %! bond_struct.issue_date               = '12-Mar-2016';
 %! bond_struct.maturity_date            = '12-Feb-2020';
@@ -1982,13 +1987,14 @@ end
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = true;
 %! bond_struct.prepayment_flag          = false;
-%! bond_struct.principal_payment        = 147000.00;
+%! bond_struct.principal_payment        = [147000.00] .* ones(1,16);
 %! bond_struct.use_principal_pmt        = 1;
 %! [ret_dates ret_values ret_int ret_princ] = rollout_structured_cashflows('31-Mar-2016','base',bond_struct);
 %! assert(ret_values,ret_int + ret_princ,sqrt(eps))
-%! assert(ret_values(1:3),[269736.833333330,331317.955519128,330524.621420768],sqrt(eps))
-%! assert(ret_values(end),32268464.028369263,sqrt(eps))
+%! assert(ret_values(1:3),[269210.818333330,330524.621420768,329731.287322407],0.001)
+%! assert(ret_values(end),32120669.536636274,0.001)
 
+	
 % testing FRN special floaters: average, min, max, capitalized CMS rates in fine and in arrears
 %!test
 %! valuation_date = datenum('30-Jun-2016');
@@ -2041,4 +2047,3 @@ end
 %!                     rollout_structured_cashflows(valuation_date, value_type, ...
 %!                     cap_float, ref_curve, v);
 %! assert(ret_values,110.223626446553,sqrt(eps));
-

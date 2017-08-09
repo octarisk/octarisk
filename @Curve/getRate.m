@@ -15,6 +15,10 @@ function rate = getRate (curve, value_type, node)
     alpha       = curve.get('alpha');
 
 % interpolate
-    rate = interpolate_curve(nodes,rates,node,interp_method,ufr,alpha,extrap_method);
-	
+	% vector or linear interpolation -> fall fast cpp method
+	if ( length(node) > 1 || strcmpi(interp_method,'linear'))
+		rate = interpolate_curve_vectorized(nodes,rates,node);
+	else
+		rate = interpolate_curve(nodes,rates,node,interp_method,ufr,alpha,extrap_method);
+	end
 end
