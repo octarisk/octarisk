@@ -31,44 +31,41 @@ end
     comp_freq_discount = discount_curve.get('compounding_freq');    
         
 % c) Calculate instrument values under shifted input data
-    % IR downshock
-        rates_ref_sensi  = rates_ref - obj.ir_shock;
+    % IR shock
+        % stack rates_ref curves
+		% adjust rates_discount for shocks
+		%	1. row: base value
+		%	2. row:	-obj.ir_shock
+		%	3. row:	+obj.ir_shock
+		rates_ref_sensi = [rates_ref; ...
+					rates_ref - obj.ir_shock; ...
+					rates_ref + obj.ir_shock];
+		rates_disc_sensis = [rates_discount; ...
+					rates_discount - obj.ir_shock; ...
+					rates_discount + obj.ir_shock];
+	% set floor and cap
         if ( isnumeric(floor_ref) )
             rates_ref_sensi = max(rates_ref_sensi,floor_ref);
         end
         if ( isnumeric(cap_ref) )
             rates_ref_sensi = min(rates_ref_sensirates_ref,cap_ref);
         end
-        % set adjusted curve rates in reference curve
-        reference_curve_shock = reference_curve.set('rates_base',rates_ref_sensi);
+    % set adjusted curve rates in reference curve
+		reference_curve_shock = reference_curve;
+        reference_curve_shock = reference_curve_shock.set('rates_base',rates_ref_sensi);
         [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
                              'base', obj, reference_curve_shock, vola_surface);
 
-        theo_value_ir_down = pricing_npv(valuation_date, ret_dates, ...
-                                    ret_values, obj.soy - obj.ir_shock, ...
-                                    nodes_discount, rates_discount, basis_obj, ...
+        value_vec = pricing_npv(valuation_date, ret_dates, ...
+                                    ret_values, obj.soy, ...
+                                    nodes_discount, rates_disc_sensis, basis_obj, ...
                                     comp_type_obj, comp_freq_obj, interp_discount, ...
                                     comp_type_discount, basis_discount, ...
                                     comp_freq_discount);
-    % IR upshock
-        rates_ref_sensi  = rates_ref + obj.ir_shock;
-        if ( isnumeric(floor_ref) )
-            rates_ref_sensi = max(rates_ref_sensi,floor_ref);
-        end
-        if ( isnumeric(cap_ref) )
-            rates_ref_sensi = min(rates_ref_sensirates_ref,cap_ref);
-        end
-        % set adjusted curve rates in reference curve
-        reference_curve_shock = reference_curve.set('rates_base',rates_ref_sensi);
-        [ret_dates ret_values ] = rollout_structured_cashflows(valuation_date, ...
-                             'base', obj, reference_curve_shock, vola_surface);
-
-        theo_value_ir_up = pricing_npv(valuation_date, ret_dates, ...
-                                    ret_values, obj.soy + obj.ir_shock, ...
-                                    nodes_discount, rates_discount, basis_obj, ...
-                                    comp_type_obj, comp_freq_obj, interp_discount, ...
-                                    comp_type_discount, basis_discount, ...
-                                    comp_freq_discount);
+									
+		theo_value				= value_vec(1);
+		theo_value_ir_down		= value_vec(2);
+		theo_value_ir_up		= value_vec(3);
 									
 	% Vola downshock (applied to spread)
         vola_spread  = obj.vola_spread - obj.vola_shock;

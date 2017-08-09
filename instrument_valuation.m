@@ -440,6 +440,15 @@ elseif ( strcmpi(tmp_type,'synthetic'))
 elseif ( sum(strcmpi(tmp_type,'bond')) > 0 ) 
     % Using Bond class
         bond = instr_obj;
+		
+	% check, whether instrument already valuated for current scenario --> delete properties
+       if ~(strcmpi(scenario,'base') || strcmpi(scenario,'stress'))
+           if ( sum(strcmpi(bond.timestep_mc_cf,scenario))>0)   % scenario already exists
+               bond = bond.set('timestep_mc_cf',{});
+               bond = bond.set('cf_values_mc',[]);
+           end
+       end
+
     % a) Get curve parameters    
       % get discount curve
         tmp_discount_curve  = bond.get('discount_curve');
@@ -451,10 +460,14 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
     % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
         if( sum(strcmpi(tmp_sub_type,{'FRB','SWAP_FIXED','ZCB','CASHFLOW'})) > 0 )       % Fixed Rate Bond instruments (incl. swap fixed leg)
             % rollout cash flows for all scenarios
-            if ( first_eval == 1)
-                bond = bond.rollout('base',valuation_date);
+            bond = bond.rollout('base',valuation_date);
+            % cash flow values are equal for base and all scenarios -> copy values without new rollout
+            if ( strcmpi(scenario,'stress') && ~strcmpi(scenario,'base'))
+               bond = bond.set('cf_values_stress',bond.get('cf_values'));
+            elseif ~(strcmpi(scenario,'stress') && strcmpi(scenario,'base'))
+               bond = bond.set('cf_values_mc',bond.get('cf_values'),'timestep_mc_cf',scenario);
             end
-            bond = bond.rollout(scenario,valuation_date);
+
 		elseif (strcmpi(tmp_sub_type,'ILB') )
 			% get inflation expectation curve
 			iec_id  = bond.get('infl_exp_curve');
@@ -475,10 +488,11 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
 				fprintf('WARNING: instrument_valuation: No consumer price index_struct object found for id >>%s<<\n',cpi_id);
 			end
 			% cashflow rollout		
-			if ( first_eval == 1)
+			if (~strcmpi(scenario,'base') )
                 bond = bond.rollout('base',valuation_date,iec_curve,hist_curve,cpi_index);
             end
-			bond = bond.rollout(scenario,valuation_date,iec_curve,hist_curve,cpi_index);
+            bond = bond.rollout(scenario,valuation_date,iec_curve,hist_curve,cpi_index);
+
 			
         elseif ( strcmpi(tmp_sub_type,'FAB') )
             % cash flow rollout
@@ -509,22 +523,25 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                     fprintf('WARNING: instrument_valuation: No discount curve_struct object found for id >>%s<<\n',tmp_ir_curve);
                 end
             
-                if ( first_eval == 1)
+                if (~strcmpi(scenario,'base') )
                     bond = bond.rollout('base',valuation_date,psa_curve,pp_surface,tmp_curve_object);
                 end
                 bond = bond.rollout(scenario,valuation_date,psa_curve,pp_surface,tmp_curve_object);
             else % fixed amortizing bond without prepayment
-                if ( first_eval == 1)
-                    bond = bond.rollout('base',valuation_date);
-                end
-                bond = bond.rollout(scenario,valuation_date);
-            end
+                bond = bond.rollout('base',valuation_date);
+				% cash flow values are equal for base and all scenarios -> copy values without new rollout
+				if ( strcmpi(scenario,'stress') && ~strcmpi(scenario,'base'))
+				   bond = bond.set('cf_values_stress',bond.get('cf_values'));
+				elseif ~(strcmpi(scenario,'stress') && strcmpi(scenario,'base'))
+				   bond = bond.set('cf_values_mc',bond.get('cf_values'),'timestep_mc_cf',scenario);
+				end
+			end
         elseif( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOATING'))       % Floating Rate Notes (incl. swap floating leg)
              %get reference curve object used for calculating floating rates:
                 tmp_ref_curve   = bond.get('reference_curve');
                 tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
             % rollout cash flows for all scenarios
-                if ( first_eval == 1)
+                if (~strcmpi(scenario,'base') )
                     bond = bond.rollout('base',tmp_ref_object,valuation_date);
                 end
                 bond = bond.rollout(scenario,tmp_ref_object,valuation_date);
@@ -534,7 +551,10 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
                 tmp_surface     = bond.get('vola_surface');
                 tmp_surf_object = get_sub_object(surface_struct, tmp_surface);
-            % rollout cash flows for all scenarios   
+            % rollout cash flows for all scenarios 
+				if (~strcmpi(scenario,'base') )
+                    bond = bond.rollout('base', valuation_date,tmp_ref_object,tmp_surf_object);
+                end
                 bond = bond.rollout(scenario, valuation_date,tmp_ref_object,tmp_surf_object);
 
         elseif( strcmpi(tmp_sub_type,'STOCHASTIC') )       % Stochastic CF instrument
@@ -544,7 +564,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 tmp_surface      = bond.get('stochastic_surface');
                 tmp_surf_obj 	 = get_sub_object(riskfactor_struct, tmp_surface);
             % rollout cash flows for all scenarios
-                if ( first_eval == 1)
+                if (~strcmpi(scenario,'base') )
                     bond = bond.rollout('base',tmp_rf_obj,tmp_surf_obj);
                 end
                 bond = bond.rollout(scenario,tmp_rf_obj,tmp_surf_obj); 
@@ -563,11 +583,14 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object,tmp_ref_object);
             else
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);
-            end    
-			% calculate key rate durations and convexities
-			bond = bond.calc_key_rates(valuation_date,tmp_curve_object);
+            end
+            % calculate key rate durations and convexities - computationally very expensive!
+            bond = bond.calc_key_rates(valuation_date,tmp_curve_object);
         end
-        bond = bond.calc_value (valuation_date,scenario,tmp_curve_object); 
+        % final valuation of bond
+        bond = bond.calc_value (valuation_date,scenario,tmp_curve_object);
+
+
     % e) store bond object:
     ret_instr_obj = bond;
 	

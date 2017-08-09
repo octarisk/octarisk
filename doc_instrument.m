@@ -758,12 +758,12 @@ end
 %!                     -9.61179000000000e-004,-5.60903000000000e-004,-2.40827000000001e-004,8.75499999999918e-006,2.00842999999999e-004,3.47525999999999e-004], ...
 %!         'method_interpolation','linear');
 %! b = b.calc_spread_over_yield('31-Mar-2016',c);
-%! assert(b.get('accrued_interest'),38229.5054644799,0.0001);
-%! assert(b.get('soy'),0.018682087543,0.00001);
+%! assert(b.get('accrued_interest'),38065.6647,0.001);
+%! assert(b.get('soy'),0.018753,0.0001);
 %! b = b.calc_value('31-Mar-2016','base',c);
-%! assert(b.getValue('base'),34752597.42,100);
+%! assert(b.getValue('base'),34752433.5843,100);
 %! b = b.calc_value('31-Mar-2016','stress',c);
-%! assert(b.getValue('stress'),36027871.49,100);
+%! assert(b.getValue('stress'),36065573.593,100);
 
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Agency MBS with given outstanding balance\n');

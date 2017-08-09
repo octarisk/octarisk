@@ -184,11 +184,15 @@ elseif ( sum(strcmpi(type,{'Bond','BONDFWD'})) > 0 )
             curve_comp_type_und, curve_basis_und, curve_comp_freq_und);
             
     % calculate accrued interest from bonds last CF date < Ts until Ts
-    last_coupon_cf_date = und_cf_dates(end);
-    und_notional    = underlying_object.get('notional');
-    und_coupon_rate = underlying_object.get('coupon_rate');
-    und_basis       = underlying_object.get('basis');
-    accr_interest   = timefactor(last_coupon_cf_date,dtm,und_basis) ...
+	if ~(isempty(und_cf_dates))
+		last_coupon_cf_date = und_cf_dates(end);
+	else
+		last_coupon_cf_date = 0; %use valuation date
+	end
+		und_notional    = underlying_object.get('notional');
+		und_coupon_rate = underlying_object.get('coupon_rate');
+		und_basis       = underlying_object.get('basis');
+		accr_interest   = timefactor(last_coupon_cf_date,dtm,und_basis) ...
                         * und_notional * und_coupon_rate;
     
     % get discount factor of forward curve df_discount(Tv,Ts)

@@ -110,11 +110,11 @@ if ischar(valuation_date) || (length(valuation_date) > 1)
    valuation_date = datenum(valuation_date);
 end
 
-if ischar(days_to_t1) || (length(days_to_t1) > 1)
+if ischar(days_to_t1) %|| (length(days_to_t1) > 1)
    days_to_t1 = datenum(days_to_t1) - valuation_date;
 end
 
-if ischar(days_to_t2) || (length(days_to_t2) > 1)
+if ischar(days_to_t2) %|| (length(days_to_t2) > 1)
    days_to_t2 = datenum(days_to_t2) - valuation_date;
 end
 
