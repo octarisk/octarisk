@@ -1063,7 +1063,8 @@ end
 %! 					instrument_struct, [], [], ...
 %! 					[], [], riskfactor_struct);
 %! assert(s.getValue('stress'),[119.7217363121810;88.6920436717158],0.00000001);
-
+%! s = s.calc_value('31-Dec-2016', 'stress',riskfactor_struct);
+%! assert(s.getValue('stress'),[119.7217363121810;88.6920436717158],0.00000001);
 
 
 %!test 
@@ -1311,6 +1312,38 @@ end
 %!                     instrument_struct, surface_struct, matrix_struct, ...
 %!                     curve_struct, index_struct, riskfactor_struct);
 %! assert(o.getValue('stress'),[347.238282599760;602.767484376531;811.214622007268;830.423521024289;889.507588641300],sqrt(eps));
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Sensitivity Instrument (Taylor Expansion) \n');
+%! c = Curve();
+%! c = c.set('id','EUR-SWAP','nodes',[11315,11680],'rates_base',[0.0180057,0.018596],'rates_stress',[0.0180057,0.018596;0.0080057,0.008596;0.0280057,0.028596],'method_interpolation','linear','compounding_type','continuous','day_count_convention','act/365');
+%! v1 = Surface();
+%! v1 = v1.set('id','V1','axis_x',[730,1095,1460],'axis_x_name','TERM','axis_y',1.0,'axis_y_name','MONEYNESS');
+%! v1 = v1.set('values_base',[0.1,0.02,0.1]);
+%! v1 = v1.set('type','INDEXVol');
+%! s = Sensitivity();
+%! s = s.set('id','SENSI_INSTRUMENT','sub_type','SENSI', ...
+%! 					'asset_class','Sensi',  'value_base', -150367508.00 , ...
+%! 					'underlyings',cellstr(['EUR-SWAP';'EUR-SWAP']), ...
+%!					'x_coord',[11501.2261098,11501.2261098], ...
+%!					'y_coord',[0,0.0], ...
+%!					'z_coord',[0,0], ...
+%!					'shock_type', cellstr(['absolute';'absolute']), 					
+%!					'sensi_prefactor', [5.215133647E9,1.07E11], 'sensi_exponent', [1,2], ...
+%!					'sensi_cross', [0,0], 'use_value_base',true,'use_taylor_exp',true);
+%! surface_struct = struct();
+%! surface_struct(1).id = v1.id;
+%! surface_struct(1).object = v1;
+%! curve_struct = struct();
+%! curve_struct(1).id = c.id;
+%! curve_struct(1).object = c;					
+%! riskfactor_struct = struct();
+%! index_struct = struct();
+%! instrument_struct = struct();
+%! s = s.calc_value('31-Dec-2016', 'base',riskfactor_struct,instrument_struct,index_struct,curve_struct,surface_struct);
+%! assert(s.getValue('base'),-150367508.00,0.01);
+%! s = s.calc_value('31-Dec-2016', 'stress',riskfactor_struct,instrument_struct,index_struct,curve_struct,surface_struct);
+%! assert(s.getValue('stress'),[-150367508.00;-197168844.47;-92866171.53],0.01);
 
 %!test 
 %! fprintf('\tdoc_instrument:\tTesting get_sub_object function\n');
