@@ -143,38 +143,38 @@ end
 % ------------------------------------------------------------------
 % interpolate curve and calculate time factors
 
-% preallocate vectors
-tf_vec  = zeros(1,length(cashflow_values));
-rate_vec = tf_vec;
-df_vec = tf_vec;
-    
-for zz = 1 : 1 : columns(cashflow_values)   % loop via all cashflows  
-    tmp_dtm = cashflow_dates(zz);
-    % Get yield at actual spot value
-        % get discount rate from discount curve
-        rate_curve = interpolate_curve(discount_nodes,discount_rates, ...
-                                        tmp_dtm,interp_discount);  
-    % convert spread rate convention (cont, act/365) to curve conv
-        spread_constant_conv = convert_curve_rates(valuation_date,tmp_dtm, ...
-                    spread_constant,'continuous','annual',3, ...
-                    comp_type_curve,comp_freq_curve,basis_curve);
-    % combine with constant spread (e.g. spread over yield)
-        yield_total 	= rate_curve  + spread_constant_conv;  
-        tmp_cf_date 	= valuation_date + tmp_dtm;            
-    % Get actual discount factor and time factor acc. to curve convention
-        tmp_df 			= discount_factor (valuation_date, tmp_cf_date, ...
-                                           yield_total, comp_type_curve, ...
-                                           basis_curve, comp_freq_curve); 
-    % Get timefactor of instrument cash flows for duration calculation
-        tmp_tf          = timefactor(valuation_date,tmp_cf_date,basis); 
-    % store in vector
-    tf_vec(zz) = tmp_tf;
-    rate_vec(zz) = yield_total;
-    df_vec(zz) = tmp_df;
+% precalculate time factors of instrument cash flows for duration calculation
+tf_vec  = timefactor(valuation_date,valuation_date + cashflow_dates,basis)'; 
+
+   
+% convert spread rate convention (cont, act/365) to curve conv
+spread_constant_vec = convert_curve_rates(valuation_date,cashflow_dates', ...
+                        spread_constant,'continuous','annual',3, ...
+                        comp_type_curve,comp_freq_curve,basis_curve);
+
+% get discount rate from discount curve
+% distinguish between interpolation methods
+if ( strcmpi(interp_discount,'linear'))
+	rate_curve_vec = interpolate_curve_vectorized(discount_nodes, ...
+						discount_rates, cashflow_dates);
+else
+	rate_curve_vec = zeros(rows(discount_rates),length(cashflow_dates));
+	for zz = 1 : 1 : columns(cashflow_dates);
+		tmp_dtm = cashflow_dates(zz);
+		if ( tmp_dtm > 0 )
+				rate_curve_vec(:,zz) = interpolate_curve(discount_nodes,discount_rates, ...
+                                            tmp_dtm,interp_discount);
+		end
+	end
 end 
-% ------------------------------------------------------------------  
 
-
+rate_vec 	= rate_curve_vec'  + spread_constant_vec ;
+% get discount factors
+df_vec 		= discount_factor (valuation_date, (valuation_date + cashflow_dates)', ...
+                            rate_vec, comp_type_curve, ...
+                            basis_curve, comp_freq_curve)';	
+% final transposing of rates into column vector
+rate_vec = rate_vec';
               
 end
  

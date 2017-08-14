@@ -206,7 +206,7 @@ elseif ( strfind(tmp_type,'option') > 0 )
 		end
     end
     % calculate value
-    if ( first_eval == 1)
+    if (~strcmpi(scenario,'base') )
         % calculate greeks
 		
 		% different pricing methods for Beisser Basket instruments or all other 
@@ -287,13 +287,13 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
                                 riskfactor_struct, para_struct);
         end
         %Calculate base values of swaption
-        if ( first_eval == 1)
+        if (~strcmpi(scenario,'base') )
             swaption = swaption.calc_value(valuation_date,'base',tmp_rf_curve_obj,tmp_vola_surf_obj,fixed_leg,float_leg);
         end
         swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,fixed_leg,float_leg);
     else     % use reference curve for extracting forward rates
         %Calculate base values of swaption
-        if ( first_eval == 1)
+        if (~strcmpi(scenario,'base') )
             swaption = swaption.calc_value(valuation_date,'base',tmp_rf_curve_obj,tmp_vola_surf_obj);
         end
         swaption = swaption.calc_value(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj);
@@ -331,7 +331,7 @@ elseif ( strfind(tmp_type,'capfloor') > 0 )
         capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
     end
     capfloor = capfloor.rollout(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj);
-    if ( first_eval == 1)
+    if (~strcmpi(scenario,'base') )
         capfloor = capfloor.calc_sensitivities(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj,tmp_disc_curve_obj);
     end
     capfloor = capfloor.calc_value(valuation_date,scenario,tmp_disc_curve_obj);
@@ -370,7 +370,7 @@ elseif (strcmpi(tmp_type,'forward') )
         end
 
     %Calculate values of equity forward
-    if ( first_eval == 1)
+    if (~strcmpi(scenario,'base') )
     % Base value
         forward = forward.calc_value(valuation_date,'base',tmp_curve_object,tmp_underlying_object);
     end
@@ -383,45 +383,10 @@ elseif (strcmpi(tmp_type,'forward') )
 % ==============================================================================   
 % Equity Valuation: Sensitivity based Approach       
 elseif ( strcmpi(tmp_type,'sensitivity'))
-tmp_delta = 0;
-tmp_shift = 0;
-% Using sensitivity class
-    sensi               = instr_obj;
-    tmp_sensitivities   = sensi.get('sensitivities');
-    tmp_riskfactors     = sensi.get('riskfactors');
-    for jj = 1 : 1 : length(tmp_sensitivities)
-        % get riskfactor:
-        tmp_riskfactor = tmp_riskfactors{jj};
-        % get idiosyncratic risk: normal distributed random variable with stddev speficied in special_num
-        if ( strcmpi(tmp_riskfactor,'IDIO') == 1 )
-            if ( strcmpi(scenario,'stress'))
-                tmp_shift;
-            else    % append idiosyncratic term only if not a stress risk factor
-                tmp_idio_vola_p_a = sensi.get('idio_vola');
-                tmp_idio_vec = ones(scen_number,1) .* tmp_idio_vola_p_a;
-                tmp_shift = tmp_shift + tmp_sensitivities(jj) .* normrnd(0,tmp_idio_vec ./ sqrt(250/tmp_ts));
-            end
-        % get sensitivity approach shift from underlying riskfactors
-        else
-            [tmp_rf_struct_obj object_ret_code]  = get_sub_object(riskfactor_struct, tmp_riskfactor);	
-            if ( object_ret_code == 0 )
-                fprintf('WARNING: instrument_valuation: No riskfactor_struct object found for id >>%s<<\n',tmp_riskfactor);
-            end
-            tmp_delta   = tmp_rf_struct_obj.getValue(scenario);
-            tmp_shift   = tmp_shift + ( tmp_sensitivities(jj) .* tmp_delta );
-        end
-    end
-
-    % Calculate new absolute scenario values from Riskfactor PnL depending on riskfactor model
-    %   calling static method located in Riskfactor class:
-    theo_value   = Riskfactor.get_abs_values(sensi.model, tmp_shift, sensi.getValue('base'));
-
-    % store values in sensitivity object:
-    if ( strcmpi(scenario,'stress'))
-        sensi = sensi.set('value_stress',theo_value);
-    else            
-        sensi = sensi.set('value_mc',theo_value,'timestep_mc',scenario);           
-    end
+	 % Using Synthetic class
+    sensi = instr_obj;
+        
+    sensi = sensi.calc_value(valuation_date,scenario,riskfactor_struct,instrument_struct,index_struct,curve_struct,surface_struct,scen_number);
     % store sensi object:
     ret_instr_obj = sensi;
 
@@ -576,7 +541,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
             bond = bond.calc_spread_over_yield(valuation_date,tmp_curve_object);
         end
     % d) get net present value of all Cashflows (discounting of all cash flows)
-        if ( first_eval == 1)
+       if (~strcmpi(scenario,'base') )
             bond = bond.calc_value (valuation_date,'base',tmp_curve_object);
             % calculate sensitivities
             if( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOATING'))
