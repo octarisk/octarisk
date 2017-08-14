@@ -1103,12 +1103,47 @@ elseif ( strcmp(type,'ZCB') == 1 )
    
 % Type FAB: Calculate CF Values for all CF Periods for fixed amortizing bonds 
 %           (annuity loans and amortizable loans)
-
 elseif ( strcmp(type,'FAB') == 1 )
-    % TODO: if given amount outstanding shall be used for calculation cash flows,
-    % do the following: set issue date to valuation date, set notional to 
-    % amount outstanding, remove all cf_dates < 0, make new attribute specifying
-    % is outstanding amount shall be used
+    % Cash flow rollout for 4 different cases:
+	% annuity = total cash flows consisting of principal cash flows and 
+	%           interest cash flows
+	%
+	% 1. FIXED_ANNUITY = true: constant cashflows CF = CF_interest_i + CF_principal_i
+	%		1a) USE_ANNUITY_AMOUNT == true, ANNUITY_AMOUNT = XXX:
+	%				annuity amount is given by attribute
+	%				CF = annuity_amount --> calculate principal and interest CFs
+	%		1b) USE_ANNUITY_AMOUNT == false:	
+	%				annuity amount is calculation as function(notional, term, coupon rate)
+	%				CF = f(not,rate,term) --> calculate principal and interest CFs
+	%
+	% 2. fixed FIXED_ANNUITY = false: constant principal cashflows, variable interest and notional CFs
+	%							CF_i = CF_principal_fixed + CF_interest_i
+	%		2a) USE_PRINCIPAL_PMT_FLAG == true, PRINCIPAL_PAYMENT = [xxx, yyy]
+	%				principal payments are given by attribute (principal payment vector)
+	%				CF_principal = [vector], calculate interest CFs for outstanding amount
+	%		2b) USE_PRINCIPAL_PMT_FLAG == false:
+	%				constant amortization rate is calculated as function(notional,number_payments)
+	%				CF_principal_i = constant, total CF and CF_interest variable
+	%
+	%  --------------------------------------------------------------------------------------------	
+	%  (1) FIXED_ANNUITY = true
+	%										  |
+	%		a) USE_ANNUITY_AMOUNT == true	  |	b) 	USE_ANNUITY_AMOUNT == false
+	%										  |
+	%			CF_TOTAL_t = ANNUITY_AMOUNT = |			CF_TOTAL_t = f(notional,rate,term) = const.
+	%							const.		  |	
+	%  --------------------------------------------------------------------------------------------
+	%										
+	%  (2) FIXED_ANNUITY = false
+	%										  |
+	%		a) USE_PRINCIPAL_PMT_FLAG == true |	b)	USE_PRINCIPAL_PMT_FLAG == false
+	%										  |
+	%			PRINCIPAL_PAYMENT = [vector]  |			PRINCIPAL_PAYMENT = f(notional,rate,term) = const.
+	%										  |
+	%			CF_TOTAL_t = PRINCIPAL_PAYMENT|			CF_TOTAL_t = PRINCIPAL_PAYMENT + CF_interest
+	%						+ CF_interest	  |	
+	%  --------------------------------------------------------------------------------------------
+	%
     % fixed annuity: fixed total payments 
     if ( fixed_annuity_flag == 1)
         if ( use_annuity_amount == 0)   % calculate annuity from coupon rate and notional
@@ -1415,6 +1450,7 @@ if enable_business_day_rule == 1
 else
     pay_dates_num = cf_datesnum;
 end
+ret_dates_all_cfs = pay_dates_num - valuation_date;
 pay_dates_num(1,:)=[];
 ret_dates = pay_dates_num' - valuation_date;
 ret_dates_tmp = ret_dates;              % store all cf dates for later use
@@ -1426,13 +1462,13 @@ ret_principal_values = cf_principal(:,(end-length(ret_dates)+1):end);
 %-------------------------------------------------------------------------------
 % #################   Calculation of accrued interests   #######################   
 %
-% calculate time in days from last coupon date
-ret_date_last_coupon = ret_dates_tmp(ret_dates_tmp<0);
+% calculate time in days from last coupon date (zero if valuation_date == coupon_date)
+ret_date_last_coupon = ret_dates_all_cfs(ret_dates_all_cfs<0);
 
 % distinguish three different cases:
 % A) issue_date.......first_cf_date....valuation_date...2nd_cf_date.....mat_date
-% B) valuation_date...issue_date......frist_cf_date.....2nd_cf_date.....mat_date
-% C) issue_date.......valuation_date..frist_cf_date.....2nd_cf_date.....mat_date
+% B) valuation_date...issue_date......first_cf_date.....2nd_cf_date.....mat_date
+% C) issue_date.......valuation_date..firist_cf_date.....2nd_cf_date.....mat_date
 
 % adjustment to accrued interest required if calculated
 % from next cashflow (background: next cashflow is adjusted for
@@ -1453,10 +1489,10 @@ if length(ret_date_last_coupon) > 0                 % CASE A
         dib = 365;
     end    
     days_from_last_coupon = ret_date_last_coupon;
-    days_to_next_coupon = ret_dates(1);  
+    days_to_next_coupon = ret_dates(1);
     adj_factor = dib / (days_from_last_coupon + days_to_next_coupon);
     if ~( term == 365)
-    adj_factor = adj_factor .* term / 12;
+		adj_factor = adj_factor .* term / 12;
     end
     tf = tf * adj_factor;
 else
@@ -1494,6 +1530,7 @@ elseif ( term == 0)
         tf = tf_id_vd ./ tf_id_md;
     end
 end
+
 % TODO: why is there a vector of accrued_interest with length of
 %       scenario values for FRB in case C?
 accrued_interest = ret_value_next_coupon .* tf;

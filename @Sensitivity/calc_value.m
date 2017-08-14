@@ -74,15 +74,9 @@ else
 	sensi_cross   = sensi.get('sensi_cross');
     cols_cross_matrix  = max(sensi_cross);
 	% input check
-<<<<<<< HEAD
 	if ~( length(sensi_prefactor) == length(sensi_exponent)) || ~( length(sensi_prefactor) == length(sensi_cross))  ...
 		|| ~( length(sensi_prefactor) == length(x_coord)) || ~( length(sensi_prefactor) == length(y_coord)) || ~( length(sensi_prefactor) == length(z_coord)) ...
 		|| ~( length(sensi_prefactor) == length(shock_type)) || ~( length(sensi_prefactor) == length(underlyings))
-=======
-	if ~( size(sensi_prefactor) == size(sensi_exponent) || ~( size(sensi_prefactor) == size(sensi_cross))  ...
-		|| ~( size(sensi_prefactor) == size(x_coord)) || ~( size(sensi_prefactor) == size(y_coord)) || ~( size(sensi_prefactor) == size(z_coord)) ...
-		|| ~( size(sensi_prefactor) == size(shock_type)) || ~( size(sensi_prefactor) == size(underlyings)) )
->>>>>>> 5d2cb5e3f5df29eea887caa8c7d6268d487adbc2
 		error('Sensitivity.calc_value: Sensi >>%s<<: Length of underlying definitions does not match.\n',sensi.id);
 	end
 	% valuation: each scenario value of all underlyings (either value, relative 

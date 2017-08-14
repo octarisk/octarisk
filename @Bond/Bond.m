@@ -51,6 +51,7 @@ classdef Bond < Instrument
         stochastic_riskfactor   = 'RF_MATRIX';    % used for stochastic cf
         stochastic_surface      = 'SURFACE_MATRIX';  % used for stochastic cf
         stochastic_rf_type      = 'normal';       % either t, normal or univariate
+		stochastic_zero_base	= true;	%Boolean: always zero value in base case
         t_degree_freedom        = 120;  % degrees of freedom for t distribution
         % attributes for CMS Floating and Fixed Legs
         convex_adj              = true; % Boolean: use convexity adjustment

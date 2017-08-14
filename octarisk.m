@@ -128,7 +128,7 @@ input_filename_surf_stoch = 'surf_stochastic_';
 input_filename_matrix = 'matrix_';
 
 % set general variables
-plotting = 0;           % switch for plotting data (0/1)
+plotting = 1;           % switch for plotting data (0/1)
 saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
 archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
 stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)

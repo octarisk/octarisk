@@ -133,9 +133,12 @@ delta = nom_t0_tp ./ denom_t0_t1;
 
 n = length(tf_df); % n is total number of payments of underlying swap
 dG = dG(cms_rate,delta,n,q); % calculate derivative of Bond pricing function G
-Dt_p = cms_df_tmp(:,1);  % Discount Factor: Hagan specifies adjustment to value, 
-                         % we want adjustment to rates
 
+% Discount Factor: Hagan specifies adjustment to value, but we want adjustment to rates
+% Calculation of discount factor at payment date
+rate_paymentdate = curve.getRate(value_type,payment_date - valuation_date);
+Dt_p = discount_factor (valuation_date, payment_date, ...
+                rate_paymentdate, comp_type_curve, basis_curve, comp_freq_curve);
 % distinguish between CMS Swaplets, Caplets and Floorlets
 convex_adj = 0.0;
 if ( regexpi( instrument.sub_type,'FLOATING') || regexpi( instrument.sub_type,'FRN_SPECIAL'))                         

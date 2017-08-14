@@ -183,7 +183,7 @@ end
 %! fprintf('\tdoc_instrument:\tPricing Stochastic Cash Flow Object\n');
 %! b = Bond();
 %! b = b.set('cf_dates',[365,730],'stochastic_riskfactor','RF_TEST','stochastic_surface','SURF_TEST');
-%! b = b.set('sub_type','STOCHASTICCF','stochastic_rf_type','uniform');
+%! b = b.set('sub_type','STOCHASTICCF','stochastic_rf_type','uniform','stochastic_zero_base',false);
 %! r = Riskfactor();
 %! r = r.set('value_base',0.5,'scenario_stress',[0.05;0.50;0.95],'model','BM');
 %! value_dates = [365,730];
@@ -740,6 +740,26 @@ end
 %! f = f.calc_value('31-Mar-2016','stress',c,i);
 %! assert(f.getValue('stress'),-605.714448748,0.00001);
 
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Agency MBS with outstanding balance\n');
+%! c = Curve();
+%! c = c.set('id','SWAP','nodes',[365,3650],'rates_base',[0.01,0.03], ...
+%!         'method_interpolation','linear');
+%! psa = Curve();
+%! psa = psa.set('id','PSA Standard','nodes',[0,900],'rates_base',[0,0.06],'method_interpolation','linear','compounding_type','simple','day_count_convention','30/360');
+%! v = Surface();
+%! v = v.set('axis_x',[0.055,0.06,0.065],'axis_x_name','coupon_rate','axis_y',[-0.01,0.0,0.01],'axis_y_name','ir_shock','values_base',[3,4,3;3,4.5,3.3;3.5,3.0,2.8],'type','PREPAYMENT');
+%! b = Bond();
+%! b = b.set('Name','MBS','coupon_rate',0.06,'value_base',550,'clean_value_base',0,'coupon_generation_method','backward','term',1,'use_outstanding_balance',1);
+%! b = b.set('maturity_date','01-May-2025','notional',1000,'compounding_type','simple','issue_date','01-May-2005','day_count_convention','act/365','outstanding_balance',500);
+%! b = b.set('sub_type','FAB','fixed_annuity',1,'prepayment_type','full','prepayment_source','curve','prepayment_flag',1,'prepayment_rate',0.06);
+%! b = b.rollout('base','31-Dec-2016',psa,v,c);
+%! b = b.calc_spread_over_yield('31-Dec-2016',c);
+%! b = b.calc_value('31-Dec-2016','base',c);
+%! assert(b.get('accrued_interest'),2.46575342465753,sqrt(eps));
+%! assert(b.get('soy'),0.00114029719465653,sqrt(eps));
+%! assert(b.getValue('base') ,550.000001572877,sqrt(eps));
+
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Fixed Amortizing Bond with given principal payments\n');
 %! b = Bond();
@@ -951,7 +971,30 @@ end
 %! assert(cap_cms.vola_spread, 0.00120662817963940,0.000001);
 %! assert(cap_cms.getValue('base'),0.600000004884487,0.00001);
 
-   
+%!test    
+%! fprintf('\tdoc_instrument:\tPricing CMS Accumulating Floater with Hagan Convexity Adjustment\n');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125], ...
+%!        'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
+%!        0.004576856,0.0055631942,0.006458646,0.00726062,0.007956808,0.008547143,0.009038821,0.009439097,0.009759173,0.010008755,0.010200843,0.010347526, ...
+%!        0.0104597123,0.0105410279,0.0105966494,0.010630943,0.0106483277],'method_interpolation','linear','compounding_type','continuous');    
+%! vv = Surface();
+%! vv = vv.set('axis_x',365,'axis_x_name','TENOR','axis_y',90,'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');
+%! vv = vv.set('values_base',0.009988);
+%! vv = vv.set('type','IRVol');
+%! value_type = 'base'; 
+%! valuation_date = '30-Jun-2017';
+%! cap_float = Bond();
+%! cap_float = cap_float.set('Name','TEST_FRN_SPECIAL','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','FRN_SPECIAL','spread',0.00);
+%! cap_float = cap_float.set('maturity_date','30-Jun-2023','notional',100,'compounding_type','simple','compounding_freq','semi-annual','issue_date','30-Jun-2017','term',365,'notional_at_end',1,'convex_adj',true);
+%! cap_float = cap_float.set('rate_composition','capitalized','day_count_convention','act/365');
+%! cap_float = cap_float.set('cms_model','Normal','cms_sliding_term',3650,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan','in_arrears',0);
+%! value_type = 'base'; 
+%! cap_float = cap_float.rollout(value_type, valuation_date, c, vv);
+%! cap_float = cap_float.calc_value(valuation_date,value_type,c);
+%! assert(cap_float.getValue('base'),104.640739631675,0.00000001);
+
+ 
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Floating Leg (in Arrears with Timing Adjustment)\n');
 %! valuation_date = datenum('31-Mar-2016');

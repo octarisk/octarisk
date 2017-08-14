@@ -39,7 +39,7 @@ function s = calc_spread_over_yield (bond,valuation_date,discount_curve,call_sch
         s.soy = 0.0;
   else
     % get dirty value
-    if s.clean_value_base == 1
+    if s.clean_value_base == true
         value_dirty = s.value_base + s.accrued_interest;
     else
         value_dirty = s.value_base;
