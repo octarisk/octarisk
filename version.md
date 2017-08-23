@@ -6,6 +6,20 @@ Possible new features:
 - Introduction of Total Return Swaps
 - Introduction of FX Swaps
 
+### 0.4.0, 2017/08/23
+Version v0.4.0 is a major release with massive speed impprovements, refactored code,
+extended documentation and a modified stress test interface
+
+- bugfix of Hagan convexity adjustment
+- added new attributes for stochastic CF instruments
+- sensitivity instruments: new subtype SENSI
+- introduction of aggregated index objects
+- recursive aggregation of index and curves possible
+- performance improvements for loading instruments and mktdata
+- reworked stress test framework with interface change: individual objects (e.g. curves, indizes, surfaces) can be shocked in each stress scenarios (absolute or relative shock, apply certain value)
+- reworked interpolation of curves, surfaces and cubes (via oct files) to increase interpolation performance (vectorization not possible for stress scenarios)
+- performance improvment with C++ functions for interpolation of cube values and linear interpolation of curves
+	
 ### 0.3.5, 2017/05/26
 Version v0.3.5 is a minor release with new instruments, refactored code and
 extended documentation.

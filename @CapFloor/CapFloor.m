@@ -202,4 +202,148 @@ classdef CapFloor < Instrument
       end % set.day_count_convention
    end 
    
+   %static methods: 
+   methods (Static = true)
+   
+	function retval = help (format,retflag)
+		formatcell = {'plain text','html','texinfo'};
+		% input checks
+		if ( nargin == 0 )
+			format = 'plain text';	
+		end
+		if ( nargin < 2 )
+			retflag = 0;	
+		end
+
+		% format check
+		if ~( strcmpi(format,formatcell))
+			fprintf('WARNING: CapFloor.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+			format = 'plain text';
+		end	
+
+% textstring in texinfo format (it is required to start at begin of line)
+textstring = "@deftypefn{Octarisk Class} {@var{object}} = CapFloor(@var{id})\n\
+@deftypefnx{Octarisk Class} {@var{object}} = CapFloor()\n\
+\n\
+Class for setting up CapFloor objects.\n\
+Plain vanilla caps and floors (consisting of caplet and floorlets) can be based\n\
+on interest rates or inflation rates. Cash flows are generated according to\n\
+different models (Black, Normal, Analytic) and subsequently discounted to calculate\n\
+the CapFloor value.\n\
+\n\
+@itemize @bullet\n\
+@item CAP: Plain Vanilla interest rate cap. Valuation model either [\'black\',\'normal\',\'analytic\']\n\
+@item FLOOR: Plain Vanilla interest rate floor. Valuation model either [\'black\',\'normal\',\'analytic\']\n\
+@item CAP_CMS: CMS interest rate cap. Valuation model either [\'black\',\'normal\',\'analytic\']\n\
+@item FLOOR_CMS: CMS interest rate floor. Valuation model either [\'black\',\'normal\',\'analytic\']\n\
+@item CAP_INFL: Cap on inflation expectation rates (derived from inflation index values).\n\
+Analytical model only (cash flow value based on difference of inflation rate and strike rate)\n\
+@item FLOOR_INFL: Floor on inflation rates (derived from inflation index values).\n\
+Analytical model only (cash flow value based on difference of inflation rate and strike rate)\n\
+@end itemize\n\
+\n\
+In the following, all methods and attributes are explained and a code example is given.\n\
+\n\
+Methods for CapFloor object @var{obj}:\n\
+@itemize @bullet\n\
+@item CapFloor(@var{id}) or CapFloor(): Constructor of a CapFloor object. @var{id} is optional and specifies id and name of new object.\n\
+\n\
+@item obj.set(@var{attribute},@var{value}): Setter method. Provide pairs of attributes and values. Values are checked for format and constraints.\n\
+\n\
+@item obj.get(@var{attribute}): Getter method. Query the value of specified attribute.\n\
+\n\
+@item obj.calc_value(@var{valuation_date},@var{scenario}, @var{discount_curve}):\n\
+Calculate the net present value of cash flows of Caps and Floors.\n\
+\n\
+@item obj.rollout(@var{valuation_date},@var{scenario}, @var{reference_curve}, @var{vola_surface}): used for (CMS) Caps and Floors\n\
+@item obj.rollout(@var{valuation_date},@var{scenario}, @var{inflation_exp_rates}, @var{historical_inflation}, @var{consumer_price_index}): used for Inflation Caps and Floors\n\
+Cash flow rollout for (Inflation) Caps and Floors.\n\
+\n\
+@item obj.calc_sensitivity(@var{valuation_date},@var{scenario},  @var{reference_curve}, @var{vola_surface}, @var{discount_curve})\n\
+Calculate numerical sensitivities (durations, vega, theta) for the given CapFloor instrument.\n\
+\n\
+@item obj.calc_vola_spread(@var{valuation_date},@var{scenario}, @var{discount_curve}, @var{volatility_surface})\n\
+Calibrate volatility spread in order to match the CapFloor price with the market price. The volatility spread will be used for further pricing.\n\
+\n\
+@item obj.getValue(@var{scenario}): Return CapFloor value for given @var{scenario}.\n\
+Method inherited from Superclass @var{Instrument}\n\
+\n\
+@item CapFloor.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
+If empty, defaults to plain text. Returnflag is boolean: True returns \n\
+documentation string, false (default) returns empty string. [static method]\n\
+@end itemize\n\
+\n\
+Attributes of CapFloor objects:\n\
+@itemize @bullet\n\
+@item @var{id}: Instrument id. Has to be unique identifier. (Default: empty string)\n\
+@item @var{name}: Instrument name. (Default: empty string)\n\
+@item @var{description}: Instrument description. (Default: empty string)\n\
+@item @var{value_base}: Base value of instrument of type real numeric. (Default: 0.0)\n\
+@item @var{currency}: Currency of instrument of type string. (Default: 'EUR')\n\
+During instrument valuation and aggregation, FX conversion takes place if corresponding FX rate is available.\n\
+@item @var{asset_class}: Asset class of instrument. (Default: 'derivative')\n\
+@item @var{type}: Type of instrument, specific for class. Set to 'CapFloor'.\n\
+@item @var{value_stress}: Line vector with instrument stress scenario values.\n\
+@item @var{value_mc}: Line vector with instrument scenario values.\n\
+MC values for several @var{timestep_mc} are stored in columns.\n\
+@item @var{timestep_mc}: String Cell array with MC timesteps. If new timesteps are set, values are automatically appended.\n\
+\n\
+@item @var{model}: Valuation model for (CMS) Caps and Floors can be either [\'black\',\'normal\',\'analytic\'].\n\
+Inflation Caps and Floors are valuated by analytical model only.\n\
+@end itemize\n\
+\n\
+\n\
+For illustration see the following example:\n\
+A 2 year Cap starting in 3 years is priced with Black model.\n\
+The resulting Cap value (137.0063959386) and volatility spread (-0.0256826614604929)is retrieved:\n\
+@example\n\
+@group\n\
+\n\
+disp('Pricing Cap Object with Black Model')\n\
+cap = CapFloor();\n\
+cap = cap.set('id','TEST_CAP','name','TEST_CAP','issue_date','30-Dec-2018', ...\n\
+'maturity_date','29-Dec-2020','compounding_type','simple');\n\
+cap = cap.set('term',365,'notional',10000, ...\n\
+'coupon_generation_method','forward','notional_at_start',0, ...\n\
+'notional_at_end',0);\n\
+cap = cap.set('strike',0.005,'model','Black','last_reset_rate',0.0, ...\n\
+'day_count_convention','act/365','sub_type','CAP');\n\
+c = Curve();\n\
+c = c.set('id','IR_EUR','nodes',[30,1095,1460],'rates_base',[0.01,0.01,0.01], ...\n\
+'method_interpolation','linear');\n\
+v = Surface();\n\
+v = v.set('axis_x',365,'axis_x_name','TENOR','axis_y',90, ...\n\
+'axis_y_name','TERM','axis_z',1.0,'axis_z_name','MONEYNESS');\n\
+v = v.set('values_base',0.8);\n\
+v = v.set('type','IRVol');\n\
+cap = cap.rollout('31-Dec-2015','base',c,v);\n\
+cap = cap.calc_value('31-Dec-2015','base',c);\n\
+base_value = cap.getValue('base')\n\
+cap = cap.set('value_base',135.000);\n\
+cap = cap.calc_vola_spread('31-Dec-2015',c,v);\n\
+cap = cap.rollout('31-Dec-2015','base',c,v);\n\
+cap = cap.calc_value('31-Dec-2015','base',c);\n\
+vola_spread = cap.vola_spread\n\
+@end group\n\
+@end example\n\
+\n\
+@end deftypefn";
+
+		% format help text
+		[retval status] = __makeinfo__(textstring,format);
+		% status
+		if (status == 0)
+			% depending on retflag, return textstring
+			if (retflag == 0)
+				% print formatted textstring
+				fprintf("\'CapFloor\' is a class definition from the file /octarisk/@CapFloor/CapFloor.m\n");
+				fprintf("\n%s\n",retval);
+				retval = [];
+			end
+		end
+
+		
+	end % end of static method help
+	
+   end	% end of static method
 end 

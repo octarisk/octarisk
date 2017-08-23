@@ -16,7 +16,7 @@ and stress test impacts on arbitrary portfolios can be calculated. Hereby,
 state-of-the-art methods and a light-weight and rapid 
 calculation shall be implemented with free software only.
 
-The code is written in Octave language and will be useable right out-of-the box 
+The code is written in Octave and C++ language and will be useable right out-of-the box 
 with Octave version >= 4.0.0 and the Statistics and Financial packages. The code 
 is licensed under the GNU GPL.
 
@@ -102,6 +102,7 @@ in order to provide full Matlab compatibility.
 
 ## Version history
 
+- Version 0.4.0   massive speed impprovements, enhanced documentation, modified stress test interface
 - Version 0.3.5   more instruments, refactored code, enhanced documentation
 - Version 0.3.4   various performance improvements, enhanced documentation
 - Version 0.3.3   introduction of c++ pricing functions, enhanced volatility framework

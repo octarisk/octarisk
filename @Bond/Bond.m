@@ -409,6 +409,160 @@ classdef Bond < Instrument
          obj.coupon_prepay = tolower(coupon_prepay);
       end % set.coupon_prepay
   
-   end % end static methods
+   end % end methods
+   
+   %static methods: 
+   methods (Static = true)
+   
+	function retval = help (format,retflag)
+		formatcell = {'plain text','html','texinfo'};
+		% input checks
+		if ( nargin == 0 )
+			format = 'plain text';	
+		end
+		if ( nargin < 2 )
+			retflag = 0;	
+		end
+
+		% format check
+		if ~( strcmpi(format,formatcell))
+			fprintf('WARNING: Bond.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+			format = 'plain text';
+		end	
+
+% textstring in texinfo format (it is required to start at begin of line)
+textstring = "@deftypefn{Octarisk Class} {@var{object}} = Bond(@var{id})\n\
+@deftypefnx{Octarisk Class} {@var{object}} = Bond()\n\
+\n\
+Class for setting up various Bond objects.\n\
+Cash flows are generated specific for each Bond sub type and subsequently\n\
+discounted to calculate the Bond value. All bonds can have embedded options\n\
+(Option pricing according to Hull-White model).\n\
+\n\
+@itemize @bullet\n\
+@item FRB: Fixed Rate Bond\n\
+@item FRN: Floating Rate Note: Calculate CF Values based on forward rates of a given reference curve.\n\
+@item ZCB: Zero Coupon Bond\n\
+@item ILB: Inflation Linked Bond\n\
+@item CASHFLOW: Cash flow instruments. Custom cash flow dates and values are discounted.\n\
+@item SWAP_FIXED: Swap fixed leg\n\
+@item SWAP_FLOATING: Swap floating leg\n\
+@item FRN_CMS_SPECIAL: Special type floating rate notes (capitalized, average, min, max) based on CMS rates\n\
+@item CMS_FLOATING: Floating leg based on CMS rates\n\
+@item FRA: Forward Rate Agreement\n\
+@item FVA: Forward Volatility Agreement\n\
+@item FRN_FWD_SPECIAL:  Averaging FRN: Average forward or historical rates of cms_sliding period\n\
+@item STOCHASTICCF: Stochastic cash flow instrument (cash flows values are derived from an empirical cash flow distribution)\n\
+@end itemize\n\
+\n\
+In the following, all methods and attributes are explained and a code example is given.\n\
+\n\
+Methods for Bond object @var{obj}:\n\
+@itemize @bullet\n\
+@item Bond(@var{id}) or Bond(): Constructor of a Bond object. @var{id} is optional and specifies id and name of new object.\n\
+\n\
+@item obj.set(@var{attribute},@var{value}): Setter method. Provide pairs of attributes and values. Values are checked for format and constraints.\n\
+\n\
+@item obj.get(@var{attribute}): Getter method. Query the value of specified attribute.\n\
+\n\
+@item obj.calc_value(@var{valuation_date},@var{scenario}, @var{discount_curve})\n\
+@item obj.calc_value(@var{valuation_date},@var{scenario}, @var{discount_curve}, @var{call_schedule}, @var{put_schedule}):\n\
+Calculate the net present value of cash flows of Bonds (including pricing of embedded options)\n\
+\n\
+@item obj.rollout(@var{scenario}, @var{valuation_date}): used for FRB and CASHFLOW  instruments\n\
+@item obj.rollout(@var{scenario}, @var{valuation_date}, @var{reference_curve}, @var{vola_surface}): used for CMS_FLOATING or FRN_SPECIAL\n\
+@item obj.rollout(@var{scenario}, @var{reference_curve}, @var{valuation_date}, @var{vola_surface}): used for FRN, FRA, FVA, SWAP_FLOATING\n\
+@item obj.rollout(@var{scenario},@var{valuation_date}, @var{psa_curve}, @var{psa_factor_surface}, @var{ir_shock_curve}): used for FAB with prepayments\n\
+@item obj.rollout(@var{scenario},@var{valuation_date}, @var{inflation_expectation_curve}, @var{historical_rates}, @var{consumer_price_index}): used for ILB\n\
+@item obj.rollout(@var{scenario},@var{valuation_date}, @var{riskfactor}, @var{cashflow_surface}): used for Stochastic CF instruments\n\
+Cash flow rollout for Bonds\n\
+\n\
+@item obj.calc_sensitivities(@var{valuation_date},@var{discount_curve}, @var{reference_curve})\n\
+Calculate analytical and numerical sensitivities for the given Bond instrument.\n\
+\n\
+@item obj.calc_key_rates(@var{valuation_date},@var{discount_curve})\n\
+Calculate key rate sensitivities for the given Bond instrument.\n\
+\n\
+@item obj.calc_spread_over_yield(@var{valuation_date},@var{scenario}, @var{discount_curve}) or\n\
+@item obj.calc_spread_over_yield(@var{valuation_date},@var{scenario}, @var{discount_curve}, @var{call_schedule}, @var{put_schedule})\n\
+Calibrate spread over yield in order to match the Bond price with the market price. The interest rate spread will be used for further pricing.\n\
+\n\
+@item obj.calc_yield_to_mat(@var{valuation_date}): Calculate yield to maturity for given cash flow structure.\n\
+\n\
+@item obj.getValue(@var{scenario}): Return Bond value for given @var{scenario}.\n\
+Method inherited from Superclass @var{Instrument}\n\
+\n\
+@item Bond.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
+If empty, defaults to plain text. Returnflag is boolean: True returns \n\
+documentation string, false (default) returns empty string. [static method]\n\
+@end itemize\n\
+\n\
+Attributes of Bond objects:\n\
+@itemize @bullet\n\
+@item @var{id}: Instrument id. Has to be unique identifier. (Default: empty string)\n\
+@item @var{name}: Instrument name. (Default: empty string)\n\
+@item @var{description}: Instrument description. (Default: empty string)\n\
+@item @var{value_base}: Base value of instrument of type real numeric. (Default: 0.0)\n\
+@item @var{currency}: Currency of instrument of type string. (Default: 'EUR')\n\
+During instrument valuation and aggregation, FX conversion takes place if corresponding FX rate is available.\n\
+@item @var{asset_class}: Asset class of instrument. (Default: 'derivative')\n\
+@item @var{type}: Type of instrument, specific for class. Set to 'Bond'.\n\
+@item @var{value_stress}: Line vector with instrument stress scenario values.\n\
+@item @var{value_mc}: Line vector with instrument scenario values.\n\
+MC values for several @var{timestep_mc} are stored in columns.\n\
+@item @var{timestep_mc}: String Cell array with MC timesteps. If new timesteps are set, values are automatically appended.\n\
+\n\
+For illustration see the following example:\n\
+A 9 month floating rate note instrument will be calibrated and priced.\n\
+The resulting spread over yield value (0.00398785481397732),\n\
+base value (99.7917725092950) and effective duration (3.93109370316470e-005)is retrieved:\n\
+@example\n\
+@group\n\
+\n\
+disp('Pricing Floating Rate Bond Object and calculating sensitivities')\n\
+b = Bond();\n\
+b = b.set('Name','Test_FRN','coupon_rate',0.00,'value_base',99.7527, ...\n\
+'coupon_generation_method','backward','compounding_type','simple');\n\
+b = b.set('maturity_date','30-Mar-2017','notional',100, ...\n\
+'compounding_type','simple','issue_date','21-Apr-2011');\n\
+b = b.set('term',3,'last_reset_rate',-0.0024,'sub_Type','FRN','spread',0.003);\n\
+r = Curve();\n\
+r = r.set('id','REF_IR_EUR','nodes',[30,91,365,730], ...\n\
+'rates_base',[0.0001002740,0.0001002740,0.0001001390,0.0001000690], ...\n\
+'method_interpolation','linear');\n\
+b = b.rollout('base',r,'30-Jun-2016');\n\
+c = Curve();\n\
+c = c.set('id','IR_EUR','nodes',[30,90,180,365,730], ...\n\
+'rates_base',[0.0019002740,0.0019002740,0.0019002301,0.0019001390,0.001900069], ...\n\
+'method_interpolation','linear');\n\
+b = b.set('clean_value_base',99.7527,'spread',0.003);\n\
+b = b.calc_spread_over_yield('30-Jun-2016',c);\n\
+b.get('soy')\n\
+b = b.calc_value('30-Jun-2016','base',c);\n\
+b.getValue('base')\n\
+b = b.calc_sensitivities('30-Jun-2016',c,r);\n\
+b.get('eff_duration')\n\
+@end group\n\
+@end example\n\
+\n\
+@end deftypefn";
+
+		% format help text
+		[retval status] = __makeinfo__(textstring,format);
+		% status
+		if (status == 0)
+			% depending on retflag, return textstring
+			if (retflag == 0)
+				% print formatted textstring
+				fprintf("\'CapFloor\' is a class definition from the file /octarisk/@CapFloor/CapFloor.m\n");
+				fprintf("\n%s\n",retval);
+				retval = [];
+			end
+		end
+
+		
+	end % end of static method help
+	
+   end	% end of static method
    
 end 
