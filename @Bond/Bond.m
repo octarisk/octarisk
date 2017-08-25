@@ -511,6 +511,7 @@ During instrument valuation and aggregation, FX conversion takes place if corres
 @item @var{value_mc}: Line vector with instrument scenario values.\n\
 MC values for several @var{timestep_mc} are stored in columns.\n\
 @item @var{timestep_mc}: String Cell array with MC timesteps. If new timesteps are set, values are automatically appended.\n\
+@end itemize\n\
 \n\
 For illustration see the following example:\n\
 A 9 month floating rate note instrument will be calibrated and priced.\n\
