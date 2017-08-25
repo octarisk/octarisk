@@ -90,7 +90,7 @@ elseif  ( strcmp('texinfo',type) == 1)
     for ii = 1:length(c)
 		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         command = strcat(c{ii},"('texinfo',1)");
-        retval = eval(command);        
+        retval = eval(command);     
         if ~( isempty(retval) )
             %replace html title
             % Problem: all \ have to be escaped:
@@ -104,6 +104,8 @@ elseif  ( strcmp('texinfo',type) == 1)
             indexstring = strcat('@cindex \t Function \t', c{ii},'\n');
             fprintf(fid, indexstring);
             fprintf(fid, retval); 
+            fprintf(fid, '\nDependencies of class:\n');
+            fprintf(fid, '\n @image{%s,15cm}\n',c{ii}(1:end-5));
             fprintf(fid, '\n');
             fprintf('SUCCESS: Documentation printed for: >>%s<<\n',c{ii}); 
         else
