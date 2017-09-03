@@ -105,13 +105,13 @@ Input and output variables:\n\
 		// get vola cube
 		curve_cube = input_struct.contents (fieldname_cube)(ii);
 		if (! curve_cube.is_defined ())
-			error ("interpolate_cubestruct: struct does not have a field named 'cube'\n");
+			error ("interpolate_curvestruct: struct does not have a field named 'cube'\n");
 		curve_array    = curve_cube.array_value ();
 		
 		// get x axis values
 		x_axis = input_struct.contents (fieldname_xx)(ii);
 		if (! x_axis.is_defined ())
-			error ("interpolate_cubestruct: struct does not have a field named '%s'\n", fieldname_xx.c_str ());
+			error ("interpolate_curvestruct: struct does not have a field named '%s'\n", fieldname_xx.c_str ());
 		xx_values    = x_axis.array_value ();
 		
 		// interpolate curve values and return  interpolated values
@@ -207,13 +207,13 @@ bool any_bad_argument(const octave_value_list& args)
 
 	if (! args(0).is_map ())
 	{
-		error ("interpolate_cubestruct: ARG0 must be a struct");
+		error ("interpolate_curvestruct: ARG0 must be a struct");
 		return true;
     }
 
 	if (! args(1).is_numeric_type())
 	{
-		error ("interpolate_cubestruct: ARG1 must be numeric (Term)");
+		error ("interpolate_curvestruct: ARG1 must be numeric (Term)");
 		return true;
     }
     

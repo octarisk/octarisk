@@ -57,36 +57,37 @@ basis = swap.get('basis');
 
 model = instrument.cms_model;
 % Start Calculation
-
 % get relevant discount factors from start date to end_date with term
-cms_dates = rollout_structured_cashflows(valuation_date, value_type, ...
+cms_dates = rollout_structured_cashflows(valuation_date, 'base', ...
                     swap, curve);
 % add issue date to cms_dates
-days_to_issue = datenum(swap.issue_date) - valuation_date;
+swapissuedatenum = datenum(swap.issue_date);
+days_to_issue = swapissuedatenum - valuation_date;
 
 cms_dates = [days_to_issue,cms_dates];
-% Preallocate memory
-cms_df = zeros(rows(rates),length(cms_dates));
 
 % time factor between valuation date and swap issue date
-TF = timefactor(valuation_date,datenum(swap.issue_date),basis);
+TF = timefactor(valuation_date,swapissuedatenum,basis);
 
-for ii = 1:1:length(cms_dates)
-    tmp_date = cms_dates(ii);
-    % interpolate rates from given curve rates
-    r_curve = curve.getRate(value_type,tmp_date);
-    % calculate discount factor
-    cms_df(:,ii) = discount_factor (valuation_date, (tmp_date + valuation_date), ...
-                        r_curve, comp_type_curve, basis_curve, comp_freq_curve);
+if strcmpi(interp_method,'linear') % vectorized interpolation approach
+	rates_cms_dates = curve.getRate(value_type,cms_dates);
+	cms_df = discount_factor (valuation_date, (cms_dates + valuation_date), ...
+							rates_cms_dates, comp_type_curve, basis_curve, comp_freq_curve);
+else % conventional loop through all nodes
+	% Preallocate memory
+	cms_df = zeros(rows(rates),length(cms_dates));
+	for ii = 1:1:length(cms_dates)
+		tmp_date = cms_dates(ii);
+		% interpolate rates from given curve rates
+		r_curve = curve.getRate(value_type,tmp_date);
+		% calculate discount factor
+		cms_df(:,ii) = discount_factor (valuation_date, (tmp_date + valuation_date), ...
+							r_curve, comp_type_curve, basis_curve, comp_freq_curve);
+	end
 end
 % calculate time factor
-tf_df = zeros(1,length(cms_dates)-1);
-for ii = 1:1:length(cms_dates)-1
-    tf_df(:,ii) = timefactor(cms_dates(ii),cms_dates(ii+1),basis);
-end
+tf_df = timefactor(cms_dates(1:end-1)',cms_dates(2:end)',basis)';
 
-% cms_df
-% tf_df
 % TODO: implement swap premiums at start and end of swap lifetime
 prem_end = 0.0; %swap.premium_at_end;
 prem_start = 0.0; %swap.premium_at_start;
@@ -127,7 +128,7 @@ end
 % Appendix A.1 Model 1: formula A.2c 
 % timefactor between CMS instrument issue date and payment date
 payment_date = valuation_date + payment_date;
-nom_t0_tp = timefactor(datenum(swap.issue_date),payment_date,basis);
+nom_t0_tp = timefactor(swapissuedatenum,payment_date,basis);
 denom_t0_t1 = q.^-(1); % timefactor between underlying cms payment date and fixing date
 delta = nom_t0_tp ./ denom_t0_t1;
 

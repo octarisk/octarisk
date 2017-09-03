@@ -123,13 +123,11 @@ if ( issuedatenum > maturitydatenum)
     error('Error: Issue date later than maturity date');
 end
 
-
 % ------------------------------------------------------------------------------
 % Start Calculation:
 issuevec = datevec(issue_date);
 todayvec = datevec(valuation_date);
 matvec = datevec(maturity_date);
-
 % floor forward rate at 0.000001:
 floor_flag = false;
 % cashflow rollout: method backwards
@@ -301,11 +299,18 @@ end
 if (rows(cf_dates) == 1)
    cf_dates = [issuevec;matvec];
 end
+
 % one time and forever: get datenum of cf_dates
 cf_datesnum = datenum(cf_dates);
-cf_business_datesnum = busdate(cf_datesnum-1 + business_day_rule, ...
-                                    business_day_direction);
-cf_business_dates = datevec(cf_business_datesnum);
+if ( enable_business_day_rule == true)
+	cf_business_datesnum = busdate(cf_datesnum-1 + business_day_rule, ...
+										business_day_direction);
+	cf_business_dates = datevec(cf_business_datesnum);
+else
+	cf_business_datesnum = cf_datesnum;
+	cf_business_dates = cf_dates;
+end
+
 %-------------------------------------------------------------------------------
 
 %-------------------------------------------------------------------------------
@@ -824,20 +829,31 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
     cms_tf    = zeros(rows(tmp_rates),length(d1));
     cf_principal = zeros(rows(tmp_rates),length(d1));
     [tf dip dib] = timefactor (d1, d2, dcc);
+	% get instrument attributes
+	sliding_term        = instrument.cms_sliding_term;
+	underlying_term     = instrument.cms_term;
+	underlying_spread   = instrument.cms_spread;
+	underlying_comp_type = instrument.cms_comp_type;
+	model               = instrument.cms_model;	
+    % preset swap
+	swap = Bond();
+	swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
+					'value_base',1,'coupon_generation_method', ...
+					'forward','last_reset_rate',-0.000, ...
+					'sub_type', 'SWAP_FIXED','spread',0.00, ...
+					'notional',1,'notional_at_end',0, ...
+					'compounding_type',underlying_comp_type, ...
+					'term',underlying_term, ...
+					'notional_at_start',0);	
     for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
         if ( t1 >= 0 && t2 >= t1 )    % for future cash flows use forward rates
         % (I) Calculate CMS x-let value with or without convexity adjustment and 
         %   distinguish between swaplets, caplets and floorlets 
-            sliding_term        = instrument.cms_sliding_term;
-            underlying_term     = instrument.cms_term;
-            underlying_spread   = instrument.cms_spread;
-            underlying_comp_type = instrument.cms_comp_type;
-            model               = instrument.cms_model;
             % payment date of FRN special is maturity date -> use date for CA
             %     ( will be incorporated in nominator of delta of Hagan)
-            payment_date        = datenum(maturity_date) - valuation_date;
+            payment_date        = maturitydatenum - valuation_date;
             if ( instrument.in_arrears == 0)    % in fine
                 fixing_start_date  = t1;
             else    % in arrears
@@ -846,16 +862,8 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
              % fixing_start_date
              % payment_date
             % set up underlying swap
-            swap = Bond();
-            swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
-                            'value_base',1,'coupon_generation_method', ...
-                            'forward','last_reset_rate',-0.000, ...
-                            'sub_type', 'SWAP_FLOATING','spread',0.00, ...
-                            'maturity_date',datestr(valuation_date + fixing_start_date + sliding_term), ...
-                            'notional',1,'compounding_type',underlying_comp_type, ...
-                            'issue_date', datestr(valuation_date + fixing_start_date), ...
-                            'term',underlying_term,'notional_at_end',0, ...
-                            'notional_at_start',0);
+            swap = swap.set('maturity_date',datestr(valuation_date + fixing_start_date + sliding_term), ...
+                            'issue_date', datestr(valuation_date + fixing_start_date));
             % get volatility according to moneyness and term
             if ( regexpi(surface.moneyness_type,'-'))
                 moneyness = 0.0; % surface with absolute moneyness
@@ -864,7 +872,6 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
             end
             tenor   = fixing_start_date; % days until foward start date
             sigma   = surface.getValue(value_type,tenor,sliding_term,moneyness);  
-            
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
             if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
@@ -891,6 +898,7 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
         cms_tf(:,ii) = tf(ii);  % store timefactor of cms rate        
         cms_rates(:,ii) = final_rate;
     end
+	
     cms_rates(:,1)=[];  % remove first cms_rates
     cms_tf(:,1)=[];  % remove first time factor
     % Capitalized Floater adjustments:
@@ -898,9 +906,15 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
     cf_dates    = [issuevec;matvec];
 	cf_datesnum = datenum(cf_dates);
     % update business date
-    cf_business_dates = datevec(busdate(cf_datesnum-1 + business_day_rule, ...
+	if ( enable_business_day_rule == true)
+		cf_business_dates = datevec(busdate(cf_datesnum-1 + business_day_rule, ...
                                     business_day_direction));
-    cf_business_datesnum = datenum(cf_business_dates);                              
+		 cf_business_datesnum = datenum(cf_business_dates);   
+	else
+		cf_business_datesnum = cf_datesnum;
+		cf_business_dates = cf_dates;
+	end
+                            
     % 2. adjust cms rates according to rate composition function
     if ( strcmpi(instrument.rate_composition,'capitalized'))
         tmp_rates = prod(1+cms_rates,2) - 1;
@@ -961,18 +975,28 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
     cf_values = zeros(rows(tmp_rates),length(d1));
     cf_principal = zeros(rows(tmp_rates),length(d1));
     [tf dip dib] = timefactor (d1, d2, dcc);
+	% get instrument data
+	sliding_term        = instrument.cms_sliding_term;
+	underlying_term     = instrument.cms_term;
+	underlying_spread   = instrument.cms_spread;
+	underlying_comp_type = instrument.cms_comp_type;
+	model               = instrument.cms_model;
+	% preset up underlying swap
+	swap = Bond();
+	swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
+					'value_base',1,'coupon_generation_method', ...
+					'forward','last_reset_rate',-0.000, ...
+					'sub_type', 'SWAP_FLOATING','spread',0.00, ...
+					'notional',1,'compounding_type',underlying_comp_type, ...
+					'term',underlying_term,'notional_at_end',0, ...
+					'notional_at_start',0);	
     for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
-        
         if ( t1 >= 0 && t2 >= t1 )    % for future cash flows use forward rates
         % (I) Calculate CMS x-let value with or without convexity adjustment and 
         %   distinguish between swaplets, caplets and floorlets 
-            sliding_term        = instrument.cms_sliding_term;
-            underlying_term     = instrument.cms_term;
-            underlying_spread   = instrument.cms_spread;
-            underlying_comp_type = instrument.cms_comp_type;
-            model               = instrument.cms_model;
+            
             payment_date        = t2;
             if ( instrument.in_arrears == 0)    % in fine
                 fixing_start_date  = t1;
@@ -983,16 +1007,9 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
             %payment_date
             
             % set up underlying swap
-            swap = Bond();
-            swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
-                            'value_base',1,'coupon_generation_method', ...
-                            'forward','last_reset_rate',-0.000, ...
-                            'sub_type', 'SWAP_FLOATING','spread',0.00, ...
-                            'maturity_date',datestr(valuation_date + fixing_start_date + sliding_term), ...
-                            'notional',1,'compounding_type',underlying_comp_type, ...
-                            'issue_date', datestr(valuation_date + fixing_start_date), ...
-                            'term',underlying_term,'notional_at_end',0, ...
-                            'notional_at_start',0);
+            swap = swap.set('maturity_date',datestr(valuation_date + fixing_start_date + sliding_term), ...
+                            'issue_date', datestr(valuation_date + fixing_start_date));
+							
             % get volatility according to moneyness and term
             if ( regexpi(surface.moneyness_type,'-'))
                 moneyness = 0.0; % surface with absolute moneyness

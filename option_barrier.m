@@ -31,7 +31,6 @@
 %# @item @var{q}: dividend rate p.a., continously compounded
 %# @item @var{Rebate}: Rebate of barrier option
 %# @end itemize
-%# @seealso{option_willowtree, swaption_black76, option_bs}
 %# @end deftypefn
 
 function [optionValue] = option_barrier(PutOrCall,UpOrDown,OutorIn,S0,X,H,T,r,sigma,q,Rebate)

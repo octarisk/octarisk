@@ -76,11 +76,8 @@ Input and output variables:\n\
 	{
 		// catch ctrl + c
             OCTAVE_QUIT;
-		// extract columns from input matrizes
-			df_col = df.column(ii); 
-			value_col = values.column(ii); 
 		// get npv of column and sum it up to total npv
-			retvec = retvec + product(df_col,value_col);
+			retvec = retvec + product(df.column(ii),values.column(ii));
 		
 	}	// end iteration over all nodes 
   
@@ -105,13 +102,13 @@ bool any_bad_argument(const octave_value_list& args)
 
 	if (! args(0).is_numeric_type ())
 	{
-		error ("interpolate_cubestruct: ARG0 must be numeric (values)");
+		error ("calculate_npv_cpp: ARG0 must be numeric (values)");
 		return true;
     }
 
 	if (! args(1).is_numeric_type())
 	{
-		error ("interpolate_cubestruct: ARG1 must be numeric (discount factors)");
+		error ("calculate_npv_cpp: ARG1 must be numeric (discount factors)");
 		return true;
     }
 	

@@ -112,19 +112,19 @@ Input and output variables:\n\
 		// get vola_surface
 		vola_surface = input_struct.contents (fieldname_cube)(ii);
 		if (! vola_surface.is_defined ())
-			error ("interpolate_cubestruct: struct does not have a field named 'cube'\n");
+			error ("interpolate_surfacestruct: struct does not have a field named 'cube'\n");
 		vola_array    = vola_surface.array_value ();
 		
 		// get x axis values
 		x_axis = input_struct.contents (fieldname_xx)(ii);
 		if (! x_axis.is_defined ())
-			error ("interpolate_cubestruct: struct does not have a field named '%s'\n", fieldname_xx.c_str ());
+			error ("interpolate_surfacestruct: struct does not have a field named '%s'\n", fieldname_xx.c_str ());
 		xx_values    = x_axis.array_value ();
 		
 		// get y axis values
 		y_axis = input_struct.contents (fieldname_yy)(ii);
 		if (! y_axis.is_defined ())
-			error ("interpolate_cubestruct: struct does not have a field named '%s'\n", fieldname_yy.c_str ());
+			error ("interpolate_surfacestruct: struct does not have a field named '%s'\n", fieldname_yy.c_str ());
 		yy_values    = y_axis.array_value ();
 		
 		// interpolate vola_surface and return  interpolated values
@@ -233,19 +233,19 @@ bool any_bad_argument(const octave_value_list& args)
 
 	if (! args(0).is_map ())
 	{
-		error ("interpolate_cubestruct: ARG0 must be a struct");
+		error ("interpolate_surfacestruct: ARG0 must be a struct");
 		return true;
     }
 
 	if (! args(1).is_numeric_type())
 	{
-		error ("interpolate_cubestruct: ARG1 must be numeric (Term)");
+		error ("interpolate_surfacestruct: ARG1 must be numeric (Term)");
 		return true;
     }
 
 	if (! args(2).is_numeric_type())
 	{
-		error ("interpolate_cubestruct: ARG2 must be numeric (Tenor)");
+		error ("interpolate_surfacestruct: ARG2 must be numeric (Tenor)");
 		return true;
     }
     

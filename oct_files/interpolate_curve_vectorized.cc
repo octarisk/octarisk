@@ -167,19 +167,19 @@ bool any_bad_argument(const octave_value_list& args)
 
 	if (! args(0).is_numeric_type ())
 	{
-		error ("interpolate_cubestruct: ARG0 must be numeric (nodes)");
+		error ("interpolate_curve_vectorized: ARG0 must be numeric (nodes)");
 		return true;
     }
 
 	if (! args(1).is_numeric_type())
 	{
-		error ("interpolate_cubestruct: ARG1 must be numeric (rates)");
+		error ("interpolate_curve_vectorized: ARG1 must be numeric (rates)");
 		return true;
     }
 	
 	if (! args(2).is_numeric_type())
 	{
-		error ("interpolate_cubestruct: ARG2 must be numeric (timesteps)");
+		error ("interpolate_curve_vectorized: ARG2 must be numeric (timesteps)");
 		return true;
     }
     
