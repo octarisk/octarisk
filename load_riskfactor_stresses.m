@@ -12,7 +12,7 @@
 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} load_riskfactor_stresses(@var{riskfactor_struct}, @var{stresstest_struct})
-%# Generate stresses for risk factor curve objects. Store all stresses in provided struct and return the final struct and a cell containing all failed risk factor ids.
+%# Generate stresses for risk factor objects (except curves). Store all stresses in provided struct and return the final struct and a cell containing all failed risk factor ids.
 %# @end deftypefn
 
 function [riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct)
@@ -20,45 +20,68 @@ function [riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfact
 rf_failed_cell = {};
 number_riskfactors = 0;
 % loop via all riskfactors, take IDs from struct und apply delta
-for ii = 1 : 1 : length( stresstest_struct )
-    tmp_shiftvalue  = [stresstest_struct( ii ).shiftvalue]; % get vector of shift value of particular scenario
-    tmp_shifttypes  = [stresstest_struct( ii ).shifttype];  % get vector of shift type of particular scenario
-    tmp_risktype    = stresstest_struct( ii ).risktype;    % get risk type cell
-    
-    for kk = 1 : 1 : length( riskfactor_struct )        % check whether risk factor is contained in risk type cell 
+for kk = 1 : 1 : length( riskfactor_struct )        % check whether risk factor is contained in risk type cell 
+    tmp_object = riskfactor_struct( kk ).object;
+    tmp_rf_id = tmp_object.id;
+    % update only Equity, Commodity, FX risk factors etc.
+    if ~( strcmpi(tmp_object.type,{'RF_IR','RF_VOLA','RF_SPREAD'}))
         try
-            % get parameters of risk factor object          % and apply specific shock
-            rf_object   = riskfactor_struct( kk ).object;
-            tmp_rf_type = rf_object.type;
-            tmp_rf_id   = rf_object.id;
-            c = regexp(tmp_rf_id, tmp_risktype);    % regexp of stress test risk type on risk factor id -> return 1 if regexp matches
-            k = cellfun(@isempty,c) == 0;           % convert NaN to 0 values
-            tmp_shift = tmp_shiftvalue * k';        % get risk factor shift value (multiply regexp match vector with shift value vector -> return shift value
-            tmp_shift_type = tmp_shifttypes * k';   % apply same on shift type -> return scalar of shift type
-
-            if ( sum(k) == 1 )
-                tmp_stress = [tmp_shift];
-            else
-                tmp_stress = [0.0];
-            end
-            rf_object = rf_object.set('scenario_stress',tmp_stress);    % add stress shift value into stress test vector of risk factor -> order preserved
-            rf_object = rf_object.set('shift_type',cat(1,rf_object.shift_type,tmp_shift_type));
-            % store risk factor object back into struct:
-            riskfactor_struct( kk ).object = rf_object; 
+            stress_values = zeros(length(stresstest_struct),1) ;
             number_riskfactors = number_riskfactors + 1;
+                % iterate via all stress definitions
+            for ii = 1:1:length(stresstest_struct)
+                    % get struct with all market object shocks
+                    subst = stresstest_struct(ii).objects;
+                    % get appropriate market object
+                    [shockstruct retcode] = get_sub_struct(subst,tmp_object.id);
+                    if ( retcode == 1)      % object_id is contained in stress
+                            stress_values(ii) = return_stress_shocks(tmp_object,shockstruct);
+                    else
+                            % apply base value
+                            stress_values(ii) = tmp_object.getValue('base');
+                    end
+            end
+            % set instrument stress vector
+            tmp_object = tmp_object.set('scenario_stress',stress_values);
+            riskfactor_struct( kk ).object = tmp_object;
         catch
-            fprintf('WARNING: There has been an error for curve: >>%s<< in stresstest: >>%s<<. Message: >>%s<<\n',tmp_rf_id,stresstest_struct( ii ).id,lasterr);
+            fprintf('WARNING: There has been an error for riskfactor: >>%s<<. Message: >>%s<<\n',tmp_rf_id,lasterr);
             rf_failed_cell{ length(rf_failed_cell) + 1 } =  tmp_rf_id;
         end %end try catch
-    end     % end for loop through all risk factors
-end     % end for loop through all stresstests
+    end
+end     % end for loop through all risk factors
  
 rf_failed_cell = unique(rf_failed_cell); 
 % returning statistics
-fprintf('SUCCESS: specified >>%d<< risk factor stresses in %d stresstests.\n',number_riskfactors,ii);
+fprintf('SUCCESS: specified >>%d<< risk factor stresses in %d stresstests.\n',number_riskfactors,length(stresstest_struct));
 if (length(rf_failed_cell) > 0 )
     fprintf('WARNING: >>%d<< risk factor stress generations failed: \n',length(rf_failed_cell));
     rf_failed_cell
 end 
 
+end
+
+
+% Helper Function for applying market data stresses
+function retval = return_stress_shocks(obj,mktstruct)
+        retval = 0.0;
+        type            = mktstruct.type;
+        shock_type      = mktstruct.shock_type;
+        shock_value     = mktstruct.shock_value;
+        % type index
+        if (strcmpi(type,'riskfactor'))
+                base_value = obj.getValue('base');
+                if (strcmpi(shock_type,'relative'))
+                        retval = base_value .* shock_value;
+                elseif (strcmpi(shock_type,'absolute'))
+                        retval = base_value + shock_value;
+                elseif (strcmpi(shock_type,'value'))
+                        retval = shock_value;
+                else
+                        error('return_stress_shocks: unknown stress shock type: >>%s<<\n',any2str(shock_type));
+                end
+        % other types
+        else
+                error('return_stress_shocks: unknown stress type: >>%s<<\n',any2str(type));
+        end
 end

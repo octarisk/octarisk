@@ -395,7 +395,37 @@ elseif ( strcmpi(tmp_type,'sensitivity'))
 elseif ( strcmpi(tmp_type,'synthetic'))
     % Using Synthetic class
     synth = instr_obj;
-        
+    
+	% valuate all underlying instruments
+	undr_instr_cell = synth.get('instruments');
+	for kk=1:1:length(undr_instr_cell)
+		tmp_undr_id = undr_instr_cell{kk};
+		% assuming underlying is instrument
+		[tmp_underlying_object object_ret_code]  = get_sub_object(instrument_struct, tmp_undr_id);
+		if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation of id >>%s<<: No instrument_struct object found for id >>%s<<\n',synth.id,any2str(tmp_undr_id));
+		else
+			% delete scenario values (in any case)
+			tmp_underlying_object = tmp_underlying_object.del_scen_data;
+			% calculate underlying values
+			if ( ~strcmpi(scenario,'base'))
+				tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, 'base', ...
+										instrument_struct, surface_struct, ...
+										matrix_struct, curve_struct, index_struct, ...
+										riskfactor_struct, para_struct);
+			end
+			tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
+										instrument_struct, surface_struct, ...
+										matrix_struct, curve_struct, index_struct, ...
+										riskfactor_struct, para_struct);
+			% overwrite object in instrument_struct
+			instrument_struct = replace_sub_object(instrument_struct,tmp_underlying_object);
+		end
+	end
+	% valuate synthetic instrument
+	if ( ~strcmpi(scenario,'base'))
+		synth = synth.calc_value(valuation_date,'base',instrument_struct,index_struct);
+	end
     synth = synth.calc_value(valuation_date,scenario,instrument_struct,index_struct);
     % store bond object:
     ret_instr_obj = synth;
@@ -551,6 +581,15 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
             end
             % calculate key rate durations and convexities - computationally very expensive!
             bond = bond.calc_key_rates(valuation_date,tmp_curve_object);
+		else
+			% calculate sensitivities
+            if( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOATING'))
+                bond = bond.calc_sensitivities(valuation_date,tmp_curve_object,tmp_ref_object);
+            else
+                bond = bond.calc_sensitivities(valuation_date,tmp_curve_object);
+            end
+            % calculate key rate durations and convexities - computationally very expensive!
+            bond = bond.calc_key_rates(valuation_date,tmp_curve_object);
         end
         % final valuation of bond
         bond = bond.calc_value (valuation_date,scenario,tmp_curve_object);
@@ -586,4 +625,19 @@ else
 end
 
 
+end
+
+% helper function
+function instrument_struct = replace_sub_object(instrument_struct,object)
+	a = {instrument_struct.id};
+	b = 1:1:length(a);
+	c = strcmpi(a, object.id);
+	% instrument_struct contains object
+	if sum(c) > 0
+		idx = b * c';
+	else % append object to instrument_struct
+		idx = length(instrument_struct) + 1;
+	end
+	instrument_struct(idx).id = object.id;
+	instrument_struct(idx).object = object;
 end

@@ -141,11 +141,15 @@ classdef Riskfactor
         if nargin < 4
             sensitivity = 1;
         end
-        if ( sum(strcmp(model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
-            ret_vec     =  exp(scen_deltavec .* sensitivity) .* value_base;
-        else        % Normal Model
-            ret_vec     = (scen_deltavec .* sensitivity) + value_base;
-        end
+		if ~(isempty(scen_deltavec))
+			if ( sum(strcmp(model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
+				ret_vec     =  exp(scen_deltavec .* sensitivity) .* value_base;
+			else        % Normal Model
+				ret_vec     = (scen_deltavec .* sensitivity) + value_base;
+			end
+		else
+			ret_vec = 0.0;
+		end
       end % get_abs_values
       
        

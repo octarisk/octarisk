@@ -8,13 +8,17 @@ Item,STRESS04,SPREAD+100bp,SPREAD_EUR_FIN_A,curve,absolute,365,,,,linear,+0.01
 Item,STRESS05,INFL-100bp,INFL_EXP_CURVE,curve,absolute,365,,,,linear,-0.01
 Item,STRESS06,INFL+100bp,INFL_EXP_CURVE,curve,absolute,365,,,,linear,+0.01
 Item,STRESS07,EQ-30Pct,EQ_DE,index,relative,,,,,linear,0.7
+Item,STRESS07,EQ-30Pct,RF_EQ_DE,riskfactor,value,,,,,linear,-0.3
 Item,STRESS08,EQ+30Pc,EQ_DE,index,relative,,,,,linear,1.3
+Item,STRESS08,EQ+30Pc,RF_EQ_DE,riskfactor,value,,,,,linear,0.3
 Item,STRESS09,VOLA_100UP,RF_VOLA_IR_EUR,surface,absolute,,,,,,1.0
 Item,STRESS09,VOLA_100UP,RF_VOLA_EQ_DE,surface,absolute,,,,,,1.0
 Item,STRESS10,RE-30Pct,REIT_GLOBAL,index,relative,,,,,linear,0.7
 Item,STRESS11,RE+30Pc,REIT_GLOBAL,index,relative,,,,,linear,1.3
 Item,STRESS12,COM-30Pct,COM_GOLD,index,relative,,,,,linear,0.7
+Item,STRESS12,COM-30Pct,RF_COM_GOLD,riskfactor,value,,,,,linear,-0.3
 Item,STRESS13,COM+30Pc,COM_GOLD,index,relative,,,,,linear,1.3
+Item,STRESS13,COM+30Pc,RF_COM_GOLD,riskfactor,value,,,,,linear,0.3
 Item,STRESS14,FX-30Pct,FX_EURUSD,index,relative,,,,,linear,0.7
 Item,STRESS15,FX+30Pc,FX_EURUSD,index,relative,,,,,linear,1.3
 Item,STRESS16,DotCom2000,EQ_DE,index,relative,,,,,linear,0.65

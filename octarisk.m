@@ -19,7 +19,9 @@
 %#
 %# @end deftypefn
 
-function octarisk(path_working_folder)
+function [instrument_struct, curve_struct, index_struct, surface_struct, para_struct, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct] = octarisk(path_working_folder,batchmode = false)
+
+
 
 % ##############################################################################################
 % Content:
@@ -109,9 +111,7 @@ try
     end
 end    
 
-% set structure for storing parameters:
-persistent para_struct;
-para_struct = struct();
+
 % set filenames for input:
 input_filename_instruments  = 'instruments.csv';
 input_filename_corr_matrix  = 'corr.csv';
@@ -128,12 +128,22 @@ input_filename_surf_stoch = 'surf_stochastic_';
 input_filename_matrix = 'matrix_';
 
 % set general variables
-plotting = 1;           % switch for plotting data (0/1)
-saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
-archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
-stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
-mc_scen_analysis = 0;   % switch for applying statistical tests on risk factor MC scenario values 
-                        %   (compare target statistic parameters with actual values)
+if (batchmode == true)
+	plotting = 0;
+	saving = 0;
+	archive_flag = 0;
+	mc_scen_analysis = 0;
+	stable_seed = 1;
+	aggregation_flag = false;
+else
+	plotting = 1;           % switch for plotting data (0/1)
+	saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
+	archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
+	stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
+	mc_scen_analysis = 0;   % switch for applying statistical tests on risk factor MC scenario values 
+							%   (compare target statistic parameters with actual values)
+	aggregation_flag = true;
+end
 % load packages
 pkg load statistics;	% load statistics package (needed in scenario_generation_MC)
 pkg load financial;		% load financial packages (needed throughout all scripts)
@@ -149,10 +159,8 @@ rnd_number_gen = 'Mersenne-Twister';	% type of random number generator in ['Mers
 						% although this is undocumented, Fortran code of Octave Version 2.0.5 seems to
 						% implement a multiplicative linear congruential generator (MLCG) of form 
 						% random_variable = (A*S) MOD M	
-	
 valuation_date = datenum('30-Sep-2016'); % valuation date
-para_struct.valuation_date = valuation_date;
-fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
+
 base_currency  = 'EUR'  % base reporting currency
 aggregation_key = {'asset_class','currency','id','type'}    % aggregation key
 mc_timesteps    = {'250d'} %{'250d'}                % MC timesteps
@@ -165,7 +173,7 @@ runcode = '2016Q3'; %substr(md5sum(num2str(time()),true),-6)
 timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
 
 first_eval      = 1;    % means first evaluation
-para_struct.first_eval = first_eval;
+
 plottime = 0;   % initializing plottime
 aggr = 0;       % initializing aggregation time
 if length(mc_timesteps) > 0
@@ -218,6 +226,35 @@ else % use random seed
 	fullpath = [path, savename, endung];
 	save ('-ascii', fullpath, savename);
 end
+
+% set structure for storing parameters:
+persistent para_struct;
+para_struct = struct();
+para_struct.plotting = plotting;
+para_struct.saving = saving;
+para_struct.archive_flag = archive_flag;
+para_struct.stable_seed = stable_seed;
+para_struct.mc_scen_analysis = mc_scen_analysis;
+para_struct.mc = mc;
+para_struct.scen_number = mc;
+para_struct.hd_limit = hd_limit;
+para_struct.confidence = confidence;
+para_struct.quantile = confidence;
+para_struct.copulatype = copulatype;
+para_struct.nu  = nu;
+para_struct.rnd_number_gen = rnd_number_gen;
+para_struct.valuation_date = valuation_date; 
+para_struct.base_currency = base_currency;
+para_struct.aggregation_key = aggregation_key;
+para_struct.mc_timesteps = mc_timesteps;
+para_struct.scenario_set = scenario_set;
+para_struct.runcode = runcode;
+para_struct.timestamp = timestamp;
+para_struct.first_eval = first_eval;
+
+
+fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
+
 % I) #########            INPUT                 #########
 tic;
 % 0. Processing timestep values
@@ -318,6 +355,9 @@ if (run_mc == true)
     [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
 end
 
+% update riskfactor with stresses
+[riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
+
 scengen = toc;
 
 tic;
@@ -376,6 +416,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
   else
       scen_number = mc;
   end
+  para_struct.scen_number = scen_number;
+  para_struct.path_static = path_static;
+  para_struct.timestep = tmp_ts;
+  para_struct.first_eval = first_eval;
+		
   fprintf('== Full valuation | scenario set %s | number of scenarios %d | timestep in days %d ==\n',tmp_scenario, scen_number,tmp_ts);
   for ii = 1 : 1 : length( instrument_struct )
     try
@@ -384,10 +429,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
     tmp_id = instrument_struct( ii ).id;
     tic;
         % =================    Full valuation    ===============================
-        para_struct.scen_number = scen_number;
-        para_struct.path_static = path_static;
-        para_struct.timestep = tmp_ts;
-        para_struct.first_eval = first_eval;
+        
         tmp_instr_obj = get_sub_object(instrument_struct, tmp_id); 
         % Call instrument object method valuate
         tmp_instr_obj = tmp_instr_obj.valuate(valuation_date, tmp_scenario, ...
@@ -451,20 +493,23 @@ end
 
 % print all base values
 fprintf('Instrument Base and stress Values: \n');
-fprintf('ID,Base,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(8).name,stresstest_struct(14).name);
+fprintf('ID,Base,Scen1,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(8).name,stresstest_struct(14).name);
 for kk = 1:1:length(instrument_struct)
     obj = instrument_struct(kk).object;
     stressvec = obj.getValue('stress');
     if (length(stressvec) > 1)
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(2),stressvec(3),stressvec(8),stressvec(14),obj.currency);
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(8),stressvec(14),obj.currency);
     else
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),obj.currency);
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),stressvec(1),obj.currency);
     end
 end
 
 
 % --------------------------------------------------------------------------------------------------------------------
 % 6. Portfolio Aggregation
+aggr = 0;
+plottime = 0;
+if (aggregation_flag == true) % aggregation and reporting batch
 tic;
 Total_Portfolios = length( portfolio_struct );
 base_value = 0;
@@ -969,6 +1014,14 @@ else
     fprintf('\nSUCCESS: All positions aggregated.\n');
 end
 
+totaltime = round((parseinput + scengen + curve_gen_time + fulvia + aggr + plottime + saving_time)*10)/10;
+fprintf(fid, 'Total Runtime:  %6.2f s\n',totaltime);
+% Close file
+fclose (fid);
+end	% close if case for empty portfolios
+end % closing main portfolioloop mm
+end % close aggregation_flag condition
+
 % Output to stdout:
 fprintf('\n');
 fprintf('=== Total Time for Calculation ===\n');
@@ -979,13 +1032,8 @@ fprintf('Total time for full valuation:  %6.2f s\n', fulvia);
 fprintf('Total time for aggregation:  %6.2f s\n', aggr);
 fprintf('Total time for plotting:  %6.2f s\n', plottime);
 fprintf('Total time for saving data:  %6.2f s\n', saving_time);
-totaltime = round((parseinput + scengen + curve_gen_time + fulvia + aggr + plottime + saving_time)*10)/10;
-fprintf(fid, 'Total Runtime:  %6.2f s\n',totaltime);
+totaltime = round((parseinput + scengen + curve_gen_time + fulvia + saving_time)*10)/10;
 fprintf('Total Runtime:  %6.2f s\n',totaltime);
-% Close file
-fclose (fid);
-end	% close if case for empty portfolios
-end % closing main portfolioloop mm
 
 % Plot correlation mismatches:
 if ( plotting == 1 && mc_scen_analysis == 1 )
