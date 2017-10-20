@@ -100,8 +100,8 @@ classdef Sensitivity < Instrument
       end % set.sub_type
 	  
 	  function obj = set.model(obj,model)
-         if ~(strcmpi(model,'GBM') || strcmpi(model,'BM') )
-            error('Model must be either GBM or BM')
+         if ~(strcmpi(model,'GBM') || strcmpi(model,'BM') || strcmpi(model,'REL') )
+            error('Model must be either REL, GBM or BM')
          end
          obj.model = model;
       end % Set.model

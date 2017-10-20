@@ -27,7 +27,11 @@ Further information:
 
 [documentation (online)](http://www.octarisk.com/documentation/index.html)
 
-[Classes and Objects (online)](http://www.octarisk.com/documentation/Octave-octarisk-Classes.html#Octave-octarisk-Classes)
+[classes and objects (online)](http://www.octarisk.com/documentation/Octave-octarisk-Classes.html#Octave-octarisk-Classes)
+
+[process overview (online)](https://www.octarisk.com/documentation/Implementation-concept.html#Process-overview)
+
+[function and method hierarchy (PDF)](https://www.octarisk.com/download/octarisk_dependencies.pdf)
 
 ## Contributors
 Stefan Schloegl (schinzilord@octarisk.com)
@@ -60,21 +64,22 @@ addpath ('/path/to/octarisk-latest')
 savepath()
 ```
 
-- start Octarisk with a reference to your working_directory (which can be 
+- adjust the path to your working_directory (which can be 
 anywhere on the system where you have write access). 
 An example working_folder with pre-defined instruments, risk factors and 
-portfolio is provided in the release .
+portfolio is provided in the release.
+- start the GUI (which automatically calls octarisk main script)
+
 
 ```
-octarisk ('/path/to/octarisk-latest/working_folder')
+octarisk_gui ('/path/to/octarisk-latest/working_folder')
 ```
 
 - the script will run several seconds and gives you two file based reports 
 (you can find the reports under `/path/to/octarisk-latest/working_folder/output/reports`),
-four images with each two histograms and bar charts for two test portfolios, 
-and some more details on the Octave screen.
+and instrument and portfolio attributes and risk measures on your screen.
 
-- now you can start adjusting the input data (`/path/to/octarisk-latest/working_folder/input/ and /mktdata`) 
+- now you can start using the GUI, adjusting the input data (`/path/to/octarisk-latest/working_folder/input/ and /mktdata`) 
 or change the risk measurement settings directly in the `octarisk.m` script.
 
 For a more detailed installation instruction please refer to this 
@@ -102,11 +107,12 @@ in order to provide full Matlab compatibility.
 
 ## Version history
 
+- Version 0.4.1   introduction of a GUI and a batch mode, minor bug fixes
 - Version 0.4.0   massive speed impprovements, enhanced documentation, modified stress test interface
 - Version 0.3.5   more instruments, refactored code, enhanced documentation
 - Version 0.3.4   various performance improvements, enhanced documentation
 - Version 0.3.3   introduction of c++ pricing functions, enhanced volatility framework
-- Version 0.3.2   Introduction of a session-like instrument valuation interface, new instruments
+- Version 0.3.2   introduction of a session-like instrument valuation interface, new instruments
 - Version 0.3.1   enhanced testing features for regression and integration tests 
 - Version 0.3.0   independent validation of all pricing functions, unittests, bug fixes
 - Version 0.3.0-rc1 further enhanced file interface, aggregated curves introduced, bug fixes

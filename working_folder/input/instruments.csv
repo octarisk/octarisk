@@ -10,8 +10,8 @@ HeaderZCB,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,d
 Item,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),114171,101.119,ZCB,Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20),EUR,IR_EUR,100,12,Fixed Income,21-Apr-2015,21-Apr-2020,backward,disc,act/365,0,FALSE,daily
 HeaderFRN,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,reference_curveCHAR,notionalNMBR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,last_reset_rateNMBR,termNMBR,compounding_freqCHAR,spreadNMBR
 Item,AUSTRIA 14/20 FLR MTN,A1ZKC4,100,FRN,AUSTRIA 14/20 FLR MTN,EUR,IR_EUR,IR_EUR,100,Fixed Income,04-Dec-2014,03-Jun-2020,backward,disc,act/365,0,FALSE,0.001,12,daily,0.03
-HeaderCOM,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,asset_classCHAR
-Item,ComStage ETF Commerzbank Commodity EW Index,ETF090,90.9,COM,ComStage ETF Commerzbank Commodity EW Index,EUR,RF_COM_DIV,1,Commodity
+HeaderCOM,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,asset_classCHAR,modelCHAR
+Item,ComStage ETF Commerzbank Commodity EW Index,ETF090,90.9,COM,ComStage ETF Commerzbank Commodity EW Index,EUR,RF_COM_DIV,1,Commodity,REL
 Item,Goldmuenze 1 Unze,GOLDPHYS,1050.18,COM,Goldmuenze 1 Unze,EUR,RF_COM_GOLD,1,Commodity
 Item,Silbermuenze 1 Unze,SILVERPHYS,14.04,COM,Silbermuenze 1 Unze,EUR,RF_COM_SILVER,1,Commodity
 HeaderDBT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,durationNMBR,convexityNMBR,asset_classCHAR,termNMBR

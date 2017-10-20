@@ -6,6 +6,12 @@ Possible new features:
 - Introduction of Total Return Swaps
 - Introduction of FX Swaps
 
+### 0.4.1, 2017/10/21
+Version v0.4.1 is a minor release with bug fixes and the introduction of a GUI
+- bugfix regarding applying risk factor stresses
+- introduced a revaluation of all underlying instrument of sensitivity instruments
+- introduction of a graphical user interface
+
 ### 0.4.0, 2017/08/23
 Version v0.4.0 is a major release with massive speed impprovements, refactored code,
 extended documentation and a modified stress test interface

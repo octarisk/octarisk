@@ -88,8 +88,10 @@ classdef Riskfactor
       end % disp
       
       function obj = set.model(obj,model)
-         if ~(strcmpi(model,'GBM') || strcmpi(model,'BM') || strcmpi(model,'BKM') || strcmpi(model,'OU') || strcmpi(model,'SRD') || strcmpi(model,'SLN') )
-            error('Model must be either GBM, BM, BKM, SLN, OU or SRD')
+         if ~(strcmpi(model,'GBM') || strcmpi(model,'BM') || strcmpi(model,'BKM') ...
+						|| strcmpi(model,'OU') || strcmpi(model,'SRD') ...
+						|| strcmpi(model,'SLN') || strcmpi(model,'REL') )
+            error('Model must be either GBM, BM, BKM, SLN, REL, OU or SRD')
          end
          obj.model = model;
       end % Set.model
@@ -142,9 +144,11 @@ classdef Riskfactor
             sensitivity = 1;
         end
 		if ~(isempty(scen_deltavec))
-			if ( sum(strcmp(model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
+			if ( sum(strcmpi(model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
 				ret_vec     =  exp(scen_deltavec .* sensitivity) .* value_base;
-			else        % Normal Model
+			elseif (strcmpi(model,'REL')) % relative shock 
+				ret_vec     = (1 + scen_deltavec .* sensitivity) .* value_base;
+			else   % Normal Model     
 				ret_vec     = (scen_deltavec .* sensitivity) + value_base;
 			end
 		else

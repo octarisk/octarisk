@@ -7,7 +7,7 @@ Item,RF_EQ_AP,RF_EQ_AP,RF_EQ,Riskfactor Equity AsiaPacific,GBM,0,0.16,-0.5,4,0,,
 Item,RF_EQ_EM,RF_EQ_EM,RF_EQ,Riskfactor Equity EmergingMarkets,GBM,0,0.2,-0.5,4,0,,,
 Item,RF_COM_DIV,RF_COM_DIV,RF_COM,Riskfactor Commodity Diversified,GBM,0,0.13,-0.5,4,0,,,
 Item,RF_RE_DM,RF_RE_DM,RF_RE,Riskfactor RealEstate World DM,GBM,0,0.15,-0.5,5.5,0,,,
-Item,RF_COM_GOLD,RF_COM_GOLD,RF_COM,Riskfactor Physical Gold,GBM,0,0.12,-0.3,6.5,0,,,
+Item,RF_COM_GOLD,RF_COM_GOLD,RF_COM,Riskfactor Physical Gold,REL,0,0.12,-0.3,6.5,0,,,
 Item,RF_COM_SILVER,RF_COM_SILVER,RF_COM,Riskfactor Physical Silver,GBM,0,0.2,-0.3,6.5,0,,,
 Item,RF_ALT_BC,RF_ALT_BC,RF_ALT,Riskfactor Bitcin EUR,GBM,0,0.5,-0.3,4.5,0,,,
 Item,RF_FX_EURUSD,RF_FX_EURUSD,RF_FX,Riskfactor Forex EUR USD,GBM,0,0.08,0,3,1.08,1.2,0.001
