@@ -45,7 +45,7 @@ for kk = 1 : 1 : length( riskfactor_struct )        % check whether risk factor 
             tmp_object = tmp_object.set('scenario_stress',stress_values);
             riskfactor_struct( kk ).object = tmp_object;
         catch
-            fprintf('WARNING: There has been an error for riskfactor: >>%s<<. Message: >>%s<<\n',tmp_rf_id,lasterr);
+            fprintf('WARNING: load_riskfactor_stresses: There has been an error for riskfactor: >>%s<<. Message: >>%s<<\n',tmp_rf_id,lasterr);
             rf_failed_cell{ length(rf_failed_cell) + 1 } =  tmp_rf_id;
         end %end try catch
     end

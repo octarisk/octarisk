@@ -35,8 +35,7 @@ if ~(isfield(s,'type'))
     error('Provided input struct has no type field. Exiting.');
 end
 
-object_class = getfield(s,'type');
-object_class = lower(object_class);
+object_class = lower(getfield(s,'type'));
 switch object_class
 case 'option'
     obj = Option();
@@ -76,6 +75,8 @@ case 'irvol'
     obj = Surface();
 case 'indexvol'
     obj = Surface();
+case 'parameter'
+    obj = Parameter();
 otherwise
     fprintf('No constructor found for class >>%s<<. Returning struct.\n',object_class);
     obj = s;

@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{ret_instr_obj}] =} instrument_valuation (@var{instr_obj}, @var{valuation_date}, @var{scenario}, @var{instrument_struct}, @var{surface_struct}, @var{matrix_struct}, @var{curve_struct}, @var{index_struct}, @var{riskfactor_struct}, @var{path_static}, @var{scen_number}, @var{tmp_ts}, @var{first_eval})
+%# @deftypefn {Function File} {[@var{ret_instr_obj}] =} instrument_valuation (@var{instr_obj}, @var{valuation_date}, @var{scenario}, @var{instrument_struct}, @var{surface_struct}, @var{matrix_struct}, @var{curve_struct}, @var{index_struct}, @var{riskfactor_struct}, @var{path_static}, @var{scen_number}, @var{first_eval})
 %#
 %# Valuation of instruments according to instrument type.
 %# The last four variables can be empty in case of base scenario valuation.
@@ -27,12 +27,12 @@
 %# @item @var{curve_struct}: structure with all curves in session
 %# @item @var{index_struct}: structure with all indizes in session
 %# @item @var{riskfactor_struct}: structure with all riskfactors in session
-%# @item @var{para_struct}: structure with required parameters
+%# @item @var{para_object}: structure with required parameters
 %# @itemize @bullet
-%# @item @var{para_struct.path_static}: OPTIONAL: path to folder with static files
-%# @item @var{para_struct.scen_number}: OPTIONAL: number of scenarios
-%# @item @var{para_struct.scenario}: OPTIONAL: timestep number of days for MC scenarios
-%# @item @var{para_struct.first_eval}: OPTIONAL: boolean, first_eval == 1 means first evaluation
+%# @item @var{para_object.path_static}: OPTIONAL: path to folder with static files
+%# @item @var{para_object.scen_number}: OPTIONAL: number of scenarios
+%# @item @var{para_object.scenario}: OPTIONAL: timestep number of days for MC scenarios
+%# @item @var{para_object.first_eval}: OPTIONAL: boolean, first_eval == 1 means first evaluation
 %# @end itemize
 %# @item @var{ret_instr_obj}: RETURN: evaluated instrument object
 %# @end itemize
@@ -40,38 +40,18 @@
 
 function [ret_instr_obj] = instrument_valuation(instr_obj, valuation_date, scenario, ...
                                     instrument_struct, surface_struct, matrix_struct, ...
-                                    curve_struct, index_struct, riskfactor_struct, para_struct)
+                                    curve_struct, index_struct, riskfactor_struct, para_object)
 
 % set default parameter                                 
 if ( nargin < 10 )
     scen_number = 1;
     path_static = '';
-    tmp_ts = 1;
     first_eval = 1;
 end
-% get parameter from provided struct
-if ( isfield(para_struct,'scen_number'))
-    scen_number = para_struct.scen_number;
-else
-    % Fallback: get scenario number from first curve object
-    tmp_curve_object = curve_struct(1).object;
-    scen_number = length(tmp_curve_object.getValue(scenario));
-end
-if ( isfield(para_struct,'path_static'))
-    path_static = para_struct.path_static;
-else
-    path_static = '';
-end
-if ( isfield(para_struct,'timestep'))
-    tmp_ts = para_struct.timestep;
-else
-    tmp_ts = 1;
-end
-if ( isfield(para_struct,'first_eval'))
-    first_eval = para_struct.first_eval;
-else
-    first_eval = 1;
-end
+% get parameter from provided parameter object
+scen_number = para_object.scen_number;
+path_static = para_object.path_static;
+first_eval = para_object.first_eval;
 
 
 
@@ -188,7 +168,7 @@ elseif ( strfind(tmp_type,'option') > 0 )
             tmp_underlying_obj = tmp_underlying_obj.valuate(valuation_date, scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
-                                riskfactor_struct, para_struct);
+                                riskfactor_struct, para_object);
         end
         tmp_vola_surf_obj = get_sub_object(surface_struct, option.get('vola_surface'));
     end
@@ -278,13 +258,13 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
             fixed_leg = fixed_leg.valuate(valuation_date, scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
-                                riskfactor_struct, para_struct);
+                                riskfactor_struct, para_object);
         end
         if ( sum(strcmp(scenario,float_leg.timestep_mc))==0)
             float_leg = float_leg.valuate(valuation_date, scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
-                                riskfactor_struct, para_struct);
+                                riskfactor_struct, para_object);
         end
         %Calculate base values of swaption
         if (~strcmpi(scenario,'base') )
@@ -358,7 +338,7 @@ elseif (strcmpi(tmp_type,'forward') )
 					tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
 										instrument_struct, surface_struct, ...
 										matrix_struct, curve_struct, index_struct, ...
-										riskfactor_struct, para_struct); 
+										riskfactor_struct, para_object); 
 				end
 			end
 		end
@@ -412,12 +392,12 @@ elseif ( strcmpi(tmp_type,'synthetic'))
 				tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, 'base', ...
 										instrument_struct, surface_struct, ...
 										matrix_struct, curve_struct, index_struct, ...
-										riskfactor_struct, para_struct);
+										riskfactor_struct, para_object);
 			end
 			tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
 										instrument_struct, surface_struct, ...
 										matrix_struct, curve_struct, index_struct, ...
-										riskfactor_struct, para_struct);
+										riskfactor_struct, para_object);
 			% overwrite object in instrument_struct
 			instrument_struct = replace_sub_object(instrument_struct,tmp_underlying_object);
 		end

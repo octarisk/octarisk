@@ -40,8 +40,8 @@ f = figure();
 set (gcf, "color", get(0, "defaultuicontrolbackgroundcolor"))
 set (gcf, "numbertitle", "off", "name", "Octarisk GUI")
 set (gcf, "menubar","none", "position",[100,200,1400,800],"units","pixels")
-h.ax_instrument = axes ("position", [0.04 0.05 0.35 0.35],"units", "normalized","title","PnL Distribution");
-h.ax_portfolio = axes ("position", [0.53 0.05 0.35 0.35],"units", "normalized","title","PnL Distribution");
+h.ax_instrument = axes ("position", [0.04 0.05 0.35 0.30],"units", "normalized","title","PnL Distribution");
+h.ax_portfolio = axes ("position", [0.53 0.05 0.35 0.30],"units", "normalized","title","PnL Distribution");
 
 % print loading screen
 h.calculation_label = uicontrol ("style", "text",
@@ -73,6 +73,16 @@ global stresstest_struct = struct();
 global valuation_date;
 
 % ##############################################################################
+function nochange(obj)
+	h = guidata (obj);
+	switch (gcbo)
+		case {h.curve_attribute_value}
+			set (h.curve_attribute_value, "string", "Change rates in mktdata.csv");
+		case {h.curve_attribute_nodes}
+			set (h.curve_attribute_nodes, "string", "Change nodes in mktdata.csv");
+	end
+end
+
 % functions for updating window objects
 function update_window (obj, init = false)
 
@@ -82,6 +92,7 @@ function update_window (obj, init = false)
   global instrument_struct;
   global portfolio_struct;
   global stresstest_struct;
+  global curve_struct;
 
   switch (gcbo)
 	case {h.object_attributes_popup}
@@ -114,6 +125,118 @@ function update_window (obj, init = false)
 		tmp_quantity = any2str(get_sub_struct(tmp_port_struct.position,tmp_pos_id).quantity);
 		set (h.position_attributes_value, "string", tmp_quantity);
 		aggregate_portfolio(obj);
+	case {h.instrument_stresstest_popup}
+		tmp_instr_id = get (h.instrument_struct_popup, "string"){get (h.instrument_struct_popup, "value")};
+		tmp_obj = get_sub_object(instrument_struct,tmp_instr_id);
+		stress_name = get (h.instrument_stresstest_popup, "string"){get (h.instrument_stresstest_popup, "value")};
+		a = {stresstest_struct.name};
+		b = 1:1:length(a);
+		c = strcmpi(a, stress_name);
+		idx_stress = b * c';
+		instr_stress_values = tmp_obj.getValue('stress');
+		if ( length(instr_stress_values) > 1)
+			tmp_instr_stress_value = instr_stress_values(idx_stress) - tmp_obj.getValue('base');
+		else
+			tmp_instr_stress_value = instr_stress_values(1) - tmp_obj.getValue('base');
+		end
+		set (h.instrument_stressvalue_value, "string", sprintf ("%.8f", tmp_instr_stress_value));
+	case {h.curve_id_menu} 	% update curve attribute value
+	    tmp_curve_id = get (h.curve_id_menu, "string"){get (h.curve_id_menu, "value")};
+		tmp_curve_prop = get (h.curve_property_menu, "string"){get (h.curve_property_menu, "value")};
+		tmp_obj = get_sub_object(curve_struct,tmp_curve_id);
+		nodes = any2str(tmp_obj.get('nodes'));
+		rates = tmp_obj.get(tmp_curve_prop);
+		if ( strcmpi(tmp_curve_prop,'rates_mc'))
+			port_scen_number = str2num(get (h.portfolio_mc_number_value, "string"));
+			rates = rates(port_scen_number,:);
+		elseif ( strcmpi(tmp_curve_prop,'rates_stress'))
+			% get stress value
+			stress_name = get (h.portfolio_stresstest_popup, "string"){get (h.portfolio_stresstest_popup, "value")};
+			a = {stresstest_struct.name};
+			b = 1:1:length(a);
+			c = strcmpi(a, stress_name);
+			idx_stress = b * c';
+			rates = rates(idx_stress,:);
+		end
+		% print curves
+		set (h.curve_attribute_nodes, "string", nodes);
+	    set (h.curve_attribute_value, "string", any2str(rates));
+	case {h.curve_property_menu}	% update curve attribute value
+	    tmp_curve_id = get (h.curve_id_menu, "string"){get (h.curve_id_menu, "value")};
+		tmp_curve_prop = get (h.curve_property_menu, "string"){get (h.curve_property_menu, "value")};
+		tmp_obj = get_sub_object(curve_struct,tmp_curve_id);
+		nodes = any2str(tmp_obj.get('nodes'));
+		rates = tmp_obj.get(tmp_curve_prop);
+		if ( strcmpi(tmp_curve_prop,'rates_mc'))
+			port_scen_number = str2num(get (h.portfolio_mc_number_value, "string"));
+			rates = rates(port_scen_number,:);
+		elseif ( strcmpi(tmp_curve_prop,'rates_stress'))
+			% get stress value
+			stress_name = get (h.portfolio_stresstest_popup, "string"){get (h.portfolio_stresstest_popup, "value")};
+			a = {stresstest_struct.name};
+			b = 1:1:length(a);
+			c = strcmpi(a, stress_name);
+			idx_stress = b * c';
+			rates = rates(idx_stress,:);
+		end
+		% print curves
+		set (h.curve_attribute_nodes, "string", nodes);
+	    set (h.curve_attribute_value, "string", any2str(rates));
+  end
+
+end
+
+function obj = plot_curve(obj)
+	h = guidata (obj);
+    global curve_struct;
+	global stresstest_struct;
+
+  switch (gcbo)
+	case {h.plot_curve_pushbutton}	% update curve attribute value
+	    tmp_curve_id = get (h.curve_id_menu, "string"){get (h.curve_id_menu, "value")};
+		tmp_curve_prop = get (h.curve_property_menu, "string"){get (h.curve_property_menu, "value")};
+		tmp_obj = get_sub_object(curve_struct,tmp_curve_id);
+		nodes = any2str(tmp_obj.get('nodes'));
+		rates_base = tmp_obj.get('rates_base');
+		rates = tmp_obj.get(tmp_curve_prop);
+		port_scen_number = 1;
+		idx_stress = 1;
+		if ( strcmpi(tmp_curve_prop,'rates_mc'))
+			rates_mc = tmp_obj.get('rates_mc');
+			port_scen_number = str2num(get (h.portfolio_mc_number_value, "string"));
+			rates = rates(port_scen_number,:);
+		elseif ( strcmpi(tmp_curve_prop,'rates_stress'))
+			% get stress value
+			stress_name = get (h.portfolio_stresstest_popup, "string"){get (h.portfolio_stresstest_popup, "value")};
+			a = {stresstest_struct.name};
+			b = 1:1:length(a);
+			c = strcmpi(a, stress_name);
+			idx_stress = b * c';
+			rates = rates(idx_stress,:);
+		else
+			rates = rates_base;
+		end
+		% plot curves
+		f2 = figure();
+		set (gcf, "numbertitle", "off", "name", "Octarisk Curve Structure")
+		%h.ax_curve_rates = axes ("title",any2str(tmp_obj.id));
+		gca();
+		h.plot = plot (tmp_obj.get('nodes'),rates_base,'color','blue',"linewidth",1,'marker','x');
+		hold on;
+		h.plot = plot (tmp_obj.get('nodes'),rates,'color','red',"linewidth",1,'marker','x');
+		hold off;
+		grid on;
+		title(sprintf ("Curve ID %s", strrep(tmp_obj.id,'_','\_')), "fontsize",12);
+		xlabel('Nodes (in days)', "fontsize",11);
+		ylabel('Term', "fontsize",11);
+		if ( strcmpi(tmp_curve_prop,'rates_mc'))
+			legend('Base Scenario Rates',strcat('VaR Scenario(', any2str(port_scen_number) ,') Rates'));
+		elseif ( strcmpi(tmp_curve_prop,'rates_stress'))
+			legend('Base Scenario Rates',strcat('Stress Scenario(', any2str(idx_stress) ,') Rates'));
+		else
+			legend('Base Scenario Rates');
+		end
+		guidata (obj, h);
   end
 
 end
@@ -150,7 +273,7 @@ function obj = update_plot(obj,inst_id,var)
     grid on;
 	var_string = sprintf ("VaR: %.2f %s", var,tmp_obj.currency);
 	text(0.025*para_struct.mc,(0.8*var),var_string); 
-	text(0.025*para_struct.mc,(1.2*var),strcat(num2str(round(var*1000/tmp_obj.getValue('base'))/10),' %'));
+	text(0.025*para_struct.mc,(1.2*var),strcat(num2str(round((var*1000+eps)/(tmp_obj.getValue('base')+eps))/10),' %'));
 	
 	title("Instrument PnL Distribution", "fontsize",12);
 	xlabel('MonteCarlo Scenario', "fontsize",11);
@@ -293,6 +416,8 @@ function aggregate_portfolio(obj)
 	tmp_quantity = tmp_pos_struct_selected.quantity;
 	tmp_pos_decomp_var     = -(tmp_pos_scen_values(scen_number_decomp) * tmp_quantity * sign(tmp_quantity) - tmp_pos_selected_base);
 	set (h.position_decomp_value, "string", sprintf ("%.4f", tmp_pos_decomp_var));
+	% set MC VaR scenario number
+	set (h.portfolio_mc_number_value, "string", sprintf ("%d", scen_number_decomp));
 	
 	% get portfolio stress value
 	stress_name = get (h.portfolio_stresstest_popup, "string"){get (h.portfolio_stresstest_popup, "value")};
@@ -536,36 +661,50 @@ h.position_currency_decomp_label = uicontrol ("style", "text",
                                 "string", portfolio_struct(1).currency,
                                 "horizontalalignment", "left",
                                 "position", [0.89 0.61 0.04 0.03]);
-%	Portfolio stress test results							
+% MC scenario number
+h.portfolio_mc_number_label = uicontrol ("style", "text",
+                                "units", "normalized",
+                                "string", "MC VaR portfolio scenario:",
+                                "horizontalalignment", "left",
+                                "position", [0.51 0.56 0.18 0.03]);
+								
+h.portfolio_mc_number_value = uicontrol ("style", "text",
+                                "units", "normalized",
+								%"backgroundcolor", [1 1 1],
+                                "string", "Press Aggregate...",
+                                %"horizontalalignment", "left",
+                                "position", [0.68 0.56 0.20 0.03]);								
+								
+								%	Portfolio stress test results							
 h.portfolio_stresstest_label = uicontrol ("style", "text",
                                 "units", "normalized",
                                 "string", "Stresstest Name:",
                                 "horizontalalignment", "left",
-                                "position", [0.51 0.56 0.16 0.03]);
+                                "position", [0.51 0.51 0.16 0.03]);
 h.portfolio_stressvalue_label = uicontrol ("style", "text",
                                 "units", "normalized",
                                 "string", "Stress Profit or Loss:",
                                 %"horizontalalignment", "left",
-                                "position", [0.68 0.56 0.18 0.03]);
+                                "position", [0.68 0.51 0.18 0.03]);
 h.portfolio_stresstest_popup = uicontrol ("style", "popupmenu",
                                "units", "normalized",
 							   "backgroundcolor", [1 1 1],
                                "string", {stresstest_struct.name},
                                "callback", @aggregate_portfolio,
-                               "position", [0.51 0.525 0.16 0.03]);
+                               "position", [0.51 0.475 0.16 0.03]);
 
 h.portfolio_stressvalue_value = uicontrol ("style", "edit",
                                "units", "normalized",
                                "string", "Press Aggregate...",
                                "callback", @aggregate_portfolio,
 							   "backgroundcolor", [1 1 1],
-                               "position", [0.68 0.525 0.20 0.03]);
+                               "position", [0.68 0.475 0.20 0.03]);
 							   
 h.portfolio_stressvalue_currency = uicontrol ("style", "text",
                                 "units", "normalized",
                                 "string", portfolio_struct(1).currency,
                                 "horizontalalignment", "left",
-                                "position", [0.89 0.525 0.04 0.03]);
+                                "position", [0.89 0.475 0.04 0.03]);
 								
 % ###################  Instrument Section  #####################################
 h.instrument_section_label = uicontrol ("style", "text",
@@ -685,7 +824,7 @@ h.instrument_stresstest_popup = uicontrol ("style", "popupmenu",
                                "units", "normalized",
 							   "backgroundcolor", [1 1 1],
                                "string", {stresstest_struct.name},
-                               "callback", @calculate_value,
+                               "callback", @update_window,
                                "position", [0.01 0.575 0.16 0.03]);
 
 h.instrument_stressvalue_value = uicontrol ("style", "edit",
@@ -700,36 +839,96 @@ h.instrument_stressvalue_currency = uicontrol ("style", "text",
                                 "string", instrument_struct(1).object.currency,
                                 "horizontalalignment", "left",
                                 "position", [0.39 0.575 0.04 0.03]);
+
+% ##############################################################################
+%	Curve section
+h.curve_section_line = uicontrol ("style", "text",
+                                "units", "normalized",
+                                "string", "_________________________________________________________",
+								"FontSize", 10,
+                                "horizontalalignment", "left",
+                                "position", [0.01 0.555 0.49 0.02]);
+h.curve_section_label = uicontrol ("style", "text",
+                                "units", "normalized",
+                                "string", "Curve Section",
+								"FontSize", 13,
+                                %"horizontalalignment", "left",
+                                "position", [0.01 0.50 0.40 0.05]);
 								
-								
+h.curve_id_label = uicontrol ("style", "text",
+                                "units", "normalized",
+                                "string", "Curve ID:",
+                                "horizontalalignment", "left",
+                                "position", [0.01 0.47 0.16 0.03]);
+h.curve_attribute_label = uicontrol ("style", "text",
+                                "units", "normalized",
+                                "string", "Attribute Value:",
+                                %"horizontalalignment", "left",
+                                "position", [0.18 0.47 0.18 0.03]);
+h.curve_id_menu = uicontrol ("style", "popupmenu",
+                               "units", "normalized",
+							   "backgroundcolor", [1 1 1],
+                               "string", {curve_struct.id},
+                               "callback", @update_window,
+                               "position", [0.01 0.435 0.16 0.03]);
+
+h.curve_property_menu = uicontrol ("style", "popupmenu",
+                               "units", "normalized",
+							   "backgroundcolor", [1 1 1],
+                               "string", {'rates_base','rates_stress','rates_mc'},
+                               "callback", @update_window,
+                               "position", [0.18 0.435 0.20 0.03]);
+
+h.curve_attribute_nodes = uicontrol ("style", "edit",
+                               "units", "normalized",
+                               "string", any2str(curve_struct(1).object.get('nodes')),
+                               "callback", @nochange,
+							   "backgroundcolor", [1 1 1],
+                               "position", [0.01 0.395 0.16 0.03]);
+							   
+h.curve_attribute_value = uicontrol ("style", "edit",
+                               "units", "normalized",
+                               "string", any2str(curve_struct(1).object.get('rates_base')),
+                               "callback", @nochange,
+							   "backgroundcolor", [1 1 1],
+                               "position", [0.18 0.395 0.20 0.03]);
+							   
+% ##############################################################################								
 % Buttons:								
 % close application
 h.exit_pushbutton = uicontrol ("style", "pushbutton",
                                 "units", "normalized",
                                 "string", "Exit",
                                 "callback","delete(gcf)",
-                                "position", [0.41 0.01 0.07 0.05]);
+                                "position", [0.41 0.01 0.07 0.04]);
 
 % Calculate value
 h.calc_value_pushbutton = uicontrol ("style", "pushbutton",
                                 "units", "normalized",
                                 "string", "Recalc",
                                 "callback",@calculate_value,
-                                "position", [0.28 0.44 0.1 0.05]);
+                                "position", [0.39 0.81 0.09 0.04]);
 
 % Aggregate portfolio
 h.aggregate_portfolio_pushbutton = uicontrol ("style", "pushbutton",
                                 "units", "normalized",
                                 "string", "Aggregate",
                                 "callback",@aggregate_portfolio,
-                                "position", [0.78 0.44 0.1 0.05]);
+                                "position", [0.89 0.89 0.09 0.04]);
+
+% Plot curve
+h.plot_curve_pushbutton = uicontrol ("style", "pushbutton",
+                                "units", "normalized",
+                                "string", "Plot Curve",
+                                "callback",@plot_curve,
+                                "position", [0.39 0.44 0.09 0.04]);
 								
 % Add position
 h.add_position_pushbutton = uicontrol ("style", "pushbutton",
                                 "units", "normalized",
                                 "string", "Add Position ->",
                                 "callback",@aggregate_portfolio,
-                                "position", [0.39 0.89 0.10 0.04]);
+                                "position", [0.39 0.89 0.09 0.04]);
 
 % Add copyright
 h.copyright_label = uicontrol ("style", "edit",

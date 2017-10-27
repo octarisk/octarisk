@@ -19,7 +19,7 @@
 %#
 %# @end deftypefn
 
-function [instrument_struct, curve_struct, index_struct, surface_struct, para_struct, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct] = octarisk(path_working_folder,batchmode = false)
+function [instrument_struct, curve_struct, index_struct, surface_struct, para_object, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct] = octarisk(path_parameter,filename_parameter)
 
 
 
@@ -67,20 +67,29 @@ fprintf('=======================================================\n');
 fprintf('\n');
 
 % 0) ###########            DEFINITION OF VARIABLES    ###########
-% 1. general variables -> path dependent on operating system
-path = path_working_folder;   % general load and save path for all input and output files
+if nargin < 2
+	error('octarisk: Please provide path and name of parameter file');
+end
+% load parameter file
+para_failed_cell = {};
+[para_object para_failed_cell] = load_parameter(path_parameter,filename_parameter);
 
-path_output = strcat(path,'/output');
-path_output_instruments = strcat(path_output,'/instruments');
-path_output_riskfactors = strcat(path_output,'/riskfactors');
-path_output_stresstests = strcat(path_output,'/stresstests');
-path_output_positions   = strcat(path_output,'/positions');
-path_output_mktdata     = strcat(path_output,'/mktdata');
-path_reports = strcat(path,'/output/reports');
-path_archive = strcat(path,'/archive');
-path_input = strcat(path,'/input');
-path_static = strcat(path,'/static');
-path_mktdata = strcat(path,'/mktdata');
+
+% 1. general variables -> path dependent on operating system
+path = para_object.path_working_folder;   % general load and save path for all input and output files
+
+path_output = strcat(path,'/',para_object.folder_output);
+path_output_instruments = strcat(path_output,'/',para_object.folder_output_instruments);
+path_output_riskfactors = strcat(path_output,'/',para_object.folder_output_riskfactors);
+path_output_stresstests = strcat(path_output,'/',para_object.folder_output_stresstests);
+path_output_positions   = strcat(path_output,'/',para_object.folder_output_positions);
+path_output_mktdata     = strcat(path_output,'/',para_object.folder_output_mktdata);
+path_reports = strcat(path,'/',para_object.folder_output,'/',para_object.folder_output_reports);
+path_archive = strcat(path,'/',para_object.folder_archive);
+path_input = strcat(path,'/',para_object.folder_input);
+path_static = strcat(path,'/',para_object.folder_static);
+path_mktdata = strcat(path,'/',para_object.folder_mktdata);
+
 mkdir(path_output);
 mkdir(path_output_instruments);
 mkdir(path_output_riskfactors);
@@ -113,66 +122,52 @@ end
 
 
 % set filenames for input:
-input_filename_instruments  = 'instruments.csv';
-input_filename_corr_matrix  = 'corr.csv';
-input_filename_stresstests  = 'stresstests.csv';
-input_filename_riskfactors  = 'riskfactors.csv';
-input_filename_positions    = 'positions.csv';
-input_filename_mktdata      = 'mktdata.csv';
-input_filename_seed			= 'random_seed.dat';
+input_filename_instruments  = para_object.input_filename_instruments;
+input_filename_corr_matrix  = para_object.input_filename_corr_matrix;
+input_filename_stresstests  = para_object.input_filename_stresstests;
+input_filename_riskfactors  = para_object.input_filename_riskfactors;
+input_filename_positions    = para_object.input_filename_positions;
+input_filename_mktdata      = para_object.input_filename_mktdata;
+input_filename_seed			= para_object.input_filename_seed;
 
 % set filenames for vola surfaces
-input_filename_vola_index = 'vol_index_';
-input_filename_vola_ir = 'vol_ir_';
-input_filename_surf_stoch = 'surf_stochastic_';
-input_filename_matrix = 'matrix_';
+input_filename_vola_index = para_object.input_filename_vola_index;
+input_filename_vola_ir = para_object.input_filename_vola_ir;
+input_filename_surf_stoch = para_object.input_filename_surf_stoch;
+input_filename_matrix = para_object.input_filename_matrix;
 
 % set general variables
-if (batchmode == true)
-	plotting = 0;
-	saving = 0;
-	archive_flag = 0;
-	mc_scen_analysis = 0;
-	stable_seed = 1;
-	aggregation_flag = false;
-else
-	plotting = 1;           % switch for plotting data (0/1)
-	saving = 0;             % switch for saving *.mat files (WARNING: that takes a long time for 50k scenarios and multiple instruments!)
-	archive_flag = 0;       % switch for archiving input files to the archive folder (as .tar). This takes some seconds.
-	stable_seed = 1;        % switch for using stored random numbers (1) or drawing new random numbers (0)
-	mc_scen_analysis = 0;   % switch for applying statistical tests on risk factor MC scenario values 
-							%   (compare target statistic parameters with actual values)
-	aggregation_flag = true;
-end
+plotting = para_object.plotting;
+saving = para_object.saving;
+archive_flag = para_object.archive_flag;
+mc_scen_analysis = para_object.mc_scen_analysis;
+stable_seed = para_object.stable_seed;
+aggregation_flag = para_object.aggregation_flag;
+% valuation parameters
+mc = para_object.mc;
+hd_limit = para_object.hd_limit;   
+quantile = para_object.quantile;   
+copulatype = para_object.copulatype;    
+nu = para_object.nu; 
+rnd_number_gen = para_object.rnd_number_gen;
+valuation_date = para_object.valuation_date;
+% Aggregation parameters
+base_currency  = para_object.base_currency;
+aggregation_key = para_object.aggregation_key;
+mc_timesteps    = para_object.mc_timesteps;
+scenario_set    = para_object.scenario_set;
+% specify unique runcode and timestamp:
+runcode = para_object.runcode;
+%substr(md5sum(num2str(time()),true),-6)
+timestamp = para_object.timestamp;
+%strftime ('%Y%m%d_%H%M%S', localtime (time ()))
+
+first_eval      = para_object.first_eval;
+
 % load packages
 pkg load statistics;	% load statistics package (needed in scenario_generation_MC)
 pkg load financial;		% load financial packages (needed throughout all scripts)
 
-% 2. VAR specific variables
-mc = 50000              % number of MonteCarlo scenarios
-hd_limit = 50001;       % below this MC limit Harrel-Davis estimator will be used
-confidence = 0.995      % level of confidence vor MC VAR calculation
-copulatype = 'Gaussian'        % Gaussian  or t-Copula  ( copulatype in ['Gaussian','t'])
-nu = 10                 % single parameter nu for t-Copula 
-rnd_number_gen = 'Mersenne-Twister';	% type of random number generator in ['Mersenne-Twister','MLCG']
-						% MLCG is Octave's "old" random number generator.
-						% although this is undocumented, Fortran code of Octave Version 2.0.5 seems to
-						% implement a multiplicative linear congruential generator (MLCG) of form 
-						% random_variable = (A*S) MOD M	
-valuation_date = datenum('30-Sep-2016'); % valuation date
-
-base_currency  = 'EUR'  % base reporting currency
-aggregation_key = {'asset_class','currency','id','type'}    % aggregation key
-mc_timesteps    = {'250d'} %{'250d'}                % MC timesteps
-%mc_timesteps    = {} %{'250d'}                % MC timesteps
-scenario_set    = [mc_timesteps,'stress'];   % %       % append stress scenarios 
-%scenario_set    = {'stress'};   %{'stress'} %       % append stress scenarios
-
-% specify unique runcode and timestamp:
-runcode = '2016Q3'; %substr(md5sum(num2str(time()),true),-6)
-timestamp = '20160424_175042'; %strftime ('%Y%m%d_%H%M%S', localtime (time ()))
-
-first_eval      = 1;    % means first evaluation
 
 plottime = 0;   % initializing plottime
 aggr = 0;       % initializing aggregation time
@@ -227,32 +222,6 @@ else % use random seed
 	save ('-ascii', fullpath, savename);
 end
 
-% set structure for storing parameters:
-persistent para_struct;
-para_struct = struct();
-para_struct.plotting = plotting;
-para_struct.saving = saving;
-para_struct.archive_flag = archive_flag;
-para_struct.stable_seed = stable_seed;
-para_struct.mc_scen_analysis = mc_scen_analysis;
-para_struct.mc = mc;
-para_struct.scen_number = mc;
-para_struct.hd_limit = hd_limit;
-para_struct.confidence = confidence;
-para_struct.quantile = confidence;
-para_struct.copulatype = copulatype;
-para_struct.nu  = nu;
-para_struct.rnd_number_gen = rnd_number_gen;
-para_struct.valuation_date = valuation_date; 
-para_struct.base_currency = base_currency;
-para_struct.aggregation_key = aggregation_key;
-para_struct.mc_timesteps = mc_timesteps;
-para_struct.scenario_set = scenario_set;
-para_struct.runcode = runcode;
-para_struct.timestamp = timestamp;
-para_struct.first_eval = first_eval;
-
-
 fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
 
 % I) #########            INPUT                 #########
@@ -261,7 +230,6 @@ tic;
 mc_timestep_days = zeros(length(mc_timesteps),1);
 for kk = 1:1:length(mc_timesteps)
     tmp_ts = mc_timesteps{kk};
-    para_struct.mc_timestep = tmp_ts;
     if ( strcmpi(tmp_ts(end),'d') )
         mc_timestep_days(kk) = str2num(tmp_ts(1:end-1));  % get timestep days
     elseif ( strcmp(to_lower(tmp_ts(end)),'y'))
@@ -295,7 +263,7 @@ persistent stresstest_struct;
 stresstest_struct=struct();
 [stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, path_input,input_filename_stresstests,path_output_stresstests,path_archive,timestamp,archive_flag);
 no_stresstests = length(stresstest_struct);
-para_struct.no_stresstests = no_stresstests;
+para_object.no_stresstests = no_stresstests;
 
 % 5. Processing Market Data objects (Indizes and Marketcurves)
 persistent mktdata_struct;
@@ -416,10 +384,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
   else
       scen_number = mc;
   end
-  para_struct.scen_number = scen_number;
-  para_struct.path_static = path_static;
-  para_struct.timestep = tmp_ts;
-  para_struct.first_eval = first_eval;
+  % store current scenario number in object
+  para_object.scen_number = scen_number;
 		
   fprintf('== Full valuation | scenario set %s | number of scenarios %d | timestep in days %d ==\n',tmp_scenario, scen_number,tmp_ts);
   for ii = 1 : 1 : length( instrument_struct )
@@ -435,7 +401,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
         tmp_instr_obj = tmp_instr_obj.valuate(valuation_date, tmp_scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
-                                riskfactor_struct, para_struct);
+                                riskfactor_struct, para_object);
         % store valuated instrument in struct
         instrument_struct( ii ).object = tmp_instr_obj;
         % print status message:
@@ -465,7 +431,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
         instrument_struct( ii ).object = cc;
     end
   end 
-  first_eval = 0;
+  para_object.first_eval = 0;
+  
 end      % end eval mc timesteps and stress loops
 
 tic;
@@ -493,12 +460,12 @@ end
 
 % print all base values
 fprintf('Instrument Base and stress Values: \n');
-fprintf('ID,Base,Scen1,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(8).name,stresstest_struct(14).name);
+fprintf('ID,Base,Scen1,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(4).name,stresstest_struct(5).name);
 for kk = 1:1:length(instrument_struct)
     obj = instrument_struct(kk).object;
     stressvec = obj.getValue('stress');
     if (length(stressvec) > 1)
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(8),stressvec(14),obj.currency);
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(4),stressvec(5),obj.currency);
     else
         fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),stressvec(1),obj.currency);
     end
@@ -514,7 +481,7 @@ tic;
 Total_Portfolios = length( portfolio_struct );
 base_value = 0;
 idx_figure = 0;
-confi = 1 - confidence
+confi = 1 - quantile
 confi_scenario = max(round(confi * mc),1);
 persistent aggr_key_struct;
 position_failed_cell = {};
@@ -582,7 +549,7 @@ for mm = 1 : 1 : length( portfolio_struct )
     fprintf(fid, '=== Risk measures report for Portfolio %s ===\n',tmp_port_id);
     fprintf(fid, 'Portfolio name: %s \n',tmp_port_name);
     fprintf(fid, 'Portfolio description: %s \n',tmp_port_description);
-    fprintf(fid, 'VaR calculated at %2.1f%% confidence intervall: \n',confidence.*100);
+    fprintf(fid, 'VaR calculated at %2.1f%% confidence intervall: \n',quantile.*100);
     if (run_mc == true)
         fprintf(fid, 'Number of Monte Carlo Scenarios: %i \n', mc);
     end
@@ -857,18 +824,18 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     fprintf('=== Total Portfolio VaR === \n');
   end
   % Output to file: 
-  fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
-  fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
-  fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
-  fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f %s|\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
+  fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,quantile.*100,mc_var_shock_pct*100);
+  fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,quantile.*100,mc_var_shock,fund_currency);
+  fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,quantile.*100,mc_es_shock_pct*100);
+  fprintf(fid, '|Portfolio ES  %s@%2.1f%%| \t |%9.2f %s|\n\n',tmp_scen_set,quantile.*100,mc_es_shock,fund_currency);
   
 
   
   % Output to stdout:
-  fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_var_shock_pct*100);
-  fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,confidence.*100,mc_var_shock,fund_currency);
-  fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,confidence.*100,mc_es_shock_pct*100);
-  fprintf('ES  %s@%2.1f%%: \t %9.2f %s\n\n',tmp_scen_set,confidence.*100,mc_es_shock,fund_currency);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,quantile.*100,mc_var_shock_pct*100);
+  fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,quantile.*100,mc_var_shock,fund_currency);
+  fprintf('ES  %s@%2.1f%%: \t %9.2f%%\n',tmp_scen_set,quantile.*100,mc_es_shock_pct*100);
+  fprintf('ES  %s@%2.1f%%: \t %9.2f %s\n\n',tmp_scen_set,quantile.*100,mc_es_shock,fund_currency);
   fprintf('Low tail VAR: \n');
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,50.0,-VAR50_shock,fund_currency);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,70.0,-VAR70_shock,fund_currency);

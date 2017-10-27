@@ -1481,9 +1481,8 @@ RF_COM
 
 
 # name: value_base
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 
@@ -1592,9 +1591,8 @@ RF_ALT
 
 
 # name: value_base
-# type: matrix
-# rows: 0
-# columns: 0
+# type: scalar
+0
 
 
 

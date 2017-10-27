@@ -1,0 +1,58 @@
+% Input folder
+path_working_folderCHAR,C:/Dokumente/Work/octarisk/working_folder
+folder_archiveCHAR,archive
+folder_inputCHAR,input
+folder_staticCHAR,static
+folder_mktdataCHAR,mktdata
+
+% output folder
+folder_outputCHAR,output
+folder_output_instrumentsCHAR,instruments
+folder_output_riskfactorsCHAR,riskfactors
+folder_output_stresstestsCHAR,stresstests
+folder_output_positionsCHAR,positions
+folder_output_mktdataCHAR,mktdata
+folder_output_reportsCHAR,reports
+
+% input filenames
+input_filename_instrumentsCHAR,instruments.csv
+input_filename_corr_matrixCHAR,corr.csv
+input_filename_stresstestsCHAR,stresstests.csv
+input_filename_riskfactorsCHAR,riskfactors.csv
+input_filename_positionsCHAR,positions.csv
+input_filename_mktdataCHAR,mktdata.csv
+input_filename_seedCHAR,random_seed.dat
+
+% set filenames for vola surfaces
+input_filename_vola_indexCHAR,vol_index_
+input_filename_vola_irCHAR,vol_ir_
+input_filename_surf_stochCHAR,surf_stochastic_
+input_filename_matrixCHAR,matrix_
+
+% Boolean variables
+plottingBOOL,1
+savingBOOL,0
+archive_flagBOOL,0
+stable_seedBOOL,1
+mc_scen_analysisBOOL,0
+aggregation_flagBOOL,true
+first_evalBOOL,1
+
+% VAR specific variables
+mcNMBR,50000
+hd_limitNMBR,50001
+quantileNMBR,0.995
+copulatypeCHAR,Gaussian
+nuNMBR,10
+rnd_number_genCHAR,Mersenne-Twister
+valuation_dateDATE,30-Jun-2016
+
+% Aggregation specific variables
+base_currencyCHAR,EUR
+aggregation_keyCELL,asset_class|currency|id
+mc_timestepsCELL,250d
+scenario_setCELL,250d|stress
+
+% specify unique runcode and timestamp:
+runcodeCHAR,2016Q3
+timestampCHAR,20160424_175042

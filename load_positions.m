@@ -101,7 +101,7 @@ for ii = 1 : 1 : length(tmp_list_files)
           %# remove the EOL character(s)
           lines(1 == dummy) = {''};
           lines_out = {};
-           %# remove everything beyond the eol character (the character number dummy value found)
+            %# remove everything beyond the eol character (the character number dummy value found)
           for kk = 1 : 1 : length(lines)
                 tmp_lines = lines{kk};
                 dummy_eol = dummy(kk);

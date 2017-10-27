@@ -48,13 +48,15 @@ in = fileread(file_corrmatrix_in);
   lines(1 == dummy) = {''};
   lines_out = {};
    %# remove everything beyond the eol character (the character number dummy value found)
-  for kk = 1 : 1 : length(lines)
-        tmp_lines = lines{kk};
-        dummy_eol = dummy(kk);
-        if ( length(tmp_lines)>1)
-            lines_out{kk} = tmp_lines(1:dummy_eol-1);
-        end
-  end
+	  for kk = 1 : 1 : length(lines)
+		tmp_lines = lines{kk};
+		if (~( regexpi(tmp_lines,'%') || regexpi(tmp_lines,'#')) && ~isempty(tmp_lines))
+			dummy_eol = dummy(kk);
+			if ( length(tmp_lines)>1)
+				lines_out{ length(lines_out) + 1} = tmp_lines(1:dummy_eol-1);
+			end
+		end
+	  end
 
   %# extract fields
   content = cellfun (@(x) strsplit (x, separator, 'collapsedelimiters', false), lines_out, ...
