@@ -1,0 +1,130 @@
+==================================================================== 
+=== Risk measures report for Portfolio FUND_AAA ===
+Portfolio name: Global Diversified 
+Portfolio description: Global diversified test portfolio 
+VaR calculated at 99.5% confidence intervall: 
+Number of Monte Carlo Scenarios: 50000 
+Valuation Date: 30-Jun-2016 
+Portfolio currency: EUR 
+Portfolio base value: 146220.59 EUR 
+
+=====    MC RESULTS    ===== 
+for time step: 250d 
+
+Test statistics on portfolio level:
+|MC 250d Tail scenario number	 |38341| 
+|MC 250d P&L skewness  			 |0.2| 
+|MC 250d P&L kurtosis  			 |3.5| 
+Risk factor scenario values: 
+|VaR 250d scenario delta |RF_ID|Scen-2|Scen-1|Base|Scen+1|Scen+2|
+|VaR 250d scenario values |RF_ALT_BC|-0.143|0.111|-1.127|-0.028|-0.315|
+|VaR 250d scenario values |RF_COM_DIV|-0.238|-0.172|-0.288|-0.089|-0.171|
+|VaR 250d scenario values |RF_COM_GOLD|-0.073|-0.304|-0.158|-0.035|-0.130|
+|VaR 250d scenario values |RF_COM_SILVER|-0.354|-0.474|-0.331|-0.074|-0.491|
+|VaR 250d scenario values |RF_EQ_AP|-0.472|-0.289|-0.306|-0.462|-0.342|
+|VaR 250d scenario values |RF_EQ_DE|-0.354|-0.456|-0.847|-0.527|-0.377|
+|VaR 250d scenario values |RF_EQ_EM|-0.537|-0.439|-0.602|-0.416|-0.573|
+|VaR 250d scenario values |RF_EQ_EU|-0.321|-0.245|-0.432|-0.425|-0.333|
+|VaR 250d scenario values |RF_EQ_EUR|-0.336|-0.425|-0.954|-0.478|-0.390|
+|VaR 250d scenario values |RF_EQ_NA|-0.309|-0.456|-0.683|-0.509|-0.324|
+|VaR 250d scenario values |RF_FX_EURUSD|0.206|0.177|0.126|0.204|0.105|
+|VaR 250d scenario values |RF_IR_EUR_10Y|0.004|0.004|-0.000|0.005|0.004|
+|VaR 250d scenario values |RF_IR_EUR_1Y|-0.001|-0.001|-0.001|-0.001|-0.002|
+|VaR 250d scenario values |RF_IR_EUR_20Y|0.007|0.008|0.002|0.013|0.008|
+|VaR 250d scenario values |RF_IR_USD_10Y|0.003|0.002|-0.011|0.001|0.004|
+|VaR 250d scenario values |RF_IR_USD_1Y|0.000|0.000|-0.004|0.001|0.001|
+|VaR 250d scenario values |RF_IR_USD_20Y|0.007|0.005|-0.009|0.002|0.009|
+|VaR 250d scenario values |RF_RE_DM|-0.477|-0.475|-0.149|-0.374|-0.655|
+|VaR 250d scenario values |RF_SPREAD_EUR_HY_5Y|-0.006|0.012|0.004|0.003|-0.009|
+|VaR 250d scenario values |RF_VOLA_COM_GOLD|0.234|0.198|0.215|0.113|0.217|
+|VaR 250d scenario values |RF_VOLA_EQ_DE|-0.697|-0.642|-0.622|-0.561|-0.602|
+
+Sensitivities on Positional Level: 
+
+=== Aggregation Key VAR === 
+ Risk aggregation for key: asset_class 
+|VaR 250d | Key value   | Basevalue 	 | Standalone HD VAR 	 | Decomp HD VAR|
+|VaR 250d | Fixed Income 	 | 53400.49 EUR 	|  4397.09 EUR 	 |  3104.43 EUR|
+|VaR 250d | Equity 	 | 59750.00 EUR 	| 23057.20 EUR 	 | 22090.53 EUR|
+|VaR 250d | REIT 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  6253.34 EUR|
+|VaR 250d | Commodity 	 | 15645.06 EUR 	|  4296.32 EUR 	 |  2134.17 EUR|
+|VaR 250d | Alternative 	 |   488.90 EUR 	|   394.00 EUR 	 |    89.64 EUR|
+|VaR 250d | Derivative 	 |   -33.31 EUR 	|   406.77 EUR 	 |   351.84 EUR|
+|VaR 250d | Diversified 	 |     3.21 EUR 	|    26.26 EUR 	 |    23.04 EUR|
+|VaR 250d | cash 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+ Risk aggregation for key: currency 
+|VaR 250d | Key value   | Basevalue 	 | Standalone HD VAR 	 | Decomp HD VAR|
+|VaR 250d | USD 	 | 35306.50 EUR 	| 11150.47 EUR 	 |  9321.25 EUR|
+|VaR 250d | EUR 	 |110914.09 EUR 	| 25389.14 EUR 	 | 24725.74 EUR|
+ Risk aggregation for key: id 
+|VaR 250d | Key value   | Basevalue 	 | Standalone HD VAR 	 | Decomp HD VAR|
+|VaR 250d | A0RFFT 	 |  6014.31 EUR 	|  1330.15 EUR 	 |   821.70 EUR|
+|VaR 250d | A1JB4Q 	 | 10829.50 EUR 	|   409.85 EUR 	 |    25.96 EUR|
+|VaR 250d | A1J7CK 	 | 11997.50 EUR 	|  2843.33 EUR 	 |  2065.57 EUR|
+|VaR 250d | A1YC04 	 | 21104.60 EUR 	|   152.71 EUR 	 |     8.15 EUR|
+|VaR 250d | A0RM43 	 |  1328.44 EUR 	|   259.91 EUR 	 |   180.64 EUR|
+|VaR 250d | ETF127 	 | 19281.93 EUR 	|  9284.79 EUR 	 |  8234.89 EUR|
+|VaR 250d | DBX1A7 	 |  1744.08 EUR 	|   666.18 EUR 	 |   576.45 EUR|
+|VaR 250d | 513700 	 |    78.76 EUR 	|    40.37 EUR 	 |    34.25 EUR|
+|VaR 250d | DBX1EU 	 |  1176.59 EUR 	|   449.42 EUR 	 |   388.88 EUR|
+|VaR 250d | ETF060 	 |  7791.74 EUR 	|  2976.19 EUR 	 |  2575.30 EUR|
+|VaR 250d | ETF114 	 |  7358.52 EUR 	|  3038.55 EUR 	 |  2478.10 EUR|
+|VaR 250d | LYX0BX 	 |  1153.92 EUR 	|   555.65 EUR 	 |   492.81 EUR|
+|VaR 250d | LYX0AG 	 |  3174.72 EUR 	|  1184.13 EUR 	 |  1063.01 EUR|
+|VaR 250d | ETF012 	 | 14195.74 EUR 	|  5697.44 EUR 	 |  4702.54 EUR|
+|VaR 250d | A0DPMW 	 |   738.74 EUR 	|   305.05 EUR 	 |   248.78 EUR|
+|VaR 250d | BASF11 	 |  3055.26 EUR 	|  1527.66 EUR 	 |  1295.51 EUR|
+|VaR 250d | A0LGQL 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  6253.34 EUR|
+|VaR 250d | ETF090 	 |  4817.70 EUR 	|  1644.42 EUR 	 |   910.16 EUR|
+|VaR 250d | GOLDPHYS 	 | 10827.36 EUR 	|  3550.68 EUR 	 |  1224.01 EUR|
+|VaR 250d | BTCOIN 	 |   488.90 EUR 	|   394.00 EUR 	 |    89.64 EUR|
+|VaR 250d | ODAXC20160318 	 |   -23.61 EUR 	|   240.84 EUR 	 |   -23.57 EUR|
+|VaR 250d | EQFORW01 	 |    -9.70 EUR 	|   430.38 EUR 	 |   375.40 EUR|
+|VaR 250d | SYNTH01 	 |     3.21 EUR 	|    26.26 EUR 	 |    23.04 EUR|
+|VaR 250d | CASH_EUR 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+|VaR 250d | 114171 	 |  1017.68 EUR 	|    13.36 EUR 	 |     2.42 EUR|
+|VaR 250d | 836791 	 |  1108.45 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+
+Total VaR undiversified: 
+|VaR 250d undiversified| | 44558.83 EUR|
+
+=== Total Portfolio HD-VaR === 
+|Portfolio VaR 250d@99.5%| 	 |   -23.28%|
+|Portfolio VaR 250d@99.5%| 	 | 34046.99 EUR|
+|Portfolio ES  250d@99.5%| 	 |   -26.46%|
+|Portfolio ES  250d@99.5%| 	 | 38689.51 EUR|
+
+
+Difference to HD-VaR 250d:     143.30 EUR
+
+Total Reduction in VaR via Diversification: 
+|Portfolio VaR 250d Diversification Effect| |    23.59%|
+====================================================================
+
+=====    STRESS RESULTS    ===== 
+
+Stress test results:
+Relative PnL in Stresstest: |Base| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS01| 	 |2.09%|
+Relative PnL in Stresstest: |STRESS02| 	 |-2.06%|
+Relative PnL in Stresstest: |STRESS03| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS04| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS05| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS06| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS07| 	 |-0.20%|
+Relative PnL in Stresstest: |STRESS08| 	 |0.13%|
+Relative PnL in Stresstest: |STRESS09| 	 |-0.08%|
+Relative PnL in Stresstest: |STRESS10| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS11| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS12| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS13| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS14| 	 |10.35%|
+Relative PnL in Stresstest: |STRESS15| 	 |-5.57%|
+Relative PnL in Stresstest: |STRESS16| 	 |-0.24%|
+Relative PnL in Stresstest: |STRESS17| 	 |-0.35%|
+Relative PnL in Stresstest: |STRESS18| 	 |-1.35%|
+Relative PnL in Stresstest: |STRESS19| 	 |1.32%|
+Relative PnL in Stresstest: |STRESS20| 	 |-0.41%|
+Relative PnL in Stresstest: |STRESS21| 	 |0.38%|
+
+Total Runtime:    6.90 s

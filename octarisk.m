@@ -67,9 +67,14 @@ fprintf('=======================================================\n');
 fprintf('\n');
 
 % 0) ###########            DEFINITION OF VARIABLES    ###########
-if nargin < 2
+if nargin == 0
 	error('octarisk: Please provide path and name of parameter file');
 end
+if (nargin == 1)	% assume parameter file called "parameter.csv"
+	fprintf('Assuming default parameter file name >>%s\\parameter.csv<<.\n',path_parameter);
+	filename_parameter = 'parameter.csv';
+end
+
 % load parameter file
 para_failed_cell = {};
 [para_object para_failed_cell] = load_parameter(path_parameter,filename_parameter);

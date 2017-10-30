@@ -66,7 +66,32 @@ end
         fprintf('SUCCESS: >>test_io<< \n');
     end
 
-% 4) Print statistics
+% 4) Run a full octarisk script in batch mode
+	fprintf('\nCall Octarisk in batch mode:\n');
+	% call octarisk script
+	function_cell(end + 1) = 'octarisk';
+	octarisk(path_testing_folder);
+	% get report files and compare with known VaR figures:
+	try
+		reportstr_fund_aaa = fileread(strcat(path_testing_folder,'/output/reports/VaR_report_2016Q3_FUND_AAA.txt'));
+		reportstr_fund_bbb = fileread(strcat(path_testing_folder,'/output/reports/VaR_report_2016Q3_FUND_BBB.txt'));
+	catch
+		reportstr_fund_aaa = '';
+		reportstr_fund_bbb  = '';
+	end
+	if ( isempty(regexpi(reportstr_fund_aaa,'34046.99 EUR')) || isempty(regexpi(reportstr_fund_bbb,'10562.33 EUR')))
+		tests_fail = tests_fail + 1;
+        fprintf('WARNING: failed tests for function >>octave<<. Fund VaR figures not as expected (VaR Fund AAA 34046.99 EUR and VaR Fund BBB 10562.33 EUR.\n');
+		M(end + 1,1) = 0;
+		M(end,2) = 2;
+    else
+		tests_total = tests_total + 1;
+        fprintf('SUCCESS: >>octave<<. All Fund VaR figures are correct.\n');
+		M(end + 1,1) = 2;
+		M(end,2) = 0;
+    end
+	
+% 5) Print statistics
 fprintf('\nVisualization:\n');
 for ii = 1 : 1 : rows(M)
     success_string = '';
@@ -77,7 +102,7 @@ for ii = 1 : 1 : rows(M)
     for jj = 1 : 1 : M(ii,2)
         fail_string = strcat(fail_string,'-');
     end
-    fprintf('%s %s \t%s\n',fail_string,success_string,function_cell{ii});
+    fprintf(' %s %s \t%s\n',fail_string,success_string,function_cell{ii});
 end
 
 fprintf('\nSummary:\n');

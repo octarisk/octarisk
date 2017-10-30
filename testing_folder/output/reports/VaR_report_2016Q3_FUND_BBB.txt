@@ -1,0 +1,112 @@
+==================================================================== 
+=== Risk measures report for Portfolio FUND_BBB ===
+Portfolio name: Global Derivatives 
+Portfolio description: Global derivatives test portfolio 
+VaR calculated at 99.5% confidence intervall: 
+Number of Monte Carlo Scenarios: 50000 
+Valuation Date: 30-Jun-2016 
+Portfolio currency: EUR 
+Portfolio base value:  32999.27 EUR 
+
+=====    MC RESULTS    ===== 
+for time step: 250d 
+
+Test statistics on portfolio level:
+|MC 250d Tail scenario number	 |31646| 
+|MC 250d P&L skewness  			 |0.5| 
+|MC 250d P&L kurtosis  			 |5.6| 
+Risk factor scenario values: 
+|VaR 250d scenario delta |RF_ID|Scen-2|Scen-1|Base|Scen+1|Scen+2|
+|VaR 250d scenario values |RF_ALT_BC|-0.401|0.124|-0.052|-1.113|0.340|
+|VaR 250d scenario values |RF_COM_DIV|-0.335|-0.042|0.022|-0.145|-0.319|
+|VaR 250d scenario values |RF_COM_GOLD|-0.444|-0.231|-0.375|-0.143|-0.296|
+|VaR 250d scenario values |RF_COM_SILVER|-0.762|-0.623|-0.349|-0.342|-0.618|
+|VaR 250d scenario values |RF_EQ_AP|-0.230|-0.328|-0.374|-0.418|-0.334|
+|VaR 250d scenario values |RF_EQ_DE|-0.236|-0.130|-0.447|-0.381|-0.233|
+|VaR 250d scenario values |RF_EQ_EM|-0.602|-0.209|-0.246|-0.368|-0.461|
+|VaR 250d scenario values |RF_EQ_EU|-0.237|-0.095|-0.263|-0.177|-0.218|
+|VaR 250d scenario values |RF_EQ_EUR|-0.103|-0.019|-0.270|-0.353|-0.287|
+|VaR 250d scenario values |RF_EQ_NA|-0.127|-0.238|-0.204|-0.273|-0.482|
+|VaR 250d scenario values |RF_FX_EURUSD|0.066|0.133|0.297|0.234|0.196|
+|VaR 250d scenario values |RF_IR_EUR_10Y|0.001|0.001|0.009|-0.002|0.001|
+|VaR 250d scenario values |RF_IR_EUR_1Y|0.000|0.001|0.001|-0.000|-0.001|
+|VaR 250d scenario values |RF_IR_EUR_20Y|0.002|0.001|0.018|-0.005|0.001|
+|VaR 250d scenario values |RF_IR_USD_10Y|0.010|0.006|0.012|0.006|0.002|
+|VaR 250d scenario values |RF_IR_USD_1Y|0.004|0.002|-0.000|0.005|0.002|
+|VaR 250d scenario values |RF_IR_USD_20Y|0.010|0.009|0.012|0.009|0.005|
+|VaR 250d scenario values |RF_RE_DM|-0.322|-0.605|-0.325|-0.482|-0.360|
+|VaR 250d scenario values |RF_SPREAD_EUR_HY_5Y|-0.004|0.009|0.006|0.008|-0.001|
+|VaR 250d scenario values |RF_VOLA_COM_GOLD|0.196|0.203|0.104|0.203|0.209|
+|VaR 250d scenario values |RF_VOLA_EQ_DE|-0.703|-0.683|-0.742|-0.624|-0.641|
+
+Sensitivities on Positional Level: 
+
+=== Aggregation Key VAR === 
+ Risk aggregation for key: asset_class 
+|VaR 250d | Key value   | Basevalue 	 | Standalone HD VAR 	 | Decomp HD VAR|
+|VaR 250d | REIT 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  7077.26 EUR|
+|VaR 250d | Fixed Income 	 |   112.73 EUR 	|     0.35 EUR 	 |    -0.01 EUR|
+|VaR 250d | Commodity 	 | 15645.06 EUR 	|  4296.32 EUR 	 |  3273.42 EUR|
+|VaR 250d | Alternative 	 |   488.90 EUR 	|   394.00 EUR 	 |    15.43 EUR|
+|VaR 250d | Derivative 	 |  -245.80 EUR 	|  1843.76 EUR 	 |    35.14 EUR|
+|VaR 250d | Diversified 	 |    32.14 EUR 	|   262.61 EUR 	 |   161.09 EUR|
+|VaR 250d | cash 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+ Risk aggregation for key: currency 
+|VaR 250d | Key value   | Basevalue 	 | Standalone HD VAR 	 | Decomp HD VAR|
+|VaR 250d | USD 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  7077.26 EUR|
+|VaR 250d | EUR 	 | 17033.02 EUR 	|  4349.31 EUR 	 |  3485.07 EUR|
+ Risk aggregation for key: id 
+|VaR 250d | Key value   | Basevalue 	 | Standalone HD VAR 	 | Decomp HD VAR|
+|VaR 250d | A0LGQL 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  7077.26 EUR|
+|VaR 250d | A1ZKC4 	 |   112.73 EUR 	|     0.35 EUR 	 |    -0.01 EUR|
+|VaR 250d | ETF090 	 |  4817.70 EUR 	|  1644.42 EUR 	 |   635.89 EUR|
+|VaR 250d | GOLDPHYS 	 | 10827.36 EUR 	|  3550.68 EUR 	 |  2637.53 EUR|
+|VaR 250d | BTCOIN 	 |   488.90 EUR 	|   394.00 EUR 	 |    15.43 EUR|
+|VaR 250d | ODAXC20160318 	 |  -236.11 EUR 	|  2408.38 EUR 	 |  -222.97 EUR|
+|VaR 250d | EQFORW01 	 |    -9.70 EUR 	|   430.38 EUR 	 |   258.11 EUR|
+|VaR 250d | SYNTH01 	 |    32.14 EUR 	|   262.61 EUR 	 |   161.09 EUR|
+|VaR 250d | CASH_EUR 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+
+Total VaR undiversified: 
+|VaR 250d undiversified| | 16210.22 EUR|
+
+=== Total Portfolio HD-VaR === 
+|Portfolio VaR 250d@99.5%| 	 |   -32.01%|
+|Portfolio VaR 250d@99.5%| 	 | 10562.33 EUR|
+|Portfolio ES  250d@99.5%| 	 |   -36.42%|
+|Portfolio ES  250d@99.5%| 	 | 12019.72 EUR|
+
+
+Difference to HD-VaR 250d:       7.11 EUR
+
+Total Reduction in VaR via Diversification: 
+|Portfolio VaR 250d Diversification Effect| |    34.84%|
+====================================================================
+
+=====    STRESS RESULTS    ===== 
+
+Stress test results:
+Relative PnL in Stresstest: |Base| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS01| 	 |-0.08%|
+Relative PnL in Stresstest: |STRESS02| 	 |0.08%|
+Relative PnL in Stresstest: |STRESS03| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS04| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS05| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS06| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS07| 	 |-0.71%|
+Relative PnL in Stresstest: |STRESS08| 	 |-2.05%|
+Relative PnL in Stresstest: |STRESS09| 	 |-3.62%|
+Relative PnL in Stresstest: |STRESS10| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS11| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS12| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS13| 	 |0.00%|
+Relative PnL in Stresstest: |STRESS14| 	 |20.79%|
+Relative PnL in Stresstest: |STRESS15| 	 |-11.19%|
+Relative PnL in Stresstest: |STRESS16| 	 |-1.30%|
+Relative PnL in Stresstest: |STRESS17| 	 |5.61%|
+Relative PnL in Stresstest: |STRESS18| 	 |-0.06%|
+Relative PnL in Stresstest: |STRESS19| 	 |0.05%|
+Relative PnL in Stresstest: |STRESS20| 	 |0.12%|
+Relative PnL in Stresstest: |STRESS21| 	 |-0.13%|
+
+Total Runtime:    6.60 s
