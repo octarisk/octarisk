@@ -66,7 +66,30 @@ end
         fprintf('SUCCESS: >>test_io<< \n');
     end
 
-% 4) Print statistics
+% 4) Run a full octarisk script in batch mode
+	fprintf('\nCall Octarisk in batch mode:\n');
+	% call octarisk script
+	function_cell(end + 1) = 'octarisk';
+	octarisk(path_testing_folder);
+	% get hash of report files and compare with known hash:
+	hash_fund_aaa = hash('SHA256',strcat(path_testing_folder,'/output/reports/VaR_report_2016Q3_FUND_AAA.txt'));
+	hash_fund_bbb = hash('SHA256',strcat(path_testing_folder,'/output/reports/VaR_report_2016Q3_FUND_BBB.txt'));
+	known_hash_aaa = '3406e4cf61fb54baa1d8df810c4d680d450426e4041530183d27d94c8b8ad846';
+	known_hash_bbb = '21bbce9ab7d7556b7c37329e24bb9e7d19d9d5d6f45764e23e21661b61c8ddcd';
+	
+	if ~( strcmpi(hash_fund_aaa,known_hash_aaa) || strcmpi(hash_fund_bbb,known_hash_bbb) )
+		tests_fail = tests_fail + 1;
+        fprintf('WARNING: failed tests for function >>octave<< \n');
+		M(end + 1,1) = 0;
+		M(end,2) = 2;
+    else
+		tests_total = tests_total + 1;
+        fprintf('SUCCESS: >>octave<<. All reports are correct.\n');
+		M(end + 1,1) = 2;
+		M(end,2) = 0;
+    end
+	
+% 5) Print statistics
 fprintf('\nVisualization:\n');
 for ii = 1 : 1 : rows(M)
     success_string = '';

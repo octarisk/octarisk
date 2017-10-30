@@ -22,8 +22,9 @@
 
 % ##############################################################################
 
-% Specify path to session (Recommendation for first try: /path/to/octarisk/working_folder)
-input_path = 'C:/Dokumente/Work/octarisk/working_folder';
+% Specify path to parameter.csv (Recommendation for first try: /path/to/octarisk/ and parameter.csv)
+input_path = 'C:/Dokumente/Work/octarisk/';
+parameter_file = 'parameter.csv';
 
 % All valuation specific input parameters are set in function file octarisk.m.
 
@@ -54,7 +55,7 @@ clear instrument_struct;
 clear curve_struct;
 clear index_struct;
 clear surface_struct;
-clear para_struct;
+clear para_object;
 clear riskfactor_struct;
 clear portfolio_struct;
 warning('off','Octave:classdef-to-struct');
@@ -64,7 +65,7 @@ global instrument_struct = struct();
 global curve_struct = struct();
 global index_struct = struct();
 global surface_struct = struct();
-global para_struct = struct();
+global para_object = struct();
 global matrix_struct = struct();
 global riskfactor_struct = struct();
 global portfolio_struct = struct();
@@ -251,13 +252,13 @@ function obj = update_plot(obj,inst_id,var)
 	global curve_struct;
 	global index_struct;
 	global surface_struct;
-	global para_struct;
+	global para_object;
 	global matrix_struct;
 	global riskfactor_struct;
 	global valuation_date;
 	% get instrument data
 	tmp_obj = get_sub_object(instrument_struct,inst_id);
-	yy = tmp_obj.getValue(para_struct.timestep) .- tmp_obj.getValue('base');
+	yy = tmp_obj.getValue(para_object.mc_timesteps{1}) .- tmp_obj.getValue('base');
 	yy_sorted = sort(yy);
 	xx = 1:1:length(yy);
 	%ax_instrument = gca (h.ax_instrument);
@@ -266,14 +267,14 @@ function obj = update_plot(obj,inst_id,var)
 	gca();
     h.plot = plot (xx, yy_sorted, "b", "linewidth",2);
 	hold on;
-	h.plot = plot ([1,para_struct.mc],[var,var], "r", "linewidth",1);
+	h.plot = plot ([1,para_object.mc],[var,var], "r", "linewidth",1);
 	hold on;
 	h.plot = plot ([1,1],[var,var], "b", "linewidth",1);
 	hold off;
     grid on;
 	var_string = sprintf ("VaR: %.2f %s", var,tmp_obj.currency);
-	text(0.025*para_struct.mc,(0.8*var),var_string); 
-	text(0.025*para_struct.mc,(1.2*var),strcat(num2str(round((var*1000+eps)/(tmp_obj.getValue('base')+eps))/10),' %'));
+	text(0.025*para_object.mc,(0.8*var),var_string); 
+	text(0.025*para_object.mc,(1.2*var),strcat(num2str(round((var*1000+eps)/(tmp_obj.getValue('base')+eps))/10),' %'));
 	
 	title("Instrument PnL Distribution", "fontsize",12);
 	xlabel('MonteCarlo Scenario', "fontsize",11);
@@ -294,7 +295,7 @@ function obj = update_plot_aggregation(obj,scenario_values,var,fund_currency,bas
 	global curve_struct;
 	global index_struct;
 	global surface_struct;
-	global para_struct;
+	global para_object;
 	global matrix_struct;
 	global riskfactor_struct;
 	global valuation_date;
@@ -305,14 +306,14 @@ function obj = update_plot_aggregation(obj,scenario_values,var,fund_currency,bas
 	gca();
     h.plot = plot (xx, scenario_values, "b", "linewidth",2);
 	hold on;
-	h.plot = plot ([1,para_struct.mc],[var,var], "r", "linewidth",1);
+	h.plot = plot ([1,para_object.mc],[var,var], "r", "linewidth",1);
 	hold on;
 	h.plot = plot ([1,1],[var,var], "b", "linewidth",1);
 	hold off;
 	grid on;
 	var_string = sprintf ("VaR: %d %s", round(var),fund_currency);
-	text(0.025*para_struct.mc,(0.8*var),var_string);
-	text(0.025*para_struct.mc,(1.2*var),strcat(num2str(round(var*1000/base_value)/10),' %')); 
+	text(0.025*para_object.mc,(0.8*var),var_string);
+	text(0.025*para_object.mc,(1.2*var),strcat(num2str(round(var*1000/base_value)/10),' %')); 
 	title("Portfolio PnL Distribution", "fontsize",12);
 	xlabel('MonteCarlo Scenario', "fontsize",11);
 	ylabel(strcat('Profit and Loss (',fund_currency,')'), "fontsize",11);
@@ -326,7 +327,7 @@ function aggregate_portfolio(obj)
 	global instrument_struct;
 	global portfolio_struct;
 	global index_struct;
-	global para_struct;
+	global para_object;
 	global stresstest_struct;
 	h = guidata (obj);
 	tmp_port_id = get (h.portfolio_struct_popup, "string"){get (h.portfolio_struct_popup, "value")};
@@ -382,22 +383,22 @@ function aggregate_portfolio(obj)
 	
 	% aggregate positions in base scenario
 	position_failed_cell = {};
-	confi_scenario = max(round((1 - para_struct.quantile) * para_struct.mc),1);
+	confi_scenario = max(round((1 - para_object.quantile) * para_object.mc),1);
 	[tmp_pos_struct position_failed_cell base_value] = aggregate_positions(tmp_pos_struct, ...
 			position_failed_cell,instrument_struct,index_struct, ...
-			para_struct.mc,'base',fund_currency,tmp_port_id,false);
+			para_object.mc,'base',fund_currency,tmp_port_id,false);
 	tmp_pos_struct_selected = get_sub_struct(tmp_pos_struct,tmp_pos_id);
     tmp_pos_selected_base = tmp_pos_struct_selected.basevalue;	
 	[tmp_pos_struct position_failed_cell scenario_values] = aggregate_positions(tmp_pos_struct, ...
 			position_failed_cell,instrument_struct,index_struct, ...
-			para_struct.mc,para_struct.timestep,fund_currency,tmp_port_id,false);
+			para_object.mc,para_object.mc_timesteps{1},fund_currency,tmp_port_id,false);
 	[yy_sorted idx] = sort(scenario_values - base_value);
 	var = yy_sorted(confi_scenario);
 	
 	% get stress results
 	[tmp_pos_struct position_failed_cell stress_values] = aggregate_positions(tmp_pos_struct, ...
 			position_failed_cell,instrument_struct,index_struct, ...
-			para_struct.no_stresstests,'stress',fund_currency,tmp_port_id,false);
+			para_object.no_stresstests,'stress',fund_currency,tmp_port_id,false);
 			
 	% set var and base value
 	set (h.position_var_value, "string", sprintf ("%.4f", var));
@@ -442,7 +443,7 @@ function calculate_value(obj)
 	global curve_struct;
 	global index_struct;
 	global surface_struct;
-	global para_struct;
+	global para_object;
 	global matrix_struct;
 	global riskfactor_struct;
 	global valuation_date;
@@ -466,31 +467,31 @@ function calculate_value(obj)
 	tmp_obj = tmp_obj.del_scen_data;
 	
 	% recalculate instrument
-	para_struct.scen_number = 1;
+	para_object.scen_number = 1;
     tmp_obj = tmp_obj.valuate(valuation_date, 'base', ...
                             instrument_struct, surface_struct, ...
                             matrix_struct, curve_struct, index_struct, ...
-                            riskfactor_struct, para_struct);
+                            riskfactor_struct, para_object);
 	
 	% recalc in MC
-	para_struct.scen_number = para_struct.mc;
-    tmp_obj = tmp_obj.valuate(valuation_date, para_struct.timestep, ...
+	para_object.scen_number = para_object.mc;
+    tmp_obj = tmp_obj.valuate(valuation_date, para_object.mc_timesteps{1}, ...
                             instrument_struct, surface_struct, ...
                             matrix_struct, curve_struct, index_struct, ...
-                            riskfactor_struct, para_struct);
-	para_struct.scen_number = para_struct.no_stresstests;
+                            riskfactor_struct, para_object);
+	para_object.scen_number = para_object.no_stresstests;
 	% recalculate instrument
     tmp_obj = tmp_obj.valuate(valuation_date, 'stress', ...
                             instrument_struct, surface_struct, ...
                             matrix_struct, curve_struct, index_struct, ...
-                            riskfactor_struct, para_struct);
+                            riskfactor_struct, para_object);
 							
 	% print instrument value
 	v = sprintf ("%.8f", tmp_obj.getValue('base'));
 	set (h.instrument_value_value, "string", v);
-	yy = tmp_obj.getValue(para_struct.timestep) .- tmp_obj.getValue('base');
+	yy = tmp_obj.getValue(para_object.mc_timesteps{1}) .- tmp_obj.getValue('base');
 	yy_sorted = sort(yy);
-	var = yy_sorted(max(round((1 - para_struct.quantile) * para_struct.mc),1));
+	var = yy_sorted(max(round((1 - para_object.quantile) * para_object.mc),1));
 	set (h.instrument_var_value, "string", sprintf ("%.8f", var));
 	set (h.instrument_var_value_pct, "string", sprintf ("%.4f", 100 * (var + 1E-16) ./ (tmp_obj.getValue('base') + 1E-16)));
 
@@ -530,12 +531,9 @@ end
 % ##############################################################################
 
 % call octarisk in batch mode to retrieve valuated instruments
-[instrument_struct, curve_struct, index_struct, surface_struct, para_struct, ...
-matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct] = octarisk(input_path,true);
-para_struct.timestep = para_struct.mc_timesteps{1};
-para_struct.first_eval = true;
-para_struct.scen_number = para_struct.mc;
-valuation_date = para_struct.valuation_date;
+[instrument_struct, curve_struct, index_struct, surface_struct, para_object, ...
+matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct] = octarisk(input_path,parameter_file);
+valuation_date = para_object.valuation_date;
 
 
 % ##############################################################################
@@ -608,7 +606,7 @@ h.position_currency_var_label = uicontrol ("style", "text",
 								
 h.position_var_label = uicontrol ("style", "text",
                                 "units", "normalized",
-                                "string", strcat("Value at Risk (", para_struct.timestep ,",", any2str(para_struct.quantile),"):"),
+                                "string", strcat("Value at Risk (", para_object.mc_timesteps{1} ,",", any2str(para_object.quantile),"):"),
                                 "horizontalalignment", "left",
                                 "position", [0.51 0.71 0.18 0.03]);
 h.position_var_value = uicontrol ("style", "edit",
@@ -627,7 +625,7 @@ h.position_currency_base_label = uicontrol ("style", "text",
 %	Portfolio var results
 h.position_var_label_pct = uicontrol ("style", "text",
                                 "units", "normalized",
-                                "string", strcat("Value at Risk (", para_struct.timestep ,",", any2str(para_struct.quantile),"):"),
+                                "string", strcat("Value at Risk (", para_object.mc_timesteps{1} ,",", any2str(para_object.quantile),"):"),
                                 "horizontalalignment", "left",
                                 "position", [0.51 0.66 0.18 0.03]);
 h.position_var_value_pct = uicontrol ("style", "edit",
@@ -774,7 +772,7 @@ h.instrument_value_currency = uicontrol ("style", "text",
 								
 h.instrument_var_label = uicontrol ("style", "text",
                                 "units", "normalized",
-                                "string", strcat("Value at Risk (", para_struct.timestep ,",", any2str(para_struct.quantile),"):"),
+                                "string", strcat("Value at Risk (", para_object.mc_timesteps{1} ,",", any2str(para_object.quantile),"):"),
                                 "horizontalalignment", "left",
                                 "position", [0.01 0.71 0.18 0.03]);
 								
@@ -793,7 +791,7 @@ h.instrument_var_currency = uicontrol ("style", "text",
 
 h.instrument_var_label_pct = uicontrol ("style", "text",
                                 "units", "normalized",
-                                "string", strcat("Value at Risk (", para_struct.timestep ,",", any2str(para_struct.quantile),"):"),
+                                "string", strcat("Value at Risk (", para_object.mc_timesteps{1} ,",", any2str(para_object.quantile),"):"),
                                 "horizontalalignment", "left",
                                 "position", [0.01 0.66 0.18 0.03]);
 								
