@@ -30,7 +30,7 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
 
 	retcode = 0;
     % Get input variables
-    tmp_dtm           = (datenum(obj.maturity_date) - valuation_date); 
+    tmp_dtm           = (datenum(obj.maturity_date,1) - valuation_date); 
     tmp_rf_rate_base  = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + ...
                                                                     obj.spread;
         

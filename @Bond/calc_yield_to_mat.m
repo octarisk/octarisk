@@ -7,13 +7,11 @@ function s = calc_yield_to_mat (bond, valuation_date)
   ub = 1;
   
   if ( nargin < 2)
-        valuation_date = datestr(today);
-  elseif ( nargin == 2)
-        valuation_date = datestr(valuation_date);
+        valuation_date = today;
   end
   
   if ( ischar(valuation_date))
-    valuation_date = datenum(valuation_date);
+    valuation_date = datenum(valuation_date,1);
   end
 
   % Check, whether cash flow have already been roll out 

@@ -138,7 +138,7 @@ end
 
 % Start time:
 if ischar(valuation_date)
-   valuation_date = datenum(valuation_date);
+   valuation_date = datenum(valuation_date,1);
 end
 
 % ------------------------------------------------------------------

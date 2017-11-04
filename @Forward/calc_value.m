@@ -12,7 +12,9 @@ function obj = calc_value (forward,valuation_date,value_type,discount_curve_obje
     if ( nargin < 5 )
         error('No underlying_object set for value_type not being base.');
     end
- 
+	if (ischar(valuation_date))
+        valuation_date = datenum(valuation_date,1);
+    end
     % calculate value according to pricing formula
     if ( sum(strcmpi(obj.sub_type,{'BondFuture','EquityFuture'})) > 0 )
         [theo_value theo_price] = pricing_forward(valuation_date,value_type,obj, ...

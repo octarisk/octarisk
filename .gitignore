@@ -15,4 +15,6 @@ octave-workspace
 # exclude the following folders
 /working_folder/output/*
 /working_folder/archive/*
+/testing_folder/output/*
+/testing_folder/archive/*
 /prototype_folder/*

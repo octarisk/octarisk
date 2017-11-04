@@ -5,7 +5,7 @@ if ( nargin < 6)
 end
 
 if ischar(valuation_date)
-      valuation_date = datenum(valuation_date);
+      valuation_date = datenum(valuation_date,1);
 end
   
 % a) get object attributes

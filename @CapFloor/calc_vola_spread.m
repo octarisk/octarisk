@@ -8,6 +8,10 @@ function obj = calc_vola_spread (capfloor,valuation_date,discount_curve,vola_sur
 		error ('No vola spread calibration possible for sub_type CAP/FLOOR_INFL');
 	end
 
+	if ischar(valuation_date)
+		valuation_date = datenum(valuation_date,1);
+	end
+
 	% get market value
 	market_value = obj.getValue('base');
 	

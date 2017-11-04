@@ -23,7 +23,7 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     end
     
     if ischar(valuation_date)
-        valuation_date = datenum(valuation_date);
+        valuation_date = datenum(valuation_date,1);
     end
 
     % call function for generating CF dates and values and accrued_interest
@@ -65,7 +65,7 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     end
     
     if ischar(valuation_date)
-        valuation_date = datenum(valuation_date);
+        valuation_date = datenum(valuation_date,1);
     end
 
     % call function for generating CF dates and values and accrued_interest
@@ -170,9 +170,9 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
   % all other bond types (like FRB etc.)
   else  
     if ( nargin < 3)
-        valuation_date = datestr(today);
+        valuation_date = today;
     elseif ( nargin == 3)
-        valuation_date = datestr(arg1);
+        valuation_date = arg1;
     end
     % call function for rolling out cashflows
     [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date] = ...

@@ -537,8 +537,9 @@ end
 function W = Wilson_function(t,u,ufrc,alpha)
     ma = max(t,u);
     mi = min(t,u);
-    W = exp(-ufrc .* (t + u)) .* ( alpha .* mi - 0.5 .* exp(-alpha.*ma) ...
-		.* ( exp(alpha.*mi) - exp(-alpha.*mi) ) );
+	tmp_a_mi = alpha .* mi;
+    W = exp(-ufrc .* (t + u)) .* ( tmp_a_mi - 0.5 .* exp(-alpha.*ma) ...
+		.* ( 2*sinh(tmp_a_mi) ) );
 end
 
 % function for calculating new discount rates 
@@ -561,44 +562,38 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
             nodes_input_y = nodes_input_y ./365;
             tt = tt ./ 365;
         end
+		
     % Calculate chi via solving linear equations  
-        % 1. calculate vector mu
+        % 1. calculate vector mu and m
         mu = exp(- ufrc .* nodes_input_y);
-        % Matlab adaption
-        %nodesinput_y_tmp = repmat(nodes_input_y,1,columns(rates_input));
-        %rates_x_nodes = log(1+rates_input) .*nodesinput_y_tmp;
-        rates_x_nodes = log(1+rates_input) .*nodes_input_y;
-        m  = 1 ./ exp(rates_x_nodes);
-        
+		% fast implementation of: m  = exp(-log(1+rates_input) .* nodes_input_y) 
+		m = (1+rates_input).^(-nodes_input_y);
+		
         % 2. calculate matrix W (size length(rates)^2)
         [X,Y] = meshgrid(nodes_input_y,nodes_input_y);
         W = Wilson_function(X,Y,ufrc,alpha);
-
+		d_vec = (m - mu);
+		
         % 3. calculate vector chi: solving set of linear equaitons: 
-        % m = mu + W*chi
-        % Matlab adaption
-        %mu=repmat(mu,1,columns(m));
-        d_vec = (m - mu);
 		chi = W\d_vec;	% solve equation system
+		
     % calculate discount rate and discount factor
         [X,Y] = meshgrid(nodes_input_y,tt);     % set up meshgrid
         WW = Wilson_function(X,Y,ufrc,alpha); 
-        chi_mat = repmat( chi',rows(WW),1);
-        % Matlab adaption
-        %WW=repmat(WW,rows(chi_mat),1);
-        M = chi_mat .* WW;
+        M = chi' .* WW;
         S = sum(M,2);
+
     % Return discount factor and discount rates
-    P = exp(-ufrc*tt) + S;
-    % set discount factors to positive values, 
-    % anyway there will be singularities...
-    P(P<0) = 0.001;
-    R =  log(1 ./P) ./tt;
-    if ~(isreal(R))
-       error('ERROR: R vector not real');    
-    end
+		P = exp(-ufrc*tt) + S;
+		% set discount factors to positive values, 
+		% anyway there will be singularities...
+		P(P<0) = eps;
+		R = -log(P) ./tt;
+		if ~(isreal(R))
+		   error('interpolate_smith_wilson: R vector not real. Singularities detected.');    
+		end
 	% Return continuous compounded rates
-	R = exp(R)-1;
+		R = exp(R)-1;
 end
 
 

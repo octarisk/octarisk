@@ -2,7 +2,7 @@ function obj = calc_sensitivities (bond, valuation_date, discount_curve, referen
 obj = bond;
 
 if ischar(valuation_date)
-    valuation_date = datenum(valuation_date);
+    valuation_date = datenum(valuation_date,1);
 end
 
 % A) get bond related attributes

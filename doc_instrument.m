@@ -315,6 +315,10 @@ end
 %! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.getValue('base'),70.000,0.001);
 %! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
+%! assert(o.get('theo_theta'),-0.0129592907697752,sqrt(eps));
+%! assert(o.get('theo_rho'),11.2600772731753,sqrt(eps));
+%! assert(o.get('theo_vega'),4.07951486908950,sqrt(eps));
+%! assert(o.get('theo_omega'),2.60858246740055,sqrt(eps));
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing European Barrier Option Object\n');
@@ -339,6 +343,10 @@ end
 %! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),0.030000,0.00001);
 %! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
+%! assert(o.get('theo_theta'),-0.0187217581366794,sqrt(eps));
+%! assert(o.get('theo_rho'),0.119110865994094,sqrt(eps));
+%! assert(o.get('theo_vega'),0.248425358720136,sqrt(eps));
+%! assert(o.get('theo_omega'),-5.24021547490609,sqrt(eps));
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Asian Geometric Continuous Averaging Option Object\n');
@@ -360,6 +368,11 @@ end
 %! o = o.set('value_base',4.900);
 %! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.get('vola_spread'),0.0288927625504014,0.00001);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
+%! assert(o.get('theo_theta'),-0.00200313644853622,sqrt(eps));
+%! assert(o.get('theo_rho'),-0.0890992274042119,sqrt(eps));
+%! assert(o.get('theo_vega'),0.0749765679629277,sqrt(eps));
+%! assert(o.get('theo_omega'),-12.5669199489962,sqrt(eps));
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Asian Arithmetic Continuous Averaging Option Object\n');

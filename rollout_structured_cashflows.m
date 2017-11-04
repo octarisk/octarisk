@@ -39,7 +39,7 @@ if nargin < 3 || nargin > 6
  end
 
 if (ischar(valuation_date))
-    valuation_date = datenum(valuation_date); 
+    valuation_date = datenum(valuation_date,1); 
 end
 
 if nargin > 3 
@@ -117,17 +117,29 @@ end
 if (nargin < 2 && strcmp(type,'SWAP_FLOATING') == 1)
     error('Too few arguments. No existing IR curve for type FRN.');
 end
-maturitydatenum = datenum(maturity_date);
-issuedatenum = datenum(issue_date);
+
+% assume format of dates to be dd-mmm-yyyy to speed up conversion
+if ( ischar(maturity_date))
+	maturitydatenum = datenum_fast(maturity_date,1);
+else
+	maturitydatenum = datenum(maturity_date);
+end
+
+if ( ischar(issue_date))
+	issuedatenum = datenum_fast(issue_date,1);
+else
+	issuedatenum = datenum(issue_date);
+end
+
 if ( issuedatenum > maturitydatenum)
     error('Error: Issue date later than maturity date');
 end
 
 % ------------------------------------------------------------------------------
 % Start Calculation:
-issuevec = datevec(issue_date);
-todayvec = datevec(valuation_date);
-matvec = datevec(maturity_date);
+issuevec = datevec_fast(issuedatenum);
+todayvec = datevec_fast(valuation_date);
+matvec = datevec_fast(maturitydatenum);
 % floor forward rate at 0.000001:
 floor_flag = false;
 % cashflow rollout: method backwards
@@ -151,7 +163,7 @@ if ( strcmpi(coupon_generation_method,'backward') )
 		% rollout for annual 365 days (compounding frequency = 1 payment per year)
 		elseif ( term == 365 || term == 52 || term == 0)
 			new_cf_date = cfdatenum-365;
-			new_cf_date = datevec(new_cf_date);
+			new_cf_date = datevec_fast(new_cf_date);
 			new_cf_year = new_cf_date(:,1);
 			new_cf_month = new_cf_date(:,2);
 			new_cf_day = new_cf_date(:,3);    
@@ -193,7 +205,7 @@ if ( strcmpi(coupon_generation_method,'backward') )
 		end
 		% update cf_date
 		cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
-		cfdatenum = datenum(cf_date);
+		cfdatenum = datenum_fast(cf_date);
 		if cfdatenum >= issuedatenum
 			cf_dates = [cf_dates ; cf_date];
 		end
@@ -221,7 +233,7 @@ elseif ( strcmpi(coupon_generation_method,'forward') )
 		% rollout for annual 365 days (compounding frequency = 1 payment per year)
 		elseif ( term == 365 || term == 52 || term == 0)
 			new_cf_date = cfdatenum + 365;
-			new_cf_date = datevec(new_cf_date);
+			new_cf_date = datevec_fast(new_cf_date);
 			new_cf_year = new_cf_date(:,1);
 			new_cf_month = new_cf_date(:,2);
 			new_cf_day = new_cf_date(:,3);   
@@ -261,7 +273,7 @@ elseif ( strcmpi(coupon_generation_method,'forward') )
 		end
 		% update cf_date
 		cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
-		cfdatenum = datenum(cf_date);
+		cfdatenum = datenum_fast(cf_date);
 		if ( cfdatenum <= maturitydatenum)
 			cf_dates = [cf_dates ; cf_date];
 		end
@@ -301,7 +313,7 @@ if (rows(cf_dates) == 1)
 end
 
 % one time and forever: get datenum of cf_dates
-cf_datesnum = datenum(cf_dates);
+cf_datesnum = datenum_fast(cf_dates);
 if ( enable_business_day_rule == true)
 	cf_business_datesnum = busdate(cf_datesnum-1 + business_day_rule, ...
 										business_day_direction);
@@ -368,7 +380,7 @@ if ( strcmpi(type,'FRB') || strcmpi(type,'SWAP_FIXED') )
 elseif ( strcmpi(type,'FRA') )
     T0 = valuation_date;	% valuation_date
     Tt = cf_datesnum(2) - T0; % cash flow date = maturity date of FRA
-	Tu = datenum(instrument.underlying_maturity_date) - T0; % underlyings maturity date
+	Tu = datenum(instrument.underlying_maturity_date,1) - T0; % underlyings maturity date
 	% preallocate memory
 	cf_values = zeros(rows(tmp_rates),1);
 		
@@ -422,7 +434,7 @@ elseif ( strcmpi(type,'FRA') )
 elseif ( strcmpi(type,'FVA') )
     T0 = valuation_date;	% valuation_date
     Tt = cf_datesnum(2) - T0; % cash flow date = maturity date of FRA
-	Tu = datenum(instrument.underlying_maturity_date) - T0; % underlyings maturity date
+	Tu = datenum(instrument.underlying_maturity_date,1) - T0; % underlyings maturity date
 	
 		
 	% only future cashflows, underlying > instrument mat date
@@ -492,7 +504,7 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 			adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
 			% calculate indexation lag in days:
 			[valdate_yy valdate_mm valdate_dd] = datevec(valuation_date);
-			tmp_date = datenum(valdate_yy - adjust_for_years,valdate_mm - adjust_for_month, valdate_dd  );
+			tmp_date = datenum([valdate_yy - adjust_for_years,valdate_mm - adjust_for_month, valdate_dd]  );
 			%new_cf_day = check_day(valdate_yy,valdate_mm - adjust_for_month,valdate_dd - adjust_for_years )
 			diff_days = valuation_date - tmp_date	;
 			cpi_initial = hist.getRate(value_type,-diff_days);
@@ -521,9 +533,9 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 				adjust_for_years = floor(adjust_for_month/12);
 				adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
 				[d1_yy d1_mm d1_dd] = datevec(tmp_d1);
-				tmp_d1 = datenum(d1_yy - adjust_for_years,d1_mm - adjust_for_month, d1_dd );
+				tmp_d1 = datenum([d1_yy - adjust_for_years,d1_mm - adjust_for_month, d1_dd] );
 				[d2_yy d2_mm d2_dd] = datevec(tmp_d2);
-				tmp_d2 = datenum(d2_yy - adjust_for_years,d2_mm - adjust_for_month, d2_dd );
+				tmp_d2 = datenum([d2_yy - adjust_for_years,d2_mm - adjust_for_month, d2_dd] );
 			end
 		end
 		% get timefactors and cf dates
@@ -820,7 +832,7 @@ elseif ( strcmpi(type,'FRN') || strcmpi(type,'SWAP_FLOATING') || strcmpi(type,'C
 % Special floating types (capitalized, average, min, max) based on CMS rates
 elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
     % assume in fine -> fixing at forward start date -> use issue date as first
-    cf_datesnum = [datenum(issue_date);datenum(cf_dates)];
+    cf_datesnum = [issuedatenum;cf_datesnum];
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
     notvec = zeros(1,length(d1));
@@ -862,8 +874,8 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
              % fixing_start_date
              % payment_date
             % set up underlying swap
-            swap = swap.set('maturity_date',datestr(valuation_date + fixing_start_date + sliding_term), ...
-                            'issue_date', datestr(valuation_date + fixing_start_date));
+            swap = swap.set('maturity_date',valuation_date + fixing_start_date + sliding_term, ...
+                            'issue_date', valuation_date + fixing_start_date);
             % get volatility according to moneyness and term
             if ( regexpi(surface.moneyness_type,'-'))
                 moneyness = 0.0; % surface with absolute moneyness
@@ -951,8 +963,8 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
     end
     
     % adjust adj_rate to term and compounding type of instrument
-    instr_adj_rate = (1 ./ discount_factor(datestr(valuation_date), ...
-                            datestr(maturity_date), adj_rate, ...
+    instr_adj_rate = (1 ./ discount_factor(valuation_date, ...
+                            maturity_date, adj_rate, ...
                             compounding_type, dcc, compounding_freq)) - 1;                  
     ret_values  = instr_adj_rate .* notional;
     cf_interest = ret_values;
@@ -967,7 +979,7 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
 % Type CMS and CMS Caps/Floors: Calculate CF Values for all CF Periods with cms rates
 elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type,'FLOOR_CMS'))
     % assume in fine -> fixing at forward start date -> use issue date as first
-    cf_datesnum = [datenum(issue_date);datenum(cf_dates)]; 
+    cf_datesnum = [issuedatenum;cf_datesnum]; 
     d1 = cf_datesnum(1:length(cf_datesnum)-1);
     d2 = cf_datesnum(2:length(cf_datesnum));
     notvec = zeros(1,length(d1));
@@ -1007,8 +1019,8 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
             %payment_date
             
             % set up underlying swap
-            swap = swap.set('maturity_date',datestr(valuation_date + fixing_start_date + sliding_term), ...
-                            'issue_date', datestr(valuation_date + fixing_start_date));
+            swap = swap.set('maturity_date',valuation_date + fixing_start_date + sliding_term, ...
+                            'issue_date', valuation_date + fixing_start_date);
 							
             % get volatility according to moneyness and term
             if ( regexpi(surface.moneyness_type,'-'))
@@ -1267,7 +1279,6 @@ elseif ( strcmp(type,'FAB') == 1 )
             m = comp_freq;
             total_term = number_payments / m;   % total term of annuity in years
             amortization_rate = notional / number_payments;  
-            cf_datesnum = datenum(cf_dates);
             d1 = cf_datesnum(1:length(cf_datesnum)-1);
             d2 = cf_datesnum(2:length(cf_datesnum));
             cf_values = zeros(1,number_payments);
@@ -1384,7 +1395,6 @@ elseif ( strcmp(type,'FAB') == 1 )
             else
                 out_balance = instrument.outstanding_balance;
                 % use only payment dates > valuation date  
-                cf_datesnum = datenum(cf_dates);
                 original_payments = length(cf_dates);
                 number_payments = length(cf_datesnum);
                 d1 = cf_datesnum(1:length(cf_datesnum)-1);
@@ -1395,7 +1405,7 @@ elseif ( strcmp(type,'FAB') == 1 )
                 cf_interest_pp = zeros(rows(prepayment_factor),number_payments);
                 cf_principal_pp = zeros(rows(prepayment_factor),number_payments); 
                 cf_annuity = zeros(rows(prepayment_factor),number_payments);                
-                issue_date = datenum(instrument.issue_date);
+                issue_date = issuedatenum;
                 % calculate all principal and interest cash flows including
                 % prepayment cashflows. use future cash flows only
                 for ii = 1 : 1 : number_payments
@@ -1542,8 +1552,8 @@ elseif ( term == 0)
     if ( valuation_date <= issuedatenum )    % CASE B
         tf = 0;
     else                                            % CASE A/C
-        tf_id_md = timefactor(issue_date, maturity_date, dcc);
-        tf_id_vd = timefactor(issue_date, valuation_date, dcc);
+        tf_id_md = timefactor(issuedatenum, maturitydatenum, dcc);
+        tf_id_vd = timefactor(issuedatenum, valuation_date, dcc);
         tf = tf_id_vd ./ tf_id_md;
     end
 end
@@ -1582,6 +1592,157 @@ function new_cf_day = check_day(cf_year,cf_month,cf_day)
         
 end
 
+%-------------------------------------------------------------------------------
+%            Custom datenum and datevec Functions 
+%-------------------------------------------------------------------------------
+% Octave's built in functions have been cleaned from unused code. Now only
+% date format 'dd-mmm-yyyy' is allowed to improve performance
+function [day] = datenum_fast (input1, format = 1)
+
+  ## Days until start of month assuming year starts March 1.
+  persistent monthstart = [306; 337; 0; 31; 61; 92; 122; 153; 184; 214; 245; 275];
+  persistent monthlength = [31; 28; 31; 30; 31; 30; 31; 31; 30; 31; 30; 31];
+
+
+  if (ischar (input1) || iscellstr (input1)) % input is 
+    [year, month, day, hour, minute, second] = datevec_fast (input1, 1);
+  else	% input is vector
+      second = 0;
+      minute = 0;
+      hour   = 0;
+      day   = input1(:,3);
+      month = input1(:,2);
+      year  = input1(:,1);
+  end
+
+  month(month < 1) = 1;  # For compatibility.  Otherwise allow negative months.
+
+  % no fractional month possible
+
+  % Set start of year to March by moving Jan. and Feb. to previous year.
+  % Correct for months > 12 by moving to subsequent years.
+  year += ceil ((month-14)/12);
+
+  % Lookup number of days since start of the current year.
+    day += monthstart (mod (month-1,12) + 1) + 60;
+
+  % Add number of days to the start of the current year.  Correct
+  % for leap year every 4 years except centuries not divisible by 400.
+  day += 365*year + floor (year/4) - floor (year/100) + floor (year/400);
+
+end
+
+% ------------------------------------------------------------------------------
+function [y, m, d, h, mi, s] = datevec_fast (date, f = 1, p = [])
+
+  if (nargin < 1 || nargin > 3)
+    print_usage ();
+  end
+
+  if (ischar (date))
+    date = cellstr (date);
+  end
+
+  if (isnumeric (f))
+    p = f;
+    f = [];
+  end
+
+  if (isempty (f))
+    f = -1;
+  end
+
+  if (isempty (p))
+    p = (localtime (time ())).year + 1900 - 50;
+  end
+
+  % datestring input
+  if (iscell (date))
+
+    nd = numel (date);
+
+    y = m = d = h = mi = s = zeros (nd, 1);
+	% hard coded: format string always dd-mm-yyyy
+	f = '%d-%b-%Y';
+	rY = 7;
+	ry = 0;
+	fy = 1;
+	fm = 1;
+	fd = 1;
+	fh = 0;
+	fmi = 0;
+	fs = 0;
+	found = 1;
+
+	for k = 1:nd
+		[found y(k) m(k) d(k) h(k) mi(k) s(k)] = ...
+			__date_str2vec_custom__ (date{k}, p, f, rY, ry, fy, fm, fd, fh, fmi, fs);
+	end
+
+  % datenum input
+  else 
+    date = date(:);
+
+    % Move day 0 from midnight -0001-12-31 to midnight 0000-3-1
+    z = double (floor (date) - 60);
+    % Calculate number of centuries; K1 = 0.25 is to avoid rounding problems.
+    a = floor ((z - 0.25) / 36524.25);
+    % Days within century; K2 = 0.25 is to avoid rounding problems.
+    b = z - 0.25 + a - floor (a / 4);
+    % Calculate the year (year starts on March 1).
+    y = floor (b / 365.25);
+    % Calculate day in year.
+    c = fix (b - floor (365.25 * y)) + 1;
+    % Calculate month in year.
+    m = fix ((5 * c + 456) / 153);
+    d = c - fix ((153 * m - 457) / 5);
+    % Move to Jan 1 as start of year.
+    ++y(m > 12);
+    m(m > 12) -= 12;
+
+    % no fractional time units
+	s = 0;
+	h = 0;
+	mi = 0;
+	
+
+  end
+
+  if (isvector(date) && length(date) > 1)
+	if ( rows(date) > columns(date))
+		date = date';
+	end
+	y = date(:,1);
+	m = date(:,2);
+	d = date(:,3);
+	h = date(:,4);
+	mi = date(:,5);
+	s = date(:,6);
+  end
+  
+  
+  if (nargout <= 1)
+    y = [y, m, d, h, mi, s];
+  end
+
+end
+% ------------------------------------------------------------------------------
+function [found, y, m, d, h, mi, s] = __date_str2vec_custom__ (ds, p, f, rY, ry, fy, fm, fd, fh, fmi, fs)
+
+  % strptime will always be possible
+  [tm, nc] = strptime (ds, f);
+
+  if (nc == columns (ds) + 1)
+    found = true;
+    y = tm.year + 1900; m = tm.mon + 1; d = tm.mday;
+    h = 0; mi = 0; s = 0;
+  else
+    y = m = d = h = mi = s = 0;
+    found = false;
+  end
+
+end
+% ------------------------------------------------------------------------------
 %!test
 %! bond_struct=struct();
 %! bond_struct.sub_type                 = 'FRB';

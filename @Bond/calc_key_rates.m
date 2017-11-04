@@ -4,6 +4,10 @@ function obj = calc_key_rates(bond,valuation_date,discount_curve)
         error('Error: No  discount curve set. Aborting.');
    end
 
+    if ( ischar(valuation_date))
+		valuation_date = datenum(valuation_date,1);
+	end
+  
     % Get discount curve nodes and rate
         disc_nodes    = discount_curve.get('nodes');
         disc_rates    = discount_curve.getValue('base');

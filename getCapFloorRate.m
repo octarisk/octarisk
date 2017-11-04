@@ -77,7 +77,7 @@ end
 % model dependent calculation
 if (strcmpi(model,'Black') && X > 0.0 && sigma > 0.0)  % Black model only if X positive
     if ( F < 0 )
-        error ('Error: forward rate in Black model is negative. Use normal model instead.');
+        error ('getCapFloorRate: forward rate in Black model is negative. Use normal model instead.');
     end
     d1 = (log(F./X) + 0.5.*(sigma.^2).*tf)./(sigma.*sqrt(tf));
     d2 = d1 - sigma.*sqrt(tf);

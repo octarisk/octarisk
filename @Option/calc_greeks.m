@@ -29,7 +29,7 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,discount_
     
     
     % Get input variables
-    tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date); 
+    tmp_dtm                  = (datenum(obj.maturity_date,1) - valuation_date); 
     tmp_rf_rate              = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + obj.spread;
     tmp_impl_vola_spread     = obj.vola_spread;
     % Get underlying absolute scenario value 

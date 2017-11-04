@@ -44,7 +44,7 @@ type = forward.sub_type;
 storage_cost = forward.storage_cost; % continuous storage cost p.a.
 convenience_yield = forward.convenience_yield; % continuous convenience_yield p.a.
 dividend_yield = forward.dividend_yield;
-maturity_date = datenum(forward.maturity_date);
+maturity_date = datenum(forward.maturity_date,1);
 strike = forward.strike_price;
 
 % Getting curve properties
@@ -110,7 +110,7 @@ end
 
 % convert valuation_date
 if (ischar(valuation_date))
-    valuation_date = datenum(valuation_date);
+    valuation_date = datenum(valuation_date,1);
 end
 days_to_maturity    = maturity_date - valuation_date;
 if ( days_to_maturity < 1)

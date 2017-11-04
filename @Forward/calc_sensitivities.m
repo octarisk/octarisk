@@ -11,9 +11,11 @@ function obj = calc_sensitivities (forward,valuation_date,discount_curve_object,
     if ( nargin < 4 )
         error('No underlying_object set for value_type not being base.');
     end
-    
+    if (ischar(valuation_date))
+        valuation_date = datenum(valuation_date,1);
+    end
     % Get input variables
-    tmp_dtm                  = (datenum(obj.maturity_date) - valuation_date); 
+    tmp_dtm                  = (datenum(obj.maturity_date,1) - valuation_date); 
    
     % default values
     theo_value  		= 0.0;

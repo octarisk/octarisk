@@ -127,4 +127,4 @@ Relative PnL in Stresstest: |STRESS19| 	 |1.32%|
 Relative PnL in Stresstest: |STRESS20| 	 |-0.41%|
 Relative PnL in Stresstest: |STRESS21| 	 |0.38%|
 
-Total Runtime:    8.00 s
+Total Runtime:    8.80 s

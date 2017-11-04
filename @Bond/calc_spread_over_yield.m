@@ -6,16 +6,13 @@ function s = calc_spread_over_yield (bond,valuation_date,discount_curve,call_sch
    ub = 1;
 
    if ( nargin == 2)
-        valuation_date = datestr(today);
-   elseif ( nargin == 3)
-        valuation_date = datestr(valuation_date);
-
+        valuation_date = today;
    elseif ( nargin < 2)
         error('Error: No  discount curve set. Aborting.');
    end
    
    if ischar(valuation_date)
-	   valuation_date = datenum(valuation_date);
+	   valuation_date = datenum(valuation_date,1);
    end
 
    % Get reference curve nodes and rate

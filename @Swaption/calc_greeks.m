@@ -18,15 +18,16 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
     end
 
     if ( ischar(valuation_date))
-        valuation_date = datenum(valuation_date);
+        valuation_date = datenum(valuation_date,1);
     end
     
     % Get input variables
     
     % ??Convert tmp_effdate timefactor from Instrument basis to pricing basis (act/365)??
     % get days in period
+	matdatenum = datenum(obj.maturity_date,1);
     [tmp_tf tmp_effdate dib]  = timefactor (valuation_date, ...
-                                datenum(obj.maturity_date), obj.basis);
+                                matdatenum, obj.basis);
     % calculating swaption maturity date: effdate + tenor
     tmp_dtm          = tmp_effdate + 365 * obj.tenor; % unit years is assumed
     tmp_effdate = max(tmp_effdate,1);
@@ -83,13 +84,13 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
         if ( regexpi(tmp_vola_surf_obj.axis_x_name,'TENOR')) % standard case
             % x-axis: effective date of swaption -> option term
             % y-axis: underlying swap tenor -> underlying term
-            xx = datenum(obj.maturity_date) - valuation_date;
+            xx = matdatenum - valuation_date;
             yy = tmp_swap_tenor*365;
         elseif ( regexpi(tmp_vola_surf_obj.axis_x_name,'TERM'))
             % x-axis: underlying swap tenor -> underlying term 
             % y-axis: effective date of swaption -> option term
             xx = tmp_swap_tenor*365;
-            yy = datenum(obj.maturity_date) - valuation_date;
+            yy = matdatenum - valuation_date;
         else
             fprintf('Swaption.calc_value: WARNING: Volatility surface has neither TENOR nor TERM axis. Taking value at (0,0). \n');
             xx = 0;
@@ -190,7 +191,7 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
 
             % interpolation of volatility
             % calculate yy: time between maturity and issue date of underlying
-            yy = datenum(leg_fixed_obj.maturity_date) - datenum(leg_fixed_obj.issue_date);
+            yy = datenum(leg_fixed_obj.maturity_date,1) - datenum(leg_fixed_obj.issue_date,1);
             tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
                 xx,yy,tmp_moneyness) + tmp_impl_vola_spread;
 				

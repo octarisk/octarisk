@@ -15,12 +15,14 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
         call_flag = 0;
         moneyness_exponent = -1;
     end
-     
+    if ischar(valuation_date)
+	   valuation_date = datenum(valuation_date,1);
+    end 
     % Get input variables
     
     % Convert tmp_effdate timefactor from Instrument basis to pricing basis (act/365)
     tmp_effdate  = timefactor (valuation_date, ...
-                                datenum(obj.maturity_date), obj.basis) .* 365;
+                                datenum(obj.maturity_date,1), obj.basis) .* 365;
     % calculating swaption maturity date: effdate + tenor
     tmp_dtm          = tmp_effdate + 365 * obj.tenor; % unit years is assumed
     tmp_effdate = max(tmp_effdate,1);
