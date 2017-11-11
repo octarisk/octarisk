@@ -82,7 +82,9 @@ para_failed_cell = {};
 
 % 1. general variables -> path dependent on operating system
 path = para_object.path_working_folder;   % general load and save path for all input and output files
-
+if ( strcmpi(path,''))
+	path = path_parameter
+end
 path_output = strcat(path,'/',para_object.folder_output);
 path_output_instruments = strcat(path_output,'/',para_object.folder_output_instruments);
 path_output_riskfactors = strcat(path_output,'/',para_object.folder_output_riskfactors);

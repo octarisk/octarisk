@@ -1,4 +1,5 @@
 % Input folder
+path_working_folderCHAR,/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder
 folder_archiveCHAR,archive
 folder_inputCHAR,input
 folder_staticCHAR,static
@@ -29,12 +30,12 @@ input_filename_surf_stochCHAR,surf_stochastic_
 input_filename_matrixCHAR,matrix_
 
 % Boolean variables
-plottingBOOL,0
+plottingBOOL,false
 savingBOOL,0
 archive_flagBOOL,0
 stable_seedBOOL,1
 mc_scen_analysisBOOL,0
-aggregation_flagBOOL,true
+aggregation_flagBOOL,false
 first_evalBOOL,1
 
 % VAR specific variables

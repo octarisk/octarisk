@@ -50,7 +50,7 @@ Sensitivities on Positional Level:
 |VaR 250d | Alternative 	 |   488.90 EUR 	|   394.00 EUR 	 |    15.43 EUR|
 |VaR 250d | Derivative 	 |  -245.80 EUR 	|  1843.76 EUR 	 |    35.14 EUR|
 |VaR 250d | Diversified 	 |    32.14 EUR 	|   262.61 EUR 	 |   161.09 EUR|
-|VaR 250d | cash 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+|VaR 250d | cash 	 |  1000.00 EUR 	|     0.00 EUR 	 |     0.00 EUR|
  Risk aggregation for key: currency 
 |VaR 250d | Key value   | Basevalue 	 | Standalone HD VAR 	 | Decomp HD VAR|
 |VaR 250d | USD 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  7077.26 EUR|
@@ -60,12 +60,12 @@ Sensitivities on Positional Level:
 |VaR 250d | A0LGQL 	 | 15966.25 EUR 	|  7513.40 EUR 	 |  7077.26 EUR|
 |VaR 250d | A1ZKC4 	 |   112.73 EUR 	|     0.35 EUR 	 |    -0.01 EUR|
 |VaR 250d | ETF090 	 |  4817.70 EUR 	|  1644.42 EUR 	 |   635.89 EUR|
-|VaR 250d | GOLDPHYS 	 | 10827.36 EUR 	|  3550.68 EUR 	 |  2637.53 EUR|
+|VaR 250d | GOLDPHYS 	 | 10827.36 EUR 	|  3550.68 EUR 	 |  2637.54 EUR|
 |VaR 250d | BTCOIN 	 |   488.90 EUR 	|   394.00 EUR 	 |    15.43 EUR|
 |VaR 250d | ODAXC20160318 	 |  -236.11 EUR 	|  2408.38 EUR 	 |  -222.97 EUR|
 |VaR 250d | EQFORW01 	 |    -9.70 EUR 	|   430.38 EUR 	 |   258.11 EUR|
 |VaR 250d | SYNTH01 	 |    32.14 EUR 	|   262.61 EUR 	 |   161.09 EUR|
-|VaR 250d | CASH_EUR 	 |  1000.00 EUR 	|     0.00 EUR 	 |    -0.00 EUR|
+|VaR 250d | CASH_EUR 	 |  1000.00 EUR 	|     0.00 EUR 	 |     0.00 EUR|
 
 Total VaR undiversified: 
 |VaR 250d undiversified| | 16210.22 EUR|
@@ -77,7 +77,7 @@ Total VaR undiversified:
 |Portfolio ES  250d@99.5%| 	 | 12019.72 EUR|
 
 
-Difference to HD-VaR 250d:       7.11 EUR
+Difference to HD-VaR 250d:       7.12 EUR
 
 Total Reduction in VaR via Diversification: 
 |Portfolio VaR 250d Diversification Effect| |    34.84%|
@@ -109,4 +109,4 @@ Relative PnL in Stresstest: |STRESS19| 	 |0.05%|
 Relative PnL in Stresstest: |STRESS20| 	 |0.12%|
 Relative PnL in Stresstest: |STRESS21| 	 |-0.13%|
 
-Total Runtime:    8.50 s
+Total Runtime:    4.60 s

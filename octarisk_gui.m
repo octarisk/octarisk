@@ -23,8 +23,14 @@
 % ##############################################################################
 
 % Specify path to parameter.csv (Recommendation for first try: /path/to/octarisk/ and parameter.csv)
-input_path = 'C:/Dokumente/Work/octarisk/';
-parameter_file = 'parameter.csv';
+if (isunix)
+	input_path = '/home/schinzilord/Dokumente/Programmierung/octarisk/';
+	parameter_file = 'parameter_unix.csv';
+else
+	input_path = 'C:/Dokumente/Work/octarisk/';
+	parameter_file = 'parameter.csv';
+end
+
 
 % All valuation specific input parameters are set in function file octarisk.m.
 
