@@ -91,14 +91,14 @@ q = divrate;    % assuming act/365 continuous compounding
     normcdf_d1 = 0.5.*(1+erf(d1./sqrt(2)));
     normcdf_d2 = 0.5.*(1+erf(d2./sqrt(2)));
                    
-% normal density corresponding to N1 (needed for greeks)
-    N1s = exp(-d1 .* d1 ./ 2) ./ sqrt(2 .* pi);   
 % Calculating value: 
     value   = eta .* (exp(-q.*T) .* S.*normcdf_eta_d1- X.*exp(-r.*T) ...
                 .*normcdf_eta_d2); 
 
 % Calculate greeks only if demanded:
 	if (nargout > 1)
+		% normal density corresponding to N1 (needed for greeks)
+		N1s = exp(-d1 .* d1 ./ 2) ./ sqrt(2 .* pi); 
 		delta   = eta .* exp(-q.*T) .* normcdf_eta_d1;
 		gamma   =  exp(-q .* T) .* N1s ./ S ./ sigma ./ sqrt(T);
 		theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...

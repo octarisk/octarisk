@@ -81,25 +81,21 @@ elseif ( nargin == 7 )
   comp_type = 'disc';
   comp_freq = 1;
   interp_discount = 'linear';
-  interp_spread  = 'linear';
   comp_type_curve  = comp_type;
   basis_curve      = basis; 
   comp_freq_curve  = comp_freq;
 elseif ( nargin == 8 )
   comp_freq = 1;
   interp_discount = 'linear';
-  interp_spread  = 'linear';
   comp_type_curve  = comp_type;
   basis_curve      = basis; 
   comp_freq_curve  = comp_freq;
 elseif ( nargin == 9 )
   interp_discount = 'linear';
-  interp_spread  = 'linear'; 
   comp_type_curve  = comp_type;
   basis_curve      = basis; 
   comp_freq_curve  = comp_freq;
 elseif ( nargin == 10 )
-  interp_spread  = 'linear';
   comp_type_curve  = comp_type;
   basis_curve      = basis; 
   comp_freq_curve  = comp_freq;  
