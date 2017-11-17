@@ -1,4 +1,4 @@
-# Created by Octave 4.0.0, Fri Jul 15 15:42:26 2016 W. Europe Daylight Time <unknown@T43NB067>
+# Created by Octave 4.2.0, Fri Nov 17 12:43:33 2017 GMT <unknown@unknown>
 # name: tmp_mktdata_struct
 # type: struct
 # ndims: 2
@@ -131,22 +131,6 @@ SPREAD_EUR_FIN_BBB
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 5
-EQ_DE
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 8
-COM_GOLD
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
 # length: 9
 FX_EURUSD
 
@@ -157,6 +141,22 @@ FX_EURUSD
 # elements: 1
 # length: 9
 FX_EURCAD
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 8
+COM_GOLD
 
 
 
@@ -289,22 +289,6 @@ SPREAD_EUR_FIN_BBB
 # name: <cell-element>
 # type: sq_string
 # elements: 1
-# length: 5
-DAX30
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
-# length: 4
-Gold
-
-
-
-# name: <cell-element>
-# type: sq_string
-# elements: 1
 # length: 7
 EUR_USD
 
@@ -318,6 +302,22 @@ EUR_CAD
 
 
 
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 5
+DAX30
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 4
+Gold
+
+
+
 
 
 # name: object
@@ -328,14 +328,24 @@ EUR_CAD
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -353,6 +363,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -368,7 +390,7 @@ Aggregated Spread Curve USD BBB
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -417,6 +439,13 @@ SPREAD_USD_BBB
 
 
 
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
+
+
 # name: method_interpolation
 # type: sq_string
 # elements: 1
@@ -461,6 +490,19 @@ AGGR_SPREAD_USD_BBB
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -474,6 +516,11 @@ absolute
 Aggregated Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -481,14 +528,24 @@ Aggregated Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -506,6 +563,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -521,7 +590,7 @@ Aggregated Spread Curve EUR USD
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -552,6 +621,13 @@ IR_USD
 
 
 
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -600,6 +676,19 @@ AGGR_IR_USD_EUR
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -613,6 +702,11 @@ absolute
 Aggregated Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -620,14 +714,24 @@ Aggregated Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
-# type: float scalar
+# type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -645,6 +749,18 @@ annual
 simple
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -660,7 +776,7 @@ Aggregated Spread Curve EUR USD
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -691,6 +807,13 @@ SPREAD_EUR_FIN_BBB
 
 
 
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -739,6 +862,19 @@ AGGR_EUR_FIN_BBB
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -752,6 +888,11 @@ absolute
 Aggregated Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -759,14 +900,24 @@ Aggregated Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -784,6 +935,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -799,7 +962,7 @@ EUR-SWAP Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -813,6 +976,13 @@ IR_EUR
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -862,6 +1032,19 @@ IR_EUR
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -875,6 +1058,11 @@ absolute
 Discount Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -882,14 +1070,24 @@ Discount Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -907,6 +1105,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -922,7 +1132,7 @@ USD-SWAP Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -936,6 +1146,13 @@ IR_USD
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -985,6 +1202,19 @@ IR_USD
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -998,6 +1228,11 @@ absolute
 Discount Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1005,14 +1240,24 @@ Discount Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1030,6 +1275,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -1045,7 +1302,7 @@ SPREAD_EUR_High Yield Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1059,6 +1316,13 @@ SPREAD_EUR_HY
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -1104,6 +1368,19 @@ SPREAD_EUR_HY
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1117,6 +1394,11 @@ absolute
 Spread Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1124,14 +1406,24 @@ Spread Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1149,6 +1441,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -1164,7 +1468,7 @@ SPREAD_USD_High Yield Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1178,6 +1482,13 @@ SPREAD_USD_HY
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -1223,6 +1534,19 @@ SPREAD_USD_HY
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1236,6 +1560,11 @@ absolute
 Spread Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1243,7 +1572,17 @@ Spread Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
@@ -1266,6 +1605,18 @@ annual
 # elements: 1
 # length: 4
 cont
+
+
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
 
 
 # name: day_count_convention
@@ -1299,6 +1650,13 @@ SPREAD_USD_AAA
 # elements: 0
 
 
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
+
+
 # name: method_interpolation
 # type: sq_string
 # elements: 1
@@ -1342,6 +1700,19 @@ SPREAD_USD_AAA
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1355,6 +1726,11 @@ absolute
 Spread Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1362,7 +1738,17 @@ Spread Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
@@ -1385,6 +1771,18 @@ annual
 # elements: 1
 # length: 4
 cont
+
+
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
 
 
 # name: day_count_convention
@@ -1418,6 +1816,13 @@ SPREAD_USD_AA
 # elements: 0
 
 
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
+
+
 # name: method_interpolation
 # type: sq_string
 # elements: 1
@@ -1461,6 +1866,19 @@ SPREAD_USD_AA
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1474,6 +1892,11 @@ absolute
 Spread Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1481,14 +1904,24 @@ Spread Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1504,6 +1937,18 @@ annual
 # elements: 1
 # length: 4
 cont
+
+
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
 
 
 # name: day_count_convention
@@ -1521,7 +1966,7 @@ SPREAD_USD_A Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1535,6 +1980,13 @@ SPREAD_USD_A
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -1580,6 +2032,19 @@ SPREAD_USD_A
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1593,6 +2058,11 @@ absolute
 Spread Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1600,14 +2070,24 @@ Spread Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1623,6 +2103,18 @@ annual
 # elements: 1
 # length: 4
 cont
+
+
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
 
 
 # name: day_count_convention
@@ -1640,7 +2132,7 @@ SPREAD_USD_BBB Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1654,6 +2146,13 @@ SPREAD_USD_BBB
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -1699,6 +2198,19 @@ SPREAD_USD_BBB
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1712,6 +2224,11 @@ absolute
 Spread Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1719,14 +2236,24 @@ Spread Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1744,6 +2271,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -1759,7 +2298,7 @@ Standard PSA Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1773,6 +2312,13 @@ PSA_CURVE
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -1822,6 +2368,19 @@ PSA_CURVE
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1835,6 +2394,11 @@ absolute
 Prepayment Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1842,14 +2406,24 @@ Prepayment Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1867,6 +2441,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -1882,7 +2468,7 @@ Validation EUR-SWAP Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1896,6 +2482,13 @@ IR_SWAP_EUR
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -1945,6 +2538,19 @@ IR-EUR-SWAP
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1958,6 +2564,11 @@ absolute
 Discount Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -1965,14 +2576,24 @@ Discount Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -1990,6 +2611,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -2005,7 +2638,7 @@ Validation EUR-SPREAD-FIN-A Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -2019,6 +2652,13 @@ SPREAD_EUR_FIN_A
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -2068,6 +2708,19 @@ SPREAD_EUR_FIN_A
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -2081,6 +2734,11 @@ absolute
 Spread Curve
 
 
+# name: ufr
+# type: scalar
+0.042
+
+
 
 
 
@@ -2088,14 +2746,24 @@ Spread Curve
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 18
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
 # name: basis
 # type: scalar
 3
 
 
 # name: cap
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -2113,6 +2781,18 @@ annual
 cont
 
 
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
 # name: day_count_convention
 # type: sq_string
 # elements: 1
@@ -2128,7 +2808,7 @@ Validation EUR-SPREAD-FIN-BBB Curve
 
 
 # name: floor
-# type: null_sq_string
+# type: sq_string
 # elements: 0
 
 
@@ -2142,6 +2822,13 @@ SPREAD_EUR_FIN_BBB
 # name: increments
 # type: null_sq_string
 # elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
 
 
 # name: method_interpolation
@@ -2191,6 +2878,19 @@ SPREAD_EUR_FIN_BBB
 absolute
 
 
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -2204,76 +2904,9 @@ absolute
 Spread Curve
 
 
-
-
-
-# name: <cell-element>
-# type: scalar struct
-# ndims: 2
- 1 1
-# length: 10
-# name: currency
-# type: sq_string
-# elements: 1
-# length: 3
-EUR
-
-
-# name: description
-# type: sq_string
-# elements: 1
-# length: 34
-DAX Equity Index German Blue Chips
-
-
-# name: id
-# type: sq_string
-# elements: 1
-# length: 5
-EQ_DE
-
-
-# name: name
-# type: sq_string
-# elements: 1
-# length: 5
-DAX30
-
-
-# name: scenario_mc
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: scenario_stress
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: shift_type
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: timestep_mc
-# type: cell
-# rows: 0
-# columns: 0
-
-
-# name: type
-# type: sq_string
-# elements: 1
-# length: 12
-Equity Index
-
-
-# name: value_base
+# name: ufr
 # type: scalar
-9820
+0.042
 
 
 
@@ -2283,79 +2916,7 @@ Equity Index
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 10
-# name: currency
-# type: sq_string
-# elements: 1
-# length: 3
-USD
-
-
-# name: description
-# type: sq_string
-# elements: 1
-# length: 16
-Gold 1 Ounce USD
-
-
-# name: id
-# type: sq_string
-# elements: 1
-# length: 8
-COM_GOLD
-
-
-# name: name
-# type: sq_string
-# elements: 1
-# length: 4
-Gold
-
-
-# name: scenario_mc
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: scenario_stress
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: shift_type
-# type: null_matrix
-# rows: 0
-# columns: 0
-
-
-# name: timestep_mc
-# type: cell
-# rows: 0
-# columns: 0
-
-
-# name: type
-# type: sq_string
-# elements: 1
-# length: 15
-Commodity Index
-
-
-# name: value_base
-# type: scalar
-1073
-
-
-
-
-
-# name: <cell-element>
-# type: scalar struct
-# ndims: 2
- 1 1
-# length: 10
+# length: 13
 # name: currency
 # type: sq_string
 # elements: 1
@@ -2375,6 +2936,24 @@ EUR USD Exchange rate
 # elements: 1
 # length: 9
 FX_EURUSD
+
+
+# name: increments
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: index_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: index_parameter
+# type: scalar
+1
 
 
 # name: name
@@ -2427,7 +3006,7 @@ Exchange Rate
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 10
+# length: 13
 # name: currency
 # type: sq_string
 # elements: 1
@@ -2447,6 +3026,24 @@ EUR CAD Exchange rate
 # elements: 1
 # length: 9
 FX_EURCAD
+
+
+# name: increments
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: index_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: index_parameter
+# type: scalar
+1
 
 
 # name: name
@@ -2490,6 +3087,186 @@ Exchange Rate
 # name: value_base
 # type: scalar
 1.25
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 13
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+EUR
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 34
+DAX Equity Index German Blue Chips
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 5
+EQ_DE
+
+
+# name: increments
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: index_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: index_parameter
+# type: scalar
+1
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 5
+DAX30
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Equity Index
+
+
+# name: value_base
+# type: scalar
+9820
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 13
+# name: currency
+# type: sq_string
+# elements: 1
+# length: 3
+USD
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 16
+Gold 1 Ounce USD
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 8
+COM_GOLD
+
+
+# name: increments
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: index_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: index_parameter
+# type: scalar
+1
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 4
+Gold
+
+
+# name: scenario_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: scenario_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shift_type
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 15
+Commodity Index
+
+
+# name: value_base
+# type: scalar
+1073
 
 
 

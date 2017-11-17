@@ -492,7 +492,7 @@ end
 %! assert(o.get('theo_delta'),0.615703060831976,0.00001);
  
 %!test
-%! fprintf('\tdoc_instrument:\tPricing American Option Object (Willowtree and Bjerksund and Stensland)\n');
+%! fprintf('\tdoc_instrument:\tPricing American Option Object (CRR, Willowtree and Bjerksund and Stensland)\n');
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[730,3650,4380],'rates_base',[0.0001001034,0.0045624391,0.0062559362],'method_interpolation','linear');
 %! v = Surface();
@@ -504,6 +504,19 @@ end
 %! o = Option();
 %! o = o.set('maturity_date','29-Mar-2026','currency','USD','timesteps_size',5,'willowtree_nodes',30);
 %! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
+%! o = o.set('pricing_function_american','CRR');
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
+%! assert(o.getValue('base'),122.976377187361,sqrt(eps));
+%! o = o.set('value_base',100);
+%! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
+%! assert(o.getValue('base'),100.000,0.001);
+%! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
+%! assert(o.get('theo_delta'),-0.624297868987391,sqrt(eps));
+%! assert(o.get('theo_vega'),3.31289415079807,sqrt(eps));
+%! o = Option();
+%! o = o.set('maturity_date','29-Mar-2026','currency','USD','timesteps_size',5,'willowtree_nodes',30);
+%! o = o.set('strike',368.7362,'multiplier',1,'sub_Type','OPT_AM_P');
+%! o = o.calc_value('31-Mar-2016','base',i,c,v);
 %! o = o.set('pricing_function_american','Willowtree');
 %! o = o.calc_value('31-Mar-2016','base',i,c,v);
 %! assert(o.getValue('base'),123.043,0.001);
@@ -520,6 +533,8 @@ end
 %! o = o.calc_vola_spread('31-Mar-2016',i,c,v);
 %! assert(o.getValue('base'),100.000,0.0001);
 %! o = o.calc_greeks('31-Mar-2016','base',i,c,v);
+
+
 
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Debt Object\n');

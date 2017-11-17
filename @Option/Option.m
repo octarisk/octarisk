@@ -16,7 +16,7 @@ classdef Option < Instrument
         multiplier = 5;
         timesteps_size = 5;      % size of one timestep in path dependent valuations
         willowtree_nodes = 20;   % number of willowtree nodes per timestep
-        pricing_function_american = 'BjSten'; % [Willowtree,BjSten] 
+        pricing_function_american = 'bjsten'; % [CRR,Willowtree,BjSten] 
         div_yield = 0.0;         % dividend yield (continuous, act/365)
         % special attributes required for barrier option only:
         upordown = 'U';          % Up or Down Barrier Option {'U','D'}
@@ -174,6 +174,16 @@ classdef Option < Instrument
          obj.lookback_type = lower(lookback_type);
       end % set.lookback_type
 	  
+	  
+	  % restrictions for American Options
+      function obj = set.pricing_function_american(obj,american_type)
+		 american_type_cell = {'CRR','BjSten','Willowtree'};
+         if ~(any(strcmpi(american_type,american_type_cell)))
+            error('Option pricing_function_american must be either >>%s<<',any2str(american_type_cell))
+         end
+         obj.pricing_function_american = lower(american_type);
+      end % set.pricing_function_american
+	  
 	  % restrictions for Binary Options
       function obj = set.binary_type(obj,binary_type)
 		 binary_type_cell = {'gap','cash','asset','supershare'};
@@ -233,8 +243,8 @@ are introduced:\n\
 @itemize @bullet\n\
 @item OPT_EUR_C: European Call option priced by Black-Scholes model.\n\
 @item OPT_EUR_P: European Put option priced by Black-Scholes model.\n\
-@item OPT_AM_C: American Call option priced by Willow tree model or Bjerksund-Stensland approximation.\n\
-@item OPT_AM_P: European Put option priced by Willow tree model or Bjerksund-Stensland approximation.\n\
+@item OPT_AM_C: American Call option priced by Willow tree model, CRR binomial tree or Bjerksund-Stensland approximation.\n\
+@item OPT_AM_P: European Put option priced by Willow tree model, CRR binomial tree or Bjerksund-Stensland approximation.\n\
 @item OPT_BAR_C: European Barrier Call option. Can have all combinations of out or in and up or down barrier types. Priced with Merton, Reiner, Rubinstein model.\n\
 @item OPT_BAR_P: European Barrier Put option. Same restrictions as Barrier Call options.\n\
 @item OPT_ASN_C: European Asian Call option. Average rate only. The following compounding types can be used:\n\
