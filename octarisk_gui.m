@@ -27,7 +27,7 @@ if (isunix)
 	input_path = '/home/schinzilord/Dokumente/Programmierung/octarisk/';
 	parameter_file = 'parameter_unix.csv';
 else
-	input_path = 'C:/Dokumente/Work/octarisk/';
+	input_path = 'C:/Dokumente/Work/octarisk/private_folder';
 	parameter_file = 'parameter.csv';
 end
 
@@ -281,7 +281,7 @@ function obj = update_plot(obj,inst_id,var)
 	var_string = sprintf ("VaR: %.2f %s", var,tmp_obj.currency);
 	text(0.025*para_object.mc,(0.8*var),var_string); 
 	text(0.025*para_object.mc,(1.2*var),strcat(num2str(round((var*1000+eps)/(tmp_obj.getValue('base')+eps))/10),' %'));
-	
+	axis ([0 length(xx) min(yy_sorted)-eps -var+eps]);
 	title("Instrument PnL Distribution", "fontsize",12);
 	xlabel('MonteCarlo Scenario', "fontsize",11);
 	ylabel(strcat('Profit and Loss (',tmp_obj.currency,')'), "fontsize",11);
@@ -321,6 +321,7 @@ function obj = update_plot_aggregation(obj,scenario_values,var,fund_currency,bas
 	text(0.025*para_object.mc,(0.8*var),var_string);
 	text(0.025*para_object.mc,(1.2*var),strcat(num2str(round(var*1000/base_value)/10),' %')); 
 	title("Portfolio PnL Distribution", "fontsize",12);
+	axis ([0 length(xx) min(scenario_values) -var]);
 	xlabel('MonteCarlo Scenario', "fontsize",11);
 	ylabel(strcat('Profit and Loss (',fund_currency,')'), "fontsize",11);
 	set (h.plot, "ydata", scenario_values);
@@ -422,7 +423,7 @@ function aggregate_portfolio(obj)
 	scen_number_decomp = idx(confi_scenario);
 	tmp_quantity = tmp_pos_struct_selected.quantity;
 	tmp_pos_decomp_var     = -(tmp_pos_scen_values(scen_number_decomp) * tmp_quantity * sign(tmp_quantity) - tmp_pos_selected_base);
-	set (h.position_decomp_value, "string", sprintf ("%.4f", tmp_pos_decomp_var));
+	set (h.position_decomp_value, "string", sprintf ("%.4f", -tmp_pos_decomp_var));
 	% set MC VaR scenario number
 	set (h.portfolio_mc_number_value, "string", sprintf ("%d", scen_number_decomp));
 	

@@ -304,11 +304,15 @@ if (run_mc == true)
     %   in order of their appearance in correlation matrix
     for ii = 1 : 1 : length(riskfactor_cell)
         rf_id = riskfactor_cell{ii};
-        rf_object = get_sub_object(riskfactor_struct, rf_id);
-        rf_para_distributions(1,ii)   = rf_object.mean;  % mu
-        rf_para_distributions(2,ii)   = rf_object.std;   % sigma
-        rf_para_distributions(3,ii)   = rf_object.skew;  % skew
-        rf_para_distributions(4,ii)   = rf_object.kurt;  % kurt    
+        [rf_object retcode] = get_sub_object(riskfactor_struct, rf_id);
+		if (retcode > 0)
+			rf_para_distributions(1,ii)   = rf_object.mean;  % mu
+			rf_para_distributions(2,ii)   = rf_object.std;   % sigma
+			rf_para_distributions(3,ii)   = rf_object.skew;  % skew
+			rf_para_distributions(4,ii)   = rf_object.kurt;  % kurt  
+		else
+			error('Unknown risk factor defined in correlation matrix: >>%s<<',rf_id);
+		end
     end
     % c) call MC scenario generation (Copula approach, Pearson distribution types 1-7 according four moments of distribution parameters)
     %    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
@@ -912,7 +916,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    BEGIN  STRESS REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
 elseif ( strcmpi(tmp_scen_set,'stress') )     % Stress scenario
     % prepare stresstest plotting and report output
-    stresstest_plot_desc = {stresstest_struct.id};
+    stresstest_plot_desc = {stresstest_struct.name};
     
 	 %  Loop via all positions and aggregate Position Stress vector and get portfolio stress values
 	[position_struct position_failed_cell portfolio_stress] = aggregate_positions(position_struct, ...

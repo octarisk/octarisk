@@ -108,6 +108,19 @@ function obj = calc_value(option,valuation_date,value_type,underlying,discount_c
                                     tmp_imp_vola_shock,0.0,option.timesteps_size, ...
                                     option.willowtree_nodes,path_static) .* tmp_multiplier;
 			elseif ( strcmpi(obj.pricing_function_american,'CRR') )
+				%---------------------- end ------------------------------------
+				% TODO: consider using parallel package (only Linux supported, 
+				% wont compile under Windows)
+				% pkg load parallel;
+				% number_cores = 3; % call function three time with 1/3 of input vectors as inputs
+				% pararrayfun(cores,@func,var1,var2,...,var3,"Vectorized",true,"ChunksPerProc",1);
+				% theo_value  = pararrayfun(number_cores,@pricing_option_cpp, ...)
+				%					 2,logical(call_flag),tmp_underlying_value, ...
+                %                    tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...
+                %                    tmp_imp_vola_shock,divyield,treenodes, ...
+				%					"Vectorized",true,"ChunksPerProc",1);	
+				%---------------------- end ------------------------------------
+
 				treenodes 	= round(tmp_dtm_pricing/option.timesteps_size);
                 theo_value	= pricing_option_cpp(2,logical(call_flag),tmp_underlying_value, ...
                                     tmp_strike,tmp_dtm_pricing,tmp_rf_rate_conv, ...

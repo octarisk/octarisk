@@ -24,7 +24,7 @@ static bool any_bad_argument(const octave_value_list& args);
 static ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S, 
             const NDArray& X, const NDArray& T, const NDArray& r, 
             const NDArray& sigma, const NDArray& q, const octave_idx_type& len, 
-			const octave_idx_type& n);
+			octave_idx_type& n);
 			
 static ColumnVector get_EU_option_price_BS(const bool& call_flag, const NDArray& S_vec, 
             const NDArray& X_vec, const NDArray& T_vec, const NDArray& r_vec, 
@@ -91,8 +91,6 @@ Input and output variables:\n\
 	} else {
 		n = args(8).int_value ();
 	}
-	// n needs to be even
-	n = ((n % 2 == 0) ? n : n + 1);
 	
 	// total number of scenarios: get maximum of length of all vectors
 	int len_S = S_vec.numel ();
@@ -193,7 +191,7 @@ Input and output variables:\n\
 ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S, 
             const NDArray& X, const NDArray& T, const NDArray& r, 
             const NDArray& sigma, const NDArray& q, const octave_idx_type& len, 
-			const octave_idx_type& n)
+			octave_idx_type& n)
 {
 	// rework required, placeholder template for Asian style MC valuations
 	octave_rand::distribution("normal");// initialize distribution
@@ -201,6 +199,8 @@ ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S,
 	ColumnVector OptionVec (dim_scen);
 	double  TF_oo, DF, dt, P, S_tt, sqrdt, P_at, S_tt_at;
 	double inner_value, no_timesteps;
+	// n needs to be even
+	n = ((n % 2 == 0) ? n : n + 1);
 	double MC_scen = static_cast<double>(n);
 	int timesteps;
 	double drift;
@@ -227,7 +227,7 @@ ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S,
 		TF_oo = T(oo) / 365.0;
 		DF = exp(-r(oo) * TF_oo);
 		// generate random numbers (use antithetic paths)
-		dim_vector dim_timesteps(n/2,timesteps);
+		dim_vector dim_timesteps(timesteps,n/2);
 		rnd_vec = octave_rand::nd_array(dim_timesteps);
 		// precalculate inner scenario independent terms
 		drift = (r(oo) - q(oo) - 0.5 * sigma(oo) * sigma(oo)) * dt;
@@ -244,10 +244,10 @@ ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S,
 			for (octave_idx_type tt = 0; tt < timesteps; ++tt) 
 			{
 				// normal path									
-				S_tt = S_tt * exp( drift + (rnd_vec(ii,tt) * sigmasqrdt) );
+				S_tt = S_tt * exp( drift + (rnd_vec(tt,ii) * sigmasqrdt) );
 				P = P + S_tt;
 				// antithetic path						
-				S_tt_at = S_tt_at * exp( drift + (-rnd_vec(ii,tt) * sigmasqrdt) );
+				S_tt_at = S_tt_at * exp( drift + (-rnd_vec(tt,ii) * sigmasqrdt) );
 				P_at = P_at + S_tt_at;
 			}
 			// arithmetic average of underlying price
