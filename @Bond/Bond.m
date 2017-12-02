@@ -473,6 +473,7 @@ discounted to calculate the Bond value. All bonds can have embedded options\n\
 @item FRN: Floating Rate Note: Calculate CF Values based on forward rates of a given reference curve.\n\
 @item ZCB: Zero Coupon Bond\n\
 @item ILB: Inflation Linked Bond\n\
+@item CDS: Credit Default Swaps\n\
 @item CASHFLOW: Cash flow instruments. Custom cash flow dates and values are discounted.\n\
 @item SWAP_FIXED: Swap fixed leg\n\
 @item SWAP_FLOATING: Swap floating leg\n\
@@ -504,6 +505,7 @@ Calculate the net present value of cash flows of Bonds (including pricing of emb
 @item obj.rollout(@var{scenario},@var{valuation_date}, @var{psa_curve}, @var{psa_factor_surface}, @var{ir_shock_curve}): used for FAB with prepayments\n\
 @item obj.rollout(@var{scenario},@var{valuation_date}, @var{inflation_expectation_curve}, @var{historical_rates}, @var{consumer_price_index}): used for ILB\n\
 @item obj.rollout(@var{scenario},@var{valuation_date}, @var{riskfactor}, @var{cashflow_surface}): used for Stochastic CF instruments\n\
+@item obj.rollout(@var{scenario},@var{valuation_date}, @var{hazard_curve}, @var{reference_asset},@var{reference_curve}): used for CDS\n\
 Cash flow rollout for Bonds\n\
 \n\
 @item obj.calc_sensitivities(@var{valuation_date},@var{discount_curve}, @var{reference_curve})\n\

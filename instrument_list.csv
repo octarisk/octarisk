@@ -1,0 +1,35 @@
+class,type,valuation
+Option,European,Black-Scholes
+Option,American,Binomial|Willowtree|Bjerksund-Stensland
+Option,Barrier,Generic
+Option,Binary,Generic
+Option,Lookback,Conze and Viswanathan|Goldman, Sosin and Gatto
+Option,Asian,Generic,Kemna-Vorst|Levy|MC
+Sensitivity,1st and 2nd order,based on risk factor or instrument shocks
+Stochastic,EmpiricalDistribution,uniform|normal|t-distributed
+Swaption,European,Black-Scholes|Bachelier
+Synthetic,Synthetic,linear combination of underlying instruments
+Bond,Fixed Rate Bond,net present value
+Bond,Floating Rate Note,net present value
+Bond,Zero Coupon Bond,net present value
+Bond,Inflation Linked Bond,net present value
+Bond,Credit Default Swaps,net present value
+Bond,Custom Cash flows,net present value
+Bond,Swap fixed leg,net present value
+Bond,Swap floating leg,net present value
+Bond,floating rate notes (capitalized, average, min, max),net present value
+Bond,Floating leg based on CMS rates,net present value
+Bond,Forward Rate Agreement,net present value
+Bond,Forward Volatility Agreement,net present value
+Bond,Averaging FRN,net present value
+Bond,STOCHASTICCF,derive cash flows from an empirical cash flow distribution
+CapsFloor,interest rate caps and floors,Black|Normal|Analytic
+CapsFloor,CMS interest rate caps and floors,Black|Normal|Analytic
+CapsFloor,Plain Vanilla inflation rate caps and floors,Black|Normal|Analytic
+Cash,Cash,net present value
+Debt,Sensitivity,duration and convexity
+Forward,Bond Forward,payoff
+Forward,Equty Forward,payoff
+Forward,FX Forward,payoff
+Forward,Equity Future,standardized contract
+Forward,Bond Future,standardized contract
