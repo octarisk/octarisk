@@ -46,12 +46,13 @@ copulatypeCHAR,Gaussian
 nuNMBR,10
 rnd_number_genCHAR,Mersenne-Twister
 valuation_dateDATE,30-Jun-2016
+mc_timestepsCELL,250d
+scenario_setCELL,250d|stress
 
 % Aggregation specific variables
 base_currencyCHAR,EUR
 aggregation_keyCELL,asset_class|currency|id
-mc_timestepsCELL,250d
-scenario_setCELL,250d|stress
+
 
 % specify unique runcode and timestamp:
 runcodeCHAR,2016Q3
