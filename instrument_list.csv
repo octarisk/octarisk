@@ -3,8 +3,8 @@ Option,European,Black-Scholes
 Option,American,Binomial|Willowtree|Bjerksund-Stensland
 Option,Barrier,Generic
 Option,Binary,Generic
-Option,Lookback,Conze and Viswanathan|Goldman, Sosin and Gatto
-Option,Asian,Generic,Kemna-Vorst|Levy|MC
+Option,Lookback,Conze and Viswanathan|GoldmanSosinGatto
+Option,Asian,Kemna-Vorst|Levy|MC
 Sensitivity,1st and 2nd order,based on risk factor or instrument shocks
 Stochastic,EmpiricalDistribution,uniform|normal|t-distributed
 Swaption,European,Black-Scholes|Bachelier
@@ -17,7 +17,7 @@ Bond,Credit Default Swaps,net present value
 Bond,Custom Cash flows,net present value
 Bond,Swap fixed leg,net present value
 Bond,Swap floating leg,net present value
-Bond,floating rate notes (capitalized, average, min, max),net present value
+Bond,floating rate notes (capitalized average min max),net present value
 Bond,Floating leg based on CMS rates,net present value
 Bond,Forward Rate Agreement,net present value
 Bond,Forward Volatility Agreement,net present value
