@@ -3,7 +3,7 @@ Option,European,Black-Scholes
 Option,American,Binomial|Willowtree|Bjerksund-Stensland
 Option,Barrier,Generic
 Option,Binary,Generic
-Option,Lookback,Conze and Viswanathan|Goldman, Sosin and Gatto
+Option,Lookback,Conze and Viswanathan|GoldmanSosinGatto
 Option,Asian,Generic,Kemna-Vorst|Levy|MC
 Sensitivity,1st and 2nd order,based on risk factor or instrument shocks
 Stochastic,EmpiricalDistribution,uniform|normal|t-distributed
