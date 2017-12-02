@@ -19,7 +19,7 @@
 %#
 %# @end deftypefn
 
-function [instrument_struct, curve_struct, index_struct, surface_struct, para_object, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct] = octarisk(path_parameter,filename_parameter)
+function [instrument_struct, curve_struct, index_struct, surface_struct, para_object, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct, mc_var_shock_pct] = octarisk(path_parameter,filename_parameter)
 
 
 
@@ -78,7 +78,6 @@ end
 % load parameter file
 para_failed_cell = {};
 [para_object para_failed_cell] = load_parameter(path_parameter,filename_parameter);
-
 
 % 1. general variables -> path dependent on operating system
 path = para_object.path_working_folder;   % general load and save path for all input and output files
@@ -165,14 +164,17 @@ mc_timesteps    = para_object.mc_timesteps;
 scenario_set    = para_object.scenario_set;
 % specify unique runcode and timestamp:
 runcode = para_object.runcode;
-%substr(md5sum(num2str(time()),true),-6)
-timestamp = para_object.timestamp;
-%strftime ('%Y%m%d_%H%M%S', localtime (time ()))
+if ( strcmpi(runcode,''))
+	runcode = substr(hash('MD5',num2str(time())),-6);	% assign random runcode
+end
 
+timestamp = para_object.timestamp;
+if ( strcmpi(timestamp,''))
+	timestamp = strftime ('%Y%m%d_%H%M%S', localtime (time ())); % assign act date
+end
 first_eval      = para_object.first_eval;
 
 % load packages
-pkg load statistics;	% load statistics package (needed in scenario_generation_MC)
 pkg load financial;		% load financial packages (needed throughout all scripts)
 
 
@@ -316,7 +318,7 @@ if (run_mc == true)
     end
     % c) call MC scenario generation (Copula approach, Pearson distribution types 1-7 according four moments of distribution parameters)
     %    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
-    [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,stable_seed);
+    [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,para_object);
     %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
 
     % variable for switching statistical analysis on and off

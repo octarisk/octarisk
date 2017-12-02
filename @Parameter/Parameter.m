@@ -62,6 +62,8 @@ classdef Parameter
 		rnd_number_gen = 'Mersenne-Twister';
 		valuation_date = today;
 		no_stresstests = 1;
+		use_sobol = false;
+		sobol_seed = 1;
 
 		% Aggregation specific variables
 		base_currency = 'EUR';

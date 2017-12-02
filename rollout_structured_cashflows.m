@@ -22,6 +22,8 @@
 %# riskfactor for IR Curve shock extraction.
 %# For Inflation Linked Bonds ref_curve is used as inflation expectation curve,
 %# surface is used for Consumer Price Index.
+%# For CDS instruments ref_curve is used as hazard curve,
+%# surface is used for reference asset, riskfactor as reference object for FLOATER.
 %#
 %# @seealso{timefactor, discount_factor, get_forward_rate, interpolate_curve}
 %# @end deftypefn
@@ -364,6 +366,205 @@ if ( strcmpi(type,'FRB') || strcmpi(type,'SWAP_FIXED') )
         cf_principal(:,end) = notional;
     end
 
+	
+% ##############################################################################
+%
+% Type CDS: Calculate CF Values for Credit Default Swaps
+% Valuation according to the probability model.
+% The following CDS types are supported:
+% either receive protection or provide protection (multiply all cash flows by -1)
+% ----------------       premium_leg cashflows   -------------------------------
+% premium leg cash flow dates taken from CDS itself
+% cds_use_initial_premium == false 	| cds_use_initial_premium == true
+%									|
+% FIXED: CFs from coupon rate 		|	use initial_premium for fixed payment
+%			and spread.				|	at issue_date. 
+%									|
+% FLOATING: CFs from forward rates	|
+%			of reference curve		|-------------------------------------------
+%
+%  credit_state > DEFAULT: get expectation rates from Hazard curve 
+%  -> calculate expected premium cash flows from survival probabilities
+%  credit_state == DEFAULT: no premium paid in this case
+%
+% ----------------     protection_leg cashflows   ------------------------------ 
+%  credit_state > DEFAULT: get expectation rates from Hazard curve 
+%				protection leg cash flow dates taken from reference asset
+%  -> expected default_cf = 
+%				notional * loss_given_default * survival_prob * hazard_rate
+%  credit_state == DEFAULT: default_cf	= notional * loss_given_default
+%
+elseif ( strcmpi(type,'CDS_FIXED') || strcmpi(type,'CDS_FLOATING') )			
+	% For CDS instruments ref_curve is used as hazard curve,
+	% surface is used for reference asset, riskfactor as ref object for FLOATER.
+	reference_asset = surface;
+	hazard_curve = ref_curve;
+	
+	% get credit state of reference asset -> in default -> premium leg = 0
+	%							protection leg = notional * loss_given_default
+	% credit state != default -> payout according default probability weights
+	if ( strcmpi(reference_asset.get('credit_state'),'D'))
+		cf_interest = 0.0;
+		cf_principal = notional * instrument.loss_given_default;
+		% cashflow one day after valuation date
+		cf_datesnum = max(issuedatenum,valuation_date + 1); 
+		cf_business_datesnum = cf_datesnum;
+		% adjust sign of cashflows
+		if ( instrument.cds_receive_protection == false) % protection provider
+			cf_principal = -cf_principal;
+		end
+		ret_values = cf_principal;
+	else	% credit_state != default
+	
+		% get CF dates from reference_asset:
+		ref_cf_dates = reference_asset.get('cf_dates');
+		d1 = cf_datesnum(1:length(cf_datesnum)-1);
+		d2 = cf_datesnum(2:length(cf_datesnum));
+		
+		% -------------   premium leg: get interest cash flows  --------------------
+		if ( instrument.cds_use_initial_premium == false)
+			if ( strcmpi(type,'CDS_FIXED') )
+				% calculate all cash flows (prorated == true --> deposit method
+				cf_interest = ((1 ./ discount_factor(d1, d2, coupon_rate, ...
+											compounding_type, dcc, ...
+											compounding_freq)) - 1)' .* notional;
+				% prorated == false: adjust deposit method to bond method --> in 
+				% leap year adjust time period length by adding one day and
+				% recalculate cash flow
+				if ( instrument.prorated == false) 
+					delta_coupon = cf_interest - coupon_rate .* notional;
+					delta_prorated = notional .* coupon_rate / 365;
+					if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
+						cf_interest = ((1 ./ discount_factor(d1+1, d2, ...
+											coupon_rate, compounding_type, dcc, ...
+											compounding_freq)) - 1)' .* notional;
+					end
+				end
+			else	% CDS_FLOATING
+				reference_curve = riskfactor;	% reference curve to extract forward rates
+				tmp_nodes = reference_curve.get('nodes');
+				tmp_rates = reference_curve.getValue(value_type);
+				cf_interest = zeros(rows(tmp_rates),length(d1));
+				[tf dip dib] = timefactor (d1, d2, dcc);
+				for ii = 1 : 1 : length(d1)
+					% convert dates into years from valuation date with timefactor
+					t1 = (d1(ii) - valuation_date);
+					t2 = (d2(ii) - valuation_date);
+			  
+					if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rate
+						payment_date        = t2;
+						% adjust forward start and end date for in fine vs. in arrears
+						if ( instrument.in_arrears == 0)    % in fine
+							fsd  = t1;
+							fed  = t2;
+						else    % in arrears
+							fsd  = t2;
+							fed  = t2 + (t2 - t1);
+						end
+						 % get forward rate from provided curve
+						forward_rate_curve = get_forward_rate(tmp_nodes,tmp_rates, ...
+							fsd,fed-fsd,compounding_type,method_interpolation, ...
+							compounding_freq, dcc, valuation_date, ...
+							comp_type_curve, basis_curve, comp_freq_curve,floor_flag);
+									
+						% calculate final floating cash flows
+						forward_rate = (spread + forward_rate_curve) .* tf(ii);
+
+					elseif ( t1 < 0 && t2 > 0 ) % if last cf date is in the past, while
+											% next is in future, use last reset rate
+						forward_rate = (spread + instrument.last_reset_rate) .* tf(ii);
+					else    % if both cf dates t1 and t2 lie in the past omit cash flow
+						forward_rate = 0.0;
+					end
+					cf_interest(:,ii) = forward_rate .* notional;
+				end
+					
+			end	% end get interest cash flows
+		else	% use initial premium at issue_date 
+			idx_vec = issuedatenum == cf_datesnum;
+			idx = idx_vec' * [1:1:length(idx_vec)]';
+			cf_interest = zeros(1,length(cf_datesnum));
+			cf_interest(idx) = instrument.cds_initial_premium;
+		end
+		issue_date_reldays = issuedatenum - valuation_date;
+		% get probability weights for all interest cash flows:
+		hr_nodes_int = d2 - valuation_date;
+		hr_timesteps = d2-d1;
+		if ( instrument.cds_use_initial_premium == true)
+			hr_nodes_int = [issue_date_reldays,hr_nodes_int']';
+			hr_timesteps = [issue_date_reldays;hr_nodes_int(2:end) - hr_nodes_int(1:end-1)];
+			d2 = hr_nodes_int + valuation_date;
+			d1 = d2 - hr_timesteps;
+		end
+		hazard_rates_curve = hazard_curve.getRate(value_type,hr_nodes_int)';
+		% convert hazard rates (timefactor)
+		hazard_rates = convert_curve_rates(valuation_date, ...
+					hr_timesteps,hazard_rates_curve, ...
+					comp_type_curve,comp_freq_curve,basis_curve,compounding_type, ...
+					compounding_freq,dcc);
+		% calculate survival probabilities
+		survival_probs = cumprod(discount_factor(d1, d2, hazard_rates, ...
+									compounding_type, dcc, compounding_freq))';
+
+		cf_interest = cf_interest .* survival_probs;
+		hr_nodes_int = hr_nodes_int';
+
+		% ------------   protection leg: get default cash flows  ------------------
+		% payout of probability weighted default cfs at all ref_cf_dates
+		% append issue date
+		
+		princ_dates = sort([issue_date_reldays,ref_cf_dates]);
+		princ_dates = princ_dates(princ_dates>=issue_date_reldays);
+		hr_nodes_princ = princ_dates(2:end);
+		hr_timesteps = hr_nodes_princ - princ_dates(1:end-1);
+		d2 = princ_dates(2:end) + valuation_date;
+		d1 = d2 - hr_timesteps;
+		hazard_rates_curve = hazard_curve.getRate(value_type,hr_nodes_princ)';
+		% convert hazard rates (timefactor)
+		hazard_rates = convert_curve_rates(valuation_date, ...
+					hr_timesteps',hazard_rates_curve, ...
+					comp_type_curve,comp_freq_curve,basis_curve,compounding_type, ...
+					compounding_freq,dcc);
+		% calculate survival probabilities
+		survival_probs = cumprod(discount_factor(d1, d2, hazard_rates', ...
+									compounding_type, dcc, compounding_freq));
+		hazard_rates = (1 ./ discount_factor(d1, d2, hazard_rates', ...
+									compounding_type, dcc, compounding_freq)) - 1;
+		
+		cf_principal = -notional .* hazard_rates .* survival_probs ...
+												 .* instrument.loss_given_default;
+		
+		% --------------------------------------------------------------------------
+		% adjust sign of cashflows
+		if ( instrument.cds_receive_protection == false) % protection provider
+			cf_interest = -cf_interest;
+			cf_principal = -cf_principal;
+		end
+
+		% sum up final cashflows (all unique time steps from protection and premium)
+		cf_datesnum = unique([(cf_datesnum - valuation_date)',hr_nodes_int,hr_nodes_princ]);
+		ret_values = zeros(rows(cf_interest),columns(cf_datesnum));
+		ret_cf_interest  = zeros(rows(cf_interest),columns(cf_datesnum));
+		ret_cf_principal  = zeros(rows(cf_principal),columns(cf_datesnum));
+		for ii=1:columns(cf_datesnum)
+			tmp_date = cf_datesnum(ii);
+			tmp_int_cf = cf_interest(:,hr_nodes_int==tmp_date);
+			tmp_princ_cf = cf_principal(:,hr_nodes_princ==tmp_date);
+			if ~ (isempty(tmp_int_cf))
+				ret_values(:,ii) = cf_interest(:,hr_nodes_int==tmp_date); 
+				ret_cf_interest(:,ii) = cf_interest(:,hr_nodes_int==tmp_date); 
+			end
+			if ~ (isempty(tmp_princ_cf))
+				ret_values(:,ii) = ret_values(:,ii) + cf_principal(:,hr_nodes_princ==tmp_date);
+				ret_cf_principal(:,ii) = cf_principal(:,hr_nodes_princ==tmp_date);
+			end
+		end
+		cf_datesnum = (cf_datesnum + valuation_date)';
+		cf_interest = ret_cf_interest;
+		cf_principal = ret_cf_principal;
+		
+		cf_business_datesnum = cf_datesnum;
+	end	% end credit_state != default
 % ##############################################################################
 %
 % Type FRA: Calculate CF Value for Forward Rate Agreements
@@ -1470,19 +1671,25 @@ if ( term == 0 )
 end
 % end special treatment
 
-ret_dates_tmp = cf_business_datesnum;
-ret_dates = ret_dates_tmp(2:rows(cf_business_dates));
+
 if enable_business_day_rule == 1
     pay_dates_num = cf_business_datesnum;
 else
     pay_dates_num = cf_datesnum;
 end
 ret_dates_all_cfs = pay_dates_num - valuation_date;
-pay_dates_num(1,:)=[];
-ret_dates = pay_dates_num' - valuation_date;
-ret_dates_tmp = ret_dates;              % store all cf dates for later use
-ret_dates = ret_dates(ret_dates>0);
+% delete first cf date, if no cf occurs
+if ( sum(ret_values(:,1)) == 0.0)
+	pay_dates_num(1,:)=[];
+end
 
+ret_dates = pay_dates_num' - valuation_date;
+
+if ( columns(ret_values) < columns(ret_dates))
+	ret_dates = ret_dates(end-columns(ret_values)+1:end);
+end
+
+ret_dates = ret_dates(ret_dates>0);	% only future cash flows
 ret_values = ret_values(:,(end-length(ret_dates)+1):end);
 ret_interest_values = cf_interest(:,(end-length(ret_dates)+1):end);
 ret_principal_values = cf_principal(:,(end-length(ret_dates)+1):end);

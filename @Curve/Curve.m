@@ -143,10 +143,10 @@ classdef Curve
       function obj = set.type(obj,type)
 		 typecell = { 'Discount Curve', 'Spread Curve', 'Dummy Curve', ...
 						'Aggregated Curve', 'Prepayment Curve', ...
-						'Call Schedule', 'Put Schedule', ...
+						'Call Schedule', 'Put Schedule',  'Hazard Curve', ...
 						'Historical Curve', 'Inflation Expectation Curve', 'Shock Curve'};
          if ~(strcmpi(type,typecell))
-            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve, Dummy Curve, Call or Put Schedule, Inflation Expectation Curve, Historical Curve or Prepayment Curve')
+            error('Type must be either Discount Curve, Spread Curve, Aggregated Curve, Dummy Curve, Call or Put Schedule, Inflation Expectation Curve, Hazard Curve, Historical Curve or Prepayment Curve')
          end
          obj.type = type;
       end % Set.type
@@ -257,6 +257,7 @@ This class contains all attributes and methods related to the following Curve ty
 @item Prepayment Curve: specify prepayment rates per node (e.g. PSA curves).\n\
 @item Call Schedule: curve used for Bonds with embedded call options\n\
 @item Put Schedule: curve used for Bonds with embedded put options\n\
+@item Hazard Curve: curve used for CDS. Gives default probability per cf date\n\
 @item Historical Curve: curve with historical rates of index levels. Used for inflation linked or averaging instruments\n\
 @item Inflation Expectation Curve: specify inflation expectation rates used for inflation linked instrument pricing\n\
 @item Shock Curve: specify absolute or relative shocks per node, which can then be applied to other Curve types.\n\

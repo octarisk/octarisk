@@ -531,7 +531,42 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                     bond = bond.rollout('base', valuation_date,tmp_ref_object,tmp_surf_object);
                 end
                 bond = bond.rollout(scenario, valuation_date,tmp_ref_object,tmp_surf_object);
-
+				
+		elseif( regexpi(tmp_sub_type,'CDS') )     % CDS
+			%get hazard_curve object:
+			tmp_hazard     = bond.get('hazard_curve');
+			tmp_hazard_object = get_sub_object(curve_struct, tmp_hazard);
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No hazard curve_struct object found for id >>%s<<\n',tmp_hazard);
+			end
+			
+			%get reference_asset object:
+			tmp_ref_asset     = bond.get('reference_asset');
+			tmp_ref_asset_object = get_sub_object(instrument_struct, tmp_ref_asset);
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No reference instrument_struct object found for id >>%s<<\n',tmp_ref_asset);
+			end
+			
+			if strcmpi(tmp_sub_type,'CDS_FLOATING')
+			%get reference curve object used for calculating floating rates:
+                tmp_ref_curve   = bond.get('reference_curve');
+                tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
+				if ( object_ret_code == 0 )
+                    fprintf('WARNING: instrument_valuation: No reference curve_struct object found for id >>%s<<\n',tmp_ref_curve);
+                end
+			else
+				tmp_ref_object = Curve();
+			end	
+            % rollout cash flows for all scenarios 
+			if (~strcmpi(scenario,'base') )
+				bond = bond.rollout('base', valuation_date, ...
+									tmp_hazard_object,tmp_ref_asset_object, ...
+									tmp_ref_object);
+			end
+			bond = bond.rollout(scenario, valuation_date, ...
+									tmp_hazard_object,tmp_ref_asset_object, ...
+									tmp_ref_object);
+				
         elseif( strcmpi(tmp_sub_type,'STOCHASTIC') )       % Stochastic CF instrument
              %get riskfactor object and surface object:
                 tmp_riskfactor   = bond.get('stochastic_riskfactor');

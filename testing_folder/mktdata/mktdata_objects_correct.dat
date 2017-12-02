@@ -1,13 +1,13 @@
-# Created by Octave 4.2.0, Fri Nov 17 12:43:33 2017 GMT <unknown@unknown>
+# Created by Octave 4.2.1, Fri Dec 01 15:48:17 2017 GMT <unknown@unknown>
 # name: tmp_mktdata_struct
 # type: struct
 # ndims: 2
- 1 19
+ 1 20
 # length: 3
 # name: id
 # type: cell
 # rows: 1
-# columns: 19
+# columns: 20
 # name: <cell-element>
 # type: sq_string
 # elements: 1
@@ -101,6 +101,14 @@ SPREAD_USD_BBB
 # elements: 1
 # length: 9
 PSA_CURVE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
+HAZARDCURVE
 
 
 
@@ -165,7 +173,7 @@ COM_GOLD
 # name: name
 # type: cell
 # rows: 1
-# columns: 19
+# columns: 20
 # name: <cell-element>
 # type: sq_string
 # elements: 1
@@ -266,6 +274,14 @@ PSA_CURVE
 # type: sq_string
 # elements: 1
 # length: 11
+HAZARDCURVE
+
+
+
+# name: <cell-element>
+# type: sq_string
+# elements: 1
+# length: 11
 IR-EUR-SWAP
 
 
@@ -323,7 +339,7 @@ Gold
 # name: object
 # type: cell
 # rows: 1
-# columns: 19
+# columns: 20
 # name: <cell-element>
 # type: scalar struct
 # ndims: 2
@@ -2392,6 +2408,176 @@ absolute
 # elements: 1
 # length: 16
 Prepayment Curve
+
+
+# name: ufr
+# type: scalar
+0.042
+
+
+
+
+
+# name: <cell-element>
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 26
+# name: alpha
+# type: scalar
+0.19
+
+
+# name: american_flag
+# type: scalar
+0
+
+
+# name: basis
+# type: scalar
+3
+
+
+# name: cap
+# type: sq_string
+# elements: 0
+
+
+# name: compounding_freq
+# type: sq_string
+# elements: 1
+# length: 6
+annual
+
+
+# name: compounding_type
+# type: sq_string
+# elements: 1
+# length: 4
+cont
+
+
+# name: curve_function
+# type: sq_string
+# elements: 1
+# length: 3
+sum
+
+
+# name: curve_parameter
+# type: scalar
+1
+
+
+# name: day_count_convention
+# type: sq_string
+# elements: 1
+# length: 7
+act/365
+
+
+# name: description
+# type: sq_string
+# elements: 1
+# length: 12
+Hazard Curve
+
+
+# name: floor
+# type: sq_string
+# elements: 0
+
+
+# name: id
+# type: sq_string
+# elements: 1
+# length: 11
+HAZARDCURVE
+
+
+# name: increments
+# type: null_sq_string
+# elements: 0
+
+
+# name: method_extrapolation
+# type: sq_string
+# elements: 1
+# length: 8
+constant
+
+
+# name: method_interpolation
+# type: sq_string
+# elements: 1
+# length: 6
+linear
+
+
+# name: name
+# type: sq_string
+# elements: 1
+# length: 11
+HAZARDCURVE
+
+
+# name: nodes
+# type: matrix
+# rows: 1
+# columns: 5
+ 0 365 730 1825 3650
+
+
+# name: rates_base
+# type: matrix
+# rows: 1
+# columns: 5
+ 0 0.1 0.2 0.4 0.06
+
+
+# name: rates_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: rates_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: shocktype_mc
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: shocktype_stress
+# type: sq_string
+# elements: 1
+# length: 8
+absolute
+
+
+# name: sln_level
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: timestep_mc
+# type: cell
+# rows: 0
+# columns: 0
+
+
+# name: type
+# type: sq_string
+# elements: 1
+# length: 12
+Hazard Curve
 
 
 # name: ufr

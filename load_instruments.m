@@ -170,7 +170,7 @@ for ii = 1 : 1 : length(tmp_list_files)
           error_flag = 0;
           if (length(content{jj}) > 3)  % parse row only if it contains some meaningful data
             % B.3a) Generate object of appropriate class
-            if ( sum(strcmpi(tmp_instrument_type,{'FRB','FRN','ZCB','FAB','CASHFLOW','BOND','SWAPFIXED','SWAPFLOAT','CMSFLOAT'})) > 0)        % store data in Class Bond
+            if ( sum(strcmpi(tmp_instrument_type,{'FRB','FRN','ZCB','FAB','CASHFLOW','BOND','SWAPFIXED','SWAPFLOAT','CMSFLOAT','CDS'})) > 0)        % store data in Class Bond
                 i = Bond(); 
             elseif ( sum(strcmpi(tmp_instrument_type,{'FWD'})) > 0)        % store data in Class Forward
                 i = Forward();  

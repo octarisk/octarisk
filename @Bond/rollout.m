@@ -1,6 +1,7 @@
 function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
   s = bond;
 
+  % ----------------------------------------------------------------------------
   if ( strcmpi(s.sub_type,'FRN') || strcmpi(s.sub_type,'SWAP_FLOATING') || strcmpi(s.sub_type,'FRA') || strcmpi(s.sub_type,'FVA'))
     if ( nargin < 3 )
         error ('rollout for sub_type FRA, FRN or SWAP_FLOATING: expecting reference curve / surface object');
@@ -35,7 +36,8 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
         [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
                 valuation_date,value_type,s,tmp_curve_object, vola_surface);
     end
-                                
+   
+  % ----------------------------------------------------------------------------   
   % Fixed Amortizing Bonds                              
   elseif ( strcmpi(s.sub_type,'FAB'))
     % arg1: ref_curve (PSA prepayment curve)
@@ -72,7 +74,44 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date ] = rollout_structured_cashflows( ...
                                 valuation_date,value_type,s,psa_curve, ...
                                 psa_factor_surface,ir_shock_curve);
-                                
+  
+  % ----------------------------------------------------------------------------   	
+  % Credit Default Swaps                            
+  elseif ( strcmpi(s.sub_type,'CDS_FIXED') || strcmpi(s.sub_type,'CDS_FLOATING'))  %(s, value_type, arg1, arg2, arg3, arg4)
+    % arg1: valuation_date
+	% arg2: hazard curve
+    % arg3: referencing asset
+    % arg4: reference curve
+    if ( strcmpi(s.sub_type,'CDS_FIXED'))
+		if ( nargin != 5)
+			error ('rollout for sub_type CDS_FIXED: expecting value_type, valuation_date, hazard curve, reference asset');
+		else
+			valuation_date	= arg1;
+			hazard_curve 	= arg2;
+			ref_asset		= arg3;
+			ref_curve		= Curve();
+		end
+	else
+		if ( nargin != 6)
+			error ('rollout for sub_type CDS_FLOATING: expecting value_type, valuation_date, hazard curve, reference asset, reference curve');
+		else
+			valuation_date	= arg1;
+			hazard_curve 	= arg2;
+			ref_asset		= arg3;
+			ref_curve		= arg4;
+		end
+	end
+      
+    if ischar(valuation_date)
+        valuation_date = datenum(valuation_date,1);
+    end
+
+    % call function for generating CF dates and values and accrued_interest
+    [ret_dates ret_values ret_interest_values ret_principal_values ...
+		accr_int last_coupon_date] = ...
+                    rollout_structured_cashflows(valuation_date, value_type, ...
+                    s, hazard_curve, ref_asset,ref_curve);	
+  % ----------------------------------------------------------------------------  
   % type CASHFLOW -> duplicate all base cashflows
   elseif ( strcmpi(s.sub_type,'CASHFLOW') )
     ret_dates  = s.get('cf_dates');
@@ -80,6 +119,7 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     accr_int = 0.0;
     last_coupon_date = 0.0;
   
+  % ----------------------------------------------------------------------------
   % type CMS Floating Leg or FRN Special (capitalized, average, min, max CMS rates)
   elseif ( strcmpi(s.sub_type,'CMS_FLOATING') || strcmpi(s.sub_type,'FRN_SPECIAL'))
     if ( nargin < 5 )
@@ -95,6 +135,7 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     accr_int = 0.0;
     last_coupon_date = 0.0;
 	
+  % ----------------------------------------------------------------------------
   % type Averaging SWAP_FLOATING or averaging FRN
   elseif ( strcmpi(s.sub_type,'SWAP_FLOATING_FWD_SPECIAL') || strcmpi(s.sub_type,'FRN_FWD_SPECIAL'))
     if ( nargin < 5 )
@@ -109,8 +150,9 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
                             value_type, s, curve_object, hist_obj);
     accr_int = 0.0;
     last_coupon_date = 0.0;
-	
- % type Inflation Linked Bonds
+
+  % ----------------------------------------------------------------------------	
+  % type Inflation Linked Bonds
   elseif ( strcmpi(s.sub_type,'ILB'))
     if ( nargin < 6 )
         error ('rollout for sub_type ILB: expecting value_type, valuation_date,inflation expectation curve, historical curve, cpi index objects');
@@ -127,6 +169,7 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
                             value_type,  s, iec_obj, hist_obj, cpi_obj);
 	accr_int = 0.0;
 	
+  % ----------------------------------------------------------------------------
   % type stochastic -> get cash flows from underlying surface and risk factor quantiles
   elseif ( strcmpi(s.sub_type,'STOCHASTICCF') )
     % arg1: riskfactor random variable -> cashflows drawn from surface
@@ -166,7 +209,8 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
 	end
     accr_int = 0.0;
     last_coupon_date = 0.0;
-    
+   
+  % ----------------------------------------------------------------------------   
   % all other bond types (like FRB etc.)
   else  
     if ( nargin < 3)

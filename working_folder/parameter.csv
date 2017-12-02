@@ -30,11 +30,11 @@ input_filename_surf_stochCHAR,surf_stochastic_
 input_filename_matrixCHAR,matrix_
 
 % Boolean variables
-plottingBOOL,1
+plottingBOOL,0
 savingBOOL,0
 archive_flagBOOL,0
-stable_seedBOOL,1
-mc_scen_analysisBOOL,0
+stable_seedBOOL,0
+mc_scen_analysisBOOL,1
 aggregation_flagBOOL,true
 first_evalBOOL,1
 
@@ -45,6 +45,8 @@ quantileNMBR,0.995
 copulatypeCHAR,Gaussian
 nuNMBR,10
 rnd_number_genCHAR,Mersenne-Twister
+use_sobolBOOL,false
+sobol_seedNMBR,1
 valuation_dateDATE,30-Jun-2016
 
 % Aggregation specific variables

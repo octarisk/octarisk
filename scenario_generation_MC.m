@@ -20,7 +20,7 @@
 %# @end deftypefn
 
 function [R distr_type] = scenario_generation_MC(corr_matrix,P,mc, ...
-                            copulatype,nu,time_horizon,path_static,stable_seed)
+                            copulatype,nu,time_horizon,path_static,para_object)
 % A) input data checks
 [rr_c cc_c] = size(corr_matrix);
 [pp_p cc_p] = size(P);
@@ -41,16 +41,16 @@ end
 
 if nargin < 7
     path_static = pwd;
-    stable_seed = 0;
 end
 
-if nargin < 8
-    stable_seed = 0;
-end
+
+
 
 % overwrite stable_seed setting --> always draw new random numbers.
 % seed is set during octarisk startup, therefore the random numbers should be always the same automatically
-stable_seed = 0;
+stable_seed = para_object.stable_seed;
+use_sobol  = para_object.use_sobol;
+sobol_seed = para_object.sobol_seed;
 
 % 2) Time horizon check
 factor_time_horizon = 256 / time_horizon;
@@ -80,17 +80,35 @@ new_corr = false;
 	
 	% draw new random numbers
 	if ( new_corr == true)
-        fprintf('scenario_generation_MC: New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
-        if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
-            % draw random variables from multivariate normal distribution
-            Y   = mvnrnd(zeros(1,length(corr_matrix)),corr_matrix,mc);      
-        elseif ( strcmp(copulatype, 't') == 1) % t-copula 
-            % draw random variables from multivariate student-t distribution
-            Y   = mvtrnd(corr_matrix,nu,mc);     
-        end
-        if (stable_seed == 1)
-            save ('-v7',tmp_filename,'Y');
-        end
+		dim = length(corr_matrix);
+		if ( use_sobol == false)
+			fprintf('scenario_generation_MC: New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
+			randn_matrix = randn(mc,dim);
+		else
+			% generate Sobol numbers
+			sobol_seed = max(sobol_seed,1);	% minimum Sobol seed = 1: first Sobol numbers 0.5
+			fprintf('scenario_generation_MC: Use Sobol numbers with seed %d for %d MC scenarios and Copulatype %s.\n',sobol_seed,mc,copulatype);
+			if ( dim > 1111)
+				error('scenario_generation_MC: Sobol numbers only support up to 1111 dimensions. Use different Sobol generator or MC instead.');
+			end
+			sobol_matrix = get_sobol_cpp(mc,dim,sobol_seed);
+			randn_matrix = norminv(sobol_matrix);
+			% scale randn_matrix to get 0,1 distributed numbers (Sobol numbers
+			% systematically underestimate standard deviation)
+			randn_matrix = randn_matrix ./ std(randn_matrix);
+		end
+		
+		% apply Copula
+		if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
+			% draw random variables from multivariate normal distribution
+			Y   = mvnrnd_custom(zeros(1,dim),corr_matrix,mc,randn_matrix);  
+		elseif ( strcmp(copulatype, 't') == 1) % t-copula 
+			% draw random variables from multivariate student-t distribution
+			Y   = mvtrnd_custom(corr_matrix,nu,mc,randn_matrix);     
+		end
+		if (stable_seed == 1)
+			save ('-v7',tmp_filename,'Y');
+		end
     end
 	
 
@@ -130,18 +148,90 @@ end
 
 end
 
+% ##############################################################################
+% custom functions 
+%# Copyright (C) 2003 Iain Murray
+%# taken and modified from Octave's statistical package
+function s = mvnrnd_custom(mu,sigma,n,randn_matrix);  
+
+	mu = zeros(1,length(sigma));
+	d = columns(sigma);
+	tol=eps*norm (sigma, "fro");
+	
+	try
+		U = chol (sigma + tol*eye (d),"upper");
+	catch
+		[E , Lambda] = eig (sigma);
+
+		if min (diag (Lambda)) < -100*tol
+		  error('sigma must be positive semi-definite. Lowest eigenvalue %g', ...
+				min (diag (Lambda)));
+		else
+		  Lambda(Lambda<0) = 0;
+		end
+		warning ("mvnrnd:InvalidInput","Cholesky factorization failed. Using diagonalized matrix.")
+		U = sqrt (Lambda) * E';
+	end
+
+	% draw univariate random numbers
+	s = randn_matrix*U + mu;
+
+end
+
+% ##############################################################################
+%# Copyright (C) 2012  Arno Onken <asnelt@asnelt.org>, Iñigo Urteaga
+%# taken and modified from Octave's statistical package
+function x = mvtrnd_custom (sigma, nu, n,randn_matrix)
+
+
+  if (!isvector (nu) || any (nu <= 0))
+    error ("mvtrnd: nu must be a positive scalar or vector");
+  endif
+  nu = nu(:);
+
+  if (nargin > 2)
+    if (! isscalar (n) || n < 0 | round (n) != n)
+      error ("mvtrnd: n must be a non-negative integer")
+    endif
+    if (isscalar (nu))
+      nu = nu * ones (n, 1);
+    else
+      if (length (nu) != n)
+        error ("mvtrnd: n must match the length of nu")
+      endif
+    endif
+  else
+    n = length (nu);
+  endif
+
+  # Normalize sigma
+  if (any (diag (sigma) != 1))
+    sigma = sigma ./ sqrt (diag (sigma) * diag (sigma)');
+  endif
+
+  # Dimension
+  d = size (sigma, 1);
+  # Draw samples
+  y = mvnrnd_custom (zeros (1, d), sigma, n, randn_matrix);
+  u = repmat (chi2rnd (nu), 1, d);
+  x = y .* sqrt (repmat (nu, 1, d) ./ u);
+end
+
+
 %!test 
 %! fprintf('HOLD ON...\n');
-%! fprintf('\tscenario_generation_MC:\tGenerating MC scenarios with stable Seed and Gaussian Copula\n');
-%! pkg load statistics;
+%! fprintf('\tscenario_generation_MC:\tGenerating MC and Sobol scenarios with stable Seed and Gaussian Copula\n');
 %! corr_matrix = [1,0.2,-0.3;0.2,1,0;-0.3,0.0,1];
 %! P = [0,0,0;0.2,0.5,0.4;-0.3,0,0.3;3,1.5,4.5];
 %! mc = 100000;
 %! copulatype = 'Gaussian';
 %! nu = 4;
+%! para_object.stable_seed = 0;
+%! para_object.use_sobol = false;
+%! para_object.sobol_seed = 1;
 %! rand('state',666 .*ones(625,1));	% set seed
 %! randn('state',666 .*ones(625,1));	% set seed
-%! [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,256);
+%! [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,256,[],para_object);
 %! assert(distr_type,[1,2,4])
 %! mean_target = P(1,1);   % mean
 %! mean_act = mean(R(:,1));
@@ -155,4 +245,19 @@ end
 %! kurt_target = P(4,3);  % kurt    
 %! kurt_act = kurtosis(R(:,3));
 %! assert(kurt_act,kurt_target,0.03)
+%! para_object.use_sobol = true;
+%! [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,256,[],para_object);
+%! assert(distr_type,[1,2,4])
+%! mean_target = P(1,1);   % mean
+%! mean_act = mean(R(:,1));
+%! assert(mean_act,mean_target,0.01)
+%! sigma_target = P(2,2);   % sigma
+%! sigma_act = std(R(:,2));
+%! assert(sigma_act,sigma_target,0.01)
+%! skew_target = P(3,1);   % skew
+%! skew_act = skewness(R(:,1));
+%! assert(skew_act,skew_target,0.06)
+%! kurt_target = P(4,3);  % kurt    
+%! kurt_act = kurtosis(R(:,3));
+%! assert(kurt_act,kurt_target,0.2)
 %! pkg unload statistics;

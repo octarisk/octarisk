@@ -1,6 +1,9 @@
 function obj = calc_sensitivities (bond, valuation_date, discount_curve, reference_curve)
 obj = bond;
 
+%TODO: implement correct sensi calculation for CMS_Floating, CDS_FLOATING, Callable Bonds
+%		right now only there is no new cash flow rollout (no sensi to reference curve)
+
 if ischar(valuation_date)
     valuation_date = datenum(valuation_date,1);
 end

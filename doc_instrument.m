@@ -1433,6 +1433,67 @@ end
 %! assert(isequal(retstruct,b),true);
 %! assert(retcode,1);
 
+%!test 
+%! fprintf('\tdoc_instrument:\tTesting Credit Default Swaps (Fixed and Floating, (no) default)\n');
+%! valuation_date = datenum('30-Jun-2017');
+%! value_type = 'base';
+%! % reference asset:
+%! a = Bond();
+%! a = a.set('id','REFBOND','credit_state','AA','issue_date','30-Jun-2017','maturity_date','29-Jun-2020');
+%! a = a.set('coupon_rate',0.02,'sub_type','FRB','notional',100,'coupon_generation_method','forward','term',365);
+%! a = a.rollout(value_type, valuation_date);
+%! % reference curve
+%! c = Curve();
+%! c = c.set('id','REFCURVE','nodes',[0,365,730,1095,1460,1825], ...
+%!       'rates_base',[0.01,0.01,0.01,0.01,0.01,0.01], 'method_interpolation','linear', ...
+%! 	  'compounding_type','continuous','day_count_convention','act/365'); 
+%! % hazard curve
+%! h = Curve();
+%! h = h.set('type','Hazard Curve','id','HAZARDCURVE','nodes',[0,365,730,1095,1460,1825], ...
+%!       'rates_base',[0.01,0.01,0.02,0.03,0.04,0.05], 'method_interpolation','linear', ...
+%! 	  'compounding_type','continuous','day_count_convention','act/365'); 	  
+%! % CDS Floating
+%! b = Bond();
+%! b = b.set('sub_type','CDS_FLOATING','coupon_rate',0.04,'notional',100, ...
+%! 		'issue_date','30-Jun-2017','maturity_date','29-Jun-2020' , ...
+%! 		'loss_given_default',0.8,'cds_use_initial_premium',false, 'cds_initial_premium', 4.0, ...
+%! 		'reference_asset','REFBOND','hazard_curve','HAZARDCURVE', 'coupon_generation_method','forward', ...
+%! 		'compounding_type','simple','day_count_convention','act/365','cds_receive_protection',true);
+%! c = c.set('rates_stress',[	0.01,0.01,0.01,0.01,0.01,0.01; ...
+%! 						0.01,0.02,0.032,0.021,0.031,0.023; ...
+%! 						0.01,-0.01,0.03,0.04,0.03,-0.01]); 
+%! % CDS Floating
+%! b = b.set('sub_type','CDS_FLOATING');
+%! b = b.rollout('base',valuation_date,h, a,c);
+%! b = b.rollout('stress',valuation_date,h, a,c);	
+%! assert(b.getCF('base'),[0.199003325016637,-0.593030040228064,-1.347990905494223],sqrt(eps))
+%! assert(b.getCF('stress'),[0.199003325016637,-0.593030040228064,-1.347990905494223; ...
+%! 							1.204020033433450,2.796948522945633,-2.388609377964669; ...
+%! 							-1.781129344307817,5.468180048335224,3.529066644434367],sqrt(eps));
+%! b = b.calc_value(valuation_date,'base',c);
+%! assert(b.getValue('base'),-1.69241580331523,sqrt(eps));
+%! b = b.calc_value(valuation_date,'stress',c);
+%! assert(b.getValue('stress'),[-1.69241580331523;1.56096135072673;6.48070937044417],sqrt(eps));
+%! % CDS FIXED premium leg
+%! b = b.set('sub_type','CDS_FIXED');
+%! b = b.rollout('base',valuation_date,h, a);
+%! b = b.rollout('stress',valuation_date,h, a);
+%! assert(b.getCF('base'),[3.16418603493013,2.31343811814125,1.47257813719623],sqrt(eps));	
+%! assert(b.getCF('stress'),[3.16418603493013,2.31343811814125,1.47257813719623],sqrt(eps));
+%! b = b.calc_value(valuation_date,'base',c);
+%! assert(b.getValue('base'),6.82938770805661,sqrt(eps));
+%! b = b.calc_value(valuation_date,'stress',c);
+%! assert(b.getValue('stress'),[6.82938770805661;6.65421510587343;6.68076024811611],sqrt(eps));
+%! % CDS FIXED: reference asset in default
+%! a = a.set('credit_state','D');
+%! b = b.rollout('base',valuation_date,h, a);	
+%! b = b.rollout('stress',valuation_date,h, a);				
+%! assert(b.getCF('base'),80.0,sqrt(eps))	
+%! assert(b.getCF('stress'),80.0,sqrt(eps))
+%! b = b.calc_value(valuation_date,'base',c);
+%! assert(b.getValue('base'),79.9978082492022,sqrt(eps));
+%! b = b.calc_value(valuation_date,'stress',c);
+%! assert(b.getValue('stress'), [79.9978082492022;79.9978022444880;79.9978202586320],sqrt(eps));
 
 %!test 
 %! fprintf('\tdoc_instrument:\t Volatility Cube Interpolation Tests\n');
@@ -1471,3 +1532,14 @@ end
 %! assert(vv.interpolate(2000,1700,-0.0025),0.00503838293282042,0.000001)
 %! vv = vv.set('method_interpolation','nearest');
 %! assert(vv.interpolate(3650,730,0.0025),0.00978959,0.000001)
+
+%!test
+%! fprintf('\tdoc_instrument:\t Sobol generator tests\n');
+%! a = get_sobol_cpp(50000,10,1);
+%! normdist_a = norminv(a);
+%! % scaling to get normal 0,1 distributed random variables
+%! normdist_a = normdist_a ./ std(normdist_a);
+%! mean_std_a = mean(std(normdist_a));
+%! assert(mean_std_a,1,sqrt(eps))
+%! len_tail = length(normdist_a(abs(normdist_a)>=2.57582930354890))/2;
+%! assert(len_tail,2500,sqrt(eps))

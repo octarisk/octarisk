@@ -97,6 +97,15 @@ classdef Bond < Instrument
 		
 		% Forward volatility / variance agreement
 		fva_type				= 'volatility'; % in ['volatility','variance']
+		
+		% credit default swap
+		credit_state			= 'UNRATED'; % credit rating in {AAA,AA,A,BBB,BB,B,C,D,UNRATED}
+		loss_given_default  	= 1.0; % share lost if bond in default
+		cds_use_initial_premium	= false; % boolean flag: use initial premium 
+		cds_initial_premium		= 0.0; % initial premium amount (if flag=true)
+		reference_asset			= ''; % ID to reference asset (for cf_dates and credit state)
+		hazard_curve			= ''; % ID referencing hazard curve
+		cds_receive_protection = true;	% boolean flag: provide or receive protection leg
     end
    
     properties (SetAccess = private)
@@ -181,6 +190,7 @@ classdef Bond < Instrument
          fprintf('use_outstanding_balance: %d\n',b.use_outstanding_balance);
 		 fprintf('prorated: %s\n',any2str(b.prorated)); 
 		 fprintf('in_arrears: %s\n',any2str(b.in_arrears)); 
+		 fprintf('credit_state: %s\n',any2str(b.credit_state)); 
 		 if ~( isempty(b.key_rate_eff_dur))
 			fprintf('Key rate term: %s\n',any2str(b.key_term)); 
 			fprintf('Key rate Effective Duration: %s\n',any2str(b.key_rate_eff_dur));
@@ -206,6 +216,14 @@ classdef Bond < Instrument
             fprintf('put_schedule: %s\n',b.put_schedule); 
             fprintf('vola_surface: %s\n',b.vola_surface); 
          end 
+		 if ( regexpi(b.sub_type,'CDS_'))
+            fprintf('loss_given_default: %f\n',b.loss_given_default); 
+            fprintf('cds_use_initial_premium: %s\n',any2str(b.cds_use_initial_premium)); 
+            fprintf('cds_initial_premium: %s\n',any2str(b.cds_initial_premium)); 
+			fprintf('reference_asset: %s\n',b.reference_asset); 
+			fprintf('hazard_curve: %s\n',b.hazard_curve);
+			fprintf('cds_receive_protection: %s\n',any2str(b.cds_receive_protection));
+         end
          if ( regexpi(b.sub_type,'FRN_SPECIAL'))
             fprintf('vola_surface: %s\n',b.vola_surface); 
             fprintf('rate_composition: %s\n',b.rate_composition); 
@@ -310,8 +328,9 @@ classdef Bond < Instrument
                 || strcmpi(sub_type,'CMS_FLOATING') || strcmpi(sub_type,'FRN_SPECIAL') ...
 				|| strcmpi(sub_type,'ILB') || strcmpi(sub_type,'SWAP_FLOATING_FWD_SPECIAL') ...
 				|| strcmpi(sub_type,'FRN_FWD_SPECIAL')  || strcmpi(sub_type,'FRA') ...
-				|| strcmpi(sub_type,'FVA'))
-            error('Bond sub_type must be either FRB, FRN, ZCB, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL, CMS_FLOATING, FRA, FVA, FRN_FWD_SPECIAL or SWAP_FLOATING_FWD_SPECIAL: %s',sub_type)
+				|| strcmpi(sub_type,'FVA') ...
+				|| strcmpi(sub_type,'CDS_FLOATING') || strcmpi(sub_type,'CDS_FIXED'))
+            error('Bond sub_type must be either FRB, FRN, ZCB, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL, CMS_FLOATING, FRA, FVA, FRN_FWD_SPECIAL, CDS_FLOATING, CDS_FIXED or SWAP_FLOATING_FWD_SPECIAL: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
@@ -409,6 +428,16 @@ classdef Bond < Instrument
          obj.coupon_prepay = tolower(coupon_prepay);
       end % set.coupon_prepay
   
+      function obj = set.credit_state(obj,credit_state)
+		 credit_state = upper(credit_state);
+		 rating_cell = {'AAA','AA','A','BBB','BB','B','C','D','UNRATED'};
+         if ( sum(strcmpi(rating_cell,credit_state)) == 0)
+                fprintf('Need valid credit state:  >>%s<< not in {AAA,AA,A,BBB,BB,B,C,D,UNRATED} for id >>%s<<. Setting to default value UNRATED.\n',credit_state,obj.id);
+                credit_state = 'UNRATED';
+            end
+          obj.credit_state = credit_state;
+      end % set.credit_state
+			
    end % end methods
    
    %static methods: 
