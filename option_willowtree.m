@@ -137,8 +137,9 @@ end
 S0      = reshape(S0,1,1,rows(S0));
 K       = reshape(K,1,1,rows(K));
 T       = reshape(T,1,1,rows(T));
-rf       = reshape(rf,1,1,rows(rf));
+rf      = reshape(rf,1,1,rows(rf));
 sigma   = reshape(sigma,1,1,rows(sigma));
+divyield   = reshape(divyield,1,1,rows(divyield));
 T_years = T ./ 365;
 
 % Rounding Time according to timesteps dt and number of nodes
@@ -162,6 +163,7 @@ q = ones(n,1) ./n;
 % Setting tree at final timestep with underlying asset prices
 
 % Assuming geometric brownian motion:
+
 S_T = S0 .* (exp( (rf  - divyield - (sigma.^2 ./ 2)) .* T_years + ...
         sigma .* sqrt(T_years) .* z));
 
