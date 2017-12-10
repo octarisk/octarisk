@@ -85,7 +85,7 @@ Input and output variables:\n\
 	if ( nargin == 8)
 	{
 		if ( option_type == 2)
-			n =  std::rint(T_vec(0) / 7.0);	// default weekly Tree steps
+			n =  rint(T_vec(0) / 7.0);	// default weekly Tree steps
 		else
 			n = 1024;	// default value for inner MC scenarios 
 	} else {
@@ -218,8 +218,8 @@ ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S,
 		OCTAVE_QUIT;
 		
 		inner_value = 0.0;
-		timesteps = std::rint( T(oo) / 7.0 );	// weekly time steps
-		no_timesteps = std::round( T(oo) / 7.0  );
+		timesteps = rint( T(oo) / 7.0 );	// weekly time steps
+		no_timesteps = round( T(oo) / 7.0  );
 		
 		dt = (T(oo) / 365.0) / no_timesteps;
 		sqrdt = std::sqrt(dt);

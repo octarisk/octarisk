@@ -1,10 +1,10 @@
 classdef Parameter
    % file: @Parameter/Parameter.m
-    properties
-      name = 'Parameter';
-      id = 'para_object';
-      description = 'Parameter Object';
-      type = 'Parameter'; 
+	properties
+		name = 'Parameter';
+		id = 'para_object';
+		description = 'Parameter Object';
+		type = 'Parameter'; 
 		% input folder properties
 	    path_working_folder = '';
 		folder_archive = 'archive';
@@ -64,6 +64,8 @@ classdef Parameter
 		no_stresstests = 1;
 		use_sobol = false;
 		sobol_seed = 1;
+		filename_sobol_direction_number = 'new-joe-kuo-6.21201'; % Reference: http://web.maths.unsw.edu.au/~fkuo/sobol/
+		path_sobol_direction_number = 'static';
 
 		% Aggregation specific variables
 		base_currency = 'EUR';

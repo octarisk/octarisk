@@ -45,6 +45,8 @@ copulatypeCHAR,Gaussian
 nuNMBR,10
 rnd_number_genCHAR,Mersenne-Twister
 valuation_dateDATE,30-Jun-2016
+filename_sobol_direction_numberCHAR,new-joe-kuo-6.21201
+path_sobol_direction_numberCHAR,static
 
 % Aggregation specific variables
 base_currencyCHAR,EUR

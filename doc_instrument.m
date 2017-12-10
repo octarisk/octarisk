@@ -1535,11 +1535,32 @@ end
 
 %!test
 %! fprintf('\tdoc_instrument:\t Sobol generator tests\n');
-%! a = get_sobol_cpp(50000,10,1);
+%! direction_file = strcat(pwd,'/static/joe-kuo-old.1111');
+%! a = calc_sobol_cpp(50001,10,direction_file);
+%! a(1,:) = []; % remove first line (contains 0.0)
 %! normdist_a = norminv(a);
 %! % scaling to get normal 0,1 distributed random variables
 %! normdist_a = normdist_a ./ std(normdist_a);
 %! mean_std_a = mean(std(normdist_a));
-%! assert(mean_std_a,1,sqrt(eps))
+%! assert(mean_std_a,1,sqrt(eps));
+%! % testing 0.995 quantile
 %! len_tail = length(normdist_a(abs(normdist_a)>=2.57582930354890))/2;
 %! assert(len_tail,2500,sqrt(eps))
+%! % testing 0.9999 quantile
+%! len_tail = length(normdist_a(abs(normdist_a)>=3.71901648545568))/2;
+%! assert(len_tail,45.5,sqrt(eps))
+%! % testing different Sobol direction numbers
+%! direction_file = strcat(pwd,'/static/new-joe-kuo-6.21201')
+%! a = calc_sobol_cpp(50001,10,direction_file);
+%! a(1,:) = []; % remove first line (contains 0.0)
+%! normdist_a = norminv(a);
+%! % scaling to get normal 0,1 distributed random variables
+%! normdist_a = normdist_a ./ std(normdist_a);
+%! mean_std_a = mean(std(normdist_a));
+%! assert(mean_std_a,1,sqrt(eps));
+%! % testing 0.995 quantile
+%! len_tail = length(normdist_a(abs(normdist_a)>=2.57582930354890))/2;
+%! assert(len_tail,2499.5,sqrt(eps))
+%! % testing 0.9999 quantile
+%! len_tail = length(normdist_a(abs(normdist_a)>=3.71901648545568))/2;
+%! assert(len_tail,46,sqrt(eps))

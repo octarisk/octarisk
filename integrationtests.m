@@ -18,6 +18,9 @@
 %# @end deftypefn
 
 function integrationtests(path_folder)
+old_dir = pwd;
+% change directory
+chdir(path_folder);
 
 % 0) check for required oct files
 if ~( exist('pricing_callable_bond_cpp') == 3)
@@ -124,5 +127,5 @@ fprintf('\nSummary:\n');
 fprintf('\tFUNCTIONS\t%d \n',length(function_cell));
 fprintf('\tPASS\t\t%d \n',tests_total - tests_fail);
 fprintf('\tFAIL\t\t%d \n',tests_fail);
-
+chdir(old_dir);
 end

@@ -51,6 +51,9 @@ end
 stable_seed = para_object.stable_seed;
 use_sobol  = para_object.use_sobol;
 sobol_seed = para_object.sobol_seed;
+filepath_sobol_direction_number = strcat(para_object.path_working_folder,...
+							'/',para_object.path_sobol_direction_number, ...
+							'/',para_object.filename_sobol_direction_number);
 
 % 2) Time horizon check
 factor_time_horizon = 256 / time_horizon;
@@ -88,10 +91,13 @@ new_corr = false;
 			% generate Sobol numbers
 			sobol_seed = max(sobol_seed,1);	% minimum Sobol seed = 1: first Sobol numbers 0.5
 			fprintf('scenario_generation_MC: Use Sobol numbers with seed %d for %d MC scenarios and Copulatype %s.\n',sobol_seed,mc,copulatype);
-			if ( dim > 1111)
-				error('scenario_generation_MC: Sobol numbers only support up to 1111 dimensions. Use different Sobol generator or MC instead.');
+			if ( dim > 21201)
+				error('scenario_generation_MC: Sobol numbers only support up to 21201 dimensions. Use different Sobol generator or MC instead.');
 			end
-			sobol_matrix = get_sobol_cpp(mc,dim,sobol_seed);
+			sobol_matrix = calc_sobol_cpp(mc+sobol_seed,dim,filepath_sobol_direction_number);
+			% remove all rows < seed
+			sobol_matrix(1:sobol_seed,:) = [];
+			% get standard normal distributed random numbers
 			randn_matrix = norminv(sobol_matrix);
 			% scale randn_matrix to get 0,1 distributed numbers (Sobol numbers
 			% systematically underestimate standard deviation)
