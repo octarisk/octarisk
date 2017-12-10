@@ -235,6 +235,9 @@ end
 %! para_object.stable_seed = 0;
 %! para_object.use_sobol = false;
 %! para_object.sobol_seed = 1;
+%! para_object.path_working_folder = pwd;
+%! para_object.path_sobol_direction_number = '';
+%! para_object.filename_sobol_direction_number = '';						
 %! rand('state',666 .*ones(625,1));	% set seed
 %! randn('state',666 .*ones(625,1));	% set seed
 %! [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,256,[],para_object);
@@ -251,19 +254,3 @@ end
 %! kurt_target = P(4,3);  % kurt    
 %! kurt_act = kurtosis(R(:,3));
 %! assert(kurt_act,kurt_target,0.03)
-%! para_object.use_sobol = true;
-%! [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,256,[],para_object);
-%! assert(distr_type,[1,2,4])
-%! mean_target = P(1,1);   % mean
-%! mean_act = mean(R(:,1));
-%! assert(mean_act,mean_target,0.01)
-%! sigma_target = P(2,2);   % sigma
-%! sigma_act = std(R(:,2));
-%! assert(sigma_act,sigma_target,0.01)
-%! skew_target = P(3,1);   % skew
-%! skew_act = skewness(R(:,1));
-%! assert(skew_act,skew_target,0.06)
-%! kurt_target = P(4,3);  % kurt    
-%! kurt_act = kurtosis(R(:,3));
-%! assert(kurt_act,kurt_target,0.2)
-%! pkg unload statistics;
