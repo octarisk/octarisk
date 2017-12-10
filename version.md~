@@ -2,13 +2,9 @@
 
 ### next versions
 Possible new features:
+- Introduction of credit default swaps
 - Introduction of Total Return Swaps
 - Introduction of FX Swaps
-
-### 0.4.2, 2017/12/10
-Version v0.4.2 is a minor release with new features, performance improvements and bug fixes
-- implemented credit default swaps
-- introduced Sobol quasi-random number generator
 
 ### 0.4.1, 2017/10/21
 Version v0.4.1 is a minor release with bug fixes and the introduction of a GUI
