@@ -17,8 +17,9 @@ for ii = 1 : 1 : length(oct_file_list)
             fprintf('File >>%s<< found. Trying to compile... \n',tmp_filename);
             link_to_file = strcat(path_to_oct_files,'/',tmp_filename);
             
-            % compile .cc file
-            [outfile, status] = mkoctfile (link_to_file);
+            % compile .cc file (forcing gnu++11 standards)
+            [outfile, status] =feval("mkoctfile","-v","-std=gnu++11",link_to_file);
+            % [outfile, status] = mkoctfile -v '-std=gnu++11' (link_to_file);
             if ( status == 0 )
                 fprintf('----> File >>%s<< successfully compiled\n',tmp_filename);
                 counter_compiled += 1;
