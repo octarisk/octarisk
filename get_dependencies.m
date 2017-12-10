@@ -40,17 +40,17 @@ for i = 1 : 1 : length(cell_scriptnames)
     if ( regexp(cell_scriptnames{i},'.m$') && isempty(strfind(cell_scriptnames{i},'unittest')) && isempty(strfind(cell_scriptnames{i},'any2str')) ...
 		&& isempty(strfind(cell_scriptnames{i},'get_sub_object')) && isempty(strfind(cell_scriptnames{i},'get_sub_struct')) ...
 		&& isempty(strfind(cell_scriptnames{i},'instrument_valuation')))
-        c{ length(c) + 1 } = strcat(path_octarisk,'\',cell_scriptnames{i}(1:end-2),'.m');
+        c{ length(c) + 1 } = strcat(path_octarisk,'/',cell_scriptnames{i}(1:end-2),'.m');
 	    namecell{ length(namecell) + 1 } =  cell_scriptnames{i}(1:end-2);
     end
 end
 % add *.cc files
-cc_filepath = strcat(path_octarisk,'\oct_files');
+cc_filepath = strcat(path_octarisk,'/oct_files');
 cc_cc = dir(cc_filepath);
 cell_scriptnames_cc = {cc_cc.name};
 for i = 1 : 1 : length(cell_scriptnames_cc)
     if ( regexp(cell_scriptnames_cc{i},'.cc$') )
-        c{ length(c) + 1 } = strcat(path_octarisk,'\oct_files\',cell_scriptnames_cc{i}(1:end-3),'.cc');
+        c{ length(c) + 1 } = strcat(path_octarisk,'/oct_files/',cell_scriptnames_cc{i}(1:end-3),'.cc');
 	    namecell{ length(namecell) + 1 } =  cell_scriptnames_cc{i}(1:end-3);
     end
 end
@@ -64,12 +64,16 @@ classes = {'Instrument', 'Matrix','Curve','Forward','Option', ...
 
 for kk = 1:1:length(classes)
 	tmp_class = classes{kk};
-	tmp_folder = strcat(path_octarisk,'\@',tmp_class);
+	if (isunix)
+		tmp_folder = strcat(path_octarisk,'@',tmp_class);
+	else
+		tmp_folder = strcat(path_octarisk,'\@',tmp_class);
+	end
 	cc = dir(tmp_folder);
 	class_methods = {cc.name};
 	for i = 1 : 1 : length(class_methods)
 		if ( regexp(class_methods{i},'.m$') )
-			c{ length(c) + 1 } = strcat(tmp_folder,'\',class_methods{i}(1:end-2),'.m');
+			c{ length(c) + 1 } = strcat(tmp_folder,'/',class_methods{i}(1:end-2),'.m');
 			namecell{ length(namecell) + 1 } =  strcat('@',tmp_class,'::',class_methods{i}(1:end-2));
 		end
 	end
@@ -79,7 +83,7 @@ result_struct = struct();
 
 % nested loop: look for each script whether it has dependencies on other scripts
 for kk=1:1:length(c)
-	tmp_script = c{kk};
+	tmp_script = c{kk}
 	str = fileread(tmp_script);
 	% remove everything before '@end deftype' (we do not want to take comments into account)
 	deftype_position = strfind(str,'@end deftypef');
@@ -114,7 +118,7 @@ end
 
 
 % Special treatment instrument_valuation
-instr_val_script = strcat(path_octarisk,'\instrument_valuation.m');
+instr_val_script = strcat(path_octarisk,'/instrument_valuation.m');
 str = fileread(instr_val_script);
 script_name = 'instrument_valuation';
 dependency_cell = {};
@@ -144,7 +148,7 @@ result_struct(kk).dependency_cell = dependency_cell;
 %###############################################################################
 %                Printing of octarisk_dependencies.dot (overall view)
 %
-file_out = strcat(path_out,'\octarisk_dependencies.dot')
+file_out = strcat(path_out,'/octarisk_dependencies.dot')
 fprintf('Printing all class methods and properties to one files in path: %s \n',file_out);
 % open file
 fid = fopen (file_out, 'w');
@@ -228,7 +232,7 @@ fprintf('Printing all class methods and properties to separate file: %s \n',path
 
 for kk = 1:1:length(classes)
 	tmp_class = classes{kk};
-	filename = strcat(path_out,'\',tmp_class,'.dot')
+	filename = strcat(path_out,'/',tmp_class,'.dot')
 	% open file
 	fid = fopen (filename, 'w');
 	% A) print header
