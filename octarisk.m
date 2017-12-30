@@ -514,7 +514,7 @@ if (run_mc == true)
             hd_vec_min      = zeros(max(confi_scenario-500,0)-1,1);
             hd_vec_max      = zeros(mc-min(confi_scenario+500,mc),1);
             tt              = max(confi_scenario-500,1):1:min(confi_scenario+500,mc);
-            hd_vec_func     = harrell_davis_weight(mc,tt,confi)';
+            hd_vec_func     = harrell_davis_weight(mc,tt,confi);
             hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
             save ('-v7',tmp_filename,'hd_vec');
         end

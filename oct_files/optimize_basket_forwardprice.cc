@@ -21,7 +21,6 @@ details.
 #include <octave/oct.h>
 #include <cmath>
 #include <octave/parse.h>
-#include <ctime>
 
 static bool any_bad_argument(const octave_value_list& args);
 

@@ -16,7 +16,6 @@ details.
 #include <octave/oct.h>
 #include <cmath>
 #include <octave/parse.h>
-#include <ctime>
 
 static bool any_bad_argument(const octave_value_list& args);
 
@@ -546,25 +545,25 @@ octave_value_list build_hw_probabilities(const int& jMax, const int& N,
         if (j<=jMax) {
             for (int i=jMax+2-j; i<=jMax+j; i++ ) 
             {
-                pu(i-1,j-1) = (0.166666666666667) + (J(i-1)*J(i-1)*M*M + J(i-1)*M)/2.0;
+                pu(i-1,j-1) = (0.166666666666667) + (J(i-1)*J(i-1)*M*M + J(i-1)*M)*0.5;
                 pm(i-1,j-1) = (0.666666666666667) -  (J(i-1)*J(i-1)*M*M);
-                pd(i-1,j-1) = (0.166666666666667) + (J(i-1)*J(i-1)*M*M - J(i-1)*M)/2.0;
+                pd(i-1,j-1) = (0.166666666666667) + (J(i-1)*J(i-1)*M*M - J(i-1)*M)*0.5;
             }
         } else {
             for (int i= 1 ; i<=2*jMax+1; i++ ) 
             {
                 if (i==1) {
-                    pu(i-1,j-1) =  1.16666666666667 + (J(i-1)*J(i-1)*M*M + 3*J(i-1)*M)/2.0;
+                    pu(i-1,j-1) =  1.16666666666667 + (J(i-1)*J(i-1)*M*M + 3*J(i-1)*M)*0.5;
                     pm(i-1,j-1) =  -0.3333333333333 -  J(i-1)*J(i-1)*M*M - 2*J(i-1)*M;
-                    pd(i-1,j-1) =  0.166666666666667 + (J(i-1)*J(i-1)*M*M + J(i-1)*M)/2.0;
+                    pd(i-1,j-1) =  0.166666666666667 + (J(i-1)*J(i-1)*M*M + J(i-1)*M)*0.5;
                 } else if (i==2*jMax+1) {
-                    pu(i-1,j-1) =  0.166666666666667 + (J(i-1)*J(i-1)*M*M - J(i-1)*M)/2.0;
+                    pu(i-1,j-1) =  0.166666666666667 + (J(i-1)*J(i-1)*M*M - J(i-1)*M)*0.5;
                     pm(i-1,j-1) =  -0.3333333333333 -  J(i-1)*J(i-1)*M*M + 2*J(i-1)*M;
-                    pd(i-1,j-1) =  1.16666666666667 + (J(i-1)*J(i-1)*M*M - 3*J(i-1)*M)/2.0;
+                    pd(i-1,j-1) =  1.16666666666667 + (J(i-1)*J(i-1)*M*M - 3*J(i-1)*M)*0.5;
                 } else {
-                    pu(i-1,j-1) = 0.166666666666667 + (J(i-1)*J(i-1)*M*M + J(i-1)*M)/2.0;
+                    pu(i-1,j-1) = 0.166666666666667 + (J(i-1)*J(i-1)*M*M + J(i-1)*M)*0.5;
                     pm(i-1,j-1) = 0.666666666666667 -  J(i-1)*J(i-1)*M*M;
-                    pd(i-1,j-1) = 0.166666666666667 + (J(i-1)*J(i-1)*M*M - J(i-1)*M)/2.0;
+                    pd(i-1,j-1) = 0.166666666666667 + (J(i-1)*J(i-1)*M*M - J(i-1)*M)*0.5;
                 }
             }
         }

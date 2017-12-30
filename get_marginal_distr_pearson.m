@@ -74,12 +74,12 @@ elseif ( type == 1)
     m2 = retvec(3);
     a1 = retvec(4);
     a2 = retvec(5);
-    r = a1 + (a2 - a1) .* betainv(Z,m1+1,m2+1);
+    r = a1 + (a2 - a1) .* betainv_vec(Z,m1+1,m2+1);
 elseif ( type == 2)
     % symmetric beta distribution
     m = retvec(2);
     a1 = retvec(3);
-    r = a1 + 2*abs(a1) .* betainv(Z,m+1,m+1);
+    r = a1 + 2*abs(a1) .* betainv_vec(Z,m+1,m+1);
 elseif ( type == 3)
     % gamma or chi-squared distribution
     m  = retvec(2); 
