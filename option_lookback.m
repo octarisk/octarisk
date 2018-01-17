@@ -84,7 +84,7 @@ function value = option_lookback(CallPutFlag,lookback_type,S,X1,X2,T,r,sigma,div
     error ('Implicit volatility sigma must be numeric ')
   elseif ~isnumeric (divrate)
     error ('Dividend rate must be numeric ')     
-  elseif ( sigma < 0)
+  elseif ~( isempty(sigma(sigma< 0)))
     error ('Volatility sigma must be positive ')        
   end
   

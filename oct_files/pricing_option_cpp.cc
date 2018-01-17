@@ -116,6 +116,11 @@ Input and output variables:\n\
 	if (len_divrate > 1 && len_divrate != len)
 		error("pricing_option_cpp: expecting divrate to be of length 1 or %d",len);
 	
+	for (octave_idx_type ii = 0; ii < len_sigma; ++ii) 
+	{
+		if ( sigma_vec(ii) < 0 )
+			error("Volatility sigma must be positive!");
+	}
 	// initialize scenario dependent output:
 	dim_vector dim_scen (len, 1);
 	ColumnVector OptionVec (dim_scen);
@@ -157,7 +162,7 @@ Input and output variables:\n\
 	else
 		sigma = sigma_vec;
 	
-		
+	
 	// Calculate Option prices
 	switch(option_type) {
 		case 1: // European Option

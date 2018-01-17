@@ -72,8 +72,9 @@ new_corr = false;
         Y_struct = load(tmp_filename);  % read in from stored file
         Y = Y_struct.Y;
 		% test random numbers for matching correlation settings
-		if (norm(abs(corr(Y) - corr_matrix)) > 0.02)
-			fprintf('scenario_generation_MC: WARNING: Frobenius norm of stored correlation matrix minus correlation settings > 0.02. New random numbers will be drawn.\n');
+		frob_norm = norm(abs(corr(Y) - corr_matrix));
+		if (frob_norm > 0.05)
+			fprintf('scenario_generation_MC: WARNING: Frobenius norm %s of stored correlation matrix minus correlation settings > 0.02. New random numbers will be drawn.\n',any2str(frob_norm));
 			new_corr = true;
 		end
     % otherwise draw new random numbers and save to static folder for next run

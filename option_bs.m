@@ -71,10 +71,10 @@ function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X, .
     error ('Implicit volatility sigma must be numeric ')
   elseif ~isnumeric (divrate)
     error ('Dividend rate must be numeric ')     
-  elseif ( sigma < 0)
+  elseif ~( isempty(sigma(sigma< 0)))
     error ('Volatility sigma must be positive ')        
   end
-  
+ 
 % Calculation of BS value
 if ( CallPutFlag == 1 ) % Call
     eta = 1;

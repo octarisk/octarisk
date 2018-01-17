@@ -76,7 +76,7 @@ function [value] = option_bjsten(CallFlag, S, X, Time, r, sigma, divrate)
     error ('Implicit volatility sigma must be numeric ')
   elseif ~isnumeric (divrate)
     error ('Dividend rate must be numeric ')     
-  elseif ( sigma < 0)
+  elseif ~( isempty(sigma(sigma< 0)))
     error ('Volatility sigma must be positive ')        
   end    
 % Transformation

@@ -425,7 +425,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
         % =================  End Full valuation  ===============================
         
      % store performance data into cell array
-     fulvia_performance{end + 1} = strcat(tmp_id,'_',num2str(scen_number),'_',num2str(toc),' s');
+     fulvia_performance{end + 1} = strcat(tmp_instr_obj.get('type'),'|',tmp_instr_obj.get('sub_type'),'|',tmp_id,'|',num2str(scen_number),'|',num2str(toc),'|s');
      fulvia = fulvia + toc ;  
     catch   % catch error in instrument valuation
         fprintf('octarisk:Instrument valuation for %s failed. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);

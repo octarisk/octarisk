@@ -53,7 +53,8 @@ function obj = calc_greeks(option,valuation_date,value_type,underlying,discount_
         % get implied volatility spread (choose offset to vola, that tmp_value == option_bs with input of appropriate vol):
         tmp_imp_vola_shock  = tmp_vola_surf_obj.getValue(value_type, ...
                                 tmp_dtm,tmp_moneyness) + tmp_impl_vola_spread;
- 
+		 % sigma needs to be positive
+	    tmp_imp_vola_shock(tmp_imp_vola_shock<=0) = sqrt(eps);
        % Convert timefactor from Instrument basis to pricing basis (act/365)
         tmp_dtm_pricing  = timefactor (valuation_date, ...
                                 valuation_date + tmp_dtm, obj.basis) .* 365;

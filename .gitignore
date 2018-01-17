@@ -4,6 +4,7 @@
 *.mat
 *.csv~
 *.dat~
+*.md~
 *.m~
 *.txt
 # exclude oct files, since compilation is OE specific

@@ -65,8 +65,8 @@ function Value = option_asian_levy(CallPutFlag,S,X,T,r,sigma,divrate)
     error ('Implicit volatility sigma must be numeric ')
   elseif ~ isnumeric (divrate)
     error ('Dividend rate must be numeric ')     
-  elseif ( sigma < 0)
-    error ('Volatility sigma must be positive ')        
+  elseif ~( isempty(sigma(sigma< 0)))
+    error ('Volatility sigma must be positive ')       
   end
   
 
@@ -104,5 +104,6 @@ end
 %!assert(option_asian_levy(1,100,[95;100;105],0.75*365,0.1,0.35,0.05),[10.12128991523418;7.50377214245155;5.40712811308192],0.0000001)
 %!assert(option_asian_levy(1,6.8,6.9,0.5*365,0.07,0.14,0.09),0.0944157786932514,0.0000001) 
 %!assert(option_asian_levy(0,6.8,6.9,0.5*365,0.07,0.14,0.09),0.223697742233234,0.0000001)
+%!error(option_asian_levy(1,6.8,6.9,0.5*365,0.07,-0.14,0.09)) 
 % Test case from Hull "Options, Future and other Derivatives", 7th Edition, page 565
 %!assert(option_asian_levy(1,50,50,1*365,0.1,0.4,0.00),5.6168,0.001) 

@@ -114,8 +114,8 @@ function value = option_binary(CallPutFlag,binary_type,S,X1,X2,T,r,sigma,divrate
     error ('Implicit volatility sigma must be numeric ')
   elseif ~isnumeric (divrate)
     error ('Dividend rate must be numeric ')     
-  elseif ( sigma < 0)
-    error ('Volatility sigma must be positive ')        
+  elseif ~( isempty(sigma(sigma< 0)))
+    error ('Volatility sigma must be positive ')         
   end
   
   if ~(any(strcmpi(binary_type,{'gap','cash','asset','supershare'})))

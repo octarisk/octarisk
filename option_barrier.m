@@ -71,8 +71,8 @@ function [optionValue] = option_barrier(PutOrCall,UpOrDown,OutorIn,S0,X,H,T,r,si
     error ('Implicit volatility sigma must be numeric ')
   elseif ~isnumeric (q)
     error ('Dividend rate must be numeric ')     
-  elseif ( sigma < 0)
-    error ('Volatility sigma must be positive ') 
+  elseif ~( isempty(sigma(sigma< 0)))
+    error ('Volatility sigma must be positive ')  
   elseif ~isnumeric (Rebate)
     error ('Rebate must be numeric ')      
   end
