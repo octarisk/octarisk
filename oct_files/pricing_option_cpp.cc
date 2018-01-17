@@ -36,8 +36,7 @@ static ColumnVector get_AM_option_price_CRR(const bool& call_flag, const NDArray
 			const octave_idx_type& n);
 			
 DEFUN_DLD (pricing_option_cpp, args, nargout, "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} {@var{OptionVec}} = pricing_option_cpp(@var{option_type}, \n\
-@var{call_flag}, @var{S_vec}, @var{X_vec}, @var{T_vec}, @var{r_vec}, @var{sigma_vec}, @var{divrate_vec}, @var{n}) \n\
+@deftypefn{Loadable Function} {@var{OptionVec}} = pricing_option_cpp(@var{option_type}, @var{call_flag}, @var{S_vec}, @var{X_vec}, @var{T_vec}, @var{r_vec}, @var{sigma_vec}, @var{divrate_vec}, @var{n}) \n\
 \n\
 Compute the put or call value of different equity options.\n\
 \n\
@@ -57,6 +56,16 @@ Input and output variables:\n\
 @item @var{n}: Integer: number of tree steps (AM) or number of MC scenarios (ASIAN)\n\
 @item @var{OptionVec}: Double: OUTPUT: Option prices (columnn vector)\n\
 @end itemize\n\
+Example Call:\n\
+@example\n\
+@group\n\
+retvec = pricing_option_cpp(1,false,[10000;9000;11000],11000,365,0.01,[0.2;0.025;0.03],0.0)\n\
+retvec =\n\
+   1351.5596280726359\n\
+   1890.5481712408509\n\
+     83.4751762658461\n\
+@end group\n\
+@end example\n\
 @end deftypefn")
 {
   octave_value retval;

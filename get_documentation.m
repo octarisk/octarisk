@@ -31,6 +31,15 @@ for i = 1 : 1 : length(cell_scriptnames)
         c{ length(c) + 1 } = cell_scriptnames{i}(1:end-2);
     end
 end
+
+% get names of all c++ source code files
+cc = dir(strcat(path_octarisk,'/oct_files'));
+cell_scriptnames = {cc.name};
+for i = 1 : 1 : length(cell_scriptnames)
+    if ( regexp(cell_scriptnames{i},'.cc$') )
+        c{ length(c) + 1 } = cell_scriptnames{i}(1:end-3);
+    end
+end
 c
 
 % printing functions:
