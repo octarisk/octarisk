@@ -51,21 +51,15 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
     b = ( scenarios + 1 ) * ( 1 - alpha);
     x_1 = observation ./ scenarios;
     x_2 = (observation - 1 ) ./ scenarios;
-    beta_1 = betacdf( x_1 , a , b );
-    beta_2 = betacdf( x_2 , a , b );
+    beta_1 = betainc_vec( x_1' , a , b );
+    beta_2 = betainc_vec( x_2' , a , b );
     X = beta_1 - beta_2;
 	
-	% ############   BEGIN REMOVE AFTER BUGFIX    ##############################
-    % BUG #51157 workaround: Octave calculates betainc.cc in single precision
-	% (see https://savannah.gnu.org/bugs/?51157 for details)
-	% truncate everything below sqrt(eps) to avoid negative weights:
-	X(abs(X)<sqrt(eps)) = 0.0;
-	% ############   END REMOVE AFTER BUGFIX    ################################
 end
 
 %!test
-%! hd_vec = harrell_davis_weight(600,1:3,0.005)';
-%! assert(hd_vec,[ 0.0796170388679505;0.2425460273970582;0.2540220601759450],0.00001);
+%! hd_vec = harrell_davis_weight(600,1:3,0.005);
+%! assert(hd_vec,[ 0.0796170388679505;0.2425460273970582;0.2540220601759450],1e-12);
 
 %# Tests:
 %scenarios  = 50000

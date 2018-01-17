@@ -13,22 +13,9 @@ details.
 */
 
 #include <octave/oct.h>
-#include <octave/unwind-prot.h>
 #include <cmath>
 #include <octave/parse.h>
 #include <octave/ov-struct.h>
-
-void
-my_err_handler (const char *fmt, ...)
-{
-  // Do nothing!!
-}
-
-void
-my_err_with_id_handler (const char *id, const char *fmt, ...)
-{
-  // Do nothing!!
-}
 
 static bool any_bad_argument(const octave_value_list& args);
 static double previous_neighbour(NDArray axis_values, double coord);
