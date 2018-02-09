@@ -5,7 +5,7 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
     end
 
     % Get discount curve nodes and rate
-        tmp_nodes        = discount_curve.get('nodes');
+        tmp_nodes        = discount_curve.nodes;
         tmp_rates        = discount_curve.getValue(value_type);
         tmp_type = obj.sub_type;
     % Get Call or Putflag

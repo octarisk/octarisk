@@ -4,7 +4,7 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
         error('Error: No discount curve or vola surface set. Aborting.');
     end
     % Get discount curve nodes and rate
-        tmp_nodes        = discount_curve.get('nodes');
+        tmp_nodes        = discount_curve.nodes;
         tmp_rates_base   = discount_curve.getValue('base');
     tmp_type = obj.sub_type;
     % Get Call or Putflag

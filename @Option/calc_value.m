@@ -13,11 +13,11 @@ function obj = calc_value(option,valuation_date,value_type,underlying,discount_c
         path_static = pwd;
     end
     % Get discount curve nodes and rate
-        tmp_nodes        	= discount_curve.get('nodes');
+        tmp_nodes        	= discount_curve.nodes;
         tmp_rates        	= discount_curve.getValue(value_type);
-        comp_type_curve 	= discount_curve.get('compounding_type');
-        comp_freq_curve 	= discount_curve.get('compounding_freq');
-        basis_curve     	= discount_curve.get('basis');
+        comp_type_curve 	= discount_curve.compounding_type;
+        comp_freq_curve 	= discount_curve.compounding_freq;
+        basis_curve     	= discount_curve.basis;
         
     % get further option attributes
     option_type = obj.option_type;

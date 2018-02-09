@@ -13,8 +13,8 @@ end
 if ( sum(strcmpi(sensi.sub_type,{'EQU','RET','COM','STK','ALT'}) > 0))
 	tmp_delta = 0;
 	tmp_shift = 0;
-    tmp_sensitivities   = sensi.get('sensitivities');
-    tmp_riskfactors     = sensi.get('riskfactors');
+    tmp_sensitivities   = sensi.sensitivities;
+    tmp_riskfactors     = sensi.riskfactors;
 	% get timestep from scenarios
 	if ~( strcmpi(scenario,{'base','stress'}))
 		if ( strcmpi(scenario(end),'d') )
@@ -60,18 +60,18 @@ if ( sum(strcmpi(sensi.sub_type,{'EQU','RET','COM','STK','ALT'}) > 0))
 %=============================================================================== 
 % valuation for 'SENSI' instruments (linear and quadratic combination of underlyings)
 else
-  if ( strcmpi(scenario,'base') &&  sensi.get('use_value_base') == true )
-	theo_value = sensi.get('value_base');
+  if ( strcmpi(scenario,'base') &&  sensi.use_value_base == true )
+	theo_value = sensi.value_base;
   else
 	theo_value = 0.0;
-	underlyings   = sensi.get('underlyings');
-    x_coord       = sensi.get('x_coord');
-	y_coord       = sensi.get('y_coord');
-	z_coord       = sensi.get('z_coord');
-	shock_type	  = sensi.get('shock_type');
-	sensi_prefactor  = sensi.get('sensi_prefactor');
-	sensi_exponent  = sensi.get('sensi_exponent');
-	sensi_cross   = sensi.get('sensi_cross');
+	underlyings   = sensi.underlyings;
+    x_coord       = sensi.x_coord;
+	y_coord       = sensi.y_coord;
+	z_coord       = sensi.z_coord;
+	shock_type	  = sensi.shock_type;
+	sensi_prefactor  = sensi.sensi_prefactor;
+	sensi_exponent  = sensi.sensi_exponent;
+	sensi_cross   = sensi.sensi_cross;
     cols_cross_matrix  = max(sensi_cross);
 	% input check
 	if ~( length(sensi_prefactor) == length(sensi_exponent)) || ~( length(sensi_prefactor) == length(sensi_cross))  ...

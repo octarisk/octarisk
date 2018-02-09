@@ -10,7 +10,6 @@ function obj = calc_value(capfloor,valuation_date,value_type,discount_curve)
     
     % Get interpolation method and other curve related attributes
         tmp_interp_discount = discount_curve.get('method_interpolation');
-        tmp_curve_dcc       = discount_curve.get('day_count_convention');
         tmp_curve_basis     = discount_curve.get('basis');
         tmp_curve_comp_type = discount_curve.get('compounding_type');
         tmp_curve_comp_freq = discount_curve.get('compounding_freq');

@@ -49,18 +49,18 @@ strike = forward.strike_price;
 
 % Getting curve properties
 % Get Discount Curve nodes and rate and related attributes
-discount_nodes  = discount_curve_object.get('nodes');
+discount_nodes  = discount_curve_object.nodes;
 discount_rates  = discount_curve_object.getValue(value_type);
-interp_discount = discount_curve_object.get('method_interpolation');
-curve_basis     = discount_curve_object.get('basis');
-curve_comp_type = discount_curve_object.get('compounding_type');
-curve_comp_freq = discount_curve_object.get('compounding_freq');
+interp_discount = discount_curve_object.method_interpolation;
+curve_basis     = discount_curve_object.basis;
+curve_comp_type = discount_curve_object.compounding_type;
+curve_comp_freq = discount_curve_object.compounding_freq;
 
 % Getting underlying properties
 % distinguish between index or RF underlyings for EQ and Bond Forwards
 if ( sum(strcmpi(type,{'Equity','EQFWD','BondFuture','EquityFuture'})) > 0 )
-    if ( strfind(underlying_object.get('id'),'RF_') )   % underlying instrument is a risk factor
-        tmp_underlying_sensitivity = forward.get('underlying_sensitivity');
+    if ( strfind(underlying_object.id,'RF_') )   % underlying instrument is a risk factor
+        tmp_underlying_sensitivity = forward.underlying_sensitivity;
         tmp_underlying_delta = underlying_object.getValue(value_type);
         underlying_price = Riskfactor.get_abs_values(underlying_object.model, ...
             tmp_underlying_delta, forward.underlying_price_base, ...
@@ -74,12 +74,12 @@ elseif ( sum(strcmpi(type,{'FX'})) > 0 )
         error('pricing_forward: No foreign curve object provided.');
     end
     % getting underlying curve properties
-    foreign_nodes           = und_curve_object.get('nodes');
+    foreign_nodes           = und_curve_object.nodes;
     foreign_rates           = und_curve_object.getValue(value_type);
-    interp_foreign          = und_curve_object.get('method_interpolation');
-    curve_basis_foreign     = und_curve_object.get('basis');
-    curve_comp_type_foreign = und_curve_object.get('compounding_type');
-    curve_comp_freq_foreign = und_curve_object.get('compounding_freq');
+    interp_foreign          = und_curve_object.method_interpolation;
+    curve_basis_foreign     = und_curve_object.basis;
+    curve_comp_type_foreign = und_curve_object.compounding_type;
+    curve_comp_freq_foreign = und_curve_object.compounding_freq;
     % Getting underlying currency properties
     underlying_price = underlying_object.getValue(value_type);
     
@@ -87,8 +87,8 @@ elseif ( sum(strcmpi(type,{'FX','Bond','BONDFWD'})) > 0 )
     if nargin < 5
         error('pricing_forward: No foreign curve object provided.');
     end
-    if ( strfind(underlying_object.get('id'),'RF_') )   % underlying instrument is a risk factor
-        tmp_underlying_sensitivity = forward.get('underlying_sensitivity');
+    if ( strfind(underlying_object.id,'RF_') )   % underlying instrument is a risk factor
+        tmp_underlying_sensitivity = forward.underlying_sensitivity;
         tmp_underlying_delta = underlying_object.getValue(value_type);
         underlying_price = Riskfactor.get_abs_values(underlying_object.model, ...
             tmp_underlying_delta, obj.underlying_price_base, ...
@@ -97,12 +97,12 @@ elseif ( sum(strcmpi(type,{'FX','Bond','BONDFWD'})) > 0 )
         underlying_price = underlying_object.getValue(value_type);
     end
     % getting underlying curve properties
-    und_nodes           = und_curve_object.get('nodes');
+    und_nodes           = und_curve_object.nodes;
     und_rates           = und_curve_object.getValue(value_type);
-    interp_und          = und_curve_object.get('method_interpolation');
-    curve_basis_und     = und_curve_object.get('basis');
-    curve_comp_type_und = und_curve_object.get('compounding_type');
-    curve_comp_freq_und = und_curve_object.get('compounding_freq');
+    interp_und          = und_curve_object.method_interpolation;
+    curve_basis_und     = und_curve_object.basis;
+    curve_comp_type_und = und_curve_object.compounding_type;
+    curve_comp_freq_und = und_curve_object.compounding_freq;
     % Getting underlying currency properties
     underlying_price = underlying_object.getValue(value_type);
 
@@ -171,12 +171,12 @@ elseif ( sum(strcmpi(type,{'Bond','BONDFWD'})) > 0 )
     % settlement, making it necessary to add these AI to the forward price.
     % get PV of underlying Bond CF from valuation date until maturity date
     %     discounted with underlying bonds discount curve
-    und_cf_dates    = underlying_object.get('cf_dates');
-    und_cf_values   = underlying_object.get('cf_values');
+    und_cf_dates    = underlying_object.cf_dates;
+    und_cf_values   = underlying_object.cf_values;
     dtm = maturity_date - valuation_date;
     und_cf_values   = und_cf_values(und_cf_dates < dtm);
     und_cf_dates    = und_cf_dates(und_cf_dates < dtm);
-    und_spread      = underlying_object.get('soy');
+    und_spread      = underlying_object.soy;
     
     pv_und_bond_int = pricing_npv(valuation_date, ...
             und_cf_dates, und_cf_values, und_spread, und_nodes, ...
@@ -189,9 +189,9 @@ elseif ( sum(strcmpi(type,{'Bond','BONDFWD'})) > 0 )
 	else
 		last_coupon_cf_date = 0; %use valuation date
 	end
-		und_notional    = underlying_object.get('notional');
-		und_coupon_rate = underlying_object.get('coupon_rate');
-		und_basis       = underlying_object.get('basis');
+		und_notional    = underlying_object.notional;
+		und_coupon_rate = underlying_object.coupon_rate;
+		und_basis       = underlying_object.basis;
 		accr_interest   = timefactor(last_coupon_cf_date,dtm,und_basis) ...
                         * und_notional * und_coupon_rate;
     
@@ -212,10 +212,10 @@ elseif ( sum(strcmpi(type,{'BondFuture'})) > 0 )
         maturity_date, discount_rate_curve, ...
         curve_comp_type, curve_basis, curve_comp_freq);
     % get attribute values of underlying bond
-    last_coupon_date = underlying_object.get('last_coupon_date');
-    comp_weight     = forward.get('component_weight');
-    coupon_rate     = underlying_object.get('coupon_rate');
-    notional        = underlying_object.get('notional');
+    last_coupon_date = underlying_object.last_coupon_date;
+    comp_weight     = forward.component_weight;
+    coupon_rate     = underlying_object.coupon_rate;
+    notional        = underlying_object.notional;
     % calculate accrued interest from last bond coupon date to forward settlement
     accr_int        = coupon_rate * timefactor(last_coupon_date + ...
                             valuation_date, maturity_date,3) * notional;
@@ -227,7 +227,7 @@ elseif ( sum(strcmpi(type,{'BondFuture'})) > 0 )
     end  
     % a) calculate forward price from given net basis
     if true(price_from_nb_flag)
-        net_basis       = forward.get('net_basis');
+        net_basis       = forward.net_basis;
         % calculate forward price and payoff value
         forward_price   = net_basis + (underlying_price ./ df_discount - accr_int) ...
                                     ./ comp_weight;
@@ -258,7 +258,7 @@ elseif ( sum(strcmpi(type,{'EquityFuture'})) > 0 )
     end   
     % a) calculate future price from given net basis
     if true(price_from_nb_flag)
-        net_basis       = forward.get('net_basis');
+        net_basis       = forward.net_basis;
         % calculate forward price and payoff value
         forward_price   = (underlying_price - disc_payments) * df_forward  ...
                                     ./ df_discount + net_basis;

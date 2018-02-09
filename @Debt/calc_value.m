@@ -8,10 +8,10 @@ function obj = calc_value (debt,discount_curve_object,value_type)
    end
     value_type = lower(value_type);
     % Get duration and convexity
-        tmp_dur         = debt.get('duration');
-		tmp_term        = debt.get('term');
-        tmp_convex      = debt.get('convexity');
-        tmp_value_base  = debt.get('value_base');
+        tmp_dur         = debt.duration;
+		tmp_term        = debt.term;
+        tmp_convex      = debt.convexity;
+        tmp_value_base  = debt.value_base;
     % Get Yields and spreads at instrument duration 
         yield_original  = discount_curve_object.getRate('base',tmp_term * 365);
         yield_shifted   = discount_curve_object.getRate(value_type,tmp_term * 365);      

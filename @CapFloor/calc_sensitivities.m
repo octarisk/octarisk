@@ -18,7 +18,6 @@ end
     
 % b) Get curve specific attributes
     % Get reference curve attributes
-    nodes_ref          = reference_curve.get('nodes');
     rates_ref          = reference_curve.getValue('base');
     floor_ref          = reference_curve.get('floor');
     cap_ref            = reference_curve.get('cap');

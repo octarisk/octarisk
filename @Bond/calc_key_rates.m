@@ -9,15 +9,14 @@ function obj = calc_key_rates(bond,valuation_date,discount_curve)
 	end
   
     % Get discount curve nodes and rate
-        disc_nodes    = discount_curve.get('nodes');
+        disc_nodes    = discount_curve.nodes;
         disc_rates    = discount_curve.getValue('base');
     
     % Get interpolation method and other curve related attributes
-        interp_discount = discount_curve.get('method_interpolation');
-        curve_dcc       = discount_curve.get('day_count_convention');
-        curve_basis     = discount_curve.get('basis');
-        curve_comp_type = discount_curve.get('compounding_type');
-        curve_comp_freq = discount_curve.get('compounding_freq');
+        interp_discount = discount_curve.method_interpolation;
+        curve_basis     = discount_curve.basis;
+        curve_comp_type = discount_curve.compounding_type;
+        curve_comp_freq = discount_curve.compounding_freq;
         
     % Get cf values and dates
     cf_dates  = obj.get('cf_dates');
@@ -27,9 +26,9 @@ function obj = calc_key_rates(bond,valuation_date,discount_curve)
 	cf_dates = cf_dates(cf_dates>0);
 	
     % Get bond related basis and conventions
-    basis       = bond.get('basis');
-    comp_type   = bond.get('compounding_type');
-    comp_freq   = bond.get('compounding_freq');
+    basis       = bond.basis;
+    comp_type   = bond.compounding_type;
+    comp_freq   = bond.compounding_freq;
     
     if ( columns(cf_values) == 0 || rows(cf_values) == 0 )
         error('No cash flow values set. CF rollout done?');    
@@ -37,9 +36,9 @@ function obj = calc_key_rates(bond,valuation_date,discount_curve)
 	base_value  = bond.getValue('base');
 	
 	% get key rate input parameter
-	key_terms = obj.get('key_term');
-    key_rate_shock = obj.get('key_rate_shock');
-    key_rate_width = obj.get('key_rate_width');	
+	key_terms = obj.key_term;
+    key_rate_shock = obj.key_rate_shock;
+    key_rate_width = obj.key_rate_width;	
 	
 	% new discount curve
 	curve_keyrate_up = zeros(1,length(cf_dates));

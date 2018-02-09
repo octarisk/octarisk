@@ -14,13 +14,9 @@ details.
 
 #include <octave/oct.h>
 #include <cmath>
-#include <octave/parse.h>
-#include <octave/ov-struct.h>
 
 static bool any_bad_argument(const octave_value_list& args);
-static double previous_neighbour(NDArray axis_values, double coord);
-static double next_neighbour(NDArray axis_values, double coord);
-static octave_idx_type get_indexvalue(NDArray axis_values, double coord);
+
 
 
 DEFUN_DLD (interpolate_curve_vectorized, args, nargout, "-*- texinfo -*-\n\

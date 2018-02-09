@@ -8,24 +8,23 @@ function obj = calc_value(bond,valuation_date,value_type,discount_curve,call_sch
    end
 
     % Get discount curve nodes and rate
-        tmp_nodes    = discount_curve.get('nodes');
+        tmp_nodes    = discount_curve.nodes;
         tmp_rates    = discount_curve.getValue(value_type);
     
     % Get interpolation method and other curve related attributes
-        tmp_interp_discount = discount_curve.get('method_interpolation');
-        tmp_curve_dcc       = discount_curve.get('day_count_convention');
-        tmp_curve_basis     = discount_curve.get('basis');
-        tmp_curve_comp_type = discount_curve.get('compounding_type');
-        tmp_curve_comp_freq = discount_curve.get('compounding_freq');
+        tmp_interp_discount = discount_curve.method_interpolation;
+        tmp_curve_basis     = discount_curve.basis;
+        tmp_curve_comp_type = discount_curve.compounding_type;
+        tmp_curve_comp_freq = discount_curve.compounding_freq;
         
     % Get cf values and dates
-    tmp_cashflow_dates  = obj.get('cf_dates');
+    tmp_cashflow_dates  = obj.cf_dates;
     tmp_cashflow_values = obj.getCF(value_type);
     
     % Get bond related basis and conventions
-    basis       = bond.get('basis');
-    comp_type   = bond.get('compounding_type');
-    comp_freq   = bond.get('compounding_freq');
+    basis       = bond.basis;
+    comp_type   = bond.compounding_type;
+    comp_freq   = bond.compounding_freq;
     
     if ( columns(tmp_cashflow_values) == 0 || rows(tmp_cashflow_values) == 0 )
         error('No cash flow values set. CF rollout done?');    

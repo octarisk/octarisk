@@ -15,10 +15,10 @@ if ~(strcmpi(value_type,'Base'))
 	    if (strcmpi(class(rf),'Curve'))
 			% get shocktype
 			if ( strcmpi(value_type,'Stress'))
-				shocktype = rf.get('shocktype_stress');
+				shocktype = rf.shocktype_stress;
 				
 			else % MC scenarios
-				shocktype = rf.get('shocktype_mc');
+				shocktype = rf.shocktype_mc;
 			end
 			rates_shock = zeros(rows(rf.getRate(value_type, 1)),length(nodes));
 			% loop via all nodes

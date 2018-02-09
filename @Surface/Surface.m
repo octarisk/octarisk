@@ -210,7 +210,7 @@ documentation string, false (default) returns empty string. [static method]\n\
 the shocks for later use in attribute @var{shock_struct}. These shocks are then applied to the surface base value with method getValue.\n\
 The risk factors are taken from the provided structure according to the surface risk factor IDs given by the attribute @var{riskfactors}.\n\
 \n\
-@item Surface.interpolate(@var{x}, @var{y}, @var{z}): Return Surface base value at given coordinates.\n\
+@item Surface.interpolate(@var{x}, [@var{y}, [@var{z}]]): Return Surface base value at given coordinates.\n\
 @end itemize\n\
 \n\
 Attributes of Surface objects:\n\
@@ -223,6 +223,7 @@ Attributes of Surface objects:\n\
 for details (Default: \'act/365\')\n\
 @item @var{compounding_type}: Compounding type. Can be continuous, discrete or simple. \n\
 (Default: \'cont\')\n\
+@item @var{method_interpolation}: Interpolation method. Can be linear or nearest. Default: linear.\n\
 @item @var{compounding_freq}: Compounding frequency used for discrete compounding.\n\
 Can be [daily, weekly, monthly, quarterly, semi-annual, annual]. (Default: \'annual\')\n\
 @item @var{values_base}:  Base values of Surface.\n\

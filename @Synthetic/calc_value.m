@@ -8,9 +8,9 @@ end
 % get values of underlying instrument and weigh them by their sensitivity
 tmp_value_base      = 0;
 tmp_value           = 0;
-tmp_weights         = obj.get('weights');
-tmp_instruments     = obj.get('instruments');
-tmp_currency        = obj.get('currency');
+tmp_weights         = obj.weights;
+tmp_instruments     = obj.instruments;
+tmp_currency        = obj.currency;
 % summing up values over all underlying instruments
 for jj = 1 : 1 : length(tmp_weights)
     % get underlying instrument:
@@ -29,7 +29,7 @@ for jj = 1 : 1 : length(tmp_weights)
     underlying_value_base       = und_obj.getValue('base');                 
     underlying_value_vec        = und_obj.getValue(value_type);  
     % Get FX rate:
-    tmp_underlying_currency = und_obj.get('currency'); 
+    tmp_underlying_currency = und_obj.currency; 
     if ( strcmp(tmp_underlying_currency,tmp_currency) == 1 )
         tmp_fx_rate_base    = 1;
         tmp_fx_value        = 1; %ones(scen_number,1);

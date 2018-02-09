@@ -10,24 +10,24 @@ end
 
 % A) get bond related attributes
 % Get base cf values and dates
-cashflow_dates  = bond.get('cf_dates');
+cashflow_dates  = bond.cf_dates;
 cashflow_values = bond.getCF('base');
 if ( columns(cashflow_values) == 0 || rows(cashflow_values) == 0 )
     error('No cash flow values set. CF rollout done?');    
 end
 
 % Get bond related basis and conventions
-    basis_bond       = bond.get('basis');
-    comp_type_bond   = bond.get('compounding_type');
-    comp_freq_bond   = bond.get('compounding_freq');
+    basis_bond       = bond.basis;
+    comp_type_bond   = bond.compounding_type;
+    comp_freq_bond   = bond.compounding_freq;
 
 % get discount curve attributes
-    nodes_discount    = discount_curve.get('nodes');
+    nodes_discount    = discount_curve.nodes;
     rates_discount    = discount_curve.getValue('base');
-    interp_discount = discount_curve.get('method_interpolation');
-    basis_discount     = discount_curve.get('basis');
-    comp_type_discount = discount_curve.get('compounding_type');
-    comp_freq_discount = discount_curve.get('compounding_freq');
+    interp_discount = discount_curve.method_interpolation;
+    basis_discount     = discount_curve.basis;
+    comp_type_discount = discount_curve.compounding_type;
+    comp_freq_discount = discount_curve.compounding_freq;
  
 % B) Calculate analytic sensitivities where no new CF rollout is required    
     % TODO: incorporate embedded bond option calculation 
@@ -62,10 +62,9 @@ if ( strcmp(bond.sub_type,'FRN') || strcmp(bond.sub_type,'SWAP_FLOAT'))
     % C.1.a) Get reference curve specific attributes
 
     % Get reference curve nodes and rate
-        nodes_ref    = reference_curve.get('nodes');
         rates_ref    = reference_curve.getValue('base');
-        floor_ref    = reference_curve.get('floor');
-        cap_ref      = reference_curve.get('cap');
+        floor_ref    = reference_curve.floor;
+        cap_ref      = reference_curve.cap;
    
 					
     % C.1.b) Calculate sensitivities
