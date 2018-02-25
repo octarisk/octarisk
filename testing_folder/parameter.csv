@@ -33,7 +33,7 @@ plottingBOOL,0
 savingBOOL,0
 archive_flagBOOL,0
 stable_seedBOOL,1
-mc_scen_analysisBOOL,0
+mc_scen_analysisBOOL,1
 aggregation_flagBOOL,true
 first_evalBOOL,1
 
