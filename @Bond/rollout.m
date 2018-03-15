@@ -168,7 +168,6 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
 		accr_int last_coupon_date] = rollout_structured_cashflows(valuation_date, ...
                             value_type,  s, iec_obj, hist_obj, cpi_obj);
 	accr_int = 0.0;
-	
   % ----------------------------------------------------------------------------
   % type stochastic -> get cash flows from underlying surface and risk factor quantiles
   elseif ( strcmpi(s.sub_type,'STOCHASTICCF') )

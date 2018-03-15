@@ -706,8 +706,12 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 			% calculate indexation lag in days:
 			[valdate_yy valdate_mm valdate_dd] = datevec(valuation_date);
 			tmp_date = datenum([valdate_yy - adjust_for_years,valdate_mm - adjust_for_month, valdate_dd]  );
+			% adjust for end of month if necessary:
+			if (eomdate(valdate_yy,valdate_mm) == valuation_date)
+				tmp_date = eomdate(valdate_yy - adjust_for_years,valdate_mm - adjust_for_month);
+			end
 			%new_cf_day = check_day(valdate_yy,valdate_mm - adjust_for_month,valdate_dd - adjust_for_years )
-			diff_days = valuation_date - tmp_date	;
+			diff_days = valuation_date - tmp_date;
 			cpi_initial = hist.getRate(value_type,-diff_days);
 		end
 	end
