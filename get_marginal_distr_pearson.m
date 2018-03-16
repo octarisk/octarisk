@@ -62,7 +62,8 @@ function [r,type] = get_marginal_distr_pearson(mu,sigma,skew,kurt,Z)
 % (scale and location will be applied in the end)
 retvec = classify_pearson(mu,sigma,skew,kurt);
 type = retvec(1);
-
+% debug
+type
 % generate standard marginal distribution (zero mean, unit variance) values for 
 % given correlated random numbers
 if ( type == 0)
@@ -125,6 +126,11 @@ elseif ( type == 7)
     c2 = retvec(4);
     r = sqrt(c0 ./ (1-c2)) .* tinv(Z,nu);
 end
+%debug
+mean_tmp = mean(r)
+std_tmp = std(r)
+skew_tmp = skew(r)
+kurt_tmp = kurt(r)
 
 % apply scale and location parameter
 r = r.*sigma + mu;
