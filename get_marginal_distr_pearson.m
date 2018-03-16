@@ -129,8 +129,8 @@ end
 %debug
 mean_tmp = mean(r)
 std_tmp = std(r)
-skew_tmp = skew(r)
-kurt_tmp = kurt(r)
+skew_tmp = skewness(r)
+kurt_tmp = kurtosis(r)
 
 % apply scale and location parameter
 r = r.*sigma + mu;
