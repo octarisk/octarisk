@@ -62,8 +62,11 @@ function [r,type] = get_marginal_distr_pearson(mu,sigma,skew,kurt,Z)
 % (scale and location will be applied in the end)
 retvec = classify_pearson(mu,sigma,skew,kurt);
 type = retvec(1);
-% debug
-type
+
+if ( kurt <= 0.0)
+	error('ERROR: et_marginal_distr_pearson: kurtosis has to be larger than 0.0\n');
+end
+
 % generate standard marginal distribution (zero mean, unit variance) values for 
 % given correlated random numbers
 if ( type == 0)
@@ -80,6 +83,10 @@ elseif ( type == 2)
     % symmetric beta distribution
     m = retvec(2);
     a1 = retvec(3);
+    if ( m <= -1.0)
+		fprintf('WARN: get_marginal_distr_pearson: symmetric beta distribution: kurtosis has to be larger than 1 for skewness equals 0. Setting kurtosis to 1.5.\n');
+		m = -0.5;
+    end
     r = a1 + 2*abs(a1) .* betainv_vec(Z,m+1,m+1);
 elseif ( type == 3)
     % gamma or chi-squared distribution
@@ -126,11 +133,6 @@ elseif ( type == 7)
     c2 = retvec(4);
     r = sqrt(c0 ./ (1-c2)) .* tinv(Z,nu);
 end
-%debug
-mean_tmp = mean(r)
-std_tmp = std(r)
-skew_tmp = skewness(r)
-kurt_tmp = kurtosis(r)
 
 % apply scale and location parameter
 r = r.*sigma + mu;
