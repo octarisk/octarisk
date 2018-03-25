@@ -116,7 +116,8 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
 			y = interp1(nodes',rates',timestep,'linear','extrap')';
 			return
 		else
-			y = rates(:,1);
+			[minval tmp_idx] = min(nodes);
+			y = rates(:,tmp_idx);
 			return
 		end
     elseif ( timestep >= max(nodes) ) % constant or linear extrapolation
@@ -124,7 +125,8 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
 			y = interp1(nodes',rates',timestep,'linear','extrap')';
 			return
 		else
-			y = rates(:,end);
+			[maxval tmp_idx] = max(nodes);
+			y = rates(:,tmp_idx);
 			return
 		end
     else
@@ -132,10 +134,10 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
         if (strcmpi(method,'linear'))          % linear interpolation
             for ii = 1 : 1 : (no_scen_nodes - 1)
                 if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
-                     y = ((1 - abs(timestep - nodes(ii)) ...
-							./ dnodes(ii)).* rates(:,ii) ...
-							+ (1 - abs(nodes(ii + 1) - timestep) ...
-							./ dnodes(ii)).* rates(:,ii+1)) ;            
+					 w1 = 1 - abs(timestep - nodes(ii)) ./ dnodes(ii);
+					 w2 = 1 - w1;
+                     y = w1.* rates(:,ii) + w2.* rates(:,ii+1); 
+					 return;           
                 end
             end
 			
@@ -146,6 +148,7 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
 							( nodes(ii+1 ) - nodes(ii) );
                     y = (alpha .* nodes(ii) .* rates(:,ii) ...
 					 + (1 - alpha) .* nodes(ii+1) .* rates(:,ii+1)) ./ timestep;
+					 return;
                 end
             end
             

@@ -13,7 +13,7 @@ function rate = getRate (curve, value_type, node)
 
 % interpolate
 	% vector or linear interpolation -> fall fast cpp method
-	if ( length(node) > 1 || strcmpi(interp_method,'linear'))
+	if ( length(node) > 1 && strcmpi(interp_method,'linear'))
 		if ( length(node) == 1 && strcmpi(interp_method,'linear'))
 			% interpolation of single node: call fast and simple version
 			rate = interpolate_curve_vectorized_mc(nodes,rates,node);

@@ -46,10 +46,10 @@ Input and output variables:\n\
   NDArray timesteps = args(2).array_value ();   // Vector with timesteps  
  
 // calculate discount factor
-	int len_nodes     = nodes.numel ();
-	int len_timesteps = timesteps.numel ();
-	int rows_rates    = rates.rows ();
-	int cols_rates    = rates.cols ();
+	long len_nodes     = nodes.numel ();
+	long len_timesteps = timesteps.numel ();
+	long rows_rates    = rates.rows ();
+	long cols_rates    = rates.cols ();
 
 	if ( cols_rates != len_nodes )
 		 error ("interpolate_curce_vectorized.cpp: Columns of nodes and rates have to be equal!\n");
@@ -59,9 +59,36 @@ Input and output variables:\n\
 	dim_vector dim_scen_dnode (len_nodes - 1, 1);
 	NDArray dnodes (dim_scen_dnode);
 	dnodes.fill(0.0);
+	long node, minnode, maxnode;
+	octave_idx_type idx_min, idx_max;
+	minnode = nodes(0);
+	maxnode = nodes(0);
+	idx_min = 0;
+	idx_max = 0;
 	for (octave_idx_type jj = 0; jj < len_nodes - 1; jj++) 
 	{
-		dnodes(jj) = nodes(jj+1) - nodes(jj);
+		dnodes(jj) = abs(nodes(jj+1) - nodes(jj));
+		if ( nodes(jj) < minnode) 
+		{
+			minnode = nodes(jj);
+			idx_min = jj;
+		}
+		if ( nodes(jj) > maxnode)
+		{
+			maxnode = nodes(jj);
+			idx_max = jj;
+		}
+	}
+	// check for last node:
+	if ( nodes(len_nodes - 1) < minnode) 
+	{
+		minnode = nodes(len_nodes - 1);
+		idx_min = len_nodes - 1;
+	}
+	if ( nodes(len_nodes - 1) > maxnode) 
+	{
+		maxnode = nodes(len_nodes - 1);
+		idx_max = len_nodes - 1;	
 	}
 	
   // initialize scenario dependent output:
@@ -69,9 +96,7 @@ Input and output variables:\n\
 	Matrix retmat (dim_scen);
 	retmat.fill(0.0);
 	double rate;
-	int timestep, node, firstnode, lastnode;
-	firstnode = nodes(0);
-	lastnode  = nodes(len_nodes - 1);
+	long timestep;
     bool foundflag;
 	dim_vector dim_scenvector (rows_rates, 1);
 	ColumnVector aa (dim_scenvector);
@@ -92,14 +117,14 @@ Input and output variables:\n\
 		foundflag = false;
 		// octave_stdout << "Timestep: " << timestep << "\n";
 		// constant extrapolation previous
-		if (abs(timestep) <= firstnode)	
+		if (timestep <= minnode)	
 			{
-				aa = rates.column(0);
+				aa = rates.column(idx_min);
 				retmat.insert(aa, 0, ii); 
 			}
-		else if (abs(timestep) >= lastnode)	// constant extrapolation last
+		else if (timestep >= maxnode)	// constant extrapolation last
 			{
-				aa = rates.column(len_nodes - 1);
+				aa = rates.column(idx_max);
 				retmat.insert(aa, 0, ii);
 			}
 		else  // interpolation

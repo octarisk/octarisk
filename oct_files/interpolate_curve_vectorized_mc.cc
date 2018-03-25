@@ -43,12 +43,12 @@ Input and output variables:\n\
 	
 	NDArray nodes 	= args(0).array_value ();   // Vector with nodes  
 	Matrix  rates 	= args(1).matrix_value();	// Matrix with rates	  
-	int timestep 		= args(2).int_value ();   // Timestep (int) 
+	long timestep 	= args(2).int_value ();   // Timestep (int) 
  
 	// calculate discount factor
-	int len_nodes     = nodes.numel ();
-	int rows_rates    = rates.rows ();
-	int cols_rates    = rates.cols ();
+	octave_idx_type len_nodes     = nodes.numel ();
+	octave_idx_type rows_rates    = rates.rows ();
+	octave_idx_type cols_rates    = rates.cols ();
 
 	if ( cols_rates != len_nodes )
 		 error ("interpolate_curce_vectorized.cpp: Columns of nodes and rates have to be equal!\n");
@@ -57,15 +57,39 @@ Input and output variables:\n\
 	dim_vector dim_scen_dnode (len_nodes - 1, 1);
 	NDArray dnodes (dim_scen_dnode);
 	dnodes.fill(0.0);
+	long minnode, maxnode;
+	octave_idx_type idx_min, idx_max;
+	minnode = nodes(0);
+	maxnode = nodes(0);
+	idx_min = 0;
+	idx_max = 0;
 	for (octave_idx_type jj = 0; jj < len_nodes - 1; jj++) 
 	{
-		dnodes(jj) = nodes(jj+1) - nodes(jj);
+		dnodes(jj) = abs(nodes(jj+1) - nodes(jj));
+		if ( nodes(jj) < minnode) 
+		{
+			minnode = nodes(jj);
+			idx_min = jj;
+		}
+		if ( nodes(jj) > maxnode)
+		{
+			maxnode = nodes(jj);
+			idx_max = jj;
+		}
+	}
+	// check for last node:
+	if ( nodes(len_nodes - 1) < minnode) 
+	{
+		minnode = nodes(len_nodes - 1);
+		idx_min = len_nodes - 1;
+	}
+	if ( nodes(len_nodes - 1) > maxnode) 
+	{
+		maxnode = nodes(len_nodes - 1);
+		idx_max = len_nodes - 1;	
 	}
 	// initialize scenario dependent output:
 	double rate, w1, w2;
-	int node, firstnode, lastnode;
-	firstnode = nodes(0);
-	lastnode  = nodes(len_nodes - 1);
 	dim_vector dim_scenvector (rows_rates, 1);
 	ColumnVector aa (dim_scenvector);
 	ColumnVector bb (dim_scenvector);
@@ -74,13 +98,13 @@ Input and output variables:\n\
 	ColumnVector retval (dim_scenvector);
 	
 	// constant extrapolation previous
-	if (abs(timestep) <= firstnode)	
+	if (timestep <= minnode)	
 		{
-			retval = rates.column(0);
+			retval = rates.column(idx_min);
 		}
-	else if (abs(timestep) >= lastnode)	// constant extrapolation last
+	else if (timestep >= maxnode)	// constant extrapolation last
 		{
-			retval = rates.column(len_nodes - 1);
+			retval = rates.column(idx_max);
 		}
 	else  // interpolation
 	{

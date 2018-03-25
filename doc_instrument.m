@@ -1564,3 +1564,25 @@ end
 %! % testing 0.9999 quantile
 %! len_tail = length(normdist_a(abs(normdist_a)>=3.71901648545568))/2;
 %! assert(len_tail,46,sqrt(eps))
+
+
+%!test
+%! fprintf('\tdoc_instrument:\t Interpolation and Extrapolation tests\n');
+%! assert(interpolate_curve_vectorized_mc([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],-30),0.010000000000,eps)
+%! assert(interpolate_curve_vectorized_mc([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],30),0.04333333333333333,eps)
+%! assert(interpolate_curve_vectorized_mc([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],80),0.050000000000,eps)
+%! assert(interpolate_curve_vectorized_mc([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],-80),0.050000000000,eps)
+%! assert(interpolate_curve_vectorized_mc([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],-30),0.04333333333333333,eps)
+%! assert(interpolate_curve_vectorized_mc([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],30),0.010000000000,eps)
+%! assert(interpolate_curve_vectorized([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],-30),0.010000000000,eps)
+%! assert(interpolate_curve_vectorized([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],30),0.04333333333333333,eps)
+%! assert(interpolate_curve_vectorized([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],80),0.050000000000,eps)
+%! assert(interpolate_curve_vectorized([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],-80),0.050000000000,eps)
+%! assert(interpolate_curve_vectorized([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],-30),0.04333333333333333,eps)
+%! assert(interpolate_curve_vectorized([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],30),0.010000000000,eps)
+%! assert(interpolate_curve([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],-30),0.010000000000,eps)
+%! assert(interpolate_curve([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],30),0.04333333333333333,eps)
+%! assert(interpolate_curve([1,5,10,20,50],[0.01,0.02,0.03,0.04,0.05],80),0.050000000000,eps)
+%! assert(interpolate_curve([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],-80),0.050000000000,eps)
+%! assert(interpolate_curve([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],-30),0.04333333333333333,eps)
+%! assert(interpolate_curve([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],30),0.010000000000,eps)
