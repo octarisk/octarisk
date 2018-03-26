@@ -6,7 +6,7 @@ function m = get (obj, property)
     if (ischar (property))
       % check, if property is an unique existing field
         try
-            m = getfield(obj,property);
+            m = obj.(property);
         catch
             fprintf('get: allowed fieldnames:\n');
             fieldnames(obj)

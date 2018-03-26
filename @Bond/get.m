@@ -4,9 +4,9 @@ function s = get (obj, property)
     s = obj.name;
   elseif (nargin == 2)
     if (ischar (property))
-      % check, if property is an unique existing field
+      % check, if property is an existing field
         try
-            s = getfield(obj,property);
+            s = obj.(property);
         catch
             fprintf('get: allowed fieldnames:\n');
             fieldnames(obj)

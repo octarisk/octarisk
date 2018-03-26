@@ -694,8 +694,6 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 	
 	% get current CPI level
 	cpi_level = cpi.getValue(value_type);
-	% without indexation lag initial and current level are equal
-	cpi_initial = cpi_level;
 		
 	% get historical index level for indexation lag > 0
 	if (instrument.use_indexation_lag == true)
@@ -704,16 +702,20 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 			adjust_for_years = floor(adjust_for_month/12);
 			adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
 			% calculate indexation lag in days:
-			[valdate_yy valdate_mm valdate_dd] = datevec(valuation_date);
-			tmp_date = datenum([valdate_yy - adjust_for_years,valdate_mm - adjust_for_month, valdate_dd]  );
+			[issuedate_yy issuedate_mm issuedate_dd] = datevec(issue_date);
+			tmp_date = datenum([issuedate_yy - adjust_for_years, ...
+							issuedate_mm - adjust_for_month, issuedate_dd]  );
 			% adjust for end of month if necessary:
-			if (eomdate(valdate_yy,valdate_mm) == valuation_date)
-				tmp_date = eomdate(valdate_yy - adjust_for_years,valdate_mm - adjust_for_month);
+			if (eomdate(issuedate_yy,issuedate_mm) == valuation_date)
+				tmp_date = eomdate(issuedate_yy - adjust_for_years,issuedate_mm - adjust_for_month);
 			end
-			%new_cf_day = check_day(valdate_yy,valdate_mm - adjust_for_month,valdate_dd - adjust_for_years )
+			%new_cf_day = check_day(issuedate_yy,issuedate_mm - adjust_for_month,valdate_dd - adjust_for_years )
 			diff_days = valuation_date - tmp_date;
 			cpi_initial = hist.getRate(value_type,-diff_days);
 		end
+	else % Compute initial index level from historical rate without lag
+		days_from_issuedate = issuedatenum - valuation_date;
+		cpi_initial = hist.getRate(value_type,days_from_issuedate);
 	end
     % preallocate memory
 	no_scen = max(length(iec.getRate(value_type,0)),length(cpi_level));
@@ -732,33 +734,59 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 		% check for indexation_lag and adjust timesteps accordingly
 		tmp_d1 = d1(ii);
 		tmp_d2 = d2(ii);
+		adjust_for_month = 0;
 		if (instrument.use_indexation_lag == true)
 			adjust_for_month = instrument.infl_exp_lag;
 			if (adjust_for_month ~= 0) % adjust for lag
-				adjust_for_years = floor(adjust_for_month/12);
-				adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
 				[d1_yy d1_mm d1_dd] = datevec(tmp_d1);
-				tmp_d1 = datenum([d1_yy - adjust_for_years,d1_mm - adjust_for_month, d1_dd] );
 				[d2_yy d2_mm d2_dd] = datevec(tmp_d2);
-				tmp_d2 = datenum([d2_yy - adjust_for_years,d2_mm - adjust_for_month, d2_dd] );
+				adjust_for_years = floor(adjust_for_month/12);
+							
+				adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
+				% if lagged date's year is previous year:
+				if (adjust_for_month > d1_mm)
+					adjust_for_years_d1 = 1;
+					adjust_for_month_d1 = adjust_for_month - 12;
+				else % same year
+					adjust_for_month_d1 = adjust_for_month;
+					adjust_for_years_d1 = adjust_for_years;
+				end
+				[d1_yy - adjust_for_years_d1,d1_mm - adjust_for_month_d1, d1_dd];
+				tmp_d1 = datenum([d1_yy - adjust_for_years_d1,d1_mm - adjust_for_month_d1, d1_dd] );
+				if (adjust_for_month > d2_mm)	% lag into previous yes
+					adjust_for_years_d2 = 1;
+					adjust_for_month_d2 = adjust_for_month - 12;
+				else % same year
+					adjust_for_month_d2 = adjust_for_month;
+					adjust_for_years_d2 = adjust_for_years;
+				end
+				tmp_d2 = datenum([d2_yy - adjust_for_years_d2,d2_mm - adjust_for_month_d2, d2_dd] );
 			end
 		end
 		% get timefactors and cf dates
         [tf dip dib] = timefactor (tmp_d1, tmp_d2, dcc);
         t1 = (tmp_d1 - valuation_date);
         t2 = (tmp_d2 - valuation_date);
-		
-        if ( t2 >= 0 && t2 >= t1 )        % future cash flows only
+		% future cash flows only, but adjust for indexation lag
+        if ( t2 >= 0 - (adjust_for_month * 31) && t2 >= t1 ) 
             % adjust notional according to CPI adjustment factor based on
             % interpolated inflation expectation curve rates
             % distinguish between t1 and t2
 			iec_rate = iec.getRate(value_type,t2);
-			adj_cpi_factor = 1 ./ discount_factor(valuation_date, tmp_d2, iec_rate, ...
-                                            iec.compounding_type, iec.basis, ...
-                                            iec.compounding_freq);	
-			% take adjust cpi factor relativ to initial cpi value
-            notional_tmp = notional .* adj_cpi_factor .* cpi_level ./ cpi_initial;
-			inflation_index(:,ii) = adj_cpi_factor .* cpi_level;
+			% special case: if indexation lag too large, take hist CPI level
+			if ( t2 > 0) 
+				adj_cpi_factor = 1 ./ discount_factor(valuation_date, tmp_d2, iec_rate, ...
+												iec.compounding_type, iec.basis, ...
+												iec.compounding_freq);
+				% take adjust cpi factor relative to initial cpi value
+				new_cpi_level = adj_cpi_factor .* cpi_level;
+				inflation_index(:,ii) = adj_cpi_factor .* cpi_level;
+			else
+				new_cpi_level = hist.getRate(value_type,t2);
+				inflation_index(:,ii) = new_cpi_level;
+			end
+            notional_tmp = notional .* new_cpi_level ./ cpi_initial;
+			
             cf_values(:,ii) = rates_interest(ii) .* notional_tmp;
 			% prorated == false: adjust deposit method to bond method --> in case
 			% of leap year adjust time period length by adding one day and

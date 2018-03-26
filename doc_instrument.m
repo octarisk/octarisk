@@ -1586,3 +1586,15 @@ end
 %! assert(interpolate_curve([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],-80),0.050000000000,eps)
 %! assert(interpolate_curve([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],-30),0.04333333333333333,eps)
 %! assert(interpolate_curve([-1,-5,-10,-20,-50],[0.01,0.02,0.03,0.04,0.05],30),0.010000000000,eps)
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Negative CF Fixed Rate Bond Object\n');
+%! b = Bond();
+%! b = b.set('Name','Test_FRB','coupon_rate',-0.035,'value_base',100,'coupon_generation_method','backward','term',365);
+%! b = b.set('maturity_date','31-Dec-2019','notional',100,'compounding_type','cont','issue_date','01-Feb-2011','day_count_convention','act/365');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[-0.035,-0.035],'method_interpolation','linear');
+%! b = b.rollout('base','31-Dec-2016');
+%! b = b.calc_value('31-Dec-2016','base',c);
+%! assert(b.get('cf_values'),[-3.43945837424335,-3.43945837424335,96.56054162575664],2e-14)
+%! assert(b.getValue('base'),100,2e-14);

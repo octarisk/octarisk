@@ -114,6 +114,10 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
     if ( timestep <= min(nodes) ) % constant or linear extrapolation
 		if ( strcmpi(method_extrapolation,'linear'))
 			y = interp1(nodes',rates',timestep,'linear','extrap')';
+			disp("next next")
+			nodes
+			rates
+			timestep
 			return
 		else
 			[minval tmp_idx] = min(nodes);
@@ -154,9 +158,12 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
             
         elseif (strcmpi(method,'constant'))          % constant interpolation 
             % take octaves built-in interpolation 
-            % -> previous neighbourfor compatiblity reasons
-            y = interp1(nodes',rates',timestep,'previous')';
-            
+            % -> next neighbour for compatiblity reasons (used for hist rates)
+			if ( all(nodes(2:end) < 0))
+				y = interp1(nodes',rates',timestep,'next')';
+            else
+				y = interp1(nodes',rates',timestep,'previous')';
+			end
         elseif (strcmpi(method,'previous'))      % mapping to previous neighbour 
             y = interp1(nodes',rates',timestep,'previous')';
             
