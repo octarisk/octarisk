@@ -5,7 +5,8 @@ classdef CapFloor < Instrument
         maturity_date = '';
         compounding_type = 'cont';
         compounding_freq = 1;  
-        term = 12;               
+        term = 12; 
+		term_unit = 'months';	% can be [days,months,years]
         day_count_convention = 'act/365';
         notional = 0;                 
         coupon_generation_method = 'backward';
@@ -34,7 +35,9 @@ classdef CapFloor < Instrument
         cms_model               = 'Black'; % volatility model [Black, normal]
         cms_convex_model        = 'Hull'; % Model for calculating convexity adj.
         cms_sliding_term        = 1825; % sliding term of CMS float leg in days
+		cms_sliding_term_unit   = 'days';   % can be [days,months,years]
         cms_term                = 365; % term of CMS
+		cms_term_unit			= 'days';	% can be [days,months,years]
         cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
@@ -98,7 +101,7 @@ classdef CapFloor < Instrument
          fprintf('issue_date: %s\n',b.issue_date);
          fprintf('maturity_date: %s\n',b.maturity_date);      
          fprintf('strike: %f \n',b.strike);     
-         fprintf('term: %f \n',b.term);      
+         fprintf('term: %d %s\n',b.term,b.term_unit);      
          fprintf('notional: %f \n',b.notional);  
          fprintf('notional_at_start: %d \n',b.notional_at_start);
          fprintf('notional_at_end: %d \n',b.notional_at_end);          
@@ -112,8 +115,9 @@ classdef CapFloor < Instrument
          fprintf('convex_adj: %s\n',any2str(b.convex_adj)); 
          if ( regexpi(b.sub_type,'CMS'))
             fprintf('cms_model: %s\n',b.cms_model); 
-            fprintf('cms_sliding_term: %s\n',any2str(b.cms_sliding_term)); 
-            fprintf('cms_term: %s\n',any2str(b.cms_term)); 
+            fprintf('cms_sliding_term: %s %s\n',any2str(b.cms_sliding_term), ...
+													b.cms_sliding_term_unit); 
+            fprintf('cms_term: %s %s\n',any2str(b.cms_term),b.cms_term_unit); 
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
@@ -195,6 +199,30 @@ classdef CapFloor < Instrument
          end
       end % set.sub_type
       
+	  function obj = set.term_unit(obj,term_unit)
+         if ~(strcmpi(term_unit,'days') || strcmpi(term_unit,'months') ...
+				|| strcmpi(term_unit,'years'))
+            error('CapFloor term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',term_unit,obj.id);
+         end
+         obj.term_unit = tolower(term_unit);
+      end % set.term_unit
+	  
+	  function obj = set.cms_term_unit(obj,cms_term_unit)
+         if ~(strcmpi(cms_term_unit,'days') || strcmpi(cms_term_unit,'months') ...
+				|| strcmpi(cms_term_unit,'years'))
+            error('CapFloor cms_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_term_unit,obj.id);
+         end
+         obj.cms_term_unit = tolower(cms_term_unit);
+      end % set.cms_term_unit
+	  
+	  function obj = set.cms_sliding_term_unit(obj,cms_sliding_term_unit)
+         if ~(strcmpi(cms_sliding_term_unit,'days') || strcmpi(cms_sliding_term_unit,'months') ...
+				|| strcmpi(cms_sliding_term_unit,'years'))
+            error('CapFloor cms_sliding_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_sliding_term_unit,obj.id);
+         end
+         obj.cms_sliding_term_unit = tolower(cms_sliding_term_unit);
+      end % set.cms_sliding_term_unit
+	  
       function obj = set.day_count_convention(obj,day_count_convention)
          obj.day_count_convention = day_count_convention;
          % Call superclass method to set basis
@@ -303,7 +331,7 @@ disp('Pricing Cap Object with Black Model')\n\
 cap = CapFloor();\n\
 cap = cap.set('id','TEST_CAP','name','TEST_CAP','issue_date','30-Dec-2018', ...\n\
 'maturity_date','29-Dec-2020','compounding_type','simple');\n\
-cap = cap.set('term',365,'notional',10000, ...\n\
+cap = cap.set('term',365,'term_unit','days','notional',10000, ...\n\
 'coupon_generation_method','forward','notional_at_start',0, ...\n\
 'notional_at_end',0);\n\
 cap = cap.set('strike',0.005,'model','Black','last_reset_rate',0.0, ...\n\

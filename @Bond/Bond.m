@@ -5,7 +5,8 @@ classdef Bond < Instrument
         maturity_date = '';
         compounding_type = 'disc';
         compounding_freq = 1;  
-        term = 12;               
+        term = 12;     
+		term_unit = 'months';	% can be [days,months,years]
         day_count_convention = 'act/365';
         notional = 0;           
         coupon_rate = 0.0;        
@@ -58,7 +59,9 @@ classdef Bond < Instrument
         cms_convex_model        = 'Hull'; % Model for calculating convexity adj.
         cms_model               = 'Black'; % volatility model [Black, normal]
         cms_sliding_term        = 1825; % sliding term of CMS float leg in days
+		cms_sliding_term_unit   = 'days';   % can be [days,months,years]
         cms_term                = 365; % term of CMS
+		cms_term_unit			= 'days';	% can be [days,months,years]
         cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
@@ -166,7 +169,7 @@ classdef Bond < Instrument
          else
             fprintf('compounding_freq: %d\n',b.compounding_freq);  
          end
-         fprintf('term: %d\n',b.term);   
+         fprintf('term: %d %s\n',b.term,b.term_unit);   
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('basis: %d\n',b.basis); 
          fprintf('Notional: %f %s\n',b.notional,b.currency); 
@@ -201,8 +204,9 @@ classdef Bond < Instrument
          if ( regexpi(b.sub_type,'CMS'))
             fprintf('vola_surface: %s\n',b.vola_surface); 
             fprintf('cms_model: %s\n',b.cms_model); 
-            fprintf('cms_sliding_term: %s\n',any2str(b.cms_sliding_term)); 
-            fprintf('cms_term: %s\n',any2str(b.cms_term)); 
+            fprintf('cms_sliding_term: %s %s\n',any2str(b.cms_sliding_term), ...
+													b.cms_sliding_term_unit);
+            fprintf('cms_term: %s %s\n',any2str(b.cms_term),b.cms_term_unit); 
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
@@ -228,7 +232,7 @@ classdef Bond < Instrument
             fprintf('vola_surface: %s\n',b.vola_surface); 
             fprintf('rate_composition: %s\n',b.rate_composition); 
             fprintf('cms_model: %s\n',b.cms_model); 
-            fprintf('cms_sliding_term: %s\n',any2str(b.cms_sliding_term)); 
+            fprintf('cms_sliding_term: %s %s\n',any2str(b.cms_sliding_term),b.cms_sliding_term_unit); 
             fprintf('cms_term: %s\n',any2str(b.cms_term)); 
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
@@ -339,20 +343,14 @@ classdef Bond < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
-      
-      function obj = set.term(obj,term)
-        if ( isempty(term))
-            fprintf('Need valid term for id >>%s<<. Setting to default value 12 month.\n',obj.id);
-            obj.term = 12;
-        else
-            if ( sum(term == [0;1;3;6;12;52;365]) == 0)
-                fprintf('Need valid term in [0;1;3;6;12;52;365] for id >>%s<<. Setting to default value 12 month.\n',obj.id);
-                obj.term = 12;
-            else 
-                obj.term = term;
-            end
-        end
-      end % set.term
+	  
+	  function obj = set.cms_term_unit(obj,cms_term_unit)
+         if ~(strcmpi(cms_term_unit,'days') || strcmpi(cms_term_unit,'months') ...
+				|| strcmpi(cms_term_unit,'years'))
+            error('CapFloor cms_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_term_unit,obj.id);
+         end
+         obj.cms_term_unit = tolower(cms_term_unit);
+      end % set.cms_term_unit
       
       function obj = set.coupon_generation_method(obj,coupon_generation_method)
         if ( strcmpi(coupon_generation_method,'backward'))
@@ -427,6 +425,22 @@ classdef Bond < Instrument
          end
          obj.coupon_prepay = tolower(coupon_prepay);
       end % set.coupon_prepay
+	  
+	  function obj = set.term_unit(obj,term_unit)
+         if ~(strcmpi(term_unit,'days') || strcmpi(term_unit,'months') ...
+				|| strcmpi(term_unit,'years'))
+            error('Bond term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',term_unit,obj.id);
+         end
+         obj.term_unit = tolower(term_unit);
+      end % set.term_unit
+  
+	  function obj = set.cms_sliding_term_unit(obj,cms_sliding_term_unit)
+         if ~(strcmpi(cms_sliding_term_unit,'days') || strcmpi(cms_sliding_term_unit,'months') ...
+				|| strcmpi(cms_sliding_term_unit,'years'))
+            error('Bond cms_sliding_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_sliding_term_unit,obj.id);
+         end
+         obj.cms_sliding_term_unit = tolower(cms_sliding_term_unit);
+      end % set.cms_sliding_term_unit
   
       function obj = set.credit_state(obj,credit_state)
 		 credit_state = upper(credit_state);
@@ -557,7 +571,7 @@ b = b.set('Name','Test_FRN','coupon_rate',0.00,'value_base',99.7527, ...\n\
 'coupon_generation_method','backward','compounding_type','simple');\n\
 b = b.set('maturity_date','30-Mar-2017','notional',100, ...\n\
 'compounding_type','simple','issue_date','21-Apr-2011');\n\
-b = b.set('term',3,'last_reset_rate',-0.0024,'sub_Type','FRN','spread',0.003);\n\
+b = b.set('term',3,'term_unit','months','last_reset_rate',-0.0024,'sub_Type','FRN','spread',0.003);\n\
 r = Curve();\n\
 r = r.set('id','REF_IR_EUR','nodes',[30,91,365,730], ...\n\
 'rates_base',[0.0001002740,0.0001002740,0.0001001390,0.0001000690], ...\n\

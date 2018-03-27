@@ -110,7 +110,7 @@ end
 %!test 
 %! fprintf('\tdoc_instrument:\tCalculating Key Rate Durations and Convexity\n');
 %! b = Bond();
-%! b = b.set('Name','Test_FRB','coupon_rate',0.01,'value_base',100,'clean_value_base',0,'coupon_generation_method','backward','term',365);
+%! b = b.set('Name','Test_FRB','coupon_rate',0.01,'value_base',100,'clean_value_base',0,'coupon_generation_method','backward','term',365,'term_unit','days');
 %! b = b.set('maturity_date','30-Dec-2019','notional',100,'compounding_type','simple','issue_date','30-Dec-2016');
 %! b = b.set('key_term',[365,730,1095],'key_rate_shock',0.01,'key_rate_width',365);
 %! b = b.rollout('base','30-Dec-2016');
@@ -550,7 +550,7 @@ end
 %! fprintf('\tdoc_instrument:\tPricing Cap Object with Black Model\n');
 %! cap = CapFloor();
 %! cap = cap.set('id','TEST_CAP','name','TEST_CAP','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
-%! cap = cap.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! cap = cap.set('term',365,'term_unit','days','notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
 %! cap = cap.set('strike',0.005,'model','Black','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','CAP');
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[30,1095,1460],'rates_base',[0.01,0.01,0.01],'method_interpolation','linear');
@@ -579,7 +579,7 @@ end
 %! iec = iec.set('id','IEC_CURVE', 'type', 'Inflation Expectation Curve', 'nodes',[365,730,1095],'rates_base',[0.0025,0.004,0.005],'rates_stress',[0.0025,0.004,0.005;0.0025,0.004,0.005],'method_interpolation','linear','compounding_type','continuous','day_count_convention','act/365');
 %! cap = CapFloor();
 %! cap = cap.set('id','TEST_CAP','name','TEST_CAP','issue_date',valuation_date,'maturity_date','31-Mar-2017','compounding_type','simple');
-%! cap = cap.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0,'prorated',true);
+%! cap = cap.set('term',365,'term_unit','days','notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0,'prorated',true);
 %! cap = cap.set('strike',0.01,'model','Black','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR_INFL','in_arrears',0);
 %! cap = cap.set('cpi_index','CPI','infl_exp_curve','IEC_CURVE','cpi_historical_curve','HIST_CURVE','infl_exp_lag',12,'use_indexation_lag',false);
 %! cap = cap.rollout(valuation_date,'base',iec,hist,cpi);
@@ -603,9 +603,9 @@ end
 %! v = v.set('type','IRVol');
 %! cap_cms = CapFloor();
 %! cap_cms = cap_cms.set('id','TEST_CAP','name','TEST_CAP','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
-%! cap_cms = cap_cms.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! cap_cms = cap_cms.set('term',365,'term_unit','days','notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
 %! cap_cms = cap_cms.set('strike',0.005,'model','Black','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','CAP_CMS');
-%! cap_cms = cap_cms.set('cms_model','Black','cms_sliding_term',365,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple');
+%! cap_cms = cap_cms.set('cms_model','Black','cms_sliding_term',365,'cms_term',365,'cms_term_unit','days','cms_spread',0.0,'cms_comp_type','simple');
 %! cap_cms = cap_cms.rollout( '31-Dec-2015', 'base', c, v);
 %! cap_cms = cap_cms.calc_value('31-Dec-2015','base',c);
 %! assert(cap_cms.getValue('base'),137.006395938592,0.0000001);
@@ -614,7 +614,7 @@ end
 %! fprintf('\tdoc_instrument:\tPricing 1st Floor Object with Normal Model\n');
 %! floor = CapFloor();
 %! floor = floor.set('id','TEST_FLOOR','name','TEST_FLOOR','issue_date','30-Dec-2018','maturity_date','29-Dec-2020','compounding_type','simple');
-%! floor = floor.set('term',365,'notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! floor = floor.set('term',365,'term_unit','days','notional',10000,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
 %! floor = floor.set('strike',0.005,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR','convex_adj',false);
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[30,1095,1460,1825],'rates_base',[0.01,0.01,0.01,0.01],'method_interpolation','linear');
@@ -641,7 +641,7 @@ end
 %! fprintf('\tdoc_instrument:\tPricing 2nd Floor Object with Normal Model\n');
 %! floor = CapFloor();
 %! floor = floor.set('id','TEST_FLOOR','name','TEST_FLOOR','issue_date','30-Jun-2017','maturity_date','30-Jun-2018','compounding_type','simple');
-%! floor = floor.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! floor = floor.set('term',365,'term_unit','days','notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
 %! floor = floor.set('strike',0.05,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR','convex_adj',false);
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[365,730,1095],'rates_base',[-0.0001756810,-0.0003231590,-0.0002455850],'method_interpolation','linear');
@@ -658,9 +658,9 @@ end
 %! fprintf('\tdoc_instrument:\tPricing CMS Floor Object with Normal Model without CA\n');
 %! floor = CapFloor();
 %! floor = floor.set('id','TEST_FLOOR','name','TEST_FLOOR','issue_date','29-Jun-2021','maturity_date','29-Jun-2022','compounding_type','simple');
-%! floor = floor.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0,'ir_shock',0.005);
+%! floor = floor.set('term',365,'term_unit','days','notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0,'ir_shock',0.005);
 %! floor = floor.set('strike',0.02,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','FLOOR_CMS','convex_adj',false);
-%! floor = floor.set('cms_model','Normal','cms_sliding_term',365,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hull');
+%! floor = floor.set('cms_model','Normal','cms_sliding_term',365,'cms_term',365,'cms_term_unit','days','cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hull');
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[1460,1825,2190,2555],'rates_base',[-0.0007102520,-0.0000300010,0.0008896040,0.0018981976],'method_interpolation','linear');
 %! v = Surface();
@@ -854,14 +854,14 @@ end
 %!         'method_interpolation','linear');
 %! fix = Bond();
 %! fix = fix.set('Name','SWAP_FIXED','coupon_rate',0.045,'value_base',100,'coupon_generation_method','forward','sub_type','SWAP_FIXED');
-%! fix = fix.set('maturity_date','24-Mar-2046','notional',100,'compounding_type','simple','issue_date','26-Mar-2036','term',365,'notional_at_end',0);
+%! fix = fix.set('maturity_date','24-Mar-2046','notional',100,'compounding_type','simple','issue_date','26-Mar-2036','term',365,'term_unit','days','notional_at_end',0);
 %! fix = fix.rollout('base','31-Mar-2016');
 %! fix = fix.rollout('stress','31-Mar-2016');
 %! fix = fix.calc_value('31-Mar-2016','base',r);  
 %! fix = fix.calc_value('31-Mar-2016','stress',r);
 %! float = Bond();
 %! float = float.set('Name','SWAP_FLOAT','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','SWAP_FLOATING','spread',0.00);
-%! float = float.set('maturity_date','24-Mar-2046','notional',100,'compounding_type','simple','issue_date','26-Mar-2036','term',365,'notional_at_end',0);
+%! float = float.set('maturity_date','24-Mar-2046','notional',100,'compounding_type','simple','issue_date','26-Mar-2036','term',365,'term_unit','days','notional_at_end',0);
 %! float = float.rollout('base',r,'31-Mar-2016');
 %! float = float.rollout('stress',r,'31-Mar-2016');
 %! float = float.calc_value('30-Sep-2016','base',r);  
@@ -922,8 +922,8 @@ end
 %! hist = hist.set('id','HIST_CURVE', 'type', 'Historical Curve', 'nodes',[0,-365, -730, -1095, -1460, -1825, -2190],'rates_base',[0.0001,0.00064,0.00278,0.00177,0.01291,0.01042,0.01046],'method_interpolation','next');
 %! float = Bond();
 %! float = float.set('Name','SWAP_FLOATING_AVG_TEST','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','SWAP_FLOATING_FWD_SPECIAL','spread',0.00);
-%! float = float.set('maturity_date',datestr(valuation_date + 4015),'notional',100,'compounding_type','simple','issue_date',datestr(valuation_date + 365),'term',365,'notional_at_end',0);
-%! float = float.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'in_arrears',0,'rate_composition','average');
+%! float = float.set('maturity_date',datestr(valuation_date + 4015),'notional',100,'compounding_type','simple','issue_date',datestr(valuation_date + 365),'term',365,'term_unit','days','notional_at_end',0);
+%! float = float.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'cms_term_unit','days','in_arrears',0,'rate_composition','average');
 %! value_type = 'base'; 
 %! float = float.rollout(value_type, valuation_date, neg_curve, hist);
 %! float = float.calc_value(valuation_date,value_type,neg_curve);
@@ -935,8 +935,8 @@ end
 %! valuation_date = datenum('31-Mar-2016');
 %! cms_float = Bond();
 %! cms_float = cms_float.set('Name','CMS_FLOAT','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','CMS_FLOATING','spread',0.00);
-%! cms_float = cms_float.set('maturity_date','26-Mar-2036','notional',100,'compounding_type','simple','issue_date','29-Mar-2026','term',365,'notional_at_end',0);
-%! cms_float = cms_float.set('cms_model','Black','cms_sliding_term',1825,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hull');
+%! cms_float = cms_float.set('maturity_date','26-Mar-2036','notional',100,'compounding_type','simple','issue_date','29-Mar-2026','term',365,'term_unit','days','notional_at_end',0);
+%! cms_float = cms_float.set('cms_model','Black','cms_sliding_term',1825,'cms_term',365,'cms_term_unit','days','cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hull');
 %! ref_curve = Curve();
 %! ref_curve = ref_curve.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125], ...
 %!       'rates_base',[-0.003893453,-0.00290339,-0.001494198,-0.001505168,-0.001137107,-0.000482153,0.000352778,0.001307437,0.002381893,0.003485566, ...
@@ -983,9 +983,9 @@ end
 %! value_type = 'base'; 
 %! cap_cms = CapFloor();
 %! cap_cms = cap_cms.set('id','TEST_CAP','name','TEST_CAP','issue_date','31-Mar-2018','maturity_date','31-Mar-2019','compounding_type','simple');
-%! cap_cms = cap_cms.set('term',365,'notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
+%! cap_cms = cap_cms.set('term',365,'term_unit','days','notional',100,'coupon_generation_method','forward','notional_at_start',0,'notional_at_end',0);
 %! cap_cms = cap_cms.set('strike',0.005,'model','Normal','last_reset_rate',0.0,'day_count_convention','act/365','sub_type','CAP_CMS');
-%! cap_cms = cap_cms.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan');
+%! cap_cms = cap_cms.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'cms_term_unit','days','cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan');
 %! cap_cms = cap_cms.rollout( '31-Mar-2016', 'base', c, v);
 %! cap_cms = cap_cms.calc_value('31-Mar-2016','base',c);
 %! cap_cms = cap_cms.rollout( '31-Mar-2016', 'stress', c, v);
@@ -1014,9 +1014,9 @@ end
 %! valuation_date = '30-Jun-2017';
 %! cap_float = Bond();
 %! cap_float = cap_float.set('Name','TEST_FRN_SPECIAL','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','FRN_SPECIAL','spread',0.00);
-%! cap_float = cap_float.set('maturity_date','30-Jun-2023','notional',100,'compounding_type','simple','compounding_freq','semi-annual','issue_date','30-Jun-2017','term',365,'notional_at_end',1,'convex_adj',true);
+%! cap_float = cap_float.set('maturity_date','30-Jun-2023','notional',100,'compounding_type','simple','compounding_freq','semi-annual','issue_date','30-Jun-2017','term',365,'term_unit','days','notional_at_end',1,'convex_adj',true);
 %! cap_float = cap_float.set('rate_composition','capitalized','day_count_convention','act/365');
-%! cap_float = cap_float.set('cms_model','Normal','cms_sliding_term',3650,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan','in_arrears',0);
+%! cap_float = cap_float.set('cms_model','Normal','cms_sliding_term',3650,'cms_term',365,'cms_term_unit','days','cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan','in_arrears',0);
 %! value_type = 'base'; 
 %! cap_float = cap_float.rollout(value_type, valuation_date, c, vv);
 %! cap_float = cap_float.calc_value(valuation_date,value_type,c);
@@ -1028,7 +1028,7 @@ end
 %! valuation_date = datenum('31-Mar-2016');
 %! float = Bond();
 %! float = float.set('Name','FLOAT','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','SWAP_FLOATING','spread',0.00);
-%! float = float.set('maturity_date','29-Mar-2026','notional',100,'compounding_type','simple','issue_date','31-Mar-2016','term',365,'notional_at_end',1);
+%! float = float.set('maturity_date','29-Mar-2026','notional',100,'compounding_type','simple','issue_date','31-Mar-2016','term',365,'term_unit','days','notional_at_end',1);
 %! float = float.set('in_arrears',1);
 %! ref_curve = Curve();
 %! ref_curve = ref_curve.set('id','IR_EUR','nodes',[30,91,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125], ...
@@ -1083,7 +1083,7 @@ end
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Forward Rate Agreement\n');
 %! b = Bond();
-%! b = b.set('Name','Test_FRA','coupon_rate',0.01,'value_base',100,'clean_value_base',0,'coupon_generation_method','backward','term',365);
+%! b = b.set('Name','Test_FRA','coupon_rate',0.01,'value_base',100,'clean_value_base',0,'coupon_generation_method','backward','term',365,'term_unit','days');
 %! b = b.set('maturity_date','30-Dec-2017','notional',100,'compounding_type','simple','issue_date','30-Dec-2016','sub_type','FRA','day_count_convention','act/365');
 %! b = b.set('strike_rate',0.0000,'underlying_maturity_date','30-Dec-2018','coupon_prepay','Discount');
 %! c = Curve();
@@ -1095,7 +1095,7 @@ end
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing Forward Volatility Agreement\n');
 %! b = Bond();
-%! b = b.set('Name','Test_FVA','value_base',100,'coupon_generation_method','backward','term',365);
+%! b = b.set('Name','Test_FVA','value_base',100,'coupon_generation_method','backward','term',365,'term_unit','days');
 %! b = b.set('maturity_date','21-Jun-2013','notional',1000,'compounding_type','simple','issue_date','22-Jun-2010','sub_type','FVA','day_count_convention','act/365');
 %! b = b.set('strike_rate',0.12,'underlying_maturity_date','21-Jun-2014','fva_type','volatility');
 %! c = Curve();
@@ -1440,7 +1440,7 @@ end
 %! % reference asset:
 %! a = Bond();
 %! a = a.set('id','REFBOND','credit_state','AA','issue_date','30-Jun-2017','maturity_date','29-Jun-2020');
-%! a = a.set('coupon_rate',0.02,'sub_type','FRB','notional',100,'coupon_generation_method','forward','term',365);
+%! a = a.set('coupon_rate',0.02,'sub_type','FRB','notional',100,'coupon_generation_method','forward','term',365,'term_unit','days');
 %! a = a.rollout(value_type, valuation_date);
 %! % reference curve
 %! c = Curve();
@@ -1590,7 +1590,7 @@ end
 %!test
 %! fprintf('\tdoc_instrument:\tPricing Negative CF Fixed Rate Bond Object\n');
 %! b = Bond();
-%! b = b.set('Name','Test_FRB','coupon_rate',-0.035,'value_base',100,'coupon_generation_method','backward','term',365);
+%! b = b.set('Name','Test_FRB','coupon_rate',-0.035,'value_base',100,'coupon_generation_method','backward','term',365,'term_unit','days');
 %! b = b.set('maturity_date','31-Dec-2019','notional',100,'compounding_type','cont','issue_date','01-Feb-2011','day_count_convention','act/365');
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[365,3650],'rates_base',[-0.035,-0.035],'method_interpolation','linear');

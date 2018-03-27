@@ -91,26 +91,26 @@ if nargin > 3
     end
     notional = instrument.notional;
     term = instrument.term;
+	term_unit = instrument.term_unit;
     compounding_freq = instrument.compounding_freq;
     maturity_date = instrument.maturity_date;
-
-    % get term time factor (payments per year)
-    if ( mod(term,365) == 0 && term ~= 0)
-        term_factor = 365 / term; 
-    elseif ( term == 12 || term == 52)
-        term_factor = 1; 
-    elseif ( term == 6)
-        term_factor = 2; 
-    elseif ( term == 3)
-        term_factor = 4; 
-    elseif ( term == 1)
-        term_factor = 12;
-    elseif ( term == 0) % All cash flows are paid at maturity
+    
+	if ( term != 0)
+		if ( strcmpi(term_unit,'months'))
+			term_factor = 12 / term;
+		elseif ( strcmpi(term_unit,'days') )
+			term_factor = 365 / term;
+		else % years
+			term_factor = 1 / term;
+		end
+	else % Special case: all cash flows are paid at maturity
+		term = datenum(maturity_date) - datenum(issue_date);
+		term_unit = 'days';
         term_factor = 1;         
-    else    
-        term_factor = 1;
     end
     comp_freq = term_factor;
+
+	%----------------------------------
 % check for existing interest rate curve for FRN
 if (nargin < 2 && strcmp(type,'FRN') == 1)
     error('Too few arguments. No existing IR curve for type FRN.');
@@ -138,155 +138,47 @@ if ( issuedatenum > maturitydatenum)
 end
 
 % ------------------------------------------------------------------------------
-% Start Calculation:
-issuevec = datevec_fast(issuedatenum);
-todayvec = datevec_fast(valuation_date);
-matvec = datevec_fast(maturitydatenum);
-% floor forward rate at 0.000001:
-floor_flag = false;
-% cashflow rollout: method backwards
-if ( strcmpi(coupon_generation_method,'backward') )
-	cf_date = matvec;
-	cf_dates = cf_date;
-    cfdatenum = maturitydatenum;
-	while cfdatenum >= issuedatenum
-		cf_year = cf_date(:,1);
-		cf_month = cf_date(:,2);
-		cf_day  = cf_date(:,3);
-		cf_original_day  = matvec(:,3);
-		
-		% depending on frequency, adjust year, month or day
-		% rollout for annual (compounding frequency = 1 payment per year)
-		if ( term == 12)
-			new_cf_year = cf_year - 1;
-			new_cf_month = cf_month;
-			new_cf_day = cf_day;
-			
-		% rollout for annual 365 days (compounding frequency = 1 payment per year)
-		elseif ( term == 365 || term == 52 || term == 0)
-			new_cf_date = cfdatenum-365;
-			new_cf_date = datevec_fast(new_cf_date);
-			new_cf_year = new_cf_date(:,1);
-			new_cf_month = new_cf_date(:,2);
-			new_cf_day = new_cf_date(:,3);    
-			
-		% rollout for semi-annual (compounding frequency = 2 payments per year)
-		elseif ( term == 6)
-			new_cf_year = cf_year;
-			new_cf_month = cf_month - 6;
-			if ( new_cf_month <= 0 )
-				new_cf_month = cf_month + 6;
-				new_cf_year = cf_year - 1;
+% Cash flow date calculation:
+	issuevec = datevec_fast(issuedatenum);
+	todayvec = datevec_fast(valuation_date);
+	matvec = datevec_fast(maturitydatenum);
+	% floor forward rate at 0.000001:
+	floor_flag = false;
+	% cashflow rollout: method backwards
+	if ( strcmpi(coupon_generation_method,'backward') )
+		cf_date = matvec;
+		cf_dates = cf_date;
+		cfdatenum = maturitydatenum;
+		mult = 0;
+		while cfdatenum >= issuedatenum
+			mult += 1;
+			[cfdatenum cf_date] = addtodatefinancial(maturitydatenum, -term * mult, term_unit);
+			if cfdatenum >= issuedatenum
+				cf_dates = [cf_dates ; cf_date];
 			end
-			
-			% error checking for end of month
-			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-		% rollout for quarter (compounding frequency = 4 payments per year)
-		elseif ( term == 3)
-			new_cf_year = cf_year;
-			new_cf_month = cf_month - 3;
-			if ( new_cf_month <= 0 )
-				new_cf_month = cf_month + 9;
-				new_cf_year = cf_year - 1;
-			end
-			
-			% error checking for end of month
-			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-		% rollout for monthly (compounding frequency = 12 payments per year)
-		elseif ( term == 1)
-			cf_day = cf_original_day;
-			new_cf_year = cf_year;
-			new_cf_month = cf_month - 1;
-			if ( new_cf_month <= 0 )
-				new_cf_month = cf_month + 11;
-				new_cf_year = cf_year - 1;
-			end
-			
-			% error checking for end of month
-			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-		end
-		% update cf_date
-		cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
-		cfdatenum = datenum_fast(cf_date);
-		if cfdatenum >= issuedatenum
-			cf_dates = [cf_dates ; cf_date];
-		end
-	end % end coupon generation backward
-    % flip cf_date vector (since backward has reverse order)
-	cf_dates = flipud(cf_dates);
+		end % end coupon generation backward
+		% flip cf_date vector (since backward has reverse order)
+		cf_dates = flipud(cf_dates);
 
-% cashflow rollout: method forward
-elseif ( strcmpi(coupon_generation_method,'forward') )
-	cf_date = issuevec;
-	cf_dates = cf_date;
-	cfdatenum = issuedatenum;
-	while cfdatenum <= maturitydatenum
-		cf_year = cf_date(:,1);
-		cf_month = cf_date(:,2);
-		cf_day  = cf_date(:,3);
-		cf_original_day  = issuevec(:,3);
-		
-		% depending on frequency, adjust year, month or day
-		% rollout for annual (compounding frequency = 1 payment per year)
-		if ( term == 12)
-			new_cf_year = cf_year + 1;
-			new_cf_month = cf_month;
-			new_cf_day = cf_day;
-		% rollout for annual 365 days (compounding frequency = 1 payment per year)
-		elseif ( term == 365 || term == 52 || term == 0)
-			new_cf_date = cfdatenum + 365;
-			new_cf_date = datevec_fast(new_cf_date);
-			new_cf_year = new_cf_date(:,1);
-			new_cf_month = new_cf_date(:,2);
-			new_cf_day = new_cf_date(:,3);   
-		% rollout for semi-annual (compounding frequency = 2 payments per year)
-		elseif ( term == 6)
-			new_cf_year = cf_year;
-			new_cf_month = cf_month + 6;
-			if ( new_cf_month >= 13 )
-				new_cf_month = cf_month - 6;
-				new_cf_year = cf_year + 1;
+	% cashflow rollout: method forward
+	elseif ( strcmpi(coupon_generation_method,'forward') )
+		cf_date = issuevec;
+		cf_dates = cf_date;
+		cfdatenum = issuedatenum;
+		mult = 0;
+		while cfdatenum <= maturitydatenum
+			mult += 1;
+			[cfdatenum cf_date] = addtodatefinancial(issuedatenum, term * mult, term_unit);
+			if ( cfdatenum <= maturitydatenum)
+				cf_dates = [cf_dates ; cf_date];
 			end
-			% error checking for end of month
-			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-		% rollout for quarter (compounding frequency = 4 payments per year)
-		elseif ( term == 3)
-			new_cf_year = cf_year;
-			new_cf_month = cf_month + 3;
-			if ( new_cf_month >= 13 )
-				new_cf_month = cf_month - 9;
-				new_cf_year = cf_year + 1;
-			end
-			% error checking for end of month
-			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-		% rollout for monthly (compounding frequency = 12 payments per year)
-		elseif ( term == 1)
-			cf_day = cf_original_day;
-			new_cf_year = cf_year;
-			new_cf_month = cf_month + 1;
-			if ( new_cf_month >= 13 )
-				new_cf_month = cf_month - 11;
-				new_cf_year = cf_year + 1;
-			end
-			% error checking for end of month
-			new_cf_day = check_day(new_cf_year,new_cf_month,cf_original_day);
-		else
-			error('rollout_cashflows_oop: unknown term >>%s<<',any2str(term));
-		end
-		% update cf_date
-		cf_date = [new_cf_year, new_cf_month, new_cf_day, 0, 0, 0];
-		cfdatenum = datenum_fast(cf_date);
-		if ( cfdatenum <= maturitydatenum)
-			cf_dates = [cf_dates ; cf_date];
-		end
-	end        % end coupon generation forward
+		end        % end coupon generation forward
 
-%-------------------------------------------------------------------------------
-% cashflow rollout: method zero
-elseif ( strcmpi(coupon_generation_method,'zero'))
-    % rollout for zero coupon bonds -> just one cashflow at maturity
-        cf_dates = [issuevec ; matvec];
-end 
+	% cashflow rollout: method zero
+	elseif ( strcmpi(coupon_generation_method,'zero'))
+		% rollout for zero coupon bonds -> just one cashflow at maturity
+			cf_dates = [issuevec ; matvec];
+	end 
 %-------------------------------------------------------------------------------    
 
 %-------------------------------------------------------------------------------
@@ -683,7 +575,7 @@ elseif ( strcmpi(type,'FVA') )
 
 % Type Inflation Linked Bonds: Calculate CPI adjustedCF Values 
 elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_INFL') )
-	% remap input objects: ref_curve, surface,riskfactor
+	% remap input objects: ref_curve, surface, riskfactor
 	iec 	= ref_curve;
 	hist 	= surface;
 	cpi 	= riskfactor;
@@ -698,21 +590,9 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 	% get historical index level for indexation lag > 0
 	if (instrument.use_indexation_lag == true)
 		adjust_for_month = instrument.infl_exp_lag;
-		if (adjust_for_month ~= 0) % adjust for lag
-			adjust_for_years = floor(adjust_for_month/12);
-			adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
-			% calculate indexation lag in days:
-			[issuedate_yy issuedate_mm issuedate_dd] = datevec(issue_date);
-			tmp_date = datenum([issuedate_yy - adjust_for_years, ...
-							issuedate_mm - adjust_for_month, issuedate_dd]  );
-			% adjust for end of month if necessary:
-			if (eomdate(issuedate_yy,issuedate_mm) == valuation_date)
-				tmp_date = eomdate(issuedate_yy - adjust_for_years,issuedate_mm - adjust_for_month);
-			end
-			%new_cf_day = check_day(issuedate_yy,issuedate_mm - adjust_for_month,valdate_dd - adjust_for_years )
-			diff_days = valuation_date - tmp_date;
-			cpi_initial = hist.getRate(value_type,-diff_days);
-		end
+		tmp_date = addtodatefinancial(issuedatenum, 0, -adjust_for_month, 0);
+		diff_days = valuation_date - tmp_date;
+		cpi_initial = hist.getRate(value_type,-diff_days);
 	else % Compute initial index level from historical rate without lag
 		days_from_issuedate = issuedatenum - valuation_date;
 		cpi_initial = hist.getRate(value_type,days_from_issuedate);
@@ -737,31 +617,8 @@ elseif ( strcmpi(type,'ILB') || strcmpi(type,'CAP_INFL') || strcmpi(type,'FLOOR_
 		adjust_for_month = 0;
 		if (instrument.use_indexation_lag == true)
 			adjust_for_month = instrument.infl_exp_lag;
-			if (adjust_for_month ~= 0) % adjust for lag
-				[d1_yy d1_mm d1_dd] = datevec(tmp_d1);
-				[d2_yy d2_mm d2_dd] = datevec(tmp_d2);
-				adjust_for_years = floor(adjust_for_month/12);
-							
-				adjust_for_month = adjust_for_month - floor(adjust_for_month/12) * 12;
-				% if lagged date's year is previous year:
-				if (adjust_for_month > d1_mm)
-					adjust_for_years_d1 = 1;
-					adjust_for_month_d1 = adjust_for_month - 12;
-				else % same year
-					adjust_for_month_d1 = adjust_for_month;
-					adjust_for_years_d1 = adjust_for_years;
-				end
-				[d1_yy - adjust_for_years_d1,d1_mm - adjust_for_month_d1, d1_dd];
-				tmp_d1 = datenum([d1_yy - adjust_for_years_d1,d1_mm - adjust_for_month_d1, d1_dd] );
-				if (adjust_for_month > d2_mm)	% lag into previous yes
-					adjust_for_years_d2 = 1;
-					adjust_for_month_d2 = adjust_for_month - 12;
-				else % same year
-					adjust_for_month_d2 = adjust_for_month;
-					adjust_for_years_d2 = adjust_for_years;
-				end
-				tmp_d2 = datenum([d2_yy - adjust_for_years_d2,d2_mm - adjust_for_month_d2, d2_dd] );
-			end
+			tmp_d1 = addtodatefinancial(tmp_d1, 0, -adjust_for_month, 0);
+			tmp_d2 = addtodatefinancial(tmp_d2, 0, -adjust_for_month, 0);
 		end
 		% get timefactors and cf dates
         [tf dip dib] = timefactor (tmp_d1, tmp_d2, dcc);
@@ -1076,10 +933,13 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
     [tf dip dib] = timefactor (d1, d2, dcc);
 	% get instrument attributes
 	sliding_term        = instrument.cms_sliding_term;
+	sliding_term_unit   = instrument.cms_sliding_term_unit;
 	underlying_term     = instrument.cms_term;
+	underlying_term_unit = instrument.cms_term_unit;
 	underlying_spread   = instrument.cms_spread;
 	underlying_comp_type = instrument.cms_comp_type;
 	model               = instrument.cms_model;	
+	
     % preset swap
 	swap = Bond();
 	swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
@@ -1088,7 +948,7 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
 					'sub_type', 'SWAP_FIXED','spread',0.00, ...
 					'notional',1,'notional_at_end',0, ...
 					'compounding_type',underlying_comp_type, ...
-					'term',underlying_term, ...
+					'term',underlying_term, 'term_unit', underlying_term_unit, ...
 					'notional_at_start',0);	
     for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
@@ -1107,8 +967,12 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
              % fixing_start_date
              % payment_date
             % set up underlying swap
-            swap = swap.set('maturity_date',valuation_date + fixing_start_date + sliding_term, ...
-                            'issue_date', valuation_date + fixing_start_date);
+			
+			swap_issue_date = addtodatefinancial(valuation_date,fixing_start_date,'days');
+			swap_mat_date = addtodatefinancial(swap_issue_date,sliding_term,sliding_term_unit);
+			dtm_tmp = swap_mat_date - swap_issue_date;
+            swap = swap.set('maturity_date',swap_mat_date, ...
+                            'issue_date', swap_issue_date);
             % get volatility according to moneyness and term
             if ( regexpi(surface.moneyness_type,'-'))
                 moneyness = 0.0; % surface with absolute moneyness
@@ -1116,7 +980,7 @@ elseif ( strcmpi(type,'FRN_SPECIAL') || strcmpi(type,'FRN_CMS_SPECIAL'))
                 moneyness = 1.0; % surface with relative moneyness
             end
             tenor   = fixing_start_date; % days until foward start date
-            sigma   = surface.getValue(value_type,tenor,sliding_term,moneyness);  
+            sigma   = surface.getValue(value_type,tenor,dtm_tmp,moneyness);  
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
             if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
@@ -1222,7 +1086,9 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
     [tf dip dib] = timefactor (d1, d2, dcc);
 	% get instrument data
 	sliding_term        = instrument.cms_sliding_term;
+	sliding_term_unit   = instrument.cms_sliding_term_unit;
 	underlying_term     = instrument.cms_term;
+	underlying_term_unit = instrument.cms_term_unit;
 	underlying_spread   = instrument.cms_spread;
 	underlying_comp_type = instrument.cms_comp_type;
 	model               = instrument.cms_model;
@@ -1233,7 +1099,8 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
 					'forward','last_reset_rate',-0.000, ...
 					'sub_type', 'SWAP_FLOATING','spread',0.00, ...
 					'notional',1,'compounding_type',underlying_comp_type, ...
-					'term',underlying_term,'notional_at_end',0, ...
+					'term',underlying_term, 'term_unit', underlying_term_unit, ...
+					'notional_at_end',0, ...
 					'notional_at_start',0);	
     for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
@@ -1252,8 +1119,11 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
             %payment_date
             
             % set up underlying swap
-            swap = swap.set('maturity_date',valuation_date + fixing_start_date + sliding_term, ...
-                            'issue_date', valuation_date + fixing_start_date);
+            swap_issue_date = addtodatefinancial(valuation_date,fixing_start_date,'days');
+			swap_mat_date = addtodatefinancial(swap_issue_date,sliding_term,sliding_term_unit);
+			dtm_tmp = swap_mat_date - swap_issue_date;
+            swap = swap.set('maturity_date',swap_mat_date, ...
+                            'issue_date', swap_issue_date);
 							
             % get volatility according to moneyness and term
             if ( regexpi(surface.moneyness_type,'-'))
@@ -1262,7 +1132,7 @@ elseif ( strcmpi(type,'CMS_FLOATING') || strcmpi(type,'CAP_CMS') || strcmpi(type
                 moneyness = 1.0; % surface with relative moneyness
             end
             tenor   = fixing_start_date; % days until foward start date
-            sigma   = surface.getValue(value_type,tenor,sliding_term,moneyness); 
+            sigma   = surface.getValue(value_type,tenor,dtm_tmp,moneyness); 
 				
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
@@ -1990,6 +1860,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
+%! bond_struct.term_unit				= 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.prorated                 = true;
@@ -2020,6 +1891,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
+%! bond_struct.term_unit				= 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.prorated                 = true;
@@ -2050,6 +1922,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
+%! bond_struct.term_unit				= 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.use_annuity_amount       = 0;
@@ -2082,6 +1955,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
+%! bond_struct.term_unit				= 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
@@ -2119,6 +1993,7 @@ end
 %! bond_struct.compounding_type         = 'disc';
 %! bond_struct.compounding_freq         = 1;
 %! bond_struct.term                     = 365;
+%! bond_struct.term_unit                = 'days';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
@@ -2156,6 +2031,7 @@ end
 %! cap_struct.compounding_type         = 'cont';
 %! cap_struct.compounding_freq         = 1;
 %! cap_struct.term                     = 3;
+%! cap_struct.term_unit				   = 'months';
 %! cap_struct.day_count_convention     = 'act/365';
 %! cap_struct.basis                    = 3;
 %! cap_struct.notional                 = 10000 ;
@@ -2198,6 +2074,7 @@ end
 %! cap_struct.compounding_type         = 'simple';
 %! cap_struct.compounding_freq         = 1;
 %! cap_struct.term                     = 365;
+%! cap_struct.term_unit                = 'days';
 %! cap_struct.day_count_convention     = 'act/365';
 %! cap_struct.basis                    = 3;
 %! cap_struct.notional                 = 10000;
@@ -2240,6 +2117,7 @@ end
 %! cap_struct.compounding_type         = 'simple';
 %! cap_struct.compounding_freq         = 1;
 %! cap_struct.term                     = 365;
+%! cap_struct.term_unit                = 'days';
 %! cap_struct.day_count_convention     = 'act/365';
 %! cap_struct.basis                    = 3;
 %! cap_struct.notional                 = 10000;
@@ -2282,6 +2160,7 @@ end
 %! cap_struct.compounding_type         = 'simple';
 %! cap_struct.compounding_freq         = 1;
 %! cap_struct.term                     = 365;
+%! cap_struct.term_unit                = 'days';
 %! cap_struct.day_count_convention     = 'act/365';
 %! cap_struct.basis                    = 3;
 %! cap_struct.notional                 = 10000;
@@ -2324,6 +2203,7 @@ end
 %! bond_struct.compounding_type         = 'disc';
 %! bond_struct.compounding_freq         = 1;
 %! bond_struct.term                     = 365;
+%! bond_struct.term_unit                = 'days';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 1 ;
@@ -2358,6 +2238,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
+%! bond_struct.term_unit				= 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.prorated                 = true;
@@ -2390,6 +2271,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1;
 %! bond_struct.term                     = 6;
+%! bond_struct.term_unit				= 'months';
 %! bond_struct.prorated                 = true;
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
@@ -2408,11 +2290,11 @@ end
 %! bond_struct.notional_at_start        = false;
 %! bond_struct.notional_at_end          = true;
 %! bond_struct.prepayment_flag          = false;
-%! [ret_dates ret_values ret_int ret_princ accrued_interest] = rollout_structured_cashflows('31-Dec-2015','base',bond_struct);
-%! assert(ret_values,ret_int + ret_princ,sqrt(eps))
-%! assert(ret_dates,[90,274,455,639,820,1004,1185,1369,1551,1735,1916,2100],0.000000001);
-%! assert(ret_values,[1.0595890411,1.0712328767,1.0537671233,1.0712328767,1.0537671233,1.0712328767,1.0537671233,1.0712328767,1.0595890411,1.0712328767,1.0537671233,101.0712328767],0.000000001);
-%! assert(accrued_interest,0.535616438356163,0.0000001);
+%!  [ret_dates ret_values ret_int ret_princ accrued_interest] = rollout_structured_cashflows('31-Dec-2015','base',bond_struct);
+%!  assert(ret_values,ret_int + ret_princ,sqrt(eps))
+%!  assert(ret_dates,[91,274,456,639,821,1004,1186,1369,1552,1735,1917,2100],0.000000001);
+%!  assert(ret_values,[1.06541095890411,1.06541095890411,1.05958904109589,1.06541095890411,1.05958904109589,1.06541095890411,1.05958904109589,1.06541095890411,1.06541095890411,1.06541095890411,1.05958904109589,101.06541095890411],0.000000001);
+%!  assert(accrued_interest,0.535616438356163,0.0000001);
 
 %!test
 %! bond_struct=struct();
@@ -2423,6 +2305,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 3   ;
+%! bond_struct.term_unit				= 'months';
 %! bond_struct.day_count_convention     = 'act/act';
 %! bond_struct.basis                    = 0;
 %! bond_struct.notional                 = 34300000 ;
@@ -2454,7 +2337,7 @@ end
 %! valuation_date = datenum('30-Jun-2016');
 %! cap_float = Bond();
 %! cap_float = cap_float.set('Name','TEST_FRN_SPECIAL','coupon_rate',0.00,'value_base',100,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','FRN_SPECIAL','spread',0.00);
-%! cap_float = cap_float.set('maturity_date','28-Jun-2026','notional',100,'compounding_type','simple','issue_date','30-Jun-2016','term',365,'notional_at_end',1,'convex_adj',false);
+%! cap_float = cap_float.set('maturity_date','28-Jun-2026','notional',100,'compounding_type','simple','issue_date','30-Jun-2016','term',365,'term_unit','days','notional_at_end',1,'convex_adj',false);
 %! cap_float = cap_float.set('cms_model','Normal','cms_sliding_term',1825,'cms_term',365,'cms_spread',0.0,'cms_comp_type','simple','cms_convex_model','Hagan','in_arrears',0,'day_count_convention','act/365');
 %! ref_curve = Curve();
 %! ref_curve = ref_curve.set('id','IR_EUR','nodes',[365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125], ...

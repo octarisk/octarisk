@@ -156,7 +156,7 @@ end
 %! t2 = 1825;
 %! swap = Bond();
 %! swap = swap.set('Name','SWAP_FLOAT','coupon_rate',0.00,'value_base',1,'coupon_generation_method','forward','last_reset_rate',-0.000,'sub_type','SWAP_FLOATING','spread',0.00);
-%! swap = swap.set('maturity_date',datestr(valuation_date + t1 + t2),'notional',1,'compounding_type','simple','issue_date', datestr(valuation_date + t1),'term',365,'notional_at_end',0,'notional_at_start',0);
+%! swap = swap.set('maturity_date',datestr(valuation_date + t1 + t2),'notional',1,'compounding_type','simple','issue_date', datestr(valuation_date + t1),'term',365,'term_unit','days','notional_at_end',0,'notional_at_start',0);
 %! value_type = 'base';  
 %! model = 'Black'; 
 %! sigma = 0.80; 
