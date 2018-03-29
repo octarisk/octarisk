@@ -76,7 +76,8 @@ if nargin > 3
     long_last_period        = instrument.long_last_period;
     spread                  = instrument.spread;
     in_arrears_flag         = instrument.in_arrears;
-
+	% floor forward rate at 0.000001:
+	floor_flag = false;		% false: default setting, no global parameter
 % --- Checking mandatory structure field items --- 
 
     type = instrument.sub_type;
@@ -138,86 +139,16 @@ if ( issuedatenum > maturitydatenum)
 end
 
 % ------------------------------------------------------------------------------
-% Cash flow date calculation:
-	issuevec = datevec_fast(issuedatenum);
-	todayvec = datevec_fast(valuation_date);
-	matvec = datevec_fast(maturitydatenum);
-	% floor forward rate at 0.000001:
-	floor_flag = false;
-	% cashflow rollout: method backwards
-	if ( strcmpi(coupon_generation_method,'backward') )
-		cf_date = matvec;
-		cf_dates = cf_date;
-		cfdatenum = maturitydatenum;
-		mult = 0;
-		while cfdatenum >= issuedatenum
-			mult += 1;
-			[cfdatenum cf_date] = addtodatefinancial(maturitydatenum, -term * mult, term_unit);
-			if cfdatenum >= issuedatenum
-				cf_dates = [cf_dates ; cf_date];
-			end
-		end % end coupon generation backward
-		% flip cf_date vector (since backward has reverse order)
-		cf_dates = flipud(cf_dates);
+% ######################   Calculate Cash Flow dates  ##########################   
+%
+% Call get_cf_dates function for generation of cash flow dates
+[cf_dates cf_datesnum cf_business_dates cf_business_datesnum issuevec matvec] = get_cf_dates(
+	issuedatenum,valuation_date,maturitydatenum,coupon_generation_method, ...
+	term,term_unit,long_first_period,long_last_period, ...
+	enable_business_day_rule,business_day_rule,business_day_direction);
+	
 
-	% cashflow rollout: method forward
-	elseif ( strcmpi(coupon_generation_method,'forward') )
-		cf_date = issuevec;
-		cf_dates = cf_date;
-		cfdatenum = issuedatenum;
-		mult = 0;
-		while cfdatenum <= maturitydatenum
-			mult += 1;
-			[cfdatenum cf_date] = addtodatefinancial(issuedatenum, term * mult, term_unit);
-			if ( cfdatenum <= maturitydatenum)
-				cf_dates = [cf_dates ; cf_date];
-			end
-		end        % end coupon generation forward
 
-	% cashflow rollout: method zero
-	elseif ( strcmpi(coupon_generation_method,'zero'))
-		% rollout for zero coupon bonds -> just one cashflow at maturity
-			cf_dates = [issuevec ; matvec];
-	end 
-%-------------------------------------------------------------------------------    
-
-%-------------------------------------------------------------------------------
-% Adjust first and last coupon period to implement issue date:
-if (long_first_period == true)
-    if ( datenum(cf_dates(1,:)) > issuedatenum )
-        cf_dates(1,:) = issuevec;
-    end
-else
-    if ( datenum(cf_dates(1,:)) > issuedatenum )
-        cf_dates = [issuevec;cf_dates];
-    end
-end
-if (long_last_period == true)
-    if ( datenum(cf_dates(rows(cf_dates),:)) < maturitydatenum )
-        cf_dates(rows(cf_dates),:) = matvec;
-    end
-else
-    if ( datenum(cf_dates(rows(cf_dates),:)) < maturitydatenum )
-        cf_dates = [cf_dates;matvec];
-    end
-end
-%special case: long_last_period == long_first_period == true || only one cashflow (e.g. monthly term):
-if (rows(cf_dates) == 1)
-   cf_dates = [issuevec;matvec];
-end
-
-% one time and forever: get datenum of cf_dates
-cf_datesnum = datenum_fast(cf_dates);
-if ( enable_business_day_rule == true)
-	cf_business_datesnum = busdate(cf_datesnum-1 + business_day_rule, ...
-										business_day_direction);
-	cf_business_dates = datevec(cf_business_datesnum);
-else
-	cf_business_datesnum = cf_datesnum;
-	cf_business_dates = cf_dates;
-end
-
-%-------------------------------------------------------------------------------
 
 %-------------------------------------------------------------------------------
 % ############   Calculate Cash Flow values depending on type   ################   
@@ -1681,25 +1612,88 @@ end
 %-------------------------------------------------------------------------------
 %                           Helper Functions
 %-------------------------------------------------------------------------------
-function new_cf_day = check_day(cf_year,cf_month,cf_day)
- % error checking for valid days 29,30 or 31 at end of month
-        if ( cf_day <= 28 )
-            new_cf_day = cf_day;
-        elseif ( cf_day == 29 || cf_day == 30 )
-            if ( cf_month == 2 )
-                if ( yeardays(cf_year) == 366 )
-                    new_cf_day = 29;
-                else
-                    new_cf_day = 28;
-                end
-            else
-                new_cf_day = cf_day;
-            end
-        elseif ( cf_day == 31 ) 
-            new_cf_day = eomday (cf_year, cf_month);
-        end
-        
+function [cf_dates cf_datesnum cf_business_dates cf_business_datesnum issuevec matvec] = get_cf_dates(
+	issuedatenum,valuation_date,maturitydatenum,coupon_generation_method, ...
+	term,term_unit,long_first_period,long_last_period, ...
+	enable_business_day_rule,business_day_rule,business_day_direction)
+	
+% Cash flow date calculation:
+	issuevec = datevec_fast(issuedatenum);
+	todayvec = datevec_fast(valuation_date);
+	matvec = datevec_fast(maturitydatenum);
+	% cashflow rollout: method backwards
+	if ( strcmpi(coupon_generation_method,'backward') )
+		cf_date = matvec;
+		cf_dates = cf_date;
+		cfdatenum = maturitydatenum;
+		mult = 0;
+		while cfdatenum >= issuedatenum
+			mult += 1;
+			[cfdatenum cf_date] = addtodatefinancial(maturitydatenum, -term * mult, term_unit);
+			if cfdatenum >= issuedatenum
+				cf_dates = [cf_dates ; cf_date];
+			end
+		end % end coupon generation backward
+		% flip cf_date vector (since backward has reverse order)
+		cf_dates = flipud(cf_dates);
+
+	% cashflow rollout: method forward
+	elseif ( strcmpi(coupon_generation_method,'forward') )
+		cf_date = issuevec;
+		cf_dates = cf_date;
+		cfdatenum = issuedatenum;
+		mult = 0;
+		while cfdatenum <= maturitydatenum
+			mult += 1;
+			[cfdatenum cf_date] = addtodatefinancial(issuedatenum, term * mult, term_unit);
+			if ( cfdatenum <= maturitydatenum)
+				cf_dates = [cf_dates ; cf_date];
+			end
+		end        % end coupon generation forward
+
+	% cashflow rollout: method zero
+	elseif ( strcmpi(coupon_generation_method,'zero'))
+		% rollout for zero coupon bonds -> just one cashflow at maturity
+			cf_dates = [issuevec ; matvec];
+	end 
+
+	% Adjust first and last coupon period to implement issue date:
+	if (long_first_period == true)
+		if ( datenum(cf_dates(1,:)) > issuedatenum )
+			cf_dates(1,:) = issuevec;
+		end
+	else
+		if ( datenum(cf_dates(1,:)) > issuedatenum )
+			cf_dates = [issuevec;cf_dates];
+		end
+	end
+	if (long_last_period == true)
+		if ( datenum(cf_dates(rows(cf_dates),:)) < maturitydatenum )
+			cf_dates(rows(cf_dates),:) = matvec;
+		end
+	else
+		if ( datenum(cf_dates(rows(cf_dates),:)) < maturitydatenum )
+			cf_dates = [cf_dates;matvec];
+		end
+	end
+	%special case: long_last_period == long_first_period == true || only one cashflow (e.g. monthly term):
+	if (rows(cf_dates) == 1)
+	   cf_dates = [issuevec;matvec];
+	end
+
+	% one time and forever: get datenum of cf_dates
+	cf_datesnum = datenum_fast(cf_dates);
+	if ( enable_business_day_rule == true)
+		cf_business_datesnum = busdate(cf_datesnum-1 + business_day_rule, ...
+											business_day_direction);
+		cf_business_dates = datevec(cf_business_datesnum);
+	else
+		cf_business_datesnum = cf_datesnum;
+		cf_business_dates = cf_dates;
+	end
+
 end
+%-------------------------------------------------------------------------------
 
 %-------------------------------------------------------------------------------
 %            Custom datenum and datevec Functions 

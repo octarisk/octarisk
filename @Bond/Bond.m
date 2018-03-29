@@ -347,7 +347,7 @@ classdef Bond < Instrument
 	  function obj = set.cms_term_unit(obj,cms_term_unit)
          if ~(strcmpi(cms_term_unit,'days') || strcmpi(cms_term_unit,'months') ...
 				|| strcmpi(cms_term_unit,'years'))
-            error('CapFloor cms_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_term_unit,obj.id);
+            error('Bond cms_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_term_unit,obj.id);
          end
          obj.cms_term_unit = tolower(cms_term_unit);
       end % set.cms_term_unit
@@ -600,7 +600,7 @@ b.get('eff_duration')\n\
 			% depending on retflag, return textstring
 			if (retflag == 0)
 				% print formatted textstring
-				fprintf("\'CapFloor\' is a class definition from the file /octarisk/@CapFloor/CapFloor.m\n");
+				fprintf("\'Bond\' is a class definition from the file /octarisk/@Bond/Bond.m\n");
 				fprintf("\n%s\n",retval);
 				retval = [];
 			end
