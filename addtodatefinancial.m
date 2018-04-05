@@ -304,41 +304,41 @@ end
 %!test
 %! valuation_date = '31-May-2017';
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), 0, 10, -5);
-%! assert(newdatevec,[2018 03 26])
+%! assert(newdatevec,[2018 03 26 0 0 0])
 %! valuation_date = '30-Apr-2017';
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), 0, 10, 0);
-%! assert(newdatevec,[2018 02 28])
+%! assert(newdatevec,[2018 02 28 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), 1, 0, 0);
-%! assert(newdatevec,[2018 04 30])
+%! assert(newdatevec,[2018 04 30 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), 1, 'years');
-%! assert(newdatevec,[2018 04 30])
+%! assert(newdatevec,[2018 04 30 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), 1, 0, 6);
-%! assert(newdatevec,[2018 05 06])
+%! assert(newdatevec,[2018 05 06 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), -1, 0, 6);
-%! assert(newdatevec,[2016 05 06])
+%! assert(newdatevec,[2016 05 06 0 0 0])
 %! valuation_date = '29-Dec-2017';
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), 0, 5, 0);
-%! assert(newdatevec,[2018 05 29])
+%! assert(newdatevec,[2018 05 29 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), 0, 13, 0);
-%! assert(newdatevec,[2019 01 29])
+%! assert(newdatevec,[2019 01 29 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(datevec(valuation_date), 0, 14, 0);
-%! assert(newdatevec,[2019 02 28])
+%! assert(newdatevec,[2019 02 28 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(datenum(valuation_date), 1, 14, 0);
-%! assert(newdatevec,[2020 02 29])
+%! assert(newdatevec,[2020 02 29 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, 0, -5, 0);
-%! assert(newdatevec,[2017 07 29])
+%! assert(newdatevec,[2017 07 29 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, 0, -15, 0);
-%! assert(newdatevec,[2016 09 29])
+%! assert(newdatevec,[2016 09 29 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, -4, -15, 0);
-%! assert(newdatevec,[2012 09 29])
+%! assert(newdatevec,[2012 09 29 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, 0, -12, 0);
-%! assert(newdatevec,[2016 12 29])
+%! assert(newdatevec,[2016 12 29 0 0 0])
 %! valuation_date = '31-Mar-2016';
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, 0, -12, 0);
-%! assert(newdatevec,[2015 03 31])
+%! assert(newdatevec,[2015 03 31 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, 0, -11, 0);
-%! assert(newdatevec,[2015 04 30])
+%! assert(newdatevec,[2015 04 30 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, -11, 'months');
-%! assert(newdatevec,[2015 04 30])
+%! assert(newdatevec,[2015 04 30 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, -10, 'days');
-%! assert(newdatevec,[2016 03 21])
+%! assert(newdatevec,[2016 03 21 0 0 0])
