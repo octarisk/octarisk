@@ -74,7 +74,7 @@ new_corr = false;
 		% test random numbers for matching correlation settings
 		frob_norm = norm(abs(corr(Y) - corr_matrix));
 		if (frob_norm > 0.05)
-			fprintf('scenario_generation_MC: WARNING: Frobenius norm %s of stored correlation matrix minus correlation settings > 0.02. New random numbers will be drawn.\n',any2str(frob_norm));
+			fprintf('scenario_generation_MC: WARNING: Frobenius norm %s of correlation matrix drawn from random numbers minus correlation settings > 0.05. New random numbers will be drawn.\n',any2str(frob_norm));
 			new_corr = true;
 		end
     % otherwise draw new random numbers and save to static folder for next run

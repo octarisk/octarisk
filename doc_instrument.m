@@ -1550,7 +1550,7 @@ end
 %! len_tail = length(normdist_a(abs(normdist_a)>=3.71901648545568))/2;
 %! assert(len_tail,45.5,sqrt(eps))
 %! % testing different Sobol direction numbers
-%! direction_file = strcat(pwd,'/static/new-joe-kuo-6.21201')
+%! direction_file = strcat(pwd,'/static/new-joe-kuo-6.21201');
 %! a = calc_sobol_cpp(50001,10,direction_file);
 %! a(1,:) = []; % remove first line (contains 0.0)
 %! normdist_a = norminv(a);
