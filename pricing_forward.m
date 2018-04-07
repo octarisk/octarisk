@@ -184,15 +184,15 @@ elseif ( sum(strcmpi(type,{'Bond','BONDFWD'})) > 0 )
             curve_comp_type_und, curve_basis_und, curve_comp_freq_und);
             
     % calculate accrued interest from bonds last CF date < Ts until Ts
-	if ~(isempty(und_cf_dates))
-		last_coupon_cf_date = und_cf_dates(end);
-	else
-		last_coupon_cf_date = 0; %use valuation date
-	end
-		und_notional    = underlying_object.notional;
-		und_coupon_rate = underlying_object.coupon_rate;
-		und_basis       = underlying_object.basis;
-		accr_interest   = timefactor(last_coupon_cf_date,dtm,und_basis) ...
+    if ~(isempty(und_cf_dates))
+        last_coupon_cf_date = und_cf_dates(end);
+    else
+        last_coupon_cf_date = 0; %use valuation date
+    end
+        und_notional    = underlying_object.notional;
+        und_coupon_rate = underlying_object.coupon_rate;
+        und_basis       = underlying_object.basis;
+        accr_interest   = timefactor(last_coupon_cf_date,dtm,und_basis) ...
                         * und_notional * und_coupon_rate;
     
     % get discount factor of forward curve df_discount(Tv,Ts)
@@ -274,10 +274,10 @@ elseif ( sum(strcmpi(type,{'EquityFuture'})) > 0 )
 % #####  Calculate forward value for FX forwards    #####
 elseif ( sum(strcmpi(type,{'FX'})) > 0 )
     % Pricing Formula: 
-	% FX_SPOT_PRICE quoted in units of domestic currency per unit of foreign
-	% FX_FWD_Price quoted in units of domestic currency per unit of foreign
-	% FX_FWD_Price = FX_SPOT_PRICE * DF_FOREIGN / DF_DOMESTIC
-	% Payoff is discounted difference between forward price and strike
+    % FX_SPOT_PRICE quoted in units of domestic currency per unit of foreign
+    % FX_FWD_Price quoted in units of domestic currency per unit of foreign
+    % FX_FWD_Price = FX_SPOT_PRICE * DF_FOREIGN / DF_DOMESTIC
+    % Payoff is discounted difference between forward price and strike
     % extract rate from foreign curve
     foreign_rate_curve = und_curve_object.getRate(value_type,days_to_maturity);
     % Convert foreign rate from curve rate convention to instrument convention

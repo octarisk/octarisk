@@ -54,13 +54,13 @@ if ( strcmpi(type,'special'))
      %              vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'rates_mc'))   
       if (isreal (val))
-		% applying cap and floor rates before setting values
-		if ( isnumeric(obj.floor) )
-			val = max(val,obj.floor);
-		end
-		if ( isnumeric(obj.cap) )
-			val = min(val,obj.cap);
-		end
+        % applying cap and floor rates before setting values
+        if ( isnumeric(obj.floor) )
+            val = max(val,obj.floor);
+        end
+        if ( isnumeric(obj.cap) )
+            val = min(val,obj.cap);
+        end
         [mc_rows mc_cols mc_stack] = size(obj.rates_mc);
         tmp_cell = obj.rates_mc;
         if ( mc_cols > 0 || mc_rows > 0) % appending vector to existing vector
@@ -86,12 +86,12 @@ if ( strcmpi(type,'special'))
     elseif (ischar (prop) && strcmp (prop, 'rates_stress'))   
       if (isreal (val))
         % applying cap and floor rates before setting values
-		if ( isnumeric(obj.floor) )
-			val = max(val,obj.floor);
-		end
-		if ( isnumeric(obj.cap) )
-			val = min(val,obj.cap);
-		end
+        if ( isnumeric(obj.floor) )
+            val = max(val,obj.floor);
+        end
+        if ( isnumeric(obj.cap) )
+            val = min(val,obj.cap);
+        end
         retval = val;
       else
         error ('set: expecting the stress value to be real ');
@@ -100,12 +100,12 @@ if ( strcmpi(type,'special'))
     elseif (ischar (prop) && strcmp (prop, 'rates_base'))   
       if (ismatrix (val) && isreal (val))
         % applying cap and floor rates before setting values
-		if ( isnumeric(obj.floor) )
-			val = max(val,obj.floor);
-		end
-		if ( isnumeric(obj.cap) )
-			val = min(val,obj.cap);
-		end
+        if ( isnumeric(obj.floor) )
+            val = max(val,obj.floor);
+        end
+        if ( isnumeric(obj.cap) )
+            val = min(val,obj.cap);
+        end
         retval = val;
       else
         error ('set: expecting the base values to be a real vector');
@@ -132,11 +132,11 @@ if ( strcmpi(type,'special'))
             retval = cellstr(val);
         end 
       else
-	    if (iscell(val) && length(val) == 0)
-			retval = {};
-		else
+        if (iscell(val) && length(val) == 0)
+            retval = {};
+        else
             error ('set: expecting timestep_mc to be a cell vector');
-		end
+        end
       end
     % =========== set timestep_mc_cf: appending or setting timestep vector =====
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc_cf'))   
@@ -160,16 +160,16 @@ if ( strcmpi(type,'special'))
             retval = cellstr(val);
         end 
       else
-	    if (iscell(val) && length(val) == 0)
-			retval = {};
-		else
+        if (iscell(val) && length(val) == 0)
+            retval = {};
+        else
             error ('set: expecting the cell value to be a cell vector');
-		end
+        end
      end
     % ====================== set scenario_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'scenario_stress'))   
       
-      if (isvector (val) && isreal (val))	% append to existing stress vector
+      if (isvector (val) && isreal (val))   % append to existing stress vector
         retval = [obj.scenario_stress; val];
       else
         if ( isempty(val))
@@ -189,11 +189,11 @@ if ( strcmpi(type,'special'))
                 tmp_cell(:,:,mc_stack + 1) = val;
                 retval = tmp_cell;
             else
-				if isempty(val)
-				    retval = [];
-				else
+                if isempty(val)
+                    retval = [];
+                else
                     error('set: expecting length of new input vector for cf_values_mc to equal length of already existing rate vector');
-			    end
+                end
             end
         else    % setting vector
             tmp_cell(:,:,1) = val;

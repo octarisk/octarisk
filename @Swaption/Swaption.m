@@ -13,7 +13,7 @@ classdef Swaption < Instrument
         vola_sensi = 1;
         strike = 0.025;
         spot = 0.025;
-        multiplier = 100;			% only used if valued without underlyings
+        multiplier = 100;           % only used if valued without underlyings
         tenor = 10;                 % Tenor of underlying swap in years
         no_payments = 1;
         und_fixed_leg = '';         % String: underlying fixed leg
@@ -33,11 +33,11 @@ classdef Swaption < Instrument
         und_float_value = 0.0;
         call_flag = false;
         implied_volatility = 0.0;
-		theo_delta = 0.0;
-		theo_gamma = 0.0;
-		theo_vega = 0.0;
-		theo_theta = 0.0;
-		theo_rho = 0.0;
+        theo_delta = 0.0;
+        theo_gamma = 0.0;
+        theo_vega = 0.0;
+        theo_theta = 0.0;
+        theo_rho = 0.0;
     end
 
    methods
@@ -89,8 +89,8 @@ classdef Swaption < Instrument
          if ~(b.vola_spread == 0.0)
             fprintf('vola_spread: %f \n',b.vola_spread);
          end
-		 if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
-				+ b.theo_rho ) ~= 0 )
+         if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
+                + b.theo_rho ) ~= 0 )
             fprintf('theo_delta:\t%8.8f\n',b.theo_delta);  
             fprintf('theo_gamma:\t%8.8f\n',b.theo_gamma);  
             fprintf('theo_vega:\t%8.8f\n',b.theo_vega);  
@@ -133,21 +133,21 @@ classdef Swaption < Instrument
    %static methods: 
    methods (Static = true)
    
-	function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+    function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Swaption.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Swaption.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Swaption(@var{id})\n\
@@ -293,22 +293,22 @@ s.getValue('base')\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Swaption\' is a class definition from the file /octarisk/@Swaption/Swaption.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Swaption\' is a class definition from the file /octarisk/@Swaption/Swaption.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-		
-	end % end of static method help
-	
-   end	% end of static method
+        
+    end % end of static method help
+    
+   end  % end of static method
    
 end 

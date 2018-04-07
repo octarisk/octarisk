@@ -121,13 +121,13 @@ fprintf('MR level ergodic \t %9.4f\n',mr_level_ergodic);
 % ending outer loop
 end
 
-	
+    
 tt = 1 : 1 : rows(M);
 figure(1);
 clf;
 for ii = 1 : 1 : columns(M)
-	plot(tt,M(:,ii));
-	hold on;
+    plot(tt,M(:,ii));
+    hold on;
 end
 end
 

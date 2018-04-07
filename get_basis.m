@@ -23,23 +23,23 @@
 %#
 %# The following mapping will be done for the input strings:
 %# @itemize @bullet
-%# @item @var{basis}: 		day-count basis (scalar)
-%#		@itemize @bullet
-%# 			@item @var{0} = actual/actual or act/act (1/1 mapped to act/act)
-%# 			@item @var{1} = 30/360 SIA
-%# 			@item @var{2} = act/360 or actual/360 or actual/360 Full
-%# 			@item @var{3} = act/365 or actual/365 or actual/365 Full
-%# 			@item @var{4} = 30/360 PSA
-%# 			@item @var{5} = 30/360 ISDA
-%# 			@item @var{6} = 30/360 European
-%# 			@item @var{7} = act/365 Japanese
-%# 			@item @var{8} = act/act ISMA
-%# 			@item @var{9} = act/360 ISMA
-%# 			@item @var{10} = act/365 ISMA
-%# 			@item @var{11} = 30/360E
-%# 			@item @var{13} = 30/360 or 30/360 German
-%# 			@item @var{14} = business/252
-%# 			@item @var{15} = act/364
+%# @item @var{basis}:       day-count basis (scalar)
+%#      @itemize @bullet
+%#          @item @var{0} = actual/actual or act/act (1/1 mapped to act/act)
+%#          @item @var{1} = 30/360 SIA
+%#          @item @var{2} = act/360 or actual/360 or actual/360 Full
+%#          @item @var{3} = act/365 or actual/365 or actual/365 Full
+%#          @item @var{4} = 30/360 PSA
+%#          @item @var{5} = 30/360 ISDA
+%#          @item @var{6} = 30/360 European
+%#          @item @var{7} = act/365 Japanese
+%#          @item @var{8} = act/act ISMA
+%#          @item @var{9} = act/360 ISMA
+%#          @item @var{10} = act/365 ISMA
+%#          @item @var{11} = 30/360E
+%#          @item @var{13} = 30/360 or 30/360 German
+%#          @item @var{14} = business/252
+%#          @item @var{15} = act/364
 %#      @end itemize
 %# @end itemize
 %# @seealso{timefactor}

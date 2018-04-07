@@ -33,13 +33,13 @@ end
 profile clear;
 profile on;
 try
-	if nargin < 3
-		feval(script_name,argument);
-	elseif nargin == 4
-		feval(script_name,argument,arg2);
-	elseif nargin == 5
-		feval(script_name,argument,arg2,arg3);
-	end
+    if nargin < 3
+        feval(script_name,argument);
+    elseif nargin == 4
+        feval(script_name,argument,arg2);
+    elseif nargin == 5
+        feval(script_name,argument,arg2,arg3);
+    end
     profile off;
 catch
     profile off;

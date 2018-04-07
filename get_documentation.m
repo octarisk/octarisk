@@ -47,7 +47,7 @@ if ( strcmp('html',type) == 1)
     % Loop via all function names in cellstring, convert texinfo to html and 
     % print it to functionname.html
     for ii = 1:length(c)
-		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
+        fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         [retval status] = __makeinfo__(get_help_text(c{ii}),'html');
         
         if ( status == 0 )
@@ -71,7 +71,7 @@ elseif  ( strcmp('txt',type) == 1)
     filename = strcat(path_documentation,'/documentation.txt');
     fid = fopen (filename, 'w');
     for ii = 1:length(c)
-		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
+        fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         [retval status] = __makeinfo__(get_help_text(c{ii}),'plain text');
         
         if ( status == 0 )
@@ -102,7 +102,7 @@ elseif  ( strcmp('texinfo',type) == 1)
     end
     fprintf(fid,'\@end menu \n');
     for ii = 1:length(c)
-		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
+        fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         [retval status] = __makeinfo__(get_help_text(c{ii}),'texinfo');
         
         if ( status == 0 )

@@ -31,14 +31,14 @@
 %# licensed under the GPL >= 2.0 @*
 %# Input and output variables:
 %# @itemize @bullet
-%# @item @var{mu}: 		mean of marginal distribution (scalar)
-%# @item @var{sigma}: 	standard deviation of marginal distribution (scalar)
-%# @item @var{skew}: 	skewness of marginal distribution (scalar)
-%# @item @var{kurt}: 	kurtosis of marginal distribution (scalar)
-%# @item @var{Z}: 		uniform distributed random variables (Nx1 vector)
-%# @item @var{r}: 		OUTPUT: Nx1 vector with random variables distributed 
+%# @item @var{mu}:      mean of marginal distribution (scalar)
+%# @item @var{sigma}:   standard deviation of marginal distribution (scalar)
+%# @item @var{skew}:    skewness of marginal distribution (scalar)
+%# @item @var{kurt}:    kurtosis of marginal distribution (scalar)
+%# @item @var{Z}:       uniform distributed random variables (Nx1 vector)
+%# @item @var{r}:       OUTPUT: Nx1 vector with random variables distributed 
 %# according to Pearson type (vector)
-%# @item @var{type}: 	OUTPUT: Pearson distribution type (I - VII) (scalar)
+%# @item @var{type}:    OUTPUT: Pearson distribution type (I - VII) (scalar)
 %# @end itemize
 %# The marginal distribution type is chosen according to the input parameters 
 %# out of the Pearson Type I-VII distribution family: @*
@@ -64,7 +64,7 @@ retvec = classify_pearson(mu,sigma,skew,kurt);
 type = retvec(1);
 
 if ( kurt <= 0.0)
-	error('ERROR: et_marginal_distr_pearson: kurtosis has to be larger than 0.0\n');
+    error('ERROR: et_marginal_distr_pearson: kurtosis has to be larger than 0.0\n');
 end
 
 % generate standard marginal distribution (zero mean, unit variance) values for 
@@ -84,8 +84,8 @@ elseif ( type == 2)
     m = retvec(2);
     a1 = retvec(3);
     if ( m <= -1.0)
-		fprintf('WARN: get_marginal_distr_pearson: symmetric beta distribution: kurtosis has to be larger than 1 for skewness equals 0. Setting kurtosis to 1.5.\n');
-		m = -0.5;
+        fprintf('WARN: get_marginal_distr_pearson: symmetric beta distribution: kurtosis has to be larger than 1 for skewness equals 0. Setting kurtosis to 1.5.\n');
+        m = -0.5;
     end
     r = a1 + 2*abs(a1) .* betainv_vec(Z,m+1,m+1);
 elseif ( type == 3)

@@ -6,7 +6,7 @@ classdef CapFloor < Instrument
         compounding_type = 'cont';
         compounding_freq = 1;  
         term = 12; 
-		term_unit = 'months';	% can be [days,months,years]
+        term_unit = 'months';   % can be [days,months,years]
         day_count_convention = 'act/365';
         notional = 0;                 
         coupon_generation_method = 'backward';
@@ -20,7 +20,7 @@ classdef CapFloor < Instrument
         discount_curve = 'IR_EUR';
         reference_curve = 'IR_EUR';
         ir_shock   = 0.01;      % shock used for calculation of effective duration
-		vola_shock = 0.0001;	% shock used for calculation of vega
+        vola_shock = 0.0001;    % shock used for calculation of vega
         in_arrears = 0;
         notional_at_start = 0; 
         notional_at_end = 0;
@@ -35,19 +35,19 @@ classdef CapFloor < Instrument
         cms_model               = 'Black'; % volatility model [Black, normal]
         cms_convex_model        = 'Hull'; % Model for calculating convexity adj.
         cms_sliding_term        = 1825; % sliding term of CMS float leg in days
-		cms_sliding_term_unit   = 'days';   % can be [days,months,years]
+        cms_sliding_term_unit   = 'days';   % can be [days,months,years]
         cms_term                = 365; % term of CMS
-		cms_term_unit			= 'days';	% can be [days,months,years]
+        cms_term_unit           = 'days';   % can be [days,months,years]
         cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
-		% Inflation Linked bond specific attributes
-		cpi_index				= ''; % Consumer Price Index
-		infl_exp_curve			= ''; % Inflation Expectation Curve
-		cpi_historical_curve	= ''; % Curve with historical values for CPI
-		infl_exp_lag			= ''; % inflation expectation lag (in months)
-		use_indexation_lag		= false; % Bool: true -> use infl_exp_lag
-		calibration_flag = 1;       % BOOL: if true, no calibration will be done
+        % Inflation Linked bond specific attributes
+        cpi_index               = ''; % Consumer Price Index
+        infl_exp_curve          = ''; % Inflation Expectation Curve
+        cpi_historical_curve    = ''; % Curve with historical values for CPI
+        infl_exp_lag            = ''; % inflation expectation lag (in months)
+        use_indexation_lag      = false; % Bool: true -> use infl_exp_lag
+        calibration_flag = 1;       % BOOL: if true, no calibration will be done
     end
    
     properties (SetAccess = private)
@@ -65,8 +65,8 @@ classdef CapFloor < Instrument
         mac_duration = 0.0;
         mod_duration = 0.0;
         eff_duration = 0.0;
-		vega = 0.0;
-		theta = 0.0;
+        vega = 0.0;
+        theta = 0.0;
         spread_duration = 0.0;
         dollar_duration = 0.0;
         dv01 = 0.0;
@@ -116,25 +116,25 @@ classdef CapFloor < Instrument
          if ( regexpi(b.sub_type,'CMS'))
             fprintf('cms_model: %s\n',b.cms_model); 
             fprintf('cms_sliding_term: %s %s\n',any2str(b.cms_sliding_term), ...
-													b.cms_sliding_term_unit); 
+                                                    b.cms_sliding_term_unit); 
             fprintf('cms_term: %s %s\n',any2str(b.cms_term),b.cms_term_unit); 
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model); 
          end 
-		 if ( regexpi(b.sub_type,'INFL'))
+         if ( regexpi(b.sub_type,'INFL'))
             fprintf('cpi_index: %s\n',b.cpi_index); 
             fprintf('infl_exp_curve: %s\n',b.infl_exp_curve); 
             fprintf('cpi_historical_curve: %s\n',b.cpi_historical_curve); 
-			fprintf('infl_exp_lag: %s\n',any2str(b.infl_exp_lag));
-			fprintf('use_indexation_lag: %s\n',any2str(b.use_indexation_lag));
-         end		 
+            fprintf('infl_exp_lag: %s\n',any2str(b.infl_exp_lag));
+            fprintf('use_indexation_lag: %s\n',any2str(b.use_indexation_lag));
+         end         
          fprintf('ir_shock: %f \n',b.ir_shock);
-		 fprintf('vola_spread: %f \n',b.vola_spread);
+         fprintf('vola_spread: %f \n',b.vola_spread);
          fprintf('eff_duration: %f \n',b.eff_duration);
          fprintf('eff_convexity: %f \n',b.eff_convexity);
-		 fprintf('vega: %f \n',b.vega);
-		 fprintf('theta: %f \n',b.theta);
+         fprintf('vega: %f \n',b.vega);
+         fprintf('theta: %f \n',b.theta);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
          [mc_rows mc_cols mc_stack] = size(b.cf_values_mc);
@@ -188,7 +188,7 @@ classdef CapFloor < Instrument
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'CAP') || strcmpi(sub_type,'FLOOR') ...
                 || strcmpi(sub_type,'CAP_CMS') || strcmpi(sub_type,'FLOOR_CMS') ...
-				|| strcmpi(sub_type,'FLOOR_INFL') || strcmpi(sub_type,'CAP_INFL'))
+                || strcmpi(sub_type,'FLOOR_INFL') || strcmpi(sub_type,'CAP_INFL'))
             error('CapFloor sub_type must be either CAP(_CMS / _INFL), FLOOR(_CMS / _INFL)')
          end
          obj.sub_type = sub_type;
@@ -199,30 +199,30 @@ classdef CapFloor < Instrument
          end
       end % set.sub_type
       
-	  function obj = set.term_unit(obj,term_unit)
+      function obj = set.term_unit(obj,term_unit)
          if ~(strcmpi(term_unit,'days') || strcmpi(term_unit,'months') ...
-				|| strcmpi(term_unit,'years'))
+                || strcmpi(term_unit,'years'))
             error('CapFloor term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',term_unit,obj.id);
          end
          obj.term_unit = tolower(term_unit);
       end % set.term_unit
-	  
-	  function obj = set.cms_term_unit(obj,cms_term_unit)
+      
+      function obj = set.cms_term_unit(obj,cms_term_unit)
          if ~(strcmpi(cms_term_unit,'days') || strcmpi(cms_term_unit,'months') ...
-				|| strcmpi(cms_term_unit,'years'))
+                || strcmpi(cms_term_unit,'years'))
             error('CapFloor cms_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_term_unit,obj.id);
          end
          obj.cms_term_unit = tolower(cms_term_unit);
       end % set.cms_term_unit
-	  
-	  function obj = set.cms_sliding_term_unit(obj,cms_sliding_term_unit)
+      
+      function obj = set.cms_sliding_term_unit(obj,cms_sliding_term_unit)
          if ~(strcmpi(cms_sliding_term_unit,'days') || strcmpi(cms_sliding_term_unit,'months') ...
-				|| strcmpi(cms_sliding_term_unit,'years'))
+                || strcmpi(cms_sliding_term_unit,'years'))
             error('CapFloor cms_sliding_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_sliding_term_unit,obj.id);
          end
          obj.cms_sliding_term_unit = tolower(cms_sliding_term_unit);
       end % set.cms_sliding_term_unit
-	  
+      
       function obj = set.day_count_convention(obj,day_count_convention)
          obj.day_count_convention = day_count_convention;
          % Call superclass method to set basis
@@ -233,21 +233,21 @@ classdef CapFloor < Instrument
    %static methods: 
    methods (Static = true)
    
-	function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+    function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: CapFloor.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: CapFloor.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = CapFloor(@var{id})\n\
@@ -357,21 +357,21 @@ vola_spread = cap.vola_spread\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'CapFloor\' is a class definition from the file /octarisk/@CapFloor/CapFloor.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'CapFloor\' is a class definition from the file /octarisk/@CapFloor/CapFloor.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-		
-	end % end of static method help
-	
-   end	% end of static method
+        
+    end % end of static method help
+    
+   end  % end of static method
 end 

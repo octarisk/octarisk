@@ -6,7 +6,7 @@ classdef Bond < Instrument
         compounding_type = 'disc';
         compounding_freq = 1;  
         term = 12;     
-		term_unit = 'months';	% can be [days,months,years]
+        term_unit = 'months';   % can be [days,months,years]
         day_count_convention = 'act/365';
         notional = 0;           
         coupon_rate = 0.0;        
@@ -52,63 +52,63 @@ classdef Bond < Instrument
         stochastic_riskfactor   = 'RF_MATRIX';    % used for stochastic cf
         stochastic_surface      = 'SURFACE_MATRIX';  % used for stochastic cf
         stochastic_rf_type      = 'normal';       % either t, normal or univariate
-		stochastic_zero_base	= true;	%Boolean: always zero value in base case
+        stochastic_zero_base    = true; %Boolean: always zero value in base case
         t_degree_freedom        = 120;  % degrees of freedom for t distribution
         % attributes for CMS Floating and Fixed Legs
         convex_adj              = true; % Boolean: use convexity adjustment
         cms_convex_model        = 'Hull'; % Model for calculating convexity adj.
         cms_model               = 'Black'; % volatility model [Black, normal]
         cms_sliding_term        = 1825; % sliding term of CMS float leg in days
-		cms_sliding_term_unit   = 'days';   % can be [days,months,years]
+        cms_sliding_term_unit   = 'days';   % can be [days,months,years]
         cms_term                = 365; % term of CMS
-		cms_term_unit			= 'days';	% can be [days,months,years]
+        cms_term_unit           = 'days';   % can be [days,months,years]
         cms_spread              = 0.0; % spread of CMS
         cms_comp_type           = 'simple'; % CMS compounding type
         vola_spread             = 0.0;
-		% attributes for Special FRN / SWAP_FLOATING
-		fwd_sliding_term        = 1825; % sliding term of forward float leg in days
+        % attributes for Special FRN / SWAP_FLOATING
+        fwd_sliding_term        = 1825; % sliding term of forward float leg in days
         fwd_term                = 365; % term of forward rates
-		
+        
         prorated                = true; % Bool: true means deposit method 
-			%  (adjust cash flows for leap year), false = bond method (fixed coupon)
+            %  (adjust cash flows for leap year), false = bond method (fixed coupon)
         rate_composition        = 'capitalize'; % function for CMS rates
                                     % ['capitalize', 'average', 'max', 'min']
-		% callable bond specific attributes
+        % callable bond specific attributes
         embedded_option_flag    = false; % true: bond is call or putable
         alpha                   = 0.1; % callable bond mean reversion constant
         sigma                   = 0.01; % callable bond rate volatility
         treenodes               = 50; % callable bond tree nodes
         call_schedule           = ''; % callable bond call schedule curve
         put_schedule            = ''; % callable bond put schedule curve
-		
-		% Inflation Linked bond specific attributes
-		cpi_index				= ''; % Consumer Price Index
-		infl_exp_curve			= ''; % Inflation Expectation Curve
-		cpi_historical_curve	= ''; % Curve with historical values for CPI
-		infl_exp_lag			= ''; % inflation expectation lag (in months)
-		use_indexation_lag		= false; % Bool: true -> use infl_exp_lag
-		
-		% Key rate duration specific attributes
-		key_term 				= [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
-		key_rate_shock 			= 0.01; % key rate shock size (cont, act/365)
-		key_rate_width 			= 365;% width of key rate shocks
-		
-		% Forward rate agreement
-		strike_rate				= 0.0; % strike rate (cont, act/365)
-		underlying_maturity_date = '01-Jan-1900';
-		coupon_prepay			= 'discount'; % in ['discount','in fine'];
-		
-		% Forward volatility / variance agreement
-		fva_type				= 'volatility'; % in ['volatility','variance']
-		
-		% credit default swap
-		credit_state			= 'UNRATED'; % credit rating in {AAA,AA,A,BBB,BB,B,C,D,UNRATED}
-		loss_given_default  	= 1.0; % share lost if bond in default
-		cds_use_initial_premium	= false; % boolean flag: use initial premium 
-		cds_initial_premium		= 0.0; % initial premium amount (if flag=true)
-		reference_asset			= ''; % ID to reference asset (for cf_dates and credit state)
-		hazard_curve			= ''; % ID referencing hazard curve
-		cds_receive_protection = true;	% boolean flag: provide or receive protection leg
+        
+        % Inflation Linked bond specific attributes
+        cpi_index               = ''; % Consumer Price Index
+        infl_exp_curve          = ''; % Inflation Expectation Curve
+        cpi_historical_curve    = ''; % Curve with historical values for CPI
+        infl_exp_lag            = ''; % inflation expectation lag (in months)
+        use_indexation_lag      = false; % Bool: true -> use infl_exp_lag
+        
+        % Key rate duration specific attributes
+        key_term                = [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
+        key_rate_shock          = 0.01; % key rate shock size (cont, act/365)
+        key_rate_width          = 365;% width of key rate shocks
+        
+        % Forward rate agreement
+        strike_rate             = 0.0; % strike rate (cont, act/365)
+        underlying_maturity_date = '01-Jan-1900';
+        coupon_prepay           = 'discount'; % in ['discount','in fine'];
+        
+        % Forward volatility / variance agreement
+        fva_type                = 'volatility'; % in ['volatility','variance']
+        
+        % credit default swap
+        credit_state            = 'UNRATED'; % credit rating in {AAA,AA,A,BBB,BB,B,C,D,UNRATED}
+        loss_given_default      = 1.0; % share lost if bond in default
+        cds_use_initial_premium = false; % boolean flag: use initial premium 
+        cds_initial_premium     = 0.0; % initial premium amount (if flag=true)
+        reference_asset         = ''; % ID to reference asset (for cf_dates and credit state)
+        hazard_curve            = ''; % ID referencing hazard curve
+        cds_receive_protection = true;  % boolean flag: provide or receive protection leg
     end
    
     properties (SetAccess = private)
@@ -134,10 +134,10 @@ classdef Bond < Instrument
         accrued_interest = 0.0;
         last_coupon_date = 0;
         embedded_option_value = 0.0;
-		key_rate_eff_dur = [];
-		key_rate_mon_dur = [];
-		key_rate_eff_convex = [];
-		key_rate_mon_convex = [];
+        key_rate_eff_dur = [];
+        key_rate_mon_dur = [];
+        key_rate_eff_convex = [];
+        key_rate_mon_convex = [];
     end
    
    methods
@@ -191,21 +191,21 @@ classdef Bond < Instrument
          fprintf('principal_payment: %f\n',b.principal_payment); 
          fprintf('use_principal_pmt: %d\n',b.use_principal_pmt);
          fprintf('use_outstanding_balance: %d\n',b.use_outstanding_balance);
-		 fprintf('prorated: %s\n',any2str(b.prorated)); 
-		 fprintf('in_arrears: %s\n',any2str(b.in_arrears)); 
-		 fprintf('credit_state: %s\n',any2str(b.credit_state)); 
-		 if ~( isempty(b.key_rate_eff_dur))
-			fprintf('Key rate term: %s\n',any2str(b.key_term)); 
-			fprintf('Key rate Effective Duration: %s\n',any2str(b.key_rate_eff_dur));
-			fprintf('Key rate Monetary Duration: %s\n',any2str(b.key_rate_mon_dur));
-			fprintf('Key rate Effective Convexity: %s\n',any2str(b.key_rate_eff_convex));
-			fprintf('Key rate Monetary Convexity: %s\n',any2str(b.key_rate_mon_convex));
-		 end
+         fprintf('prorated: %s\n',any2str(b.prorated)); 
+         fprintf('in_arrears: %s\n',any2str(b.in_arrears)); 
+         fprintf('credit_state: %s\n',any2str(b.credit_state)); 
+         if ~( isempty(b.key_rate_eff_dur))
+            fprintf('Key rate term: %s\n',any2str(b.key_term)); 
+            fprintf('Key rate Effective Duration: %s\n',any2str(b.key_rate_eff_dur));
+            fprintf('Key rate Monetary Duration: %s\n',any2str(b.key_rate_mon_dur));
+            fprintf('Key rate Effective Convexity: %s\n',any2str(b.key_rate_eff_convex));
+            fprintf('Key rate Monetary Convexity: %s\n',any2str(b.key_rate_mon_convex));
+         end
          if ( regexpi(b.sub_type,'CMS'))
             fprintf('vola_surface: %s\n',b.vola_surface); 
             fprintf('cms_model: %s\n',b.cms_model); 
             fprintf('cms_sliding_term: %s %s\n',any2str(b.cms_sliding_term), ...
-													b.cms_sliding_term_unit);
+                                                    b.cms_sliding_term_unit);
             fprintf('cms_term: %s %s\n',any2str(b.cms_term),b.cms_term_unit); 
             fprintf('cms_spread: %s\n',any2str(b.cms_spread)); 
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
@@ -220,13 +220,13 @@ classdef Bond < Instrument
             fprintf('put_schedule: %s\n',b.put_schedule); 
             fprintf('vola_surface: %s\n',b.vola_surface); 
          end 
-		 if ( regexpi(b.sub_type,'CDS_'))
+         if ( regexpi(b.sub_type,'CDS_'))
             fprintf('loss_given_default: %f\n',b.loss_given_default); 
             fprintf('cds_use_initial_premium: %s\n',any2str(b.cds_use_initial_premium)); 
             fprintf('cds_initial_premium: %s\n',any2str(b.cds_initial_premium)); 
-			fprintf('reference_asset: %s\n',b.reference_asset); 
-			fprintf('hazard_curve: %s\n',b.hazard_curve);
-			fprintf('cds_receive_protection: %s\n',any2str(b.cds_receive_protection));
+            fprintf('reference_asset: %s\n',b.reference_asset); 
+            fprintf('hazard_curve: %s\n',b.hazard_curve);
+            fprintf('cds_receive_protection: %s\n',any2str(b.cds_receive_protection));
          end
          if ( regexpi(b.sub_type,'FRN_SPECIAL'))
             fprintf('vola_surface: %s\n',b.vola_surface); 
@@ -238,19 +238,19 @@ classdef Bond < Instrument
             fprintf('cms_comp_type: %s\n',b.cms_comp_type); 
             fprintf('cms_convex_model: %s\n',b.cms_convex_model);
          end 
-		 if ( strcmpi(b.sub_type,'FRA'))
-			fprintf('strike_rate (cont, act/365): %s\n',any2str(b.strike_rate));
+         if ( strcmpi(b.sub_type,'FRA'))
+            fprintf('strike_rate (cont, act/365): %s\n',any2str(b.strike_rate));
             fprintf('underlying_maturity_date: %s\n',any2str(b.underlying_maturity_date)); 
             fprintf('coupon_prepay: %s\n',any2str(b.coupon_prepay));
-			fprintf('fva_type: %s\n',any2str(b.fva_type));
+            fprintf('fva_type: %s\n',any2str(b.fva_type));
          end 
-		 if ( strcmpi(b.sub_type,'FVA'))
-			fprintf('strike_rate (cont, act/365): %s\n',any2str(b.strike_rate));
+         if ( strcmpi(b.sub_type,'FVA'))
+            fprintf('strike_rate (cont, act/365): %s\n',any2str(b.strike_rate));
             fprintf('underlying_maturity_date: %s\n',any2str(b.underlying_maturity_date)); 
             fprintf('vola_surface: %s\n',any2str(b.vola_surface)); 
          end 
-		 if ( regexpi(b.sub_type,'_FWD_SPECIAL'))
-			fprintf('rate_composition: %s\n',b.rate_composition);
+         if ( regexpi(b.sub_type,'_FWD_SPECIAL'))
+            fprintf('rate_composition: %s\n',b.rate_composition);
             fprintf('fwd_sliding_term: %s\n',any2str(b.fwd_sliding_term)); 
             fprintf('fwd_term: %s\n',any2str(b.fwd_term)); 
          end 
@@ -262,14 +262,14 @@ classdef Bond < Instrument
                 fprintf('t_degree_freedom: %d\n',b.t_degree_freedom); 
             end
          end
-		 if ( strcmpi(b.sub_type,'ILB'))
+         if ( strcmpi(b.sub_type,'ILB'))
             fprintf('cpi_index: %s\n',b.cpi_index); 
             fprintf('infl_exp_curve: %s\n',b.infl_exp_curve); 
             fprintf('cpi_historical_curve: %s\n',b.cpi_historical_curve); 
-			fprintf('infl_exp_lag: %s\n',any2str(b.infl_exp_lag));
-			fprintf('use_indexation_lag: %s\n',any2str(b.use_indexation_lag));
+            fprintf('infl_exp_lag: %s\n',any2str(b.infl_exp_lag));
+            fprintf('use_indexation_lag: %s\n',any2str(b.use_indexation_lag));
          end
-		
+        
          %fprintf('spot_value: %f %s\n',b.spot_value,b.currency);
          % display all mc values and cf values
          cf_stress_rows = min(rows(b.cf_values_stress),5);
@@ -330,10 +330,10 @@ classdef Bond < Instrument
                 || strcmpi(sub_type,'SWAP_FIXED') || strcmpi(sub_type,'SWAP_FLOATING') ...
                 || strcmpi(sub_type,'ZCB')  || strcmpi(sub_type,'STOCHASTICCF') ...
                 || strcmpi(sub_type,'CMS_FLOATING') || strcmpi(sub_type,'FRN_SPECIAL') ...
-				|| strcmpi(sub_type,'ILB') || strcmpi(sub_type,'SWAP_FLOATING_FWD_SPECIAL') ...
-				|| strcmpi(sub_type,'FRN_FWD_SPECIAL')  || strcmpi(sub_type,'FRA') ...
-				|| strcmpi(sub_type,'FVA') ...
-				|| strcmpi(sub_type,'CDS_FLOATING') || strcmpi(sub_type,'CDS_FIXED'))
+                || strcmpi(sub_type,'ILB') || strcmpi(sub_type,'SWAP_FLOATING_FWD_SPECIAL') ...
+                || strcmpi(sub_type,'FRN_FWD_SPECIAL')  || strcmpi(sub_type,'FRA') ...
+                || strcmpi(sub_type,'FVA') ...
+                || strcmpi(sub_type,'CDS_FLOATING') || strcmpi(sub_type,'CDS_FIXED'))
             error('Bond sub_type must be either FRB, FRN, ZCB, ILB, CASHFLOW, SWAP_FIXED, STOCHASTICCF, SWAP_FLOATING, FRN_SPECIAL, CMS_FLOATING, FRA, FVA, FRN_FWD_SPECIAL, CDS_FLOATING, CDS_FIXED or SWAP_FLOATING_FWD_SPECIAL: %s',sub_type)
          end
          obj.sub_type = sub_type;
@@ -343,10 +343,10 @@ classdef Bond < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
-	  
-	  function obj = set.cms_term_unit(obj,cms_term_unit)
+      
+      function obj = set.cms_term_unit(obj,cms_term_unit)
          if ~(strcmpi(cms_term_unit,'days') || strcmpi(cms_term_unit,'months') ...
-				|| strcmpi(cms_term_unit,'years'))
+                || strcmpi(cms_term_unit,'years'))
             error('Bond cms_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_term_unit,obj.id);
          end
          obj.cms_term_unit = tolower(cms_term_unit);
@@ -425,53 +425,53 @@ classdef Bond < Instrument
          end
          obj.coupon_prepay = tolower(coupon_prepay);
       end % set.coupon_prepay
-	  
-	  function obj = set.term_unit(obj,term_unit)
+      
+      function obj = set.term_unit(obj,term_unit)
          if ~(strcmpi(term_unit,'days') || strcmpi(term_unit,'months') ...
-				|| strcmpi(term_unit,'years'))
+                || strcmpi(term_unit,'years'))
             error('Bond term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',term_unit,obj.id);
          end
          obj.term_unit = tolower(term_unit);
       end % set.term_unit
   
-	  function obj = set.cms_sliding_term_unit(obj,cms_sliding_term_unit)
+      function obj = set.cms_sliding_term_unit(obj,cms_sliding_term_unit)
          if ~(strcmpi(cms_sliding_term_unit,'days') || strcmpi(cms_sliding_term_unit,'months') ...
-				|| strcmpi(cms_sliding_term_unit,'years'))
+                || strcmpi(cms_sliding_term_unit,'years'))
             error('Bond cms_sliding_term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',cms_sliding_term_unit,obj.id);
          end
          obj.cms_sliding_term_unit = tolower(cms_sliding_term_unit);
       end % set.cms_sliding_term_unit
   
       function obj = set.credit_state(obj,credit_state)
-		 credit_state = upper(credit_state);
-		 rating_cell = {'AAA','AA','A','BBB','BB','B','C','D','UNRATED'};
+         credit_state = upper(credit_state);
+         rating_cell = {'AAA','AA','A','BBB','BB','B','C','D','UNRATED'};
          if ( sum(strcmpi(rating_cell,credit_state)) == 0)
                 fprintf('Need valid credit state:  >>%s<< not in {AAA,AA,A,BBB,BB,B,C,D,UNRATED} for id >>%s<<. Setting to default value UNRATED.\n',credit_state,obj.id);
                 credit_state = 'UNRATED';
             end
           obj.credit_state = credit_state;
       end % set.credit_state
-			
+            
    end % end methods
    
    %static methods: 
    methods (Static = true)
    
-	function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+    function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Bond.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Bond.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Bond(@var{id})\n\
@@ -593,22 +593,22 @@ b.get('eff_duration')\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Bond\' is a class definition from the file /octarisk/@Bond/Bond.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Bond\' is a class definition from the file /octarisk/@Bond/Bond.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-		
-	end % end of static method help
-	
-   end	% end of static method
+        
+    end % end of static method help
+    
+   end  % end of static method
    
 end 

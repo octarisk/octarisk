@@ -140,13 +140,13 @@ function [y] = betainc_vec (x, a, b, tail = "lower")
   ## gives (B(a,b) * I_x(a,b)) / (x^a * (1-x)^b).
   ## call vectorized C++ code (column vectors required)
   if ( rows(x) == 1 && columns(x) > 1)
-	x = x';
+    x = x';
   end
   if ( rows(a) == 1 && columns(a) > 1)
-	a = a';
+    a = a';
   end
   if ( rows(b) == 1 && columns(b) > 1)
-	b = b';
+    b = b';
   end
   f = betainc_lentz_vec(x, a, b);
   # We divide the continued fraction by B(a,b) / (x^a * (1-x)^b)

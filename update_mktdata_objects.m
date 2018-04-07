@@ -32,34 +32,34 @@ for ii = 1 : 1 : length(mktdata_struct)
     if ( strcmp(tmp_class,'index') && ~strcmpi(tmp_object.type,'aggregated index'))
         tmp_id = tmp_object.id;
         try
-			% a) apply Stress scenario shocks
-				% reserve stress_values matrix
-				stress_values = zeros(length(stress_struct),columns(tmp_object.getValue('base'))) ;
+            % a) apply Stress scenario shocks
+                % reserve stress_values matrix
+                stress_values = zeros(length(stress_struct),columns(tmp_object.getValue('base'))) ;
 
-				% iterate via all stress definitions
-				for ii = 1:1:length(stress_struct)
-					% get struct with all market object shocks
-					subst = stress_struct(ii).objects;
-					% get appropriate market object
-					[mktstruct retcode] = get_sub_struct(subst,tmp_object.id);
-					if ( retcode == 1)	% market data is contained in stress
-						stress_values(ii,:) = return_stress_shocks(tmp_object,mktstruct);
-					else
-						% apply base value
-						stress_values(ii,:) = tmp_object.getValue('base');
-					end
-				end
-				% set instrument stress vector
-				tmp_object = tmp_object.set('scenario_stress',stress_values);
+                % iterate via all stress definitions
+                for ii = 1:1:length(stress_struct)
+                    % get struct with all market object shocks
+                    subst = stress_struct(ii).objects;
+                    % get appropriate market object
+                    [mktstruct retcode] = get_sub_struct(subst,tmp_object.id);
+                    if ( retcode == 1)  % market data is contained in stress
+                        stress_values(ii,:) = return_stress_shocks(tmp_object,mktstruct);
+                    else
+                        % apply base value
+                        stress_values(ii,:) = tmp_object.getValue('base');
+                    end
+                end
+                % set instrument stress vector
+                tmp_object = tmp_object.set('scenario_stress',stress_values);
 
-			% b) apply MC scenario shocks
-			if ( run_mc == true)
-				tmp_rf_id = strcat('RF_',tmp_id);
-				[tmp_rf_object ret_code] = get_sub_object(riskfactor_struct, tmp_rf_id);
-				if (ret_code == 1)	% match found -> market object has attached risk factor
-					% get risk factor object values
-					tmp_model               = tmp_rf_object.get('model');
-					% set mc object values:
+            % b) apply MC scenario shocks
+            if ( run_mc == true)
+                tmp_rf_id = strcat('RF_',tmp_id);
+                [tmp_rf_object ret_code] = get_sub_object(riskfactor_struct, tmp_rf_id);
+                if (ret_code == 1)  % match found -> market object has attached risk factor
+                    % get risk factor object values
+                    tmp_model               = tmp_rf_object.get('model');
+                    % set mc object values:
                     tmp_scenario_mc_shock   = tmp_rf_object.get('scenario_mc');
                     if ( sum(strcmp(tmp_model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
                         tmp_scenario_values     =  exp(tmp_scenario_mc_shock) .*  tmp_object.value_base;
@@ -69,8 +69,8 @@ for ii = 1 : 1 : length(mktdata_struct)
                     tmp_timesteps_mc    = tmp_rf_object.get('timestep_mc');
                     tmp_object = tmp_object.set('scenario_mc', tmp_scenario_values );
                     tmp_object = tmp_object.set('timestep_mc', tmp_timesteps_mc );
-				end		% no match found, market object has no attached risk factor
-			end
+                end     % no match found, market object has no attached risk factor
+            end
             tmp_store_struct = length(index_struct) + 1;
             index_struct( tmp_store_struct ).id      = tmp_object.id;
             index_struct( tmp_store_struct ).name    = tmp_object.name;
@@ -84,13 +84,13 @@ for ii = 1 : 1 : length(mktdata_struct)
     elseif ( strcmpi(tmp_class,'surface'))
         tmp_id = tmp_object.id;
         try  
-			% % a) apply Stress scenario shocks
-			% tmp_object = tmp_object.apply_stress_shocks(stress_struct);
-			% % b) apply MC scenario shocks
-			% if ( run_mc == true)
-				% % Update MC risk factor shock values
-				% tmp_object = tmp_object.apply_rf_shocks(riskfactor_struct);
-			% end
+            % % a) apply Stress scenario shocks
+            % tmp_object = tmp_object.apply_stress_shocks(stress_struct);
+            % % b) apply MC scenario shocks
+            % if ( run_mc == true)
+                % % Update MC risk factor shock values
+                % tmp_object = tmp_object.apply_rf_shocks(riskfactor_struct);
+            % end
 
             % store surface object in struct
             tmp_store_struct = length(surface_struct) + 1;
@@ -105,83 +105,83 @@ for ii = 1 : 1 : length(mktdata_struct)
     elseif ( strcmpi(tmp_class,'curve') && ~strcmpi(tmp_object.type,'aggregated curve'))
         tmp_id = tmp_object.id;
         try
-			% a) get base values of mktdata curve and sort them
-				% get base values of mktdata curve
+            % a) get base values of mktdata curve and sort them
+                % get base values of mktdata curve
                 curve_nodes      = tmp_object.get('nodes');
                 curve_rates_base = tmp_object.get('rates_base');
                 % sort nodes and accordingly base rates:
-				if (curve_nodes >= 0 )
-					[curve_nodes tmp_indizes] = sort(curve_nodes);
-					curve_rates_base = curve_rates_base(:,tmp_indizes);
-				elseif (curve_nodes <= 0 )
-					[curve_nodes tmp_indizes] = sort(curve_nodes,'descend');
-					curve_rates_base = curve_rates_base(:,tmp_indizes);
-				end
+                if (curve_nodes >= 0 )
+                    [curve_nodes tmp_indizes] = sort(curve_nodes);
+                    curve_rates_base = curve_rates_base(:,tmp_indizes);
+                elseif (curve_nodes <= 0 )
+                    [curve_nodes tmp_indizes] = sort(curve_nodes,'descend');
+                    curve_rates_base = curve_rates_base(:,tmp_indizes);
+                end
                 tmp_object = tmp_object.set('rates_base',curve_rates_base); % restore rates base. Maybe they were unsorted.
                 tmp_object = tmp_object.set('nodes',curve_nodes); % restore nodes. Maybe they were unsorted.
-			
-			% b) apply stress scenario shocks to market data curve
+            
+            % b) apply stress scenario shocks to market data curve
 
-				% set stressed_values
-				stress_values = zeros(length(stress_struct),columns(tmp_object.getValue('base'))) ;
-				% iterate via all stress definitions
-				for ii = 1:1:length(stress_struct)
-					% get struct with all market object shocks
-					subst = stress_struct(ii).objects;
-					% get approriate market object
-					[mktstruct retcode] = get_sub_struct(subst,tmp_object.id);
-					if ( retcode == 1)	% market data is contained in stress
-						stress_values(ii,:) = return_stress_shocks(tmp_object,mktstruct);
-					else
-						% apply base value
-						stress_values(ii,:) = tmp_object.getValue('base');
-					end
-					
-				end
-				% set instrument stress vector
-				tmp_object = tmp_object.set('rates_stress',stress_values);
+                % set stressed_values
+                stress_values = zeros(length(stress_struct),columns(tmp_object.getValue('base'))) ;
+                % iterate via all stress definitions
+                for ii = 1:1:length(stress_struct)
+                    % get struct with all market object shocks
+                    subst = stress_struct(ii).objects;
+                    % get approriate market object
+                    [mktstruct retcode] = get_sub_struct(subst,tmp_object.id);
+                    if ( retcode == 1)  % market data is contained in stress
+                        stress_values(ii,:) = return_stress_shocks(tmp_object,mktstruct);
+                    else
+                        % apply base value
+                        stress_values(ii,:) = tmp_object.getValue('base');
+                    end
+                    
+                end
+                % set instrument stress vector
+                tmp_object = tmp_object.set('rates_stress',stress_values);
 
-			
-			% c) apply MC scenario shocks to market data curve
-			if ( run_mc == true)
-				tmp_rf_id = strcat('RF_',tmp_id);
-				[tmp_rf_object ret_code] = get_sub_object(curve_struct, tmp_rf_id);
-				if (ret_code == 1)	% match found -> market object has attached risk factor -> calculate appropriate scenario values
+            
+            % c) apply MC scenario shocks to market data curve
+            if ( run_mc == true)
+                tmp_rf_id = strcat('RF_',tmp_id);
+                [tmp_rf_object ret_code] = get_sub_object(curve_struct, tmp_rf_id);
+                if (ret_code == 1)  % match found -> market object has attached risk factor -> calculate appropriate scenario values
                 
                     tmp_timestep_mc = tmp_rf_object.get('timestep_mc');
                     tmp_shocktype_mc = tmp_rf_object.get('shocktype_mc');
-					% loop through all timestep_mc
+                    % loop through all timestep_mc
                     for kk = 1 : 1 : length(tmp_timestep_mc)
                         tmp_value_type = tmp_timestep_mc{kk};
                         rf_shock_nodes    = tmp_rf_object.get('nodes');
                         rf_shock_rates    = tmp_rf_object.getValue(tmp_value_type);
-						% 1. loop through all risk factor shock values and calculate
-						% sln values
-						if  ( strcmpi(tmp_rf_object.get('shocktype_mc'),'sln_relative'))
-							shock_vec = [];
-							for jj = 1 : 1 : length(rf_shock_nodes)
-								tmp_node = rf_shock_nodes(jj);
-								tmp_shock = tmp_rf_object.getRate(tmp_value_type,tmp_node);
-								% in case of shifted log-normal: adjust shock and calculate absolute shock
-									tmp_shocktype_mc = 'absolute';
-									sln_level_vector = tmp_rf_object.get('sln_level');
-									% interpolate sln level:
-									sln_level = interpolate_curve(rf_shock_nodes,sln_level_vector,tmp_node,tmp_rf_object.method_interpolation);
-									tmp_rate_base = tmp_object.getRate('base',tmp_node);
-									tmp_shock = (( tmp_rate_base + sln_level ) .* tmp_shock - sln_level) - tmp_rate_base;
-								
-								shock_vec = horzcat(shock_vec,tmp_shock);
-							end
-							rf_shock_rates = shock_vec;
-						end
+                        % 1. loop through all risk factor shock values and calculate
+                        % sln values
+                        if  ( strcmpi(tmp_rf_object.get('shocktype_mc'),'sln_relative'))
+                            shock_vec = [];
+                            for jj = 1 : 1 : length(rf_shock_nodes)
+                                tmp_node = rf_shock_nodes(jj);
+                                tmp_shock = tmp_rf_object.getRate(tmp_value_type,tmp_node);
+                                % in case of shifted log-normal: adjust shock and calculate absolute shock
+                                    tmp_shocktype_mc = 'absolute';
+                                    sln_level_vector = tmp_rf_object.get('sln_level');
+                                    % interpolate sln level:
+                                    sln_level = interpolate_curve(rf_shock_nodes,sln_level_vector,tmp_node,tmp_rf_object.method_interpolation);
+                                    tmp_rate_base = tmp_object.getRate('base',tmp_node);
+                                    tmp_shock = (( tmp_rate_base + sln_level ) .* tmp_shock - sln_level) - tmp_rate_base;
+                                
+                                shock_vec = horzcat(shock_vec,tmp_shock);
+                            end
+                            rf_shock_rates = shock_vec;
+                        end
                         % 2. loop through all IR Curve nodes and get interpolated shock value from risk factor
                         tmp_ir_shock_matrix = zeros(rows(rf_shock_rates),length(curve_nodes));
-						
+                        
                         for ii = 1 : 1 : length(curve_nodes)
                             tmp_node = curve_nodes(ii);
                             % get interpolated shock vector at node and generate total shock matrix
-							tmp_ir_shock_matrix(:,ii) = interpolate_curve(rf_shock_nodes, ...
-								rf_shock_rates,tmp_node,tmp_rf_object.method_interpolation);
+                            tmp_ir_shock_matrix(:,ii) = interpolate_curve(rf_shock_nodes, ...
+                                rf_shock_rates,tmp_node,tmp_rf_object.method_interpolation);
                         end
                         if ( strcmp(tmp_shocktype_mc,'relative'))
                             curve_rates_mc = curve_rates_base .* tmp_ir_shock_matrix;
@@ -198,8 +198,8 @@ for ii = 1 : 1 : length(mktdata_struct)
                         tmp_object = tmp_object.set('rates_mc',curve_rates_mc);
                         
                     end
-				end
-            end	% no match found, market object has no attached risk factor -> just store in curve struct
+                end
+            end % no match found, market object has no attached risk factor -> just store in curve struct
             % store everything in curve struct
             tmp_store_struct = length(curve_struct) + 1;
             curve_struct( tmp_store_struct ).id      = tmp_object.id;
@@ -313,8 +313,8 @@ for ii = 1 : 1 : length(mktdata_struct)
     tmp_class = lower(class(tmp_object));
     if ( strcmpi(tmp_class,'index') && strcmpi(tmp_object.type,'aggregated index'))
         tmp_id = tmp_object.id;
-		try
-			% call helper function for aggregating curve objects
+        try
+            % call helper function for aggregating curve objects
             % check whether aggregated index was not already generated
             [tmp_obj ret_code] = get_sub_object(index_struct,tmp_id);
             if (ret_code == 1)
@@ -331,10 +331,10 @@ for ii = 1 : 1 : length(mktdata_struct)
                 index_struct( tmp_store_struct ).name    = tmp_object.name;
                 index_struct( tmp_store_struct ).object  = tmp_object;
             end
-		catch
-			fprintf('WARNING: octarisk::update_mktdata_objects: There has been an error for new Curve object:  >>%s<<. Message: >>%s<< in line >>%d<< \n',any2str(tmp_id),lasterr,lasterror.stack.line);
-			id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
-		end
+        catch
+            fprintf('WARNING: octarisk::update_mktdata_objects: There has been an error for new Curve object:  >>%s<<. Message: >>%s<< in line >>%d<< \n',any2str(tmp_id),lasterr,lasterror.stack.line);
+            id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_id;
+        end
     end
 end
 fprintf('SUCCESS: generated >>%d<< aggregated index objects from marketdata. \n',aggr_index_objects);
@@ -374,59 +374,59 @@ end
 
 % Helper Function for applying market data stresses
 function retval = return_stress_shocks(obj,mktstruct)
-	retval = 0.0;
-	type 		= mktstruct.type;
-	shock_type 	= mktstruct.shock_type;
-	shock_value = mktstruct.shock_value;
-	% type index
-	if (strcmpi(type,'index'))
-		base_value = obj.getValue('base');
-		if (strcmpi(shock_type,'relative'))
-			retval = base_value .* shock_value;
-		elseif (strcmpi(shock_type,'absolute'))
-			retval = base_value + shock_value;
-		elseif (strcmpi(shock_type,'value'))
-			retval = shock_value;
-		else
-			error('return_stress_shocks: unknown stress shock type: >>%s<<\n',any2str(shock_type));
-		end
-		
-	% type curve
-	elseif (strcmpi(type,'curve'))
-		% get base rates and nodes of curve
-		rates_base = obj.get('rates_base');
-		nodes = obj.get('nodes');
-		rates_stress = zeros(1,length(nodes));
-		
-		% apply interpolated shocks to all base rates
-		for kk = 1:1:length(nodes)
-			tmp_node = nodes(kk);
-			shock_value = interpolate_curve (mktstruct.term, ...
-								mktstruct.shock_value, tmp_node, ...
-								mktstruct.method_interpolation);
-			if (strcmpi(shock_type,'relative'))
-				rates_stress(kk)  = rates_base(kk) .* shock_value;
-			elseif (strcmpi(shock_type,'absolute'))
-				rates_stress(kk)  = rates_base(kk) + shock_value;
-			elseif (strcmpi(shock_type,'value'))
-				rates_stress(kk)  = shock_value;
-			else
-				error('return_stress_shocks: unknown stress shock type: >>%s<<\n',any2str(shock_type));
-			end
-		end
-		% return stressed rates
-		retval = rates_stress;
-	% other types
-	else
-		error('return_stress_shocks: unknown stress type: >>%s<<\n',any2str(type));
-	end
+    retval = 0.0;
+    type        = mktstruct.type;
+    shock_type  = mktstruct.shock_type;
+    shock_value = mktstruct.shock_value;
+    % type index
+    if (strcmpi(type,'index'))
+        base_value = obj.getValue('base');
+        if (strcmpi(shock_type,'relative'))
+            retval = base_value .* shock_value;
+        elseif (strcmpi(shock_type,'absolute'))
+            retval = base_value + shock_value;
+        elseif (strcmpi(shock_type,'value'))
+            retval = shock_value;
+        else
+            error('return_stress_shocks: unknown stress shock type: >>%s<<\n',any2str(shock_type));
+        end
+        
+    % type curve
+    elseif (strcmpi(type,'curve'))
+        % get base rates and nodes of curve
+        rates_base = obj.get('rates_base');
+        nodes = obj.get('nodes');
+        rates_stress = zeros(1,length(nodes));
+        
+        % apply interpolated shocks to all base rates
+        for kk = 1:1:length(nodes)
+            tmp_node = nodes(kk);
+            shock_value = interpolate_curve (mktstruct.term, ...
+                                mktstruct.shock_value, tmp_node, ...
+                                mktstruct.method_interpolation);
+            if (strcmpi(shock_type,'relative'))
+                rates_stress(kk)  = rates_base(kk) .* shock_value;
+            elseif (strcmpi(shock_type,'absolute'))
+                rates_stress(kk)  = rates_base(kk) + shock_value;
+            elseif (strcmpi(shock_type,'value'))
+                rates_stress(kk)  = shock_value;
+            else
+                error('return_stress_shocks: unknown stress shock type: >>%s<<\n',any2str(shock_type));
+            end
+        end
+        % return stressed rates
+        retval = rates_stress;
+    % other types
+    else
+        error('return_stress_shocks: unknown stress type: >>%s<<\n',any2str(type));
+    end
 end
 
 % ==============================================================================
 % Helper Function for stacking curves
 function [tmp_object curve_struct] = aggregate_curve_ojects(tmp_object, ...
-				valuation_date,mktdata_struct,index_struct,riskfactor_struct, ...
-				curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc)
+                valuation_date,mktdata_struct,index_struct,riskfactor_struct, ...
+                curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc)
 
 %fprintf('New type aggregated object: %s \n',tmp_id);
 % get nodes of aggr curve and set rates
@@ -453,7 +453,7 @@ for kk = 1 : 1 : length(aggr_curve_increments)
     tmp_incr_id = aggr_curve_increments{kk};
     % searching for curve increment in curve_struct
     [tmp_incr_object ret_code] = get_sub_object(curve_struct, tmp_incr_id);
-    if (ret_code == 1)	% match found -> market object has underlying increment curve -> calculate appropriate scenario values
+    if (ret_code == 1)  % match found -> market object has underlying increment curve -> calculate appropriate scenario values
         interp_method = tmp_incr_object.get('method_interpolation');
         
         % get dcc, comp type and freq of increment curve (original values)
@@ -546,8 +546,8 @@ for kk = 1 : 1 : length(aggr_curve_increments)
                 aggr_curve_rates_mc = aggr_curve_rates_mc .* tmp_aggr_curve_rates_mc;
             elseif ( strcmpi(aggr_curve_function,'divide'))
                 aggr_curve_rates_mc = aggr_curve_rates_mc ./ tmp_aggr_curve_rates_mc;
-			else
-				error('ERROR: update_mktdata_objects: unknown curve function >>%s<<',any2str(aggr_curve_function));
+            else
+                error('ERROR: update_mktdata_objects: unknown curve function >>%s<<',any2str(aggr_curve_function));
             end
         end
     else

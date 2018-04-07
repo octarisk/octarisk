@@ -9,7 +9,7 @@ classdef Synthetic < Instrument
         instr_vol_surfaces  = {'INSTRUMENT_VOL'};
         discount_curve = '';
         correlation_matrix = '';
-		basket_vola_type = 'Levy'; % [Levy, VCV, Beisser] approximation for basket volatility calculation
+        basket_vola_type = 'Levy'; % [Levy, VCV, Beisser] approximation for basket volatility calculation
     end
    
     properties (SetAccess = private)
@@ -53,7 +53,7 @@ classdef Synthetic < Instrument
          fprintf('correlation_matrix: %s\n',b.correlation_matrix); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('Instrument Volatility Surface(s): %s \n',any2str(b.instr_vol_surfaces));    
-		 fprintf('basket_vola_type: %s\n',b.basket_vola_type); 	
+         fprintf('basket_vola_type: %s\n',b.basket_vola_type);  
       end
       
       function obj = set.sub_type(obj,sub_type)
@@ -71,34 +71,34 @@ classdef Synthetic < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
-	  
-	  function obj = set.basket_vola_type(obj,basket_vola_type)
-		 if ~(strcmpi(basket_vola_type,{'Levy','VCV','Beisser'}) )
+      
+      function obj = set.basket_vola_type(obj,basket_vola_type)
+         if ~(strcmpi(basket_vola_type,{'Levy','VCV','Beisser'}) )
             error('Synthetic Instrument basket_vola_type must be Levy, VCV or Beisser')
          end
          obj.basket_vola_type = basket_vola_type;
       end % set.basket_vola_type
-	 
+     
    end % end of methods
    
    %static methods: 
    methods (Static = true)
    
-	function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+    function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Synthetic.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Synthetic.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Synthetic(@var{id})\n\
@@ -205,21 +205,21 @@ s.getValue('base')\n\
 @end example\n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Synthetic\' is a class definition from the file /octarisk/@Synthetic/Synthetic.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Synthetic\' is a class definition from the file /octarisk/@Synthetic/Synthetic.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-		
-	end % end of static method help
-	
-   end	% end of static methods
+        
+    end % end of static method help
+    
+   end  % end of static methods
 end 

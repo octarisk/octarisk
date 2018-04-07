@@ -85,52 +85,52 @@ T = T ./ 365;   % assuming act/365 day count convention (converted by Option cla
 q = divrate;    % assuming act/365 continuous compounding
 % get special case T == 0 --> skip this part
 if ( T > 0 )
-	d1 = (log(S./X) + (r - q + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-	d2 = d1 - sigma.*sqrt(T);
-	normcdf_eta_d1 	= 0.5.*(1+erf(eta .* d1./sqrt(2)));
-	normcdf_eta_d2 	= 0.5.*(1+erf(eta .* d2./sqrt(2)));
-	normcdf_d1 		= 0.5.*(1+erf(d1./sqrt(2)));
-	normcdf_d2 		= 0.5.*(1+erf(d2./sqrt(2)));           
-	% Calculating value: 
-	value   = eta .* (exp(-q.*T) .* S.*normcdf_eta_d1- X.*exp(-r.*T) ...
-			.*normcdf_eta_d2); 
+    d1 = (log(S./X) + (r - q + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    d2 = d1 - sigma.*sqrt(T);
+    normcdf_eta_d1  = 0.5.*(1+erf(eta .* d1./sqrt(2)));
+    normcdf_eta_d2  = 0.5.*(1+erf(eta .* d2./sqrt(2)));
+    normcdf_d1      = 0.5.*(1+erf(d1./sqrt(2)));
+    normcdf_d2      = 0.5.*(1+erf(d2./sqrt(2)));           
+    % Calculating value: 
+    value   = eta .* (exp(-q.*T) .* S.*normcdf_eta_d1- X.*exp(-r.*T) ...
+            .*normcdf_eta_d2); 
 else % payoff without uncertainty
-	if ( CallPutFlag == 1 ) % Call
-		value = max(S - X, 0.0);
-	else   % Put   
-		value = max(X - S, 0.0);
-	end
+    if ( CallPutFlag == 1 ) % Call
+        value = max(S - X, 0.0);
+    else   % Put   
+        value = max(X - S, 0.0);
+    end
 end
-	
+    
 % Calculate greeks only if demanded:
-	if (nargout > 1 && T > 0)
-		% normal density corresponding to N1 (needed for greeks)
-		N1s = exp(-d1 .* d1 ./ 2) ./ sqrt(2 .* pi); 
-		delta   = eta .* exp(-q.*T) .* normcdf_eta_d1;
-		gamma   =  exp(-q .* T) .* N1s ./ S ./ sigma ./ sqrt(T);
-		theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
-					+ q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) ...
-					.* X .* normcdf_d2;
-		if ( CallPutFlag == 1 ) % Call
-			theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
-					+ q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) ...
-					.* X .* normcdf_d2;
-		else   % Put   
-			theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
-					- q .* exp(-q .* T) .* S .* (1 - normcdf_d1) + r .* exp(-r .* T) ...
-					.* X .* (1 - normcdf_d2);
-		end   
-		theta = theta ./ 365;
-		vega    = S .* exp(-q.*T) .* N1s .* sqrt(T) ./ 100;
-		rho     = eta .* T.* X .*exp(-r.*T).* normcdf_eta_d2 ./ 100;
-		if ~(value == 0)
-			omega   = delta .* S ./ value;
-		else
-			omega = 0;
-		end
-	else
-		delta = gamma = vega = theta = rho = omega = 0;
-	end
+    if (nargout > 1 && T > 0)
+        % normal density corresponding to N1 (needed for greeks)
+        N1s = exp(-d1 .* d1 ./ 2) ./ sqrt(2 .* pi); 
+        delta   = eta .* exp(-q.*T) .* normcdf_eta_d1;
+        gamma   =  exp(-q .* T) .* N1s ./ S ./ sigma ./ sqrt(T);
+        theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
+                    + q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) ...
+                    .* X .* normcdf_d2;
+        if ( CallPutFlag == 1 ) % Call
+            theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
+                    + q .* exp(-q .* T) .* S .* normcdf_d1 - r .* exp(-r .* T) ...
+                    .* X .* normcdf_d2;
+        else   % Put   
+            theta   = -exp(-q .* T) .* S .* N1s .* sigma ./ 2 ./ sqrt(T) ...
+                    - q .* exp(-q .* T) .* S .* (1 - normcdf_d1) + r .* exp(-r .* T) ...
+                    .* X .* (1 - normcdf_d2);
+        end   
+        theta = theta ./ 365;
+        vega    = S .* exp(-q.*T) .* N1s .* sqrt(T) ./ 100;
+        rho     = eta .* T.* X .*exp(-r.*T).* normcdf_eta_d2 ./ 100;
+        if ~(value == 0)
+            omega   = delta .* S ./ value;
+        else
+            omega = 0;
+        end
+    else
+        delta = gamma = vega = theta = rho = omega = 0;
+    end
 end
 
 %!assert(option_bs(0,[10000;9000;11000],11000,365,0.01,[0.2;0.025;0.03]),[1351.5596289;1890.5481719;83.4751769],0.000002)

@@ -24,10 +24,10 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
     % Get input variables
     
     % get days in period
-	matdatedatenum = datenum(obj.maturity_date,1);
+    matdatedatenum = datenum(obj.maturity_date,1);
     [tmp_tf tmp_effdate dib]  = timefactor (valuation_date, ...
                                 matdatedatenum, obj.basis);
-	tmp_effdate =  matdatedatenum - valuation_date;
+    tmp_effdate =  matdatedatenum - valuation_date;
     % calculating swaption maturity date: effdate + tenor
     tmp_dtm          = tmp_effdate + 365 * obj.tenor; % unit years is assumed
     tmp_effdate = max(tmp_effdate,1);

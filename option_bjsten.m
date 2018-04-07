@@ -80,7 +80,7 @@ function [value] = option_bjsten(CallFlag, S, X, Time, r, sigma, divrate)
     error ('Volatility sigma must be positive ')        
   end    
 % Transformation
-	Time = Time ./ 365;	% days to maturity
+    Time = Time ./ 365; % days to maturity
     b = r - divrate;    % b equals risk free rate minus dividend yield   
                                                
     % The Bjerksund and Stensland (1993) American approximation:
@@ -115,10 +115,10 @@ else
         result = S-X;
     else 
         result = alpha.*S.^Beta - alpha.* bsPhi(S,Time,Beta,I,I,r,b,sigma) + ...
-				bsPhi(S,Time,1,I,I,r,b,sigma) ...
-				- bsPhi(S,Time,1,X,I,r,b,sigma) ...
-				- X.*bsPhi(S,Time,0,I,I,r,b,sigma) ...
-				+ X.*bsPhi(S,Time,0,X,I,r,b,sigma); 
+                bsPhi(S,Time,1,I,I,r,b,sigma) ...
+                - bsPhi(S,Time,1,X,I,r,b,sigma) ...
+                - X.*bsPhi(S,Time,0,I,I,r,b,sigma) ...
+                + X.*bsPhi(S,Time,0,X,I,r,b,sigma); 
     end
 end
     

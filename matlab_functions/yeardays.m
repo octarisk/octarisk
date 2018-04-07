@@ -1,28 +1,28 @@
 function d = yeardays (y, basis)
 
   if (nargin == 1)
-	basis = 0;
+    basis = 0;
   elseif (nargin ~= 2)
     print_usage ();
   end
 
   if isscalar (y)
-	d = zeros (size (basis));
+    d = zeros (size (basis));
   elseif isscalar (basis)
-	%the rest of the code is much simpler if you can be sure that
-	% basis is a matrix if y is a matrix
-	basis = basis * ones (size (y));
-	d = zeros (size (y));
+    %the rest of the code is much simpler if you can be sure that
+    % basis is a matrix if y is a matrix
+    basis = basis * ones (size (y));
+    d = zeros (size (y));
   else
-	if ndims (y) == ndims (basis)
-	  if ~ all (size (y) == size (basis))
-		error ('year and basis must be the same size or one must be a scalar');
-	  else
-		d = zeros (size (y));
-	  end
-	else
-	  error ('year and basis must be the same size or one must be a scalar.')
-	end
+    if ndims (y) == ndims (basis)
+      if ~ all (size (y) == size (basis))
+        error ('year and basis must be the same size or one must be a scalar');
+      else
+        d = zeros (size (y));
+      end
+    else
+      error ('year and basis must be the same size or one must be a scalar.')
+    end
   end
 
   bact = ismember (basis(:), [0 8])
@@ -31,8 +31,8 @@ function d = yeardays (y, basis)
 
   badbasismask = ~ (bact | b360 | b365);
   if any (badbasismask)
-	badbasis = unique (basis(badbasismask));
-	error ('Unsupported basis: %g\n', badbasis)
+    badbasis = unique (basis(badbasismask));
+    error ('Unsupported basis: %g\n', badbasis)
   end
 
   d(bact) = 365 + (eomday(y(bact), 2) == 29);

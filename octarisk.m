@@ -68,11 +68,11 @@ fprintf('\n');
 
 % 0) ###########            DEFINITION OF VARIABLES    ###########
 if nargin == 0
-	error('octarisk: Please provide path and name of parameter file');
+    error('octarisk: Please provide path and name of parameter file');
 end
-if (nargin == 1)	% assume parameter file called "parameter.csv"
-	fprintf('Assuming default parameter file name >>%s\\parameter.csv<<.\n',path_parameter);
-	filename_parameter = 'parameter.csv';
+if (nargin == 1)    % assume parameter file called "parameter.csv"
+    fprintf('Assuming default parameter file name >>%s\\parameter.csv<<.\n',path_parameter);
+    filename_parameter = 'parameter.csv';
 end
 
 % load parameter file
@@ -82,7 +82,7 @@ para_failed_cell = {};
 % 1. general variables -> path dependent on operating system
 path = para_object.path_working_folder;   % general load and save path for all input and output files
 if ( strcmpi(path,''))
-	path = path_parameter
+    path = path_parameter
 end
 path_output = strcat(path,'/',para_object.folder_output);
 path_output_instruments = strcat(path_output,'/',para_object.folder_output_instruments);
@@ -134,7 +134,7 @@ input_filename_stresstests  = para_object.input_filename_stresstests;
 input_filename_riskfactors  = para_object.input_filename_riskfactors;
 input_filename_positions    = para_object.input_filename_positions;
 input_filename_mktdata      = para_object.input_filename_mktdata;
-input_filename_seed			= para_object.input_filename_seed;
+input_filename_seed         = para_object.input_filename_seed;
 
 % set filenames for vola surfaces
 input_filename_vola_index = para_object.input_filename_vola_index;
@@ -165,17 +165,17 @@ scenario_set    = para_object.scenario_set;
 % specify unique runcode and timestamp:
 runcode = para_object.runcode;
 if ( strcmpi(runcode,''))
-	runcode = substr(hash('MD5',num2str(time())),-6);	% assign random runcode
+    runcode = substr(hash('MD5',num2str(time())),-6);   % assign random runcode
 end
 
 timestamp = para_object.timestamp;
 if ( strcmpi(timestamp,''))
-	timestamp = strftime ('%Y%m%d_%H%M%S', localtime (time ())); % assign act date
+    timestamp = strftime ('%Y%m%d_%H%M%S', localtime (time ())); % assign act date
 end
 first_eval      = para_object.first_eval;
 
 % load packages
-pkg load financial;		% load financial packages (needed throughout all scripts)
+pkg load financial;     % load financial packages (needed throughout all scripts)
 
 
 plottime = 0;   % initializing plottime
@@ -194,41 +194,41 @@ if ( stable_seed == 1)
     %    This file will be converted to a 32bit unsigned integer vector and used as seed.
     %    This high entropy seed is required to avoid low entropy random numbers used during scenario generation.
     %fid = fopen(strcat(path_static,'/',input_filename_seed)); % open file
-    %random_seed = fread(fid,Inf,'uint32');		% convert binary file into integers
-    %fclose(fid);								% close file 
-	random_seed = load(strcat(path_static,'/',input_filename_seed));
-	if ~(strcmpi(rnd_number_gen,'Mersenne-Twister'))
-		rand('seed',random_seed);				% set seed for MLCG
-		randn('seed',random_seed);
-	else	% Mersenne-Twister
-		rand('state',random_seed);				% set seed for Mersenne-Twister
-		randn('state',random_seed);
-	end
+    %random_seed = fread(fid,Inf,'uint32');     % convert binary file into integers
+    %fclose(fid);                               % close file 
+    random_seed = load(strcat(path_static,'/',input_filename_seed));
+    if ~(strcmpi(rnd_number_gen,'Mersenne-Twister'))
+        rand('seed',random_seed);               % set seed for MLCG
+        randn('seed',random_seed);
+    else    % Mersenne-Twister
+        rand('state',random_seed);              % set seed for Mersenne-Twister
+        randn('state',random_seed);
+    end
 else % use random seed
-	if ~(strcmpi(rnd_number_gen,'Mersenne-Twister'))
-		rand('seed','reset');					% reset seed for MLCG
-		randn('seed','reset');
-		% query seed
-		seed_rand = rand ('seed');
-		seed_randn = randn ('seed');
-	else	% Mersenne-Twister
-		rand ('state', 'reset');				% reset seed for Mersenne-Twister	
-		randn ('state', 'reset');
-		% query seed
-		seed_rand = rand ('state');
-		seed_randn = rand ('state');
-	end
-	% store used seed_rand
-	savename = 'seed_rand';
-	endung   = '.dat';
-	path 	 = strcat(path_static,'/');
-	fullpath = [path, savename, endung];
-	save ('-ascii', fullpath, savename);
-	% store used seed_randn
-	savename = 'seed_randn';
-	endung   = '.dat';
-	fullpath = [path, savename, endung];
-	save ('-ascii', fullpath, savename);
+    if ~(strcmpi(rnd_number_gen,'Mersenne-Twister'))
+        rand('seed','reset');                   % reset seed for MLCG
+        randn('seed','reset');
+        % query seed
+        seed_rand = rand ('seed');
+        seed_randn = randn ('seed');
+    else    % Mersenne-Twister
+        rand ('state', 'reset');                % reset seed for Mersenne-Twister   
+        randn ('state', 'reset');
+        % query seed
+        seed_rand = rand ('state');
+        seed_randn = rand ('state');
+    end
+    % store used seed_rand
+    savename = 'seed_rand';
+    endung   = '.dat';
+    path     = strcat(path_static,'/');
+    fullpath = [path, savename, endung];
+    save ('-ascii', fullpath, savename);
+    % store used seed_randn
+    savename = 'seed_randn';
+    endung   = '.dat';
+    fullpath = [path, savename, endung];
+    save ('-ascii', fullpath, savename);
 end
 
 fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
@@ -307,14 +307,14 @@ if (run_mc == true)
     for ii = 1 : 1 : length(riskfactor_cell)
         rf_id = riskfactor_cell{ii};
         [rf_object retcode] = get_sub_object(riskfactor_struct, rf_id);
-		if (retcode > 0)
-			rf_para_distributions(1,ii)   = rf_object.mean;  % mu
-			rf_para_distributions(2,ii)   = rf_object.std;   % sigma
-			rf_para_distributions(3,ii)   = rf_object.skew;  % skew
-			rf_para_distributions(4,ii)   = rf_object.kurt;  % kurt  
-		else
-			error('Unknown risk factor defined in correlation matrix: >>%s<<',rf_id);
-		end
+        if (retcode > 0)
+            rf_para_distributions(1,ii)   = rf_object.mean;  % mu
+            rf_para_distributions(2,ii)   = rf_object.std;   % sigma
+            rf_para_distributions(3,ii)   = rf_object.skew;  % skew
+            rf_para_distributions(4,ii)   = rf_object.kurt;  % kurt  
+        else
+            error('Unknown risk factor defined in correlation matrix: >>%s<<',rf_id);
+        end
     end
     % c) call MC scenario generation (Copula approach, Pearson distribution types 1-7 according four moments of distribution parameters)
     %    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
@@ -360,7 +360,7 @@ persistent curve_struct;
 curve_struct=struct();
 [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving,run_mc);
 
-		
+        
 % b) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 persistent index_struct;
 index_struct=struct();
@@ -399,7 +399,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
   end
   % store current scenario number in object
   para_object.scen_number = scen_number;
-		
+        
   fprintf('== Full valuation | scenario set %s | number of scenarios %d | timestep in days %d ==\n',tmp_scenario, scen_number,tmp_ts);
   for ii = 1 : 1 : length( instrument_struct )
     try
@@ -457,8 +457,8 @@ if ( saving == 1 )
         tmp_instrument_struct(ii).object = struct(tmp_instrument_struct(ii).object);
     end 
     savename = 'tmp_instrument_struct_fv';
-	fullpath = [path_output, savename, endung];
-	save ('-v7', fullpath, savename);
+    fullpath = [path_output, savename, endung];
+    save ('-v7', fullpath, savename);
 end
 saving_time = saving_time + toc;  
 
@@ -519,9 +519,9 @@ if (run_mc == true)
             save ('-v7',tmp_filename,'hd_vec');
         end
         %size_hdvec = size(hd_vec);
-	else  % make dummy hdvec with weight 1 at confidence scenario
-		hd_vec = zeros(mc,1);
-		hd_vec(confi_scenario) = 1.0;		
+    else  % make dummy hdvec with weight 1 at confidence scenario
+        hd_vec = zeros(mc,1);
+        hd_vec(confi_scenario) = 1.0;       
     end
 end
 
@@ -538,16 +538,16 @@ for mm = 1 : 1 : length( portfolio_struct )
   position_struct = portfolio_struct( mm ).position;
   PositionStructlength = length( position_struct  );
   
-			
-  if isempty( position_struct )	% check for empty portfolios
-	fprintf('WARNING: Skipping empty portfolio >>%s<<\n',tmp_port_id);
+            
+  if isempty( position_struct ) % check for empty portfolios
+    fprintf('WARNING: Skipping empty portfolio >>%s<<\n',tmp_port_id);
   else
   
     %  Loop via all positions and aggregate Position MC vector and get portfolio shock values
-	printflag = false;	% print information about aggregated instruments (quantity, ...
-	%	instrument base value, FX conversion rate, accumulated portfolio value)
+    printflag = false;  % print information about aggregated instruments (quantity, ...
+    %   instrument base value, FX conversion rate, accumulated portfolio value)
     [position_struct position_failed_cell base_value] = aggregate_positions(position_struct, ...
-			position_failed_cell,instrument_struct,index_struct,mc,'base',fund_currency,tmp_port_id,printflag);
+            position_failed_cell,instrument_struct,index_struct,mc,'base',fund_currency,tmp_port_id,printflag);
   
 
     % Fileoutput:
@@ -584,9 +584,9 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     fprintf(fid, '\n');    
     
     %  Loop via all positions and aggregate Position MC vector and get portfolio shock values
-	[position_struct position_failed_cell portfolio_shock] = aggregate_positions(position_struct, ...
-			position_failed_cell,instrument_struct,index_struct,mc,tmp_scen_set,fund_currency,tmp_port_id,'false');
-	
+    [position_struct position_failed_cell portfolio_shock] = aggregate_positions(position_struct, ...
+            position_failed_cell,instrument_struct,index_struct,mc,tmp_scen_set,fund_currency,tmp_port_id,'false');
+    
 
   % b.) VaR Calculation
   %  i.) sort arrays
@@ -640,8 +640,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 
 
   % d) Calculate Expected Shortfall as average of losses in sorted profit and loss vector from [1:confi_scenario-1]:
-  mc_es_shock			= base_value - mean(portfolio_shock_sort(1:confi_scenario-1));
-  mc_es_shock_pct		= -(1 - mean(endstaende_sort_shock(1:confi_scenario-1)));
+  mc_es_shock           = base_value - mean(portfolio_shock_sort(1:confi_scenario-1));
+  mc_es_shock_pct       = -(1 - mean(endstaende_sort_shock(1:confi_scenario-1)));
 
   % e) Print Report including position VaRs
 
@@ -677,93 +677,93 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   for ii = 1 : 1 : length( position_struct )
     tmp_id = position_struct( ii ).id;
     try
-        tmp_instr_object = get_sub_object(instrument_struct, tmp_id);		
-		octamat = position_struct( ii ).mc_scenarios.octamat;
+        tmp_instr_object = get_sub_object(instrument_struct, tmp_id);       
+        octamat = position_struct( ii ).mc_scenarios.octamat;
         tmp_values_shock = sort(octamat);
-		tmp_value = tmp_instr_object.getValue('base');
-		
-		tmp_name = tmp_instr_object.get('name');
-		tmp_type = tmp_instr_object.get('type'); 
-		tmp_currency = tmp_instr_object.get('currency'); 
-		   
-		tmp_quantity            = position_struct( ii ).quantity;
-		tmp_basevalue           = position_struct( ii ).basevalue;
-		
-		% take only shocked positions into account (MC shock vectors requires to contain MC scenario)
-		if (length(tmp_values_shock) > confi_scenario)
-			% calculate pos var
-			tmp_decomp_var_shock     = -(octamat(confi_scenarionumber_shock) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 
-			tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
-			
-			% calculate HD pos var
-			tmp_pos_var_hd = (tmp_basevalue ) -  (sum(octamat(scen_order_shock) .* hd_vec) * tmp_quantity  * sign(tmp_quantity));	
-			tmp_decomp_var_shock_hd   = -((sum(octamat(scen_order_shock) .* hd_vec)) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 	
-		else
-			tmp_decomp_var_shock   	= 0.0;
-			tmp_pos_var   			= 0.0;
-			tmp_pos_var_hd   		= 0.0;
-			tmp_decomp_var_shock_hd = 0.0;
-		end
-		
-		% Aggregate positional data according to aggregation keys:
-		for jj = 1 : 1 : length(aggregation_key)
-			if ( ii == 1)   % first use of struct
-				tmp_aggr_cell = {};
-				aggregation_mat = [];
-				aggregation_basevalue = [];
-				aggregation_decomp_shock = 0;
-			else            % reading from struct from previous instrument
-				tmp_aggr_cell           = aggr_key_struct( jj ).key_values;
-				aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
-				aggregation_basevalue   = [aggr_key_struct( jj ).aggregation_basevalue];
-				aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
-			end
-			if (isProp(tmp_instr_object,aggregation_key{jj}) == 1)
-				tmp_aggr_key_value = getfield(tmp_instr_object,aggregation_key{jj});
-				if (ischar(tmp_aggr_key_value))
-					if ( strcmp(tmp_aggr_key_value,'') == 1 )
-						tmp_aggr_key_value = 'Unknown';
-					end
-					% Assign P&L to aggregation key
-					% check, wether aggr key already exist in cell array
-					if (sum(strcmp(tmp_aggr_cell,tmp_aggr_key_value)) > 0)   % aggregation key found
-						tmp_vec_xx = 1:1:length(tmp_aggr_cell);
-						tmp_aggr_key_index = strcmp(tmp_aggr_cell,tmp_aggr_key_value)*tmp_vec_xx';
-						aggregation_basevalue(:,tmp_aggr_key_index) = aggregation_basevalue(:,tmp_aggr_key_index) + tmp_basevalue;
-						aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) + (octamat .* tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);
-						aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + tmp_decomp_var_shock_hd;
-					else    % aggregation key not found -> set value for first time
-						tmp_aggr_cell{end+1} = tmp_aggr_key_value;
-						tmp_aggr_key_index = length(tmp_aggr_cell);
-						aggregation_basevalue(:,tmp_aggr_key_index) = tmp_basevalue;
-						aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  - tmp_basevalue);
-						aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock_hd;
-					end
-				else
-					disp('Aggregation key not valid');
-				end
-			else
-				disp('Aggregation key not found in instrument definition');
-			end
-			% storing updated values in struct
-			aggr_key_struct( jj ).key_name = aggregation_key{jj};
-			aggr_key_struct( jj ).key_values = tmp_aggr_cell;
-			aggr_key_struct( jj ).aggregation_mat = aggregation_mat;
-			aggr_key_struct( jj ).aggregation_basevalue = aggregation_basevalue;
-			aggr_key_struct( jj ).aggregation_decomp_shock = aggregation_decomp_shock;
-		end
-		
-	   
-		total_var_undiversified = total_var_undiversified + tmp_pos_var;
-		% Store Values for piechart (Except CASH):
-		pie_chart_values_instr_shock(ii) = (tmp_pos_var) / abs(tmp_quantity);
-		pie_chart_desc_instr_shock(ii) = cellstr( strcat(tmp_instr_object.id));
-		pie_chart_values_pos_shock(ii) = (tmp_decomp_var_shock) ;
-		pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
-    catch	% if instrument not found raise warning and populate cell
-		fprintf('Instrument ID %s not found for position. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);
-		position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
-	end
+        tmp_value = tmp_instr_object.getValue('base');
+        
+        tmp_name = tmp_instr_object.get('name');
+        tmp_type = tmp_instr_object.get('type'); 
+        tmp_currency = tmp_instr_object.get('currency'); 
+           
+        tmp_quantity            = position_struct( ii ).quantity;
+        tmp_basevalue           = position_struct( ii ).basevalue;
+        
+        % take only shocked positions into account (MC shock vectors requires to contain MC scenario)
+        if (length(tmp_values_shock) > confi_scenario)
+            % calculate pos var
+            tmp_decomp_var_shock     = -(octamat(confi_scenarionumber_shock) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue); 
+            tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
+            
+            % calculate HD pos var
+            tmp_pos_var_hd = (tmp_basevalue ) -  (sum(octamat(scen_order_shock) .* hd_vec) * tmp_quantity  * sign(tmp_quantity));   
+            tmp_decomp_var_shock_hd   = -((sum(octamat(scen_order_shock) .* hd_vec)) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);     
+        else
+            tmp_decomp_var_shock    = 0.0;
+            tmp_pos_var             = 0.0;
+            tmp_pos_var_hd          = 0.0;
+            tmp_decomp_var_shock_hd = 0.0;
+        end
+        
+        % Aggregate positional data according to aggregation keys:
+        for jj = 1 : 1 : length(aggregation_key)
+            if ( ii == 1)   % first use of struct
+                tmp_aggr_cell = {};
+                aggregation_mat = [];
+                aggregation_basevalue = [];
+                aggregation_decomp_shock = 0;
+            else            % reading from struct from previous instrument
+                tmp_aggr_cell           = aggr_key_struct( jj ).key_values;
+                aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
+                aggregation_basevalue   = [aggr_key_struct( jj ).aggregation_basevalue];
+                aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
+            end
+            if (isProp(tmp_instr_object,aggregation_key{jj}) == 1)
+                tmp_aggr_key_value = getfield(tmp_instr_object,aggregation_key{jj});
+                if (ischar(tmp_aggr_key_value))
+                    if ( strcmp(tmp_aggr_key_value,'') == 1 )
+                        tmp_aggr_key_value = 'Unknown';
+                    end
+                    % Assign P&L to aggregation key
+                    % check, wether aggr key already exist in cell array
+                    if (sum(strcmp(tmp_aggr_cell,tmp_aggr_key_value)) > 0)   % aggregation key found
+                        tmp_vec_xx = 1:1:length(tmp_aggr_cell);
+                        tmp_aggr_key_index = strcmp(tmp_aggr_cell,tmp_aggr_key_value)*tmp_vec_xx';
+                        aggregation_basevalue(:,tmp_aggr_key_index) = aggregation_basevalue(:,tmp_aggr_key_index) + tmp_basevalue;
+                        aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) + (octamat .* tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);
+                        aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + tmp_decomp_var_shock_hd;
+                    else    % aggregation key not found -> set value for first time
+                        tmp_aggr_cell{end+1} = tmp_aggr_key_value;
+                        tmp_aggr_key_index = length(tmp_aggr_cell);
+                        aggregation_basevalue(:,tmp_aggr_key_index) = tmp_basevalue;
+                        aggregation_mat(:,tmp_aggr_key_index)       = (octamat .* tmp_quantity .* sign(tmp_quantity)  - tmp_basevalue);
+                        aggregation_decomp_shock(tmp_aggr_key_index)  = tmp_decomp_var_shock_hd;
+                    end
+                else
+                    disp('Aggregation key not valid');
+                end
+            else
+                disp('Aggregation key not found in instrument definition');
+            end
+            % storing updated values in struct
+            aggr_key_struct( jj ).key_name = aggregation_key{jj};
+            aggr_key_struct( jj ).key_values = tmp_aggr_cell;
+            aggr_key_struct( jj ).aggregation_mat = aggregation_mat;
+            aggr_key_struct( jj ).aggregation_basevalue = aggregation_basevalue;
+            aggr_key_struct( jj ).aggregation_decomp_shock = aggregation_decomp_shock;
+        end
+        
+       
+        total_var_undiversified = total_var_undiversified + tmp_pos_var;
+        % Store Values for piechart (Except CASH):
+        pie_chart_values_instr_shock(ii) = (tmp_pos_var) / abs(tmp_quantity);
+        pie_chart_desc_instr_shock(ii) = cellstr( strcat(tmp_instr_object.id));
+        pie_chart_values_pos_shock(ii) = (tmp_decomp_var_shock) ;
+        pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
+    catch   % if instrument not found raise warning and populate cell
+        fprintf('Instrument ID %s not found for position. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);
+        position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+    end
   end  % end loop for all positions
   % prepare vector for piechart:
   [pie_chart_values_sorted_instr_shock sorted_numbers_instr_shock ] = sort(pie_chart_values_instr_shock,'descend');
@@ -793,32 +793,32 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     tmp_aggr_cell               = aggr_key_struct( jj ).key_values;
     tmp_aggr_key_name           = aggr_key_struct( jj ).key_name;
     tmp_aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
-	tmp_aggregation_basevalue   = [aggr_key_struct( jj ).aggregation_basevalue];
+    tmp_aggregation_basevalue   = [aggr_key_struct( jj ).aggregation_basevalue];
     tmp_aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
-	if ( mc < hd_limit )	% print HD VaR figures
-		fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-		fprintf('|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp HD VAR|\n',tmp_scen_set);
-		fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-		fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp HD VAR|\n',tmp_scen_set);
-	else
-		fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-		fprintf('|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
-		fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-		fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
-	end
-		
+    if ( mc < hd_limit )    % print HD VaR figures
+        fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+        fprintf('|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp HD VAR|\n',tmp_scen_set);
+        fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+        fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp HD VAR|\n',tmp_scen_set);
+    else
+        fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+        fprintf('|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
+        fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+        fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
+    end
+        
     
     for ii = 1 : 1 : length(tmp_aggr_cell)
         tmp_aggr_key_value          = tmp_aggr_cell{ii};
-        tmp_sorted_aggr_mat			= sort(tmp_aggregation_mat(:,ii));	
-		% HD VaR only if number of scenarios < hd_limit
-	    if ( mc < hd_limit )
-		    tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
-	    else
-		    tmp_standalone_aggr_key_var = abs(tmp_sorted_aggr_mat(confi_scenario));
-	    end
+        tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
+        % HD VaR only if number of scenarios < hd_limit
+        if ( mc < hd_limit )
+            tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
+        else
+            tmp_standalone_aggr_key_var = abs(tmp_sorted_aggr_mat(confi_scenario));
+        end
         tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
-		tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
+        tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
         fprintf('|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
         fprintf(fid, '|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
     end
@@ -872,44 +872,44 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   % 8.  Plotting 
   tic
   if ( plotting == 1 )
-	  plot_vec = 1:1:mc;
-	  %graphics_toolkit gnuplot;
-	  idx_figure = idx_figure + 1;
-	  figure(idx_figure);
-	  clf;
+      plot_vec = 1:1:mc;
+      %graphics_toolkit gnuplot;
+      idx_figure = idx_figure + 1;
+      figure(idx_figure);
+      clf;
 
-	  subplot (2, 2, 1)
-		hist(endstaende_reldiff_shock,40)
-		title_string = {tmp_port_name; tmp_port_description; strcat('Portfolio PnL ',tmp_scen_set);};
-		title (title_string,'fontsize',12);
-		xlabel('Relative Portfoliovalue');
-	  subplot (2, 2, 2)
-		plot ( plot_vec, p_l_absolut_shock,'linewidth',2);
-		%area ( plot_vec, p_l_absolut_shock,'Facecolor','blue');
-		hold on;
-		plot ( [1, mc], [-mc_var_shock, -mc_var_shock], '-','linewidth',1);
-		hold on;
-		plot ( [1, mc], [0, 0], 'r','linewidth',1);
-		h=get (gcf, 'currentaxes');
-		xlabel('MonteCarlo Scenario');
-		set(h,'xtick',[1 mc])
-		set(h,'ytick',[min(p_l_absolut_shock) -20000 0 20000 max(p_l_absolut_shock)])
-		h=text(0.025*mc,(-1.45*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
-		h=text(0.025*mc,(-2.1*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
-		%set(h,'fontweight','bold'); %,'rotation',90)
-		ylabel(strcat('Absolute PnL (in ',fund_currency,')'));
-		title_string = strcat('Portfolio PnL ',tmp_scen_set);
-		title (title_string,'fontsize',12);
-	  subplot (2, 2, 3)
-		pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock, plot_vec_pie);
-		title_string = strcat('Position contribution to VaR',tmp_scen_set);
-		title(title_string,'fontsize',12);
-		axis ('tic', 'off');    
-	  subplot (2, 2, 4)
-		pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock, plot_vec_pie);
-		title_string = strcat('Pie Chart of Riskiest Instruments (VaR',tmp_scen_set,')');
-		title(title_string,'fontsize',12);
-		axis ('tic', 'off');
+      subplot (2, 2, 1)
+        hist(endstaende_reldiff_shock,40)
+        title_string = {tmp_port_name; tmp_port_description; strcat('Portfolio PnL ',tmp_scen_set);};
+        title (title_string,'fontsize',12);
+        xlabel('Relative Portfoliovalue');
+      subplot (2, 2, 2)
+        plot ( plot_vec, p_l_absolut_shock,'linewidth',2);
+        %area ( plot_vec, p_l_absolut_shock,'Facecolor','blue');
+        hold on;
+        plot ( [1, mc], [-mc_var_shock, -mc_var_shock], '-','linewidth',1);
+        hold on;
+        plot ( [1, mc], [0, 0], 'r','linewidth',1);
+        h=get (gcf, 'currentaxes');
+        xlabel('MonteCarlo Scenario');
+        set(h,'xtick',[1 mc])
+        set(h,'ytick',[min(p_l_absolut_shock) -20000 0 20000 max(p_l_absolut_shock)])
+        h=text(0.025*mc,(-1.45*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
+        h=text(0.025*mc,(-2.1*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
+        %set(h,'fontweight','bold'); %,'rotation',90)
+        ylabel(strcat('Absolute PnL (in ',fund_currency,')'));
+        title_string = strcat('Portfolio PnL ',tmp_scen_set);
+        title (title_string,'fontsize',12);
+      subplot (2, 2, 3)
+        pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock, plot_vec_pie);
+        title_string = strcat('Position contribution to VaR',tmp_scen_set);
+        title(title_string,'fontsize',12);
+        axis ('tic', 'off');    
+      subplot (2, 2, 4)
+        pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock, plot_vec_pie);
+        title_string = strcat('Pie Chart of Riskiest Instruments (VaR',tmp_scen_set,')');
+        title(title_string,'fontsize',12);
+        axis ('tic', 'off');
   end     % end plotting
   plottime = toc; % end plotting
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    END  MC REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
@@ -920,10 +920,10 @@ elseif ( strcmpi(tmp_scen_set,'stress') )     % Stress scenario
     % prepare stresstest plotting and report output
     stresstest_plot_desc = {stresstest_struct.name};
     
-	 %  Loop via all positions and aggregate Position Stress vector and get portfolio stress values
-	[position_struct position_failed_cell portfolio_stress] = aggregate_positions(position_struct, ...
-			position_failed_cell,instrument_struct,index_struct,no_stresstests,tmp_scen_set,fund_currency,tmp_port_id,'false');
-			
+     %  Loop via all positions and aggregate Position Stress vector and get portfolio stress values
+    [position_struct position_failed_cell portfolio_stress] = aggregate_positions(position_struct, ...
+            position_failed_cell,instrument_struct,index_struct,no_stresstests,tmp_scen_set,fund_currency,tmp_port_id,'false');
+            
     % Calc absolute and relative stress values
     p_l_absolut_stress      = portfolio_stress - base_value;
     p_l_relativ_stress      = (portfolio_stress - base_value )./ base_value;
@@ -935,28 +935,28 @@ elseif ( strcmpi(tmp_scen_set,'stress') )     % Stress scenario
     % for ii = 1 : 1 : length( position_struct )  
         % tmp_id = position_struct( ii ).id
         % try
-			% % get instrument data: get Position's Riskfactors and Sensitivities
-			% tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
-			% tmp_values_stress = [position_struct( ii ).stresstests];
-			% % tmp_value = tmp_instr_object.getValue('base');
-			% % tmp_currency = tmp_instr_object.get('currency');
-			% tmp_name = tmp_instr_object.get('name');
+            % % get instrument data: get Position's Riskfactors and Sensitivities
+            % tmp_instr_object = get_sub_object(instrument_struct, tmp_id);
+            % tmp_values_stress = [position_struct( ii ).stresstests];
+            % % tmp_value = tmp_instr_object.getValue('base');
+            % % tmp_currency = tmp_instr_object.get('currency');
+            % tmp_name = tmp_instr_object.get('name');
 
-			% % Get instrument IR and Spread sensitivity from stresstests 1-4:
-			% if ~( tmp_values_stress(end) == 0 ) % test for base values 0 (e.g. matured option )
-				% tmp_values_stress_rel = 100 .*(tmp_values_stress - tmp_values_stress(end)) ./ tmp_values_stress(end);
-			% else
-				% tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
-			% end
-			% tmp_values_stress_rel
-			% tmp_ir_sensitivity = (abs(tmp_values_stress_rel(1)) + abs(tmp_values_stress_rel(2)))/2;
-			% tmp_spread_sensitivity = (abs(tmp_values_stress_rel(3)) + abs(tmp_values_stress_rel(4)))/2;
-			% fprintf(fid, '|Sensi ModDuration \t\t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_ir_sensitivity);
-			% fprintf(fid, '|Sensi ModSpreadDur \t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_spread_sensitivity);
-        % catch	% if instrument not found raise warning and populate cell
-			% %fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
-			% %position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
-		% end	
+            % % Get instrument IR and Spread sensitivity from stresstests 1-4:
+            % if ~( tmp_values_stress(end) == 0 ) % test for base values 0 (e.g. matured option )
+                % tmp_values_stress_rel = 100 .*(tmp_values_stress - tmp_values_stress(end)) ./ tmp_values_stress(end);
+            % else
+                % tmp_values_stress_rel = zeros(length(tmp_values_stress),1);
+            % end
+            % tmp_values_stress_rel
+            % tmp_ir_sensitivity = (abs(tmp_values_stress_rel(1)) + abs(tmp_values_stress_rel(2)))/2;
+            % tmp_spread_sensitivity = (abs(tmp_values_stress_rel(3)) + abs(tmp_values_stress_rel(4)))/2;
+            % fprintf(fid, '|Sensi ModDuration \t\t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_ir_sensitivity);
+            % fprintf(fid, '|Sensi ModSpreadDur \t |%s|%s| = \t |%3.2f%%|\n',tmp_name,tmp_id,tmp_spread_sensitivity);
+        % catch % if instrument not found raise warning and populate cell
+            % %fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+            % %position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+        % end   
     % end 
  
     fprintf(fid, 'Stress test results:\n');
@@ -998,7 +998,7 @@ totaltime = round((parseinput + scengen + curve_gen_time + fulvia + aggr + plott
 fprintf(fid, 'Total Runtime:  %6.2f s\n',totaltime);
 % Close file
 fclose (fid);
-end	% close if case for empty portfolios
+end % close if case for empty portfolios
 end % closing main portfolioloop mm
 end % close aggregation_flag condition
 

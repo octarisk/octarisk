@@ -52,8 +52,8 @@ stable_seed = para_object.stable_seed;
 use_sobol  = para_object.use_sobol;
 sobol_seed = para_object.sobol_seed;
 filepath_sobol_direction_number = strcat(para_object.path_working_folder,...
-							'/',para_object.path_sobol_direction_number, ...
-							'/',para_object.filename_sobol_direction_number);
+                            '/',para_object.path_sobol_direction_number, ...
+                            '/',para_object.filename_sobol_direction_number);
 
 % 2) Time horizon check
 factor_time_horizon = 256 / time_horizon;
@@ -71,53 +71,53 @@ new_corr = false;
         fprintf('scenario_generation_MC: Taking file >>%s<< with random numbers from static folder\n',tmp_filename);
         Y_struct = load(tmp_filename);  % read in from stored file
         Y = Y_struct.Y;
-		% test random numbers for matching correlation settings
-		frob_norm = norm(abs(corr(Y) - corr_matrix));
-		if (frob_norm > 0.05)
-			fprintf('scenario_generation_MC: WARNING: Frobenius norm %s of correlation matrix drawn from random numbers minus correlation settings > 0.05. New random numbers will be drawn.\n',any2str(frob_norm));
-			new_corr = true;
-		end
+        % test random numbers for matching correlation settings
+        frob_norm = norm(abs(corr(Y) - corr_matrix));
+        if (frob_norm > 0.05)
+            fprintf('scenario_generation_MC: WARNING: Frobenius norm %s of correlation matrix drawn from random numbers minus correlation settings > 0.05. New random numbers will be drawn.\n',any2str(frob_norm));
+            new_corr = true;
+        end
     % otherwise draw new random numbers and save to static folder for next run
     else 
-		new_corr = true;
+        new_corr = true;
     end
-	
-	% draw new random numbers
-	if ( new_corr == true)
-		dim = length(corr_matrix);
-		if ( use_sobol == false)
-			fprintf('scenario_generation_MC: New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
-			randn_matrix = randn(mc,dim);
-		else
-			% generate Sobol numbers
-			sobol_seed = max(sobol_seed,1);	% minimum Sobol seed = 1: first Sobol numbers 0.5
-			fprintf('scenario_generation_MC: Use Sobol numbers with seed %d for %d MC scenarios and Copulatype %s.\n',sobol_seed,mc,copulatype);
-			if ( dim > 21201)
-				error('scenario_generation_MC: Sobol numbers only support up to 21201 dimensions. Use different Sobol generator or MC instead.');
-			end
-			sobol_matrix = calc_sobol_cpp(mc+sobol_seed,dim,filepath_sobol_direction_number);
-			% remove all rows < seed
-			sobol_matrix(1:sobol_seed,:) = [];
-			% get standard normal distributed random numbers
-			randn_matrix = norminv(sobol_matrix);
-			% scale randn_matrix to get 0,1 distributed numbers (Sobol numbers
-			% systematically underestimate standard deviation)
-			randn_matrix = randn_matrix ./ std(randn_matrix);
-		end
-		
-		% apply Copula
-		if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
-			% draw random variables from multivariate normal distribution
-			Y   = mvnrnd_custom(zeros(1,dim),corr_matrix,mc,randn_matrix);  
-		elseif ( strcmp(copulatype, 't') == 1) % t-copula 
-			% draw random variables from multivariate student-t distribution
-			Y   = mvtrnd_custom(corr_matrix,nu,mc,randn_matrix);     
-		end
-		if (stable_seed == 1)
-			save ('-v7',tmp_filename,'Y');
-		end
+    
+    % draw new random numbers
+    if ( new_corr == true)
+        dim = length(corr_matrix);
+        if ( use_sobol == false)
+            fprintf('scenario_generation_MC: New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
+            randn_matrix = randn(mc,dim);
+        else
+            % generate Sobol numbers
+            sobol_seed = max(sobol_seed,1); % minimum Sobol seed = 1: first Sobol numbers 0.5
+            fprintf('scenario_generation_MC: Use Sobol numbers with seed %d for %d MC scenarios and Copulatype %s.\n',sobol_seed,mc,copulatype);
+            if ( dim > 21201)
+                error('scenario_generation_MC: Sobol numbers only support up to 21201 dimensions. Use different Sobol generator or MC instead.');
+            end
+            sobol_matrix = calc_sobol_cpp(mc+sobol_seed,dim,filepath_sobol_direction_number);
+            % remove all rows < seed
+            sobol_matrix(1:sobol_seed,:) = [];
+            % get standard normal distributed random numbers
+            randn_matrix = norminv(sobol_matrix);
+            % scale randn_matrix to get 0,1 distributed numbers (Sobol numbers
+            % systematically underestimate standard deviation)
+            randn_matrix = randn_matrix ./ std(randn_matrix);
+        end
+        
+        % apply Copula
+        if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
+            % draw random variables from multivariate normal distribution
+            Y   = mvnrnd_custom(zeros(1,dim),corr_matrix,mc,randn_matrix);  
+        elseif ( strcmp(copulatype, 't') == 1) % t-copula 
+            % draw random variables from multivariate student-t distribution
+            Y   = mvtrnd_custom(corr_matrix,nu,mc,randn_matrix);     
+        end
+        if (stable_seed == 1)
+            save ('-v7',tmp_filename,'Y');
+        end
     end
-	
+    
 
 % B.2) Calculate cumulative distribution functions 
 %      -> map t- or normdistributed random numbers to intervall [0,1]  
@@ -161,27 +161,27 @@ end
 %# taken and modified from Octave's statistical package
 function s = mvnrnd_custom(mu,sigma,n,randn_matrix);  
 
-	mu = zeros(1,length(sigma));
-	d = columns(sigma);
-	tol=eps*norm (sigma, "fro");
-	
-	try
-		U = chol (sigma + tol*eye (d),"upper");
-	catch
-		[E , Lambda] = eig (sigma);
+    mu = zeros(1,length(sigma));
+    d = columns(sigma);
+    tol=eps*norm (sigma, "fro");
+    
+    try
+        U = chol (sigma + tol*eye (d),"upper");
+    catch
+        [E , Lambda] = eig (sigma);
 
-		if min (diag (Lambda)) < -100*tol
-		  error('sigma must be positive semi-definite. Lowest eigenvalue %g', ...
-				min (diag (Lambda)));
-		else
-		  Lambda(Lambda<0) = 0;
-		end
-		warning ("mvnrnd:InvalidInput","Cholesky factorization failed. Using diagonalized matrix.")
-		U = sqrt (Lambda) * E';
-	end
+        if min (diag (Lambda)) < -100*tol
+          error('sigma must be positive semi-definite. Lowest eigenvalue %g', ...
+                min (diag (Lambda)));
+        else
+          Lambda(Lambda<0) = 0;
+        end
+        warning ("mvnrnd:InvalidInput","Cholesky factorization failed. Using diagonalized matrix.")
+        U = sqrt (Lambda) * E';
+    end
 
-	% draw univariate random numbers
-	s = randn_matrix*U + mu;
+    % draw univariate random numbers
+    s = randn_matrix*U + mu;
 
 end
 
@@ -238,9 +238,9 @@ end
 %! para_object.sobol_seed = 1;
 %! para_object.path_working_folder = pwd;
 %! para_object.path_sobol_direction_number = '';
-%! para_object.filename_sobol_direction_number = '';						
-%! rand('state',666 .*ones(625,1));	% set seed
-%! randn('state',666 .*ones(625,1));	% set seed
+%! para_object.filename_sobol_direction_number = '';                        
+%! rand('state',666 .*ones(625,1)); % set seed
+%! randn('state',666 .*ones(625,1));    % set seed
 %! [R distr_type] = scenario_generation_MC(corr_matrix,P,mc,copulatype,nu,256,[],para_object);
 %! assert(distr_type,[1,2,4])
 %! mean_target = P(1,1);   % mean

@@ -1,5 +1,5 @@
 function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp_vola_surf_obj,leg_fixed_obj,leg_float_obj)
-	obj = swaption;
+    obj = swaption;
     if ( nargin < 4)
         error('Error: No  discount curve or vola surface set. Aborting.');
     end
@@ -25,7 +25,7 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
     
     % ??Convert tmp_effdate timefactor from Instrument basis to pricing basis (act/365)??
     % get days in period
-	matdatenum = datenum(obj.maturity_date,1);
+    matdatenum = datenum(obj.maturity_date,1);
     [tmp_tf tmp_effdate dib]  = timefactor (valuation_date, ...
                                 matdatenum, obj.basis);
     % calculating swaption maturity date: effdate + tenor
@@ -39,7 +39,7 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
     mc = length(tmp_rf_rate);
     
     if ( tmp_dtm < 0 )
-		theo_value  = 0.0;
+        theo_value  = 0.0;
         theo_delta  = 0.0;
         theo_gamma  = 0.0;
         theo_vega   = 0.0;
@@ -47,7 +47,7 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
         theo_rho    = 0.0;
         theo_omega  = 0.0; 
         tmp_multiplier = 0.0;
-		theo_value_base = obj.value_base;
+        theo_value_base = obj.value_base;
     else
         % Valuation:
         tmp_spot            = obj.spot;
@@ -114,42 +114,42 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
             tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
                  xx,yy,tmp_moneyness) + tmp_impl_vola_spread;
             
-			% calculate shock to Y_u:
-			dY_u = 0.01 * tmp_forward_shock;  
-			dVola = tmp_imp_vola_shock * 0.01;
-			
-			% set up sensi scenario vector with shocks to all input parameter
-			tmp_forward_shock_vec 	= [tmp_forward_shock.*ones(1,1); ...
-											tmp_forward_shock * 0.99; ...
-											tmp_forward_shock * 1.01; ...
-											tmp_forward_shock.*ones(6,1)];
-			rf_rate_conv_vec 		= [tmp_rf_rate_conv.*ones(3,1); ...
-											tmp_rf_rate_conv - 0.01; ...
-											tmp_rf_rate_conv + 0.01; ...
-											tmp_rf_rate_conv.*ones(4,1)];
-			imp_vola_shock_vec 		= [tmp_imp_vola_shock.*ones(5,1); ...
-											tmp_imp_vola_shock * 0.99; ...
-											tmp_imp_vola_shock * 1.01; ...
-											tmp_imp_vola_shock.*ones(2,1)];
-			tmp_effdate_vec 		= [tmp_effdate.*ones(7,1); ...
-											tmp_effdate - 1; ...
-											tmp_effdate + 1];
-			sensi_vec				= ones(9,1);
-		
+            % calculate shock to Y_u:
+            dY_u = 0.01 * tmp_forward_shock;  
+            dVola = tmp_imp_vola_shock * 0.01;
+            
+            % set up sensi scenario vector with shocks to all input parameter
+            tmp_forward_shock_vec   = [tmp_forward_shock.*ones(1,1); ...
+                                            tmp_forward_shock * 0.99; ...
+                                            tmp_forward_shock * 1.01; ...
+                                            tmp_forward_shock.*ones(6,1)];
+            rf_rate_conv_vec        = [tmp_rf_rate_conv.*ones(3,1); ...
+                                            tmp_rf_rate_conv - 0.01; ...
+                                            tmp_rf_rate_conv + 0.01; ...
+                                            tmp_rf_rate_conv.*ones(4,1)];
+            imp_vola_shock_vec      = [tmp_imp_vola_shock.*ones(5,1); ...
+                                            tmp_imp_vola_shock * 0.99; ...
+                                            tmp_imp_vola_shock * 1.01; ...
+                                            tmp_imp_vola_shock.*ones(2,1)];
+            tmp_effdate_vec         = [tmp_effdate.*ones(7,1); ...
+                                            tmp_effdate - 1; ...
+                                            tmp_effdate + 1];
+            sensi_vec               = ones(9,1);
+        
             if ( regexpi(tmp_model,'black'))
-				% calculating effective greeks -> imply from derivatives
+                % calculating effective greeks -> imply from derivatives
                 sensi_vec = swaption_black76(call_flag,tmp_forward_shock_vec, ...
                                         tmp_strike,tmp_effdate_vec,rf_rate_conv_vec, ...
                                         imp_vola_shock_vec,tmp_swap_no_pmt, ...
-                                        tmp_swap_tenor);	
-														
+                                        tmp_swap_tenor);    
+                                                        
             else % Bachelier formula
-				% normal volatilities
-				dVola = 0.01;
-                imp_vola_shock_vec 		= [tmp_imp_vola_shock.*ones(5,1); ...
-											tmp_imp_vola_shock - dVola; ...
-											tmp_imp_vola_shock + dVola; ...
-											tmp_imp_vola_shock.*ones(2,1)];
+                % normal volatilities
+                dVola = 0.01;
+                imp_vola_shock_vec      = [tmp_imp_vola_shock.*ones(5,1); ...
+                                            tmp_imp_vola_shock - dVola; ...
+                                            tmp_imp_vola_shock + dVola; ...
+                                            tmp_imp_vola_shock.*ones(2,1)];
 
                 sensi_vec = swaption_bachelier(call_flag,tmp_forward_shock_vec, ...
                                         tmp_strike,tmp_effdate_vec,rf_rate_conv_vec, ...
@@ -157,7 +157,7 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
                                         tmp_swap_tenor);
 
             end
-			
+            
         else    % pricing with underlying float and fixed leg
             % make sure underlying objects are existing
             if ( nargin < 7)
@@ -178,9 +178,9 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
                 Y = 0.0;
             end
             
-			% set multiplier to 1 (value derived from underlyings only)
-			tmp_multiplier = 1.0;
-			
+            % set multiplier to 1 (value derived from underlyings only)
+            tmp_multiplier = 1.0;
+            
             % get volatility according to moneyness and term
             % surface with absolute moneyness K - S
             if ( regexpi(tmp_vola_surf_obj.moneyness_type,'-')) 
@@ -194,41 +194,41 @@ function obj = calc_greeks(swaption,valuation_date,value_type,discount_curve,tmp
             yy = datenum(leg_fixed_obj.maturity_date,1) - datenum(leg_fixed_obj.issue_date,1);
             tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
                 xx,yy,tmp_moneyness) + tmp_impl_vola_spread;
-				
-			% calculate shock to Y_u:
-			dY_u = 0.01 * tmp_strike .* V_float ./ V_fix;
-			
-			% set up sensi scenario vector with shocks to all input parameter
-			V_float_vec 	= [V_float.*ones(1,1); ...
-											V_float * 0.99; ...
-											V_float * 1.01; ...
-											V_float.*ones(6,1)];
-			dVola = 0.01;
-            imp_vola_shock_vec 		= [tmp_imp_vola_shock.*ones(5,1); ...
-											tmp_imp_vola_shock - dVola; ...
-											tmp_imp_vola_shock + dVola; ...
-											tmp_imp_vola_shock.*ones(2,1)];
-			tmp_effdate_vec 		= [tmp_effdate.*ones(7,1); ...
-											tmp_effdate - 1; ...
-											tmp_effdate + 1];
-			
+                
+            % calculate shock to Y_u:
+            dY_u = 0.01 * tmp_strike .* V_float ./ V_fix;
+            
+            % set up sensi scenario vector with shocks to all input parameter
+            V_float_vec     = [V_float.*ones(1,1); ...
+                                            V_float * 0.99; ...
+                                            V_float * 1.01; ...
+                                            V_float.*ones(6,1)];
+            dVola = 0.01;
+            imp_vola_shock_vec      = [tmp_imp_vola_shock.*ones(5,1); ...
+                                            tmp_imp_vola_shock - dVola; ...
+                                            tmp_imp_vola_shock + dVola; ...
+                                            tmp_imp_vola_shock.*ones(2,1)];
+            tmp_effdate_vec         = [tmp_effdate.*ones(7,1); ...
+                                            tmp_effdate - 1; ...
+                                            tmp_effdate + 1];
+            
             % calculating effective greeks -> imply from derivatives
             sensi_vec = swaption_underlyings(call_flag,tmp_strike,V_fix, ...
                                V_float_vec,tmp_effdate_vec,imp_vola_shock_vec, ...
                                tmp_model);
         end
-		sensi_vec
-		% calculate numeric derivatives
-		%sensi_vec = [theo_value_base;undvalue_down;undvalue_up;rfrate_down;rfrate_up;vola_down;vola_up;time_down;time_up]
-		theo_delta  = (sensi_vec(3) - sensi_vec(2)) / (2 * dY_u);
+        sensi_vec
+        % calculate numeric derivatives
+        %sensi_vec = [theo_value_base;undvalue_down;undvalue_up;rfrate_down;rfrate_up;vola_down;vola_up;time_down;time_up]
+        theo_delta  = (sensi_vec(3) - sensi_vec(2)) / (2 * dY_u);
         theo_gamma  = (sensi_vec(3) + sensi_vec(2) - 2 * sensi_vec(1))  / (dY_u).^2;
         theo_vega   = (sensi_vec(7) - sensi_vec(6))/ (200 * dVola);
         theo_theta  = -(sensi_vec(9) - sensi_vec(8)) / 2;
         theo_rho    = (sensi_vec(5) - sensi_vec(4)) / 2;
-		
-			
+        
+            
     end   % close loop if tmp_dtm < 0
-			
+            
  
     % store theo_sensitivities in object attributes 
     if ( strcmpi(value_type,'base'))

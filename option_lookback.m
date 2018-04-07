@@ -95,102 +95,102 @@ function value = option_lookback(CallPutFlag,lookback_type,S,X1,X2,T,r,sigma,div
 b = r - divrate; % cost of carry according to Haug
 T = T ./ 365;   % assuming act/365 day count convention (Option class converts)
 
-value = 0.0;	% default value zero
+value = 0.0;    % default value zero
 
 % =====   Valuation of floating_strike lookback options:
 if (strcmpi(lookback_type,{'floating_strike'}))
-	X = X1; % X1 equals minimum or maximum underlying price
-	d1 = (log(S./X) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-	d2 = d1 - sigma.*sqrt(T);
-	N_d1 = 0.5.*(1+erf(d1./sqrt(2)));
-	N_d2 = 0.5.*(1+erf(d2./sqrt(2)));
-	N_minus_d1 = 0.5.*(1+erf(-d1./sqrt(2)));
-	N_minus_d2 = 0.5.*(1+erf(-d2./sqrt(2)));
-		
-	if ( CallPutFlag == 1 ) % Call
-		% b == 0	% formula 4.40 in Haug, 2nd Edition
-		b_eq_0 = b == 0;
-		value_b_eq_0 = S.*exp(-r.*T).*N_d1 - X.*exp(-r.*T).*N_d2 ...
-					+ S.*exp(-r.*T).*sigma.*sqrt(T).*(normpdf(d1) + d1.*(N_d1-1));
-		% b <> 0	% formula 4.39 in Haug, 2nd Edition
-		value_b_ne_0 = S.*exp((b-r).*T).*N_d1 - X.*exp(-r.*T).*N_d2 ...
-					+ S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
-					.* ((S./X).^(-2.*b./sigma.^2)  ...
-					.* normcdf(-d1 + sqrt(T).*2.*b./sigma) - exp(b.*T) .* N_minus_d1);
+    X = X1; % X1 equals minimum or maximum underlying price
+    d1 = (log(S./X) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    d2 = d1 - sigma.*sqrt(T);
+    N_d1 = 0.5.*(1+erf(d1./sqrt(2)));
+    N_d2 = 0.5.*(1+erf(d2./sqrt(2)));
+    N_minus_d1 = 0.5.*(1+erf(-d1./sqrt(2)));
+    N_minus_d2 = 0.5.*(1+erf(-d2./sqrt(2)));
+        
+    if ( CallPutFlag == 1 ) % Call
+        % b == 0    % formula 4.40 in Haug, 2nd Edition
+        b_eq_0 = b == 0;
+        value_b_eq_0 = S.*exp(-r.*T).*N_d1 - X.*exp(-r.*T).*N_d2 ...
+                    + S.*exp(-r.*T).*sigma.*sqrt(T).*(normpdf(d1) + d1.*(N_d1-1));
+        % b <> 0    % formula 4.39 in Haug, 2nd Edition
+        value_b_ne_0 = S.*exp((b-r).*T).*N_d1 - X.*exp(-r.*T).*N_d2 ...
+                    + S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
+                    .* ((S./X).^(-2.*b./sigma.^2)  ...
+                    .* normcdf(-d1 + sqrt(T).*2.*b./sigma) - exp(b.*T) .* N_minus_d1);
 
-		value = value_b_ne_0 .* ( 1 - b_eq_0)  + value_b_eq_0 .* b_eq_0;
-	else   % Put   
-		%b == 0	% formula 4.42 in Haug, 2nd Edition
-		b_eq_0 = b == 0;
-		value_b_eq_0 = X.*exp(-r.*T).*N_minus_d2 - S.*exp((b-r).*T).*N_minus_d1 ...
-					+ S.*exp(-r.*T).*sigma.*sqrt(T).*(normpdf(d1) + d1.*N_d1);
-		% b <> 0	% formula 4.41 in Haug, 2nd Edition
-		value_b_ne_0 = X.*exp(-r.*T).*N_minus_d2 - S.*exp((b-r).*T).*N_minus_d1 ...
-					+ S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
-					.* (-(S./X).^(-2.*b./sigma.^2)  ...
-					.* normcdf(d1 - sqrt(T).*2.*b./sigma) + exp(b.*T) .* N_d1);
-		value = value_b_ne_0 .* ( 1 - b_eq_0)  + value_b_eq_0 .* b_eq_0;
-	end
+        value = value_b_ne_0 .* ( 1 - b_eq_0)  + value_b_eq_0 .* b_eq_0;
+    else   % Put   
+        %b == 0 % formula 4.42 in Haug, 2nd Edition
+        b_eq_0 = b == 0;
+        value_b_eq_0 = X.*exp(-r.*T).*N_minus_d2 - S.*exp((b-r).*T).*N_minus_d1 ...
+                    + S.*exp(-r.*T).*sigma.*sqrt(T).*(normpdf(d1) + d1.*N_d1);
+        % b <> 0    % formula 4.41 in Haug, 2nd Edition
+        value_b_ne_0 = X.*exp(-r.*T).*N_minus_d2 - S.*exp((b-r).*T).*N_minus_d1 ...
+                    + S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
+                    .* (-(S./X).^(-2.*b./sigma.^2)  ...
+                    .* normcdf(d1 - sqrt(T).*2.*b./sigma) + exp(b.*T) .* N_d1);
+        value = value_b_ne_0 .* ( 1 - b_eq_0)  + value_b_eq_0 .* b_eq_0;
+    end
 
-% =====   Valuation of fixed_strike lookback options:	
+% =====   Valuation of fixed_strike lookback options:   
 elseif (strcmpi(lookback_type,{'fixed_strike'}))
-	X = X2; 	% fixed strike
-	S_ext = X1; % maximum or minimum underlying price
-	
-	if ( CallPutFlag == 1 ) % Call
-		% X <= S_ext	% formula 4.43 in Haug, 2nd Edition
-			X_le_S_ext = X <= S_ext;
-			d1 = (log(S./S_ext) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-			d2 = d1 - sigma.*sqrt(T);
-			N_d1 = 0.5.*(1+erf(d1./sqrt(2)));
-			N_d2 = 0.5.*(1+erf(d2./sqrt(2)));
-			
-			value_X_le_S_ext = (S_ext - X).*exp(-r.*T) + S.*exp((b-r).*T).*N_d1 ...
-					- S_ext.*exp(-r.*T).* N_d2...
-					+ S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
-					.* (-(S./S_ext).^(-2.*b./sigma.^2)  ...
-					.* normcdf(d1 - sqrt(T).*2.*b./sigma) + exp(b.*T) .* N_d1);			
-		% X > S_ext
-			X_gt_S_ext = X > S_ext;
-			d1 = (log(S./X) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-			d2 = d1 - sigma.*sqrt(T);
-			N_d1 = 0.5.*(1+erf(d1./sqrt(2)));
-			N_d2 = 0.5.*(1+erf(d2./sqrt(2)));
-			
-			value_X_lt_S_ext = S.*exp((b-r).*T).*N_d1 - X.*exp(-r.*T).*N_d2 ...
-					+ S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
-					.* (-(S./X).^(-2.*b./sigma.^2)  ...
-					.* normcdf(d1 - sqrt(T).*2.*b./sigma) + exp(b.*T) .* N_d1);	
-		% sum up both cases for each scenario
-		value = value_X_le_S_ext .* X_le_S_ext + value_X_lt_S_ext .* X_gt_S_ext;
-	
-	else	% Put 
-		% X < S_ext	% formula 4.44 in Haug, 2nd Edition
-			X_lt_S_ext = X < S_ext;
-			d1 = (log(S./X) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-			d2 = d1 - sigma.*sqrt(T);
-			N_minus_d1 = 0.5.*(1+erf(-d1./sqrt(2)));
-			N_minus_d2 = 0.5.*(1+erf(-d2./sqrt(2)));
-	
-			value_X_lt_S_ext = X.*exp(-r.*T).*N_minus_d2 - S.*exp((b-r).*T).*N_minus_d1 ...
-					+ S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
-					.* ((S./X).^(-2.*b./sigma.^2)  ...
-					.* normcdf(-d1 + sqrt(T).*2.*b./sigma) - exp(b.*T) .* N_minus_d1);			
-		% X >= S_ext
-			X_ge_S_ext = X >= S_ext;
-			d1 = (log(S./S_ext) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-			d2 = d1 - sigma.*sqrt(T);
-			N_minus_d1 = 0.5.*(1+erf(-d1./sqrt(2)));
-			N_minus_d2 = 0.5.*(1+erf(-d2./sqrt(2)));
-			
-			value_X_ge_S_ext = (X - S_ext).*exp(-r.*T) - S.*exp((b-r).*T).*N_minus_d1 ...
-					+ S_ext .* exp(-r.*T).*N_minus_d2 ...
-					+ S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
-					.* ((S./S_ext).^(-2.*b./sigma.^2)  ...
-					.* normcdf(-d1 + sqrt(T).*2.*b./sigma) - exp(b.*T) .* N_minus_d1);	
-		% sum up both cases for each scenario			
-		value = value_X_ge_S_ext .* X_ge_S_ext + value_X_lt_S_ext .* X_lt_S_ext;
-	end
+    X = X2;     % fixed strike
+    S_ext = X1; % maximum or minimum underlying price
+    
+    if ( CallPutFlag == 1 ) % Call
+        % X <= S_ext    % formula 4.43 in Haug, 2nd Edition
+            X_le_S_ext = X <= S_ext;
+            d1 = (log(S./S_ext) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+            d2 = d1 - sigma.*sqrt(T);
+            N_d1 = 0.5.*(1+erf(d1./sqrt(2)));
+            N_d2 = 0.5.*(1+erf(d2./sqrt(2)));
+            
+            value_X_le_S_ext = (S_ext - X).*exp(-r.*T) + S.*exp((b-r).*T).*N_d1 ...
+                    - S_ext.*exp(-r.*T).* N_d2...
+                    + S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
+                    .* (-(S./S_ext).^(-2.*b./sigma.^2)  ...
+                    .* normcdf(d1 - sqrt(T).*2.*b./sigma) + exp(b.*T) .* N_d1);         
+        % X > S_ext
+            X_gt_S_ext = X > S_ext;
+            d1 = (log(S./X) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+            d2 = d1 - sigma.*sqrt(T);
+            N_d1 = 0.5.*(1+erf(d1./sqrt(2)));
+            N_d2 = 0.5.*(1+erf(d2./sqrt(2)));
+            
+            value_X_lt_S_ext = S.*exp((b-r).*T).*N_d1 - X.*exp(-r.*T).*N_d2 ...
+                    + S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
+                    .* (-(S./X).^(-2.*b./sigma.^2)  ...
+                    .* normcdf(d1 - sqrt(T).*2.*b./sigma) + exp(b.*T) .* N_d1); 
+        % sum up both cases for each scenario
+        value = value_X_le_S_ext .* X_le_S_ext + value_X_lt_S_ext .* X_gt_S_ext;
+    
+    else    % Put 
+        % X < S_ext % formula 4.44 in Haug, 2nd Edition
+            X_lt_S_ext = X < S_ext;
+            d1 = (log(S./X) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+            d2 = d1 - sigma.*sqrt(T);
+            N_minus_d1 = 0.5.*(1+erf(-d1./sqrt(2)));
+            N_minus_d2 = 0.5.*(1+erf(-d2./sqrt(2)));
+    
+            value_X_lt_S_ext = X.*exp(-r.*T).*N_minus_d2 - S.*exp((b-r).*T).*N_minus_d1 ...
+                    + S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
+                    .* ((S./X).^(-2.*b./sigma.^2)  ...
+                    .* normcdf(-d1 + sqrt(T).*2.*b./sigma) - exp(b.*T) .* N_minus_d1);          
+        % X >= S_ext
+            X_ge_S_ext = X >= S_ext;
+            d1 = (log(S./S_ext) + (b + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+            d2 = d1 - sigma.*sqrt(T);
+            N_minus_d1 = 0.5.*(1+erf(-d1./sqrt(2)));
+            N_minus_d2 = 0.5.*(1+erf(-d2./sqrt(2)));
+            
+            value_X_ge_S_ext = (X - S_ext).*exp(-r.*T) - S.*exp((b-r).*T).*N_minus_d1 ...
+                    + S_ext .* exp(-r.*T).*N_minus_d2 ...
+                    + S.*exp(-r.*T).* (sigma.^2 ./ (2.*b)) ...
+                    .* ((S./S_ext).^(-2.*b./sigma.^2)  ...
+                    .* normcdf(-d1 + sqrt(T).*2.*b./sigma) - exp(b.*T) .* N_minus_d1);  
+        % sum up both cases for each scenario           
+        value = value_X_ge_S_ext .* X_ge_S_ext + value_X_lt_S_ext .* X_lt_S_ext;
+    end
 end
 
 end

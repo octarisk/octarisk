@@ -49,9 +49,9 @@
 %#  @end example
 %# Input and output variables:
 %# @itemize @bullet
-%# @item @var{valuation_date}: 	base date used in timefactor calculation 
+%# @item @var{valuation_date}:  base date used in timefactor calculation 
 %# (datestr or datenum)
-%# @item @var{node}: 			number of days until second date used in 
+%# @item @var{node}:            number of days until second date used in 
 %# timefactor calculation (scalar)
 %# @item @var{rate_origin}:     interest rate between first and second date 
 %# (scalar)
@@ -67,7 +67,7 @@
 %# 1,2,4,12,52,365 or [daily,weekly,monthly,quarter,semi-annual,annual] 
 %# (scalar or string)
 %# @item @var{dcc_basis_target}: day-count basis of target rate(scalar)
-%# @item @var{rate_target}: 	OUTPUT: converted interest rate
+%# @item @var{rate_target}:     OUTPUT: converted interest rate
 %# @item @var{conversion_type}: OUTPUT: conversion type from x to y
 %# @end itemize
 %# @seealso{timefactor}

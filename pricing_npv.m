@@ -156,57 +156,57 @@ spread_constant_vec = convert_curve_rates(valuation_date,cashflow_dates', ...
 % get discount rate from discount curve
 % distinguish between interpolation methods
 if ( strcmpi(interp_discount,'linear'))
-	rate_curve_vec = interpolate_curve_vectorized(discount_nodes, ...
-						discount_rates, cashflow_dates);
+    rate_curve_vec = interpolate_curve_vectorized(discount_nodes, ...
+                        discount_rates, cashflow_dates);
 else
-	rate_curve_vec = zeros(rows(discount_rates),length(cashflow_dates));
-	for zz = 1 : 1 : columns(cashflow_dates);
-		tmp_dtm = cashflow_dates(zz);
-		if ( tmp_dtm > 0 )
-				rate_curve_vec(:,zz) = interpolate_curve(discount_nodes,discount_rates, ...
+    rate_curve_vec = zeros(rows(discount_rates),length(cashflow_dates));
+    for zz = 1 : 1 : columns(cashflow_dates);
+        tmp_dtm = cashflow_dates(zz);
+        if ( tmp_dtm > 0 )
+                rate_curve_vec(:,zz) = interpolate_curve(discount_nodes,discount_rates, ...
                                             tmp_dtm,interp_discount);
-		end
-	end
+        end
+    end
 end 
 rate_curve_vec = max(rate_curve_vec,-0.99999);
 yield_total = rate_curve_vec'  + spread_constant_vec ;
 
 % get discount factors
-df_vec 		= discount_factor (valuation_date, (valuation_date + cashflow_dates)', ...
+df_vec      = discount_factor (valuation_date, (valuation_date + cashflow_dates)', ...
                             yield_total, comp_type_curve, ...
-                            basis_curve, comp_freq_curve)';									
+                            basis_curve, comp_freq_curve)';                                 
 
 % calculate net present value (call cpp function for efficient column loop)
-npv 		= calculate_npv_cpp(cashflow_values,df_vec);
+npv         = calculate_npv_cpp(cashflow_values,df_vec);
 
-% calculate sensitivities only if flag is set	
+% calculate sensitivities only if flag is set   
 if (sensi_flag == true && npv(1) > 0.0)
-	tf_vec  = timefactor(valuation_date,valuation_date + cashflow_dates,basis); 
-	
-	% get npv of all single cash flows
-	npv_cashflows = cashflow_values .* df_vec;
-	
-	% calculate durations
-	MacDur = sum(tf_vec .* npv_cashflows,2);
-	MonDur = sum(tf_vec .* df_vec.^2 .* cashflow_values,2);
+    tf_vec  = timefactor(valuation_date,valuation_date + cashflow_dates,basis); 
+    
+    % get npv of all single cash flows
+    npv_cashflows = cashflow_values .* df_vec;
+    
+    % calculate durations
+    MacDur = sum(tf_vec .* npv_cashflows,2);
+    MonDur = sum(tf_vec .* df_vec.^2 .* cashflow_values,2);
 
-	% calculate convexities
-	if ( regexpi(comp_type_curve,'disc'))
-		Convexity = sum(npv_cashflows .* (tf_vec + 1/comp_freq ) ...
-				.* tf_vec ./ ( 1 + yield_total'/comp_freq).^2,2);
-	elseif ( regexpi(comp_type_curve,'cont')) 
-		Convexity = sum(npv_cashflows .* tf_vec.^2,2);
-	else    % in case of simple compounding
-		Convexity = sum(2 .* tf_vec.^2 .* cashflow_values .* df_vec.^3,2);
-	end
-	% calculating alternative Convexity
-	Convexity_alt = sum(npv_cashflows .* (tf_vec.^2 + tf_vec) ...
-					./ ( 1 + yield_total'),2);
-	
-	% calculate sensitivities 
-	MacDur = MacDur ./ npv;
-	Convexity = Convexity ./ npv;    
-	Convexity_alt = Convexity_alt ./ npv;
+    % calculate convexities
+    if ( regexpi(comp_type_curve,'disc'))
+        Convexity = sum(npv_cashflows .* (tf_vec + 1/comp_freq ) ...
+                .* tf_vec ./ ( 1 + yield_total'/comp_freq).^2,2);
+    elseif ( regexpi(comp_type_curve,'cont')) 
+        Convexity = sum(npv_cashflows .* tf_vec.^2,2);
+    else    % in case of simple compounding
+        Convexity = sum(2 .* tf_vec.^2 .* cashflow_values .* df_vec.^3,2);
+    end
+    % calculating alternative Convexity
+    Convexity_alt = sum(npv_cashflows .* (tf_vec.^2 + tf_vec) ...
+                    ./ ( 1 + yield_total'),2);
+    
+    % calculate sensitivities 
+    MacDur = MacDur ./ npv;
+    Convexity = Convexity ./ npv;    
+    Convexity_alt = Convexity_alt ./ npv;
 end
               
 end

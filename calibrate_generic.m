@@ -21,16 +21,16 @@
 function [calibrated_value retcode] = calibrate_generic(objf,x0,lb,ub)
 
 if nargin < 2
-	x0 = 0.0;
-	lb = [];
-	ub = [];
+    x0 = 0.0;
+    lb = [];
+    ub = [];
 end
 if nargin < 3
-	lb = [];
-	ub = [];
+    lb = [];
+    ub = [];
 end
 if nargin < 4
-	ub = [];
+    ub = [];
 end
 
 options(1) = 0;
@@ -41,24 +41,24 @@ retcode = 0;
 [x, obj, info, iter] = fmincon (objf, x0, [], [], [], [], lb, ub);
 
 if (info == 1)
-	%fprintf ('+++ calibrate_generic: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
+    %fprintf ('+++ calibrate_generic: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
 elseif (info == 0)
-	fprintf ('--- calibrate_generic: WARNING: BS Number of iterations or function evaluations exceeded default values. ---\n');
+    fprintf ('--- calibrate_generic: WARNING: BS Number of iterations or function evaluations exceeded default values. ---\n');
     x = -99;
-	retcode = 255;
+    retcode = 255;
 elseif (info == -1)
-	fprintf ('--- calibrate_generic: WARNING: BS Stopped by an output function or plot function. ---\n');
+    fprintf ('--- calibrate_generic: WARNING: BS Stopped by an output function or plot function. ---\n');
     x = -99;
-	retcode = 255;
+    retcode = 255;
 elseif (info == -2)
     fprintf ('--- calibrate_generic: WARNING: BS No feasible point was found. ---\n');
     x = -99;
-	retcode = 255;
+    retcode = 255;
 elseif (info == 2)
-	%fprintf ('+++ calibrate_generic: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
+    %fprintf ('+++ calibrate_generic: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
 else
-	fprintf ('--- calibrate_generic: WARNING: BS Optimization did not converge! ---\n');
-	retcode = 255;
+    fprintf ('--- calibrate_generic: WARNING: BS Optimization did not converge! ---\n');
+    retcode = 255;
     x = -99;
 end
 

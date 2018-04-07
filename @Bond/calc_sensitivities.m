@@ -2,7 +2,7 @@ function obj = calc_sensitivities (bond, valuation_date, discount_curve, referen
 obj = bond;
 
 %TODO: implement correct sensi calculation for CMS_Floating, CDS_FLOATING, Callable Bonds
-%		right now only there is no new cash flow rollout (no sensi to reference curve)
+%       right now only there is no new cash flow rollout (no sensi to reference curve)
 
 if ischar(valuation_date)
     valuation_date = datenum(valuation_date,1);
@@ -66,26 +66,26 @@ if ( strcmp(bond.sub_type,'FRN') || strcmp(bond.sub_type,'SWAP_FLOAT'))
         floor_ref    = reference_curve.floor;
         cap_ref      = reference_curve.cap;
    
-					
+                    
     % C.1.b) Calculate sensitivities
-		% stack rates_ref curves
-		% adjust rates_discount for shocks
-		%	1. row: base value
-		%	2. row:	-bond.ir_shock
-		%	3. row:	+bond.ir_shock
-		%	4. row:	-0.0001 (DV01)
-		%	5. row:	+0.0001 (DV01)
-		rates_ref_sensi = [rates_ref; ...
-					rates_ref - bond.ir_shock; ...
-					rates_ref + bond.ir_shock; ...
-					rates_ref - 0.0001; ...
-					rates_ref + 0.0001];
-		rates_disc_sensis = [rates_discount; ...
-					rates_discount - bond.ir_shock; ...
-					rates_discount + bond.ir_shock; ...
-					rates_discount - 0.0001; ...
-					rates_discount + 0.0001];
-	% set floor and cap
+        % stack rates_ref curves
+        % adjust rates_discount for shocks
+        %   1. row: base value
+        %   2. row: -bond.ir_shock
+        %   3. row: +bond.ir_shock
+        %   4. row: -0.0001 (DV01)
+        %   5. row: +0.0001 (DV01)
+        rates_ref_sensi = [rates_ref; ...
+                    rates_ref - bond.ir_shock; ...
+                    rates_ref + bond.ir_shock; ...
+                    rates_ref - 0.0001; ...
+                    rates_ref + 0.0001];
+        rates_disc_sensis = [rates_discount; ...
+                    rates_discount - bond.ir_shock; ...
+                    rates_discount + bond.ir_shock; ...
+                    rates_discount - 0.0001; ...
+                    rates_discount + 0.0001];
+    % set floor and cap
         if ( isnumeric(floor_ref) )
             rates_ref_sensi = max(rates_ref_sensi,floor_ref);
         end
@@ -97,19 +97,19 @@ if ( strcmp(bond.sub_type,'FRN') || strcmp(bond.sub_type,'SWAP_FLOAT'))
     % make cash flow rollout
         [ret_dates ret_values] = rollout_structured_cashflows(valuation_date, ...
                                                     'base',obj,reference_curve);
-	% valuate
+    % valuate
         value_vec = pricing_npv(valuation_date, ret_dates, ...
                                 ret_values, bond.soy, ...
                                 nodes_discount, rates_disc_sensis, basis_bond, ...
                                 comp_type_bond, comp_freq_bond, interp_discount, ...
                                 comp_type_discount, basis_discount, ...
                                 comp_freq_discount);
-									
-		theo_value				= value_vec(1);
-		theo_value_100bpdown	= value_vec(2);
-		theo_value_100bpup		= value_vec(3);
-		theo_value_1bpdown		= value_vec(4);
-		theo_value_1bpup		= value_vec(5);							
+                                    
+        theo_value              = value_vec(1);
+        theo_value_100bpdown    = value_vec(2);
+        theo_value_100bpup      = value_vec(3);
+        theo_value_1bpdown      = value_vec(4);
+        theo_value_1bpup        = value_vec(5);                         
 
     % calculate effective duration
         obj.eff_duration = ( theo_value_100bpdown - theo_value_100bpup ) ...
@@ -127,38 +127,38 @@ if ( strcmp(bond.sub_type,'FRN') || strcmp(bond.sub_type,'SWAP_FLOAT'))
         obj.pv01 = theo_value_1bpup - theo_value;         
     
     % calculate spread duration (without CF rollout): shock discount curve only
-	rates_eff_sensis = [rates_discount; ...
-					rates_discount - bond.ir_shock; ...
-					rates_discount + bond.ir_shock];
+    rates_eff_sensis = [rates_discount; ...
+                    rates_discount - bond.ir_shock; ...
+                    rates_discount + bond.ir_shock];
     value_vec = pricing_npv(valuation_date, cashflow_dates, ...
                                 cashflow_values, bond.soy, ...
                                 nodes_discount, rates_eff_sensis, basis_bond, ...
                                 comp_type_bond, comp_freq_bond, interp_discount, ...
                                 comp_type_discount, basis_discount, ...
                                 comp_freq_discount);
-								
-	theo_value				= value_vec(1);
-	theo_value_100bpdown	= value_vec(2);
-	theo_value_100bpup		= value_vec(3);
-	
-	% calc spread duration
+                                
+    theo_value              = value_vec(1);
+    theo_value_100bpdown    = value_vec(2);
+    theo_value_100bpup      = value_vec(3);
+    
+    % calc spread duration
     obj.spread_duration = ( theo_value_100bpdown - theo_value_100bpup ) ...
                     / ( 2 * theo_value * bond.ir_shock );
     
 else  % all bonds with fixed cashflows (FRB, SWAP_FIXED, CF Instruments)
   % C.2) calculate effective sensitivities for all fixed CF bonds
-	% adjust rates_discount for shocks
-	%	1. row: base value
-	%	2. row:	-bond.ir_shock
-	%	3. row:	+bond.ir_shock
-	%	4. row:	-0.0001 (DV01)
-	%	5. row:	+0.0001 (DV01)
-	rates_eff_sensis = [rates_discount; ...
-					rates_discount - bond.ir_shock; ...
-					rates_discount + bond.ir_shock; ...
-					rates_discount - 0.0001; ...
-					rates_discount + 0.0001];
-					
+    % adjust rates_discount for shocks
+    %   1. row: base value
+    %   2. row: -bond.ir_shock
+    %   3. row: +bond.ir_shock
+    %   4. row: -0.0001 (DV01)
+    %   5. row: +0.0001 (DV01)
+    rates_eff_sensis = [rates_discount; ...
+                    rates_discount - bond.ir_shock; ...
+                    rates_discount + bond.ir_shock; ...
+                    rates_discount - 0.0001; ...
+                    rates_discount + 0.0001];
+                    
     % calculate values under shock
     value_vec = pricing_npv(valuation_date, cashflow_dates, ...
                                 cashflow_values, bond.soy, ...
@@ -166,12 +166,12 @@ else  % all bonds with fixed cashflows (FRB, SWAP_FIXED, CF Instruments)
                                 comp_type_bond, comp_freq_bond, interp_discount, ...
                                 comp_type_discount, basis_discount, ...
                                 comp_freq_discount);
-    theo_value				= value_vec(1);
-	theo_value_100bpdown	= value_vec(2);
-	theo_value_100bpup		= value_vec(3);
-	theo_value_1bpdown		= value_vec(4);
-	theo_value_1bpup		= value_vec(5);
-	
+    theo_value              = value_vec(1);
+    theo_value_100bpdown    = value_vec(2);
+    theo_value_100bpup      = value_vec(3);
+    theo_value_1bpdown      = value_vec(4);
+    theo_value_1bpup        = value_vec(5);
+    
     obj.eff_duration = ( theo_value_100bpdown - theo_value_100bpup ) ...
                     / ( 2 * theo_value * bond.ir_shock );
     % spread duration for FRB equals effective duration:

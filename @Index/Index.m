@@ -1,4 +1,4 @@
-classdef Index		% Superclass
+classdef Index      % Superclass
    % file: @Index/Index.m
    properties
       name = '';
@@ -7,10 +7,10 @@ classdef Index		% Superclass
       currency = 'EUR';
       value_base = 1;
       type = ''; 
-	  % required for aggregated indexes
-	  index_function = 'sum';   
+      % required for aggregated indexes
+      index_function = 'sum';   
       index_parameter = 1;
-	  increments = {};
+      increments = {};
    end
    
     properties (SetAccess = protected )
@@ -133,21 +133,21 @@ classdef Index		% Superclass
       end
 
       % print Help text
-	  function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+      function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Index.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Index.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Index(@var{id})\n\
@@ -229,31 +229,31 @@ For illustration see the following example:\n\
 disp('Setting up an equity index and Exchange Rate')\n\
 i = Index();\n\
 i = i.set('id','MSCIWORLD','value_base',1000, ...\n\
-	'scenario_stress',[2000;1333;800],'currency','USD');\n\
+    'scenario_stress',[2000;1333;800],'currency','USD');\n\
 fx = Index();\n\
 fx = fx.set('id','FX_EURUSD','value_base',1.1,  ...\n\
-	'scenario_stress',[1.2;1.18;1.23]);\n\
+    'scenario_stress',[1.2;1.18;1.23]);\n\
 @end group\n\
 @end example\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Index\' is a class definition from the file /octarisk/@Index/Index.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Index\' is a class definition from the file /octarisk/@Index/Index.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-	  end % end of static method help
-	
-   end	% end of static methods
+      end % end of static method help
+    
+   end  % end of static methods
             
    
 end % classdef

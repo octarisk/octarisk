@@ -243,13 +243,13 @@ end
 
 % check for empty portfolios
 for kk = 1 : 1 : length(tmp_portfolio_struct)
-	tmp_port_id = tmp_portfolio_struct( kk ).id;
-	position_struct = struct();
-	position_struct = tmp_portfolio_struct( kk ).position;
-	if isempty(position_struct)
-		fprintf('ERROR: Portfolio >>%s<< has no positions.\n',tmp_port_id);
-		id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_port_id;
-	end
+    tmp_port_id = tmp_portfolio_struct( kk ).id;
+    position_struct = struct();
+    position_struct = tmp_portfolio_struct( kk ).position;
+    if isempty(position_struct)
+        fprintf('ERROR: Portfolio >>%s<< has no positions.\n',tmp_port_id);
+        id_failed_cell{ length(id_failed_cell) + 1 } =  tmp_port_id;
+    end
 end
 
 % C) return final position objects  

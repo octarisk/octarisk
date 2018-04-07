@@ -19,13 +19,13 @@
 %# @*
 %# Input and output variables:
 %# @itemize @bullet
-%#  @item @var{chi}: 	GPD shape parameter one (float)
-%#  @item @var{sigma}: 	GPD shape parameter two (float)
+%#  @item @var{chi}:    GPD shape parameter one (float)
+%#  @item @var{sigma}:  GPD shape parameter two (float)
 %#  @item @var{u}:      offset level (float)
 %#  @item @var{q}:      quantile (float in [0:1])
 %#  @item @var{n}:      Number of scenarios in total distribution (integer)
 %#  @item @var{nu}:     number of tail scenarios (in doubt set to 0.025 * n) (integer)
-%#  @item @var{VAR}: 	OUTPUT: Value-at-Risk according to the GPD
+%#  @item @var{VAR}:    OUTPUT: Value-at-Risk according to the GPD
 %#  @item @var{ES}:     OUTPUT: Expected shortfall according to the GPD
 %# @end itemize
 %# Example call for calculation of VAR and ES for several confidence levels: 

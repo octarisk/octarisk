@@ -23,10 +23,10 @@
 %# @*
 %# Explanation of Parameters:
 %# @itemize @bullet
-%# @item @var{v}:       INPUT: 	sorted profit and loss distribution of all 
-%#								required tail events (1xN vector)
+%# @item @var{v}:       INPUT:  sorted profit and loss distribution of all 
+%#                              required tail events (1xN vector)
 %# @item @var{chi}:     OUTPUT: Generalized Pareto distribution: shape 
-%#								parameter (scalar)
+%#                              parameter (scalar)
 %# @item @var{sigma}:   OUTPUT: scale parameter (scalar)
 %# @item @var{u}:       OUTPUT: location parameter(scalar)
 %# @end itemize
@@ -39,7 +39,7 @@ u = min(v);     % location parameter
 chi = 0.3;      % shape parameter
 beta = u/10;    % scale parameter
 y = v - u;      % substitution of loss distribution which is shifted 
-				% by location parameter
+                % by location parameter
 
 % Start parameter
 x0 = [chi;beta];
@@ -50,23 +50,23 @@ options(2) = 1e-5;
 
 % Calibrate chi and sigma
 [x, obj, info, iter] = fmincon ( @ (x) min_GPD(x,y), x0,[], ...
-                            [], [],[],[0.00001;0.00001], []);	
+                            [], [],[],[0.00001;0.00001], []);   
 
 if (info == 1)
-	%fprintf ('+++ calibrate_evt_gpd: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
+    %fprintf ('+++ calibrate_evt_gpd: SUCCESS: First-order optimality measure and maximum constraint violation was less than default values. +++\n');
 elseif (info == 0)
-	fprintf ('--- calibrate_evt_gpd: WARNING: BS Number of iterations or function evaluations exceeded default values. ---\n');
+    fprintf ('--- calibrate_evt_gpd: WARNING: BS Number of iterations or function evaluations exceeded default values. ---\n');
     x = [0.0000001,1];
 elseif (info == -1)
-	fprintf ('--- calibrate_evt_gpd: WARNING: BS Stopped by an output function or plot function. ---\n');
+    fprintf ('--- calibrate_evt_gpd: WARNING: BS Stopped by an output function or plot function. ---\n');
     x = [0.0000001,1];
 elseif (info == -2)
     fprintf ('--- calibrate_evt_gpd: WARNING: BS No feasible point was found. ---\n');
     x = [0.0000001,1];
 elseif (info == 2)
-	%fprintf ('+++ calibrate_evt_gpd: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
+    %fprintf ('+++ calibrate_evt_gpd: SUCCESS: Change in x and maximum constraint violation was less than default values. +++\n');
 else
-	fprintf ('--- calibrate_evt_gpd: WARNING: BS Optimization did not converge! ---\n');
+    fprintf ('--- calibrate_evt_gpd: WARNING: BS Optimization did not converge! ---\n');
     x = [0.0000001,1];
 end
 % 
@@ -79,9 +79,9 @@ end
 %------------------------------------------------------------------
 %------------------- Begin Subfunctions ---------------------------
 
-%  Objective Function for calibration of generalized pareto distribution:	       
+%  Objective Function for calibration of generalized pareto distribution:          
 function obj = min_GPD (x,y)
-			chi = x(1);
+            chi = x(1);
             beta = x(2);
             L = log( ( 1 + ( chi .* (y) )./beta ).^(-1./chi -1) ./ beta );
             obj = -(sum(L));

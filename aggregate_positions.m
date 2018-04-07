@@ -38,77 +38,77 @@ function [position_struct position_failed_cell retvec] = aggregate_positions(pos
 
 % Loop through all positions and calculate portfolio MC shock and position MC constributions
 portfolio_shock      = zeros(scennumber,1);
-portfolio_value		 = 0.0;
+portfolio_value      = 0.0;
 portfolio_stress    = zeros(scennumber,1);
 if (printflag == true && strcmpi(scen_set,'base'))
-	fprintf('=== Aggregation for Portfolio >>%s<< ===\n',port_id);
+    fprintf('=== Aggregation for Portfolio >>%s<< ===\n',port_id);
     fprintf('ID,BaseValue,Quantity,FX_Rate,Portfoliovalue\n');
-end	
+end 
 
 % loop through all positions and aggregate instruments
 for ii = 1 : 1 : length( position_struct )
-	tmp_id = position_struct( ii ).id;
-	tmp_quantity = position_struct( ii ).quantity;
-	try
-		[tmp_instr_object object_ret_code]  = get_sub_object(instrument_struct, tmp_id);
-		if ( object_ret_code == 0 )
-			error('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_id);
-		end	
-		tmp_value = tmp_instr_object.getValue('base');
-		tmp_currency = tmp_instr_object.get('currency');
+    tmp_id = position_struct( ii ).id;
+    tmp_quantity = position_struct( ii ).quantity;
+    try
+        [tmp_instr_object object_ret_code]  = get_sub_object(instrument_struct, tmp_id);
+        if ( object_ret_code == 0 )
+            error('octarisk: WARNING: No instrument_struct object found for id >>%s<<\n',tmp_id);
+        end 
+        tmp_value = tmp_instr_object.getValue('base');
+        tmp_currency = tmp_instr_object.get('currency');
 
-		% Get instrument Value from full valuation instrument_struct:
-		% absolute values from full valuation
-		new_value_vec_shock      = tmp_instr_object.getValue(scen_set);              
-	   
-		% Get FX rate:
-		if ( strcmp(fund_currency,tmp_currency) == 1 )
-			tmp_fx_value_shock   = 1;
-			tmp_fx_rate_base = 1;
-		else
-			%disp( ' Conversion of currency: ');
-			tmp_fx_index   		= strcat('FX_', fund_currency, tmp_currency);
-			[tmp_fx_struct_obj object_ret_code]  = get_sub_object(index_struct, tmp_fx_index);
-			if ( object_ret_code == 0 )
-				error('octarisk: WARNING: No index_struct object found for FX id >>%s<<\n',tmp_fx_index);
-			end	
-			tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-			tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(scen_set);   
-		end
-		
-		if (strcmpi(scen_set,'base'))		
-			position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate_base;
-			portfolio_value = portfolio_value + tmp_value .* tmp_quantity  ./ tmp_fx_rate_base;
-			if (printflag == true)
-				fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f\n',tmp_id,tmp_value,tmp_quantity,tmp_fx_rate_base,portfolio_value);
-			end	
-		elseif (strcmpi(scen_set,'stress'))	 % Stress scenario set
-			% Store new Values in Position's struct
-			pos_vec_stress  = new_value_vec_shock .*  sign(tmp_quantity) ./ tmp_fx_value_shock;
-			%octamat = [  pos_vec_stress ] ;
-			position_struct( ii ).stresstests = pos_vec_stress;
-			portfolio_stress = portfolio_stress + new_value_vec_shock .*  tmp_quantity ./ tmp_fx_value_shock;
-		else	% MC scenario set
-			% Store new MC Values in Position's struct
-			pos_vec_shock 	= new_value_vec_shock .* sign(tmp_quantity) ./ tmp_fx_value_shock; % convert position PnL into fund currency
-			octamat = [  pos_vec_shock ] ;
-			position_struct( ii ).mc_scenarios.octamat = octamat; 
-			portfolio_shock = portfolio_shock +  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
-		end
-	catch	% if instrument not found raise warning and populate cell
-		fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
-		position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
-	end
-	
+        % Get instrument Value from full valuation instrument_struct:
+        % absolute values from full valuation
+        new_value_vec_shock      = tmp_instr_object.getValue(scen_set);              
+       
+        % Get FX rate:
+        if ( strcmp(fund_currency,tmp_currency) == 1 )
+            tmp_fx_value_shock   = 1;
+            tmp_fx_rate_base = 1;
+        else
+            %disp( ' Conversion of currency: ');
+            tmp_fx_index        = strcat('FX_', fund_currency, tmp_currency);
+            [tmp_fx_struct_obj object_ret_code]  = get_sub_object(index_struct, tmp_fx_index);
+            if ( object_ret_code == 0 )
+                error('octarisk: WARNING: No index_struct object found for FX id >>%s<<\n',tmp_fx_index);
+            end 
+            tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
+            tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(scen_set);   
+        end
+        
+        if (strcmpi(scen_set,'base'))       
+            position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate_base;
+            portfolio_value = portfolio_value + tmp_value .* tmp_quantity  ./ tmp_fx_rate_base;
+            if (printflag == true)
+                fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f\n',tmp_id,tmp_value,tmp_quantity,tmp_fx_rate_base,portfolio_value);
+            end 
+        elseif (strcmpi(scen_set,'stress'))  % Stress scenario set
+            % Store new Values in Position's struct
+            pos_vec_stress  = new_value_vec_shock .*  sign(tmp_quantity) ./ tmp_fx_value_shock;
+            %octamat = [  pos_vec_stress ] ;
+            position_struct( ii ).stresstests = pos_vec_stress;
+            portfolio_stress = portfolio_stress + new_value_vec_shock .*  tmp_quantity ./ tmp_fx_value_shock;
+        else    % MC scenario set
+            % Store new MC Values in Position's struct
+            pos_vec_shock   = new_value_vec_shock .* sign(tmp_quantity) ./ tmp_fx_value_shock; % convert position PnL into fund currency
+            octamat = [  pos_vec_shock ] ;
+            position_struct( ii ).mc_scenarios.octamat = octamat; 
+            portfolio_shock = portfolio_shock +  tmp_quantity .* new_value_vec_shock ./ tmp_fx_value_shock;
+        end
+    catch   % if instrument not found raise warning and populate cell
+        fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+        position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+    end
+    
 end % end position loop
 
 % prepare return vector
 if (strcmpi(scen_set,'base'))
-	retvec = portfolio_value;
-elseif (strcmpi(scen_set,'stress'))	% Stress scenario set
-	retvec = portfolio_stress;
-else	% MC scenario set
-	retvec = portfolio_shock;
+    retvec = portfolio_value;
+elseif (strcmpi(scen_set,'stress')) % Stress scenario set
+    retvec = portfolio_stress;
+else    % MC scenario set
+    retvec = portfolio_shock;
 end
 
-end	% end function
+end % end function

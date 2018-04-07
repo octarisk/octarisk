@@ -32,17 +32,17 @@ if nargin < 3 || nargin > 6
     print_usage ();
 end
 if nargin < 4
-	ref_curve = [];
-	surface = [];
-	riskfactor = [];
-end	 
+    ref_curve = [];
+    surface = [];
+    riskfactor = [];
+end  
 if nargin < 5
-	surface = [];
-	riskfactor = [];
-end	 
+    surface = [];
+    riskfactor = [];
+end  
 if nargin < 6
-	riskfactor = [];
-end	 
+    riskfactor = [];
+end  
 
 % ######################   Initial fill of para structure ###################### 
 para = fill_para_struct(nargin,valuation_date, value_type, ...
@@ -50,86 +50,86 @@ para = fill_para_struct(nargin,valuation_date, value_type, ...
 
 % ######################   Calculate Cash Flow dates  ##########################   
 para = get_cf_dates(para);
-	
+    
 % ############   Calculate Cash Flow values depending on type   ################   
 % Type Fixed Rate Bonds
 if ( strcmpi(para.type,'FRB') || strcmpi(para.type,'SWAP_FIXED') )
-	para = get_cfvalues_FRB(para.valuation_date, value_type, para, instrument);
+    para = get_cfvalues_FRB(para.valuation_date, value_type, para, instrument);
 
 % Type ZCB: Zero Coupon Bond has notional cash flow at maturity date
 elseif ( strcmpi(para.type,'ZCB'))   
     para.ret_values = para.notional;
     para.cf_principal = para.notional;
     para.cf_interest = 0;
-	
+    
 % Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
 elseif ( strcmpi(para.type,'FRN') || strcmpi(para.type,'SWAP_FLOATING') ...
-					|| strcmpi(para.type,'CAP') || strcmpi(para.type,'FLOOR'))
-	para = get_cfvalues_FRNCAPFLOOR(para.valuation_date, value_type, ...
-													para, instrument, surface);
+                    || strcmpi(para.type,'CAP') || strcmpi(para.type,'FLOOR'))
+    para = get_cfvalues_FRNCAPFLOOR(para.valuation_date, value_type, ...
+                                                    para, instrument, surface);
 
 % Type Inflation Linked Bonds: Calculate CPI adjustedCF Values 
 elseif ( strcmpi(para.type,'ILB') || strcmpi(para.type,'CAP_INFL') ...
-										|| strcmpi(para.type,'FLOOR_INFL') )
-	para = get_cfvalues_ILB(para.valuation_date, value_type, para, ...
-									instrument, ref_curve, surface, riskfactor);
-													
+                                        || strcmpi(para.type,'FLOOR_INFL') )
+    para = get_cfvalues_ILB(para.valuation_date, value_type, para, ...
+                                    instrument, ref_curve, surface, riskfactor);
+                                                    
 % Type Credit Default Swaps
 elseif ( strcmpi(para.type,'CDS_FIXED') || strcmpi(para.type,'CDS_FLOATING') )
-	para = get_cfvalues_CDS(para.valuation_date, value_type, para, ...
-									instrument, ref_curve, surface, riskfactor);
+    para = get_cfvalues_CDS(para.valuation_date, value_type, para, ...
+                                    instrument, ref_curve, surface, riskfactor);
 
-% Type Forward Rate Agreement	
+% Type Forward Rate Agreement   
 elseif ( strcmpi(para.type,'FRA') )
-	para = get_cfvalues_FRA(para.valuation_date, value_type, para, instrument);
+    para = get_cfvalues_FRA(para.valuation_date, value_type, para, instrument);
 
-% Type Forward Volatility Agreement	
+% Type Forward Volatility Agreement 
 elseif ( strcmpi(para.type,'FVA') )
-	para = get_cfvalues_FVA(para.valuation_date, value_type, para, ...
-														instrument, surface);
+    para = get_cfvalues_FVA(para.valuation_date, value_type, para, ...
+                                                        instrument, surface);
 
 
 % Type Averaging FRN: Average forward or historical rates of cms_sliding period
 elseif ( strcmpi(para.type,'FRN_FWD_SPECIAL') ...
-							|| strcmpi(para.type,'SWAP_FLOATING_FWD_SPECIAL'))
-	para = get_cfvalues_FRN_FWD_SPECIAL(para.valuation_date, value_type, ...
-													para, instrument, surface);
-	
+                            || strcmpi(para.type,'SWAP_FLOATING_FWD_SPECIAL'))
+    para = get_cfvalues_FRN_FWD_SPECIAL(para.valuation_date, value_type, ...
+                                                    para, instrument, surface);
+    
 % Special floating types (capitalized, average, min, max) based on CMS rates
 elseif ( strcmpi(para.type,'FRN_SPECIAL') || strcmpi(para.type,'FRN_CMS_SPECIAL'))
-	para = get_cfvalues_FRN_SPECIAL(para.valuation_date, value_type, ...
-										para, instrument, ref_curve, surface);
+    para = get_cfvalues_FRN_SPECIAL(para.valuation_date, value_type, ...
+                                        para, instrument, ref_curve, surface);
 
 % Type CMS and CMS Caps/Floors: Calculate CF Values with cms rates
 elseif ( strcmpi(para.type,'CMS_FLOATING') || strcmpi(para.type,'CAP_CMS') ...
-											|| strcmpi(para.type,'FLOOR_CMS'))
-	para = get_cfvalues_CMS_FLOATING_CAPFLOOR(para.valuation_date, ...
-							value_type, para, instrument, ref_curve, surface);
+                                            || strcmpi(para.type,'FLOOR_CMS'))
+    para = get_cfvalues_CMS_FLOATING_CAPFLOOR(para.valuation_date, ...
+                            value_type, para, instrument, ref_curve, surface);
    
 % Type FAB: Calculate CF Values for all CF Periods for fixed amortizing bonds 
 elseif ( strcmpi(para.type,'FAB'))
-	para = get_cfvalues_FAB(para.valuation_date, value_type, para, ...
-									instrument, ref_curve, surface, riskfactor);
+    para = get_cfvalues_FAB(para.valuation_date, value_type, para, ...
+                                    instrument, ref_curve, surface, riskfactor);
 
 else
-	error('rollout_structured_cashflows: Unknown instrument type >>%s<<',any2str(para.type));
+    error('rollout_structured_cashflows: Unknown instrument type >>%s<<',any2str(para.type));
 end
 
 % ####################   Calculate Final Cash Flow values  #####################   
-para 	= get_final_cf_values(para);
+para    = get_final_cf_values(para);
 
 % ######################   Calculate Accrued Interest  #########################   
-para 	= calc_accrued_interest(para);
+para    = calc_accrued_interest(para);
 
 % ###################   prepare main function return values  ###################   
-ret_dates 				= para.ret_dates;
-ret_values 				= para.ret_values;
-ret_interest_values 	= para.ret_interest_values;
-ret_principal_values 	= para.ret_principal_values;
-last_coupon_date 		= para.last_coupon_date;
-accrued_interest		= para.accrued_interest;
+ret_dates               = para.ret_dates;
+ret_values              = para.ret_values;
+ret_interest_values     = para.ret_interest_values;
+ret_principal_values    = para.ret_principal_values;
+last_coupon_date        = para.last_coupon_date;
+accrued_interest        = para.accrued_interest;
 
-end	% end of main function
+end % end of main function
 
 % ##############################################################################
 % ##############################################################################
@@ -168,7 +168,7 @@ if length(ret_date_last_coupon) > 0                 % CASE A
     days_to_next_coupon = para.ret_dates(1);
     adj_factor = dib / (days_from_last_coupon + days_to_next_coupon);
     if ~( para.term == 365)
-		adj_factor = adj_factor .* para.term / 12;
+        adj_factor = adj_factor .* para.term / 12;
     end
     tf = tf * adj_factor;
 else
@@ -217,46 +217,46 @@ end
 % ##############################################################################
 function [para] = get_final_cf_values(para)
 
-	% special treatment for term == 0 (means all cash flows summed up at Maturity)
-	if ( para.term == 0 )
-		para.cf_dates = [para.issuevec;para.cf_dates(end,:)];
-		para.cf_business_dates = [para.issuevec;para.cf_business_dates(end,:)];
-		para.ret_values = sum(para.ret_values,2);
-		para.cf_interest = sum(para.cf_interest,2);
-		para.cf_principal = sum(para.cf_principal,2);
-	end
-	% end special treatment
+    % special treatment for term == 0 (means all cash flows summed up at Maturity)
+    if ( para.term == 0 )
+        para.cf_dates = [para.issuevec;para.cf_dates(end,:)];
+        para.cf_business_dates = [para.issuevec;para.cf_business_dates(end,:)];
+        para.ret_values = sum(para.ret_values,2);
+        para.cf_interest = sum(para.cf_interest,2);
+        para.cf_principal = sum(para.cf_principal,2);
+    end
+    % end special treatment
 
-	% apply business day rules
-	if para.enable_business_day_rule == 1
-		pay_dates_num = para.cf_business_datesnum;
-	else
-		pay_dates_num = para.cf_datesnum;
-	end
-	para.ret_dates_all_cfs = pay_dates_num - para.valuation_date;
-	% delete first cf date, if no cf occurs
-	if ( sum(para.ret_values(:,1)) == 0.0)
-		pay_dates_num(1,:)=[];
-	end
+    % apply business day rules
+    if para.enable_business_day_rule == 1
+        pay_dates_num = para.cf_business_datesnum;
+    else
+        pay_dates_num = para.cf_datesnum;
+    end
+    para.ret_dates_all_cfs = pay_dates_num - para.valuation_date;
+    % delete first cf date, if no cf occurs
+    if ( sum(para.ret_values(:,1)) == 0.0)
+        pay_dates_num(1,:)=[];
+    end
 
-	para.ret_dates = pay_dates_num' - para.valuation_date;
+    para.ret_dates = pay_dates_num' - para.valuation_date;
 
-	if ( columns(para.ret_values) < columns(para.ret_dates))
-		para.ret_dates = para.ret_dates(end-columns(para.ret_values)+1:end);
-	end
+    if ( columns(para.ret_values) < columns(para.ret_dates))
+        para.ret_dates = para.ret_dates(end-columns(para.ret_values)+1:end);
+    end
 
-	% calculate final return vectors for dates, total, interest and principal cash flows
-	para.ret_dates = para.ret_dates(para.ret_dates>0);	% only future cash flows
-	para.ret_values = para.ret_values(:,(end-length(para.ret_dates)+1):end);
-	para.ret_interest_values = para.cf_interest(:,(end-length(para.ret_dates)+1):end);
-	para.ret_principal_values = para.cf_principal(:,(end-length(para.ret_dates)+1):end);
+    % calculate final return vectors for dates, total, interest and principal cash flows
+    para.ret_dates = para.ret_dates(para.ret_dates>0);  % only future cash flows
+    para.ret_values = para.ret_values(:,(end-length(para.ret_dates)+1):end);
+    para.ret_interest_values = para.cf_interest(:,(end-length(para.ret_dates)+1):end);
+    para.ret_principal_values = para.cf_principal(:,(end-length(para.ret_dates)+1):end);
 
-end	% end get_final_cf_values
+end % end get_final_cf_values
 
 % ##############################################################################
 function para = fill_para_struct(nargin,valuation_date, value_type, ...
                     instrument, ref_curve, surface,riskfactor)
-					
+                    
 para = struct();
 para.valuation_date = valuation_date;
 if (ischar(valuation_date))
@@ -295,15 +295,15 @@ end
     para.long_last_period        = instrument.long_last_period;
     para.spread                  = instrument.spread;
     para.in_arrears_flag         = instrument.in_arrears;
-	% floor forward rate at 0.000001:
-	para.floor_flag = false;		% false: default setting, no global parameter
+    % floor forward rate at 0.000001:
+    para.floor_flag = false;        % false: default setting, no global parameter
 % --- Checking mandatory structure field items --- 
 
     para.type = instrument.sub_type;
     if (  strcmpi(para.type,'ZCB') || strcmpi(para.type,'FRA') || strcmpi(para.type,'FVA'))
         para.coupon_generation_method = 'zero';
     elseif ( strcmpi(para.type,'FRN') || strcmpi(para.type,'SWAP_FLOATING') ...
-					|| strcmpi(para.type,'CAP') || strcmpi(para.type,'FLOOR'))
+                    || strcmpi(para.type,'CAP') || strcmpi(para.type,'FLOOR'))
             para.last_reset_rate = instrument.last_reset_rate;
     elseif ( strcmpi(para.type,'FAB'))
             para.fixed_annuity_flag = instrument.fixed_annuity;
@@ -312,26 +312,26 @@ end
     end
     para.notional = instrument.notional;
     para.term = instrument.term;
-	para.term_unit = instrument.term_unit;
+    para.term_unit = instrument.term_unit;
     para.compounding_freq = instrument.compounding_freq;
     para.maturity_date = instrument.maturity_date;
     
-	if ( para.term != 0)
-		if ( strcmpi(para.term_unit,'months'))
-			para.term_factor = 12 / para.term;
-		elseif ( strcmpi(para.term_unit,'days') )
-			para.term_factor = 365 / para.term;
-		else % years
-			para.term_factor = 1 / para.term;
-		end
-	else % Special case: all cash flows are paid at maturity
-		para.term = datenum(para.maturity_date) - datenum(para.issue_date);
-		para.term_unit = 'days';
+    if ( para.term != 0)
+        if ( strcmpi(para.term_unit,'months'))
+            para.term_factor = 12 / para.term;
+        elseif ( strcmpi(para.term_unit,'days') )
+            para.term_factor = 365 / para.term;
+        else % years
+            para.term_factor = 1 / para.term;
+        end
+    else % Special case: all cash flows are paid at maturity
+        para.term = datenum(para.maturity_date) - datenum(para.issue_date);
+        para.term_unit = 'days';
         para.term_factor = 1;         
     end
     para.comp_freq = para.term_factor;
 
-	%----------------------------------
+    %----------------------------------
 % check for existing interest rate curve for FRN
 if (nargin < 2 && strcmp(para.type,'FRN') == 1)
     error('Too few arguments. No existing IR curve for type FRN.');
@@ -343,15 +343,15 @@ end
 
 % assume format of dates to be dd-mmm-yyyy to speed up conversion
 if ( ischar(para.maturity_date))
-	para.maturitydatenum = datenum_fast(para.maturity_date,1);
+    para.maturitydatenum = datenum_fast(para.maturity_date,1);
 else
-	para.maturitydatenum = datenum(para.maturity_date);
+    para.maturitydatenum = datenum(para.maturity_date);
 end
 
 if ( ischar(para.issue_date))
-	para.issuedatenum = datenum_fast(para.issue_date,1);
+    para.issuedatenum = datenum_fast(para.issue_date,1);
 else
-	para.issuedatenum = datenum(para.issue_date);
+    para.issuedatenum = datenum(para.issue_date);
 end
 
 if ( para.issuedatenum > para.maturitydatenum)
@@ -359,57 +359,57 @@ if ( para.issuedatenum > para.maturitydatenum)
 end
 
 % return values for cash flows:
-para.ret_values 	= [0]; 
-para.cf_principal 	= [0];
-para.cf_interest 	= [0];
-					
+para.ret_values     = [0]; 
+para.cf_principal   = [0];
+para.cf_interest    = [0];
+                    
 end  % end fill_para
 % ##############################################################################
 
 %-------------------------------------------------------------------------------
 %                  Instrument Cash Flow rollout Functions
 %-------------------------------------------------------------------------------
-function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, ref_curve, surface, riskfactor)	
+function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, ref_curve, surface, riskfactor)  
     % Cash flow rollout for 4 different cases:
-	% annuity = total cash flows consisting of principal cash flows and 
-	%           interest cash flows
-	%
-	% 1. FIXED_ANNUITY = true: constant cashflows CF = CF_interest_i + CF_principal_i
-	%		1a) USE_ANNUITY_AMOUNT == true, ANNUITY_AMOUNT = XXX:
-	%				annuity amount is given by attribute
-	%				CF = annuity_amount --> calculate principal and interest CFs
-	%		1b) USE_ANNUITY_AMOUNT == false:	
-	%				annuity amount is calculation as function(notional, term, coupon rate)
-	%				CF = f(not,rate,term) --> calculate principal and interest CFs
-	%
-	% 2. fixed FIXED_ANNUITY = false: constant principal cashflows, variable interest and notional CFs
-	%							CF_i = CF_principal_fixed + CF_interest_i
-	%		2a) USE_PRINCIPAL_PMT_FLAG == true, PRINCIPAL_PAYMENT = [xxx, yyy]
-	%				principal payments are given by attribute (principal payment vector)
-	%				CF_principal = [vector], calculate interest CFs for outstanding amount
-	%		2b) USE_PRINCIPAL_PMT_FLAG == false:
-	%				constant amortization rate is calculated as function(notional,number_payments)
-	%				CF_principal_i = constant, total CF and CF_interest variable
-	%
-	%  --------------------------------------------------------------------------------------------	
-	%  (1) FIXED_ANNUITY = true
-	%										  |
-	%		a) USE_ANNUITY_AMOUNT == true	  |	b) 	USE_ANNUITY_AMOUNT == false
-	%										  |
-	%			CF_TOTAL_t = ANNUITY_AMOUNT = |			CF_TOTAL_t = f(notional,rate,term) = const.
-	%							const.		  |	
-	%  --------------------------------------------------------------------------------------------
-	%										
-	%  (2) FIXED_ANNUITY = false
-	%										  |
-	%		a) USE_PRINCIPAL_PMT_FLAG == true |	b)	USE_PRINCIPAL_PMT_FLAG == false
-	%										  |
-	%			PRINCIPAL_PAYMENT = [vector]  |			PRINCIPAL_PAYMENT = f(notional,rate,term) = const.
-	%										  |
-	%			CF_TOTAL_t = PRINCIPAL_PAYMENT|			CF_TOTAL_t = PRINCIPAL_PAYMENT + CF_interest
-	%						+ CF_interest	  |	
-	%  --------------------------------------------------------------------------------------------
-	%
+    % annuity = total cash flows consisting of principal cash flows and 
+    %           interest cash flows
+    %
+    % 1. FIXED_ANNUITY = true: constant cashflows CF = CF_interest_i + CF_principal_i
+    %       1a) USE_ANNUITY_AMOUNT == true, ANNUITY_AMOUNT = XXX:
+    %               annuity amount is given by attribute
+    %               CF = annuity_amount --> calculate principal and interest CFs
+    %       1b) USE_ANNUITY_AMOUNT == false:    
+    %               annuity amount is calculation as function(notional, term, coupon rate)
+    %               CF = f(not,rate,term) --> calculate principal and interest CFs
+    %
+    % 2. fixed FIXED_ANNUITY = false: constant principal cashflows, variable interest and notional CFs
+    %                           CF_i = CF_principal_fixed + CF_interest_i
+    %       2a) USE_PRINCIPAL_PMT_FLAG == true, PRINCIPAL_PAYMENT = [xxx, yyy]
+    %               principal payments are given by attribute (principal payment vector)
+    %               CF_principal = [vector], calculate interest CFs for outstanding amount
+    %       2b) USE_PRINCIPAL_PMT_FLAG == false:
+    %               constant amortization rate is calculated as function(notional,number_payments)
+    %               CF_principal_i = constant, total CF and CF_interest variable
+    %
+    %  -------------------------------------------------------------------------------------------- 
+    %  (1) FIXED_ANNUITY = true
+    %                                         |
+    %       a) USE_ANNUITY_AMOUNT == true     | b)  USE_ANNUITY_AMOUNT == false
+    %                                         |
+    %           CF_TOTAL_t = ANNUITY_AMOUNT = |         CF_TOTAL_t = f(notional,rate,term) = const.
+    %                           const.        | 
+    %  --------------------------------------------------------------------------------------------
+    %                                       
+    %  (2) FIXED_ANNUITY = false
+    %                                         |
+    %       a) USE_PRINCIPAL_PMT_FLAG == true | b)  USE_PRINCIPAL_PMT_FLAG == false
+    %                                         |
+    %           PRINCIPAL_PAYMENT = [vector]  |         PRINCIPAL_PAYMENT = f(notional,rate,term) = const.
+    %                                         |
+    %           CF_TOTAL_t = PRINCIPAL_PAYMENT|         CF_TOTAL_t = PRINCIPAL_PAYMENT + CF_interest
+    %                       + CF_interest     | 
+    %  --------------------------------------------------------------------------------------------
+    %
     % fixed annuity: fixed total payments 
     if ( para.fixed_annuity_flag == 1)
         if ( para.use_annuity_amount == 0)   % calculate annuity from coupon rate and notional
@@ -443,11 +443,11 @@ function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, r
 
               % calculate principal and interest cf
               amount_outstanding_vec(1) = para.notional;
-			  % get interest rates at nodes
-			  rate_interest = ((1 ./ discount_factor (d1, d2, ...
+              % get interest rates at nodes
+              rate_interest = ((1 ./ discount_factor (d1, d2, ...
                                       para.coupon_rate, para.compounding_type, para.dcc, ...
                                       para.compounding_freq)) - 1)';
-									  
+                                      
               % cashflows of first date
               cf_interest(1) = para.notional.* rate_interest(1);
               % cashflows of remaining dates
@@ -458,13 +458,13 @@ function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, r
               end
               cf_principal = ret_values - cf_interest;
             end   % end coupon_rate <> 0.0
-	else    % use fixed given annuity_amount
+    else    % use fixed given annuity_amount
             annuity_amt = instrument.annuity_amount;
             number_payments = rows(para.cf_dates) -1;
             m = para.comp_freq;
             d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
             d2 = para.cf_datesnum(2:length(para.cf_datesnum));
-			cf_interest = zeros(1,number_payments);
+            cf_interest = zeros(1,number_payments);
             rate_interest = ((1 ./ discount_factor (d1, d2, ...
                                       para.coupon_rate, para.compounding_type, para.dcc, ...
                                       para.compounding_freq)) - 1)';
@@ -501,8 +501,8 @@ function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, r
             d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
             d2 = para.cf_datesnum(2:length(para.cf_datesnum));
             %cf_interest = zeros(1,number_payments);
-			amount_outstanding_vec = para.notional - cumsum(princ_pmt);
-			cf_interest = amount_outstanding_vec .* ((1 ./ ...
+            amount_outstanding_vec = para.notional - cumsum(princ_pmt);
+            cf_interest = amount_outstanding_vec .* ((1 ./ ...
                             discount_factor (d1, d2, para.coupon_rate, ...
                                 para.compounding_type, para.dcc, para.compounding_freq))' - 1);
 
@@ -519,7 +519,7 @@ function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, r
             d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
             d2 = para.cf_datesnum(2:length(para.cf_datesnum));
             cf_values = zeros(1,number_payments);
-			rate_interest = ((1 ./ discount_factor (d1, d2, ...
+            rate_interest = ((1 ./ discount_factor (d1, d2, ...
                                       para.coupon_rate, para.compounding_type, para.dcc, ...
                                       para.compounding_freq)) - 1)';
             amount_outstanding = para.notional;
@@ -617,7 +617,7 @@ function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, r
                     % convert annualized prepayment rate
                     lambda = ((1 ./ discount_factor (d1(ii), d2(ii), ...
                     prepayment_rate, para.comp_type_curve, ...
-					para.basis_curve, para.comp_freq_curve)) - 1);  
+                    para.basis_curve, para.comp_freq_curve)) - 1);  
 
                     %       (cf_principal_pp will be matrix (:,ii))
                     cf_principal_pp(:,ii) = Q_scaling .* ( cf_principal(ii) ...
@@ -691,11 +691,11 @@ function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, r
         cf_interest = cf_interest_pp;
         
     end % end prepayment procedure
-	
-	para.ret_values 	= ret_values;
-	para.cf_interest 	= cf_interest;
-	para.cf_principal 	= cf_principal;
-end	% end get_cfvalues_FAB
+    
+    para.ret_values     = ret_values;
+    para.cf_interest    = cf_interest;
+    para.cf_principal   = cf_principal;
+end % end get_cfvalues_FAB
 % ##############################################################################
 function para = get_cfvalues_FRB(valuation_date, value_type, para, instrument)
 
@@ -704,21 +704,21 @@ function para = get_cfvalues_FRB(valuation_date, value_type, para, instrument)
     % preallocate memory
     cf_principal = zeros(1,length(d1));
     % calculate all cash flows (assume prorated == true --> deposit method
-	cf_values = ((1 ./ discount_factor(d1, d2, para.coupon_rate, ...
-								para.compounding_type, para.dcc, ...
-								para.compounding_freq)) - 1)' .* para.notional;
-	% prorated == false: adjust deposit method to bond method --> in case
-	% of leap year adjust time period length by adding one day and
-	% recalculate cash flow
-	if ( instrument.prorated == false) 
-		delta_coupon = cf_values - para.coupon_rate .* para.notional;
-		delta_prorated = para.notional .* para.coupon_rate / 365;
-		if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
-			cf_values = ((1 ./ discount_factor(d1+1, d2, ...
-							para.coupon_rate, para.compounding_type, para.dcc, ...
-							para.compounding_freq)) - 1)' .* para.notional;
-		end
-	end
+    cf_values = ((1 ./ discount_factor(d1, d2, para.coupon_rate, ...
+                                para.compounding_type, para.dcc, ...
+                                para.compounding_freq)) - 1)' .* para.notional;
+    % prorated == false: adjust deposit method to bond method --> in case
+    % of leap year adjust time period length by adding one day and
+    % recalculate cash flow
+    if ( instrument.prorated == false) 
+        delta_coupon = cf_values - para.coupon_rate .* para.notional;
+        delta_prorated = para.notional .* para.coupon_rate / 365;
+        if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
+            cf_values = ((1 ./ discount_factor(d1+1, d2, ...
+                            para.coupon_rate, para.compounding_type, para.dcc, ...
+                            para.compounding_freq)) - 1)' .* para.notional;
+        end
+    end
 
     ret_values = cf_values;
     cf_interest = cf_values;
@@ -731,11 +731,11 @@ function para = get_cfvalues_FRB(valuation_date, value_type, para, instrument)
         ret_values(:,end) = ret_values(:,end) + para.notional;
         cf_principal(:,end) = para.notional;
     end
-	
-	% return struct
-	para.ret_values 	= ret_values;
-	para.cf_interest 	= cf_interest;
-	para.cf_principal 	= cf_principal;
+    
+    % return struct
+    para.ret_values     = ret_values;
+    para.cf_interest    = cf_interest;
+    para.cf_principal   = cf_principal;
 end % end get_cfvalues_FRB
 
 % ##############################################################################
@@ -743,7 +743,7 @@ function para = get_cfvalues_FRA(valuation_date, value_type, para, instrument)
 % Type FRA: Calculate CF Value for Forward Rate Agreements
 % Forward Rate Agreement has following times and discount factors
 % -----X------------------------X---------------------------X----
-%      T0		    Tt (maturity date FRA)           Tu (underlying mat date)
+%      T0           Tt (maturity date FRA)           Tu (underlying mat date)
 % Discount Factors:             |---------------------------|
 %                                    forward rate ---> du   
 %                                    strike rate  ---> dk
@@ -752,51 +752,51 @@ function para = get_cfvalues_FRA(valuation_date, value_type, para, instrument)
 % Cashflow = notional * (1/du - 1/dk) * du = notional * (1 - du / dk)
 % Value <---------  discounting  ------    Cashflow at Tt    
 
-    T0 = para.valuation_date;	% valuation_date
+    T0 = para.valuation_date;   % valuation_date
     Tt = para.cf_datesnum(2) - T0; % cash flow date = maturity date of FRA
-	Tu = datenum(instrument.underlying_maturity_date,1) - T0; % underlyings maturity date
-	% preallocate memory
-	cf_values = zeros(rows(para.tmp_rates),1);
-		
-	% only future cashflows, underlying > instrument mat date
-	if ( Tu >= Tt && Tt >= 0)	
-		% get forward rate from Tt -> Tu
-		forward_rate = get_forward_rate(para.tmp_nodes,para.tmp_rates, ...
-					Tt,Tu-Tt,para.compounding_type,para.method_interpolation, ...
+    Tu = datenum(instrument.underlying_maturity_date,1) - T0; % underlyings maturity date
+    % preallocate memory
+    cf_values = zeros(rows(para.tmp_rates),1);
+        
+    % only future cashflows, underlying > instrument mat date
+    if ( Tu >= Tt && Tt >= 0)   
+        % get forward rate from Tt -> Tu
+        forward_rate = get_forward_rate(para.tmp_nodes,para.tmp_rates, ...
+                    Tt,Tu-Tt,para.compounding_type,para.method_interpolation, ...
                     para.compounding_freq, para.dcc, para.valuation_date, ...
-					para.comp_type_curve, para.basis_curve, para.comp_freq_curve,para.floor_flag);
+                    para.comp_type_curve, para.basis_curve, para.comp_freq_curve,para.floor_flag);
 
-		% get discount factors
-		% underlying forward rate discount factor
-		du = discount_factor(Tt, Tu, forward_rate, ...
-								para.comp_type_curve, para.basis_curve, para.comp_freq_curve);
-		
-		% strike discount factor	
-		strike_rate_conv = convert_curve_rates(Tt,Tu,instrument.strike_rate, ...
-				'cont','annual',3,para.comp_type_curve,para.comp_freq_curve,para.basis_curve);
-		dk_strike = discount_factor(Tt, Tu, strike_rate_conv, ...
-								para.comp_type_curve, para.basis_curve, para.comp_freq_curve);
-										   
-		% calculate cash flow
-		if ( strcmpi(instrument.coupon_prepay,'discount')) % Coupon Prepay = Discount
-			cf_values(:,1) = para.notional .* ( 1 - du ./ dk_strike );
-		else	% in fine
-			cf_values(:,1) = para.notional .* ( 1 - du ./ dk_strike ) ./ du;
-		end
-	else	% past cash flows or invalid cash flows
-		fprintf('rollout_structured_cashflows: FRA >>%s<< has invalid cash flow dates or invalid (underlyings) maturity date. cf_values = 0.0.\n', instrument.id);
-		cf_values = 0.0;
-	end
+        % get discount factors
+        % underlying forward rate discount factor
+        du = discount_factor(Tt, Tu, forward_rate, ...
+                                para.comp_type_curve, para.basis_curve, para.comp_freq_curve);
+        
+        % strike discount factor    
+        strike_rate_conv = convert_curve_rates(Tt,Tu,instrument.strike_rate, ...
+                'cont','annual',3,para.comp_type_curve,para.comp_freq_curve,para.basis_curve);
+        dk_strike = discount_factor(Tt, Tu, strike_rate_conv, ...
+                                para.comp_type_curve, para.basis_curve, para.comp_freq_curve);
+                                           
+        % calculate cash flow
+        if ( strcmpi(instrument.coupon_prepay,'discount')) % Coupon Prepay = Discount
+            cf_values(:,1) = para.notional .* ( 1 - du ./ dk_strike );
+        else    % in fine
+            cf_values(:,1) = para.notional .* ( 1 - du ./ dk_strike ) ./ du;
+        end
+    else    % past cash flows or invalid cash flows
+        fprintf('rollout_structured_cashflows: FRA >>%s<< has invalid cash flow dates or invalid (underlyings) maturity date. cf_values = 0.0.\n', instrument.id);
+        cf_values = 0.0;
+    end
     para.ret_values = cf_values;
-	para.cf_principal = cf_values;
+    para.cf_principal = cf_values;
     para.cf_interest = 0.0;
-end 	% end get_cfvalues_FRA
+end     % end get_cfvalues_FRA
 % ##############################################################################
-function para = get_cfvalues_FVA(valuation_date, value_type, para, instrument, surface)	
+function para = get_cfvalues_FVA(valuation_date, value_type, para, instrument, surface) 
 % Type FVA: Calculate CF Value for Forward Volatility Agreements
 % Forward Volatility Agreement has following times steps and discount factors
 % -----X------------------------X---------------------------X----
-%      T0		    Tt (maturity date FVA)           Tu (underlying mat date)
+%      T0           Tt (maturity date FVA)           Tu (underlying mat date)
 % Discount Factors:             |---------------------------|
 %                                    volatility at Tu ---> Tu_vol 
 %                                    volatility at Tt ---> Tt_vol   
@@ -805,356 +805,356 @@ function para = get_cfvalues_FVA(valuation_date, value_type, para, instrument, s
 % and strike volatility:
 % Cashflow = notional * (sqrt( (Tu_vol^2 - Tt_vol^2) / TF_Tu) - K_vol)
 % Value <---------  discounting  ------    Cashflow at Tt    
-    T0 = para.valuation_date;	% valuation_date
+    T0 = para.valuation_date;   % valuation_date
     Tt = para.cf_datesnum(2) - T0; % cash flow date = maturity date of FRA
-	Tu = datenum(instrument.underlying_maturity_date,1) - T0; % underlyings maturity date
-	
-	% only future cashflows, underlying > instrument mat date
-	if ( Tu >= Tt && Tt >= 0)	
-		if ( strcmpi(surface.type,'IR')) % Surface type IR
-			% get volatility according to term, tenor and moneyness 1
-			term    = Tu-Tt; % underlying tenor
-			Tu_vol  = surface.getValue(value_type,Tu,term,1);
-			Tt_vol  = surface.getValue(value_type,Tt,term,1);
-		else % Surface type INDEX
-			% get volatility according to term and moneyness 1
-			Tu_vol  = surface.getValue(value_type,Tu,1);
-			Tt_vol  = surface.getValue(value_type,Tt,1);
-		end
-		% get time factors
-		TF_Tu 		= timefactor(0,Tu,para.dcc);
-		TF_Tt 		= timefactor(0,Tt,para.dcc);
-		TF_Tt_Tu 	= timefactor(Tt,Tu,para.dcc);
-		% calculate forward variance
-		fwd_var = (Tu_vol.^2 .* TF_Tu - Tt_vol.^2 .* TF_Tt);
-		% preallocate memory
-		cf_values = zeros(rows(fwd_var),1);
-		% calculate final cashflows
-		if ( fwd_var > 0.0)
-			if ( strcmpi(instrument.fva_type,'volatility'))
-				cf_values(:,1) = para.notional .* (sqrt( fwd_var ./ TF_Tt_Tu) - instrument.strike_rate);
-			elseif ( strcmpi(instrument.fva_type,'variance'))
-				cf_values(:,1) = para.notional .* ( fwd_var ./ TF_Tt_Tu - instrument.strike_rate.^2);
-			else
-				fprintf('rollout_structured_cashflows: FRV >>%s<< has unknown fva_type >>%s<<\n', instrument.id, instrument.fva_type);
-			end
-		else	% prevent complex cf values
-			fprintf('rollout_structured_cashflows: FRV >>%s<< has negative forward variance. cf_values = 0.0.\n', instrument.id);
-			cf_values(:,1) = 0.0;
-		end
-	else	% past cash flows or invalid cash flows
-		fprintf('rollout_structured_cashflows: FRV >>%s<< has invalid cash flow dates or invalid (underlyings) maturity date. cf_values = 0.0.\n', instrument.id);
-		cf_values = 0.0;
-	end
+    Tu = datenum(instrument.underlying_maturity_date,1) - T0; % underlyings maturity date
+    
+    % only future cashflows, underlying > instrument mat date
+    if ( Tu >= Tt && Tt >= 0)   
+        if ( strcmpi(surface.type,'IR')) % Surface type IR
+            % get volatility according to term, tenor and moneyness 1
+            term    = Tu-Tt; % underlying tenor
+            Tu_vol  = surface.getValue(value_type,Tu,term,1);
+            Tt_vol  = surface.getValue(value_type,Tt,term,1);
+        else % Surface type INDEX
+            % get volatility according to term and moneyness 1
+            Tu_vol  = surface.getValue(value_type,Tu,1);
+            Tt_vol  = surface.getValue(value_type,Tt,1);
+        end
+        % get time factors
+        TF_Tu       = timefactor(0,Tu,para.dcc);
+        TF_Tt       = timefactor(0,Tt,para.dcc);
+        TF_Tt_Tu    = timefactor(Tt,Tu,para.dcc);
+        % calculate forward variance
+        fwd_var = (Tu_vol.^2 .* TF_Tu - Tt_vol.^2 .* TF_Tt);
+        % preallocate memory
+        cf_values = zeros(rows(fwd_var),1);
+        % calculate final cashflows
+        if ( fwd_var > 0.0)
+            if ( strcmpi(instrument.fva_type,'volatility'))
+                cf_values(:,1) = para.notional .* (sqrt( fwd_var ./ TF_Tt_Tu) - instrument.strike_rate);
+            elseif ( strcmpi(instrument.fva_type,'variance'))
+                cf_values(:,1) = para.notional .* ( fwd_var ./ TF_Tt_Tu - instrument.strike_rate.^2);
+            else
+                fprintf('rollout_structured_cashflows: FRV >>%s<< has unknown fva_type >>%s<<\n', instrument.id, instrument.fva_type);
+            end
+        else    % prevent complex cf values
+            fprintf('rollout_structured_cashflows: FRV >>%s<< has negative forward variance. cf_values = 0.0.\n', instrument.id);
+            cf_values(:,1) = 0.0;
+        end
+    else    % past cash flows or invalid cash flows
+        fprintf('rollout_structured_cashflows: FRV >>%s<< has invalid cash flow dates or invalid (underlyings) maturity date. cf_values = 0.0.\n', instrument.id);
+        cf_values = 0.0;
+    end
     para.ret_values = cf_values;
-	para.cf_principal = cf_values;
+    para.cf_principal = cf_values;
     para.cf_interest = 0.0;
-end	% end get_cfvalues_FVA
+end % end get_cfvalues_FVA
 % ##############################################################################
 function para = get_cfvalues_CDS(valuation_date, value_type, para, instrument, ref_curve, surface, riskfactor)
-	% Type CDS: Calculate CF Values for Credit Default Swaps
-	% Valuation according to the probability model.
-	% The following CDS types are supported:
-	% either receive protection or provide protection (multiply all cash flows by -1)
-	% ----------------       premium_leg cashflows   -------------------------------
-	% premium leg cash flow dates taken from CDS itself
-	% cds_use_initial_premium == false 	| cds_use_initial_premium == true
-	%									|
-	% FIXED: CFs from coupon rate 		|	use initial_premium for fixed payment
-	%			and spread.				|	at issue_date. 
-	%									|
-	% FLOATING: CFs from forward rates	|
-	%			of reference curve		|-------------------------------------------
-	%
-	%  credit_state > DEFAULT: get expectation rates from Hazard curve 
-	%  -> calculate expected premium cash flows from survival probabilities
-	%  credit_state == DEFAULT: no premium paid in this case
-	%
-	% ----------------     protection_leg cashflows   ------------------------------ 
-	%  credit_state > DEFAULT: get expectation rates from Hazard curve 
-	%				protection leg cash flow dates taken from reference asset
-	%  -> expected default_cf = 
-	%				notional * loss_given_default * survival_prob * hazard_rate
-	%  credit_state == DEFAULT: default_cf	= notional * loss_given_default
-	%
-		
-	% For CDS instruments ref_curve is used as hazard curve,
-	% surface is used for reference asset, riskfactor as ref object for FLOATER.
-	reference_asset = surface;
-	hazard_curve = ref_curve;
-	
-	% get credit state of reference asset -> in default -> premium leg = 0
-	%							protection leg = notional * loss_given_default
-	% credit state != default -> payout according default probability weights
-	if ( strcmpi(reference_asset.get('credit_state'),'D'))
-		cf_interest = 0.0;
-		cf_principal = para.notional * instrument.loss_given_default;
-		% cashflow one day after valuation date
-		para.cf_datesnum = max(para.issuedatenum,para.valuation_date + 1); 
-		para.cf_business_datesnum = para.cf_datesnum;
-		% adjust sign of cashflows
-		if ( instrument.cds_receive_protection == false) % protection provider
-			cf_principal = -cf_principal;
-		end
-		ret_values = cf_principal;
-	else	% credit_state != default
-	
-		% get CF dates from reference_asset:
-		ref_cf_dates = reference_asset.get('cf_dates');
-		d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
-		d2 = para.cf_datesnum(2:length(para.cf_datesnum));
-		
-		% -------------   premium leg: get interest cash flows  --------------------
-		if ( instrument.cds_use_initial_premium == false)
-			if ( strcmpi(para.type,'CDS_FIXED') )
-				% calculate all cash flows (prorated == true --> deposit method
-				cf_interest = ((1 ./ discount_factor(d1, d2, para.coupon_rate, ...
-									para.compounding_type, para.dcc, ...
-									para.compounding_freq)) - 1)' .* para.notional;
-				% prorated == false: adjust deposit method to bond method --> in 
-				% leap year adjust time period length by adding one day and
-				% recalculate cash flow
-				if ( instrument.prorated == false) 
-					delta_coupon = cf_interest - para.coupon_rate .* para.notional;
-					delta_prorated = para.notional .* para.coupon_rate / 365;
-					if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
-						cf_interest = ((1 ./ discount_factor(d1+1, d2, ...
-									para.coupon_rate, para.compounding_type, para.dcc, ...
-									para.compounding_freq)) - 1)' .* para.notional;
-					end
-				end
-			else	% CDS_FLOATING
-				reference_curve = riskfactor;	% reference curve to extract forward rates
-				tmp_nodes_ref = reference_curve.get('nodes');
-				tmp_rates_ref = reference_curve.getValue(value_type);
-				cf_interest = zeros(rows(tmp_rates_ref),length(d1));
-				[tf dip dib] = timefactor (d1, d2, para.dcc);
-				for ii = 1 : 1 : length(d1)
-					% convert dates into years from valuation date with timefactor
-					t1 = (d1(ii) - para.valuation_date);
-					t2 = (d2(ii) - para.valuation_date);
-			  
-					if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rate
-						payment_date        = t2;
-						% adjust forward start and end date for in fine vs. in arrears
-						if ( instrument.in_arrears == 0)    % in fine
-							fsd  = t1;
-							fed  = t2;
-						else    % in arrears
-							fsd  = t2;
-							fed  = t2 + (t2 - t1);
-						end
-						 % get forward rate from provided curve (Why compfreq / basis from para?)
-						forward_rate_curve = get_forward_rate(tmp_nodes_ref,tmp_rates_ref, ...
-							fsd,fed-fsd,para.compounding_type,para.method_interpolation, ...
-							para.compounding_freq, para.dcc, para.valuation_date, ...
-							para.comp_type_curve, para.basis_curve, para.comp_freq_curve,para.floor_flag);
-									
-						% calculate final floating cash flows
-						forward_rate = (para.spread + forward_rate_curve) .* tf(ii);
+    % Type CDS: Calculate CF Values for Credit Default Swaps
+    % Valuation according to the probability model.
+    % The following CDS types are supported:
+    % either receive protection or provide protection (multiply all cash flows by -1)
+    % ----------------       premium_leg cashflows   -------------------------------
+    % premium leg cash flow dates taken from CDS itself
+    % cds_use_initial_premium == false  | cds_use_initial_premium == true
+    %                                   |
+    % FIXED: CFs from coupon rate       |   use initial_premium for fixed payment
+    %           and spread.             |   at issue_date. 
+    %                                   |
+    % FLOATING: CFs from forward rates  |
+    %           of reference curve      |-------------------------------------------
+    %
+    %  credit_state > DEFAULT: get expectation rates from Hazard curve 
+    %  -> calculate expected premium cash flows from survival probabilities
+    %  credit_state == DEFAULT: no premium paid in this case
+    %
+    % ----------------     protection_leg cashflows   ------------------------------ 
+    %  credit_state > DEFAULT: get expectation rates from Hazard curve 
+    %               protection leg cash flow dates taken from reference asset
+    %  -> expected default_cf = 
+    %               notional * loss_given_default * survival_prob * hazard_rate
+    %  credit_state == DEFAULT: default_cf  = notional * loss_given_default
+    %
+        
+    % For CDS instruments ref_curve is used as hazard curve,
+    % surface is used for reference asset, riskfactor as ref object for FLOATER.
+    reference_asset = surface;
+    hazard_curve = ref_curve;
+    
+    % get credit state of reference asset -> in default -> premium leg = 0
+    %                           protection leg = notional * loss_given_default
+    % credit state != default -> payout according default probability weights
+    if ( strcmpi(reference_asset.get('credit_state'),'D'))
+        cf_interest = 0.0;
+        cf_principal = para.notional * instrument.loss_given_default;
+        % cashflow one day after valuation date
+        para.cf_datesnum = max(para.issuedatenum,para.valuation_date + 1); 
+        para.cf_business_datesnum = para.cf_datesnum;
+        % adjust sign of cashflows
+        if ( instrument.cds_receive_protection == false) % protection provider
+            cf_principal = -cf_principal;
+        end
+        ret_values = cf_principal;
+    else    % credit_state != default
+    
+        % get CF dates from reference_asset:
+        ref_cf_dates = reference_asset.get('cf_dates');
+        d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
+        d2 = para.cf_datesnum(2:length(para.cf_datesnum));
+        
+        % -------------   premium leg: get interest cash flows  --------------------
+        if ( instrument.cds_use_initial_premium == false)
+            if ( strcmpi(para.type,'CDS_FIXED') )
+                % calculate all cash flows (prorated == true --> deposit method
+                cf_interest = ((1 ./ discount_factor(d1, d2, para.coupon_rate, ...
+                                    para.compounding_type, para.dcc, ...
+                                    para.compounding_freq)) - 1)' .* para.notional;
+                % prorated == false: adjust deposit method to bond method --> in 
+                % leap year adjust time period length by adding one day and
+                % recalculate cash flow
+                if ( instrument.prorated == false) 
+                    delta_coupon = cf_interest - para.coupon_rate .* para.notional;
+                    delta_prorated = para.notional .* para.coupon_rate / 365;
+                    if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
+                        cf_interest = ((1 ./ discount_factor(d1+1, d2, ...
+                                    para.coupon_rate, para.compounding_type, para.dcc, ...
+                                    para.compounding_freq)) - 1)' .* para.notional;
+                    end
+                end
+            else    % CDS_FLOATING
+                reference_curve = riskfactor;   % reference curve to extract forward rates
+                tmp_nodes_ref = reference_curve.get('nodes');
+                tmp_rates_ref = reference_curve.getValue(value_type);
+                cf_interest = zeros(rows(tmp_rates_ref),length(d1));
+                [tf dip dib] = timefactor (d1, d2, para.dcc);
+                for ii = 1 : 1 : length(d1)
+                    % convert dates into years from valuation date with timefactor
+                    t1 = (d1(ii) - para.valuation_date);
+                    t2 = (d2(ii) - para.valuation_date);
+              
+                    if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rate
+                        payment_date        = t2;
+                        % adjust forward start and end date for in fine vs. in arrears
+                        if ( instrument.in_arrears == 0)    % in fine
+                            fsd  = t1;
+                            fed  = t2;
+                        else    % in arrears
+                            fsd  = t2;
+                            fed  = t2 + (t2 - t1);
+                        end
+                         % get forward rate from provided curve (Why compfreq / basis from para?)
+                        forward_rate_curve = get_forward_rate(tmp_nodes_ref,tmp_rates_ref, ...
+                            fsd,fed-fsd,para.compounding_type,para.method_interpolation, ...
+                            para.compounding_freq, para.dcc, para.valuation_date, ...
+                            para.comp_type_curve, para.basis_curve, para.comp_freq_curve,para.floor_flag);
+                                    
+                        % calculate final floating cash flows
+                        forward_rate = (para.spread + forward_rate_curve) .* tf(ii);
 
-					elseif ( t1 < 0 && t2 > 0 ) % if last cf date is in the past, while
-											% next is in future, use last reset rate
-						forward_rate = (para.spread + instrument.last_reset_rate) .* tf(ii);
-					else    % if both cf dates t1 and t2 lie in the past omit cash flow
-						forward_rate = 0.0;
-					end
-					cf_interest(:,ii) = forward_rate .* para.notional;
-				end
-					
-			end	% end get interest cash flows
-		else	% use initial premium at issue_date 
-			idx_vec = para.issuedatenum == para.cf_datesnum;
-			idx = idx_vec' * [1:1:length(idx_vec)]';
-			cf_interest = zeros(1,length(para.cf_datesnum));
-			cf_interest(idx) = instrument.cds_initial_premium;
-		end
-		issue_date_reldays = para.issuedatenum - para.valuation_date;
-		% get probability weights for all interest cash flows:
-		hr_nodes_int = d2 - para.valuation_date;
-		hr_timesteps = d2-d1;
-		if ( instrument.cds_use_initial_premium == true)
-			hr_nodes_int = [issue_date_reldays,hr_nodes_int']';
-			hr_timesteps = [issue_date_reldays;hr_nodes_int(2:end) - hr_nodes_int(1:end-1)];
-			d2 = hr_nodes_int + para.valuation_date;
-			d1 = d2 - hr_timesteps;
-		end
-		hazard_rates_curve = hazard_curve.getRate(value_type,hr_nodes_int)';
-		% convert hazard rates (timefactor)
-		hazard_rates = convert_curve_rates(para.valuation_date, ...
-					hr_timesteps,hazard_rates_curve, ...
-					para.comp_type_curve,para.comp_freq_curve,para.basis_curve,para.compounding_type, ...
-					para.compounding_freq,para.dcc);
-		% calculate survival probabilities
-		survival_probs = cumprod(discount_factor(d1, d2, hazard_rates, ...
-									para.compounding_type, para.dcc, para.compounding_freq))';
+                    elseif ( t1 < 0 && t2 > 0 ) % if last cf date is in the past, while
+                                            % next is in future, use last reset rate
+                        forward_rate = (para.spread + instrument.last_reset_rate) .* tf(ii);
+                    else    % if both cf dates t1 and t2 lie in the past omit cash flow
+                        forward_rate = 0.0;
+                    end
+                    cf_interest(:,ii) = forward_rate .* para.notional;
+                end
+                    
+            end % end get interest cash flows
+        else    % use initial premium at issue_date 
+            idx_vec = para.issuedatenum == para.cf_datesnum;
+            idx = idx_vec' * [1:1:length(idx_vec)]';
+            cf_interest = zeros(1,length(para.cf_datesnum));
+            cf_interest(idx) = instrument.cds_initial_premium;
+        end
+        issue_date_reldays = para.issuedatenum - para.valuation_date;
+        % get probability weights for all interest cash flows:
+        hr_nodes_int = d2 - para.valuation_date;
+        hr_timesteps = d2-d1;
+        if ( instrument.cds_use_initial_premium == true)
+            hr_nodes_int = [issue_date_reldays,hr_nodes_int']';
+            hr_timesteps = [issue_date_reldays;hr_nodes_int(2:end) - hr_nodes_int(1:end-1)];
+            d2 = hr_nodes_int + para.valuation_date;
+            d1 = d2 - hr_timesteps;
+        end
+        hazard_rates_curve = hazard_curve.getRate(value_type,hr_nodes_int)';
+        % convert hazard rates (timefactor)
+        hazard_rates = convert_curve_rates(para.valuation_date, ...
+                    hr_timesteps,hazard_rates_curve, ...
+                    para.comp_type_curve,para.comp_freq_curve,para.basis_curve,para.compounding_type, ...
+                    para.compounding_freq,para.dcc);
+        % calculate survival probabilities
+        survival_probs = cumprod(discount_factor(d1, d2, hazard_rates, ...
+                                    para.compounding_type, para.dcc, para.compounding_freq))';
 
-		cf_interest = cf_interest .* survival_probs;
-		hr_nodes_int = hr_nodes_int';
+        cf_interest = cf_interest .* survival_probs;
+        hr_nodes_int = hr_nodes_int';
 
-		% ------------   protection leg: get default cash flows  ------------------
-		% payout of probability weighted default cfs at all ref_cf_dates
-		% append issue date
-		
-		princ_dates = sort([issue_date_reldays,ref_cf_dates]);
-		princ_dates = princ_dates(princ_dates>=issue_date_reldays);
-		hr_nodes_princ = princ_dates(2:end);
-		hr_timesteps = hr_nodes_princ - princ_dates(1:end-1);
-		d2 = princ_dates(2:end) + para.valuation_date;
-		d1 = d2 - hr_timesteps;
-		hazard_rates_curve = hazard_curve.getRate(value_type,hr_nodes_princ)';
-		% convert hazard rates (timefactor)
-		hazard_rates = convert_curve_rates(para.valuation_date, ...
-					hr_timesteps',hazard_rates_curve, ...
-					para.comp_type_curve,para.comp_freq_curve,para.basis_curve,para.compounding_type, ...
-					para.compounding_freq,para.dcc);
-		% calculate survival probabilities
-		survival_probs = cumprod(discount_factor(d1, d2, hazard_rates', ...
-									para.compounding_type, para.dcc, para.compounding_freq));
-		hazard_rates = (1 ./ discount_factor(d1, d2, hazard_rates', ...
-									para.compounding_type, para.dcc, para.compounding_freq)) - 1;
-		
-		cf_principal = -para.notional .* hazard_rates .* survival_probs ...
-												 .* instrument.loss_given_default;
-		
-		% --------------------------------------------------------------------------
-		% adjust sign of cashflows
-		if ( instrument.cds_receive_protection == false) % protection provider
-			cf_interest = -cf_interest;
-			cf_principal = -cf_principal;
-		end
+        % ------------   protection leg: get default cash flows  ------------------
+        % payout of probability weighted default cfs at all ref_cf_dates
+        % append issue date
+        
+        princ_dates = sort([issue_date_reldays,ref_cf_dates]);
+        princ_dates = princ_dates(princ_dates>=issue_date_reldays);
+        hr_nodes_princ = princ_dates(2:end);
+        hr_timesteps = hr_nodes_princ - princ_dates(1:end-1);
+        d2 = princ_dates(2:end) + para.valuation_date;
+        d1 = d2 - hr_timesteps;
+        hazard_rates_curve = hazard_curve.getRate(value_type,hr_nodes_princ)';
+        % convert hazard rates (timefactor)
+        hazard_rates = convert_curve_rates(para.valuation_date, ...
+                    hr_timesteps',hazard_rates_curve, ...
+                    para.comp_type_curve,para.comp_freq_curve,para.basis_curve,para.compounding_type, ...
+                    para.compounding_freq,para.dcc);
+        % calculate survival probabilities
+        survival_probs = cumprod(discount_factor(d1, d2, hazard_rates', ...
+                                    para.compounding_type, para.dcc, para.compounding_freq));
+        hazard_rates = (1 ./ discount_factor(d1, d2, hazard_rates', ...
+                                    para.compounding_type, para.dcc, para.compounding_freq)) - 1;
+        
+        cf_principal = -para.notional .* hazard_rates .* survival_probs ...
+                                                 .* instrument.loss_given_default;
+        
+        % --------------------------------------------------------------------------
+        % adjust sign of cashflows
+        if ( instrument.cds_receive_protection == false) % protection provider
+            cf_interest = -cf_interest;
+            cf_principal = -cf_principal;
+        end
 
-		% sum up final cashflows (all unique time steps from protection and premium)
-		% and adjust cf_datesnum if necessary
-		para.cf_datesnum = unique([(para.cf_datesnum - para.valuation_date)',hr_nodes_int,hr_nodes_princ]);
-		ret_values = zeros(rows(cf_interest),columns(para.cf_datesnum));
-		ret_cf_interest  = zeros(rows(cf_interest),columns(para.cf_datesnum));
-		ret_cf_principal  = zeros(rows(cf_principal),columns(para.cf_datesnum));
-		for ii=1:columns(para.cf_datesnum)
-			tmp_date = para.cf_datesnum(ii);
-			tmp_int_cf = cf_interest(:,hr_nodes_int==tmp_date);
-			tmp_princ_cf = cf_principal(:,hr_nodes_princ==tmp_date);
-			if ~ (isempty(tmp_int_cf))
-				ret_values(:,ii) = cf_interest(:,hr_nodes_int==tmp_date); 
-				ret_cf_interest(:,ii) = cf_interest(:,hr_nodes_int==tmp_date); 
-			end
-			if ~ (isempty(tmp_princ_cf))
-				ret_values(:,ii) = ret_values(:,ii) + cf_principal(:,hr_nodes_princ==tmp_date);
-				ret_cf_principal(:,ii) = cf_principal(:,hr_nodes_princ==tmp_date);
-			end
-		end
-		para.cf_datesnum = (para.cf_datesnum + para.valuation_date)';
-		cf_interest = ret_cf_interest;
-		cf_principal = ret_cf_principal;
-		
-		para.cf_business_datesnum = para.cf_datesnum;
-	end	% end credit_state != default
-	
-	para.ret_values = ret_values;
-	para.cf_principal = cf_principal;
+        % sum up final cashflows (all unique time steps from protection and premium)
+        % and adjust cf_datesnum if necessary
+        para.cf_datesnum = unique([(para.cf_datesnum - para.valuation_date)',hr_nodes_int,hr_nodes_princ]);
+        ret_values = zeros(rows(cf_interest),columns(para.cf_datesnum));
+        ret_cf_interest  = zeros(rows(cf_interest),columns(para.cf_datesnum));
+        ret_cf_principal  = zeros(rows(cf_principal),columns(para.cf_datesnum));
+        for ii=1:columns(para.cf_datesnum)
+            tmp_date = para.cf_datesnum(ii);
+            tmp_int_cf = cf_interest(:,hr_nodes_int==tmp_date);
+            tmp_princ_cf = cf_principal(:,hr_nodes_princ==tmp_date);
+            if ~ (isempty(tmp_int_cf))
+                ret_values(:,ii) = cf_interest(:,hr_nodes_int==tmp_date); 
+                ret_cf_interest(:,ii) = cf_interest(:,hr_nodes_int==tmp_date); 
+            end
+            if ~ (isempty(tmp_princ_cf))
+                ret_values(:,ii) = ret_values(:,ii) + cf_principal(:,hr_nodes_princ==tmp_date);
+                ret_cf_principal(:,ii) = cf_principal(:,hr_nodes_princ==tmp_date);
+            end
+        end
+        para.cf_datesnum = (para.cf_datesnum + para.valuation_date)';
+        cf_interest = ret_cf_interest;
+        cf_principal = ret_cf_principal;
+        
+        para.cf_business_datesnum = para.cf_datesnum;
+    end % end credit_state != default
+    
+    para.ret_values = ret_values;
+    para.cf_principal = cf_principal;
     para.cf_interest = cf_interest;
 end % end get_cfvalues_CDS
 % ##############################################################################
 function para = get_cfvalues_ILB(valuation_date, value_type, para, instrument, ref_curve, surface, riskfactor)
-	
-	% remap input objects: ref_curve, surface, riskfactor
-	iec 	= ref_curve;
-	hist 	= surface;
-	cpi 	= riskfactor;
-	notional_tmp = para.notional;
+    
+    % remap input objects: ref_curve, surface, riskfactor
+    iec     = ref_curve;
+    hist    = surface;
+    cpi     = riskfactor;
+    notional_tmp = para.notional;
     %cf_datesnum = cf_datesnum((cf_datesnum-today)>0)
     d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
     d2 = para.cf_datesnum(2:length(para.cf_datesnum));
-	
-	% get current CPI level
-	cpi_level = cpi.getValue(value_type);
-		
-	% get historical index level for indexation lag > 0
-	if (instrument.use_indexation_lag == true)
-		adjust_for_month = instrument.infl_exp_lag;
-		tmp_date = addtodatefinancial(para.issuedatenum, 0, -adjust_for_month, 0);
-		diff_days = para.valuation_date - tmp_date;
-		cpi_initial = hist.getRate(value_type,-diff_days);
-	else % Compute initial index level from historical rate without lag
-		days_from_issuedate = para.issuedatenum - para.valuation_date;
-		cpi_initial = hist.getRate(value_type,days_from_issuedate);
-	end
+    
+    % get current CPI level
+    cpi_level = cpi.getValue(value_type);
+        
+    % get historical index level for indexation lag > 0
+    if (instrument.use_indexation_lag == true)
+        adjust_for_month = instrument.infl_exp_lag;
+        tmp_date = addtodatefinancial(para.issuedatenum, 0, -adjust_for_month, 0);
+        diff_days = para.valuation_date - tmp_date;
+        cpi_initial = hist.getRate(value_type,-diff_days);
+    else % Compute initial index level from historical rate without lag
+        days_from_issuedate = para.issuedatenum - para.valuation_date;
+        cpi_initial = hist.getRate(value_type,days_from_issuedate);
+    end
     % preallocate memory
-	no_scen = max(length(iec.getRate(value_type,0)),length(cpi_level));
-	cf_values = zeros(no_scen,length(d1));
+    no_scen = max(length(iec.getRate(value_type,0)),length(cpi_level));
+    cf_values = zeros(no_scen,length(d1));
     cf_principal = zeros(no_scen,length(d1));
-	inflation_index = zeros(no_scen,length(d1));
-	
-	% precalculate rates at nodes
-	rates_interest = ((1 ./ discount_factor(d1, d2, para.coupon_rate, ...
+    inflation_index = zeros(no_scen,length(d1));
+    
+    % precalculate rates at nodes
+    rates_interest = ((1 ./ discount_factor(d1, d2, para.coupon_rate, ...
                                             para.compounding_type, para.dcc, ...
                                             para.compounding_freq)) - 1)';
-											
+                                            
     % calculate all cash flows (assume prorated == true --> deposit method
     for ii = 1: 1 : length(d2)
         % convert dates into years from valuation date with timefactor
-		% check for indexation_lag and adjust timesteps accordingly
-		tmp_d1 = d1(ii);
-		tmp_d2 = d2(ii);
-		adjust_for_month = 0;
-		if (instrument.use_indexation_lag == true)
-			adjust_for_month = instrument.infl_exp_lag;
-			tmp_d1 = addtodatefinancial(tmp_d1, 0, -adjust_for_month, 0);
-			tmp_d2 = addtodatefinancial(tmp_d2, 0, -adjust_for_month, 0);
-		end
-		% get timefactors and cf dates
+        % check for indexation_lag and adjust timesteps accordingly
+        tmp_d1 = d1(ii);
+        tmp_d2 = d2(ii);
+        adjust_for_month = 0;
+        if (instrument.use_indexation_lag == true)
+            adjust_for_month = instrument.infl_exp_lag;
+            tmp_d1 = addtodatefinancial(tmp_d1, 0, -adjust_for_month, 0);
+            tmp_d2 = addtodatefinancial(tmp_d2, 0, -adjust_for_month, 0);
+        end
+        % get timefactors and cf dates
         [tf dip dib] = timefactor (tmp_d1, tmp_d2, para.dcc);
         t1 = (tmp_d1 - para.valuation_date);
         t2 = (tmp_d2 - para.valuation_date);
-		% future cash flows only, but adjust for indexation lag
+        % future cash flows only, but adjust for indexation lag
         if ( t2 >= 0 - (adjust_for_month * 31) && t2 >= t1 ) 
             % adjust notional according to CPI adjustment factor based on
             % interpolated inflation expectation curve rates
             % distinguish between t1 and t2
-			iec_rate = iec.getRate(value_type,t2);
-			% special case: if indexation lag too large, take hist CPI level
-			if ( t2 > 0) 
-				adj_cpi_factor = 1 ./ discount_factor(para.valuation_date, tmp_d2, iec_rate, ...
-												iec.compounding_type, iec.basis, ...
-												iec.compounding_freq);
-				% take adjust cpi factor relative to initial cpi value
-				new_cpi_level = adj_cpi_factor .* cpi_level;
-				inflation_index(:,ii) = adj_cpi_factor .* cpi_level;
-			else
-				new_cpi_level = hist.getRate(value_type,t2);
-				inflation_index(:,ii) = new_cpi_level;
-			end
+            iec_rate = iec.getRate(value_type,t2);
+            % special case: if indexation lag too large, take hist CPI level
+            if ( t2 > 0) 
+                adj_cpi_factor = 1 ./ discount_factor(para.valuation_date, tmp_d2, iec_rate, ...
+                                                iec.compounding_type, iec.basis, ...
+                                                iec.compounding_freq);
+                % take adjust cpi factor relative to initial cpi value
+                new_cpi_level = adj_cpi_factor .* cpi_level;
+                inflation_index(:,ii) = adj_cpi_factor .* cpi_level;
+            else
+                new_cpi_level = hist.getRate(value_type,t2);
+                inflation_index(:,ii) = new_cpi_level;
+            end
             notional_tmp = para.notional .* new_cpi_level ./ cpi_initial;
-			
+            
             cf_values(:,ii) = rates_interest(ii) .* notional_tmp;
-			% prorated == false: adjust deposit method to bond method --> in case
-			% of leap year adjust time period length by adding one day and
-			% recalculate cash flow
-			if ( instrument.prorated == false) 
-				delta_coupon = cf_values(ii) - para.coupon_rate .* notional_tmp;
-				delta_prorated = notional_tmp .* para.coupon_rate / 365;
-				if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
-					cf_values(:,ii) = ((1 ./ discount_factor(d1(ii)+1, d2(ii), ...
-								para.coupon_rate, para.compounding_type, para.dcc, ...
-								para.compounding_freq)) - 1) .* notional_tmp;
-				end
-			end
-			
-			% overwrite ILB cashflows in case of Caps or Floors
+            % prorated == false: adjust deposit method to bond method --> in case
+            % of leap year adjust time period length by adding one day and
+            % recalculate cash flow
+            if ( instrument.prorated == false) 
+                delta_coupon = cf_values(ii) - para.coupon_rate .* notional_tmp;
+                delta_prorated = notional_tmp .* para.coupon_rate / 365;
+                if ( abs(delta_coupon - delta_prorated) < sqrt(eps))
+                    cf_values(:,ii) = ((1 ./ discount_factor(d1(ii)+1, d2(ii), ...
+                                para.coupon_rate, para.compounding_type, para.dcc, ...
+                                para.compounding_freq)) - 1) .* notional_tmp;
+                end
+            end
+            
+            % overwrite ILB cashflows in case of Caps or Floors
             if (strcmpi(para.type,'CAP_INFL') || strcmpi(para.type,'FLOOR_INFL'))
-				% expand inflation index
-				inflation_index = [ones(rows(inflation_index),1) .* cpi_initial, inflation_index];
+                % expand inflation index
+                inflation_index = [ones(rows(inflation_index),1) .* cpi_initial, inflation_index];
                 % calculate inflation rate derived from inflation_index
-				% allow only for discrete compounding
-				inflation_rate = inflation_index(:,ii+1) ./ inflation_index(:,ii) - 1;
-				strike_rate = instrument.strike;
-				% TODO: additional curve object with variable strike rate
-				%strike_rate = strike_curve.getRate(value_type,t2);
-				if ( instrument.CapFlag == true)
-					cf_values(:,ii) = para.notional .* (inflation_rate - strike_rate);
-				else
-					cf_values(:,ii) = para.notional .* (strike_rate - inflation_rate);
-				end
+                % allow only for discrete compounding
+                inflation_rate = inflation_index(:,ii+1) ./ inflation_index(:,ii) - 1;
+                strike_rate = instrument.strike;
+                % TODO: additional curve object with variable strike rate
+                %strike_rate = strike_curve.getRate(value_type,t2);
+                if ( instrument.CapFlag == true)
+                    cf_values(:,ii) = para.notional .* (inflation_rate - strike_rate);
+                else
+                    cf_values(:,ii) = para.notional .* (strike_rate - inflation_rate);
+                end
             end
         else    % if both cf dates t1 and t2 lie in the past omit cash flow
             cf_values(:,ii)  = 0.0;
@@ -1171,20 +1171,20 @@ function para = get_cfvalues_ILB(valuation_date, value_type, para, instrument, r
         ret_values(:,end) = ret_values(:,end) + notional_tmp;
         cf_principal(:,end) = notional_tmp;
     end
-	
-	para.ret_values = ret_values;
-	para.cf_principal = cf_principal;
+    
+    para.ret_values = ret_values;
+    para.cf_principal = cf_principal;
     para.cf_interest = cf_interest;
-end	% end function get_cfvalues_ILB
+end % end function get_cfvalues_ILB
 
 % ##############################################################################
 function para = get_cfvalues_FRN_FWD_SPECIAL(valuation_date, value_type, para, instrument, surface)
-	
-	% remove after adapting final transformation steps
-	ret_values = para.ret_values ;
+    
+    % remove after adapting final transformation steps
+    ret_values = para.ret_values ;
     cf_principal = para.cf_principal;
     cf_interest = para.cf_interest ;
-	
+    
     %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
     d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
     d2 = para.cf_datesnum(2:length(para.cf_datesnum));
@@ -1192,13 +1192,13 @@ function para = get_cfvalues_FRN_FWD_SPECIAL(valuation_date, value_type, para, i
     notvec(length(notvec)) = 1;
     cf_values = zeros(rows(para.tmp_rates),length(d1));
     cf_principal = zeros(rows(para.tmp_rates),length(d1));
-    sliding_term = instrument.fwd_sliding_term;	% averaging period
-	und_term = instrument.fwd_term;		% term of averaging period
-	hist = surface;
-	if ~( mod(sliding_term,und_term) == 0 )
-		error('ERROR: rollout_structured_cashflow:FRN_FWD_SPECIAL: Sliding term and averaging term does not match! mod(sliding_term,und_term) = %s',any2str(mod(sliding_term,averaging_term)));
-	end
-		
+    sliding_term = instrument.fwd_sliding_term; % averaging period
+    und_term = instrument.fwd_term;     % term of averaging period
+    hist = surface;
+    if ~( mod(sliding_term,und_term) == 0 )
+        error('ERROR: rollout_structured_cashflow:FRN_FWD_SPECIAL: Sliding term and averaging term does not match! mod(sliding_term,und_term) = %s',any2str(mod(sliding_term,averaging_term)));
+    end
+        
     for ii = 1 : 1 : length(d1)
         % convert dates into years from valuation date with timefactor
         [tf dip dib] = timefactor (d1(ii), d2(ii), para.dcc);
@@ -1226,42 +1226,42 @@ function para = get_cfvalues_FRN_FWD_SPECIAL(valuation_date, value_type, para, i
                 fsd  = t2;
                 fed  = t2 + (t2 - t1);
             end
-			
-			% calculate forward rates and build average of historical rates 
-			% Loop via all dates in [fsd,fsd-sliding_term] and get rates
-			% from historical curve (if t<t0) and from forward rate (if t>t0)
-			avg_rate = zeros(1, sliding_term / und_term);
-			idx = 1;
-			for kk = sliding_term : -und_term : und_term
-				avg_date_begin 	= fed - kk;
-				avg_date_end 	= fed - kk + und_term;
-				% get rate depending on date
-				if (avg_date_begin < 0)	% take historical rates
-					rate_curve = hist.getRate(value_type,avg_date_begin);
-				else					% get forward rate for period
-					rate_curve = get_forward_rate(para.tmp_nodes,para.tmp_rates, ...
+            
+            % calculate forward rates and build average of historical rates 
+            % Loop via all dates in [fsd,fsd-sliding_term] and get rates
+            % from historical curve (if t<t0) and from forward rate (if t>t0)
+            avg_rate = zeros(1, sliding_term / und_term);
+            idx = 1;
+            for kk = sliding_term : -und_term : und_term
+                avg_date_begin  = fed - kk;
+                avg_date_end    = fed - kk + und_term;
+                % get rate depending on date
+                if (avg_date_begin < 0) % take historical rates
+                    rate_curve = hist.getRate(value_type,avg_date_begin);
+                else                    % get forward rate for period
+                    rate_curve = get_forward_rate(para.tmp_nodes,para.tmp_rates, ...
                         avg_date_begin,avg_date_end - avg_date_begin, ...
-						para.compounding_type,para.method_interpolation, ...
+                        para.compounding_type,para.method_interpolation, ...
                         para.compounding_freq, para.dcc, para.valuation_date, ...
                         para.comp_type_curve, para.basis_curve, ...
-						para.comp_freq_curve,para.floor_flag);
-				end
-				% store rate in array
-				avg_rate(idx) = rate_curve;
-				idx = idx + 1;
-			end
-			% apply function
-			if ( strcmpi(instrument.rate_composition,'average'))
-				forward_rate_curve = mean(avg_rate);
-			elseif ( strcmpi(instrument.rate_composition,'max'))
-				forward_rate_curve = max(avg_rate);
-			elseif ( strcmpi(instrument.rate_composition,'min'))
-				forward_rate_curve = min(avg_rate);
-			end 
+                        para.comp_freq_curve,para.floor_flag);
+                end
+                % store rate in array
+                avg_rate(idx) = rate_curve;
+                idx = idx + 1;
+            end
+            % apply function
+            if ( strcmpi(instrument.rate_composition,'average'))
+                forward_rate_curve = mean(avg_rate);
+            elseif ( strcmpi(instrument.rate_composition,'max'))
+                forward_rate_curve = max(avg_rate);
+            elseif ( strcmpi(instrument.rate_composition,'min'))
+                forward_rate_curve = min(avg_rate);
+            end 
             
             % calculate final floating cash flows
             forward_rate = (para.spread + forward_rate_curve) .* tf;
-			
+            
         elseif ( t1 < 0 && t2 > 0 )     % if last cf date is in the past, while
                                         % next is in future, use last reset rate
             forward_rate = (para.spread + para.last_reset_rate) .* tf;
@@ -1281,22 +1281,22 @@ function para = get_cfvalues_FRN_FWD_SPECIAL(valuation_date, value_type, para, i
         ret_values(:,end) = ret_values(:,end) + para.notional;
         cf_principal(:,end) = para.notional;
     end
-	
-	para.ret_values = ret_values;
-	para.cf_principal = cf_principal;
+    
+    para.ret_values = ret_values;
+    para.cf_principal = cf_principal;
     para.cf_interest = cf_interest;
-	
-end	% end function get_cfvalues_FRN_FWD_SPECIAL
+    
+end % end function get_cfvalues_FRN_FWD_SPECIAL
 % ##############################################################################
 function para = get_cfvalues_FRNCAPFLOOR(valuation_date, value_type, para, instrument, surface)
-	%cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
+    %cf_datesnum = cf_datesnum((cf_datesnum-valuation_date)>0);
     d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
     d2 = para.cf_datesnum(2:length(para.cf_datesnum));
     notvec = zeros(1,length(d1));
     notvec(length(notvec)) = 1;
     cf_values = zeros(rows(para.tmp_rates),length(d1));
     cf_principal = zeros(rows(para.tmp_rates),length(d1));
-	[tf dip dib] = timefactor (d1, d2, para.dcc);
+    [tf dip dib] = timefactor (d1, d2, para.dcc);
     for ii = 1 : 1 : length(d1)
         % convert dates into years from valuation date with timefactor
         t1 = (d1(ii) - valuation_date);
@@ -1366,9 +1366,9 @@ function para = get_cfvalues_FRNCAPFLOOR(valuation_date, value_type, para, instr
                 tenor   = fsd; % days until foward start date
                 term    = fed-fsd; % days of caplet / floorlet
                 sigma = surface.getValue(value_type,tenor,term,moneyness);
-				% account for vola spread (set by e.g. calibration)
+                % account for vola spread (set by e.g. calibration)
                 sigma   = sigma + instrument.vola_spread; 
-				
+                
                 % add convexity adjustment to forward rate
                 if ( instrument.convex_adj == true )
                     [adj_rate ca] = calcConvexityAdjustment(valuation_date, ...
@@ -1411,14 +1411,14 @@ function para = get_cfvalues_FRNCAPFLOOR(valuation_date, value_type, para, instr
         ret_values(:,end) = ret_values(:,end) + para.notional;
         cf_principal(:,end) = para.notional;
     end
-	
-	para.ret_values = ret_values;
-	para.cf_principal = cf_principal;
+    
+    para.ret_values = ret_values;
+    para.cf_principal = cf_principal;
     para.cf_interest = cf_interest;
 end % end function get_cfvalues_FRNCAPFLOOR
 % ##############################################################################
 function para = get_cfvalues_FRN_SPECIAL(valuation_date, value_type, para, instrument, ref_curve, surface)
-	
+    
     % assume in fine -> fixing at forward start date -> use issue date as first
     para.cf_datesnum = [para.issuedatenum;para.cf_datesnum];
     d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
@@ -1429,25 +1429,25 @@ function para = get_cfvalues_FRN_SPECIAL(valuation_date, value_type, para, instr
     cms_tf    = zeros(rows(para.tmp_rates),length(d1));
     cf_principal = zeros(rows(para.tmp_rates),length(d1));
     [tf dip dib] = timefactor (d1, d2, para.dcc);
-	% get instrument attributes
-	sliding_term        = instrument.cms_sliding_term;
-	sliding_term_unit   = instrument.cms_sliding_term_unit;
-	underlying_term     = instrument.cms_term;
-	underlying_term_unit = instrument.cms_term_unit;
-	underlying_spread   = instrument.cms_spread;
-	underlying_comp_type = instrument.cms_comp_type;
-	model               = instrument.cms_model;	
-	
+    % get instrument attributes
+    sliding_term        = instrument.cms_sliding_term;
+    sliding_term_unit   = instrument.cms_sliding_term_unit;
+    underlying_term     = instrument.cms_term;
+    underlying_term_unit = instrument.cms_term_unit;
+    underlying_spread   = instrument.cms_spread;
+    underlying_comp_type = instrument.cms_comp_type;
+    model               = instrument.cms_model; 
+    
     % preset swap
-	swap = Bond();
-	swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
-					'value_base',1,'coupon_generation_method', ...
-					'forward','last_reset_rate',-0.000, ...
-					'sub_type', 'SWAP_FIXED','spread',0.00, ...
-					'notional',1,'notional_at_end',0, ...
-					'compounding_type',underlying_comp_type, ...
-					'term',underlying_term, 'term_unit', underlying_term_unit, ...
-					'notional_at_start',0);	
+    swap = Bond();
+    swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
+                    'value_base',1,'coupon_generation_method', ...
+                    'forward','last_reset_rate',-0.000, ...
+                    'sub_type', 'SWAP_FIXED','spread',0.00, ...
+                    'notional',1,'notional_at_end',0, ...
+                    'compounding_type',underlying_comp_type, ...
+                    'term',underlying_term, 'term_unit', underlying_term_unit, ...
+                    'notional_at_start',0); 
     for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
@@ -1465,10 +1465,10 @@ function para = get_cfvalues_FRN_SPECIAL(valuation_date, value_type, para, instr
              % fixing_start_date
              % payment_date
             % set up underlying swap
-			
-			swap_issue_date = addtodatefinancial(valuation_date,fixing_start_date,'days');
-			swap_mat_date = addtodatefinancial(swap_issue_date,sliding_term,sliding_term_unit);
-			dtm_tmp = swap_mat_date - swap_issue_date;
+            
+            swap_issue_date = addtodatefinancial(valuation_date,fixing_start_date,'days');
+            swap_mat_date = addtodatefinancial(swap_issue_date,sliding_term,sliding_term_unit);
+            dtm_tmp = swap_mat_date - swap_issue_date;
             swap = swap.set('maturity_date',swap_mat_date, ...
                             'issue_date', swap_issue_date);
             % get volatility according to moneyness and term
@@ -1505,22 +1505,22 @@ function para = get_cfvalues_FRN_SPECIAL(valuation_date, value_type, para, instr
         cms_tf(:,ii) = tf(ii);  % store timefactor of cms rate        
         cms_rates(:,ii) = final_rate;
     end
-	
+    
     cms_rates(:,1)=[];  % remove first cms_rates
     cms_tf(:,1)=[];  % remove first time factor
     % Capitalized Floater adjustments:
     % 1. only final cash flow at maturity date
     para.cf_dates    = [para.issuevec;para.matvec];
-	para.cf_datesnum = datenum(para.cf_dates);
+    para.cf_datesnum = datenum(para.cf_dates);
     % update business date
-	if ( para.enable_business_day_rule == true)
-		para.cf_business_dates = datevec(busdate(para.cf_datesnum-1 + para.business_day_rule, ...
+    if ( para.enable_business_day_rule == true)
+        para.cf_business_dates = datevec(busdate(para.cf_datesnum-1 + para.business_day_rule, ...
                                     para.business_day_direction));
-		para.cf_business_datesnum = datenum(para.cf_business_dates);   
-	else
-		para.cf_business_datesnum = para.cf_datesnum;
-		para.cf_business_dates = para.cf_dates;
-	end
+        para.cf_business_datesnum = datenum(para.cf_business_dates);   
+    else
+        para.cf_business_datesnum = para.cf_datesnum;
+        para.cf_business_dates = para.cf_dates;
+    end
                             
     % 2. adjust cms rates according to rate composition function
     if ( strcmpi(instrument.rate_composition,'capitalized'))
@@ -1568,19 +1568,19 @@ function para = get_cfvalues_FRN_SPECIAL(valuation_date, value_type, para, instr
         ret_values = ret_values + para.notional;
         cf_principal = para.notional;
     end
-	para.ret_values = ret_values;
-	para.cf_principal = cf_principal;
+    para.ret_values = ret_values;
+    para.cf_principal = cf_principal;
     para.cf_interest = cf_interest;
-	
-end		% end function get_cfvalues_FRN_SPECIAL
+    
+end     % end function get_cfvalues_FRN_SPECIAL
 % ##############################################################################
 function para = get_cfvalues_CMS_FLOATING_CAPFLOOR(valuation_date, value_type, para, instrument, ref_curve, surface)
-	
-	% remove after adapting final transformation steps
-	ret_values = para.ret_values;
+    
+    % remove after adapting final transformation steps
+    ret_values = para.ret_values;
     cf_principal = para.cf_principal;
     cf_interest = para.cf_interest ;
-	
+    
     % assume in fine -> fixing at forward start date -> use issue date as first
     para.cf_datesnum = [para.issuedatenum;para.cf_datesnum];
     d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
@@ -1590,24 +1590,24 @@ function para = get_cfvalues_CMS_FLOATING_CAPFLOOR(valuation_date, value_type, p
     cf_values = zeros(rows(para.tmp_rates),length(d1));
     cf_principal = zeros(rows(para.tmp_rates),length(d1));
     [tf dip dib] = timefactor (d1, d2, para.dcc);
-	% get instrument data
-	sliding_term        = instrument.cms_sliding_term;
-	sliding_term_unit   = instrument.cms_sliding_term_unit;
-	underlying_term     = instrument.cms_term;
-	underlying_term_unit = instrument.cms_term_unit;
-	underlying_spread   = instrument.cms_spread;
-	underlying_comp_type = instrument.cms_comp_type;
-	model               = instrument.cms_model;
-	% preset up underlying swap
-	swap = Bond();
-	swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
-					'value_base',1,'coupon_generation_method', ...
-					'forward','last_reset_rate',-0.000, ...
-					'sub_type', 'SWAP_FLOATING','spread',0.00, ...
-					'notional',1,'compounding_type',underlying_comp_type, ...
-					'term',underlying_term, 'term_unit', underlying_term_unit, ...
-					'notional_at_end',0, ...
-					'notional_at_start',0);	
+    % get instrument data
+    sliding_term        = instrument.cms_sliding_term;
+    sliding_term_unit   = instrument.cms_sliding_term_unit;
+    underlying_term     = instrument.cms_term;
+    underlying_term_unit = instrument.cms_term_unit;
+    underlying_spread   = instrument.cms_spread;
+    underlying_comp_type = instrument.cms_comp_type;
+    model               = instrument.cms_model;
+    % preset up underlying swap
+    swap = Bond();
+    swap = swap.set('Name','SWAP_CMS','coupon_rate',0.00, ...
+                    'value_base',1,'coupon_generation_method', ...
+                    'forward','last_reset_rate',-0.000, ...
+                    'sub_type', 'SWAP_FLOATING','spread',0.00, ...
+                    'notional',1,'compounding_type',underlying_comp_type, ...
+                    'term',underlying_term, 'term_unit', underlying_term_unit, ...
+                    'notional_at_end',0, ...
+                    'notional_at_start',0); 
     for ii = 2 : 1 : length(d1)
         t1 = (d1(ii) - valuation_date);
         t2 = (d2(ii) - valuation_date);
@@ -1626,11 +1626,11 @@ function para = get_cfvalues_CMS_FLOATING_CAPFLOOR(valuation_date, value_type, p
             
             % set up underlying swap
             swap_issue_date = addtodatefinancial(valuation_date,fixing_start_date,'days');
-			swap_mat_date = addtodatefinancial(swap_issue_date,sliding_term,sliding_term_unit);
-			dtm_tmp = swap_mat_date - swap_issue_date;
+            swap_mat_date = addtodatefinancial(swap_issue_date,sliding_term,sliding_term_unit);
+            dtm_tmp = swap_mat_date - swap_issue_date;
             swap = swap.set('maturity_date',swap_mat_date, ...
                             'issue_date', swap_issue_date);
-							
+                            
             % get volatility according to moneyness and term
             if ( regexpi(surface.moneyness_type,'-'))
                 moneyness = 0.0; % surface with absolute moneyness
@@ -1639,7 +1639,7 @@ function para = get_cfvalues_CMS_FLOATING_CAPFLOOR(valuation_date, value_type, p
             end
             tenor   = fixing_start_date; % days until foward start date
             sigma   = surface.getValue(value_type,tenor,dtm_tmp,moneyness); 
-				
+                
             % calculate cms_rate according to cms model and instrument type
             % either adjustments for swaplets, caplets or floorlets are calculated
             if ( strcmpi( instrument.cms_convex_model,'Hull' ) )
@@ -1681,12 +1681,12 @@ function para = get_cfvalues_CMS_FLOATING_CAPFLOOR(valuation_date, value_type, p
                 % get volatility according to moneyness and term
                 tenor   = fixing_start_date; % days until foward start date
                 term    = t2 - t1; % days of caplet / floorlet
-				% current implementation: option term is term of cap
-				% in principle one could use cms_sliding term to get appropriate volatility
+                % current implementation: option term is term of cap
+                % in principle one could use cms_sliding term to get appropriate volatility
                 sigma   = surface.getValue(value_type,tenor,term,moneyness);
-				% account for vola spread (set by e.g. calibration)
-				sigma   = sigma + instrument.vola_spread; 
-			
+                % account for vola spread (set by e.g. calibration)
+                sigma   = sigma + instrument.vola_spread; 
+            
                 % calculate CAP/FLOOR rate according to model based on cms rate
                 cms_rate = getCapFloorRate(instrument.CapFlag, ...
                         cms_rate, X, tf_fsd, sigma, instrument.model);
@@ -1729,8 +1729,8 @@ function para = get_cfvalues_CMS_FLOATING_CAPFLOOR(valuation_date, value_type, p
         cf_principal(:,end) = para.notional;
     end
 
-	para.ret_values = ret_values;
-	para.cf_principal = cf_principal;
+    para.ret_values = ret_values;
+    para.cf_principal = cf_principal;
     para.cf_interest = cf_interest;
 end % end function get_cfvalues_CMS_FLOATING_CAPFLOOR
 % ##############################################################################
@@ -1740,90 +1740,90 @@ end % end function get_cfvalues_CMS_FLOATING_CAPFLOOR
 %-------------------------------------------------------------------------------
 % final cash flow date rollout function
 function para = get_cf_dates(para)
-	
+    
 % Cash flow date calculation:
-	issuevec = datevec_fast(para.issuedatenum);
-	todayvec = datevec_fast(para.valuation_date);
-	matvec = datevec_fast(para.maturitydatenum);
-	% cashflow rollout: method backwards
-	if ( strcmpi(para.coupon_generation_method,'backward') )
-		cf_date = matvec;
-		cf_dates = cf_date;
-		cfdatenum = para.maturitydatenum;
-		mult = 0;
-		while cfdatenum >= para.issuedatenum
-			mult += 1;
-			[cfdatenum cf_date] = addtodatefinancial(para.maturitydatenum, -para.term * mult, para.term_unit);
-			if cfdatenum >= para.issuedatenum
-				cf_dates = [cf_dates ; cf_date];
-			end
-		end % end coupon generation backward
-		% flip cf_date vector (since backward has reverse order)
-		cf_dates = flipud(cf_dates);
+    issuevec = datevec_fast(para.issuedatenum);
+    todayvec = datevec_fast(para.valuation_date);
+    matvec = datevec_fast(para.maturitydatenum);
+    % cashflow rollout: method backwards
+    if ( strcmpi(para.coupon_generation_method,'backward') )
+        cf_date = matvec;
+        cf_dates = cf_date;
+        cfdatenum = para.maturitydatenum;
+        mult = 0;
+        while cfdatenum >= para.issuedatenum
+            mult += 1;
+            [cfdatenum cf_date] = addtodatefinancial(para.maturitydatenum, -para.term * mult, para.term_unit);
+            if cfdatenum >= para.issuedatenum
+                cf_dates = [cf_dates ; cf_date];
+            end
+        end % end coupon generation backward
+        % flip cf_date vector (since backward has reverse order)
+        cf_dates = flipud(cf_dates);
 
-	% cashflow rollout: method forward
-	elseif ( strcmpi(para.coupon_generation_method,'forward') )
-		cf_date = issuevec;
-		cf_dates = cf_date;
-		cfdatenum = para.issuedatenum;
-		mult = 0;
-		while cfdatenum <= para.maturitydatenum
-			mult += 1;
-			[cfdatenum cf_date] = addtodatefinancial(para.issuedatenum, para.term * mult, para.term_unit);
-			if ( cfdatenum <= para.maturitydatenum)
-				cf_dates = [cf_dates ; cf_date];
-			end
-		end        % end coupon generation forward
+    % cashflow rollout: method forward
+    elseif ( strcmpi(para.coupon_generation_method,'forward') )
+        cf_date = issuevec;
+        cf_dates = cf_date;
+        cfdatenum = para.issuedatenum;
+        mult = 0;
+        while cfdatenum <= para.maturitydatenum
+            mult += 1;
+            [cfdatenum cf_date] = addtodatefinancial(para.issuedatenum, para.term * mult, para.term_unit);
+            if ( cfdatenum <= para.maturitydatenum)
+                cf_dates = [cf_dates ; cf_date];
+            end
+        end        % end coupon generation forward
 
-	% cashflow rollout: method zero
-	elseif ( strcmpi(para.coupon_generation_method,'zero'))
-		% rollout for zero coupon bonds -> just one cashflow at maturity
-			cf_dates = [issuevec ; matvec];
-	end 
+    % cashflow rollout: method zero
+    elseif ( strcmpi(para.coupon_generation_method,'zero'))
+        % rollout for zero coupon bonds -> just one cashflow at maturity
+            cf_dates = [issuevec ; matvec];
+    end 
 
-	% Adjust first and last coupon period to implement issue date:
-	if (para.long_first_period == true)
-		if ( datenum(cf_dates(1,:)) > para.issuedatenum )
-			cf_dates(1,:) = issuevec;
-		end
-	else
-		if ( datenum(cf_dates(1,:)) > para.issuedatenum )
-			cf_dates = [issuevec;cf_dates];
-		end
-	end
-	if (para.long_last_period == true)
-		if ( datenum(cf_dates(rows(cf_dates),:)) < para.maturitydatenum )
-			cf_dates(rows(cf_dates),:) = matvec;
-		end
-	else
-		if ( datenum(cf_dates(rows(cf_dates),:)) < para.maturitydatenum )
-			cf_dates = [cf_dates;matvec];
-		end
-	end
-	%special case: long_last_period == long_first_period == true || only one cashflow (e.g. monthly term):
-	if (rows(cf_dates) == 1)
-	   cf_dates = [issuevec;matvec];
-	end
+    % Adjust first and last coupon period to implement issue date:
+    if (para.long_first_period == true)
+        if ( datenum(cf_dates(1,:)) > para.issuedatenum )
+            cf_dates(1,:) = issuevec;
+        end
+    else
+        if ( datenum(cf_dates(1,:)) > para.issuedatenum )
+            cf_dates = [issuevec;cf_dates];
+        end
+    end
+    if (para.long_last_period == true)
+        if ( datenum(cf_dates(rows(cf_dates),:)) < para.maturitydatenum )
+            cf_dates(rows(cf_dates),:) = matvec;
+        end
+    else
+        if ( datenum(cf_dates(rows(cf_dates),:)) < para.maturitydatenum )
+            cf_dates = [cf_dates;matvec];
+        end
+    end
+    %special case: long_last_period == long_first_period == true || only one cashflow (e.g. monthly term):
+    if (rows(cf_dates) == 1)
+       cf_dates = [issuevec;matvec];
+    end
 
-	% one time and forever: get datenum of cf_dates
-	cf_datesnum = datenum_fast(cf_dates);
-	if ( para.enable_business_day_rule == true)
-		cf_business_datesnum = busdate(cf_datesnum-1 + para.business_day_rule, ...
-											para.business_day_direction);
-		cf_business_dates = datevec(cf_business_datesnum);
-	else
-		cf_business_datesnum = cf_datesnum;
-		cf_business_dates = cf_dates;
-	end
+    % one time and forever: get datenum of cf_dates
+    cf_datesnum = datenum_fast(cf_dates);
+    if ( para.enable_business_day_rule == true)
+        cf_business_datesnum = busdate(cf_datesnum-1 + para.business_day_rule, ...
+                                            para.business_day_direction);
+        cf_business_dates = datevec(cf_business_datesnum);
+    else
+        cf_business_datesnum = cf_datesnum;
+        cf_business_dates = cf_dates;
+    end
 
-	% store return values in para struct
-	para.cf_dates 				= cf_dates;
-	para.cf_datesnum 			= cf_datesnum;
-	para.cf_business_dates 		= cf_business_dates;
-	para.cf_business_datesnum 	= cf_business_datesnum;
-	para.issuevec  				= issuevec;
-	para.matvec					= matvec;
-	
+    % store return values in para struct
+    para.cf_dates               = cf_dates;
+    para.cf_datesnum            = cf_datesnum;
+    para.cf_business_dates      = cf_business_dates;
+    para.cf_business_datesnum   = cf_business_datesnum;
+    para.issuevec               = issuevec;
+    para.matvec                 = matvec;
+    
 end
 %-------------------------------------------------------------------------------
 
@@ -1841,7 +1841,7 @@ function [day] = datenum_fast (input1, format = 1)
 
   if (ischar (input1) || iscellstr (input1)) % input is 
     [year, month, day, hour, minute, second] = datevec_fast (input1, 1);
-  else	% input is vector
+  else  % input is vector
       second = 0;
       minute = 0;
       hour   = 0;
@@ -1897,22 +1897,22 @@ function [y, m, d, h, mi, s] = datevec_fast (date, f = 1, p = [])
     nd = numel (date);
 
     y = m = d = h = mi = s = zeros (nd, 1);
-	% hard coded: format string always dd-mm-yyyy
-	f = '%d-%b-%Y';
-	rY = 7;
-	ry = 0;
-	fy = 1;
-	fm = 1;
-	fd = 1;
-	fh = 0;
-	fmi = 0;
-	fs = 0;
-	found = 1;
+    % hard coded: format string always dd-mm-yyyy
+    f = '%d-%b-%Y';
+    rY = 7;
+    ry = 0;
+    fy = 1;
+    fm = 1;
+    fd = 1;
+    fh = 0;
+    fmi = 0;
+    fs = 0;
+    found = 1;
 
-	for k = 1:nd
-		[found y(k) m(k) d(k) h(k) mi(k) s(k)] = ...
-			__date_str2vec_custom__ (date{k}, p, f, rY, ry, fy, fm, fd, fh, fmi, fs);
-	end
+    for k = 1:nd
+        [found y(k) m(k) d(k) h(k) mi(k) s(k)] = ...
+            __date_str2vec_custom__ (date{k}, p, f, rY, ry, fy, fm, fd, fh, fmi, fs);
+    end
 
   % datenum input
   else 
@@ -1936,23 +1936,23 @@ function [y, m, d, h, mi, s] = datevec_fast (date, f = 1, p = [])
     m(m > 12) -= 12;
 
     % no fractional time units
-	s = 0;
-	h = 0;
-	mi = 0;
-	
+    s = 0;
+    h = 0;
+    mi = 0;
+    
 
   end
 
   if (isvector(date) && length(date) > 1)
-	if ( rows(date) > columns(date))
-		date = date';
-	end
-	y = date(:,1);
-	m = date(:,2);
-	d = date(:,3);
-	h = date(:,4);
-	mi = date(:,5);
-	s = date(:,6);
+    if ( rows(date) > columns(date))
+        date = date';
+    end
+    y = date(:,1);
+    m = date(:,2);
+    d = date(:,3);
+    h = date(:,4);
+    mi = date(:,5);
+    s = date(:,6);
   end
   
   
@@ -1986,7 +1986,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
-%! bond_struct.term_unit				= 'months';
+%! bond_struct.term_unit                = 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.prorated                 = true;
@@ -2017,7 +2017,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
-%! bond_struct.term_unit				= 'months';
+%! bond_struct.term_unit                = 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.prorated                 = true;
@@ -2048,7 +2048,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
-%! bond_struct.term_unit				= 'months';
+%! bond_struct.term_unit                = 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.use_annuity_amount       = 0;
@@ -2081,7 +2081,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
-%! bond_struct.term_unit				= 'months';
+%! bond_struct.term_unit                = 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.notional                 = 100 ;
@@ -2157,7 +2157,7 @@ end
 %! cap_struct.compounding_type         = 'cont';
 %! cap_struct.compounding_freq         = 1;
 %! cap_struct.term                     = 3;
-%! cap_struct.term_unit				   = 'months';
+%! cap_struct.term_unit                = 'months';
 %! cap_struct.day_count_convention     = 'act/365';
 %! cap_struct.basis                    = 3;
 %! cap_struct.notional                 = 10000 ;
@@ -2364,7 +2364,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 12   ;
-%! bond_struct.term_unit				= 'months';
+%! bond_struct.term_unit                = 'months';
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
 %! bond_struct.prorated                 = true;
@@ -2397,7 +2397,7 @@ end
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1;
 %! bond_struct.term                     = 6;
-%! bond_struct.term_unit				= 'months';
+%! bond_struct.term_unit                = 'months';
 %! bond_struct.prorated                 = true;
 %! bond_struct.day_count_convention     = 'act/365';
 %! bond_struct.basis                    = 3;
@@ -2424,14 +2424,14 @@ end
 
 %!test
 %! bond_struct=struct();
-%! bond_struct.id						= 'TestFAB';
+%! bond_struct.id                       = 'TestFAB';
 %! bond_struct.sub_type                 = 'FAB';
 %! bond_struct.issue_date               = '12-Mar-2016';
 %! bond_struct.maturity_date            = '12-Feb-2020';
 %! bond_struct.compounding_type         = 'simple';
 %! bond_struct.compounding_freq         = 1  ;
 %! bond_struct.term                     = 3   ;
-%! bond_struct.term_unit				= 'months';
+%! bond_struct.term_unit                = 'months';
 %! bond_struct.day_count_convention     = 'act/act';
 %! bond_struct.basis                    = 0;
 %! bond_struct.notional                 = 34300000 ;
@@ -2457,7 +2457,7 @@ end
 %! assert(ret_values(1:3),[269210.818333330,330524.621420768,329731.287322407],0.001)
 %! assert(ret_values(end),32120669.536636274,0.001)
 
-	
+    
 % testing FRN special floaters: average, min, max, capitalized CMS rates in fine and in arrears
 %!test
 %! valuation_date = datenum('30-Jun-2016');

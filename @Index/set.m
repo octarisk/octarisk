@@ -11,9 +11,9 @@ function obj = set(obj, varargin)
                 'value_base', 'numeric', ... 
                 'scenario_mc', 'special', ...
                 'timestep_mc', 'special', ...
-				'index_function', 'char' , ...
-				'index_parameter', 'numeric', ... 
-				'increments', 'cell' , ...
+                'index_function', 'char' , ...
+                'index_parameter', 'numeric', ... 
+                'increments', 'cell' , ...
                 'scenario_stress', 'special'...
                );
   % B) store values in object
@@ -24,13 +24,13 @@ function obj = set(obj, varargin)
   while (length (varargin) > 1)
     prop = varargin{1};
     prop = lower(prop);
-	
-	% special case: value_stress will be converted to scenario_stress (just to
-	% provide compatibility with instrument stress vector)
-	if ( strcmpi(prop,'value_stress'))
-		prop = 'scenario_stress';
-	end
-	
+    
+    % special case: value_stress will be converted to scenario_stress (just to
+    % provide compatibility with instrument stress vector)
+    if ( strcmpi(prop,'value_stress'))
+        prop = 'scenario_stress';
+    end
+    
     val = varargin{2};
     varargin(1:2) = [];
     % check, if property is an existing field

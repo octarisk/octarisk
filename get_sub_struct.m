@@ -19,17 +19,17 @@
 % III) %#%#%%#         HELPER FUNCTIONS              %#%#
 % function for extracting sub-structure from struct object according to id
 function  [match_struct ret_code matches] = get_sub_struct(input_struct, input_id)
- 	matches = 0;	
-	ret_code = 0;
-	% check whether input struct is not empty
+    matches = 0;    
+    ret_code = 0;
+    % check whether input struct is not empty
     if ~( isfield(input_struct,'id'))
         match_struct = '';
-	    ret_code = 0;
-		return;
+        ret_code = 0;
+        return;
     end
-	a = {input_struct.id};
-	b = 1:1:length(a);
-	c = strcmpi(a, input_id);	
+    a = {input_struct.id};
+    b = 1:1:length(a);
+    c = strcmpi(a, input_id);   
     % correct for multiple matches:
     if ( sum(c) > 1 )
         summe = 0;
@@ -37,23 +37,23 @@ function  [match_struct ret_code matches] = get_sub_struct(input_struct, input_i
             if ( c(ii) == 1)
                 match_struct = input_struct(ii);
                 ii;
-				ret_code = 1;
+                ret_code = 1;
                 return;
             end            
             summe = summe + 1;
         end       
     end
     matches = b * c';
-	if (matches > 0)
-	    	match_struct = input_struct(matches);
-			ret_code = 1;
-		return;
-	else
-	    %fprintf('octarisk::get_sub_struct: WARNING: No struct found for input_id: >>%s<<\n',input_id);
-		match_struct = '';
-	    ret_code = 0;
-		return;
-	end
+    if (matches > 0)
+            match_struct = input_struct(matches);
+            ret_code = 1;
+        return;
+    else
+        %fprintf('octarisk::get_sub_struct: WARNING: No struct found for input_id: >>%s<<\n',input_id);
+        match_struct = '';
+        ret_code = 0;
+        return;
+    end
 end
 
 

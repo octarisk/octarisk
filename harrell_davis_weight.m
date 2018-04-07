@@ -54,7 +54,7 @@ function X = harrell_davis_weight(scenarios,observation,alpha)
     beta_1 = betainc_vec( x_1' , a , b );
     beta_2 = betainc_vec( x_2' , a , b );
     X = beta_1 - beta_2;
-	
+    
 end
 
 %!test

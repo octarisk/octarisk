@@ -125,54 +125,54 @@ function value = option_binary(CallPutFlag,binary_type,S,X1,X2,T,r,sigma,divrate
 % b = r - divrate; % cost of carry according to Haug
 T = T ./ 365;   % assuming act/365 day count convention (Option class converts)
 
-value = 0.0;	% default value zero
+value = 0.0;    % default value zero
 
 % =====   Valuation of Gap binary options:
 if (strcmpi(binary_type,{'gap'}))
-	d1 = (log(S./X1) + (r - divrate + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-	d2 = d1 - sigma.*sqrt(T);
-	if ( CallPutFlag == 1 ) % Call
-		normcdf_d1 = 0.5.*(1+erf(d1./sqrt(2)));
-		normcdf_d2 = 0.5.*(1+erf(d2./sqrt(2)));
-		value = normcdf_d1.*S.*exp(divrate) - normcdf_d2.*X2.*exp(-r.*T);
-	else   % Put   
-		normcdf_minus_d1 = 0.5.*(1+erf(-d1./sqrt(2)));
-		normcdf_minus_d2 = 0.5.*(1+erf(-d2./sqrt(2)));
-		value = normcdf_minus_d2.*X2.*exp(-r.*T) - normcdf_minus_d1.*S.*exp(divrate);
-	end
+    d1 = (log(S./X1) + (r - divrate + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    d2 = d1 - sigma.*sqrt(T);
+    if ( CallPutFlag == 1 ) % Call
+        normcdf_d1 = 0.5.*(1+erf(d1./sqrt(2)));
+        normcdf_d2 = 0.5.*(1+erf(d2./sqrt(2)));
+        value = normcdf_d1.*S.*exp(divrate) - normcdf_d2.*X2.*exp(-r.*T);
+    else   % Put   
+        normcdf_minus_d1 = 0.5.*(1+erf(-d1./sqrt(2)));
+        normcdf_minus_d2 = 0.5.*(1+erf(-d2./sqrt(2)));
+        value = normcdf_minus_d2.*X2.*exp(-r.*T) - normcdf_minus_d1.*S.*exp(divrate);
+    end
 
-% =====   Valuation of Cash-or-Nothing binary options:	
+% =====   Valuation of Cash-or-Nothing binary options:  
 elseif (strcmpi(binary_type,{'cash'}))
-	d = (log(S./X1) + (r - divrate - 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-	if ( CallPutFlag == 1 ) % Call
-		N_d = 0.5.*(1+erf(d./sqrt(2)));
-		value = N_d.*X2.*exp(-r.*T);
-	else   % Put   
-		N_d = 0.5.*(1+erf(-d./sqrt(2)));
-		value = N_d.*X2.*exp(-r.*T);
-	end
-	
+    d = (log(S./X1) + (r - divrate - 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    if ( CallPutFlag == 1 ) % Call
+        N_d = 0.5.*(1+erf(d./sqrt(2)));
+        value = N_d.*X2.*exp(-r.*T);
+    else   % Put   
+        N_d = 0.5.*(1+erf(-d./sqrt(2)));
+        value = N_d.*X2.*exp(-r.*T);
+    end
+    
 % =====   Valuation of Asset-or-Nothing binary options:
 elseif (strcmpi(binary_type,{'asset'}))
-	d = (log(S./X1) + (r - divrate + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-	if ( CallPutFlag == 1 ) % Call
-		N_d = 0.5.*(1+erf(d./sqrt(2)));
-		value = N_d.*S.*exp(-divrate.*T);
-	else   % Put   
-		N_d = 0.5.*(1+erf(-d./sqrt(2)));
-		value = N_d.*S.*exp(-divrate.*T);
-	end
+    d = (log(S./X1) + (r - divrate + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    if ( CallPutFlag == 1 ) % Call
+        N_d = 0.5.*(1+erf(d./sqrt(2)));
+        value = N_d.*S.*exp(-divrate.*T);
+    else   % Put   
+        N_d = 0.5.*(1+erf(-d./sqrt(2)));
+        value = N_d.*S.*exp(-divrate.*T);
+    end
 
 % =====   Valuation of Supershare binary options:
 elseif (strcmpi(binary_type,{'supershare'}))
-	d1 = (log(S./X1) + (r - divrate + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-	d2 = (log(S./X2) + (r - divrate + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
-	
-	N_d1 = 0.5.*(1+erf(d1./sqrt(2)));
-	N_d2 = 0.5.*(1+erf(d2./sqrt(2)));
-	
-	% not put or call options available, just one value:
-	value = (S.*exp(-divrate.*T)./X1) .* (N_d1 - N_d2);
+    d1 = (log(S./X1) + (r - divrate + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    d2 = (log(S./X2) + (r - divrate + 0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
+    
+    N_d1 = 0.5.*(1+erf(d1./sqrt(2)));
+    N_d2 = 0.5.*(1+erf(d2./sqrt(2)));
+    
+    % not put or call options available, just one value:
+    value = (S.*exp(-divrate.*T)./X1) .* (N_d1 - N_d2);
 
 end
 

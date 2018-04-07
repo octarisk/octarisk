@@ -47,10 +47,10 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
             % Case Dependency:
                 % Geometric Brownian Motion Riskfactor Modeling
                     if ( strcmpi(tmp_model,'GBM') || strcmpi(tmp_model,'SLN')  )
-                        tmp_delta 	    = Y + ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(250)).^2) .* ts);
+                        tmp_delta       = Y + ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(250)).^2) .* ts);
                 % Brownian Motion Riskfactor Modeling
                     elseif ( strcmpi(tmp_model,'BM') )
-                        tmp_delta 	    = Y + (tmp_drift * ts);
+                        tmp_delta       = Y + (tmp_drift * ts);
                 % Black-Karasinski (log-normal mean reversion) Riskfactor Modeling
                     elseif ( strcmpi(tmp_model,'BKM') )
                         % startlevel, sigma_p_a, mr_level, mr_rate
@@ -72,9 +72,9 @@ for kk = 1 : 1 : length( mc_timesteps )      % loop via all MC time steps
                         tmp_mr_level    = rf_object.mr_level;
                         tmp_mr_rate     = rf_object.mr_rate;     
                         tmp_delta       = sqrt(tmp_start) .* Y + (tmp_mr_rate * ( tmp_mr_level - tmp_start ) * ts);
-						if (2 * tmp_mr_rate * tmp_mr_level < std(Y).^2)
-							fprintf('WARNING: load_riskfactor_scenarios: Square root diffusion process can lead to negative values for risk factor >>%s<<: 2*mr_rate*mr_level <= volatility^2.\n',tmp_id);
-						end
+                        if (2 * tmp_mr_rate * tmp_mr_level < std(Y).^2)
+                            fprintf('WARNING: load_riskfactor_scenarios: Square root diffusion process can lead to negative values for risk factor >>%s<<: 2*mr_rate*mr_level <= volatility^2.\n',tmp_id);
+                        end
                     end     
             % store increment for actual riskfactor and scenario number
             rf_object = rf_object.set('scenario_mc',tmp_delta,'timestep_mc',tmp_ts);

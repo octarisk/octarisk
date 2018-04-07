@@ -1,23 +1,23 @@
 classdef Sensitivity < Instrument
    
     properties
-		% attributes for linear combinations of risk factor shocks
+        % attributes for linear combinations of risk factor shocks
         riskfactors  = {''};
         sensitivities    = []; 
         idio_vola = 0.0;
-		model = 'GBM';
-		% attributes for sensi instruments (linear and quadratic combination of underlyings)
-		underlyings = {''};	% cell array of underlying indizes, curves, surfaces, instruments, risk factors
-		x_coord = 0.0;		% x coordinate of underlying (curves, surfaces, cubes only)
-		y_coord = 0.0;		% y coordinate of underlying (surfaces, cubes only)
-		z_coord = 0.0;		% z coordinate of underlying (cubes only)
-		shock_type = {''};	% cell array of shock types for each underlying [value, relative, absolute]
-		sensi_prefactor = [];	% vector with prefactors (a in a*x^b)
-		sensi_exponent = []; % vector with exponents (b in a*x^b)
-		sensi_cross = []; 	% vector with cross terms [0 = single; 1,2,3, ... link cross terms]
-		use_value_base = false;	% boolean flag: use value_base for base valuation. Scenario shocks are added to base value
-		use_taylor_exp = false; % boolean flag: if true, treat polynomial value 
-			% as taylor expansion: f(x) = a*x^1 + 1/2*b*x^2 + ..., otherwise just f(x) = a*x^1 + b*x^2
+        model = 'GBM';
+        % attributes for sensi instruments (linear and quadratic combination of underlyings)
+        underlyings = {''}; % cell array of underlying indizes, curves, surfaces, instruments, risk factors
+        x_coord = 0.0;      % x coordinate of underlying (curves, surfaces, cubes only)
+        y_coord = 0.0;      % y coordinate of underlying (surfaces, cubes only)
+        z_coord = 0.0;      % z coordinate of underlying (cubes only)
+        shock_type = {''};  % cell array of shock types for each underlying [value, relative, absolute]
+        sensi_prefactor = [];   % vector with prefactors (a in a*x^b)
+        sensi_exponent = []; % vector with exponents (b in a*x^b)
+        sensi_cross = [];   % vector with cross terms [0 = single; 1,2,3, ... link cross terms]
+        use_value_base = false; % boolean flag: use value_base for base valuation. Scenario shocks are added to base value
+        use_taylor_exp = false; % boolean flag: if true, treat polynomial value 
+            % as taylor expansion: f(x) = a*x^1 + 1/2*b*x^2 + ..., otherwise just f(x) = a*x^1 + b*x^2
     end
    
     properties (SetAccess = private)
@@ -47,50 +47,50 @@ classdef Sensitivity < Instrument
       function disp(b)
          disp@Instrument(b)
          fprintf('sub_type: %s\n',b.sub_type);              
-		 if (strcmpi(b.sub_type,'SENSI'))
-			
-			fprintf('underlyings: \n\t');
-			for ( ii = 1 : 1 : length(b.underlyings))
-				fprintf('%s | ',b.underlyings{ii});            
-			end
-			fprintf('\nshock_type: \n\t');
-			for ( ii = 1 : 1 : length(b.shock_type))
-				fprintf('%s | ',b.shock_type{ii});            
-			end
-			fprintf('\nsensi_prefactor: \n\t');
-			for ( ii = 1 : 1 : length(b.sensi_prefactor))
-				fprintf('%f | ',b.sensi_prefactor(ii));            
-			end
-			fprintf('\nsensi_exponent: \n\t');
-			for ( ii = 1 : 1 : length(b.sensi_exponent))
-				fprintf('%f | ',b.sensi_exponent(ii));            
-			end
-			fprintf('\nsensi_cross: \n\t');
-			for ( ii = 1 : 1 : length(b.sensi_cross))
-				fprintf('%d | ',b.sensi_cross(ii));            
-			end
-			fprintf('\nx_coord: \n\t');
-			for ( ii = 1 : 1 : length(b.x_coord))
-				fprintf('%d | ',b.x_coord(ii));            
-			end
-			fprintf('\ny_coord: \n\t');
-			for ( ii = 1 : 1 : length(b.y_coord))
-				fprintf('%d | ',b.y_coord(ii));            
-			end
-			fprintf('\nz_coord: \n\t');
-			for ( ii = 1 : 1 : length(b.z_coord))
-				fprintf('%d | ',b.z_coord(ii));            
-			end
-			fprintf('\n');
-			fprintf('use_value_base: %s\n',any2str(b.use_value_base)); 
-			fprintf('use_taylor_exp: %s\n',any2str(b.use_taylor_exp)); 
-		 else
-			 % looping via all riskfactors / sensitivities
-			 for ( ii = 1 : 1 : length(b.sensitivities))
-				fprintf('Riskfactor: %s | Sensitivity: %f\n',b.riskfactors{ii},b.sensitivities(ii));            
-			 end
-			 fprintf('idio_vola: %f\n',b.idio_vola); 
-		 end
+         if (strcmpi(b.sub_type,'SENSI'))
+            
+            fprintf('underlyings: \n\t');
+            for ( ii = 1 : 1 : length(b.underlyings))
+                fprintf('%s | ',b.underlyings{ii});            
+            end
+            fprintf('\nshock_type: \n\t');
+            for ( ii = 1 : 1 : length(b.shock_type))
+                fprintf('%s | ',b.shock_type{ii});            
+            end
+            fprintf('\nsensi_prefactor: \n\t');
+            for ( ii = 1 : 1 : length(b.sensi_prefactor))
+                fprintf('%f | ',b.sensi_prefactor(ii));            
+            end
+            fprintf('\nsensi_exponent: \n\t');
+            for ( ii = 1 : 1 : length(b.sensi_exponent))
+                fprintf('%f | ',b.sensi_exponent(ii));            
+            end
+            fprintf('\nsensi_cross: \n\t');
+            for ( ii = 1 : 1 : length(b.sensi_cross))
+                fprintf('%d | ',b.sensi_cross(ii));            
+            end
+            fprintf('\nx_coord: \n\t');
+            for ( ii = 1 : 1 : length(b.x_coord))
+                fprintf('%d | ',b.x_coord(ii));            
+            end
+            fprintf('\ny_coord: \n\t');
+            for ( ii = 1 : 1 : length(b.y_coord))
+                fprintf('%d | ',b.y_coord(ii));            
+            end
+            fprintf('\nz_coord: \n\t');
+            for ( ii = 1 : 1 : length(b.z_coord))
+                fprintf('%d | ',b.z_coord(ii));            
+            end
+            fprintf('\n');
+            fprintf('use_value_base: %s\n',any2str(b.use_value_base)); 
+            fprintf('use_taylor_exp: %s\n',any2str(b.use_taylor_exp)); 
+         else
+             % looping via all riskfactors / sensitivities
+             for ( ii = 1 : 1 : length(b.sensitivities))
+                fprintf('Riskfactor: %s | Sensitivity: %f\n',b.riskfactors{ii},b.sensitivities(ii));            
+             end
+             fprintf('idio_vola: %f\n',b.idio_vola); 
+         end
       end
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,{'EQU','RET','COM','STK','ALT','SENSI'}) )
@@ -98,34 +98,34 @@ classdef Sensitivity < Instrument
          end
          obj.sub_type = sub_type;
       end % set.sub_type
-	  
-	  function obj = set.model(obj,model)
+      
+      function obj = set.model(obj,model)
          if ~(strcmpi(model,'GBM') || strcmpi(model,'BM') || strcmpi(model,'REL') )
             error('Model must be either REL, GBM or BM')
          end
          obj.model = model;
       end % Set.model
-	  
+      
    end 
    
    %static methods: 
    methods (Static = true)
    
-	function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+    function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Sensitivity.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Sensitivity.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Sensitivity(@var{id})\n\
@@ -260,10 +260,10 @@ are shocked during a stress scenario and the total shock values for the fund are
  fprintf('\tdoc_instrument:\tPricing Sensitivity Instrument (Polynomial Function)');\n\
  r1 = Riskfactor();\n\
   r1 = r1.set('id','MSCI_WORLD','scenario_stress',[20;-10], ...\n\
-		'model','GBM','shift_type',[1;1]);\n\
+        'model','GBM','shift_type',[1;1]);\n\
   r2 = Riskfactor();\n\
   r2 = r2.set('id','MSCI_EM','scenario_stress',[10;-20], ...\n\
-		'model','GBM','shift_type',[1;1] );\n\
+        'model','GBM','shift_type',[1;1] );\n\
   riskfactor_struct = struct();\n\
   riskfactor_struct(1).id = r1.id;\n\
   riskfactor_struct(1).object = r1;\n\
@@ -271,14 +271,14 @@ are shocked during a stress scenario and the total shock values for the fund are
   riskfactor_struct(2).object = r2;\n\
   s = Sensitivity();\n\
   s = s.set('id','MSCI_ACWI_ETF','sub_type','SENSI', 'currency', 'USD' , ...\n\
-		'asset_class','Equity',  'value_base', 100, ...\n\
-		'underlyings',cellstr(['MSCI_WORLD';'MSCI_EM']), ...\n\
-		'x_coord',[0,0], ...\n\
-		'y_coord',[0,0.0], ...\n\
-		'z_coord',[0,0], ...\n\
-		'shock_type', cellstr(['absolute';'absolute']), ...\n\
-		'sensi_prefactor', [0.8,0.2], 'sensi_exponent', [1,1], ...\n\
-		'sensi_cross', [0,0], 'use_value_base',true,'use_taylor_exp',false);\n\
+        'asset_class','Equity',  'value_base', 100, ...\n\
+        'underlyings',cellstr(['MSCI_WORLD';'MSCI_EM']), ...\n\
+        'x_coord',[0,0], ...\n\
+        'y_coord',[0,0.0], ...\n\
+        'z_coord',[0,0], ...\n\
+        'shock_type', cellstr(['absolute';'absolute']), ...\n\
+        'sensi_prefactor', [0.8,0.2], 'sensi_exponent', [1,1], ...\n\
+        'sensi_cross', [0,0], 'use_value_base',true,'use_taylor_exp',false);\n\
   instrument_struct = struct();\n\
   instrument_struct(1).id = s.id;\n\
   instrument_struct(1).object = s;\n\
@@ -290,10 +290,10 @@ s.getValue('stress')\n\
  fprintf('\tdoc_instrument:\tPricing Sensitivity Instrument (Riskfactor linear combination)');\n\
  r1 = Riskfactor();\n\
   r1 = r1.set('id','MSCI_WORLD','scenario_stress',[20;-10], ...\n\
-		'model','BM','shift_type',[1;1]);\n\
+        'model','BM','shift_type',[1;1]);\n\
   r2 = Riskfactor();\n\
   r2 = r2.set('id','MSCI_EM','scenario_stress',[10;-20], ...\n\
-		'model','BM','shift_type',[1;1] );\n\
+        'model','BM','shift_type',[1;1] );\n\
   riskfactor_struct = struct();\n\
   riskfactor_struct(1).id = r1.id;\n\
   riskfactor_struct(1).object = r1;\n\
@@ -301,15 +301,15 @@ s.getValue('stress')\n\
   riskfactor_struct(2).object = r2;\n\
   s = Sensitivity();\n\
   s = s.set('id','MSCI_ACWI_ETF','sub_type','EQU', 'currency', 'USD', ...\n\
-		'asset_class','Equity', 'model', 'BM', ...\n\
-		'riskfactors',cellstr(['MSCI_WORLD';'MSCI_EM']), ...\n\
-		'sensitivities',[0.8,0.2],'value_base',100.00);\n\
+        'asset_class','Equity', 'model', 'BM', ...\n\
+        'riskfactors',cellstr(['MSCI_WORLD';'MSCI_EM']), ...\n\
+        'sensitivities',[0.8,0.2],'value_base',100.00);\n\
   instrument_struct = struct();\n\
   instrument_struct(1).id = s.id;\n\
   instrument_struct(1).object = s;\n\
   s = s.valuate('31-Dec-2016', 'stress', ...\n\
-		instrument_struct, [], [], ...\n\
-		[], [], riskfactor_struct);\n\
+        instrument_struct, [], [], ...\n\
+        [], [], riskfactor_struct);\n\
   s.getValue('stress')\n\
 @end group\n\
 @end example\n\
@@ -318,22 +318,22 @@ Stress results are [118;88].\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Sensitivity\' is a class definition from the file /octarisk/@Sensitivity/Sensitivity.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Sensitivity\' is a class definition from the file /octarisk/@Sensitivity/Sensitivity.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-		
-	end % end of static method help
-	
-   end	% end of static methods
+        
+    end % end of static method help
+    
+   end  % end of static methods
 
 end 

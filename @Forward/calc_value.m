@@ -12,7 +12,7 @@ function obj = calc_value (forward,valuation_date,value_type,discount_curve_obje
     if ( nargin < 5 )
         error('No underlying_object set for value_type not being base.');
     end
-	if (ischar(valuation_date))
+    if (ischar(valuation_date))
         valuation_date = datenum(valuation_date,1);
     end
     % calculate value according to pricing formula
@@ -49,7 +49,7 @@ function obj = calc_value (forward,valuation_date,value_type,discount_curve_obje
         obj = obj.set('value_stress',theo_value);
     elseif ( strcmp(value_type,'base'))
         obj = obj.set('value_base',theo_value(1));
-		obj = obj.set('theo_price',theo_price);
+        obj = obj.set('theo_price',theo_price);
     else
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);

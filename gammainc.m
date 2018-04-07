@@ -357,7 +357,7 @@ endfunction
 ## Lentz's algorithm
 ## __gammainc_lentz__ in libinterp/corefcn/__gammainc_lentz__.cc
 function y = gammainc_l (x, a, tail)
-	y = gammainc_lentz_vec (x, a);
+    y = gammainc_lentz_vec (x, a);
     if (strcmpi (tail, "upper"))
       y .*= D (x, a);
     elseif (strcmpi (tail,  "lower"))

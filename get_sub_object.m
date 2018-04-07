@@ -17,17 +17,17 @@
 %# @end deftypefn
 
 % function for extracting sub-structure object from struct object according to id
-function  [match_obj ret_code matches] = get_sub_object(input_struct, input_id)	
+function  [match_obj ret_code matches] = get_sub_object(input_struct, input_id) 
     matches = 0;
     % check whether input struct is not empty
     if ~( isfield(input_struct,'id'))
         match_obj = '';
-	    ret_code = 0;
-		return;
+        ret_code = 0;
+        return;
     end
-	a = {input_struct.id};
-	b = 1:1:length(a);
-	c = strcmpi(a, input_id);	
+    a = {input_struct.id};
+    b = 1:1:length(a);
+    c = strcmpi(a, input_id);   
     % correct for multiple matches:
     if ( sum(c) > 1 )
         sprintf('WARNING: %d ids matching in struct. Returning first object.\n',sum(c));
@@ -49,23 +49,23 @@ function  [match_obj ret_code matches] = get_sub_object(input_struct, input_id)
         end       
     end
     matches = b * c';
-	if (matches > 0)
+    if (matches > 0)
         % return object if possible
         if ( isfield(input_struct(matches),'object'))
-	    	match_obj = input_struct(matches).object;
-	    	ret_code = 1;
+            match_obj = input_struct(matches).object;
+            ret_code = 1;
             return;
         else
             match_obj = '';
-	    	ret_code = 0;
+            ret_code = 0;
             return;
         end
-	else
-	    %fprintf('octarisk::get_sub_object: WARNING: No object found for input_id: >>%s<<\n',input_id);
-	    match_obj = '';
-	    ret_code = 0;
-		return;
-	end
+    else
+        %fprintf('octarisk::get_sub_object: WARNING: No object found for input_id: >>%s<<\n',input_id);
+        match_obj = '';
+        ret_code = 0;
+        return;
+    end
 end
 
 

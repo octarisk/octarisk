@@ -22,12 +22,12 @@
 %#
 %# Input and output variables:
 %# @itemize @bullet
-%# @item @var{d1}: 			number of days until first date (scalar)
-%# @item @var{d2}: 			number of days until second date (scalar)
-%# @item @var{basis}: 		day-count basis (scalar or string)
-%# @item @var{df}: 		OUTPUT: discount factor (scalar)
-%# @item @var{dip}: 	OUTPUT: days in period (nominator of time factor) (scalar)
-%# @item @var{dib}: 	OUTPUT: days in base (denominator of time factor) (scalar)
+%# @item @var{d1}:          number of days until first date (scalar)
+%# @item @var{d2}:          number of days until second date (scalar)
+%# @item @var{basis}:       day-count basis (scalar or string)
+%# @item @var{df}:      OUTPUT: discount factor (scalar)
+%# @item @var{dip}:     OUTPUT: days in period (nominator of time factor) (scalar)
+%# @item @var{dib}:     OUTPUT: days in base (denominator of time factor) (scalar)
 %# @end itemize
 %# @seealso{discount_factor, yeardays, get_basis}
 %# @end deftypefn

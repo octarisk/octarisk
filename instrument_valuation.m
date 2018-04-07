@@ -100,17 +100,17 @@ elseif ( strfind(tmp_type,'option') > 0 )
     %           vola and underlying value store values in generic objects 
     %           used for further calculation
     if ( strcmpi(class(tmp_underlying_obj),'Synthetic') && tmp_underlying_obj.is_basket )
-		% for Options on Baskets, valuation have to be distinguished between
-		% Levy, VCV and Beisser valuation methods. For Levy and VCV, a volatility
-		% for the whole basket is calculated. Afterwards, option pricing takes
-		% place viewing the basket as one underlying.
-		% In contrast to that, valuation with Beisser method is different:
-		% Each underlying of the basket gets his own volatility and a new strike
-		% for all underlyings and scenarios is calculated. This breaks somehow
-		% octarisk's pricing algorithm and requires an additional valuation method
-		% option.calc_value_basket_beisser. Please see the referenced paper
-		% for background to Beisser's method.
-		
+        % for Options on Baskets, valuation have to be distinguished between
+        % Levy, VCV and Beisser valuation methods. For Levy and VCV, a volatility
+        % for the whole basket is calculated. Afterwards, option pricing takes
+        % place viewing the basket as one underlying.
+        % In contrast to that, valuation with Beisser method is different:
+        % Each underlying of the basket gets his own volatility and a new strike
+        % for all underlyings and scenarios is calculated. This breaks somehow
+        % octarisk's pricing algorithm and requires an additional valuation method
+        % option.calc_value_basket_beisser. Please see the referenced paper
+        % for background to Beisser's method.
+        
         % valuation of Synthetic Basket
         tmp_underlying_obj = tmp_underlying_obj.calc_value(valuation_date,scenario,instrument_struct,index_struct);
         
@@ -130,38 +130,38 @@ elseif ( strfind(tmp_type,'option') > 0 )
         tmp_vola_surf_obj = tmp_vola_surf_obj.set('values_base',basket_vola_base);
         tmp_vola_surf_obj = tmp_vola_surf_obj.set('type','INDEXVol', ...
                                                 'riskfactors',{'BasketVolaRF'});
-		
-		% For Levy of VCV, the basket has his own volatility. Therefore a new
-		% vola object is generated:
-		if (any(strcmpi(tmp_underlying_obj.basket_vola_type,{'Levy','VCV'})))
-			% generate risk factor object with vola shocks
-			tmp_rf_vola_obj = Riskfactor();
-			tmp_rf_vola_obj = tmp_rf_vola_obj.set('id','BasketVolaRF','model','GBM');
-			if ( strcmpi(scenario,'base'))
-				tmp_rf_vola_obj = tmp_rf_vola_obj.set('value_base',1);
-			elseif ( strcmpi(scenario,'stress'))
-				basket_vola_shocks = (basket_vola ./ basket_vola_base);% assuming relative shock factors
-				% update basket volatilty for STRESS basket vola shock
-				% set up stress struct and apply stress shocks
-				basket_stress_struct = struct();
-				for pp = 1:1:length(basket_vola_shocks)
-					basket_stress_struct(pp).id = 'STRESS';
-					basket_stress_struct(pp).objects(1).id = tmp_vola_surf_obj.id;
-					basket_stress_struct(pp).objects(1).type = 'surface';
-					basket_stress_struct(pp).objects(1).shock_type = 'relative';
-					basket_stress_struct(pp).objects(1).shock_value = basket_vola_shocks(pp);
-				end
-				tmp_vola_surf_obj = tmp_vola_surf_obj.apply_stress_shocks(basket_stress_struct);
-			else     
-				basket_vola_shocks = log(basket_vola ./ basket_vola_base);% assuming GBM
-				tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_mc',basket_vola_shocks, ...
-														'timestep_mc',scenario);
-				% update basket volatilty for MC basket vola shock
-				tmp_rf_struct(1).id = tmp_rf_vola_obj.id;
-				tmp_rf_struct(1).object = tmp_rf_vola_obj;
-				tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
-			end
-		end
+        
+        % For Levy of VCV, the basket has his own volatility. Therefore a new
+        % vola object is generated:
+        if (any(strcmpi(tmp_underlying_obj.basket_vola_type,{'Levy','VCV'})))
+            % generate risk factor object with vola shocks
+            tmp_rf_vola_obj = Riskfactor();
+            tmp_rf_vola_obj = tmp_rf_vola_obj.set('id','BasketVolaRF','model','GBM');
+            if ( strcmpi(scenario,'base'))
+                tmp_rf_vola_obj = tmp_rf_vola_obj.set('value_base',1);
+            elseif ( strcmpi(scenario,'stress'))
+                basket_vola_shocks = (basket_vola ./ basket_vola_base);% assuming relative shock factors
+                % update basket volatilty for STRESS basket vola shock
+                % set up stress struct and apply stress shocks
+                basket_stress_struct = struct();
+                for pp = 1:1:length(basket_vola_shocks)
+                    basket_stress_struct(pp).id = 'STRESS';
+                    basket_stress_struct(pp).objects(1).id = tmp_vola_surf_obj.id;
+                    basket_stress_struct(pp).objects(1).type = 'surface';
+                    basket_stress_struct(pp).objects(1).shock_type = 'relative';
+                    basket_stress_struct(pp).objects(1).shock_value = basket_vola_shocks(pp);
+                end
+                tmp_vola_surf_obj = tmp_vola_surf_obj.apply_stress_shocks(basket_stress_struct);
+            else     
+                basket_vola_shocks = log(basket_vola ./ basket_vola_base);% assuming GBM
+                tmp_rf_vola_obj = tmp_rf_vola_obj.set('scenario_mc',basket_vola_shocks, ...
+                                                        'timestep_mc',scenario);
+                % update basket volatilty for MC basket vola shock
+                tmp_rf_struct(1).id = tmp_rf_vola_obj.id;
+                tmp_rf_struct(1).object = tmp_rf_vola_obj;
+                tmp_vola_surf_obj = tmp_vola_surf_obj.apply_rf_shocks(tmp_rf_struct);
+            end
+        end
     else
     % 2nd Case: Option on single underlying, take real objects
         if ~( strcmpi(class(tmp_underlying_obj),'Index'))   % valuate instruments only
@@ -175,49 +175,49 @@ elseif ( strfind(tmp_type,'option') > 0 )
 
     % Calibration of Option vola spread 
     if ( option.get('calibration_flag') == false ) 
-		if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
-						&& tmp_underlying_obj.is_basket ...
-						&& strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
-			%option = option.calc_value_basket_beisser(valuation_date,'base',basket_vola_base,basket_dict_base);
-			%TODO: implement vola spread calculation for Beisser basket options
-		else	% basket option types Levy or VCV
-			option = option.calc_vola_spread(valuation_date,tmp_underlying_obj, ...
-								tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
-		end
+        if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
+                        && tmp_underlying_obj.is_basket ...
+                        && strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
+            %option = option.calc_value_basket_beisser(valuation_date,'base',basket_vola_base,basket_dict_base);
+            %TODO: implement vola spread calculation for Beisser basket options
+        else    % basket option types Levy or VCV
+            option = option.calc_vola_spread(valuation_date,tmp_underlying_obj, ...
+                                tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+        end
     end
     % calculate value
     if (~strcmpi(scenario,'base') )
         % calculate greeks
-		
-		% different pricing methods for Beisser Basket instruments or all other 
-		% options on baskets / underlyings
-		if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
-						&& tmp_underlying_obj.is_basket ...
-						&& strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
-			option = option.calc_greeks_basket_beisser(valuation_date,'base', ...
-													basket_vola_base,basket_dict_base);
+        
+        % different pricing methods for Beisser Basket instruments or all other 
+        % options on baskets / underlyings
+        if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
+                        && tmp_underlying_obj.is_basket ...
+                        && strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
+            option = option.calc_greeks_basket_beisser(valuation_date,'base', ...
+                                                    basket_vola_base,basket_dict_base);
 
-		else	% basket option types Levy or VCV
-			option = option.calc_value(valuation_date,'base',tmp_underlying_obj, ...
-								tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
-			option = option.calc_greeks(valuation_date,'base',tmp_underlying_obj, ...
-								tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
-		end
-		
+        else    % basket option types Levy or VCV
+            option = option.calc_value(valuation_date,'base',tmp_underlying_obj, ...
+                                tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+            option = option.calc_greeks(valuation_date,'base',tmp_underlying_obj, ...
+                                tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+        end
+        
     end
-	% different pricing methods for Beisser Basket instruments or all other 
-	% options on baskets / underlyings
-	if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
-					&& tmp_underlying_obj.is_basket ...
-					&& strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
-		option = option.calc_value_basket_beisser(valuation_date,scenario, ...
-														basket_vola,basket_dict);
-		
-	else	% basket option types Levy or VCV
-		option = option.calc_value(valuation_date,scenario,tmp_underlying_obj, ...
-								tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
-	end
-	
+    % different pricing methods for Beisser Basket instruments or all other 
+    % options on baskets / underlyings
+    if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
+                    && tmp_underlying_obj.is_basket ...
+                    && strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
+        option = option.calc_value_basket_beisser(valuation_date,scenario, ...
+                                                        basket_vola,basket_dict);
+        
+    else    % basket option types Levy or VCV
+        option = option.calc_value(valuation_date,scenario,tmp_underlying_obj, ...
+                                tmp_rf_curve_obj,tmp_vola_surf_obj,path_static);
+    end
+    
     % store option object:
     ret_instr_obj = option;
 
@@ -327,24 +327,24 @@ elseif (strcmpi(tmp_type,'forward') )
         tmp_underlying = forward.get('underlying_id');
         [tmp_underlying_object object_ret_code]  = get_sub_object(index_struct, tmp_underlying);
         if ( object_ret_code == 0 )
-			% assuming underlying is instrument
-			[tmp_underlying_object object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
-			if ( object_ret_code == 0 )
-				fprintf('WARNING: instrument_valuation of id >>%s<<: No index_struct object found for id >>%s<<\n',forward.id,any2str(tmp_underlying));
-				fprintf('WARNING: instrument_valuation of id >>%s<<: No instrument_struct object found for id >>%s<<\n',forward.id,any2str(tmp_underlying));
-			else
-			% calculate underlying values
-				if ~( strcmpi(class(tmp_underlying_object),'Index'))   % valuate instruments only
-					tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
-										instrument_struct, surface_struct, ...
-										matrix_struct, curve_struct, index_struct, ...
-										riskfactor_struct, para_object); 
-				end
-			end
-		end
+            % assuming underlying is instrument
+            [tmp_underlying_object object_ret_code]  = get_sub_object(instrument_struct, tmp_underlying);
+            if ( object_ret_code == 0 )
+                fprintf('WARNING: instrument_valuation of id >>%s<<: No index_struct object found for id >>%s<<\n',forward.id,any2str(tmp_underlying));
+                fprintf('WARNING: instrument_valuation of id >>%s<<: No instrument_struct object found for id >>%s<<\n',forward.id,any2str(tmp_underlying));
+            else
+            % calculate underlying values
+                if ~( strcmpi(class(tmp_underlying_object),'Index'))   % valuate instruments only
+                    tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
+                                        instrument_struct, surface_struct, ...
+                                        matrix_struct, curve_struct, index_struct, ...
+                                        riskfactor_struct, para_object); 
+                end
+            end
+        end
     % Get discount curve
         tmp_discount_curve                  = forward.get('discount_curve');            
-        [tmp_curve_object object_ret_code]  = get_sub_object(curve_struct, tmp_discount_curve);	
+        [tmp_curve_object object_ret_code]  = get_sub_object(curve_struct, tmp_discount_curve); 
         if ( object_ret_code == 0 )
             fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
         end
@@ -359,64 +359,64 @@ elseif (strcmpi(tmp_type,'forward') )
 
     % store bond object:
     ret_instr_obj = forward;
-	
+    
 % ==============================================================================   
 % Equity Valuation: Sensitivity based Approach       
 elseif ( strcmpi(tmp_type,'sensitivity'))
-	 % Using Synthetic class
+     % Using Synthetic class
     sensi = instr_obj;
         
     sensi = sensi.calc_value(valuation_date,scenario,riskfactor_struct,instrument_struct,index_struct,curve_struct,surface_struct,scen_number);
     % store sensi object:
     ret_instr_obj = sensi;
 
-	% ==============================================================================
+    % ==============================================================================
 % Synthetic Instrument Valuation: synthetic value is linear combination of underlying instrument values      
 elseif ( strcmpi(tmp_type,'synthetic'))
     % Using Synthetic class
     synth = instr_obj;
     
-	% valuate all underlying instruments
-	undr_instr_cell = synth.get('instruments');
-	for kk=1:1:length(undr_instr_cell)
-		tmp_undr_id = undr_instr_cell{kk};
-		% assuming underlying is instrument
-		[tmp_underlying_object object_ret_code]  = get_sub_object(instrument_struct, tmp_undr_id);
-		if ( object_ret_code == 0 )
-				fprintf('WARNING: instrument_valuation of id >>%s<<: No instrument_struct object found for id >>%s<<\n',synth.id,any2str(tmp_undr_id));
-		else
-			% delete scenario values (in any case)
-			tmp_underlying_object = tmp_underlying_object.del_scen_data;
-			% calculate underlying values
-			if ( ~strcmpi(scenario,'base'))
-				tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, 'base', ...
-										instrument_struct, surface_struct, ...
-										matrix_struct, curve_struct, index_struct, ...
-										riskfactor_struct, para_object);
-			end
-			tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
-										instrument_struct, surface_struct, ...
-										matrix_struct, curve_struct, index_struct, ...
-										riskfactor_struct, para_object);
-			% overwrite object in instrument_struct
-			instrument_struct = replace_sub_object(instrument_struct,tmp_underlying_object);
-		end
-	end
-	% valuate synthetic instrument
-	if ( ~strcmpi(scenario,'base'))
-		synth = synth.calc_value(valuation_date,'base',instrument_struct,index_struct);
-	end
+    % valuate all underlying instruments
+    undr_instr_cell = synth.get('instruments');
+    for kk=1:1:length(undr_instr_cell)
+        tmp_undr_id = undr_instr_cell{kk};
+        % assuming underlying is instrument
+        [tmp_underlying_object object_ret_code]  = get_sub_object(instrument_struct, tmp_undr_id);
+        if ( object_ret_code == 0 )
+                fprintf('WARNING: instrument_valuation of id >>%s<<: No instrument_struct object found for id >>%s<<\n',synth.id,any2str(tmp_undr_id));
+        else
+            % delete scenario values (in any case)
+            tmp_underlying_object = tmp_underlying_object.del_scen_data;
+            % calculate underlying values
+            if ( ~strcmpi(scenario,'base'))
+                tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, 'base', ...
+                                        instrument_struct, surface_struct, ...
+                                        matrix_struct, curve_struct, index_struct, ...
+                                        riskfactor_struct, para_object);
+            end
+            tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
+                                        instrument_struct, surface_struct, ...
+                                        matrix_struct, curve_struct, index_struct, ...
+                                        riskfactor_struct, para_object);
+            % overwrite object in instrument_struct
+            instrument_struct = replace_sub_object(instrument_struct,tmp_underlying_object);
+        end
+    end
+    % valuate synthetic instrument
+    if ( ~strcmpi(scenario,'base'))
+        synth = synth.calc_value(valuation_date,'base',instrument_struct,index_struct);
+    end
     synth = synth.calc_value(valuation_date,scenario,instrument_struct,index_struct);
     % store bond object:
     ret_instr_obj = synth;
 
-% ==============================================================================	
+% ==============================================================================    
 % Cashflow Valuation: summing net present value of all cashflows according to cashflowdates
 elseif ( sum(strcmpi(tmp_type,'bond')) > 0 ) 
     % Using Bond class
         bond = instr_obj;
-		
-	% check, whether instrument already valuated for current scenario --> delete properties
+        
+    % check, whether instrument already valuated for current scenario --> delete properties
        if ~(strcmpi(scenario,'base') || strcmpi(scenario,'stress'))
            if ( sum(strcmpi(bond.timestep_mc_cf,scenario))>0)   % scenario already exists
                bond = bond.set('timestep_mc_cf',{});
@@ -443,32 +443,32 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                bond = bond.set('cf_values_mc',bond.get('cf_values'),'timestep_mc_cf',scenario);
             end
 
-		elseif (strcmpi(tmp_sub_type,'ILB') )
-			% get inflation expectation curve
-			iec_id  = bond.get('infl_exp_curve');
-			[iec_curve object_ret_code]    = get_sub_object(curve_struct, iec_id); 
-			if ( object_ret_code == 0 )
-				fprintf('WARNING: instrument_valuation: No inflation expectation curve_struct object found for id >>%s<<\n',iec_curve);
-			end
-			% get historical inflation curve
-			hist_id  = bond.get('cpi_historical_curve');
-			[hist_curve object_ret_code]    = get_sub_object(curve_struct, hist_id); 
-			if ( object_ret_code == 0 )
-				fprintf('WARNING: instrument_valuation: No historical inflation curve_struct object found for id >>%s<<\n',hist_id);
-			end
-			% get consumer price index
-			cpi_id  = bond.get('cpi_index');
-			[cpi_index object_ret_code]    = get_sub_object(index_struct, cpi_id); 
-			if ( object_ret_code == 0 )
-				fprintf('WARNING: instrument_valuation: No consumer price index_struct object found for id >>%s<<\n',cpi_id);
-			end
-			% cashflow rollout		
-			if (~strcmpi(scenario,'base') )
+        elseif (strcmpi(tmp_sub_type,'ILB') )
+            % get inflation expectation curve
+            iec_id  = bond.get('infl_exp_curve');
+            [iec_curve object_ret_code]    = get_sub_object(curve_struct, iec_id); 
+            if ( object_ret_code == 0 )
+                fprintf('WARNING: instrument_valuation: No inflation expectation curve_struct object found for id >>%s<<\n',iec_curve);
+            end
+            % get historical inflation curve
+            hist_id  = bond.get('cpi_historical_curve');
+            [hist_curve object_ret_code]    = get_sub_object(curve_struct, hist_id); 
+            if ( object_ret_code == 0 )
+                fprintf('WARNING: instrument_valuation: No historical inflation curve_struct object found for id >>%s<<\n',hist_id);
+            end
+            % get consumer price index
+            cpi_id  = bond.get('cpi_index');
+            [cpi_index object_ret_code]    = get_sub_object(index_struct, cpi_id); 
+            if ( object_ret_code == 0 )
+                fprintf('WARNING: instrument_valuation: No consumer price index_struct object found for id >>%s<<\n',cpi_id);
+            end
+            % cashflow rollout      
+            if (~strcmpi(scenario,'base') )
                 bond = bond.rollout('base',valuation_date,iec_curve,hist_curve,cpi_index);
             end
             bond = bond.rollout(scenario,valuation_date,iec_curve,hist_curve,cpi_index);
 
-			
+            
         elseif ( strcmpi(tmp_sub_type,'FAB') )
             % cash flow rollout
             if ( bond.prepayment_flag == true  ) % fixed amortizing bond with prepayment
@@ -504,17 +504,17 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
                 bond = bond.rollout(scenario,valuation_date,psa_curve,pp_surface,tmp_curve_object);
             else % fixed amortizing bond without prepayment
                 bond = bond.rollout('base',valuation_date);
-				% cash flow values are equal for base and all scenarios -> copy values without new rollout
-				if ( strcmpi(scenario,'stress') && ~strcmpi(scenario,'base'))
-				   bond = bond.set('cf_values_stress',bond.get('cf_values'));
-				elseif ~(strcmpi(scenario,'stress') && strcmpi(scenario,'base'))
-				   bond = bond.set('cf_values_mc',bond.get('cf_values'),'timestep_mc_cf',scenario);
-				end
-			end
+                % cash flow values are equal for base and all scenarios -> copy values without new rollout
+                if ( strcmpi(scenario,'stress') && ~strcmpi(scenario,'base'))
+                   bond = bond.set('cf_values_stress',bond.get('cf_values'));
+                elseif ~(strcmpi(scenario,'stress') && strcmpi(scenario,'base'))
+                   bond = bond.set('cf_values_mc',bond.get('cf_values'),'timestep_mc_cf',scenario);
+                end
+            end
         elseif( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOATING'))       % Floating Rate Notes (incl. swap floating leg)
              %get reference curve object used for calculating floating rates:
                 tmp_ref_curve   = bond.get('reference_curve');
-                tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
+                tmp_ref_object  = get_sub_object(curve_struct, tmp_ref_curve);
             % rollout cash flows for all scenarios
                 if (~strcmpi(scenario,'base') )
                     bond = bond.rollout('base',tmp_ref_object,valuation_date);
@@ -523,56 +523,56 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         elseif( strcmpi(tmp_sub_type,'FRN_SPECIAL') || regexpi(tmp_sub_type,'CMS') )     % FRN_SPECIAL, CMS Swaplets
             %get reference curve object used for calculating floating rates:
                 tmp_ref_curve   = bond.get('reference_curve');
-                tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
+                tmp_ref_object  = get_sub_object(curve_struct, tmp_ref_curve);
                 tmp_surface     = bond.get('vola_surface');
                 tmp_surf_object = get_sub_object(surface_struct, tmp_surface);
             % rollout cash flows for all scenarios 
-				if (~strcmpi(scenario,'base') )
+                if (~strcmpi(scenario,'base') )
                     bond = bond.rollout('base', valuation_date,tmp_ref_object,tmp_surf_object);
                 end
                 bond = bond.rollout(scenario, valuation_date,tmp_ref_object,tmp_surf_object);
-				
-		elseif( regexpi(tmp_sub_type,'CDS') )     % CDS
-			%get hazard_curve object:
-			tmp_hazard     = bond.get('hazard_curve');
-			tmp_hazard_object = get_sub_object(curve_struct, tmp_hazard);
-			if ( object_ret_code == 0 )
-				fprintf('WARNING: instrument_valuation: No hazard curve_struct object found for id >>%s<<\n',tmp_hazard);
-			end
-			
-			%get reference_asset object:
-			tmp_ref_asset     = bond.get('reference_asset');
-			tmp_ref_asset_object = get_sub_object(instrument_struct, tmp_ref_asset);
-			if ( object_ret_code == 0 )
-				fprintf('WARNING: instrument_valuation: No reference instrument_struct object found for id >>%s<<\n',tmp_ref_asset);
-			end
-			
-			if strcmpi(tmp_sub_type,'CDS_FLOATING')
-			%get reference curve object used for calculating floating rates:
+                
+        elseif( regexpi(tmp_sub_type,'CDS') )     % CDS
+            %get hazard_curve object:
+            tmp_hazard     = bond.get('hazard_curve');
+            tmp_hazard_object = get_sub_object(curve_struct, tmp_hazard);
+            if ( object_ret_code == 0 )
+                fprintf('WARNING: instrument_valuation: No hazard curve_struct object found for id >>%s<<\n',tmp_hazard);
+            end
+            
+            %get reference_asset object:
+            tmp_ref_asset     = bond.get('reference_asset');
+            tmp_ref_asset_object = get_sub_object(instrument_struct, tmp_ref_asset);
+            if ( object_ret_code == 0 )
+                fprintf('WARNING: instrument_valuation: No reference instrument_struct object found for id >>%s<<\n',tmp_ref_asset);
+            end
+            
+            if strcmpi(tmp_sub_type,'CDS_FLOATING')
+            %get reference curve object used for calculating floating rates:
                 tmp_ref_curve   = bond.get('reference_curve');
-                tmp_ref_object 	= get_sub_object(curve_struct, tmp_ref_curve);
-				if ( object_ret_code == 0 )
+                tmp_ref_object  = get_sub_object(curve_struct, tmp_ref_curve);
+                if ( object_ret_code == 0 )
                     fprintf('WARNING: instrument_valuation: No reference curve_struct object found for id >>%s<<\n',tmp_ref_curve);
                 end
-			else
-				tmp_ref_object = Curve();
-			end	
+            else
+                tmp_ref_object = Curve();
+            end 
             % rollout cash flows for all scenarios 
-			if (~strcmpi(scenario,'base') )
-				bond = bond.rollout('base', valuation_date, ...
-									tmp_hazard_object,tmp_ref_asset_object, ...
-									tmp_ref_object);
-			end
-			bond = bond.rollout(scenario, valuation_date, ...
-									tmp_hazard_object,tmp_ref_asset_object, ...
-									tmp_ref_object);
-				
+            if (~strcmpi(scenario,'base') )
+                bond = bond.rollout('base', valuation_date, ...
+                                    tmp_hazard_object,tmp_ref_asset_object, ...
+                                    tmp_ref_object);
+            end
+            bond = bond.rollout(scenario, valuation_date, ...
+                                    tmp_hazard_object,tmp_ref_asset_object, ...
+                                    tmp_ref_object);
+                
         elseif( strcmpi(tmp_sub_type,'STOCHASTIC') )       % Stochastic CF instrument
              %get riskfactor object and surface object:
                 tmp_riskfactor   = bond.get('stochastic_riskfactor');
-                tmp_rf_obj 	     = get_sub_object(curve_struct, tmp_riskfactor);
+                tmp_rf_obj       = get_sub_object(curve_struct, tmp_riskfactor);
                 tmp_surface      = bond.get('stochastic_surface');
-                tmp_surf_obj 	 = get_sub_object(riskfactor_struct, tmp_surface);
+                tmp_surf_obj     = get_sub_object(riskfactor_struct, tmp_surface);
             % rollout cash flows for all scenarios
                 if (~strcmpi(scenario,'base') )
                     bond = bond.rollout('base',tmp_rf_obj,tmp_surf_obj);
@@ -596,8 +596,8 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
             end
             % calculate key rate durations and convexities - computationally very expensive!
             bond = bond.calc_key_rates(valuation_date,tmp_curve_object);
-		else
-			% calculate sensitivities
+        else
+            % calculate sensitivities
             if( strcmpi(tmp_sub_type,'FRN') || strcmpi(tmp_sub_type,'SWAP_FLOATING'))
                 bond = bond.calc_sensitivities(valuation_date,tmp_curve_object,tmp_ref_object);
             else
@@ -612,16 +612,16 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
 
     % e) store bond object:
     ret_instr_obj = bond;
-	
+    
 % ==============================================================================
 elseif ( strcmpi(tmp_type,'stochastic'))
     % Using Stochastic class
     stoch = instr_obj;
     %get riskfactor object and surface object:
     tmp_riskfactor   = bond.get('stochastic_riskfactor');
-    tmp_rf_obj 	     = get_sub_object(curve_struct, tmp_riskfactor);
+    tmp_rf_obj       = get_sub_object(curve_struct, tmp_riskfactor);
     tmp_surface      = bond.get('stochastic_curve');
-    tmp_surf_obj 	 = get_sub_object(riskfactor_struct, tmp_surface);
+    tmp_surf_obj     = get_sub_object(riskfactor_struct, tmp_surface);
         
     stoch = stoch.calc_value(valuation_date,scenario,tmp_rf_obj,tmp_surf_obj);
     % store Stochastic object:
@@ -644,15 +644,15 @@ end
 
 % helper function
 function instrument_struct = replace_sub_object(instrument_struct,object)
-	a = {instrument_struct.id};
-	b = 1:1:length(a);
-	c = strcmpi(a, object.id);
-	% instrument_struct contains object
-	if sum(c) > 0
-		idx = b * c';
-	else % append object to instrument_struct
-		idx = length(instrument_struct) + 1;
-	end
-	instrument_struct(idx).id = object.id;
-	instrument_struct(idx).object = object;
+    a = {instrument_struct.id};
+    b = 1:1:length(a);
+    c = strcmpi(a, object.id);
+    % instrument_struct contains object
+    if sum(c) > 0
+        idx = b * c';
+    else % append object to instrument_struct
+        idx = length(instrument_struct) + 1;
+    end
+    instrument_struct(idx).id = object.id;
+    instrument_struct(idx).object = object;
 end

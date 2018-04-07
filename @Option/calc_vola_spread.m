@@ -28,7 +28,7 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
         moneyness_exponent = -1;
     end
 
-	retcode = 0;
+    retcode = 0;
     % Get input variables
     tmp_dtm           = (datenum(obj.maturity_date,1) - valuation_date); 
     r  = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_dtm ) + ...
@@ -62,22 +62,22 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
         T  = timefactor (valuation_date, ...
                                 valuation_date + tmp_dtm, obj.basis) .* 365;
         
-		% Start parameter for calibration functions
-		x0 = -0.0001;
-		lb = -sigma + 0.0001;
-		ub = [];
-			
+        % Start parameter for calibration functions
+        x0 = -0.0001;
+        lb = -sigma + 0.0001;
+        ub = [];
+            
         % Valuation for European plain vanilla options
         if ( strcmpi(option_type,'European'))
             tmp_optionvalue_base        = option_bs(call_flag, ...
                                             tmp_underlying_value_base, ...
                                             X,T,r, sigma, q) .* multi;
-											
-		    
-			% set up objective function
-			objfunc = @ (x) phi_bs(x,call_flag, tmp_underlying_value_base, ...
-									X, T, r, sigma, q, multi, tmp_value);
-			
+                                            
+            
+            % set up objective function
+            objfunc = @ (x) phi_bs(x,call_flag, tmp_underlying_value_base, ...
+                                    X, T, r, sigma, q, multi, tmp_value);
+            
         % Valuation for: (European) Asian options
         elseif ( strcmpi(option_type,'Asian')  ) % calling Kemna-Vorst or Levy option pricing model
             avg_rule = option.averaging_rule;
@@ -86,20 +86,20 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
             if ( strcmpi(avg_rule,'geometric') && strcmpi(avg_monitoring,'continuous') )
                 % Call Kemna-Vorst90 pricing model
                 tmp_optionvalue_base = option_asian_vorst90(call_flag,tmp_underlying_value_base, ...
-												X,T,r,sigma,q) .* multi;
+                                                X,T,r,sigma,q) .* multi;
                 % set up objective function
-				objfunc = @ (x) phi_asian_vorst90(x,call_flag, tmp_underlying_value_base, ...
-										X, T, r, sigma, q, multi, tmp_value);
-	
+                objfunc = @ (x) phi_asian_vorst90(x,call_flag, tmp_underlying_value_base, ...
+                                        X, T, r, sigma, q, multi, tmp_value);
+    
             elseif ( strcmpi(avg_rule,'arithmetic') && strcmpi(avg_monitoring,'continuous') )
                 % Call Levy pricing model
                 tmp_optionvalue_base = option_asian_levy(call_flag,tmp_underlying_value_base, ...
-													X,T,r, sigma,q) .* multi;
-								
-				% set up objective function
-				objfunc = @ (x) phi_asian_levy(x,call_flag, tmp_underlying_value_base, ...
-										X, T, r, sigma, q, multi, tmp_value);
-					
+                                                    X,T,r, sigma,q) .* multi;
+                                
+                % set up objective function
+                objfunc = @ (x) phi_asian_levy(x,call_flag, tmp_underlying_value_base, ...
+                                        X, T, r, sigma, q, multi, tmp_value);
+                    
             else
                 error('Unknown Asian averaging rule >>%s<< or monitoring >>%s<<',avg_rule,avg_monitoring);
             end
@@ -113,72 +113,72 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
                                                 option.timesteps_size, ...
                                                 option.willowtree_nodes, ...
                                                 path_static) .* multi;
-												
-				% set up objective function		
-				objfunc = @ (x) phi_willowtree (x,call_flag,1,tmp_underlying_value_base, ...
-									X,T,r, sigma,q, ...
-									option.timesteps_size,option.willowtree_nodes, ...
-									multi,tmp_value,path_static);
-			elseif ( strcmpi(obj.pricing_function_american,'CRR') )
-				treenodes 	= round(T/option.timesteps_size);
-                tmp_optionvalue_base	= pricing_option_cpp(2,logical(call_flag),tmp_underlying_value_base, ...
+                                                
+                % set up objective function     
+                objfunc = @ (x) phi_willowtree (x,call_flag,1,tmp_underlying_value_base, ...
+                                    X,T,r, sigma,q, ...
+                                    option.timesteps_size,option.willowtree_nodes, ...
+                                    multi,tmp_value,path_static);
+            elseif ( strcmpi(obj.pricing_function_american,'CRR') )
+                treenodes   = round(T/option.timesteps_size);
+                tmp_optionvalue_base    = pricing_option_cpp(2,logical(call_flag),tmp_underlying_value_base, ...
                                     X,T,r, sigma,q,treenodes);
-				tmp_optionvalue_base = tmp_optionvalue_base .* multi;
-				
-				% set up objective function		
-				objfunc = @ (x) phi_crr (x,2,logical(call_flag),tmp_underlying_value_base, ...
+                tmp_optionvalue_base = tmp_optionvalue_base .* multi;
+                
+                % set up objective function     
+                objfunc = @ (x) phi_crr (x,2,logical(call_flag),tmp_underlying_value_base, ...
                                     X,T,r, sigma,q,treenodes,multi,tmp_value);
-						
+                        
             else    % use Bjerksund and Stensland approximation
                 tmp_optionvalue_base  = option_bjsten(call_flag, ...
                                         tmp_underlying_value_base, X, ...
                                         T, r, sigma, q) .* multi;
-										
-				% set up objective function		
-				objfunc = @ (x) phi_bjsten (x,call_flag, ...
+                                        
+                % set up objective function     
+                objfunc = @ (x) phi_bjsten (x,call_flag, ...
                                         tmp_underlying_value_base, X, ...
-                                        T, r, sigma, q, multi,tmp_value);						
+                                        T, r, sigma, q, multi,tmp_value);                       
             end
  
         % Valuation for European Barrier Options:
         elseif ( strcmpi(option_type,'Barrier'))   % calling Barrier option pricing model
-            tmp_optionvalue_base	= option_barrier(call_flag,obj.upordown,obj.outorin,...
+            tmp_optionvalue_base    = option_barrier(call_flag,obj.upordown,obj.outorin,...
                                         tmp_underlying_value_base, X, ...
                                         obj.barrierlevel, T, ...
                                         r, sigma, q, obj.rebate) .* multi;
-			% set up objective function		
-			objfunc = @ (x) phi_barrier (x,call_flag, ...
+            % set up objective function     
+            objfunc = @ (x) phi_barrier (x,call_flag, ...
                                         obj.upordown,obj.outorin, ...
                                         tmp_underlying_value_base, X, ...
                                         obj.barrierlevel, T, ...
-                                        r, sigma, q, obj.rebate, multi,tmp_value);							
-		
-		% Valuation for European Binary Options:
-	    elseif ( strcmpi(option_type,'Binary'))   % calling Binary option pricing model
-            tmp_optionvalue_base	= option_binary(call_flag, obj.binary_type, tmp_underlying_value_base, ...
+                                        r, sigma, q, obj.rebate, multi,tmp_value);                          
+        
+        % Valuation for European Binary Options:
+        elseif ( strcmpi(option_type,'Binary'))   % calling Binary option pricing model
+            tmp_optionvalue_base    = option_binary(call_flag, obj.binary_type, tmp_underlying_value_base, ...
                             X, obj.payoff_strike, T, r, sigma, q) .* multi;
-							
-			% set up objective function		
-			objfunc = @ (x) phi_binary (x,call_flag, obj.binary_type,  ...
-							tmp_underlying_value_base, X, obj.payoff_strike,  ...
-                            T, r, sigma,  q, multi, tmp_value);	
-							
-		% Valuation for European Lookback Options:
-	    elseif ( strcmpi(option_type,'lookback'))   % calling Lookback option pricing model
-            tmp_optionvalue_base	= option_lookback(call_flag, obj.lookback_type, tmp_underlying_value_base, ...
+                            
+            % set up objective function     
+            objfunc = @ (x) phi_binary (x,call_flag, obj.binary_type,  ...
+                            tmp_underlying_value_base, X, obj.payoff_strike,  ...
+                            T, r, sigma,  q, multi, tmp_value); 
+                            
+        % Valuation for European Lookback Options:
+        elseif ( strcmpi(option_type,'lookback'))   % calling Lookback option pricing model
+            tmp_optionvalue_base    = option_lookback(call_flag, obj.lookback_type, tmp_underlying_value_base, ...
                             X, obj.payoff_strike, T, r, sigma, q) .* multi;
-							
-			% set up objective function		
-			objfunc = @ (x) phi_lookback (x,call_flag, obj.lookback_type,  ...
-							tmp_underlying_value_base, X, obj.payoff_strike,  ...
-                            T, r, sigma,  q, multi, tmp_value);	
-							
+                            
+            % set up objective function     
+            objfunc = @ (x) phi_lookback (x,call_flag, obj.lookback_type,  ...
+                            tmp_underlying_value_base, X, obj.payoff_strike,  ...
+                            T, r, sigma,  q, multi, tmp_value); 
+                            
         else
             tmp_impl_vola_spread = 0.0;
         end
-		% call generic calibration function
-		[tmp_impl_vola_spread retcode] = calibrate_generic(objfunc,x0,lb,ub);
-				
+        % call generic calibration function
+        [tmp_impl_vola_spread retcode] = calibrate_generic(objfunc,x0,lb,ub);
+                
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 || retcode > 0)
             fprintf(' Calibration failed for >>%s<< with Retcode 255. Setting market value to THEO/Value\n',obj.id);
@@ -196,14 +196,14 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
                 % distinguish Asian options:
                 if ( strcmpi(avg_rule,'geometric') && strcmpi(avg_monitoring,'continuous') )
                     % Call Kemna-Vorst90 pricing model
-                    tmp_new_val	= option_asian_vorst90(call_flag,tmp_underlying_value_base, ...
+                    tmp_new_val = option_asian_vorst90(call_flag,tmp_underlying_value_base, ...
                                     X,T,r, sigma + tmp_impl_vola_spread,q) .* multi;
-									
+                                    
                 elseif ( strcmpi(avg_rule,'arithmetic') && strcmpi(avg_monitoring,'continuous') )
                     % Call Levy pricing model
-                    tmp_new_val	= option_asian_levy(call_flag,tmp_underlying_value_base, ...
+                    tmp_new_val = option_asian_levy(call_flag,tmp_underlying_value_base, ...
                                     X,T,r, sigma + tmp_impl_vola_spread,q) .* multi;
-									
+                                    
                 else
                     error('Unknown Asian averaging rule >>%s<< or monitoring >>%s<<',avg_rule,avg_monitoring);
                 end
@@ -214,36 +214,36 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
                                 r,sigma + tmp_impl_vola_spread, ...
                                 obj.div_yield,obj.timesteps_size, ...
                                 obj.willowtree_nodes,path_static) .* multi;
-				elseif ( strcmpi(obj.pricing_function_american,'CRR') )
-					treenodes 	= round(T/option.timesteps_size);
-					tmp_new_val	= pricing_option_cpp(2,logical(call_flag),tmp_underlying_value_base, ...
-										X,T,r, sigma + tmp_impl_vola_spread, ...
-										option.div_yield,treenodes);
-					tmp_new_val = tmp_new_val .* multi;
+                elseif ( strcmpi(obj.pricing_function_american,'CRR') )
+                    treenodes   = round(T/option.timesteps_size);
+                    tmp_new_val = pricing_option_cpp(2,logical(call_flag),tmp_underlying_value_base, ...
+                                        X,T,r, sigma + tmp_impl_vola_spread, ...
+                                        option.div_yield,treenodes);
+                    tmp_new_val = tmp_new_val .* multi;
                 else
                     tmp_new_val = option_bjsten(call_flag, ...
                                 tmp_underlying_value_base, X, T, ...
                                 r, sigma + tmp_impl_vola_spread, ...
                                 obj.div_yield) .* multi;
                 end
-				
+                
             elseif ( strcmpi(option_type,'Barrier'))   % calling Barrier option pricing model
                     tmp_new_val = option_barrier(call_flag,obj.upordown,obj.outorin,...
                                     tmp_underlying_value_base, X, ...
                                     obj.barrierlevel, T, ...
                                     r, sigma + tmp_impl_vola_spread, ...
                                     q, obj.rebate) .* multi;
-									
-			elseif ( strcmpi(option_type,'Binary'))   % calling Binary option pricing model
-					tmp_new_val= option_binary(call_flag, obj.binary_type, tmp_underlying_value_base, ...
+                                    
+            elseif ( strcmpi(option_type,'Binary'))   % calling Binary option pricing model
+                    tmp_new_val= option_binary(call_flag, obj.binary_type, tmp_underlying_value_base, ...
                             X, obj.payoff_strike, T, r, ...
                             sigma  + tmp_impl_vola_spread, q) .* multi;
-							
-			elseif ( strcmpi(option_type,'Lookback'))   % calling Lookback option pricing model
-					tmp_new_val= option_lookback(call_flag, obj.lookback_type, tmp_underlying_value_base, ...
+                            
+            elseif ( strcmpi(option_type,'Lookback'))   % calling Lookback option pricing model
+                    tmp_new_val= option_lookback(call_flag, obj.lookback_type, tmp_underlying_value_base, ...
                             X, obj.payoff_strike, T, r, ...
                             sigma  + tmp_impl_vola_spread, q) .* multi;
-							
+                            
             end
             if ( abs(tmp_value - tmp_new_val) < 0.05 )
                 %disp('Calibration successful.');
@@ -261,7 +261,7 @@ function obj = calc_vola_spread(option,valuation_date,underlying,discount_curve,
     % store theo_value vector in appropriate class property
     obj.vola_spread = tmp_impl_vola_spread;
     obj.value_base = theo_value_base;
-	obj.calibration_flag = true;
+    obj.calibration_flag = true;
 end
 
 
@@ -269,65 +269,65 @@ end
 %------------------- Begin Definition of Objective Functions--------------------
  
  
-% ----------   Definition BlackScholes Objective Function:	    
+% ----------   Definition BlackScholes Objective Function:      
 function obj = phi_bs (x,putcallflag,S,X,T,rf,sigma,q,multiplicator,market_value)
         % This is where we computer the sum of the square of the errors.
-        % The parameters are in the vector p, which for us is a two by one.	
+        % The parameters are in the vector p, which for us is a two by one. 
         tmp_option_value = option_bs(putcallflag,S,X,T,rf,sigma+x,q) ...
                            .* multiplicator;
         obj = abs( tmp_option_value  - market_value)^2;
 end
 
-% ----------   Definition AsianLevy Objective Function:	    
+% ----------   Definition AsianLevy Objective Function:     
 function obj = phi_asian_levy (x,putcallflag,S,X,T,rf,sigma,q,multiplicator,market_value)
         % This is where we computer the sum of the square of the errors.
-        % The parameters are in the vector p, which for us is a two by one.	
+        % The parameters are in the vector p, which for us is a two by one. 
         tmp_option_value = option_asian_levy(putcallflag,S,X,T,rf,sigma+x,q) ...
                            .* multiplicator;
         obj = abs( tmp_option_value  - market_value)^2;
 end
 
-% ----------   Definition AsianVorst Objective Function:	    
+% ----------   Definition AsianVorst Objective Function:        
 function obj = phi_asian_vorst90 (x,putcallflag,S,X,T,rf,sigma,q,multiplicator,market_value)
         % This is where we computer the sum of the square of the errors.
-        % The parameters are in the vector p, which for us is a two by one.	
+        % The parameters are in the vector p, which for us is a two by one. 
         tmp_option_value = option_asian_vorst90(putcallflag,S,X,T,rf,sigma+x,q) ...
                            .* multiplicator;
         obj = abs( tmp_option_value  - market_value)^2;
 end
 
-% ----------   Definition BJSten Objective Function:	    
+% ----------   Definition BJSten Objective Function:        
 function obj = phi_bjsten (x,putcallflag,S,X,T,rf,sigma,div,multiplicator,market_value)
         % This is where we computer the sum of the square of the errors.
-        % The parameters are in the vector p, which for us is a two by one.	
+        % The parameters are in the vector p, which for us is a two by one. 
         tmp_option_value = option_bjsten(putcallflag,S,X,T,rf,sigma+x,div) ...
                            .* multiplicator;
         obj = abs( tmp_option_value  - market_value)^2;
 end
 
-% ----------   Definition American Willowtree Objective Function:	    
+% ----------   Definition American Willowtree Objective Function:       
 function obj = phi_willowtree (x,putcallflag,americanflag,S,X,T,rf,sigma,q, ...
-						stepsize,nodes,multiplicator,market_value,path_static)
-		% This is where we computer the sum of the square of the errors.
-		% The parameters are in the vector p, which for us is a two by one.	
-		tmp_option_value = option_willowtree(putcallflag,americanflag, ...
-						S,X,T,rf,sigma+x,q, ...
-						stepsize,nodes,path_static) .* multiplicator;
-		obj = abs( tmp_option_value  - market_value)^2;
+                        stepsize,nodes,multiplicator,market_value,path_static)
+        % This is where we computer the sum of the square of the errors.
+        % The parameters are in the vector p, which for us is a two by one. 
+        tmp_option_value = option_willowtree(putcallflag,americanflag, ...
+                        S,X,T,rf,sigma+x,q, ...
+                        stepsize,nodes,path_static) .* multiplicator;
+        obj = abs( tmp_option_value  - market_value)^2;
 end
 
-% ----------   Definition American CRR Objective Function:	    
+% ----------   Definition American CRR Objective Function:      
 function obj = phi_crr (x,type,call_flag,S,X,T,r,sigma,q,treenodes,multi,market_value)
-		% This is where we computer the sum of the square of the errors.
-		% The parameters are in the vector p, which for us is a two by one.	
-		tmp_option_value = pricing_option_cpp(type,call_flag,S,X,T,r, ...
-											sigma+x,q,treenodes);
-		tmp_option_value = tmp_option_value	.* multi;
-		obj = abs( tmp_option_value  - market_value)^2;
+        % This is where we computer the sum of the square of the errors.
+        % The parameters are in the vector p, which for us is a two by one. 
+        tmp_option_value = pricing_option_cpp(type,call_flag,S,X,T,r, ...
+                                            sigma+x,q,treenodes);
+        tmp_option_value = tmp_option_value .* multi;
+        obj = abs( tmp_option_value  - market_value)^2;
 end
 
-									
-% ----------   Definition Barrier Objective Function:	    
+                                    
+% ----------   Definition Barrier Objective Function:       
 function obj = phi_barrier (x,putcallflag,upordown,outorin,S,X,H,T,rf,sigma,q,rebate, ...
                                             multiplicator,market_value)
         % set up objective function
@@ -336,20 +336,20 @@ function obj = phi_barrier (x,putcallflag,upordown,outorin,S,X,H,T,rf,sigma,q,re
         obj = abs( tmp_option_value  - market_value)^2;
 end
 
-% ----------   Definition Binary Objective Function:	    
+% ----------   Definition Binary Objective Function:        
 function obj = phi_binary (x,call_flag, binary_type,S, X1, X2, T, rf, sigma,  ...
                             q, multiplicator,market_value)
         % set up objective function
         tmp_option_value = option_binary(call_flag, binary_type, S, X1, X2, ...
-							T, rf, sigma + x, q) .* multiplicator;
+                            T, rf, sigma + x, q) .* multiplicator;
         obj = abs( tmp_option_value  - market_value)^2;
 end
 
-% ----------   Definition Lookback Objective Function:	    
+% ----------   Definition Lookback Objective Function:      
 function obj = phi_lookback (x,call_flag, lookback_type,S, X1, X2, T, rf, sigma,  ...
                             q, multiplicator,market_value)
         % set up objective function
         tmp_option_value = option_lookback(call_flag, lookback_type, S, X1, X2, ...
-							T, rf, sigma + x, q) .* multiplicator;
+                            T, rf, sigma + x, q) .* multiplicator;
         obj = abs( tmp_option_value  - market_value)^2;
 end

@@ -11,17 +11,17 @@ if (nargin < 10)
     % set default parameter   
     % Fallback: get scenario number from first curve, riskfactor or index object
     para_struct = struct();
-	if ~(isempty(curve_struct))
-		tmp_object = curve_struct(1).object;
-	elseif ~(isempty(riskfactor_struct))
-		tmp_object = riskfactor_struct(1).object;
-	elseif ~(isempty(index_struct))
-		tmp_object = index_struct(1).object;
-	else
-		error('instrument.valuate: Provide para_struct.\n');
-	end
+    if ~(isempty(curve_struct))
+        tmp_object = curve_struct(1).object;
+    elseif ~(isempty(riskfactor_struct))
+        tmp_object = riskfactor_struct(1).object;
+    elseif ~(isempty(index_struct))
+        tmp_object = index_struct(1).object;
+    else
+        error('instrument.valuate: Provide para_struct.\n');
+    end
 
-	scen_number = length(tmp_object.getValue(scenario));
+    scen_number = length(tmp_object.getValue(scenario));
     para_struct.scen_number = scen_number;
     
     para_struct.path_static = '';

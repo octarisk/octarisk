@@ -17,14 +17,14 @@ classdef Riskfactor
       node2 = 0;
       node3 = 0;
       type = '';
-	  sln_level = 0.0;
+      sln_level = 0.0;
    end
    
     properties (SetAccess = protected )
       scenario_stress = [];
       scenario_mc = [];
       shift_type = [];
-	  shocktype_mc = '';	% either relative or absolute
+      shocktype_mc = '';    % either relative or absolute
       timestep_mc = {};
     end
  
@@ -60,9 +60,9 @@ classdef Riskfactor
             a.name,a.id,a.description,a.type,a.model);
          fprintf('mean: %f\nstandard deviation: %f\nskewness: %f\nkurtosis: %f\n', ... 
             a.mean,a.std,a.skew,a.kurt);
-		 if (strcmpi(a.model,'SLN'))
-			fprintf('sln_level: %f\n',a.sln_level); 	
-		 end
+         if (strcmpi(a.model,'SLN'))
+            fprintf('sln_level: %f\n',a.sln_level);     
+         end
          if ( sum(strcmp(a.model,{'OU','BKM','SRD'})) > 0) 
             fprintf('mr_level: %f\n',a.mr_level); 
             fprintf('mr_rate: %f\n',a.mr_rate); 
@@ -73,7 +73,7 @@ classdef Riskfactor
          end
          if ( length(a.scenario_stress) > 0 ) 
             fprintf('Scenario stress: %8.5f \n',a.scenario_stress(1:scenario_stress_rows));
-			fprintf('Shifttype stress: %d \n',a.shift_type(1:scenario_stress_rows));
+            fprintf('Shifttype stress: %d \n',a.shift_type(1:scenario_stress_rows));
             fprintf('\n');
          end
          % looping via first 5 MC scenario values
@@ -89,8 +89,8 @@ classdef Riskfactor
       
       function obj = set.model(obj,model)
          if ~(strcmpi(model,'GBM') || strcmpi(model,'BM') || strcmpi(model,'BKM') ...
-						|| strcmpi(model,'OU') || strcmpi(model,'SRD') ...
-						|| strcmpi(model,'SLN') || strcmpi(model,'REL') )
+                        || strcmpi(model,'OU') || strcmpi(model,'SRD') ...
+                        || strcmpi(model,'SLN') || strcmpi(model,'REL') )
             error('Model must be either GBM, BM, BKM, SLN, REL, OU or SRD')
          end
          obj.model = model;
@@ -102,32 +102,32 @@ classdef Riskfactor
          end
          obj.type = type;
       end % Set.type
-	  
-	  % function obj = set.shift_type(obj,shift_type)
-	    % if ( rows(obj.scenario_stress) > 1)
-			% shift_type
-			% obj.scenario_stress
-			% if ( rows(shift_type) ~= rows(obj.scenario_stress))
-				% error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(shift_type),rows(obj.scenario_stress))
-			% end
-		% end
+      
+      % function obj = set.shift_type(obj,shift_type)
+        % if ( rows(obj.scenario_stress) > 1)
+            % shift_type
+            % obj.scenario_stress
+            % if ( rows(shift_type) ~= rows(obj.scenario_stress))
+                % error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(shift_type),rows(obj.scenario_stress))
+            % end
+        % end
          % obj.shift_type = shift_type;
       % end % Set.shift_type
-	  
-	  % function obj = set.scenario_stress(obj,scenario_stress)
-		% scenario_stress
-		% obj.shift_type
-	    % if ( rows(obj.shift_type) > 1)
-			% if ( rows(obj.shift_type) ~= rows(scenario_stress))
-				% error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(obj.shift_type),rows(scenario_stress))
-			% end
-		% end
+      
+      % function obj = set.scenario_stress(obj,scenario_stress)
+        % scenario_stress
+        % obj.shift_type
+        % if ( rows(obj.shift_type) > 1)
+            % if ( rows(obj.shift_type) ~= rows(scenario_stress))
+                % error('Riskfactor: ID >>%s<< Length of shift_types (%d) and stress scenarios (%d) does not match.',any2str(obj.id),rows(obj.shift_type),rows(scenario_stress))
+            % end
+        % end
         % obj.scenario_stress = scenario_stress;
       % end % Set.scenario_stress
 
     end
-	
-	% static methods:
+    
+    % static methods:
     methods (Static = true)
     
       function basis = get_basis(dcc_string)
@@ -143,37 +143,37 @@ classdef Riskfactor
         if nargin < 4
             sensitivity = 1;
         end
-		if ~(isempty(scen_deltavec))
-			if ( sum(strcmpi(model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
-				ret_vec     =  exp(scen_deltavec .* sensitivity) .* value_base;
-			elseif (strcmpi(model,'REL')) % relative shock 
-				ret_vec     = (1 + scen_deltavec .* sensitivity) .* value_base;
-			else   % Normal Model     
-				ret_vec     = (scen_deltavec .* sensitivity) + value_base;
-			end
-		else
-			ret_vec = 0.0;
-		end
+        if ~(isempty(scen_deltavec))
+            if ( sum(strcmpi(model,{'GBM','BKM'})) > 0 ) % Log-normal Motion
+                ret_vec     =  exp(scen_deltavec .* sensitivity) .* value_base;
+            elseif (strcmpi(model,'REL')) % relative shock 
+                ret_vec     = (1 + scen_deltavec .* sensitivity) .* value_base;
+            else   % Normal Model     
+                ret_vec     = (scen_deltavec .* sensitivity) + value_base;
+            end
+        else
+            ret_vec = 0.0;
+        end
       end % get_abs_values
       
        
 
       % print Help text
-	  function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+      function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Riskfactor.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Riskfactor.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Riskfactor(@var{id})\n\
@@ -276,28 +276,28 @@ r = Riskfactor();\n\
 r = r.set('id','RF_EUR-SWAP_3Y','name','RF_EUR-SWAP_3Y', ...\n\
     'scenario_stress',[0.02;-0.01;0.8], ...\n\
     'type','RF_IR','model','SLN','shift_type',[0;0;1], ...\n\
-	'mean',0.0,'std',0.117,'skew',0.0,'kurt',3, ...\n\
-	'node',1095,'sln_level',0.03)\n\
+    'mean',0.0,'std',0.117,'skew',0.0,'kurt',3, ...\n\
+    'node',1095,'sln_level',0.03)\n\
 @end group\n\
 @end example\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Riskfactor\' is a class definition from the file /octarisk/@Riskfactor/Riskfactor.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Riskfactor\' is a class definition from the file /octarisk/@Riskfactor/Riskfactor.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-	  end % end of static method help
-	
-    end	% end of static methods
+      end % end of static method help
+    
+    end % end of static methods
    
 end % classdef

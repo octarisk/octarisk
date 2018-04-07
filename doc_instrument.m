@@ -585,7 +585,7 @@ end
 %! cap = cap.rollout(valuation_date,'base',iec,hist,cpi);
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[0,365,730],'rates_base',[0.002,0.003,0.004],'method_interpolation','linear', ...
-%! 		'compounding_type','continuous','day_count_convention','act/365');
+%!      'compounding_type','continuous','day_count_convention','act/365');
 %! cap = cap.calc_value(valuation_date,'base',c);
 %! assert(cap.getValue('base'),0.747441547923734,0.000000001);
 %! cap = cap.set('use_indexation_lag',true);
@@ -1113,10 +1113,10 @@ end
 %! % Set up Sensitivity Instrument
 %! r1 = Riskfactor();
 %! r1 = r1.set('id','MSCI_WORLD','scenario_stress',[0.2;-0.1], ...
-%! 					'model','GBM','shift_type',[1;1]);
+%!                  'model','GBM','shift_type',[1;1]);
 %! r2 = Riskfactor();
 %! r2 = r2.set('id','MSCI_EM','scenario_stress',[0.1;-0.2], ...
-%! 					'model','GBM','shift_type',[1;1] );
+%!                  'model','GBM','shift_type',[1;1] );
 %! riskfactor_struct = struct();
 %! riskfactor_struct(1).id = r1.id;
 %! riskfactor_struct(1).object = r1;
@@ -1124,15 +1124,15 @@ end
 %! riskfactor_struct(2).object = r2;
 %! s = Sensitivity();
 %! s = s.set('id','MSCI_ACWI_ETF','sub_type','EQU', ...
-%! 					'asset_class','Equity', 'model', 'GBM', ...
-%! 					'riskfactors',cellstr(['MSCI_WORLD';'MSCI_EM']), ...
-%! 					'sensitivities',[0.8,0.2],'value_base',100.00);
+%!                  'asset_class','Equity', 'model', 'GBM', ...
+%!                  'riskfactors',cellstr(['MSCI_WORLD';'MSCI_EM']), ...
+%!                  'sensitivities',[0.8,0.2],'value_base',100.00);
 %! instrument_struct = struct();
 %! instrument_struct(1).id = s.id;
 %! instrument_struct(1).object = s;
 %! s = s.valuate('31-Dec-2016', 'stress', ...
-%! 					instrument_struct, [], [], ...
-%! 					[], [], riskfactor_struct);
+%!                  instrument_struct, [], [], ...
+%!                  [], [], riskfactor_struct);
 %! assert(s.getValue('stress'),[119.7217363121810;88.6920436717158],0.00000001);
 %! s = s.calc_value('31-Dec-2016', 'stress',riskfactor_struct);
 %! assert(s.getValue('stress'),[119.7217363121810;88.6920436717158],0.00000001);
@@ -1300,7 +1300,7 @@ end
 %! vola_shock_vec = [1;2;6;41;101];
 %! for kk=1:1:length(vola_shock_vec)
 %!      for jj=1:1:length(id_cell)
-%! 		   stress_struct(kk).id = 'STRESS';	
+%!         stress_struct(kk).id = 'STRESS'; 
 %!         stress_struct(kk).objects(jj).id = id_cell{jj};
 %!         stress_struct(kk).objects(jj).type = 'surface';
 %!         stress_struct(kk).objects(jj).shock_type = 'relative';
@@ -1312,7 +1312,7 @@ end
 %! % Set up structure with discount curve object
 %! c = Curve();
 %! c = c.set('id','IR_EUR','nodes',[7300], ...
-%!      'rates_base',[riskfree],'method_interpolation','linear');				
+%!      'rates_base',[riskfree],'method_interpolation','linear');               
 %! curve_struct = struct();
 %! curve_struct(1).id = c.id;
 %! curve_struct(1).object = c;
@@ -1394,20 +1394,20 @@ end
 %! v1 = v1.set('type','INDEXVol');
 %! s = Sensitivity();
 %! s = s.set('id','SENSI_INSTRUMENT','sub_type','SENSI', ...
-%! 					'asset_class','Sensi',  'value_base', -150367508.00 , ...
-%! 					'underlyings',cellstr(['EUR-SWAP';'EUR-SWAP']), ...
-%!					'x_coord',[11501.2261098,11501.2261098], ...
-%!					'y_coord',[0,0.0], ...
-%!					'z_coord',[0,0], ...
-%!					'shock_type', cellstr(['absolute';'absolute']), 					
-%!					'sensi_prefactor', [5.215133647E9,1.07E11], 'sensi_exponent', [1,2], ...
-%!					'sensi_cross', [0,0], 'use_value_base',true,'use_taylor_exp',true);
+%!                  'asset_class','Sensi',  'value_base', -150367508.00 , ...
+%!                  'underlyings',cellstr(['EUR-SWAP';'EUR-SWAP']), ...
+%!                  'x_coord',[11501.2261098,11501.2261098], ...
+%!                  'y_coord',[0,0.0], ...
+%!                  'z_coord',[0,0], ...
+%!                  'shock_type', cellstr(['absolute';'absolute']),                     
+%!                  'sensi_prefactor', [5.215133647E9,1.07E11], 'sensi_exponent', [1,2], ...
+%!                  'sensi_cross', [0,0], 'use_value_base',true,'use_taylor_exp',true);
 %! surface_struct = struct();
 %! surface_struct(1).id = v1.id;
 %! surface_struct(1).object = v1;
 %! curve_struct = struct();
 %! curve_struct(1).id = c.id;
-%! curve_struct(1).object = c;					
+%! curve_struct(1).object = c;                  
 %! riskfactor_struct = struct();
 %! index_struct = struct();
 %! instrument_struct = struct();
@@ -1446,30 +1446,30 @@ end
 %! c = Curve();
 %! c = c.set('id','REFCURVE','nodes',[0,365,730,1095,1460,1825], ...
 %!       'rates_base',[0.01,0.01,0.01,0.01,0.01,0.01], 'method_interpolation','linear', ...
-%! 	  'compounding_type','continuous','day_count_convention','act/365'); 
+%!    'compounding_type','continuous','day_count_convention','act/365'); 
 %! % hazard curve
 %! h = Curve();
 %! h = h.set('type','Hazard Curve','id','HAZARDCURVE','nodes',[0,365,730,1095,1460,1825], ...
 %!       'rates_base',[0.01,0.01,0.02,0.03,0.04,0.05], 'method_interpolation','linear', ...
-%! 	  'compounding_type','continuous','day_count_convention','act/365'); 	  
+%!    'compounding_type','continuous','day_count_convention','act/365');      
 %! % CDS Floating
 %! b = Bond();
 %! b = b.set('sub_type','CDS_FLOATING','coupon_rate',0.04,'notional',100, ...
-%! 		'issue_date','30-Jun-2017','maturity_date','29-Jun-2020' , ...
-%! 		'loss_given_default',0.8,'cds_use_initial_premium',false, 'cds_initial_premium', 4.0, ...
-%! 		'reference_asset','REFBOND','hazard_curve','HAZARDCURVE', 'coupon_generation_method','forward', ...
-%! 		'compounding_type','simple','day_count_convention','act/365','cds_receive_protection',true);
-%! c = c.set('rates_stress',[	0.01,0.01,0.01,0.01,0.01,0.01; ...
-%! 						0.01,0.02,0.032,0.021,0.031,0.023; ...
-%! 						0.01,-0.01,0.03,0.04,0.03,-0.01]); 
+%!      'issue_date','30-Jun-2017','maturity_date','29-Jun-2020' , ...
+%!      'loss_given_default',0.8,'cds_use_initial_premium',false, 'cds_initial_premium', 4.0, ...
+%!      'reference_asset','REFBOND','hazard_curve','HAZARDCURVE', 'coupon_generation_method','forward', ...
+%!      'compounding_type','simple','day_count_convention','act/365','cds_receive_protection',true);
+%! c = c.set('rates_stress',[   0.01,0.01,0.01,0.01,0.01,0.01; ...
+%!                      0.01,0.02,0.032,0.021,0.031,0.023; ...
+%!                      0.01,-0.01,0.03,0.04,0.03,-0.01]); 
 %! % CDS Floating
 %! b = b.set('sub_type','CDS_FLOATING');
 %! b = b.rollout('base',valuation_date,h, a,c);
-%! b = b.rollout('stress',valuation_date,h, a,c);	
+%! b = b.rollout('stress',valuation_date,h, a,c);   
 %! assert(b.getCF('base'),[0.199003325016637,-0.593030040228064,-1.347990905494223],sqrt(eps))
 %! assert(b.getCF('stress'),[0.199003325016637,-0.593030040228064,-1.347990905494223; ...
-%! 							1.204020033433450,2.796948522945633,-2.388609377964669; ...
-%! 							-1.781129344307817,5.468180048335224,3.529066644434367],sqrt(eps));
+%!                          1.204020033433450,2.796948522945633,-2.388609377964669; ...
+%!                          -1.781129344307817,5.468180048335224,3.529066644434367],sqrt(eps));
 %! b = b.calc_value(valuation_date,'base',c);
 %! assert(b.getValue('base'),-1.69241580331523,sqrt(eps));
 %! b = b.calc_value(valuation_date,'stress',c);
@@ -1478,7 +1478,7 @@ end
 %! b = b.set('sub_type','CDS_FIXED');
 %! b = b.rollout('base',valuation_date,h, a);
 %! b = b.rollout('stress',valuation_date,h, a);
-%! assert(b.getCF('base'),[3.16418603493013,2.31343811814125,1.47257813719623],sqrt(eps));	
+%! assert(b.getCF('base'),[3.16418603493013,2.31343811814125,1.47257813719623],sqrt(eps));  
 %! assert(b.getCF('stress'),[3.16418603493013,2.31343811814125,1.47257813719623],sqrt(eps));
 %! b = b.calc_value(valuation_date,'base',c);
 %! assert(b.getValue('base'),6.82938770805661,sqrt(eps));
@@ -1486,9 +1486,9 @@ end
 %! assert(b.getValue('stress'),[6.82938770805661;6.65421510587343;6.68076024811611],sqrt(eps));
 %! % CDS FIXED: reference asset in default
 %! a = a.set('credit_state','D');
-%! b = b.rollout('base',valuation_date,h, a);	
-%! b = b.rollout('stress',valuation_date,h, a);				
-%! assert(b.getCF('base'),80.0,sqrt(eps))	
+%! b = b.rollout('base',valuation_date,h, a);   
+%! b = b.rollout('stress',valuation_date,h, a);             
+%! assert(b.getCF('base'),80.0,sqrt(eps))   
 %! assert(b.getCF('stress'),80.0,sqrt(eps))
 %! b = b.calc_value(valuation_date,'base',c);
 %! assert(b.getValue('base'),79.9978082492022,sqrt(eps));

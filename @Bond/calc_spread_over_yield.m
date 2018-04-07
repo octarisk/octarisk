@@ -12,7 +12,7 @@ function s = calc_spread_over_yield (bond,valuation_date,discount_curve,call_sch
    end
    
    if ischar(valuation_date)
-	   valuation_date = datenum(valuation_date,1);
+       valuation_date = datenum(valuation_date,1);
    end
 
    % Get reference curve nodes and rate
@@ -73,21 +73,21 @@ function s = calc_spread_over_yield (bond,valuation_date,discount_curve,call_sch
     end
     
     % get cf values and dates (take only first value)
-	cf_values = s.cf_values(1,:);
-	cf_dates = s.cf_dates;
-	
-	% get time factors and interpolated rates to speed up valuation function
-	[tf_vec rate_vec] = get_bond_tf_rates(valuation_date, ...
+    cf_values = s.cf_values(1,:);
+    cf_dates = s.cf_dates;
+    
+    % get time factors and interpolated rates to speed up valuation function
+    [tf_vec rate_vec] = get_bond_tf_rates(valuation_date, ...
             cf_dates, cf_values, 0.0, tmp_nodes, ...
             tmp_rates, basis, comp_type, comp_freq, tmp_interp_discount, ...
             tmp_curve_comp_type, tmp_curve_basis, tmp_curve_comp_freq, false);
-	
-	% set up objective function
-	objfunc = @ (x) phi_soy(x,valuation_date,cf_dates, ...
+    
+    % set up objective function
+    objfunc = @ (x) phi_soy(x,valuation_date,cf_dates, ...
             cf_values,value_dirty,tmp_curve_comp_type, tmp_curve_basis, ...
             tmp_curve_comp_freq, rate_vec);
-	
-	% calculate spread over yield (with fixed embedded option value)	
+    
+    % calculate spread over yield (with fixed embedded option value)    
     [spread_over_yield retcode] = calibrate_generic(objfunc,x0,lb,ub);
             
      if ( retcode > 0 ) %failed calibration
@@ -114,7 +114,7 @@ end
 %-------------------------------------------------------------------------------
 %------------------- Begin Subfunctions ----------------------------------------
  
-% Definition Objective Function for spread over yield:	
+% Definition Objective Function for spread over yield:  
 function obj = phi_soy (x,valuation_date,cf_dates,cf_values,act_value, ...
                 comp_type_curve, basis_curve, comp_freq_curve,rate_vec)
         % convert constant spread 
@@ -124,7 +124,7 @@ function obj = phi_soy (x,valuation_date,cf_dates,cf_values,act_value, ...
         % add spread to interpolated rates
         rate_vec = rate_vec + x;
         % get discount factor
-        tmp_df 	= discount_factor (valuation_date, valuation_date + cf_dates', ...
+        tmp_df  = discount_factor (valuation_date, valuation_date + cf_dates', ...
                                                rate_vec', comp_type_curve, ...
                                                basis_curve, comp_freq_curve); 
         % Calculate actual NPV of cash flows    

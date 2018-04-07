@@ -26,14 +26,14 @@ classdef Forward < Instrument
     properties (SetAccess = private)
         sub_type = 'EQFWD';
         basis = 3;
-		theo_delta = 0.0;
-		theo_gamma = 0.0;
-		theo_vega = 0.0;
-		theo_theta = 0.0;
-		theo_rho = 0.0;
-		theo_domestic_rho = 0.0;
-		theo_foreign_rho = 0.0;
-		theo_price = 0.0;
+        theo_delta = 0.0;
+        theo_gamma = 0.0;
+        theo_vega = 0.0;
+        theo_theta = 0.0;
+        theo_rho = 0.0;
+        theo_domestic_rho = 0.0;
+        theo_foreign_rho = 0.0;
+        theo_price = 0.0;
     end
     
    methods
@@ -77,23 +77,23 @@ classdef Forward < Instrument
          fprintf('net_basis: %f\n',b.net_basis);
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('calc_price_from_netbasis: %d\n',b.calc_price_from_netbasis);
-		 fprintf('theo_price:\t%8.8f\n',b.theo_price);  
-		 if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
-				+ b.theo_rho + b.theo_domestic_rho + b.theo_foreign_rho) ~= 0 )
+         fprintf('theo_price:\t%8.8f\n',b.theo_price);  
+         if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
+                + b.theo_rho + b.theo_domestic_rho + b.theo_foreign_rho) ~= 0 )
             fprintf('theo_delta:\t%8.8f\n',b.theo_delta);  
             fprintf('theo_gamma:\t%8.8f\n',b.theo_gamma);  
             fprintf('theo_vega:\t%8.8f\n',b.theo_vega);  
             fprintf('theo_theta:\t%8.8f\n',b.theo_theta);  
             fprintf('theo_rho:\t%8.8f\n',b.theo_rho);  
-			fprintf('theo_domestic_rho:\t%8.8f\n',b.theo_domestic_rho);  
-			fprintf('theo_foreign_rho:\t%8.8f\n',b.theo_foreign_rho);  
+            fprintf('theo_domestic_rho:\t%8.8f\n',b.theo_domestic_rho);  
+            fprintf('theo_foreign_rho:\t%8.8f\n',b.theo_foreign_rho);  
          end 
       end
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'Equity') || strcmpi(sub_type,'Bond') ...
                 || strcmpi(sub_type,'EQFWD') || strcmpi(sub_type,'FX') ...
                 || strcmpi(sub_type,'BondFuture')  || strcmpi(sub_type,'EquityFuture') ...
-				|| strcmpi(sub_type,'BONDFWD'))
+                || strcmpi(sub_type,'BONDFWD'))
             error('Forward sub_type must be either EquityFuture, EQFWD, BONDFWD, FX or BondFuture')
          end
          obj.sub_type = sub_type;
@@ -108,21 +108,21 @@ classdef Forward < Instrument
    %static methods: 
    methods (Static = true)
    
-	function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+    function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Forward.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Forward.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Forward(@var{id})\n\
@@ -241,22 +241,22 @@ f.getValue('base')\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Forward\' is a class definition from the file /octarisk/@Forward/Forward.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Forward\' is a class definition from the file /octarisk/@Forward/Forward.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-		
-	end % end of static method help
-	
-   end	% end of static methods
+        
+    end % end of static method help
+    
+   end  % end of static methods
    
 end 

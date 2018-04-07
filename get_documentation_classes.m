@@ -24,17 +24,17 @@ function get_documentation_classes(type,path_octarisk,path_documentation)
 
 % set up cell with commands to Classes where help text is specified
 c = {'Instrument.help', 'Matrix.help','Curve.help','Forward.help','Option.help', ...
-		'Cash.help','Debt.help','Sensitivity.help','Riskfactor.help', 'Index.help', ...
-		'Synthetic.help', 'Surface.help', 'Swaption.help', 'Stochastic.help', ...
-		'CapFloor.help', 'Bond.help'}
+        'Cash.help','Debt.help','Sensitivity.help','Riskfactor.help', 'Index.help', ...
+        'Synthetic.help', 'Surface.help', 'Swaption.help', 'Stochastic.help', ...
+        'CapFloor.help', 'Bond.help'}
 
 % printing functions:
 if ( strcmp('html',type) == 1)
     % Loop via all function names in cellstring, convert texinfo to html and 
     % print it to functionname.html
     for ii = 1:length(c)
-		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
-		command = strcat(c{ii},"('html',1)");
+        fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
+        command = strcat(c{ii},"('html',1)");
         retval = eval(command);
         if ~( isempty(retval) )
             %replace html title
@@ -57,8 +57,8 @@ elseif  ( strcmp('txt',type) == 1)
     filename = strcat(path_documentation,'/documentation.txt');
     fid = fopen (filename, 'w');
     for ii = 1:length(c)
-		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
-		command = strcat(c{ii},"('plain text',1)");
+        fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
+        command = strcat(c{ii},"('plain text',1)");
         retval = eval(command);        
         if ~( isempty(retval) )
             %replace html title
@@ -88,7 +88,7 @@ elseif  ( strcmp('texinfo',type) == 1)
     end
     fprintf(fid,'\@end menu \n');
     for ii = 1:length(c)
-		fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
+        fprintf('Trying to print documentation for: >>%s<<\n',c{ii});
         command = strcat(c{ii},"('texinfo',1)");
         retval = eval(command);     
         if ~( isempty(retval) )

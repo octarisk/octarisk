@@ -292,12 +292,12 @@ for ii = 1 : 1 : length(tmp_list_files)
                         end
                     elseif ( sum(strcmp(tmp_columnname,{'cf_values','sensitivities','principal_payment','weights','sensi_prefactor','sensi_exponent','sensi_cross'})) > 0)
                         if ~( isempty(tmp_entry))
-							%replace | with , and apply str2num
-							tmp_entry = str2num( strrep(tmp_entry,'|',','));
-						else
-							tmp_entry = [];
-						end
-						i = i.set(tmp_columnname,tmp_entry);        
+                            %replace | with , and apply str2num
+                            tmp_entry = str2num( strrep(tmp_entry,'|',','));
+                        else
+                            tmp_entry = [];
+                        end
+                        i = i.set(tmp_columnname,tmp_entry);        
                     elseif ( sum(strcmp(tmp_columnname,{'underlyings','riskfactors','shock_type','instruments'})) > 0)  % split into cell
                         try
                             tmp_entry = strsplit( tmp_entry, '|');

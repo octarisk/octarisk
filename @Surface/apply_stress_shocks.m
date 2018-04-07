@@ -15,51 +15,51 @@ surface_stress_struct = struct();
 
 % iterate via all stress definitions
 for ii = 1:1:length(stress_struct)
-	% get struct with all market object shocks
-	subst = stress_struct(ii).objects;
-	% get appropriate market object
-	[mktstruct retcode] = get_sub_struct(subst,surface.id);
-	if ( retcode == 1)	% market data is contained in stress
-		type 		= mktstruct.type;
-		shock_type 	= mktstruct.shock_type;
-		shock_value = mktstruct.shock_value;
+    % get struct with all market object shocks
+    subst = stress_struct(ii).objects;
+    % get appropriate market object
+    [mktstruct retcode] = get_sub_struct(subst,surface.id);
+    if ( retcode == 1)  % market data is contained in stress
+        type        = mktstruct.type;
+        shock_type  = mktstruct.shock_type;
+        shock_value = mktstruct.shock_value;
 
-		% get base rates and nodes of curve
-		surface_stress_struct(ii).id   = stress_struct(ii).id;
-		surface_stress_struct(ii).axis_x = surface.axis_x;
-		surface_stress_struct(ii).axis_y = surface.axis_y;
-		if ( strcmpi(surface.type,'IRVol'))
-			surface_stress_struct(ii).axis_z = surface.axis_z;
-		end
-		values_base = surface.values_base;
-	
-		if (strcmpi(shock_type,'relative'))
-			values_stress  = values_base .* shock_value;
-		elseif (strcmpi(shock_type,'absolute'))
-			values_stress  = values_base + shock_value;
-		elseif (strcmpi(shock_type,'value'))
-			values_stress  = values_base;
-			% overwrite base scenario axis values with stress axis values
-			surface_stress_struct(ii).axis_x = mktstruct.axis_x
-			surface_stress_struct(ii).axis_y = mktstruct.axis_y;
-			if ( strcmpi(surface.type,'IRVol')) 
-				surface_stress_struct(ii).axis_z = mktstruct.axis_z;
-			end
-		else
-			error('return_stress_shocks: unknown stress shock type: >>%s<<\n',any2str(shock_type));
-		end
-		% set stress scenario cube values
-		surface_stress_struct(ii).cube = values_stress;
-	else
-		% apply base value
-		surface_stress_struct(ii).cube = surface.values_base;
-		surface_stress_struct(ii).id   = stress_struct(ii).id;
-		surface_stress_struct(ii).axis_x = surface.axis_x;
-		surface_stress_struct(ii).axis_y = surface.axis_y;
-		if ( strcmpi(surface.type,'IRVol')) 
-			surface_stress_struct(ii).axis_z = surface.axis_z;
-		end
-	end
+        % get base rates and nodes of curve
+        surface_stress_struct(ii).id   = stress_struct(ii).id;
+        surface_stress_struct(ii).axis_x = surface.axis_x;
+        surface_stress_struct(ii).axis_y = surface.axis_y;
+        if ( strcmpi(surface.type,'IRVol'))
+            surface_stress_struct(ii).axis_z = surface.axis_z;
+        end
+        values_base = surface.values_base;
+    
+        if (strcmpi(shock_type,'relative'))
+            values_stress  = values_base .* shock_value;
+        elseif (strcmpi(shock_type,'absolute'))
+            values_stress  = values_base + shock_value;
+        elseif (strcmpi(shock_type,'value'))
+            values_stress  = values_base;
+            % overwrite base scenario axis values with stress axis values
+            surface_stress_struct(ii).axis_x = mktstruct.axis_x
+            surface_stress_struct(ii).axis_y = mktstruct.axis_y;
+            if ( strcmpi(surface.type,'IRVol')) 
+                surface_stress_struct(ii).axis_z = mktstruct.axis_z;
+            end
+        else
+            error('return_stress_shocks: unknown stress shock type: >>%s<<\n',any2str(shock_type));
+        end
+        % set stress scenario cube values
+        surface_stress_struct(ii).cube = values_stress;
+    else
+        % apply base value
+        surface_stress_struct(ii).cube = surface.values_base;
+        surface_stress_struct(ii).id   = stress_struct(ii).id;
+        surface_stress_struct(ii).axis_x = surface.axis_x;
+        surface_stress_struct(ii).axis_y = surface.axis_y;
+        if ( strcmpi(surface.type,'IRVol')) 
+            surface_stress_struct(ii).axis_z = surface.axis_z;
+        end
+    end
 end
 
 

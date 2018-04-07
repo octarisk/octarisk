@@ -195,21 +195,21 @@ for ii = 1 : 1 : length(tmp_list_files)
                 try
                     % special case: some attributes come as vectors
                     if ( strcmp(tmp_columnname,'nodes'))
-					    if ~( isempty(tmp_entry))
-							%replace | with , and apply str2num
-							tmp_entry = str2num( strrep(tmp_entry,'|',','));
-						else
-							tmp_entry = [];
-						end
-						i = i.set(tmp_columnname,tmp_entry);
+                        if ~( isempty(tmp_entry))
+                            %replace | with , and apply str2num
+                            tmp_entry = str2num( strrep(tmp_entry,'|',','));
+                        else
+                            tmp_entry = [];
+                        end
+                        i = i.set(tmp_columnname,tmp_entry);
                     elseif ( strcmp(tmp_columnname,'rates_base'))
                         if ~( isempty(tmp_entry))
-							%replace | with , and apply str2num
-							tmp_entry = str2num( strrep(tmp_entry,'|',','));
-						else
-							tmp_entry = [];
-						end
-						i = i.set(tmp_columnname,tmp_entry);
+                            %replace | with , and apply str2num
+                            tmp_entry = str2num( strrep(tmp_entry,'|',','));
+                        else
+                            tmp_entry = [];
+                        end
+                        i = i.set(tmp_columnname,tmp_entry);
                     elseif ( strcmp(tmp_columnname,'increments') || ...
                                             strcmp(tmp_columnname,'riskfactors'))  % split into cell
                         try

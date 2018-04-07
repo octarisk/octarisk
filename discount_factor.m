@@ -21,15 +21,15 @@
 %#
 %# Input and output variables:
 %# @itemize @bullet
-%# @item @var{d1}: 			number of days until first date (scalar)
-%# @item @var{d2}: 			number of days until second date (scalar)
-%# @item @var{rate}: 		interest rate between first and second date (scalar)
-%# @item @var{comp_type}: 	compounding type: [simple, simp, disc, discrete, 
+%# @item @var{d1}:          number of days until first date (scalar)
+%# @item @var{d2}:          number of days until second date (scalar)
+%# @item @var{rate}:        interest rate between first and second date (scalar)
+%# @item @var{comp_type}:   compounding type: [simple, simp, disc, discrete, 
 %# cont, continuous] (string)
-%# @item @var{basis}: 		day-count basis (scalar or string)
-%# @item @var{comp_freq}: 	1,2,4,12,52,365 or [daily,weekly,monthly,
+%# @item @var{basis}:       day-count basis (scalar or string)
+%# @item @var{comp_freq}:   1,2,4,12,52,365 or [daily,weekly,monthly,
 %# quarter,semi-annual,annual] (scalar or string)
-%# @item @var{df}: 			OUTPUT: discount factor (scalar)
+%# @item @var{df}:          OUTPUT: discount factor (scalar)
 %# @end itemize
 %# @seealso{timefactor}
 %# @end deftypefn

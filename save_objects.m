@@ -30,8 +30,8 @@ try
         tmp_riskfactor_struct(ii).object = struct(tmp_riskfactor_struct(ii).object);
     end
     savename = 'tmp_riskfactor_struct';
-	fullpath = [path_output, savename, endung];
-	save ('-text', fullpath, savename);
+    fullpath = [path_output, savename, endung];
+    save ('-text', fullpath, savename);
     number_saves = number_saves + 1;
     save_cell{ length(save_cell) + 1 } =  'riskfactors';
  
@@ -41,22 +41,22 @@ try
         tmp_instrument_struct(ii).object = struct(tmp_instrument_struct(ii).object);
     end 
     savename = 'tmp_instrument_struct';
-	fullpath = [path_output, savename, endung];
-	save ('-text', fullpath, savename);
+    fullpath = [path_output, savename, endung];
+    save ('-text', fullpath, savename);
     number_saves = number_saves + 1;
     save_cell{ length(save_cell) + 1 } =  'instruments';
     
 % save portfolio
     savename = 'portfolio_struct';
-	fullpath = [path_output, savename, endung];
-	save ('-text', fullpath, savename);
+    fullpath = [path_output, savename, endung];
+    save ('-text', fullpath, savename);
     number_saves = number_saves + 1;
     save_cell{ length(save_cell) + 1 } =  'portfolio';
     
 % save stresstests
     savename = 'stresstest_struct';
-	fullpath = [path_output, savename, endung];
-	save ('-text', fullpath, savename);
+    fullpath = [path_output, savename, endung];
+    save ('-text', fullpath, savename);
     number_saves = number_saves + 1;
     save_cell{ length(save_cell) + 1 } =  'stresstests';
 catch

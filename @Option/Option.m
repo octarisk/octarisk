@@ -10,8 +10,8 @@ classdef Option < Instrument
         underlying = 'DAX30';
         vola_surface = 'vol_index_DAX30';
         vola_sensi = 1;
-        strike = 100;			 % used as first strike for Binary options
-		payoff_strike = 100;	 % Binary Option payoff strike (used as upper bound)
+        strike = 100;            % used as first strike for Binary options
+        payoff_strike = 100;     % Binary Option payoff strike (used as upper bound)
         spot = 100;
         multiplier = 5;
         timesteps_size = 5;      % size of one timestep in path dependent valuations
@@ -27,9 +27,9 @@ classdef Option < Instrument
         averaging_rule = 'geometric'; % underlying distribution of average
                                       % either {'geometric','arithmetic'}
         averaging_monitoring = 'continuous'; % continuous or discrete averaging
-		calibration_flag = 1;       % BOOL: if true, no calibration will be done
-		binary_type		= 'cash'; % ['gap','cash','asset','supershare']
-		lookback_type	= 'floating_strike'; % ['floating_strike','fixed_strike']
+        calibration_flag = 1;       % BOOL: if true, no calibration will be done
+        binary_type     = 'cash'; % ['gap','cash','asset','supershare']
+        lookback_type   = 'floating_strike'; % ['floating_strike','fixed_strike']
     end
  
     properties (SetAccess = private)
@@ -71,7 +71,7 @@ classdef Option < Instrument
          fprintf('sub_type: %s\n',b.sub_type); 
          fprintf('option_type: %s\n',b.option_type); 
          fprintf('call_flag: %d\n',b.call_flag);
-		 fprintf('maturity_date: %s\n',b.maturity_date);      
+         fprintf('maturity_date: %s\n',b.maturity_date);      
          fprintf('strike: %f \n',b.strike);
          if ( strcmpi(b.option_type,'Barrier') )
             fprintf('Barrier Level: %f\n',b.barrierlevel);
@@ -84,11 +84,11 @@ classdef Option < Instrument
             fprintf('averaging_rule: %s\n',b.averaging_rule);
             fprintf('averaging_monitoring: %s\n',b.averaging_monitoring);
          end
-		 if ( strcmpi(b.option_type,'Binary') )
+         if ( strcmpi(b.option_type,'Binary') )
             fprintf('binary_type: %s\n',b.binary_type);
-			fprintf('payoff_strike: %f\n',b.payoff_strike);
+            fprintf('payoff_strike: %f\n',b.payoff_strike);
          end
-		 if ( strcmpi(b.option_type,'Lookback') )
+         if ( strcmpi(b.option_type,'Lookback') )
             fprintf('lookback_type: %s\n',b.lookback_type);
          end
          fprintf('multiplier: %f \n',b.multiplier);         
@@ -96,14 +96,14 @@ classdef Option < Instrument
          fprintf('vola_surface: %s\n',b.vola_surface ); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('spread: %f\n',b.spread); 
-		 fprintf('vola_spread: %f\n',b.vola_spread); 
+         fprintf('vola_spread: %f\n',b.vola_spread); 
          fprintf('div_yield (cont, act/365): %f \n',b.div_yield);
          fprintf('vola_sensi: %f\n',b.vola_sensi); 
          fprintf('compounding_type: %s\n',b.compounding_type);  
          fprintf('compounding_freq: %d\n',b.compounding_freq);    
          fprintf('day_count_convention: %s\n',b.day_count_convention);
          if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
-										+ b.theo_rho + b.theo_omega) ~= 0 )
+                                        + b.theo_rho + b.theo_omega) ~= 0 )
             fprintf('theo_delta:\t%8.8f\n',b.theo_delta);  
             fprintf('theo_gamma:\t%8.8f\n',b.theo_gamma);  
             fprintf('theo_vega:\t%8.8f\n',b.theo_vega);  
@@ -113,11 +113,11 @@ classdef Option < Instrument
          end    
       end
       
-	  % automatic call of function if setting object attributes
+      % automatic call of function if setting object attributes
       function obj = set.sub_type(obj,sub_type)
-		 subtype_cell = {'OPT_EUR_C','OPT_EUR_P','OPT_AM_C', ...
+         subtype_cell = {'OPT_EUR_C','OPT_EUR_P','OPT_AM_C', ...
                   'OPT_AM_P','OPT_BAR_P','OPT_BAR_C','OPT_ASN_P','OPT_ASN_C', ...
-				  'OPT_BIN_P','OPT_BIN_C','OPT_LBK_P','OPT_LBK_C'};
+                  'OPT_BIN_P','OPT_BIN_C','OPT_LBK_P','OPT_LBK_C'};
          if ~(any(strcmpi(sub_type,subtype_cell)))
             error('Option sub_type must be either >>%s<<',any2str(subtype_cell));
          end
@@ -137,9 +137,9 @@ classdef Option < Instrument
             obj.option_type = 'Barrier';
          elseif ( regexpi(sub_type,'_ASN_'))    % (European) Asian option
             obj.option_type = 'Asian';
-		 elseif ( regexpi(sub_type,'_LBK_'))    % (European) Lookback option
+         elseif ( regexpi(sub_type,'_LBK_'))    % (European) Lookback option
             obj.option_type = 'Lookback';
-		 elseif ( regexpi(sub_type,'_BIN_'))    % (European) Binary option
+         elseif ( regexpi(sub_type,'_BIN_'))    % (European) Binary option
             obj.option_type = 'Binary';
          end
       end % set.sub_type
@@ -173,26 +173,26 @@ classdef Option < Instrument
          end
          obj.lookback_type = lower(lookback_type);
       end % set.lookback_type
-	  
-	  
-	  % restrictions for American Options
+      
+      
+      % restrictions for American Options
       function obj = set.pricing_function_american(obj,american_type)
-		 american_type_cell = {'CRR','BjSten','Willowtree'};
+         american_type_cell = {'CRR','BjSten','Willowtree'};
          if ~(any(strcmpi(american_type,american_type_cell)))
             error('Option pricing_function_american must be either >>%s<<',any2str(american_type_cell))
          end
          obj.pricing_function_american = lower(american_type);
       end % set.pricing_function_american
-	  
-	  % restrictions for Binary Options
+      
+      % restrictions for Binary Options
       function obj = set.binary_type(obj,binary_type)
-		 binary_type_cell = {'gap','cash','asset','supershare'};
+         binary_type_cell = {'gap','cash','asset','supershare'};
          if ~(any(strcmpi(binary_type,binary_type_cell)))
             error('Option binary_type must be either >>%s<<',binary_type_cell)
          end
          obj.binary_type = lower(binary_type);
       end % set.binary_type
-	  
+      
       % restrictions for Barrier Options
       function obj = set.upordown(obj,upordown)
          if ~(any(strcmpi(upordown,{'U','D'})))
@@ -216,21 +216,21 @@ classdef Option < Instrument
   %static methods: 
    methods (Static = true)
    
-	function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+    function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Option.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Option.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Option(@var{id})\n\
@@ -382,21 +382,21 @@ o.getValue('base')\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Option\' is a class definition from the file /octarisk/@Option/Option.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Option\' is a class definition from the file /octarisk/@Option/Option.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
 
-		
-	end % end of static method help
-	
-   end	% end of static methods
+        
+    end % end of static method help
+    
+   end  % end of static methods
 end 

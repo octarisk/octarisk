@@ -179,18 +179,18 @@ end % end of for loop of all files
 for ii = 1 : 1 : length(surface_struct)
 % update volatility surfaces and cubes with stress and MC scenario shocks
 % Surfaces
-	tmp_object = surface_struct(ii).object;
-	tmp_class = lower(class(tmp_object));
+    tmp_object = surface_struct(ii).object;
+    tmp_class = lower(class(tmp_object));
     if ( strcmpi(tmp_class,'surface'))
         tmp_id = tmp_object.id;
         try  
-			% a) apply Stress scenario shocks
-			tmp_object = tmp_object.apply_stress_shocks(stress_struct);
-			% b) apply MC scenario shocks
-			if ( run_mc == true)
-				% Update MC risk factor shock values
-				tmp_object = tmp_object.apply_rf_shocks(riskfactor_struct);
-			end
+            % a) apply Stress scenario shocks
+            tmp_object = tmp_object.apply_stress_shocks(stress_struct);
+            % b) apply MC scenario shocks
+            if ( run_mc == true)
+                % Update MC risk factor shock values
+                tmp_object = tmp_object.apply_rf_shocks(riskfactor_struct);
+            end
 
             % store surface object in struct
             a = {surface_struct.id};
@@ -203,8 +203,8 @@ for ii = 1 : 1 : length(surface_struct)
             fprintf('ERROR: There has been an error for new Surface object:  >>%s<<. Message: >>%s<< \n',tmp_id,lasterr);
             vola_failed_cell{ length(vola_failed_cell) + 1 } =  tmp_id;
         end
-	end
+    end
 end
 
-	
+    
 end % end of function

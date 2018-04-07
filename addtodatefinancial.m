@@ -46,104 +46,104 @@ function [newdatenum newdatevec] = addtodatefinancial(valdate, arg1, arg2, arg3)
 
 % input checks
 if (iscell(valdate) || rows(valdate) > 1)
-	fprintf('addtodatefinancial: Input has to be a single date in datenum or datevec format.\n');
-	print_usage();
+    fprintf('addtodatefinancial: Input has to be a single date in datenum or datevec format.\n');
+    print_usage();
 end
 
 if nargin < 2
-	print_usage();
+    print_usage();
 end
 
 if nargin == 2
-	yy_diff = arg1;
-	mm_diff = 0;
-	dd_diff = 0;
+    yy_diff = arg1;
+    mm_diff = 0;
+    dd_diff = 0;
 elseif nargin == 3
-	if ischar(arg2)	% special case:arg1 is value, arg2 is unit
-		if strcmpi(arg2,"months") || strcmpi(arg2,"month")
-			dd_diff = 0;
-			mm_diff = arg1;
-			yy_diff = 0;
-		elseif strcmpi(arg2,"days") || strcmpi(arg2,"day")
-			dd_diff = arg1;
-			mm_diff = 0;
-			yy_diff = 0;
-		elseif strcmpi(arg2,"years") || strcmpi(arg2,"year")
-			dd_diff = 0;
-			mm_diff = 0;
-			yy_diff = arg1;
-		else
-			error('addtodatefinancial: unknown unit >>%s<<. Must be days,months,years.',any2str(arg2));
-		end
-	else
-		yy_diff = arg1;
-		mm_diff = arg2;
-		dd_diff = 0;
-	end
+    if ischar(arg2) % special case:arg1 is value, arg2 is unit
+        if strcmpi(arg2,"months") || strcmpi(arg2,"month")
+            dd_diff = 0;
+            mm_diff = arg1;
+            yy_diff = 0;
+        elseif strcmpi(arg2,"days") || strcmpi(arg2,"day")
+            dd_diff = arg1;
+            mm_diff = 0;
+            yy_diff = 0;
+        elseif strcmpi(arg2,"years") || strcmpi(arg2,"year")
+            dd_diff = 0;
+            mm_diff = 0;
+            yy_diff = arg1;
+        else
+            error('addtodatefinancial: unknown unit >>%s<<. Must be days,months,years.',any2str(arg2));
+        end
+    else
+        yy_diff = arg1;
+        mm_diff = arg2;
+        dd_diff = 0;
+    end
 elseif nargin == 4
-	yy_diff = arg1;
-	mm_diff = arg2;
-	dd_diff = arg3;
+    yy_diff = arg1;
+    mm_diff = arg2;
+    dd_diff = arg3;
 end
 
 % convert input date
-if ischar(valdate)				% datestr format
-	[y_val m_val d_val] = datevec_fast(valdate);
-	valdatenum = datenum_fast(valdate,1);
-elseif (length(valdate) >= 3)	% datevec format
-	y_val 	= valdate(:,1);
-	m_val 	= valdate(:,2);
-	d_val 	= valdate(:,3);
-	valdatenum = datenum(valdate);
-else							% datenum format
-	[y_val m_val d_val] = datevec_fast(valdate);
-	valdatenum = valdate;
+if ischar(valdate)              % datestr format
+    [y_val m_val d_val] = datevec_fast(valdate);
+    valdatenum = datenum_fast(valdate,1);
+elseif (length(valdate) >= 3)   % datevec format
+    y_val   = valdate(:,1);
+    m_val   = valdate(:,2);
+    d_val   = valdate(:,3);
+    valdatenum = datenum(valdate);
+else                            % datenum format
+    [y_val m_val d_val] = datevec_fast(valdate);
+    valdatenum = valdate;
 end
 
 % short cut if only days are added or subtracted:
 if ( dd_diff != 0 && mm_diff == 0 && yy_diff == 0)
-	newdatenum = valdatenum + dd_diff;
-	newdatevec = datevec(newdatenum);
-	break;
+    newdatenum = valdatenum + dd_diff;
+    newdatevec = datevec(newdatenum);
+    break;
 end
-			
+            
 % check if valdate is end of month
 eom_flag = false;
 if (valdatenum == eomdate(y_val,m_val) && dd_diff == 0)
-	eom_flag = true;
+    eom_flag = true;
 end
 
 % subtract or add days
 if (dd_diff != 0)
-	[y_val m_val d_val] = datevec_fast(valdatenum + dd_diff);
+    [y_val m_val d_val] = datevec_fast(valdatenum + dd_diff);
 end
 
 % prevent roll over, if abs(mm_diff) > 12
 if ( abs(mm_diff) > 12 )
-	yy_diff += (floor ((abs(mm_diff)-1)/12) * sign(mm_diff));
-	mm_diff =( mod (abs(mm_diff)-1, 12) + 1) * sign(mm_diff);
+    yy_diff += (floor ((abs(mm_diff)-1)/12) * sign(mm_diff));
+    mm_diff =( mod (abs(mm_diff)-1, 12) + 1) * sign(mm_diff);
 end
 % case 1: negative month difference
-if ( mm_diff < 0 && -mm_diff >= m_val )	% lag into last year
-	yy_diff -= 1;
-	mm_diff = mod (m_val + mm_diff - 1, 12) + 1- m_val;
+if ( mm_diff < 0 && -mm_diff >= m_val ) % lag into last year
+    yy_diff -= 1;
+    mm_diff = mod (m_val + mm_diff - 1, 12) + 1- m_val;
 % case 2: positive month difference
 elseif ( mm_diff > 0 && mm_diff >= (12 - m_val)) 
-	yy_diff += 1;
-	mm_diff = mod (m_val + mm_diff - 1, 12) + 1 - m_val;
+    yy_diff += 1;
+    mm_diff = mod (m_val + mm_diff - 1, 12) + 1 - m_val;
 end    
 
 % final subtracting or adding of years, months, days
 if ( eom_flag == true)
-	newdatenum = eomdate(y_val + yy_diff, m_val + mm_diff);
-	[y_val m_val d_val] = datevec_fast(newdatenum);
-	newdatevec = [y_val m_val d_val, 0,0,0];
+    newdatenum = eomdate(y_val + yy_diff, m_val + mm_diff);
+    [y_val m_val d_val] = datevec_fast(newdatenum);
+    newdatevec = [y_val m_val d_val, 0,0,0];
 else
-	newdatevec = [y_val + yy_diff, m_val + mm_diff,d_val, 0,0,0];
+    newdatevec = [y_val + yy_diff, m_val + mm_diff,d_val, 0,0,0];
 end
 % adjust for leap year
 if (  (!is_leap_year(newdatevec(1))) && newdatevec(2) == 2 && newdatevec(3) > 28)
-	newdatevec(3) = 28;
+    newdatevec(3) = 28;
 end
 
 newdatenum = datenum(newdatevec);
@@ -165,7 +165,7 @@ function [day] = datenum_fast (input1, format = 1)
 
   if (ischar (input1) || iscellstr (input1)) % input is 
     [year, month, day, hour, minute, second] = datevec_fast (input1, 1);
-  else	% input is vector
+  else  % input is vector
       second = 0;
       minute = 0;
       hour   = 0;
@@ -220,22 +220,22 @@ function [y, m, d, h, mi, s] = datevec_fast (date, f = 1, p = [])
     nd = numel (date);
 
     y = m = d = h = mi = s = zeros (nd, 1);
-	% hard coded: format string always dd-mm-yyyy
-	f = '%d-%b-%Y';
-	rY = 7;
-	ry = 0;
-	fy = 1;
-	fm = 1;
-	fd = 1;
-	fh = 0;
-	fmi = 0;
-	fs = 0;
-	found = 1;
+    % hard coded: format string always dd-mm-yyyy
+    f = '%d-%b-%Y';
+    rY = 7;
+    ry = 0;
+    fy = 1;
+    fm = 1;
+    fd = 1;
+    fh = 0;
+    fmi = 0;
+    fs = 0;
+    found = 1;
 
-	for k = 1:nd
-		[found y(k) m(k) d(k) h(k) mi(k) s(k)] = ...
-			__date_str2vec_custom__ (date{k}, p, f, rY, ry, fy, fm, fd, fh, fmi, fs);
-	end
+    for k = 1:nd
+        [found y(k) m(k) d(k) h(k) mi(k) s(k)] = ...
+            __date_str2vec_custom__ (date{k}, p, f, rY, ry, fy, fm, fd, fh, fmi, fs);
+    end
 
   % datenum input
   else 
@@ -259,23 +259,23 @@ function [y, m, d, h, mi, s] = datevec_fast (date, f = 1, p = [])
     m(m > 12) -= 12;
 
     % no fractional time units
-	s = 0;
-	h = 0;
-	mi = 0;
-	
+    s = 0;
+    h = 0;
+    mi = 0;
+    
 
   end
 
   if (isvector(date) && length(date) > 1)
-	if ( rows(date) > columns(date))
-		date = date';
-	end
-	y = date(:,1);
-	m = date(:,2);
-	d = date(:,3);
-	h = date(:,4);
-	mi = date(:,5);
-	s = date(:,6);
+    if ( rows(date) > columns(date))
+        date = date';
+    end
+    y = date(:,1);
+    m = date(:,2);
+    d = date(:,3);
+    h = date(:,4);
+    mi = date(:,5);
+    s = date(:,6);
   end
   
   

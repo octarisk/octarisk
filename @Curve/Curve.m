@@ -18,19 +18,19 @@ classdef Curve
       description = '';
       type = '';  
       method_interpolation = 'linear'; %'monotone-convex'; 
-	  method_extrapolation = 'constant'; %'linear'
+      method_extrapolation = 'constant'; %'linear'
       compounding_type = 'cont';
       compounding_freq = 'annual';               
       day_count_convention = 'act/365'; 
       shocktype_mc = 'absolute';
-	  shocktype_stress = 'absolute';
+      shocktype_stress = 'absolute';
       increments = '';
       alpha = 0.19; % alpha parameter for Smith-Wilson interpolation method
       ufr = 0.042; % ultimate forward rate for Smith-Wilson interpolation method
       american_flag = 0; % specifying option type if used as call or put schedule
       curve_function = 'sum';   % required for aggregated curves
       curve_parameter = 1;      % required for aggregated curves
-	  sln_level = [];			% required for shifted log-normal model of risk factors
+      sln_level = [];           % required for shifted log-normal model of risk factors
     end
    
     properties (SetAccess = protected )
@@ -82,10 +82,10 @@ classdef Curve
             fprintf('american_flag: %s\n',any2str(a.american_flag));
          end
          if ( isnumeric(a.floor))
-			fprintf('floor rate: %f\n',a.floor);
+            fprintf('floor rate: %f\n',a.floor);
          end
          if ( isnumeric(a.cap))
-			fprintf('cap rate: %f\n',a.cap);
+            fprintf('cap rate: %f\n',a.cap);
          end
          % looping via all riskfactors / sensitivities
          if ( length(a.increments) > 0 )
@@ -141,10 +141,10 @@ classdef Curve
       end % disp
       
       function obj = set.type(obj,type)
-		 typecell = { 'Discount Curve', 'Spread Curve', 'Dummy Curve', ...
-						'Aggregated Curve', 'Prepayment Curve', ...
-						'Call Schedule', 'Put Schedule',  'Hazard Curve', ...
-						'Historical Curve', 'Inflation Expectation Curve', 'Shock Curve'};
+         typecell = { 'Discount Curve', 'Spread Curve', 'Dummy Curve', ...
+                        'Aggregated Curve', 'Prepayment Curve', ...
+                        'Call Schedule', 'Put Schedule',  'Hazard Curve', ...
+                        'Historical Curve', 'Inflation Expectation Curve', 'Shock Curve'};
          if ~(strcmpi(type,typecell))
             error('Type must be either Discount Curve, Spread Curve, Aggregated Curve, Dummy Curve, Call or Put Schedule, Inflation Expectation Curve, Hazard Curve, Historical Curve or Prepayment Curve')
          end
@@ -159,14 +159,14 @@ classdef Curve
          obj.method_interpolation = method_interpolation;
       end % Set.method_interpolation
       
-	  function obj = set.method_extrapolation(obj,method_extrapolation)
+      function obj = set.method_extrapolation(obj,method_extrapolation)
          method_extrapolation = lower(method_extrapolation);
          if ~(sum(strcmpi(method_extrapolation,{'linear','constant','monotone-convex','smith-wilson'}))>0  )
             error('Extrapolation method must be either linear or constant. Smith-Wilson and Monotone Convex automatically have extrapolation embedded.')
          end
          obj.method_extrapolation = method_extrapolation;
       end % Set.method_extrapolation
-	  
+      
 
       function obj = set.day_count_convention(obj,day_count_convention)
         obj.day_count_convention = day_count_convention;
@@ -194,8 +194,8 @@ classdef Curve
       
       function obj = set.floor(obj,floor)
          obj.floor = floor;
-		 % applying floor rates to rates_base, rates_stress and rates_mc
-		 if ( isnumeric(floor))
+         % applying floor rates to rates_base, rates_stress and rates_mc
+         if ( isnumeric(floor))
              obj.rates_base = max(obj.rates_base,floor);
              obj.rates_stress = max(obj.rates_stress,floor);
              obj.rates_mc = max(obj.rates_mc,floor);
@@ -204,8 +204,8 @@ classdef Curve
       
       function obj = set.cap(obj,cap)
          obj.cap = cap;
-		 % applying cap rates to rates_base, rates_stress and rates_mc
-		 if ( isnumeric(cap))
+         % applying cap rates to rates_base, rates_stress and rates_mc
+         if ( isnumeric(cap))
              obj.rates_base = min(obj.rates_base,cap);
              obj.rates_stress = min(obj.rates_stress,cap);
              obj.rates_mc = min(obj.rates_mc,cap);
@@ -225,21 +225,21 @@ classdef Curve
    % static methods: 
    methods (Static = true)
    
-	function retval = help (format,retflag)
-		formatcell = {'plain text','html','texinfo'};
-		% input checks
-		if ( nargin == 0 )
-			format = 'plain text';	
-		end
-		if ( nargin < 2 )
-			retflag = 0;	
-		end
+    function retval = help (format,retflag)
+        formatcell = {'plain text','html','texinfo'};
+        % input checks
+        if ( nargin == 0 )
+            format = 'plain text';  
+        end
+        if ( nargin < 2 )
+            retflag = 0;    
+        end
 
-		% format check
-		if ~( strcmpi(format,formatcell))
-			fprintf('WARNING: Curve.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
-			format = 'plain text';
-		end	
+        % format check
+        if ~( strcmpi(format,formatcell))
+            fprintf('WARNING: Curve.help: unknown format >>%s<<. Format must be [plain text, html or texinfo]. Setting format to plain text.\n',any2str(format));
+            format = 'plain text';
+        end 
 
 % textstring in texinfo format (it is required to start at begin of line)
 textstring = "@deftypefn{Octarisk Class} {@var{object}} = Curve(@var{id})\n\
@@ -378,21 +378,21 @@ c_rates_250d = c.getValue('250d')\n\
 \n\
 @end deftypefn";
 
-		% format help text
-		[retval status] = __makeinfo__(textstring,format);
-		% status
-		if (status == 0)
-			% depending on retflag, return textstring
-			if (retflag == 0)
-				% print formatted textstring
-				fprintf("\'Matrix\' is a class definition from the file /octarisk/@Matrix/Matrix.m\n");
-				fprintf("\n%s\n",retval);
-				retval = [];
-			end
-		end
-		
-	end % end of static method help
-	
-   end	% end of static methods
+        % format help text
+        [retval status] = __makeinfo__(textstring,format);
+        % status
+        if (status == 0)
+            % depending on retflag, return textstring
+            if (retflag == 0)
+                % print formatted textstring
+                fprintf("\'Matrix\' is a class definition from the file /octarisk/@Matrix/Matrix.m\n");
+                fprintf("\n%s\n",retval);
+                retval = [];
+            end
+        end
+        
+    end % end of static method help
+    
+   end  % end of static methods
    
 end % classdef

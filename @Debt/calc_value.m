@@ -9,7 +9,7 @@ function obj = calc_value (debt,discount_curve_object,value_type)
     value_type = lower(value_type);
     % Get duration and convexity
         tmp_dur         = debt.duration;
-		tmp_term        = debt.term;
+        tmp_term        = debt.term;
         tmp_convex      = debt.convexity;
         tmp_value_base  = debt.value_base;
     % Get Yields and spreads at instrument duration 
