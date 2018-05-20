@@ -176,7 +176,7 @@ first_eval      = para_object.first_eval;
 
 % load packages
 pkg load financial;     % load financial packages (needed throughout all scripts)
-
+pkg load statistics;    % load statistics packages (needed throughout all scripts)
 
 plottime = 0;   % initializing plottime
 aggr = 0;       % initializing aggregation time
@@ -253,29 +253,24 @@ else
     scenario_ts_days = zeros(length(scenario_set),1);
 end
 % 1. Processing Instruments data
-persistent instrument_struct;
 instrument_struct=struct();
 [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_input,input_filename_instruments,path_output_instruments,path_archive,timestamp,archive_flag);
 
 % 2. Processing Riskfactor data
-persistent riskfactor_struct;
 riskfactor_struct=struct();
 [riskfactor_struct id_failed_cell] = load_riskfactors(riskfactor_struct,path_input,input_filename_riskfactors,path_output_riskfactors,path_archive,timestamp,archive_flag);
 
 % 3. Processing Positions data
-persistent portfolio_struct;
 portfolio_struct=struct();
 [portfolio_struct id_failed_cell positions_cell] = load_positions(portfolio_struct, path_input,input_filename_positions,path_output_positions,path_archive,timestamp,archive_flag);
 
 % 4. Processing Stresstest data
-persistent stresstest_struct;
 stresstest_struct=struct();
 [stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, path_input,input_filename_stresstests,path_output_stresstests,path_archive,timestamp,archive_flag);
 no_stresstests = length(stresstest_struct);
 para_object.no_stresstests = no_stresstests;
 
 % 5. Processing Market Data objects (Indizes and Marketcurves)
-persistent mktdata_struct;
 mktdata_struct=struct();
 [mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct,path_mktdata,input_filename_mktdata,path_output_mktdata,path_archive,timestamp,archive_flag);
 
@@ -356,15 +351,12 @@ tic;
 
 % a) Processing yield curves
 
-persistent curve_struct;
 curve_struct=struct();
 [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving,run_mc);
 
         
 % b) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
-persistent index_struct;
 index_struct=struct();
-persistent surface_struct;
 surface_struct=struct();
 [index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests,run_mc,stresstest_struct);   
 
@@ -373,7 +365,6 @@ surface_struct=struct();
 
 
 % e) Loading matrix objects
-persistent matrix_struct;
 matrix_struct=struct();
 [matrix_struct matrix_failed_cell] = load_matrix_objects(matrix_struct,path_mktdata,input_filename_matrix);
  
@@ -496,7 +487,6 @@ base_value = 0;
 idx_figure = 0;
 confi = 1 - quantile
 confi_scenario = max(round(confi * mc),1);
-persistent aggr_key_struct;
 position_failed_cell = {};
 % before looping via all portfolio make one time Harrel Davis Vector:
 if (run_mc == true)

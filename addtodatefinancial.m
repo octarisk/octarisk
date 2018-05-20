@@ -104,49 +104,48 @@ end
 if ( dd_diff != 0 && mm_diff == 0 && yy_diff == 0)
     newdatenum = valdatenum + dd_diff;
     newdatevec = datevec(newdatenum);
-    break;
-end
-            
-% check if valdate is end of month
-eom_flag = false;
-if (valdatenum == eomdate(y_val,m_val) && dd_diff == 0)
-    eom_flag = true;
-end
+else   % make full calculations             
+    % check if valdate is end of month
+    eom_flag = false;
+    if (valdatenum == eomdate(y_val,m_val) && dd_diff == 0)
+        eom_flag = true;
+    end
 
-% subtract or add days
-if (dd_diff != 0)
-    [y_val m_val d_val] = datevec_fast(valdatenum + dd_diff);
-end
+    % subtract or add days
+    if (dd_diff != 0)
+        [y_val m_val d_val] = datevec_fast(valdatenum + dd_diff);
+    end
 
-% prevent roll over, if abs(mm_diff) > 12
-if ( abs(mm_diff) > 12 )
-    yy_diff += (floor ((abs(mm_diff)-1)/12) * sign(mm_diff));
-    mm_diff =( mod (abs(mm_diff)-1, 12) + 1) * sign(mm_diff);
-end
-% case 1: negative month difference
-if ( mm_diff < 0 && -mm_diff >= m_val ) % lag into last year
-    yy_diff -= 1;
-    mm_diff = mod (m_val + mm_diff - 1, 12) + 1- m_val;
-% case 2: positive month difference
-elseif ( mm_diff > 0 && mm_diff >= (12 - m_val)) 
-    yy_diff += 1;
-    mm_diff = mod (m_val + mm_diff - 1, 12) + 1 - m_val;
-end    
+    % prevent roll over, if abs(mm_diff) > 12
+    if ( abs(mm_diff) > 12 )
+        yy_diff += (floor ((abs(mm_diff)-1)/12) * sign(mm_diff));
+        mm_diff =( mod (abs(mm_diff)-1, 12) + 1) * sign(mm_diff);
+    end
+    % case 1: negative month difference
+    if ( mm_diff < 0 && -mm_diff >= m_val ) % lag into last year
+        yy_diff -= 1;
+        mm_diff = mod (m_val + mm_diff - 1, 12) + 1- m_val;
+    % case 2: positive month difference
+    elseif ( mm_diff > 0 && mm_diff >= (12 - m_val)) 
+        yy_diff += 1;
+        mm_diff = mod (m_val + mm_diff - 1, 12) + 1 - m_val;
+    end    
 
-% final subtracting or adding of years, months, days
-if ( eom_flag == true)
-    newdatenum = eomdate(y_val + yy_diff, m_val + mm_diff);
-    [y_val m_val d_val] = datevec_fast(newdatenum);
-    newdatevec = [y_val m_val d_val, 0,0,0];
-else
-    newdatevec = [y_val + yy_diff, m_val + mm_diff,d_val, 0,0,0];
-end
-% adjust for leap year
-if (  (!is_leap_year(newdatevec(1))) && newdatevec(2) == 2 && newdatevec(3) > 28)
-    newdatevec(3) = 28;
-end
+    % final subtracting or adding of years, months, days
+    if ( eom_flag == true)
+        newdatenum = eomdate(y_val + yy_diff, m_val + mm_diff);
+        [y_val m_val d_val] = datevec_fast(newdatenum);
+        newdatevec = [y_val m_val d_val, 0,0,0];
+    else
+        newdatevec = [y_val + yy_diff, m_val + mm_diff,d_val, 0,0,0];
+    end
+    % adjust for leap year
+    if (  (!is_leap_year(newdatevec(1))) && newdatevec(2) == 2 && newdatevec(3) > 28)
+        newdatevec(3) = 28;
+    end
 
-newdatenum = datenum(newdatevec);
+    newdatenum = datenum(newdatevec);
+end % end shortcut condition
 end
 % ------------------------------------------------------------------------------
 

@@ -24,7 +24,7 @@ static bool any_bad_argument(const octave_value_list& args);
 static ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S, 
             const NDArray& X, const NDArray& T, const NDArray& r, 
             const NDArray& sigma, const NDArray& q, const octave_idx_type& len, 
-			octave_idx_type& n);
+			int& n);
 			
 static ColumnVector get_EU_option_price_BS(const bool& call_flag, const NDArray& S_vec, 
             const NDArray& X_vec, const NDArray& T_vec, const NDArray& r_vec, 
@@ -33,7 +33,7 @@ static ColumnVector get_EU_option_price_BS(const bool& call_flag, const NDArray&
 static ColumnVector get_AM_option_price_CRR(const bool& call_flag, const NDArray& S, 
             const NDArray& X, const NDArray& T, const NDArray& r, 
             const NDArray& sigma, const NDArray& q, const octave_idx_type& len, 
-			const octave_idx_type& n);
+			const int& n);
 			
 DEFUN_DLD (pricing_option_cpp, args, nargout, "-*- texinfo -*-\n\
 @deftypefn{Loadable Function} {@var{OptionVec}} = pricing_option_cpp(@var{option_type}, @var{call_flag}, @var{S_vec}, @var{X_vec}, @var{T_vec}, @var{r_vec}, @var{sigma_vec}, @var{divrate_vec}, @var{n}) \n\
@@ -205,7 +205,7 @@ retvec =\n\
 ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S, 
             const NDArray& X, const NDArray& T, const NDArray& r, 
             const NDArray& sigma, const NDArray& q, const octave_idx_type& len, 
-			octave_idx_type& n)
+			int& n)
 {
 	// rework required, placeholder template for Asian style MC valuations
 	octave_rand::distribution("normal");// initialize distribution
@@ -284,7 +284,7 @@ ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S,
 ColumnVector get_AM_option_price_CRR(const bool& call_flag, const NDArray& S, 
             const NDArray& X, const NDArray& T, const NDArray& r, 
             const NDArray& sigma, const NDArray& q, const octave_idx_type& len, 
-			const octave_idx_type& n)
+			const int& n)
 {
 	
 	// Matrices for the stock price evolution and option price
@@ -385,7 +385,7 @@ ColumnVector get_EU_option_price_BS(const bool& call_flag, const NDArray& S,
 bool any_bad_argument(const octave_value_list& args)
 {
     
-    if (!args(0).is_numeric_type())
+    if (!args(0).is_numeric_type ())
     {
         error("pricing_option_cpp: expecting Option type to be an integer");
         return true;
@@ -397,37 +397,37 @@ bool any_bad_argument(const octave_value_list& args)
         return true;
     }
     
-    if (!args(2).is_numeric_type())
+    if (!args(2).is_numeric_type ())
     {
         error("pricing_option_cpp: expecting S to be a numeric");
         return true;
     }
     
-    if (!args(3).is_numeric_type())
+    if (!args(3).is_numeric_type ())
     {
         error("pricing_option_cpp: expecting X to be a numeric");
         return true;
     }
     
-    if (!args(4).is_numeric_type())
+    if (!args(4).is_numeric_type ())
     {
         error("pricing_option_cpp: expecting T to be a numeric");
         return true;
     }
     
-    if (!args(5).is_numeric_type())
+    if (!args(5).is_numeric_type ())
     {
         error("pricing_option_cpp: expecting r to be a numeric");
         return true;
     }
     
-    if (!args(6).is_numeric_type())
+    if (!args(6).is_numeric_type ())
     {
         error("pricing_option_cpp: expecting sigma to be a numeric");
         return true;
     }
     
-    if (!args(7).is_numeric_type())
+    if (!args(7).is_numeric_type ())
     {
         error("pricing_option_cpp: expecting divrate to be a numeric");
         return true;

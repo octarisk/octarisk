@@ -22,6 +22,10 @@ old_dir = pwd;
 % change directory
 chdir(path_folder);
 
+% load packages
+pkg load financial;     % load financial packages (needed throughout all scripts)
+pkg load statistics;    % load statistics packages (needed throughout all scripts)
+
 % 0) check for required oct files
 if ~( exist('pricing_callable_bond_cpp') == 3)
     error('ERROR: pricing_callable_bond_cpp.oct does not exist in path. Compilation required.');

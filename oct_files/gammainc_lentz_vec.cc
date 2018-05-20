@@ -23,14 +23,14 @@
 #include <octave/parse.h>
 
 DEFUN_DLD (gammainc_lentz_vec, args, nargout, "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} {@var{f}} = gammainc_lentz_vec(@var{x},@var{a}\n\
+@deftypefn{Loadable Function} {@var{f}} = gammainc_lentz_vec(@var{x},@var{a})\n\
 \n\
 Continued fraction for incomplete gamma function (vectorized version).\n\
-This function should be called from function batainc_vec.m only.\n\
+This function should be called from function gammainc_vec.m only.\n\
 \n\
 Input and output variables:\n\
 @itemize @bullet\n\
-@item @var{x}: x value to calcluate cumulative gamma distribution\n\
+@item @var{x}: x value to calculate cumulative gamma distribution\n\
 @item @var{a}: shape parameter \n\
 @item @var{f}: return value of gamma cdf at x for a\n\
 @end itemize\n\

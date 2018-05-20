@@ -225,13 +225,13 @@ bool any_bad_argument(const octave_value_list& args)
 		return true;
     }
 
-	if (! args(1).is_numeric_type())
+	if (! args(1).is_numeric_type ())
 	{
 		error ("interpolate_surfacestruct: ARG1 must be numeric (Term)");
 		return true;
     }
 
-	if (! args(2).is_numeric_type())
+	if (! args(2).is_numeric_type ())
 	{
 		error ("interpolate_surfacestruct: ARG2 must be numeric (Tenor)");
 		return true;

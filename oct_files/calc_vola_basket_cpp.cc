@@ -126,25 +126,25 @@ Input and output variables:\n\
 bool any_bad_argument(const octave_value_list& args)
 {
     
-    if (!args(0).is_numeric_type())
+    if (!args(0).is_numeric_type ())
     {
         error("calc_vola_basket_cpp: expecting M1 to be numeric");
         return true;
     }
     
-    if (!args(1).is_numeric_type())
+    if (!args(1).is_numeric_type ())
     {
         error("calc_vola_basket_cpp: expecting TF to be numeric");
         return true;
     }
     
-    if (!args(2).is_numeric_type())
+    if (!args(2).is_numeric_type ())
     {
         error("calc_vola_basket_cpp: expecting exponents to be numeric");
         return true;
     }
     
-    if (!args(3).is_numeric_type())
+    if (!args(3).is_numeric_type ())
     {
         error("calc_vola_basket_cpp: expecting prefactors to be numeric");
         return true;

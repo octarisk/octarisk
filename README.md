@@ -39,16 +39,18 @@ Stefan Schloegl (schinzilord@octarisk.com)
 IRRer-Zins (IRRer-Zins@t-online.de)
 ## Installation
 
-You need Octave in Version >=4.0.0 with installed financial package.
+You need Octave in Version >=4.0.0 with installed financial and statistics package.
 Moreover, an efficient linear algebra package is strongly recommended (e.g. OpenBLAS / LaPACK)
 
-Just follow the following steps:
+Just follow these steps:
 - install Octave either from your distro repository (`sudo apt-get install octave` 
 or `yum install octave-forge`) or directly from the binaries
-- install Financial package. Therefore type at the Octave command line:
+- install Financial and Statistics package. Therefore type at the Octave command line
+(installation may take some minutes to complete):
 
 ```
 pkg install -forge financial
+pkg install -forge statistics
 ```
 
 - clone the Octarisk repository or download the latest 
@@ -105,6 +107,7 @@ in order to provide full Matlab compatibility.
 
 ## Version history
 
+- Version 0.4.3   fixed compatibility issues with Octave 4.4.0 release, minor bug fixes, more statistical tests
 - Version 0.4.2   introduction of CDS and Sobol number generator, minor bug fixes
 - Version 0.4.1   introduction of a GUI and a batch mode, minor bug fixes
 - Version 0.4.0   massive speed impprovements, enhanced documentation, modified stress test interface

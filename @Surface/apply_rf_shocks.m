@@ -8,12 +8,9 @@ function [surface] = apply_rf_shocks (surface, riskfactor_struct)
   
 % check for empty risk factor definition
 if (length(surface.riskfactors) == 0)
-    break
-elseif (length(surface.riskfactors) == 1)
-    if (isempty(surface.riskfactors{1}))
-        break
-    end
-end
+    %break
+elseif (length(surface.riskfactors) > 0 && ~isempty(surface.riskfactors{1}))
+
 % what is done here:
 % - get all underlying risk factors
 % - get all shock values of each risk factor (for  MC scenarios only)
@@ -77,4 +74,5 @@ end
     end
     % store final struct and return object
     surface.shock_struct = shock_struct;
+end % end break else condition
 end

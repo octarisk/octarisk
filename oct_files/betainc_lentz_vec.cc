@@ -21,7 +21,7 @@
 #include <octave/parse.h>
 
 DEFUN_DLD (betainc_lentz_vec, args, nargout, "-*- texinfo -*-\n\
-@deftypefn{Loadable Function} {@var{f}} = betainc_lentz_vec(@var{y},@var{a},@var{b}\n\
+@deftypefn{Loadable Function} {@var{f}} = betainc_lentz_vec(@var{y},@var{a},@var{b})\n\
 \n\
 Continued fraction for incomplete gamma function (vectorized version).\n\
 This function should be called from function batainc_vec.m only.\n\

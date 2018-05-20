@@ -5,6 +5,12 @@ Possible new features:
 - Introduction of Total Return Swaps
 - Introduction of FX Swaps
 
+### 0.4.3, 2018/05/20
+Version v0.4.3 is a minor release with bug fixes and some more features
+- fixed a compatibility issue with Octave 4.4.0
+- refactoring of script for cash flow rollout for better readability and maintainability
+- introduced more statistical tests for scenario generation
+
 ### 0.4.2, 2017/12/10
 Version v0.4.2 is a minor release with new features, performance improvements and bug fixes
 - implemented credit default swaps

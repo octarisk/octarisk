@@ -93,7 +93,7 @@ bool any_bad_argument(const octave_value_list& args)
 		return true;
     }
 
-	if (! args(1).is_numeric_type())
+	if (! args(1).is_numeric_type ())
 	{
 		error ("calculate_npv_cpp: ARG1 must be numeric (discount factors)");
 		return true;
