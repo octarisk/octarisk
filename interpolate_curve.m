@@ -114,10 +114,6 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
     if ( timestep <= min(nodes) ) % constant or linear extrapolation
         if ( strcmpi(method_extrapolation,'linear'))
             y = interp1(nodes',rates',timestep,'linear','extrap')';
-            disp("next next")
-            nodes
-            rates
-            timestep
             return
         else
             [minval tmp_idx] = min(nodes);
@@ -157,18 +153,36 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
             end
             
         elseif (strcmpi(method,'constant'))          % constant interpolation 
-            % take octaves built-in interpolation 
             % -> next neighbour for compatiblity reasons (used for hist rates)
-            if ( all(nodes(2:end) < 0))
-                y = interp1(nodes',rates',timestep,'next')';
-            else
-                y = interp1(nodes',rates',timestep,'previous')';
+            if ( all(nodes(2:end) < 0)) % previous method
+                for ii = 1 : 1 : (no_scen_nodes - 1)
+                    if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
+                         y = rates(:,ii+1); 
+                         return;           
+                    end
+                end 
+            else    % next method
+                for ii = 1 : 1 : (no_scen_nodes - 1)
+                    if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
+                         y = rates(:,ii); 
+                         return;           
+                    end
+                end
             end
         elseif (strcmpi(method,'previous'))      % mapping to previous neighbour 
-            y = interp1(nodes',rates',timestep,'previous')';
-            
+            for ii = 1 : 1 : (no_scen_nodes - 1)
+                if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
+                     y = rates(:,ii); 
+                     return;           
+                end
+            end
         elseif (strcmpi(method,'next'))          % mapping to next neighbour 
-            y = interp1(nodes',rates',timestep,'next')';    
+            for ii = 1 : 1 : (no_scen_nodes - 1)
+                if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
+                     y = rates(:,ii+1); 
+                     return;           
+                end
+            end   
             
         elseif (strcmpi(method,'loglinear'))
             for ii = 1 : 1 : (no_scen_nodes - 1)

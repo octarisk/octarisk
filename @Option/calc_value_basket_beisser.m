@@ -1,6 +1,6 @@
 function obj = calc_value_basket_beisser(option,valuation_date,value_type,sigma_bar,basket_dict)
 % Calculate Basket volatility assuming Beisser model for European Options (modify strike and volatility)
-% according to the Paper "Pricing of arithmetic basket options by conditioning" b
+% according to the Paper "Pricing of arithmetic basket options by conditioning" by
 % Deelstra et al., Insurance: Mathematics and Economics 34 (2004) 55–77
 % Formulas taken from equation 35 and 36
     
@@ -36,16 +36,14 @@ end
 
 %####################################   Helper Function   ######################
 function theo_value = option_basket_beisser(call_flag,S,w,K,sigma,rf,TF)
-
     % calculate Beisser basket option price
     d1 = (log(S ./ K) + ( rf + 0.5 .*sigma .^2) .* TF) ./ ( sigma .* sqrt(TF) );
     d2 = d1 - sigma .* sqrt(TF);
-
-    if ( call_flag)
-        theo_value = sum( w .* ( S .* normcdf(d1) - exp(-rf .* TF) .* K .* normcdf(d2) ),2);
-    else
+    % calculate call price
+    theo_value = sum( w .* ( S .* normcdf(d1) - exp(-rf .* TF) .* K .* normcdf(d2) ),2);
+    if ( call_flag == false)
         % Put-Call-Parity
-        theo_value = Callprice_min - (sum(w.*S,2) - option.strike .* exp(-rf * TF));
+        theo_value = theo_value - sum(w .* S - K .* exp(-rf * TF),2);
     end
     
 end
