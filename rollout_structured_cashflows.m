@@ -1216,16 +1216,6 @@ function para = get_cfvalues_FRN_FWD_SPECIAL(valuation_date, value_type, para, i
                 fsd  = t2;
                 fed  = t2 + (t2 - t1);
             end
-                        
-            % calculate timing adjustment
-            timing_adjustment = 1;
-            if ( instrument.in_arrears == 0)    % in fine
-                fsd  = t1;
-                fed  = t2;
-            else    % in arrears
-                fsd  = t2;
-                fed  = t2 + (t2 - t1);
-            end
             
             % calculate forward rates and build average of historical rates 
             % Loop via all dates in [fsd,fsd-sliding_term] and get rates
@@ -1305,6 +1295,8 @@ function para = get_cfvalues_FRNCAPFLOOR(valuation_date, value_type, para, instr
         if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rate
             payment_date        = t2;
             % adjust forward start and end date for in fine vs. in arrears
+            % TODO: Coupon_Prepay = "discount" not implemented 
+            %       (discount CF value from CF end date to CF start date)
             if ( instrument.in_arrears == 0)    % in fine
                 fsd  = t1;
                 fed  = t2;

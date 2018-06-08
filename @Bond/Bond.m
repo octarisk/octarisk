@@ -96,7 +96,7 @@ classdef Bond < Instrument
         % Forward rate agreement
         strike_rate             = 0.0; % strike rate (cont, act/365)
         underlying_maturity_date = '01-Jan-1900';
-        coupon_prepay           = 'discount'; % in ['discount','in fine'];
+        coupon_prepay           = 'discount'; % in ['discount','in fine','in arrears'];
         
         % Forward volatility / variance agreement
         fva_type                = 'volatility'; % in ['volatility','variance']
@@ -420,10 +420,16 @@ classdef Bond < Instrument
       end % set.rate_composition
   
       function obj = set.coupon_prepay(obj,coupon_prepay)
-         if ~(strcmpi(coupon_prepay,'discount') || strcmpi(coupon_prepay,'in fine'))
+         if ~(strcmpi(coupon_prepay,'discount') || strcmpi(coupon_prepay,'in fine') || strcmpi(coupon_prepay,'in arrears'))
             error('Bond coupon_prepay must be in [Discount,in Fine] : >>%s<< for id >>%s<<.\n',coupon_prepay,obj.id);
          end
          obj.coupon_prepay = tolower(coupon_prepay);
+         if (strcmpi(coupon_prepay,'in fine') || strcmpi(coupon_prepay,'discount'))
+            obj.in_arrears = false;
+         else
+            obj.in_arrears = true;
+         end
+         
       end % set.coupon_prepay
       
       function obj = set.term_unit(obj,term_unit)
