@@ -29,17 +29,15 @@
 %# @item @var{F}: forward rate of underlying interest rate (forward in T years for tau years)
 %# @item @var{X}: strike rate 
 %# @item @var{T}: time in days to maturity
-%# @item @var{r}: annual risk-free interest rate (continuously compounded)
 %# @item @var{sigma}: implied volatility of the interest rate measured as annual standard deviation
-%# @item @var{m}: Number of Payments per year (m = 2 -> semi-annual) (continuous compounding is assumed)
-%# @item @var{tau}: Tenor of underlying swap in Years 
+%# @item @var{Annuity}: Annuity (Sum of discount factors for underlying term dates)
 %# @end itemize
 %# @seealso{option_bs}
 %# @end deftypefn
 
-function SwaptionBachelierValue = swaption_bachelier(PayerReceiverFlag,F,X,T,r,sigma,m,tau)
+function SwaptionBachelierValue = swaption_bachelier(PayerReceiverFlag,F,X,T,sigma,Annuity)
  
- if nargin < 8 || nargin > 8
+ if nargin < 6 || nargin > 6
     print_usage ();
  end
    
@@ -53,46 +51,32 @@ elseif ~isnumeric (T)
     error ('Time T in years must be numeric ')
 elseif ( T < 0)
     error ('Time T must be positive ')    
-elseif ~isnumeric (r)
-    error ('Riskfree rate r must be numeric ')    
 elseif ~isnumeric (sigma)
     error ('Implicit volatility sigma must be numeric ') 
-elseif ~isnumeric (m)
-    error ('Number of payments must be numeric ') 
-elseif (m < 0)
-    error ('Number of payments must be positive ')    
-elseif (tau < 0)
-    error ('Tenor of underlying swap must be positive ') 
-elseif ~isnumeric (tau)
-    error ('Tenor of underlying swap must be numeric ')     
+elseif ~isnumeric (Annuity)
+    error ('Annuity must be numeric ')       
 elseif ( sigma < 0)
     error ('Volatility sigma must be positive ')        
 end
 T = T ./ 365;
 
-% C = ((F-X)*N(d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)
-%# P = ((X-F)*N(-d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)
-    d1 = (F-X)./(sigma.*sqrt(T));
+d1 = (F-X)./(sigma.*sqrt(T));
     
-% Calculation of BS Price
-if ( PayerReceiverFlag == 1 ) % Call / Payer swaption 'p'
+% Calculation of Bachelier Price
+if ( PayerReceiverFlag == 1 ) % Call / Payer swaption
     N1 = 0.5.*(1+erf(d1./sqrt(2)));
     n1 = exp(- d1 .^2 /2)./sqrt(2*pi);
-    value = ((F-X).*N1 + sigma.*sqrt(T).*n1).*exp(-r.*T);
-else   % Put / Receiver swaption 'r'  
+    value = sigma.*sqrt(T).*Annuity.*(d1.*N1+n1);
+else   % Put / Receiver swaption  
     N1 = 0.5.*(1+erf(-d1./sqrt(2)));
     n1 = exp(- d1 .^2 /2)./sqrt(2*pi);
-    value = ((X-F).*N1 + sigma.*sqrt(T).*n1).*exp(-r.*T);
+    value = sigma.*sqrt(T).*Annuity.*((-d1).*N1+n1);
 end
 
-   
-% Calculate continuous compounding multiplicator for tenor of swap
-multi = (1 - (1 ./ ((1 + F ./ m) .^ (tau .* m)))) ./ F;
-
 % Return total Swaption Value
-SwaptionBachelierValue = value .* multi;
+SwaptionBachelierValue = value;
   
 end
 
-%!assert(swaption_bachelier(1,0.0609090679070339,0.062,1825,0.06,0.01219,2,3) * 100, 2.07117344171174,0.00001);
-%!assert(swaption_bachelier(0,0.0609090679070339,0.062,1825,0.06,0.01219,2,3) * 100, 2.28974797561069,0.00001);
+%!assert(swaption_bachelier(1,1.954904222037591e-002,0.03,3650,6.656275999999999e-003,8.2844976761307) * 100, 3.468017499703750,0.00000001);
+%!assert(swaption_bachelier(0,1.954904222037591e-002,0.03,3650,6.656275999999999e-003,8.2844976761307) * 100,  12.12611104356729,0.00000001);

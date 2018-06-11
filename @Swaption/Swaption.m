@@ -11,6 +11,8 @@ classdef Swaption < Instrument
         underlying = 'RF_IF_EUR';
         vola_surface = 'RF_VOLA_IR_EUR';
         vola_sensi = 1;
+        term = 365;     
+        term_unit = 'days';         % can be [days,months,years]
         strike = 0.025;
         spot = 0.025;
         multiplier = 100;           % only used if valued without underlyings
@@ -61,7 +63,8 @@ classdef Swaption < Instrument
       function disp(b)
          disp@Instrument(b)
          fprintf('sub_type: %s\n',b.sub_type);                   
-         fprintf('maturity_date: %s\n',b.maturity_date);      
+         fprintf('maturity_date: %s\n',b.maturity_date);   
+         fprintf('term: %d %s\n',b.term,b.term_unit);
          fprintf('strike: %f \n',b.strike);
          fprintf('multiplier: %f \n',b.multiplier);          
          fprintf('vola_surface: %s\n',b.vola_surface ); 
@@ -127,6 +130,14 @@ classdef Swaption < Instrument
         end
         obj.model = model;
       end % set.model
+      
+      function obj = set.term_unit(obj,term_unit)
+         if ~(strcmpi(term_unit,'days') || strcmpi(term_unit,'months') ...
+                || strcmpi(term_unit,'years'))
+            error('Bond term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',term_unit,obj.id);
+         end
+         obj.term_unit = tolower(term_unit);
+      end % set.term_unit
       
    end 
    
