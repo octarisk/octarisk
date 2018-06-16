@@ -24,10 +24,10 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
     % Get input variables
     
     % get days in period
-    matdatedatenum = datenum(obj.maturity_date,1);
+    matdatenum = datenum(obj.maturity_date,1);
     [tmp_tf tmp_effdate dib]  = timefactor (valuation_date, ...
-                                matdatedatenum, obj.basis);
-    tmp_effdate =  matdatedatenum - valuation_date;
+                                matdatenum, obj.basis);
+    tmp_effdate =  matdatenum - valuation_date;
     annuity_dates = [];
     % calculating swaption maturity date: effdate + tenor
     if (strcmpi(obj.term_unit,'days'))
@@ -137,6 +137,7 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
                  xx,yy,tmp_moneyness) + tmp_impl_vola_spread;
             %TODO: implementation for cont rates only, allow any forward rates
             if ( regexpi(tmp_model,'black'))
+                tmp_forward_shock = max(0.0001,tmp_forward_shock); %apply floor
                 theo_value      = swaption_black76(call_flag,tmp_forward_shock, ...
                                         tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
                                         tmp_imp_vola_shock,tmp_swap_no_pmt, ...
@@ -144,7 +145,7 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
             else
                 theo_value      = swaption_bachelier(call_flag,tmp_forward_shock, ...
                                         tmp_strike,tmp_effdate, ...
-                                        tmp_imp_vola_shock,Annuity) .* tmp_multiplier          
+                                        tmp_imp_vola_shock,Annuity) .* tmp_multiplier;         
             end
         else    % pricing with underlying float and fixed leg
             % make sure underlying objects are existing

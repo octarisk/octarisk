@@ -55,8 +55,8 @@ elseif ~isnumeric (sigma)
     error ('Implicit volatility sigma must be numeric ') 
 elseif ~isnumeric (Annuity)
     error ('Annuity must be numeric ')       
-elseif ( sigma < 0)
-    error ('Volatility sigma must be positive ')        
+elseif ~( isempty(sigma(sigma< 0)))
+    error ('Volatility sigma must be positive ')      
 end
 T = T ./ 365;
 
