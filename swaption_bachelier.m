@@ -35,7 +35,7 @@
 %# @seealso{option_bs}
 %# @end deftypefn
 
-function SwaptionBachelierValue = swaption_bachelier(PayerReceiverFlag,F,X,T,sigma,Annuity)
+function value = swaption_bachelier(PayerReceiverFlag,F,X,T,sigma,Annuity)
  
  if nargin < 6 || nargin > 6
     print_usage ();
@@ -72,9 +72,6 @@ else   % Put / Receiver swaption
     n1 = exp(- d1 .^2 /2)./sqrt(2*pi);
     value = sigma.*sqrt(T).*Annuity.*((-d1).*N1+n1);
 end
-
-% Return total Swaption Value
-SwaptionBachelierValue = value;
   
 end
 

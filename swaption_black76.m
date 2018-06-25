@@ -76,9 +76,7 @@ elseif (m < 0)
 elseif (tau < 0)
     error ('Tenor of underlying swap must be positive ') 
 elseif ~isnumeric (tau)
-    error ('Tenor of underlying swap must be numeric ')     
-elseif ( sigma < 0)
-    error ('Volatility sigma must be positive ')        
+    error ('Tenor of underlying swap must be numeric ')           
 end
 T = T ./ 365;
     d1 = (log(F./X) + (0.5.*sigma.^2).*T)./(sigma.*sqrt(T));
