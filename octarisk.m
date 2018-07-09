@@ -495,20 +495,19 @@ if (run_mc == true)
         % take values from file in static folder, if already calculated
         tmp_filename = strcat(path_static,'/hd_vec_',num2str(mc),'.mat');
         if ( exist(tmp_filename,'file'))
-            fprintf('Taking file >>%s<< with HD vector in static folder\n',tmp_filename);
+            fprintf('HD Vector: Taking file >>%s<< from static folder\n',tmp_filename);
             tmp_load_struct = load(tmp_filename);
             hd_vec= tmp_load_struct.hd_vec;
         else % otherwise calculate HD vector and save it to static folder
-            fprintf('New HD vector is calculated for %d MC scenarios and saved in static foler\n',mc);
+            fprintf('New HD vector is calculated for %d MC scenarios and saved in static folder\n',mc);
             minhd           = min(2*confi_scenario+1,mc);
             hd_vec_min      = zeros(max(confi_scenario-500,0)-1,1);
             hd_vec_max      = zeros(mc-min(confi_scenario+500,mc),1);
             tt              = max(confi_scenario-500,1):1:min(confi_scenario+500,mc);
-            hd_vec_func     = harrell_davis_weight(mc,tt,confi);
+            hd_vec_func     = get_quantile_estimator('hd',mc,tt,confi);
             hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
             save ('-v7',tmp_filename,'hd_vec');
         end
-        %size_hdvec = size(hd_vec);
     else  % make dummy hdvec with weight 1 at confidence scenario
         hd_vec = zeros(mc,1);
         hd_vec(confi_scenario) = 1.0;       

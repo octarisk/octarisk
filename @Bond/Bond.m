@@ -173,19 +173,19 @@ classdef Bond < Instrument
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('basis: %d\n',b.basis); 
          fprintf('Notional: %f %s\n',b.notional,b.currency); 
-         fprintf('coupon_rate: %f\n',b.coupon_rate);  
+         fprintf('coupon_rate: %f %% %s %s\n',b.coupon_rate .* 100,b.compounding_type,b.day_count_convention);  
          fprintf('coupon_generation_method: %s\n',b.coupon_generation_method ); 
          fprintf('business_day_rule: %d\n',b.business_day_rule); 
          fprintf('business_day_direction: %d\n',b.business_day_direction); 
          fprintf('enable_business_day_rule: %d\n',b.enable_business_day_rule); 
-         fprintf('spread: %f\n',b.spread); 
-         fprintf('spread over yield: %f\n',b.soy); 
+         fprintf('spread: %f %% %s %s\n',b.spread .* 100,b.compounding_type,b.day_count_convention); 
+         fprintf('spread over yield: %f %% cont act/365\n',b.soy .* 100); 
+         fprintf('yield to maturity: %f %% annual act/365\n',b.ytm .* 100); 
          fprintf('long_first_period: %d\n',b.long_first_period); 
          fprintf('long_last_period: %d\n',b.long_last_period);  
-         fprintf('last_reset_rate: %f\n',b.last_reset_rate); 
+         fprintf('last_reset_rate: %f %% %s %s\n',b.last_reset_rate .* 100,b.compounding_type,b.day_count_convention); 
          fprintf('discount_curve: %s\n',b.discount_curve); 
          fprintf('reference_curve: %s\n',b.reference_curve); 
-         fprintf('spread_curve: %s\n',b.spread_curve); 
          fprintf('accrued_interest: %f\n',b.accrued_interest); 
          fprintf('last_coupon_date: %d\n',b.last_coupon_date);
          fprintf('principal_payment: %f\n',b.principal_payment); 
@@ -194,6 +194,17 @@ classdef Bond < Instrument
          fprintf('prorated: %s\n',any2str(b.prorated)); 
          fprintf('in_arrears: %s\n',any2str(b.in_arrears)); 
          fprintf('credit_state: %s\n',any2str(b.credit_state)); 
+         if ~( isempty(b.mac_duration))
+            fprintf('mod_duration: %s\n',any2str(b.mod_duration)); 
+            fprintf('mac_duration: %s\n',any2str(b.mac_duration)); 
+            fprintf('eff_duration: %s\n',any2str(b.eff_duration)); 
+            fprintf('dollar_duration: %s\n',any2str(b.dollar_duration)); 
+            fprintf('convexity: %s\n',any2str(b.convexity)); 
+            fprintf('eff_convexity: %s\n',any2str(b.eff_convexity)); 
+            fprintf('dv01: %s\n',any2str(b.dv01)); 
+            fprintf('pv01: %s\n',any2str(b.pv01)); 
+            fprintf('spread_duration: %s\n',any2str(b.spread_duration)); 
+         end
          if ~( isempty(b.key_rate_eff_dur))
             fprintf('Key rate term: %s\n',any2str(b.key_term)); 
             fprintf('Key rate Effective Duration: %s\n',any2str(b.key_rate_eff_dur));

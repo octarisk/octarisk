@@ -165,6 +165,7 @@ elseif ( strfind(tmp_type,'option') > 0 )
     else
     % 2nd Case: Option on single underlying, take real objects
         if ~( strcmpi(class(tmp_underlying_obj),'Index'))   % valuate instruments only
+            tmp_underlying_obj = tmp_underlying_obj.del_scen_data;
             tmp_underlying_obj = tmp_underlying_obj.valuate(valuation_date, scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
@@ -335,6 +336,8 @@ elseif (strcmpi(tmp_type,'forward') )
             else
             % calculate underlying values
                 if ~( strcmpi(class(tmp_underlying_object),'Index'))   % valuate instruments only
+                    % delete scenario values (in any case)
+                    tmp_underlying_object = tmp_underlying_object.del_scen_data;
                     tmp_underlying_object = tmp_underlying_object.valuate(valuation_date, scenario, ...
                                         instrument_struct, surface_struct, ...
                                         matrix_struct, curve_struct, index_struct, ...
@@ -349,14 +352,29 @@ elseif (strcmpi(tmp_type,'forward') )
             fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
         end
 
-    %Calculate values of equity forward
+    if ( sum(strcmpi(forward.sub_type,{'FX','Bond','BONDFWD'}))>0)
+        tmp_und_curve_id            = tmp_underlying_object.get('discount_curve');            
+        [tmp_und_crv_obj ret_code]  = get_sub_object(curve_struct, tmp_und_curve_id); 
+        if ( ret_code == 0 )
+            fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_und_curve_id);
+        end
+    else
+        tmp_und_crv_obj = [];
+    end
+    %Calculate values of  forward
     if (~strcmpi(scenario,'base') )
     % Base value
-        forward = forward.calc_value(valuation_date,'base',tmp_curve_object,tmp_underlying_object);
+        forward = forward.calc_value(valuation_date,'base',tmp_curve_object, ...
+                        tmp_underlying_object,tmp_und_crv_obj,index_struct);
     end
+    % calculate sensitivities
+        forward = forward.calc_sensitivities(valuation_date,tmp_curve_object, ...
+                        tmp_underlying_object,tmp_und_crv_obj,index_struct);
+    
     % calculation of value for scenario               
-        forward = forward.calc_value(valuation_date,scenario,tmp_curve_object,tmp_underlying_object);
-
+        forward = forward.calc_value(valuation_date,scenario,tmp_curve_object, ...
+                        tmp_underlying_object,tmp_und_crv_obj,index_struct);
+    
     % store bond object:
     ret_instr_obj = forward;
     
@@ -608,7 +626,11 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         end
         % final valuation of bond
         bond = bond.calc_value (valuation_date,scenario,tmp_curve_object);
-
+        
+        % calculate yield to maturity
+        if (strcmpi(scenario,'base') )
+            bond = bond.calc_yield_to_mat(valuation_date);
+        end
 
     % e) store bond object:
     ret_instr_obj = bond;

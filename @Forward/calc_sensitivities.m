@@ -1,4 +1,4 @@
-function obj = calc_sensitivities (forward,valuation_date,discount_curve_object,underlying_object,und_curve_object)
+function obj = calc_sensitivities (forward,valuation_date,discount_curve_object,underlying_object,und_curve_object,fx)
 % calculate sensitivities of forwards and futures by numerical approximation
   obj = forward;
    if ( nargin < 3)
@@ -11,6 +11,17 @@ function obj = calc_sensitivities (forward,valuation_date,discount_curve_object,
     if ( nargin < 4 )
         error('No underlying_object set for value_type not being base.');
     end
+    
+    if ( ~strcmpi(forward.currency,underlying_object.currency) && nargin < 6)
+        error('Currency of forward and underlying are not equal. FX object required.');
+    elseif ( ~strcmpi(forward.currency,underlying_object.currency) && nargin == 6 ) 
+        if ( ~isobject(fx) && ~isstruct(fx))
+            error('Forward: Provided FX variable is neither object nor struct.\n');
+        end
+    else
+        fx = [];
+    end
+    
     if (ischar(valuation_date))
         valuation_date = datenum(valuation_date,1);
     end
@@ -34,40 +45,40 @@ function obj = calc_sensitivities (forward,valuation_date,discount_curve_object,
         if ( sum(strcmpi(obj.sub_type,{'BondFuture','EquityFuture','Equity','EQFWD'})) > 0 )
             % get base values:
             theo_value_base = pricing_forward(valuation_date,value_type,obj, ...
-                                        discount_curve_object, underlying_object);
+                                        discount_curve_object, underlying_object,[],fx);
 
             % shock underlying value up and down by 1%:
             underlying_object_tmp = underlying_object.set('value_base', ...
                                     underlying_object.get('value_base') .* 0.99);
             undvalue_down   = pricing_forward(valuation_date,value_type,obj, ...
-                    discount_curve_object, underlying_object_tmp);
+                    discount_curve_object, underlying_object_tmp,[],fx);
             
             underlying_object_tmp = underlying_object.set('value_base', ...
                                     underlying_object.get('value_base') .* 1.01);           
             undvalue_up     = pricing_forward(valuation_date,value_type,obj, ...
-                    discount_curve_object, underlying_object_tmp);
+                    discount_curve_object, underlying_object_tmp,[],fx);
             
             % shock domestic curve values up and down by 1bp:
             domestic_curve  = discount_curve_object.set('rates_base', ...
                                 discount_curve_object.get('rates_base') - 0.0001);  
             rfrate_down     = pricing_forward(valuation_date,value_type,obj, ...
-                    domestic_curve, underlying_object);
+                    domestic_curve, underlying_object,[],fx);
             
             domestic_curve  = discount_curve_object.set('rates_base', ...
                                 discount_curve_object.get('rates_base') + 0.0001);  
             rfrate_up       = pricing_forward(valuation_date,value_type,obj, ...
-                    domestic_curve, underlying_object);
+                    domestic_curve, underlying_object,[],fx);
 
             % shock maturity date forward and back by 1 day:
             obj_tmp = obj.set('maturity_date', ...
                                 datestr(datenum(obj.get('maturity_date')) - 1));    
             time_down       = pricing_forward(valuation_date,value_type,obj_tmp, ...
-                    discount_curve_object, underlying_object);
+                    discount_curve_object, underlying_object,[],fx);
             
             obj_tmp = obj.set('maturity_date', ...
                                 datestr(datenum(obj.get('maturity_date')) + 1));
             time_up         = pricing_forward(valuation_date,value_type,obj_tmp, ...
-                    discount_curve_object, underlying_object);
+                    discount_curve_object, underlying_object,[],fx);
                     
             % calculate sensitivities
             theo_delta  = (undvalue_up - undvalue_down) ...
@@ -88,51 +99,51 @@ function obj = calc_sensitivities (forward,valuation_date,discount_curve_object,
                     
             % get shocked base values:
             theo_value_base = pricing_forward(valuation_date,value_type,obj, ...
-                    discount_curve_object, underlying_object, und_curve_object);
+                    discount_curve_object, underlying_object, und_curve_object,fx);
             
             % shock underlying value up and down by 1%:
             underlying_object_tmp = underlying_object.set('value_base', ...
                                     underlying_object.get('value_base') .* 0.99);
             undvalue_down   = pricing_forward(valuation_date,value_type,obj, ...
-                    discount_curve_object, underlying_object_tmp, und_curve_object);
+                    discount_curve_object, underlying_object_tmp, und_curve_object,fx);
             
             underlying_object_tmp = underlying_object.set('value_base', ...
                                     underlying_object.get('value_base') .* 1.01);           
             undvalue_up     = pricing_forward(valuation_date,value_type,obj, ...
-                    discount_curve_object, underlying_object_tmp, und_curve_object);
+                    discount_curve_object, underlying_object_tmp, und_curve_object,fx);
             
             % shock domestic curve values up and down by 1bp:
             domestic_curve  = discount_curve_object.set('rates_base', ...
                                 discount_curve_object.get('rates_base') - 0.0001);  
             rfrate_down     = pricing_forward(valuation_date,value_type,obj, ...
-                    domestic_curve, underlying_object, und_curve_object);
+                    domestic_curve, underlying_object, und_curve_object,fx);
             
             domestic_curve  = discount_curve_object.set('rates_base', ...
                                 discount_curve_object.get('rates_base') + 0.0001);  
             rfrate_up       = pricing_forward(valuation_date,value_type,obj, ...
-                    domestic_curve, underlying_object, und_curve_object);
+                    domestic_curve, underlying_object, und_curve_object,fx);
             
             % shock foreign curve values up and down by 1bp:
             foreign_curve  = und_curve_object.set('rates_base', ...
                                 und_curve_object.get('rates_base') - 0.0001);   
             rfrate_down_for = pricing_forward(valuation_date,value_type,obj, ...
-                    discount_curve_object, underlying_object, foreign_curve);
+                    discount_curve_object, underlying_object, foreign_curve,fx);
             
             foreign_curve  = und_curve_object.set('rates_base', ...
                                 und_curve_object.get('rates_base') + 0.0001);           
             rfrate_up_for   = pricing_forward(valuation_date,value_type,obj, ...
-                    discount_curve_object, underlying_object, foreign_curve);
+                    discount_curve_object, underlying_object, foreign_curve,fx);
             
             % shock maturity date forward and back by 1 day:
             obj_tmp = obj.set('maturity_date', ...
                                 datestr(datenum(obj.get('maturity_date')) - 1));    
             time_down       = pricing_forward(valuation_date,value_type,obj_tmp, ...
-                    discount_curve_object, underlying_object, und_curve_object);
+                    discount_curve_object, underlying_object, und_curve_object,fx);
             
             obj_tmp = obj.set('maturity_date', ...
                                 datestr(datenum(obj.get('maturity_date')) + 1));
             time_up         = pricing_forward(valuation_date,value_type,obj_tmp, ...
-                    discount_curve_object, underlying_object, und_curve_object);
+                    discount_curve_object, underlying_object, und_curve_object,fx);
                     
             % calculate sensitivities
             theo_delta  = (undvalue_up - undvalue_down) ...

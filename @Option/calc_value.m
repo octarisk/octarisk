@@ -37,9 +37,14 @@ function obj = calc_value(option,valuation_date,value_type,underlying,discount_c
         S_delta      = underlying.getValue(value_type); 
         S            = Riskfactor.get_abs_values('GBM', S_delta, obj.spot);
         S_base       = underlying.getValue('base'); 
-    else    % underlying is a Index
+    else    % underlying is an Index or Instrument
         S            = underlying.getValue(value_type); 
         S_base       = underlying.getValue('base');
+    end
+    
+    % warning if non equal currencies
+    if ( ~strcmpi(option.currency,underlying.currency))
+        warning('Option Currency %s does not match underlying currency %s \n',option.currency,underlying.currency);
     end
     mc = length(S);
 
@@ -56,18 +61,13 @@ function obj = calc_value(option,valuation_date,value_type,underlying,discount_c
       % sigma needs to be positive
         sigma(sigma<=0) = sqrt(eps);
       % Convert interest rates into act/365 continuous (used by pricing)     
-        r = convert_curve_rates(    valuation_date, ...
-                                    tmp_dtm, ...
-                                    tmp_rf_rate, ...
-                                    comp_type_curve, ...
-                                    comp_freq_curve, ...
-                                    basis_curve, ...
-                                    'cont','annual',3);
+        r = convert_curve_rates(    valuation_date, tmp_dtm, ...
+                                    tmp_rf_rate, comp_type_curve, ...
+                                    comp_freq_curve, basis_curve, 'cont','annual',3);
         q = obj.get('div_yield');
         
       % Convert timefactor from Instrument basis to pricing basis (act/365)
-        T  = timefactor (   valuation_date, ...
-                            valuation_date + tmp_dtm, ...
+        T  = timefactor (   valuation_date, valuation_date + tmp_dtm, ...
                             obj.basis) .* 365;
       
       % Valuation for: European plain vanilla options
@@ -151,6 +151,27 @@ function obj = calc_value(option,valuation_date,value_type,underlying,discount_c
     else  
         obj = obj.set('timestep_mc',value_type);
         obj = obj.set('value_mc',theo_value);
+    end
+    
+    
+    % set exposure
+    if ( strcmpi(obj.exposure_type,'exposure_from_value'))
+        if ( regexp(value_type,'stress'))
+            obj = obj.set('exposure_stress',theo_value);
+        elseif ( strcmp(value_type,'base'))
+            obj = obj.set('exposure_base',theo_value(1));
+        else
+            obj = obj.set('exposure_mc',theo_value);
+        end
+    elseif ( strcmpi(obj.exposure_type,'delta_x_underlyingvalue'))
+        val = underlying.getValue(value_type) .* obj.theo_delta;
+        if ( regexp(value_type,'stress'))
+            obj = obj.set('exposure_stress',val);
+        elseif ( strcmp(value_type,'base'))
+            obj = obj.set('exposure_base',val);
+        else
+            obj = obj.set('exposure_mc',val);
+        end    
     end
     
 end

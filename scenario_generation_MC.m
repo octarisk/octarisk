@@ -106,12 +106,14 @@ new_corr = false;
         end
         
         % apply Copula
-        if ( strcmp(copulatype, 'Gaussian') == 1 ) % Gaussian copula   
+        if ( strcmpi(copulatype, 'Gaussian') ) % Gaussian copula   
             % draw random variables from multivariate normal distribution
             Y   = mvnrnd_custom(zeros(1,dim),corr_matrix,mc,randn_matrix);  
-        elseif ( strcmp(copulatype, 't') == 1) % t-copula 
+        elseif ( strcmpi(copulatype, 't')) % t-copula 
             % draw random variables from multivariate student-t distribution
-            Y   = mvtrnd_custom(corr_matrix,nu,mc,randn_matrix);     
+            Y   = mvtrnd_custom(corr_matrix,nu,mc,randn_matrix);    
+        else
+            error('scenario_generation_MC: unknown Copula type >>%s<<. Must be >>t<< or >>Gaussian<<.\n',copulatype);
         end
         if (stable_seed == 1)
             save ('-v7',tmp_filename,'Y');
@@ -125,6 +127,8 @@ if ( strcmpi(copulatype, 'Gaussian') ) % Gaussian copula
     Z   = normcdf(Y,0,1);                % generate bivariate normal copula
 elseif ( strcmpi(copulatype, 't')) % t-copula 
     Z   = tcdf(Y,nu);                   % generate bivariate normal copula
+else
+    error('scenario_generation_MC: unknown Copula type >>%s<<. Must be >>t<< or >>Gaussian<<.\n',copulatype);
 end
 
 %     statistical checks:
