@@ -74,6 +74,10 @@ switch (kernel)
     
 end % end switch
 
+% return column vector
+if rows(w) < columns(w)
+    w = w';
+end
   
 end
 

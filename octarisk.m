@@ -150,9 +150,10 @@ mc_scen_analysis = para_object.mc_scen_analysis;
 stable_seed = para_object.stable_seed;
 aggregation_flag = para_object.aggregation_flag;
 % valuation parameters
-mc = para_object.mc;
-hd_limit = para_object.hd_limit;   
-quantile = para_object.quantile;   
+mc = para_object.mc; 
+quantile = para_object.quantile; 
+quantile_estimator = para_object.quantile_estimator;    
+quantile_bandwidth = para_object.quantile_bandwidth; 
 copulatype = para_object.copulatype;    
 nu = para_object.nu; 
 rnd_number_gen = para_object.rnd_number_gen;
@@ -285,10 +286,10 @@ parseinput = toc;
 tic;
 %-----------------------------------------------------------------
 if (run_mc == true)
-    % special adjustment needed for HD vec if testing is performed with small MC numbers
-    if ( mc < 1000 ) 
-        hd_limit = mc - 1;
-    end
+    % % special adjustment needed for HD vec if testing is performed with small MC numbers
+    % if ( mc < 1000 ) 
+        % hd_limit = mc - 1;
+    % end
 
     % a.) Load input correlation matrix
 
@@ -488,10 +489,10 @@ idx_figure = 0;
 confi = 1 - quantile
 confi_scenario = max(round(confi * mc),1);
 position_failed_cell = {};
-% before looping via all portfolio make one time Harrel Davis Vector:
+% before looping via all portfolio make one time Harrell Davis Vector:
 if (run_mc == true)
-    % HD VaR only if number of scenarios < hd_limit
-    if ( mc < hd_limit )
+    % quantile estimator is HD: try to load precalculated vector (performance reasons)
+    if ( strcmpi(quantile_estimator,'hd') )
         % take values from file in static folder, if already calculated
         tmp_filename = strcat(path_static,'/hd_vec_',num2str(mc),'.mat');
         if ( exist(tmp_filename,'file'))
@@ -501,16 +502,19 @@ if (run_mc == true)
         else % otherwise calculate HD vector and save it to static folder
             fprintf('New HD vector is calculated for %d MC scenarios and saved in static folder\n',mc);
             minhd           = min(2*confi_scenario+1,mc);
-            hd_vec_min      = zeros(max(confi_scenario-500,0)-1,1);
-            hd_vec_max      = zeros(mc-min(confi_scenario+500,mc),1);
-            tt              = max(confi_scenario-500,1):1:min(confi_scenario+500,mc);
-            hd_vec_func     = get_quantile_estimator('hd',mc,tt,confi);
+            threshold       = mc / 100;
+            hd_vec_min      = zeros(max(confi_scenario-threshold,0)-1,1);
+            hd_vec_max      = zeros(mc-min(confi_scenario+threshold,mc),1);
+            tt              = max(confi_scenario-threshold,1):1:min(confi_scenario+threshold,mc);
+            hd_vec_func     = get_quantile_estimator(quantile_estimator,mc, ...
+                                                tt,confi);
             hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
             save ('-v7',tmp_filename,'hd_vec');
         end
-    else  % make dummy hdvec with weight 1 at confidence scenario
-        hd_vec = zeros(mc,1);
-        hd_vec(confi_scenario) = 1.0;       
+    else  % generate other quantile estimator vectors
+        tt = 1:1:mc;
+        hd_vec = get_quantile_estimator(quantile_estimator,mc, ...
+                                                tt,confi,quantile_bandwidth); 
     end
 end
 
@@ -612,17 +616,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   confi_scenarionumber_shock_m2 = scen_order_shock(confi_scenario - 2);
 
   % iv.) make vector with Harrel-Davis Weights
-  % HD VaR only if number of scenarios < hd_limit
-  if ( mc < hd_limit )
-  size_hdvec = size(portfolio_shock_sort);
-    mc_var_shock_value_abs    = dot(hd_vec,portfolio_shock_sort);
-    mc_var_shock_value_rel    = dot(hd_vec,endstaende_sort_shock);
-    mc_var_shock_diff_hd      = abs(portfolio_shock_sort(confi_scenario) - mc_var_shock_value_abs);
-    fprintf('Absolute difference of HD VaR vs. VaR(confidence): %9.2f\n',mc_var_shock_diff_hd);
-  else
-    mc_var_shock_value_abs    = portfolio_shock_sort(confi_scenario);
-    mc_var_shock_value_rel    = endstaende_sort_shock(confi_scenario);
-  end
+  mc_var_shock_value_abs    = dot(hd_vec,portfolio_shock_sort);
+  mc_var_shock_value_rel    = dot(hd_vec,endstaende_sort_shock);
+  mc_var_shock_diff_hd      = abs(portfolio_shock_sort(confi_scenario) - mc_var_shock_value_abs);
+  fprintf('Absolute difference of Quantile Estimator VaR vs. VaR(confidence): %9.2f\n',mc_var_shock_diff_hd);
+
 
   mc_var_shock_pct  = -(1 - mc_var_shock_value_rel);
   mc_var_shock      = base_value - mc_var_shock_value_abs;
@@ -784,28 +782,16 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     tmp_aggregation_mat         = [aggr_key_struct( jj ).aggregation_mat];
     tmp_aggregation_basevalue   = [aggr_key_struct( jj ).aggregation_basevalue];
     tmp_aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
-    if ( mc < hd_limit )    % print HD VaR figures
-        fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-        fprintf('|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp HD VAR|\n',tmp_scen_set);
-        fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-        fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp HD VAR|\n',tmp_scen_set);
-    else
-        fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-        fprintf('|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
-        fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
-        fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone VAR \t | Decomp VAR|\n',tmp_scen_set);
-    end
-        
+    fprintf(' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+    fprintf('|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp %s VAR|\n',tmp_scen_set,upper(quantile_estimator));
+    fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
+    fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp %s VAR|\n',tmp_scen_set,upper(quantile_estimator));
+
     
     for ii = 1 : 1 : length(tmp_aggr_cell)
         tmp_aggr_key_value          = tmp_aggr_cell{ii};
         tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
-        % HD VaR only if number of scenarios < hd_limit
-        if ( mc < hd_limit )
-            tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
-        else
-            tmp_standalone_aggr_key_var = abs(tmp_sorted_aggr_mat(confi_scenario));
-        end
+        tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
         tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
         tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
         fprintf('|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
@@ -818,13 +804,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   fprintf(fid, 'Total VaR undiversified: \n');
   fprintf(fid, '|VaR %s undiversified| |%9.2f %s|\n',tmp_scen_set,total_var_undiversified,fund_currency);
   fprintf(fid, '\n');
-  if ( mc < hd_limit )
-    fprintf(fid, '=== Total Portfolio HD-VaR === \n');
-    fprintf('=== Total Portfolio HD-VaR === \n');
-  else
-    fprintf(fid, '=== Total Portfolio VaR === \n');
-    fprintf('=== Total Portfolio VaR === \n');
-  end
+  fprintf(fid, '=== Total Portfolio %s VaR === \n',upper(quantile_estimator));
+  fprintf('=== Total Portfolio %s VaR === \n',upper(quantile_estimator));
   % Output to file: 
   fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f%%|\n',tmp_scen_set,quantile.*100,mc_var_shock_pct*100);
   fprintf(fid, '|Portfolio VaR %s@%2.1f%%| \t |%9.2f %s|\n',tmp_scen_set,quantile.*100,mc_var_shock,fund_currency);
@@ -844,10 +825,8 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,90.0,-VAR90_shock,fund_currency);
   fprintf('VaR %s@%2.1f%%: \t %9.2f %s\n',tmp_scen_set,95.0,-VAR95_shock,fund_currency);
 
-  if ( mc < hd_limit )
-    fprintf(fid, '\n');
-    fprintf(fid, 'Difference to HD-VaR %s:  %9.2f %s\n',tmp_scen_set,mc_var_shock_diff_hd,fund_currency);    
-  end
+  fprintf(fid, '\n');
+  fprintf(fid, 'Difference to %s VaR %s:  %9.2f %s\n',upper(quantile_estimator),tmp_scen_set,mc_var_shock_diff_hd,fund_currency);    
   fprintf(fid, '\n');
 
   fprintf(fid, 'Total Reduction in VaR via Diversification: \n');

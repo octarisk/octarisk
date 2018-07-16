@@ -40,7 +40,8 @@ first_evalBOOL,1
 
 % VAR specific variables
 mcNMBR,50000
-hd_limitNMBR,50001
+quantile_estimatorCHAR,hd
+quantile_bandwitdhNMBR,50
 quantileNMBR,0.995
 copulatypeCHAR,Gaussian
 nuNMBR,10
