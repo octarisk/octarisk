@@ -30,8 +30,8 @@ Item,Lyxor ETF MSCI Emerging Markets,LYX0BX,8.89,EQU,Lyxor ETF MSCI Emerging Mar
 Item,ComStage ETF DJ STOXX 600,ETF060,72.82,EQU,comstage ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
 Item,Lyxor ETF MSCI World,LYX0AG,157.32,EQU,Lyxor ETF MSCI World,EUR,RF_EQ_NA|RF_EQ_EU|RF_EQ_AP,0.5|0.3|0.2,,Equity
 Item,iShares FTSE EPRA/NAREIT Global Property,A0LGQL,23.85,RET,iShares FTSE EPRA/NAREIT Global Property Dividend Plus,USD,RF_RE_DM,1,,REIT
-Item,QSC AG,513700,1.79,STK,QSC AG,EUR,RF_EQ_DE|IDIO,1.2|0.25,0.35,Equity
-Item,BASF SE,BASF11,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,QSC AG,513700,1.79,STK,QSC AG,EUR,RF_EQ_DE|IDIO,1.2|0.0,0.35,Equity
+Item,BASF SE,BASF11,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.0,0.35,Equity
 Item,Bitcoins,BTCOIN,246.92,ALT,BitCoins,EUR,RF_ALT_BC,1,,Alternative
 HeaderCASHFLOW,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,spread_curveCHAR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR
 Item,Cashflowinstrument,CFANLEIHE1,105,CASHFLOW,Cashflow instrument with cashflow vector,EUR,IR_EUR,SPREAD_EUR_HY,17-Jul-2015|16-Jul-2016|17-Jul-2017,3.0|3.0|103.00,Fixed Income

@@ -16,6 +16,14 @@
 %# classes are used to invoke objects and to set all structures attributes. 
 %# The final object @var{obj} is returned. The optional @var{verbose} parameter 
 %# sets the logging level.
+%# @*
+%# Variables:
+%# @itemize @bullet
+%# @item @var{s}: input struct containing field type and class specific fields
+%# @item @var{verbose}: flag for providing additional information 
+%# about conversion (default: false)
+%# @item @var{obj}: OUTPUT: objects
+%# @end itemize
 %# @end deftypefn
 
 function obj = struct2obj(s,verbose)

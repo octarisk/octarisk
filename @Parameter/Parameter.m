@@ -51,6 +51,8 @@ classdef Parameter
         mc_scen_analysis = 0;
         aggregation_flag = 0;
         first_eval = 1;
+        frob_norm_limit = 0.05;   % Frobenius Norm: threshold of rlzd corrmat and 
+                            % input corrmat, where to draw new random numbers
             
         % VAR specific variables
         mc = 50000;

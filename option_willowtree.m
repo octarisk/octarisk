@@ -11,8 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk})
-%# @deftypefnx {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk}, @var{nodes}, @var{path_static})
+%# @deftypefn {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk}, @var{nodes}, @var{path_static})
 %#
 %# Computes the price of european or american equity options according to the 
 %# willow tree model.@*
@@ -45,6 +44,8 @@
 %# @item @var{nodes}: number of nodes for willow tree setup. 
 %# Number of nodes must be in list [10,15,20,30,40,50]. These vectors are 
 %# optimized by Currans Method to fulfill variance constraint (default: 20)
+%# @item @var{path_static}: Optional: path to static files 
+%# (required for saving Willowtree transition probabilities) 
 %# @end itemize
 %# @seealso{option_binomial, option_bs, option_exotic_mc}
 %# @end deftypefn

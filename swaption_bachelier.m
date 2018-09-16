@@ -11,26 +11,33 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{SwaptionBachelierValue}] =} swaption_bachelier (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{m}, @var{tau})
+%# @deftypefn {Function File} {[@var{SwaptionBachelierValue}] =} swaption_bachelier (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, @var{sigma}, @var{Annuity})
 %#
-%# Compute the price of european interest rate swaptions according to Bachelier Pricing Functions assuming normal-distributed volatilities.
-%# Fast implementation, fully vectorized.@*
+%# Compute the price of european interest rate swaptions according to Bachelier 
+%# Pricing Functions assuming normal-distributed volatilities.
+%# @*
 %# @example
 %# @group
 %# C = ((F-X)*N(d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)
-%# P = ((X-F)*N(-d1) + sigma*sqrt(T)*n(d1))*exp(-rT) * multiplicator(m,tau)
 %# d1 = (F-X)/(sigma*sqrt(T))
+%# N1 = 0.5*(1+erf([-]d1/sqrt(2)))
+%# n1 = exp(- d1 ^2 /2)/sqrt(2*pi)
+%# C or [P] = sigma*sqrt(T)*Annuity*([-]d1*N1+n1)
 %# @end group
 %# @end example
 %# @*
 %# Variables:
 %# @itemize @bullet
-%# @item @var{PayerReceiverFlag}: Call / Payer '1' (pay fixed) or Put / Receiver '0' (receive fixed, pay floating) swaption
-%# @item @var{F}: forward rate of underlying interest rate (forward in T years for tau years)
+%# @item @var{PayerReceiverFlag}: Call / Payer '1' (pay fixed) or Put / 
+%# Receiver '0' (receive fixed, pay floating) swaption
+%# @item @var{F}: forward rate of underlying interest rate (forward in T years 
+%# for tau years)
 %# @item @var{X}: strike rate 
 %# @item @var{T}: time in days to maturity
-%# @item @var{sigma}: implied volatility of the interest rate measured as annual standard deviation
-%# @item @var{Annuity}: Annuity (Sum of discount factors for underlying term dates)
+%# @item @var{sigma}: implied volatility of the interest rate measured as annual 
+%# standard deviation
+%# @item @var{Annuity}: Annuity (Sum of discount factors for underlying term 
+%# dates)
 %# @end itemize
 %# @seealso{option_bs}
 %# @end deftypefn

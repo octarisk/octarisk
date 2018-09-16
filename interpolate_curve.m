@@ -12,8 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep})
-%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{interp_method}, @var{ufr}, @var{alpha}, @var{extrap_method})
+%# @deftypefn {Function File} { [@var{y}] =} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{interp_method}, @var{ufr}, @var{alpha}, @var{method_extrapolation})
 %#
 %# Calculate an interpolated rate on a curve for a given timestep.@*
 %# Supported methods are: linear (default), moneymarket, exponential, loglinear, 
@@ -26,6 +25,7 @@
 %# splines see Octave function interp1 for more details. 
 %# Explanation of Input Parameters of the interpolation curve function:
 %# @*
+%# Variables:
 %# @itemize @bullet
 %# @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
 %# @item @var{rates}: is MxN matrix with curve rates per timestep defined in
@@ -38,7 +38,8 @@
 %#                              rate (default: last liquid point)
 %# @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed 
 %#                              to ultimate forward rate (default: 0.1)
-%# @item @var{extrap_method}: OPTIONAL: extrapolation method
+%# @item @var{method_extrapolation}: OPTIONAL: extrapolation method
+%# @item @var{y}: OUTPUT: inter/extrapolated rate
 %# @end itemize
 %# @seealso{interp1, interp2, interp3, interpn}
 %# @end deftypefn

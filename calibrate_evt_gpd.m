@@ -21,7 +21,7 @@
 %# Implementation according to @i{Risk Management and Financial Institutions} 
 %# by John C. Hull, 4th edition, Wiley 2015, section 13.6, page 292ff.
 %# @*
-%# Explanation of Parameters:
+%# Variables:
 %# @itemize @bullet
 %# @item @var{v}:       INPUT:  sorted profit and loss distribution of all 
 %#                              required tail events (1xN vector)
