@@ -1,4 +1,4 @@
-%# Copyright (C) 2016 Stefan Schloegl <schinzilord@octarisk.com>
+%# Copyright (C) 2016,2017,2018 Stefan Schloegl <schinzilord@octarisk.com>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
 %# the terms of the GNU General Public License as published by the Free Software
@@ -49,7 +49,7 @@ function [R distr_type Z] = scenario_generation_MC(corr_matrix,P,mc, ...
     [rr_c cc_c] = size(corr_matrix);
     [pp_p cc_p] = size(P);
     if ( cc_c ~= cc_p )
-        error('octarisk::scenario_generation_MC: Numbers of risk factors and parameters does not match!');
+        error('scenario_generation_MC: Numbers of risk factors and parameters does not match!');
     end
 
     % overwrite stable_seed setting --> always draw new random numbers.
@@ -108,8 +108,7 @@ if ( new_corr == true)
         sobol_matrix(1:sobol_seed,:) = [];
         % get standard normal distributed random numbers
         randn_matrix = norminv(sobol_matrix);
-        % scale randn_matrix to get 0,1 distributed numbers (Sobol numbers
-        % systematically underestimate standard deviation)
+        % scale randn_matrix to get 0,1 normally distributed numbers
         randn_matrix = randn_matrix ./ std(randn_matrix);
     end
     

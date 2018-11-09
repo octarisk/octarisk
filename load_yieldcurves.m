@@ -138,7 +138,10 @@ for ii = 1 : 1 : length(rf_ir_cur_cell)
                             sln_level = cat(2,sln_level,tmp_rf_struct_obj.get('sln_level'));
                         else
                             tmp_shocktype_mc = 'absolute';
-                        end          
+                        end  
+                        if ( rows(tmp_rates_shock) >  rows(tmp_delta_shock))
+                            error('load_yieldcurves: >>%s<< not modelled in Scenarios.\n',tmp_rf_id);
+                        end
                         tmp_rates_shock = cat(2,tmp_rates_shock,tmp_delta_shock);
                     end
                 end  
