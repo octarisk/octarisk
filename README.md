@@ -63,7 +63,11 @@ slashes `/`, even under Windows):
 addpath ('/path/to/octarisk-latest')
 savepath()
 ```
-
+- compile required C++ code by typing on the Octave console
+```
+compile_oct_files('/path/to/octarisk-latest')
+```
+This takes a couple of minutes and compiles into binaries for even faster pricing (the most performance relevant algorithm have been highly optimized in C++).
 - adjust the path to your working_directory (which can be 
 anywhere on the system where you have write access). 
 An example working_folder with pre-defined instruments, risk factors and 
