@@ -72,11 +72,20 @@ This takes a couple of minutes and compiles into binaries for even faster pricin
 anywhere on the system where you have write access). 
 An example working_folder with pre-defined instruments, risk factors and 
 portfolio is provided in the release.
-- start the GUI (which automatically calls octarisk main script)
+- run unittests and integrationtests
+```
+unittests()
+integrationtests ('/path/to/octarisk-latest/testing_folder')
+```
+All tests have to be successful (PASS only, no FAILS). Otherwise please make sure all C++ binaries were compiled and both financial and statistical packages were installed properly. The integrationtests valuate all possible instrument types and calculates portfolio value-at-risk and stress figures (a full end to end test including scenario generation, instrument valuation and portfolio aggregation is performed).
+
+
+- start the GUI (which automatically calls octarisk main script) or just call the main script from the console
 
 
 ```
 octarisk_gui ('/path/to/octarisk-latest/working_folder')
+octarisk ('/path/to/octarisk-latest/working_folder')
 ```
 
 - the script will run several seconds and gives you two file based reports 
