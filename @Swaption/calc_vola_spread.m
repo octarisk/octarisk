@@ -23,8 +23,18 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
     % Convert tmp_effdate timefactor from Instrument basis to pricing basis (act/365)
     tmp_effdate  = timefactor (valuation_date, ...
                                 datenum(obj.maturity_date,1), obj.basis) .* 365;
+    annuity_dates = [];
     % calculating swaption maturity date: effdate + tenor
-    tmp_dtm          = tmp_effdate + 365 * obj.tenor; % unit years is assumed
+    if (strcmpi(obj.term_unit,'days'))
+        tmp_dtm          = tmp_effdate + obj.term * obj.tenor;
+        annuity_dates    = [tmp_effdate:obj.term:tmp_dtm];
+    elseif (strcmpi(obj.term_unit,'months'))
+        tmp_dtm          = tmp_effdate + obj.term * 30 * obj.tenor;
+        annuity_dates    = [tmp_effdate:obj.term * 30:tmp_dtm];
+    else % years
+        tmp_dtm          = tmp_effdate + obj.term * 365 * obj.tenor;
+        annuity_dates    = [tmp_effdate:obj.term * 365:tmp_dtm];
+    end
     tmp_effdate = max(tmp_effdate,1);
     
     tmp_rf_rate_base         = interpolate_curve(tmp_nodes,tmp_rates_base, ...
@@ -66,6 +76,23 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
                                 interp_method, comp_freq, basis, valuation_date, ...
                                 comp_type_curve, basis_curve, ...
                                 comp_freq_curve, floor_flag);
+        % alternative calculation: Annuity = Sum(DF_OptionTerm_SwaptionMaturity)
+        % (DF(SwaptionMaturity) - DF(OptionTerm))/Annuity
+        Annuity = zeros(rows(tmp_forward_base),1);
+        for ii=2:1:length(annuity_dates)
+            tmp_date = annuity_dates(ii);
+            tmp_rate = interpolate_curve(tmp_nodes,tmp_rates_base,tmp_date,interp_method);
+            Annuity = Annuity + discount_factor(valuation_date, ...
+                                        valuation_date+tmp_date, ...
+                                        tmp_rate,comp_type, basis, comp_freq);
+        end
+        DF_effdate_rate = interpolate_curve(tmp_nodes,tmp_rates_base,annuity_dates(1),interp_method);
+        DF_matdate_rate = interpolate_curve(tmp_nodes,tmp_rates_base,annuity_dates(end),interp_method);
+        DF_effdate = discount_factor(valuation_date, valuation_date+tmp_effdate, ...
+                                        DF_effdate_rate,comp_type, basis, comp_freq);
+        DF_matdate = discount_factor(valuation_date, valuation_date+tmp_dtm, ...
+                                        DF_matdate_rate,comp_type, basis, comp_freq);
+        tmp_forward_base = (DF_effdate - DF_matdate)./Annuity;
         
         % determining volatility cube axis
         if ( regexpi(tmp_vola_surf_obj.axis_x_name,'TENOR'))
@@ -99,30 +126,35 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
             end 
             tmp_indexvol_base = tmp_vola_surf_obj.getValue('base', ...
                  xx,yy,tmp_moneyness_base);
-                 
-            if ( regexpi(tmp_model,'black'))
-                tmp_swaptionvalue_base  = swaption_black76(call_flag,tmp_forward_base, ...
-                                            tmp_strike,tmp_effdate,tmp_rf_rate_base, ...
-                                            tmp_indexvol_base,tmp_swap_no_pmt, ...
-                                            tmp_swap_tenor) .* tmp_multiplier;
-            else
-                tmp_swaptionvalue_base  = swaption_bachelier(call_flag,tmp_forward_base, ...
-                                            tmp_strike,tmp_effdate,tmp_rf_rate_base, ...
-                                            tmp_indexvol_base,tmp_swap_no_pmt, ...
-                                            tmp_swap_tenor) .* tmp_multiplier;
-            end
+             
             % Start parameter
             x0 = 0.0001;
             % set lower and upper boundary for volatility
             lb = -tmp_indexvol_base + 0.0001;
             ub = [];
             
-            % set up objective function
-            objfunc = @ (x) phi_swaption(x,call_flag,tmp_forward_base, ...
+            if ( regexpi(tmp_model,'black'))
+                tmp_forward_base = max(0.0001,tmp_forward_base); %apply floor
+                tmp_swaptionvalue_base  = swaption_black76(call_flag,tmp_forward_base, ...
+                                            tmp_strike,tmp_effdate,tmp_rf_rate_base, ...
+                                            tmp_indexvol_base,tmp_swap_no_pmt, ...
+                                            tmp_swap_tenor) .* tmp_multiplier;
+                % set up objective function
+                objfunc = @ (x) phi_swaption_black(x,call_flag,tmp_forward_base, ...
                                         tmp_strike,tmp_effdate,tmp_rf_rate_base, ...
                                         tmp_indexvol_base,tmp_swap_no_pmt, ...
-                                        tmp_swap_tenor,tmp_multiplier,tmp_value, ...
-                                        tmp_model);
+                                        tmp_swap_tenor,tmp_multiplier,tmp_value);
+            else
+                tmp_swaptionvalue_base  = swaption_bachelier(call_flag,tmp_forward_base, ...
+                                            tmp_strike,tmp_effdate, ...
+                                            tmp_indexvol_base,Annuity) .* tmp_multiplier;
+                % set up objective function
+                objfunc = @ (x) phi_swaption_normal(x,call_flag,tmp_forward_base, ...
+                                        tmp_strike,tmp_effdate, tmp_indexvol_base, ...
+                                        Annuity,tmp_multiplier,tmp_value);
+            end
+
+            
             
         else    % pricing with underlying float and fixed leg
             % make sure underlying objects are existing
@@ -153,7 +185,7 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
             % call pricing function
             tmp_swaptionvalue_base = swaption_underlyings(call_flag,tmp_strike,V_fix, ...
                                     V_float,tmp_effdate,tmp_indexvol_base, ...
-                                    tmp_model)  .* tmp_multiplier;
+                                    tmp_model);
             % calibrate vola spread
             % Start parameter
             x0 = 0.0001;
@@ -164,13 +196,13 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
             % set up objective function
             objfunc = @ (x) phi_swaption_underlyings(x,call_flag,tmp_strike,V_fix, ...
                                     V_float,tmp_effdate,tmp_indexvol_base, ...
-                                    tmp_model,tmp_multiplier,tmp_value);
+                                    tmp_model,tmp_value);
         
         end
 
         % calculate spread over yield   
         [tmp_impl_vola_spread retcode] = calibrate_generic(objfunc,x0,lb,ub);
-            
+  
         % error handling of calibration:
         if ( tmp_impl_vola_spread < -98 )
             fprintf(' Calibration failed for >>%s<< with Retcode 99. Setting market value to THEO/Value\n',obj.id);
@@ -186,15 +218,15 @@ function obj = calc_vola_spread(swaption,valuation_date,discount_curve,tmp_vola_
                                         tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
             else
                 tmp_new_val      = swaption_bachelier(call_flag,tmp_forward_base, ...
-                                        tmp_strike,tmp_effdate,tmp_rf_rate_base, ...
+                                        tmp_strike,tmp_effdate, ...
                                         tmp_indexvol_base+ tmp_impl_vola_spread, ...
-                                        tmp_swap_no_pmt,tmp_swap_tenor) .* tmp_multiplier;
+                                        Annuity) .* tmp_multiplier;
             end
           else    % pricing with underlying float and fixed leg
                 tmp_new_val = swaption_underlyings(call_flag,tmp_strike,V_fix, ...
                                     V_float,tmp_effdate,tmp_indexvol_base ...
                                     + tmp_impl_vola_spread, ...
-                                    tmp_model)  .* tmp_multiplier;
+                                    tmp_model);
           end
           if ( abs(tmp_value - tmp_new_val) < 0.05 )
                 %disp('Calibration successful.');
@@ -219,20 +251,20 @@ end
 %------------------- Begin Subfunction ---------------------------
  
 % Definition Swaption Objective Function:       
-function obj = phi_swaption (x,PayerReceiverFlag,F,X,T,r,sigma,m,tau,multiplicator,market_value,model)
-        if ( strcmp(upper(model),'BLACK76') )
-            tmp_swaption_value = swaption_black76(PayerReceiverFlag,F,X,T,r,sigma+x,m,tau) .* multiplicator;
-        else
-            tmp_swaption_value = swaption_bachelier(PayerReceiverFlag,F,X,T,r,sigma+x,m,tau) .* multiplicator;
-        end
+function obj = phi_swaption_black (x,PayerReceiverFlag,F,X,T,r,sigma,m,tau,multiplicator,market_value)
+        tmp_swaption_value = swaption_black76(PayerReceiverFlag,F,X,T,r,sigma+x,m,tau) .* multiplicator;
+        obj = abs( tmp_swaption_value  - market_value)^2;
+end
+
+function obj = phi_swaption_normal (x,PayerReceiverFlag,F,X,T,sigma,Annuity,multiplicator,market_value)
+        tmp_swaption_value = swaption_bachelier(PayerReceiverFlag,F,X,T,sigma+x,Annuity) .* multiplicator;
         obj = abs( tmp_swaption_value  - market_value)^2;
 end
  
 % Definition Swaption with Underlyings Objective Function:      
 function obj = phi_swaption_underlyings (x,call_flag,strike,V_fix, V_float,effdate,sigma,model, ...
-                        multiplier,market_value)
+                        market_value)
         tmp_swaption_value = swaption_underlyings(call_flag,strike,V_fix, ...
-                                    V_float,effdate,sigma+x, ...
-                                    model)  .* multiplier;
+                                    V_float,effdate,sigma+x,model);
         obj = abs( tmp_swaption_value  - market_value)^2;
 end

@@ -51,67 +51,65 @@ para = fill_para_struct(nargin,valuation_date, value_type, ...
 % ######################   Calculate Cash Flow dates  ##########################   
 para = get_cf_dates(para);
     
-% ############   Calculate Cash Flow values depending on type   ################   
+    
+% ############   Calculate Cash Flow values depending on type   ################     
+switch (para.type)
+
 % Type Fixed Rate Bonds
-if ( strcmpi(para.type,'FRB') || strcmpi(para.type,'SWAP_FIXED') )
+case {'FRB' 'SWAP_FIXED'}
     para = get_cfvalues_FRB(para.valuation_date, value_type, para, instrument);
 
 % Type ZCB: Zero Coupon Bond has notional cash flow at maturity date
-elseif ( strcmpi(para.type,'ZCB'))   
+case {'ZCB'}  
     para.ret_values = para.notional;
     para.cf_principal = para.notional;
     para.cf_interest = 0;
     
-% Type FRN: Calculate CF Values for all CF Periods with forward rates based on 
-elseif ( strcmpi(para.type,'FRN') || strcmpi(para.type,'SWAP_FLOATING') ...
-                    || strcmpi(para.type,'CAP') || strcmpi(para.type,'FLOOR'))
+% Type FRN: Calculate CF Values for all CF Periods with forward rates 
+case {'FRN' 'SWAP_FLOATING' 'CAP' 'FLOOR'}
     para = get_cfvalues_FRNCAPFLOOR(para.valuation_date, value_type, ...
                                                     para, instrument, surface);
 
-% Type Inflation Linked Bonds: Calculate CPI adjustedCF Values 
-elseif ( strcmpi(para.type,'ILB') || strcmpi(para.type,'CAP_INFL') ...
-                                        || strcmpi(para.type,'FLOOR_INFL') )
+% Type Inflation Linked Bonds: Calculate CPI adjusted CF Values 
+case {'ILB' 'CAP_INFL' 'FLOOR_INFL'}
     para = get_cfvalues_ILB(para.valuation_date, value_type, para, ...
                                     instrument, ref_curve, surface, riskfactor);
                                                     
 % Type Credit Default Swaps
-elseif ( strcmpi(para.type,'CDS_FIXED') || strcmpi(para.type,'CDS_FLOATING') )
+case {'CDS_FIXED' 'CDS_FLOATING'}
     para = get_cfvalues_CDS(para.valuation_date, value_type, para, ...
                                     instrument, ref_curve, surface, riskfactor);
 
 % Type Forward Rate Agreement   
-elseif ( strcmpi(para.type,'FRA') )
+case {'FRA'}
     para = get_cfvalues_FRA(para.valuation_date, value_type, para, instrument);
 
 % Type Forward Volatility Agreement 
-elseif ( strcmpi(para.type,'FVA') )
+case {'FVA'}
     para = get_cfvalues_FVA(para.valuation_date, value_type, para, ...
                                                         instrument, surface);
 
-
 % Type Averaging FRN: Average forward or historical rates of cms_sliding period
-elseif ( strcmpi(para.type,'FRN_FWD_SPECIAL') ...
-                            || strcmpi(para.type,'SWAP_FLOATING_FWD_SPECIAL'))
+case {'FRN_FWD_SPECIAL' 'SWAP_FLOATING_FWD_SPECIAL'}
     para = get_cfvalues_FRN_FWD_SPECIAL(para.valuation_date, value_type, ...
                                                     para, instrument, surface);
     
 % Special floating types (capitalized, average, min, max) based on CMS rates
-elseif ( strcmpi(para.type,'FRN_SPECIAL') || strcmpi(para.type,'FRN_CMS_SPECIAL'))
+case {'FRN_SPECIAL' 'FRN_CMS_SPECIAL'}
     para = get_cfvalues_FRN_SPECIAL(para.valuation_date, value_type, ...
                                         para, instrument, ref_curve, surface);
 
 % Type CMS and CMS Caps/Floors: Calculate CF Values with cms rates
-elseif ( strcmpi(para.type,'CMS_FLOATING') || strcmpi(para.type,'CAP_CMS') ...
-                                            || strcmpi(para.type,'FLOOR_CMS'))
+case {'CMS_FLOATING' 'CAP_CMS' 'FLOOR_CMS'}
     para = get_cfvalues_CMS_FLOATING_CAPFLOOR(para.valuation_date, ...
                             value_type, para, instrument, ref_curve, surface);
    
 % Type FAB: Calculate CF Values for all CF Periods for fixed amortizing bonds 
-elseif ( strcmpi(para.type,'FAB'))
+case {'FAB'}
     para = get_cfvalues_FAB(para.valuation_date, value_type, para, ...
                                     instrument, ref_curve, surface, riskfactor);
 
-else
+otherwise
     error('rollout_structured_cashflows: Unknown instrument type >>%s<<',any2str(para.type));
 end
 
@@ -1216,16 +1214,6 @@ function para = get_cfvalues_FRN_FWD_SPECIAL(valuation_date, value_type, para, i
                 fsd  = t2;
                 fed  = t2 + (t2 - t1);
             end
-                        
-            % calculate timing adjustment
-            timing_adjustment = 1;
-            if ( instrument.in_arrears == 0)    % in fine
-                fsd  = t1;
-                fed  = t2;
-            else    % in arrears
-                fsd  = t2;
-                fed  = t2 + (t2 - t1);
-            end
             
             % calculate forward rates and build average of historical rates 
             % Loop via all dates in [fsd,fsd-sliding_term] and get rates
@@ -1305,6 +1293,8 @@ function para = get_cfvalues_FRNCAPFLOOR(valuation_date, value_type, para, instr
         if ( t1 >= 0 && t2 >= t1 )        % for future cash flows use forward rate
             payment_date        = t2;
             % adjust forward start and end date for in fine vs. in arrears
+            % TODO: Coupon_Prepay = "discount" not implemented 
+            %       (discount CF value from CF end date to CF start date)
             if ( instrument.in_arrears == 0)    % in fine
                 fsd  = t1;
                 fed  = t2;

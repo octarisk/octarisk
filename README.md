@@ -63,16 +63,29 @@ slashes `/`, even under Windows):
 addpath ('/path/to/octarisk-latest')
 savepath()
 ```
-
+- compile required C++ code by typing on the Octave console
+```
+compile_oct_files('/path/to/octarisk-latest')
+```
+This takes a couple of minutes and compiles into binaries for even faster pricing (the most performance relevant algorithm have been highly optimized in C++).
 - adjust the path to your working_directory (which can be 
 anywhere on the system where you have write access). 
 An example working_folder with pre-defined instruments, risk factors and 
 portfolio is provided in the release.
-- start the GUI (which automatically calls octarisk main script)
+- run unittests and integrationtests
+```
+unittests()
+integrationtests ('/path/to/octarisk-latest/testing_folder')
+```
+All tests have to be successful (PASS only, no FAILS). Otherwise please make sure all C++ binaries were compiled and both financial and statistical packages were installed properly. The integrationtests valuate all possible instrument types and calculates portfolio value-at-risk and stress figures (a full end to end test including scenario generation, instrument valuation and portfolio aggregation is performed).
+
+
+- start the GUI (which automatically calls octarisk main script) or just call the main script from the console
 
 
 ```
 octarisk_gui ('/path/to/octarisk-latest/working_folder')
+octarisk ('/path/to/octarisk-latest/working_folder')
 ```
 
 - the script will run several seconds and gives you two file based reports 

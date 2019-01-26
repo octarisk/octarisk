@@ -44,6 +44,7 @@ HeaderSWAPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR
 Item,IR Payer Swaption,SWAPTIONC20180317,0.90,SWAPT_PAY,IR Payer Swaption,EUR,RF_VOLA_IR_EUR,IR_EUR,IR_EUR,10,1,0.025,0.0175,disc,act/365,100,17-Mar-2018,Derivative,Black76
 HeaderFWD,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,underlying_idCHAR,underlying_sensitivityNMBR,discount_curveCHAR,strike_priceNMBR,spreadNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,dividend_yieldNMBR,convenience_yieldNMBR,storage_costNMBR
 Item,EQForward_test,EQFORW01,2,EQFWD,EQForward test instrument,EUR,EQ_DE,1,IR_EUR,9800,0,cont,act/365,0.01,17-Oct-2018,Derivative,0.00,0.00,0.00
+Item,BondForward_test,BondFORW01,0.00,BONDFWD,BONDFWD test instrument,EUR,A1YC04,1,IR_EUR,100,0,cont,act/365,100,17-Oct-2018,Derivative,0.00,0.00,0.00
 HeaderSYNTH,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,instrumentsCHAR,weightsCHAR,asset_classCHAR
 Item,Synthetic_test,SYNTH01,121.1,SYNTH,Synthetic test instrument,EUR,A0RM43|EQFORW01,0.4|0.6,Diversified
 HeaderCAPFLOOR,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,reference_curveCHAR,vola_surfaceCHAR,convex_adjBOOL,asset_classCHAR,issue_dateDATE,maturity_dateDATE,compounding_typeCHAR,termNMBR,notionalNMBR,coupon_generation_methodCHAR,notional_at_startBOOL,notional_at_endBOOL,strikeNMBR,modelCHAR,last_reset_rateNMBR,day_count_conventionCHAR,calibration_flagBOOL

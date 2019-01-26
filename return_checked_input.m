@@ -17,8 +17,8 @@
 %# numeric, and boolean or special treatment for scenario values. 
 %# Used for storing correct field values for classes or structs.
 %# The function itself is divided into two parts: special attributes with
-%# taylormade validation checks are used for type 'special', while a 
-%# generic approach according to differenct types are performed in the second
+%# taylor made validation checks are used for type 'special', while a 
+%# generic approach according to different types are performed in the second
 %# part.
 %# @end deftypefn
 
@@ -235,6 +235,41 @@ if ( strcmpi(type,'special'))
             retval = [];
         else
             error ('set: expecting value_stress to be a real vector');
+        end
+      end
+    % ====================== set exposure_mc: if isvector -> append to 
+    %       existing vector / matrix, if ismatrix -> replace existing value
+    elseif (ischar (prop) && strcmp (prop, 'exposure_mc'))   
+      if (isvector (val) && isreal (val))
+        tmp_vector = [obj.exposure_mc];
+        if ( rows(tmp_vector) > 0 ) % appending vector to existing vector
+            if ( rows(tmp_vector) == rows(val) )
+                retval = [tmp_vector, val];
+            else
+                error ('set: expecting equal number of rows of exposure_mc')
+            end
+        else    % setting vector
+            retval = val;
+        end    
+      % replacing exposure_mc matrix with new matrix
+      elseif (ismatrix(val) && isreal(val)) 
+        retval = val;
+      else
+        if ( isempty(val))
+            retval = [];
+        else
+            error ('set: expecting exposure_mc to be a real vector');
+        end
+      end
+    % ====================== set exposure_stress ======================
+    elseif (ischar (prop) && strcmp (prop, 'exposure_stress'))   
+      if (isvector (val) && isreal (val))
+        retval = val;
+      else
+        if ( isempty(val))
+            retval = [];
+        else
+            error ('set: expecting exposure_stress to be a real vector');
         end
       end
     % ====================== set floor ======================

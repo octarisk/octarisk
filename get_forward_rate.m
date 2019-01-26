@@ -17,6 +17,7 @@
 %# yield curve. CAUTION: the forward rate is floored to 0.000001.
 %# Explanation of Input Parameters:
 %# @*
+%# Variables:
 %# @itemize @bullet
 %# @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
 %# @item @var{rates}: is MxN matrix with curve rates defined in columns. Each 

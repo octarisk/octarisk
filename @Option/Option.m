@@ -30,6 +30,7 @@ classdef Option < Instrument
         calibration_flag = 1;       % BOOL: if true, no calibration will be done
         binary_type     = 'cash'; % ['gap','cash','asset','supershare']
         lookback_type   = 'floating_strike'; % ['floating_strike','fixed_strike']
+        exposure_type = 'exposure_from_value'; % in {'exposure_from_value','delta_x_underlyingvalue'}
     end
  
     properties (SetAccess = private)
@@ -102,6 +103,7 @@ classdef Option < Instrument
          fprintf('compounding_type: %s\n',b.compounding_type);  
          fprintf('compounding_freq: %d\n',b.compounding_freq);    
          fprintf('day_count_convention: %s\n',b.day_count_convention);
+         fprintf('exposure_type: %s\n',b.exposure_type); 
          if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
                                         + b.theo_rho + b.theo_omega) ~= 0 )
             fprintf('theo_delta:\t%8.8f\n',b.theo_delta);  
@@ -211,6 +213,14 @@ classdef Option < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
+      
+      function obj = set.exposure_type(obj,exposure_type)
+         if ~(strcmpi(exposure_type,'exposure_from_value') ...
+                || strcmpi(exposure_type,'delta_x_underlyingvalue'))
+            error('Option exposure_type must be in {exposure_from_value,delta_x_underlyingvalue}');
+         end
+         obj.exposure_type = exposure_type;
+      end % set.exposure_type
    end 
 
   %static methods: 

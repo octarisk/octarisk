@@ -22,6 +22,7 @@ classdef Forward < Instrument
         component_weight = 0.0;
         net_basis = 0.0;
         calc_price_from_netbasis = false;
+        exposure_type = 'exposure_from_price'; % in {'exposure_from_price','exposure_from_value','delta_x_underlyingvalue'}
     end
     properties (SetAccess = private)
         sub_type = 'EQFWD';
@@ -67,7 +68,7 @@ classdef Forward < Instrument
          fprintf('day_count_convention: %s\n',b.day_count_convention); 
          fprintf('strike_price: %f\n',b.strike_price);  
          fprintf('underlying_id: %s\n',b.underlying_id); 
-         %fprintf('underlying_price_base: %f\n',b.underlying_price_base); 
+         fprintf('underlying_price_base: %f %s\n',b.underlying_price_base,b.currency); 
          fprintf('underlying_sensitivity: %d\n',b.underlying_sensitivity); 
          fprintf('dividend_yield: %f\n',b.dividend_yield); 
          fprintf('convenience_yield: %f\n',b.convenience_yield);
@@ -76,6 +77,7 @@ classdef Forward < Instrument
          fprintf('component_weight: %f\n',b.component_weight);
          fprintf('net_basis: %f\n',b.net_basis);
          fprintf('discount_curve: %s\n',b.discount_curve); 
+         fprintf('exposure_type: %s\n',b.exposure_type); 
          fprintf('calc_price_from_netbasis: %d\n',b.calc_price_from_netbasis);
          fprintf('theo_price:\t%8.8f\n',b.theo_price);  
          if ( (b.theo_delta + b.theo_gamma + b.theo_vega + b.theo_theta ...
@@ -103,6 +105,18 @@ classdef Forward < Instrument
          % Call superclass method to set basis
          obj.basis = Instrument.get_basis(obj.day_count_convention);
       end % set.day_count_convention
+      
+      function obj = set.exposure_type(obj,exposure_type)
+         if ~(strcmpi(exposure_type,'exposure_from_price') ...
+                || strcmpi(exposure_type,'exposure_from_value') ...
+                || strcmpi(exposure_type,'delta_x_underlyingvalue'))
+            error('Forward exposure_type must be in {exposure_from_price,exposure_from_value,delta_x_underlyingvalue}');
+         end
+         obj.exposure_type = exposure_type;
+      end % set.exposure_type
+
+      
+      
    end 
    
    %static methods: 

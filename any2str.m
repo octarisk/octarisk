@@ -16,6 +16,13 @@
 %# performed. One output string ( a one-liner!) and the input type is returned.
 %# Conversion is supported for scalars, matrizes up to three dimensions, cells,
 %# boolean values and structs.
+%# @*
+%# Variables:
+%# @itemize @bullet
+%# @item @var{value}:   input value (can be struct,string,integer,...)
+%# @item @var{output}:  input value converted to string
+%# @item @var{type}:    output type
+%# @end itemize
 %# @end deftypefn
 
 function [output] = any2str(value)

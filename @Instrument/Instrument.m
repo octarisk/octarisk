@@ -38,6 +38,9 @@ classdef Instrument
       value_stress = [];
       value_mc = [];
       timestep_mc = {};
+      exposure_base = [];
+      exposure_mc = [];
+      exposure_stress = [];
     end
    
    % Class methods
@@ -63,6 +66,7 @@ classdef Instrument
          value_mc_cols = min(length(a.timestep_mc),2);
          fprintf('name: %s\nid: %s\ndescription: %s\ntype: %s\nasset_class: %s\ncurrency: %s\nvalue_base: %8.6f %s\n', ... 
             a.name,a.id,a.description,a.type,a.asset_class,a.currency,a.value_base,a.currency);
+         fprintf('exposure_base: %8.6f %s\n',a.exposure_base,a.currency);   
          fprintf('value_stress: %8.6f \n',a.value_stress(1:value_stress_rows));
          fprintf('\n');
          % looping via first 5 MC scenario values
@@ -88,6 +92,21 @@ classdef Instrument
          end
          obj.type = type;
       end % Set.type
+      
+      function obj = set.value_base(obj,val)
+         obj.value_base = val;
+         obj.exposure_base = val;
+      end % automatically set exposure from value
+      
+      function obj = set.value_mc(obj,val)
+         obj.value_mc = val;
+         obj.exposure_mc = val;
+      end % automatically set exposure from value
+      
+      function obj = set.value_stress(obj,val)
+         obj.value_stress = val;
+         obj.exposure_stress = val;
+      end % automatically set exposure from value
       
     end
     

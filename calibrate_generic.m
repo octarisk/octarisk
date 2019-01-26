@@ -15,6 +15,14 @@
 %#
 %# Calibrate a given objective function according to start parameter and bounds.
 %# This function calls the generic optimizer fmincon.
+%# @*
+%# Variables:
+%# @itemize @bullet
+%# @item @var{objf}: pointer to objective function
+%# @item @var{x0}: start value
+%# @item @var{lb}: lower bound
+%# @item @var{ub}: upper bound
+%# @end itemize
 %# @seealso{fmincon}
 %# @end deftypefn
 

@@ -87,9 +87,9 @@ end
         reportstr_fund_bbb  = '';
     end
     % because of unknown reasons, VaR is different on Windows and Unix systems...
-    if ( isempty(regexpi(reportstr_fund_aaa,'34046.99 EUR')) || isempty(regexpi(reportstr_fund_bbb,'10562.33 EUR')))
+    if ( isempty(regexpi(reportstr_fund_aaa,'34055.07 EUR')) || isempty(regexpi(reportstr_fund_bbb,'10562.33 EUR')))
         tests_fail = tests_fail + 1;
-        fprintf('WARNING: failed tests for function >>octarisk<<. Fund VaR figures not as expected (VaR Fund AAA 34046.99 EUR and VaR Fund BBB 10562.33 EUR.\n');
+        fprintf('WARNING: failed tests for function >>octarisk<<. Fund VaR figures not as expected (VaR Fund AAA 34055.07 EUR and VaR Fund BBB 10562.33 EUR.\n');
         M(end + 1,1) = 0;
         M(end,2) = 2;
     else

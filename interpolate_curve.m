@@ -12,8 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep})
-%# @deftypefnx {Function File} {} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{interp_method}, @var{ufr}, @var{alpha}, @var{extrap_method})
+%# @deftypefn {Function File} { [@var{y}] =} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{interp_method}, @var{ufr}, @var{alpha}, @var{method_extrapolation})
 %#
 %# Calculate an interpolated rate on a curve for a given timestep.@*
 %# Supported methods are: linear (default), moneymarket, exponential, loglinear, 
@@ -26,6 +25,7 @@
 %# splines see Octave function interp1 for more details. 
 %# Explanation of Input Parameters of the interpolation curve function:
 %# @*
+%# Variables:
 %# @itemize @bullet
 %# @item @var{nodes}: is a 1xN vector with all timesteps of the given curve
 %# @item @var{rates}: is MxN matrix with curve rates per timestep defined in
@@ -38,7 +38,8 @@
 %#                              rate (default: last liquid point)
 %# @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed 
 %#                              to ultimate forward rate (default: 0.1)
-%# @item @var{extrap_method}: OPTIONAL: extrapolation method
+%# @item @var{method_extrapolation}: OPTIONAL: extrapolation method
+%# @item @var{y}: OUTPUT: inter/extrapolated rate
 %# @end itemize
 %# @seealso{interp1, interp2, interp3, interpn}
 %# @end deftypefn
@@ -114,10 +115,6 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
     if ( timestep <= min(nodes) ) % constant or linear extrapolation
         if ( strcmpi(method_extrapolation,'linear'))
             y = interp1(nodes',rates',timestep,'linear','extrap')';
-            disp("next next")
-            nodes
-            rates
-            timestep
             return
         else
             [minval tmp_idx] = min(nodes);
@@ -157,18 +154,36 @@ if ~(strcmpi(method,{'smith-wilson','monotone-convex'}))  % constant
             end
             
         elseif (strcmpi(method,'constant'))          % constant interpolation 
-            % take octaves built-in interpolation 
             % -> next neighbour for compatiblity reasons (used for hist rates)
-            if ( all(nodes(2:end) < 0))
-                y = interp1(nodes',rates',timestep,'next')';
-            else
-                y = interp1(nodes',rates',timestep,'previous')';
+            if ( all(nodes(2:end) < 0)) % previous method
+                for ii = 1 : 1 : (no_scen_nodes - 1)
+                    if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
+                         y = rates(:,ii+1); 
+                         return;           
+                    end
+                end 
+            else    % next method
+                for ii = 1 : 1 : (no_scen_nodes - 1)
+                    if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
+                         y = rates(:,ii); 
+                         return;           
+                    end
+                end
             end
         elseif (strcmpi(method,'previous'))      % mapping to previous neighbour 
-            y = interp1(nodes',rates',timestep,'previous')';
-            
+            for ii = 1 : 1 : (no_scen_nodes - 1)
+                if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
+                     y = rates(:,ii); 
+                     return;           
+                end
+            end
         elseif (strcmpi(method,'next'))          % mapping to next neighbour 
-            y = interp1(nodes',rates',timestep,'next')';    
+            for ii = 1 : 1 : (no_scen_nodes - 1)
+                if ( abs(timestep) >= abs(nodes(ii)) && abs(timestep) <= abs(nodes(ii+1 )) )
+                     y = rates(:,ii+1); 
+                     return;           
+                end
+            end   
             
         elseif (strcmpi(method,'loglinear'))
             for ii = 1 : 1 : (no_scen_nodes - 1)

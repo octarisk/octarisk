@@ -12,7 +12,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{valuation_date}, @var{forward}, @var{discount_curve_object}, @var{underlying_object}, @var{und_curve_object})
+%# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{valuation_date}, @var{forward}, @var{discount_curve_object}, @var{underlying_object}, @var{und_curve_object},@var{fx})
 %#
 %# Compute the theoretical value and price of FX, equity and bond forwards and 
 %# futures.@*
@@ -24,14 +24,15 @@
 %# @item @var{discount_curve_object}: discount curve for forward
 %# @item @var{underlying_object}: underlying object of forward
 %# @item @var{und_curve_object}: discount curve object of underlying object
+%# @item @var{fx}: fx object with currency conversion rate between forward and underlying currency
 %# @end itemize
 %# @seealso{timefactor, discount_factor, convert_curve_rates}
 %# @end deftypefn
 
 function [theo_value theo_price] = pricing_forward(valuation_date,value_type, forward, ...
-    discount_curve_object, underlying_object, und_curve_object )
+    discount_curve_object, underlying_object, und_curve_object, fx )
 
-if nargin < 5 || nargin > 6
+if nargin < 5 || nargin > 7
     print_usage ();
 end
 
@@ -87,15 +88,6 @@ elseif ( sum(strcmpi(type,{'FX','Bond','BONDFWD'})) > 0 )
     if nargin < 5
         error('pricing_forward: No foreign curve object provided.');
     end
-    if ( strfind(underlying_object.id,'RF_') )   % underlying instrument is a risk factor
-        tmp_underlying_sensitivity = forward.underlying_sensitivity;
-        tmp_underlying_delta = underlying_object.getValue(value_type);
-        underlying_price = Riskfactor.get_abs_values(underlying_object.model, ...
-            tmp_underlying_delta, obj.underlying_price_base, ...
-            tmp_underlying_sensitivity);
-    else    % underlying is a index
-        underlying_price = underlying_object.getValue(value_type);
-    end
     % getting underlying curve properties
     und_nodes           = und_curve_object.nodes;
     und_rates           = und_curve_object.getValue(value_type);
@@ -121,6 +113,26 @@ end
 if ( rows(discount_rates) > 1 && rows(underlying_price) > 1 ...
         && (rows(underlying_price) ~= rows(discount_rates)))
     error('Rows of underlying price not equal to 1 or to number of rows of discount_rats. Aborting.')
+end
+
+% convert underlying value into forward currency
+if ( ~strcmpi(forward.currency,underlying_object.currency))
+   %Conversion of currency:
+    fx_id = strcat('FX_', forward.currency, underlying_object.currency);
+    % distinguish between FX object / struct
+    if ( isobject(fx))
+        if ( ~strcmpi(fx_id,fx.id))
+            warning('FX Object id %s does not match required fx rate %s \n',fx.id,fx_id);
+        end
+        fx_obj = fx;
+    elseif ( isstruct(fx)) % provided fx is struct
+        fx_obj = get_sub_object(fx, fx_id);
+    else
+        error('Forward: provided fx variable is neither a struct nor an fx object.\n');
+    end
+    % get conversion rate
+    fx_rate  = fx_obj.getValue(value_type);
+    underlying_price = underlying_price ./ fx_rate;
 end
 
 % get curve rates and convert

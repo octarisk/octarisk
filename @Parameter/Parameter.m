@@ -51,11 +51,14 @@ classdef Parameter
         mc_scen_analysis = 0;
         aggregation_flag = 0;
         first_eval = 1;
+        frob_norm_limit = 0.05;   % Frobenius Norm: threshold of rlzd corrmat and 
+                            % input corrmat, where to draw new random numbers
             
         % VAR specific variables
         mc = 50000;
         scen_number = 1;
-        hd_limit = 50001;
+        quantile_estimator = 'hd'; %{'hd', 'ep', 'ew', 'singular'}
+        quantile_bandwidth = 50;
         quantile = 0.995;
         copulatype = 'Gaussian';
         nu = 10;
@@ -110,6 +113,16 @@ classdef Parameter
          
       end % disp
       
+      function obj = set.quantile_estimator(obj,quantile_estimator)
+         quantile_estimator = lower(quantile_estimator);
+         quantile_estimator_cell = {'hd', 'ep', 'ew', 'singular'};
+         if ( sum(strcmpi(quantile_estimator_cell,quantile_estimator)) == 0)
+                fprintf('Need valid quantile_estimator state:  >>%s<< not in {hd, ep, ew, singular} for id >>%s<<. Setting to default value hd. See help get_quantile_estimator for more information.\n',quantile_estimator,obj.id);
+                quantile_estimator = 'hd';
+            end
+          obj.quantile_estimator = quantile_estimator;
+      end % set.quantile_estimator
+      
       function obj = set.type(obj,type)
          if ~(strcmpi(type,'Parameter')  )
             error('Type must be Parameter')
@@ -127,7 +140,7 @@ classdef Parameter
             end
          end
          obj.valuation_date = valuation_date;
-      end % Set.tyvaluation_datepe
+      end % Set.valuation_date
       
       
    end

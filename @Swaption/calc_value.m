@@ -24,12 +24,22 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
     % Get input variables
     
     % get days in period
-    matdatedatenum = datenum(obj.maturity_date,1);
+    matdatenum = datenum(obj.maturity_date,1);
     [tmp_tf tmp_effdate dib]  = timefactor (valuation_date, ...
-                                matdatedatenum, obj.basis);
-    tmp_effdate =  matdatedatenum - valuation_date;
+                                matdatenum, obj.basis);
+    tmp_effdate =  matdatenum - valuation_date;
+    annuity_dates = [];
     % calculating swaption maturity date: effdate + tenor
-    tmp_dtm          = tmp_effdate + 365 * obj.tenor; % unit years is assumed
+    if (strcmpi(obj.term_unit,'days'))
+        tmp_dtm          = tmp_effdate + obj.term * obj.tenor;
+        annuity_dates    = [tmp_effdate:obj.term:tmp_dtm];
+    elseif (strcmpi(obj.term_unit,'months'))
+        tmp_dtm          = tmp_effdate + obj.term * 30 * obj.tenor;
+        annuity_dates    = [tmp_effdate:obj.term * 30:tmp_dtm];
+    else % years
+        tmp_dtm          = tmp_effdate + obj.term * 365 * obj.tenor;
+        annuity_dates    = [tmp_effdate:obj.term * 365:tmp_dtm];
+    end
     tmp_effdate = max(tmp_effdate,1);
     
     % interpolating rates
@@ -66,13 +76,32 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
         else
             floor_flag          = false;
         end
-        % Get underlying yield rates:        
+        % Get underlying yield rates:       
         tmp_forward_shock       = get_forward_rate(tmp_nodes,tmp_rates, ...
                                     tmp_effdate,tmp_dtm-tmp_effdate, comp_type, ...
                                     interp_method, comp_freq, basis, valuation_date, ...
                                     comp_type_curve, basis_curve, ...
                                     comp_freq_curve, floor_flag);
-                      
+        
+                 
+        % alternative calculation: Annuity = Sum(DF_OptionTerm_SwaptionMaturity)
+        % (DF(SwaptionMaturity) - DF(OptionTerm))/Annuity
+        Annuity = zeros(rows(tmp_forward_shock),1);
+        for ii=2:1:length(annuity_dates)
+            tmp_date = annuity_dates(ii);
+            tmp_rate = interpolate_curve(tmp_nodes,tmp_rates,tmp_date,interp_method);
+            Annuity = Annuity + discount_factor(valuation_date, ...
+                                        valuation_date+tmp_date, ...
+                                        tmp_rate,comp_type, basis, comp_freq);
+        end
+        DF_effdate_rate = interpolate_curve(tmp_nodes,tmp_rates,annuity_dates(1),interp_method);
+        DF_matdate_rate = interpolate_curve(tmp_nodes,tmp_rates,annuity_dates(end),interp_method);
+        DF_effdate = discount_factor(valuation_date, valuation_date+tmp_effdate, ...
+                                        DF_effdate_rate,comp_type, basis, comp_freq);
+        DF_matdate = discount_factor(valuation_date, valuation_date+tmp_dtm, ...
+                                        DF_matdate_rate,comp_type, basis, comp_freq);
+        tmp_forward_shock = (DF_effdate - DF_matdate)./Annuity;
+        
         % determining volatility cube axis
         if ( regexpi(tmp_vola_surf_obj.axis_x_name,'TENOR')) % standard case
             % x-axis: effective date of swaption -> option term
@@ -106,18 +135,17 @@ function obj = calc_value(swaption,valuation_date,value_type,discount_curve,tmp_
             end 
             tmp_imp_vola_shock = tmp_vola_surf_obj.getValue(value_type, ...
                  xx,yy,tmp_moneyness) + tmp_impl_vola_spread;
-                 
+            %TODO: implementation for cont rates only, allow any forward rates
             if ( regexpi(tmp_model,'black'))
+                tmp_forward_shock = max(0.0001,tmp_forward_shock); %apply floor
                 theo_value      = swaption_black76(call_flag,tmp_forward_shock, ...
                                         tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
                                         tmp_imp_vola_shock,tmp_swap_no_pmt, ...
                                         tmp_swap_tenor) .* tmp_multiplier;
             else
-                
                 theo_value      = swaption_bachelier(call_flag,tmp_forward_shock, ...
-                                        tmp_strike,tmp_effdate,tmp_rf_rate_conv, ...
-                                        tmp_imp_vola_shock,tmp_swap_no_pmt, ...
-                                        tmp_swap_tenor) .* tmp_multiplier;
+                                        tmp_strike,tmp_effdate, ...
+                                        tmp_imp_vola_shock,Annuity) .* tmp_multiplier;         
             end
         else    % pricing with underlying float and fixed leg
             % make sure underlying objects are existing

@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{npv} @var{MacDur} @var{Convexity} @var{MonDur} @var{Convexity_alt}] =} pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values}, @var{spread_constant}, @var{discount_nodes}, @var{discount_rates}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{interp_discount})
+%# @deftypefn {Function File} {[@var{npv} @var{MacDur} @var{Convexity} @var{MonDur} @var{Convexity_alt}] =} pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values}, @var{spread_constant}, @var{discount_nodes}, @var{discount_rates}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{interp_discount}, @var{comp_type_curve}, @var{basis_curve}, @var{comp_freq_curve}, @var{sensi_flag})
 %#
 %# Compute the net present value, Macaulay Duration, Convexity and Monetary
 %# duration of a given cash flow pattern according to a given discount curve 

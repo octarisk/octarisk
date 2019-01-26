@@ -1,4 +1,4 @@
-# Created by Octave 4.2.1, Fri Dec 01 15:48:09 2017 GMT <unknown@unknown>
+# Created by Octave 4.4.0, Sat Sep 15 11:33:33 2018 GMT <unknown@T46NB090>
 # name: tmp_instrument_struct
 # type: struct
 # ndims: 2
@@ -568,7 +568,7 @@ SYNTH01
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 14
+# length: 17
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -605,6 +605,23 @@ EUR Cash Account
 # name: discount_curve
 # type: null_sq_string
 # elements: 0
+
+
+# name: exposure_base
+# type: scalar
+1
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -665,7 +682,7 @@ cash
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 119
+# length: 125
 # name: accrued_interest
 # type: scalar
 0
@@ -673,7 +690,7 @@ cash
 
 # name: alpha
 # type: scalar
-0.1
+0.10000000000000001
 
 
 # name: annuity_amount
@@ -785,6 +802,13 @@ Black
 1825
 
 
+# name: cms_sliding_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
+
+
 # name: cms_spread
 # type: scalar
 0
@@ -793,6 +817,13 @@ Black
 # name: cms_term
 # type: scalar
 365
+
+
+# name: cms_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
 
 
 # name: compounding_freq
@@ -921,6 +952,23 @@ IR_EUR
 0
 
 
+# name: exposure_base
+# type: scalar
+105
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: fixed_annuity
 # type: scalar
 0
@@ -1030,7 +1078,7 @@ CFANLEIHE1
 
 # name: last_reset_rate
 # type: scalar
-1e-005
+1.0000000000000001e-005
 
 
 # name: long_first_period
@@ -1252,6 +1300,13 @@ CASHFLOW
 12
 
 
+# name: term_unit
+# type: sq_string
+# elements: 1
+# length: 6
+months
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -1342,7 +1397,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 119
+# length: 125
 # name: accrued_interest
 # type: scalar
 0
@@ -1350,7 +1405,7 @@ bond
 
 # name: alpha
 # type: scalar
-0.1
+0.10000000000000001
 
 
 # name: annuity_amount
@@ -1460,6 +1515,13 @@ Black
 1825
 
 
+# name: cms_sliding_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
+
+
 # name: cms_spread
 # type: scalar
 0
@@ -1468,6 +1530,13 @@ Black
 # name: cms_term
 # type: scalar
 365
+
+
+# name: cms_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
 
 
 # name: compounding_freq
@@ -1596,6 +1665,23 @@ IR_EUR
 0
 
 
+# name: exposure_base
+# type: scalar
+100
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: fixed_annuity
 # type: scalar
 0
@@ -1722,7 +1808,7 @@ CDSTEST
 
 # name: loss_given_default
 # type: scalar
-0.8
+0.80000000000000004
 
 
 # name: mac_duration
@@ -1870,7 +1956,7 @@ IR_EUR
 
 # name: spread
 # type: scalar
-0.03
+0.029999999999999999
 
 
 # name: spread_curve
@@ -1931,6 +2017,13 @@ CDS_FLOATING
 # name: term
 # type: scalar
 365
+
+
+# name: term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
 
 
 # name: timestep_mc
@@ -2023,7 +2116,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -2055,6 +2148,23 @@ EUR
 # elements: 1
 # length: 43
 ComStage ETF Commerzbank Commodity EW Index
+
+
+# name: exposure_base
+# type: scalar
+90.900000000000006
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -2176,7 +2286,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-90.90000000000001
+90.900000000000006
 
 
 # name: value_mc
@@ -2213,7 +2323,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -2245,6 +2355,23 @@ EUR
 # elements: 1
 # length: 17
 Goldmuenze 1 Unze
+
+
+# name: exposure_base
+# type: scalar
+1050.1800000000001
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -2366,7 +2493,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-1050.18
+1050.1800000000001
 
 
 # name: value_mc
@@ -2403,7 +2530,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -2435,6 +2562,23 @@ EUR
 # elements: 1
 # length: 19
 Silbermuenze 1 Unze
+
+
+# name: exposure_base
+# type: scalar
+14.039999999999999
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -2556,7 +2700,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-14.04
+14.039999999999999
 
 
 # name: value_mc
@@ -2593,7 +2737,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 20
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -2642,6 +2786,23 @@ IR_USD
 # name: duration
 # type: scalar
 4.5
+
+
+# name: exposure_base
+# type: scalar
+60.5
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -2707,7 +2868,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 20
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -2755,7 +2916,24 @@ IR_USD
 
 # name: duration
 # type: scalar
-5.6
+5.5999999999999996
+
+
+# name: exposure_base
+# type: scalar
+102.48
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -2781,7 +2959,7 @@ DBT
 
 # name: term
 # type: scalar
-5.6
+5.5999999999999996
 
 
 # name: timestep_mc
@@ -2821,7 +2999,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 20
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -2869,7 +3047,24 @@ IR_USD
 
 # name: duration
 # type: scalar
-7.8
+7.7999999999999998
+
+
+# name: exposure_base
+# type: scalar
+99.930000000000007
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -2895,7 +3090,7 @@ DBT
 
 # name: term
 # type: scalar
-7.8
+7.7999999999999998
 
 
 # name: timestep_mc
@@ -2913,7 +3108,7 @@ debt
 
 # name: value_base
 # type: scalar
-99.93000000000001
+99.930000000000007
 
 
 # name: value_mc
@@ -2935,7 +3130,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 17
+# length: 20
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -2986,6 +3181,23 @@ IR_EUR
 12.1
 
 
+# name: exposure_base
+# type: scalar
+95.980000000000004
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -3027,7 +3239,7 @@ debt
 
 # name: value_base
 # type: scalar
-95.98
+95.980000000000004
 
 
 # name: value_mc
@@ -3049,7 +3261,7 @@ debt
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 119
+# length: 125
 # name: accrued_interest
 # type: scalar
 0
@@ -3057,7 +3269,7 @@ debt
 
 # name: alpha
 # type: scalar
-0.1
+0.10000000000000001
 
 
 # name: annuity_amount
@@ -3167,6 +3379,13 @@ Black
 1825
 
 
+# name: cms_sliding_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
+
+
 # name: cms_spread
 # type: scalar
 0
@@ -3175,6 +3394,13 @@ Black
 # name: cms_term
 # type: scalar
 365
+
+
+# name: cms_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
 
 
 # name: compounding_freq
@@ -3215,7 +3441,7 @@ discount
 
 # name: coupon_rate
 # type: scalar
-0.05757
+0.057570000000000003
 
 
 # name: cpi_historical_curve
@@ -3301,6 +3527,23 @@ AGGR_EUR_FIN_BBB
 # name: enable_business_day_rule
 # type: bool
 0
+
+
+# name: exposure_base
+# type: scalar
+108.681
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: fixed_annuity
@@ -3636,6 +3879,13 @@ FRB
 12
 
 
+# name: term_unit
+# type: sq_string
+# elements: 1
+# length: 6
+months
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -3726,7 +3976,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 119
+# length: 125
 # name: accrued_interest
 # type: scalar
 0
@@ -3734,7 +3984,7 @@ bond
 
 # name: alpha
 # type: scalar
-0.1
+0.10000000000000001
 
 
 # name: annuity_amount
@@ -3844,6 +4094,13 @@ Black
 1825
 
 
+# name: cms_sliding_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
+
+
 # name: cms_spread
 # type: scalar
 0
@@ -3852,6 +4109,13 @@ Black
 # name: cms_term
 # type: scalar
 365
+
+
+# name: cms_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
 
 
 # name: compounding_freq
@@ -3978,6 +4242,23 @@ IR_EUR
 # name: enable_business_day_rule
 # type: bool
 0
+
+
+# name: exposure_base
+# type: scalar
+1031.2
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: fixed_annuity
@@ -4313,6 +4594,13 @@ FRB
 12
 
 
+# name: term_unit
+# type: sq_string
+# elements: 1
+# length: 6
+months
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -4403,7 +4691,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 119
+# length: 125
 # name: accrued_interest
 # type: scalar
 0
@@ -4411,7 +4699,7 @@ bond
 
 # name: alpha
 # type: scalar
-0.1
+0.10000000000000001
 
 
 # name: annuity_amount
@@ -4521,6 +4809,13 @@ Black
 1825
 
 
+# name: cms_sliding_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
+
+
 # name: cms_spread
 # type: scalar
 0
@@ -4529,6 +4824,13 @@ Black
 # name: cms_term
 # type: scalar
 365
+
+
+# name: cms_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
 
 
 # name: compounding_freq
@@ -4655,6 +4957,23 @@ IR_EUR
 # name: enable_business_day_rule
 # type: scalar
 0
+
+
+# name: exposure_base
+# type: scalar
+100
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: fixed_annuity
@@ -4927,7 +5246,7 @@ IR_EUR
 
 # name: spread
 # type: scalar
-0.03
+0.029999999999999999
 
 
 # name: spread_curve
@@ -4988,6 +5307,13 @@ FRN
 # name: term
 # type: scalar
 12
+
+
+# name: term_unit
+# type: sq_string
+# elements: 1
+# length: 6
+months
 
 
 # name: timestep_mc
@@ -5080,7 +5406,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5112,6 +5438,23 @@ EUR
 # elements: 1
 # length: 20
 ComStage ETF S&P 500
+
+
+# name: exposure_base
+# type: scalar
+199.94
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -5270,7 +5613,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5302,6 +5645,23 @@ EUR
 # elements: 1
 # length: 36
 db x-trackers Dow Jones Euro STOXX50
+
+
+# name: exposure_base
+# type: scalar
+35.280000000000001
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -5423,7 +5783,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-35.28
+35.280000000000001
 
 
 # name: value_mc
@@ -5460,7 +5820,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5492,6 +5852,23 @@ EUR
 # elements: 1
 # length: 24
 comstage EF MSCI Pacific
+
+
+# name: exposure_base
+# type: scalar
+46.280000000000001
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -5613,7 +5990,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-46.28
+46.280000000000001
 
 
 # name: value_mc
@@ -5650,7 +6027,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5682,6 +6059,23 @@ EUR
 # elements: 1
 # length: 22
 iShares ETF MSCI Japan
+
+
+# name: exposure_base
+# type: scalar
+11.630000000000001
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -5803,7 +6197,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-11.63
+11.630000000000001
 
 
 # name: value_mc
@@ -5840,7 +6234,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -5872,6 +6266,23 @@ EUR
 # elements: 1
 # length: 20
 comstage ETF MSCI EM
+
+
+# name: exposure_base
+# type: scalar
+35.509999999999998
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -5993,7 +6404,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-35.51
+35.509999999999998
 
 
 # name: value_mc
@@ -6030,7 +6441,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6062,6 +6473,23 @@ EUR
 # elements: 1
 # length: 36
 db x-trackers ETF Dow Jones STOXX600
+
+
+# name: exposure_base
+# type: scalar
+72.670000000000002
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -6183,7 +6611,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-72.67
+72.670000000000002
 
 
 # name: value_mc
@@ -6220,7 +6648,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6252,6 +6680,23 @@ EUR
 # elements: 1
 # length: 31
 Lyxor ETF MSCI Emerging Markets
+
+
+# name: exposure_base
+# type: scalar
+8.8900000000000006
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -6373,7 +6818,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-8.890000000000001
+8.8900000000000006
 
 
 # name: value_mc
@@ -6410,7 +6855,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6442,6 +6887,23 @@ EUR
 # elements: 1
 # length: 31
 comstage ETF Dow Jones STOXX600
+
+
+# name: exposure_base
+# type: scalar
+72.819999999999993
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -6563,7 +7025,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-72.81999999999999
+72.819999999999993
 
 
 # name: value_mc
@@ -6600,7 +7062,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6632,6 +7094,23 @@ EUR
 # elements: 1
 # length: 20
 Lyxor ETF MSCI World
+
+
+# name: exposure_base
+# type: scalar
+157.31999999999999
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -6712,7 +7191,7 @@ RF_EQ_AP
 # type: matrix
 # rows: 1
 # columns: 3
- 0.5 0.3 0.2
+ 0.5 0.29999999999999999 0.20000000000000001
 
 
 # name: shock_type
@@ -6771,7 +7250,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-157.32
+157.31999999999999
 
 
 # name: value_mc
@@ -6808,7 +7287,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -6840,6 +7319,23 @@ USD
 # elements: 1
 # length: 54
 iShares FTSE EPRA/NAREIT Global Property Dividend Plus
+
+
+# name: exposure_base
+# type: scalar
+23.850000000000001
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -6961,7 +7457,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-23.85
+23.850000000000001
 
 
 # name: value_mc
@@ -6998,7 +7494,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -7032,6 +7528,23 @@ EUR
 QSC AG
 
 
+# name: exposure_base
+# type: scalar
+1.79
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -7041,7 +7554,7 @@ QSC AG
 
 # name: idio_vola
 # type: scalar
-0.35
+0.34999999999999998
 
 
 # name: model
@@ -7102,7 +7615,7 @@ IDIO
 # type: matrix
 # rows: 1
 # columns: 2
- 1.2 0.25
+ 1.2 0
 
 
 # name: shock_type
@@ -7198,7 +7711,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -7232,6 +7745,23 @@ EUR
 BASF SE
 
 
+# name: exposure_base
+# type: scalar
+78.340000000000003
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -7241,7 +7771,7 @@ BASF11
 
 # name: idio_vola
 # type: scalar
-0.35
+0.34999999999999998
 
 
 # name: model
@@ -7302,7 +7832,7 @@ IDIO
 # type: matrix
 # rows: 1
 # columns: 2
- 1.15 0.25
+ 1.1499999999999999 0
 
 
 # name: shock_type
@@ -7361,7 +7891,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-78.34
+78.340000000000003
 
 
 # name: value_mc
@@ -7398,7 +7928,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 27
+# length: 30
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -7430,6 +7960,23 @@ EUR
 # elements: 1
 # length: 8
 BitCoins
+
+
+# name: exposure_base
+# type: scalar
+246.91999999999999
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -7551,7 +8098,7 @@ sensitivity
 
 # name: value_base
 # type: scalar
-246.92
+246.91999999999999
 
 
 # name: value_mc
@@ -7588,7 +8135,7 @@ sensitivity
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 119
+# length: 125
 # name: accrued_interest
 # type: scalar
 0
@@ -7596,7 +8143,7 @@ sensitivity
 
 # name: alpha
 # type: scalar
-0.1
+0.10000000000000001
 
 
 # name: annuity_amount
@@ -7706,6 +8253,13 @@ Black
 1825
 
 
+# name: cms_sliding_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
+
+
 # name: cms_spread
 # type: scalar
 0
@@ -7714,6 +8268,13 @@ Black
 # name: cms_term
 # type: scalar
 365
+
+
+# name: cms_term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
 
 
 # name: compounding_freq
@@ -7842,6 +8403,23 @@ IR_EUR
 0
 
 
+# name: exposure_base
+# type: scalar
+101.119
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: fixed_annuity
 # type: scalar
 0
@@ -7951,7 +8529,7 @@ volatility
 
 # name: last_reset_rate
 # type: scalar
-1e-005
+1.0000000000000001e-005
 
 
 # name: long_first_period
@@ -8175,6 +8753,13 @@ ZCB
 12
 
 
+# name: term_unit
+# type: sq_string
+# elements: 1
+# length: 6
+months
+
+
 # name: timestep_mc
 # type: cell
 # rows: 0
@@ -8265,7 +8850,7 @@ bond
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 44
+# length: 49
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -8345,6 +8930,23 @@ IR_EUR
 # elements: 0
 
 
+# name: exposure_base
+# type: scalar
+0.90000000000000002
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
 # name: id
 # type: sq_string
 # elements: 1
@@ -8390,7 +8992,7 @@ IR Payer Swaption
 
 # name: spot
 # type: scalar
-0.025
+0.025000000000000001
 
 
 # name: spread
@@ -8400,7 +9002,7 @@ IR Payer Swaption
 
 # name: strike
 # type: scalar
-0.0175
+0.017500000000000002
 
 
 # name: sub_type
@@ -8413,6 +9015,18 @@ SWAPT_PAY
 # name: tenor
 # type: scalar
 10
+
+
+# name: term
+# type: scalar
+365
+
+
+# name: term_unit
+# type: sq_string
+# elements: 1
+# length: 4
+days
 
 
 # name: theo_delta
@@ -8487,7 +9101,7 @@ IR_EUR
 
 # name: value_base
 # type: scalar
-0.9
+0.90000000000000002
 
 
 # name: value_mc
@@ -8526,7 +9140,7 @@ RF_VOLA_IR_EUR
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 50
+# length: 54
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -8637,6 +9251,30 @@ IR_EUR
 # name: div_yield
 # type: scalar
 0
+
+
+# name: exposure_base
+# type: scalar
+1500
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_type
+# type: sq_string
+# elements: 1
+# length: 19
+exposure_from_value
 
 
 # name: id
@@ -8833,7 +9471,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 50
+# length: 54
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -8944,6 +9582,30 @@ IR_EUR
 # name: div_yield
 # type: scalar
 0
+
+
+# name: exposure_base
+# type: scalar
+1500
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_type
+# type: sq_string
+# elements: 1
+# length: 19
+exposure_from_value
 
 
 # name: id
@@ -9140,7 +9802,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 50
+# length: 54
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -9250,7 +9912,31 @@ IR_EUR
 
 # name: div_yield
 # type: scalar
-0.04
+0.040000000000000001
+
+
+# name: exposure_base
+# type: scalar
+580
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_type
+# type: sq_string
+# elements: 1
+# length: 19
+exposure_from_value
 
 
 # name: id
@@ -9447,7 +10133,7 @@ RF_VOLA_EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 50
+# length: 54
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -9558,6 +10244,30 @@ IR_EUR
 # name: div_yield
 # type: scalar
 0
+
+
+# name: exposure_base
+# type: scalar
+1580
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_type
+# type: sq_string
+# elements: 1
+# length: 19
+exposure_from_value
 
 
 # name: id
@@ -9754,7 +10464,7 @@ RF_VOLA_COM_GOLD
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 41
+# length: 45
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -9841,6 +10551,30 @@ IR_EUR
 0
 
 
+# name: exposure_base
+# type: scalar
+2
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_type
+# type: sq_string
+# elements: 1
+# length: 19
+exposure_from_price
+
+
 # name: foreign_curve
 # type: sq_string
 # elements: 1
@@ -9871,7 +10605,7 @@ EQFORW01
 
 # name: multiplier
 # type: scalar
-0.1
+0.10000000000000001
 
 
 # name: name
@@ -10002,7 +10736,7 @@ EQ_DE
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 24
+# length: 27
 # name: asset_class
 # type: sq_string
 # elements: 1
@@ -10077,6 +10811,23 @@ Synthetic test instrument
 # name: discount_curve
 # type: null_sq_string
 # elements: 0
+
+
+# name: exposure_base
+# type: scalar
+121.09999999999999
+
+
+# name: exposure_mc
+# type: null_matrix
+# rows: 0
+# columns: 0
+
+
+# name: exposure_stress
+# type: null_matrix
+# rows: 0
+# columns: 0
 
 
 # name: id
@@ -10156,7 +10907,7 @@ synthetic
 
 # name: value_base
 # type: scalar
-121.1
+121.09999999999999
 
 
 # name: value_mc
@@ -10175,7 +10926,7 @@ synthetic
 # type: matrix
 # rows: 1
 # columns: 2
- 0.4 0.6
+ 0.40000000000000002 0.59999999999999998
 
 
 
