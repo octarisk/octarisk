@@ -17,7 +17,7 @@ state-of-the-art methods and a light-weight and rapid
 calculation shall be implemented with free software only.
 
 The code is written in Octave and C++ language and will be useable right out-of-the box 
-with Octave version >= 4.0.0 and the Financial package. The code 
+with Octave version >= 4.4.0 and the Financial and Statistics package. The code 
 is licensed under the GNU GPL.
 
 Further information:
@@ -39,17 +39,18 @@ Stefan Schloegl (schinzilord@octarisk.com)
 IRRer-Zins (IRRer-Zins@t-online.de)
 ## Installation
 
-You need Octave in Version >=4.0.0 with installed financial and statistics package.
+You need Octave in Version >=4.4.0 with installed financial, io and statistics package.
 Moreover, an efficient linear algebra package is strongly recommended (e.g. OpenBLAS / LaPACK)
 
 Just follow these steps:
 - install Octave either from your distro repository (`sudo apt-get install octave` 
 or `yum install octave-forge`) or directly from the binaries
-- install Financial and Statistics package. Therefore type at the Octave command line
+- install Financial, IO and Statistics package. Therefore type at the Octave command line
 (installation may take some minutes to complete):
 
 ```
 pkg install -forge financial
+pkg install -forge io
 pkg install -forge statistics
 ```
 
@@ -63,7 +64,7 @@ slashes `/`, even under Windows):
 addpath ('/path/to/octarisk-latest')
 savepath()
 ```
-- compile required C++ code by typing on the Octave console
+- compile required C++ code by typing on the Octave console (C++11 compiler required)
 ```
 compile_oct_files('/path/to/octarisk-latest')
 ```
@@ -77,7 +78,7 @@ portfolio is provided in the release.
 unittests()
 integrationtests ('/path/to/octarisk-latest/testing_folder')
 ```
-All tests have to be successful (PASS only, no FAILS). Otherwise please make sure all C++ binaries were compiled and both financial and statistical packages were installed properly. The integrationtests valuate all possible instrument types and calculates portfolio value-at-risk and stress figures (a full end to end test including scenario generation, instrument valuation and portfolio aggregation is performed).
+All tests have to be successful (PASS only, no FAILS). Otherwise please make sure all C++ binaries were compiled and financial, io and statistical packages were installed properly. The integrationtests valuate all possible instrument types and calculates portfolio value-at-risk and stress figures (a full end to end test including scenario generation, instrument valuation and portfolio aggregation is performed).
 
 
 - start the GUI (which automatically calls octarisk main script) or just call the main script from the console
