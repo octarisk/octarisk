@@ -581,67 +581,67 @@ octave_value_list build_hw_probabilities(const int& jMax, const int& N,
 bool any_bad_argument(const octave_value_list& args)
 {
     
-    if (!args(11).is_numeric_type ())
+    if (!args(11).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting K to be a numeric");
         return true;
     }
     
-    if (!args(10).is_numeric_type ())
+    if (!args(10).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting Mat to be a scalar");
         return true;
     }
     
-    if (!args(9).is_numeric_type ())
+    if (!args(9).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting notional to be a numeric");
         return true;
     }
     
-    if (!args(8).is_numeric_type ())
+    if (!args(8).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting Timevec to be a numeric");
         return true;
     }
     
-    if (!args(7).is_numeric_type ())
+    if (!args(7).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting dt to be a numeric");
         return true;
     }
     
-    if (!args(6).is_numeric_type ())
+    if (!args(6).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting cf_matrix to be a numeric");
         return true;
     }
     
-    if (!args(5).is_numeric_type ())
+    if (!args(5).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting cf_dates to be a numeric");
         return true;
     }
     
-    if (!args(1).is_numeric_type ())
+    if (!args(1).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting T to be a numeric");
         return true;
     }
 
-    if (!args(2).is_numeric_type ())
+    if (!args(2).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting N to be a numeric");
         return true;
     }
 
-    if (!args(3).is_numeric_type ())
+    if (!args(3).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting alpha to be a numeric");
         return true;
     }
 
-    if (!args(4).is_numeric_type ())
+    if (!args(4).isnumeric ())
     {
         error("pricing_callable_bond_cpp: expecting sigma to be a numeric");
         return true;

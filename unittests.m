@@ -18,6 +18,7 @@
 function unittests()
 
 pkg load statistics;
+pkg load financial;
 
 % 1) Specify all functions which have embedded tests:
 function_cell= {'pricing_npv','option_bs','option_willowtree', ...

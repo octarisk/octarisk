@@ -144,19 +144,19 @@ bool any_bad_argument(const octave_value_list& args)
 		return true;
 	}
 
-	if (! args(0).is_numeric_type ())
+	if (! args(0).isnumeric ())
 	{
 		error ("interpolate_curve_vectorized: ARG0 must be numeric (nodes)");
 		return true;
     }
 
-	if (! args(1).is_numeric_type ())
+	if (! args(1).isnumeric ())
 	{
 		error ("interpolate_curve_vectorized: ARG1 must be numeric (rates)");
 		return true;
     }
 	
-	if (! args(2).is_numeric_type ())
+	if (! args(2).isnumeric ())
 	{
 		error ("interpolate_curve_vectorized: ARG2 must be numeric (timestep)");
 		return true;

@@ -39,7 +39,6 @@ for ii = 1 : 1 : length(oct_file_list)
             
             % compile .cc file (forcing gnu++11 standards)
             [outfile, status] =feval("mkoctfile","-v","-std=gnu++11",link_to_file);
-            % [outfile, status] = mkoctfile -v '-std=gnu++11' (link_to_file);
             if ( status == 0 )
                 fprintf('----> File >>%s<< successfully compiled\n',tmp_filename);
                 counter_compiled += 1;

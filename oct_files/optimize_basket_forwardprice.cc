@@ -314,67 +314,67 @@ double erfinv(double x)
 bool any_bad_argument(const octave_value_list& args)
 {
 
-    if (!args(0).is_numeric_type ())
+    if (!args(0).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting weights to be numeric");
         return true;
     }
     
-    if (!args(1).is_numeric_type ())
+    if (!args(1).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting S to be numeric");
         return true;
     }
     
-    if (!args(2).is_numeric_type ())
+    if (!args(2).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting riskfree to be numeric");
         return true;
     }
     
-    if (!args(3).is_numeric_type ())
+    if (!args(3).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting r to be numeric");
         return true;
     }
 	
-	if (!args(4).is_numeric_type ())
+	if (!args(4).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting sigma to be numeric");
         return true;
     }
 	
-	if (!args(5).is_numeric_type ())
+	if (!args(5).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting T to be numeric");
         return true;
     }
 	
-	if (!args(6).is_numeric_type ())
+	if (!args(6).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting K to be numeric");
         return true;
     }
 	
-	if (!args(7).is_numeric_type ())
+	if (!args(7).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting lbound to be numeric");
         return true;
     }
 	
-	if (!args(8).is_numeric_type ())
+	if (!args(8).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting ubound to be numeric");
         return true;
     }
 	
-	if (!args(9).is_numeric_type ())
+	if (!args(9).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting maxiter to be numeric");
         return true;
     }
 	
-	if (!args(10).is_numeric_type ())
+	if (!args(10).isnumeric ())
     {
         error("optimize_basket_forwardprice: expecting limit to be numeric");
         return true;

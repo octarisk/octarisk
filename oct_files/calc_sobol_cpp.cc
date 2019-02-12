@@ -234,13 +234,13 @@ License included in source code.\n\
 bool any_bad_argument(const octave_value_list& args)
 {
     
-    if (!args(0).is_numeric_type ())
+    if (!args(0).isnumeric ())
     {
         error("calc_sobol_cpp: expecting scenarios to be an integer");
         return true;
     }
     
-    if (!args(1).is_numeric_type ())
+    if (!args(1).isnumeric ())
     {
         error("calc_sobol_cpp: expecting dimensions to be an integer");
         return true;

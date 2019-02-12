@@ -385,49 +385,49 @@ ColumnVector get_EU_option_price_BS(const bool& call_flag, const NDArray& S,
 bool any_bad_argument(const octave_value_list& args)
 {
     
-    if (!args(0).is_numeric_type ())
+    if (!args(0).isnumeric ())
     {
         error("pricing_option_cpp: expecting Option type to be an integer");
         return true;
     }
     
-    if (!args(1).is_bool_type())
+    if (!args(1).islogical())
     {
         error("pricing_option_cpp: expecting callflag to be a bool");
         return true;
     }
     
-    if (!args(2).is_numeric_type ())
+    if (!args(2).isnumeric ())
     {
         error("pricing_option_cpp: expecting S to be a numeric");
         return true;
     }
     
-    if (!args(3).is_numeric_type ())
+    if (!args(3).isnumeric ())
     {
         error("pricing_option_cpp: expecting X to be a numeric");
         return true;
     }
     
-    if (!args(4).is_numeric_type ())
+    if (!args(4).isnumeric ())
     {
         error("pricing_option_cpp: expecting T to be a numeric");
         return true;
     }
     
-    if (!args(5).is_numeric_type ())
+    if (!args(5).isnumeric ())
     {
         error("pricing_option_cpp: expecting r to be a numeric");
         return true;
     }
     
-    if (!args(6).is_numeric_type ())
+    if (!args(6).isnumeric ())
     {
         error("pricing_option_cpp: expecting sigma to be a numeric");
         return true;
     }
     
-    if (!args(7).is_numeric_type ())
+    if (!args(7).isnumeric ())
     {
         error("pricing_option_cpp: expecting divrate to be a numeric");
         return true;
