@@ -16,7 +16,7 @@
 %# Load data from position specification file and generate objects with parsed data. Store all objects in provided position struct and return the final struct and a cell containing the failed position ids.
 %# @end deftypefn
 
-function [tmp_portfolio_struct id_failed_cell positions_cell] = load_positions(portfolio_struct, path_positions,file_positions,path_output,path_archive,tmp_timestamp,archive_flag)
+function [tmp_portfolio_struct id_failed_cell positions_cell port_obj_struct] = load_positions(portfolio_struct, path_positions,file_positions,path_output,path_archive,tmp_timestamp,archive_flag)
 
 % A) Prepare position object generation
 % A.0) Specify local variables
@@ -74,6 +74,8 @@ number_portfolios = 0;
 id_failed_cell = {};
 tmp_position_struct = struct();
 tmp_portfolio_struct = portfolio_struct;
+port_obj_struct = struct();
+pos_obj_struct = struct();
 for ii = 1 : 1 : length(tmp_list_files)
     tmp_filename = tmp_list_files( ii ).name;
     
@@ -130,7 +132,17 @@ for ii = 1 : 1 : length(tmp_list_files)
         for jj = 2 : 1 : length(content)
           error_flag = 0;
           if (length(content{jj}) > 3)  % parse row only if it contains some meaningful data
-            
+            % B.3a)  Generate Position or Portfolio Object
+            if ( strcmpi(tmp_position_type,'PORTFOLIO'))
+                tmp_obj = Position;
+                tmp_obj = tmp_obj.set('type','Portfolio');
+            elseif ( strcmpi(tmp_position_type,'POSITION'))
+                tmp_obj = Position;
+                tmp_obj = tmp_obj.set('type','Position');
+            else
+                fprintf('Unknown type. Neither position nor portfolio');
+            end
+        
             % B.3b)  Loop through all position attributes
             tmp_cell = content{jj};
             for mm = 2 : 1 : length(tmp_cell)   % loop via all entries in row and set object attributes
@@ -197,6 +209,14 @@ for ii = 1 : 1 : length(tmp_list_files)
                 catch
                     error_flag = 1;
                 end
+                
+                % try to store items in object
+                try
+                    tmp_obj = tmp_obj.set(tmp_columnname,tmp_entry);
+                catch
+                    error_flag = 1;
+                end
+                
             end  % end for loop via all attributes
             % B.3c) Error checking for positions / portfolio: 
             if ( error_flag > 0 )
@@ -207,12 +227,15 @@ for ii = 1 : 1 : length(tmp_list_files)
                 error_flag = 0;
                 if ( strcmpi(tmp_position_type,'PORTFOLIO'))
                     number_portfolios = number_portfolios + 1;
+                    port_obj_struct( number_portfolios ).id = tmp_obj.id;
+                    port_obj_struct( number_portfolios ).object = tmp_obj;
                 elseif ( strcmpi(tmp_position_type,'POSITION'))
                     number_positions = number_positions + 1;
                     % add position id to position_cell
+                    pos_obj_struct( number_positions ).id = tmp_obj.id;
+                    pos_obj_struct( number_positions ).object = tmp_obj;
                     positions_cell{ length(positions_cell) + 1 } =  tmp_cell_struct{1, jj - 1};
                 end
-                number_positions = number_positions + 1;
             end
           end   % end if loop with meaningful data
         end  % next position / next row in specification
@@ -239,6 +262,30 @@ for kk = 1 : 1 : length(tmp_portfolio_struct)
             idx = idx + 1;
         end
     end   
+end
+
+% Portfolio Object: finished loading position into struct -> consolidate structure
+for kk = 1 : 1 : length(pos_obj_struct)
+    tmp_pos_obj = pos_obj_struct(kk).object;
+    tmp_pos_id = tmp_pos_obj.id ;
+    % get port_id of position object:
+    tmp_port_id = tmp_pos_obj.port_id;
+    [tmp_port_obj retcode] = get_sub_object(port_obj_struct,tmp_port_id);
+    if retcode == 0
+        error('Position has no portfolio object\n',tmp_pos_id);
+    else
+        % append pos_id to port_obj.positions{}
+        tmp_positions_struct = tmp_port_obj.positions;
+        len_positions = length(tmp_positions_struct);
+        tmp_positions_struct( len_positions + 1 ).object = tmp_pos_obj;
+        tmp_positions_struct( len_positions + 1 ).id = tmp_pos_obj.id;
+        tmp_port_obj.positions = tmp_positions_struct;
+        % store object back in port_obj_struct
+        id_cell = {port_obj_struct.id};
+        tmpvec = 1:1:length(id_cell);
+        index_value = strcmpi(id_cell,tmp_port_id) * tmpvec';
+        port_obj_struct( index_value ).object = tmp_port_obj;
+    end
 end
 
 % check for empty portfolios
@@ -268,5 +315,16 @@ if (archive_flag == 1)
         tarfiles = tar( strcat(path_archive,'/archive_positions_',tmp_timestamp,'.tar'),strcat(path,'/*'));
     end
 end
+
+% remove
+for kk = 1:1:length(port_obj_struct)
+    tmp_obj = port_obj_struct(kk).object;
+    tmp_obj
+end
+% for kk = 1:1:length(pos_obj_struct)
+    % tmp_obj = pos_obj_struct(kk).object;
+    % kk
+    % tmp_obj
+% end
 
 end % end function

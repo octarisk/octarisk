@@ -19,7 +19,7 @@
 %#
 %# @end deftypefn
 
-function [instrument_struct, curve_struct, index_struct, surface_struct, para_object, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct, mc_var_shock_pct] = octarisk(path_parameter,filename_parameter)
+function [instrument_struct, curve_struct, index_struct, surface_struct, para_object, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct, mc_var_shock_pct, port_obj_struct] = octarisk(path_parameter,filename_parameter)
 
 
 
@@ -125,7 +125,6 @@ try
             end
     end
 end    
-
 
 % set filenames for input:
 input_filename_instruments  = para_object.input_filename_instruments;
@@ -255,25 +254,36 @@ else
 end
 % 1. Processing Instruments data
 instrument_struct=struct();
-[instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_input,input_filename_instruments,path_output_instruments,path_archive,timestamp,archive_flag);
+[instrument_struct id_failed_cell] = load_instruments(instrument_struct, ...
+                    valuation_date,path_input,input_filename_instruments, ...
+                    path_output_instruments,path_archive,timestamp,archive_flag);
+              
 
 % 2. Processing Riskfactor data
 riskfactor_struct=struct();
-[riskfactor_struct id_failed_cell] = load_riskfactors(riskfactor_struct,path_input,input_filename_riskfactors,path_output_riskfactors,path_archive,timestamp,archive_flag);
+[riskfactor_struct id_failed_cell] = load_riskfactors(riskfactor_struct, ...
+            path_input,input_filename_riskfactors,path_output_riskfactors, ...
+            path_archive,timestamp,archive_flag);
 
 % 3. Processing Positions data
 portfolio_struct=struct();
-[portfolio_struct id_failed_cell positions_cell] = load_positions(portfolio_struct, path_input,input_filename_positions,path_output_positions,path_archive,timestamp,archive_flag);
+[portfolio_struct id_failed_cell positions_cell port_obj_struct] = load_positions(portfolio_struct, ...
+            path_input,input_filename_positions,path_output_positions, ...
+            path_archive,timestamp,archive_flag);
 
 % 4. Processing Stresstest data
 stresstest_struct=struct();
-[stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, path_input,input_filename_stresstests,path_output_stresstests,path_archive,timestamp,archive_flag);
+[stresstest_struct id_failed_cell] = load_stresstests(stresstest_struct, ...
+            path_input,input_filename_stresstests,path_output_stresstests, ...
+            path_archive,timestamp,archive_flag);
 no_stresstests = length(stresstest_struct);
 para_object.no_stresstests = no_stresstests;
 
 % 5. Processing Market Data objects (Indizes and Marketcurves)
 mktdata_struct=struct();
-[mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct,path_mktdata,input_filename_mktdata,path_output_mktdata,path_archive,timestamp,archive_flag);
+[mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct, ...
+            path_mktdata,input_filename_mktdata,path_output_mktdata, ...
+            path_archive,timestamp,archive_flag);
 
 parseinput = toc;
 

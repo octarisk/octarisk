@@ -124,40 +124,8 @@ for ii = 1 : 1 : length(tmp_list_files)
     if (length(tmp_filename) > 3 && strcmp(tmp_filename,'comments.txt') == 0) 
         % B.1) parse input data
         tmp_filename = strcat(path,'/',tmp_filename);
-        in = fileread(tmp_filename);
-        % ==========================================================
-        % use custom design for data import -> Copyright (C) 2009-2014 Pascal Dupuis <cdemills@gmail.com>: 
-        % code from his dataframe package, published under the GNU GPL
-        %# explicit list taken from 'man pcrepattern' -- we enclose all
-          %# vertical separators in case the underlying regexp engine
-          %# doesn't have them all.
-          eol = '(\r\n|\n|\v|\f|\r|\x85)';
-          %# cut into lines -- include the EOL to have a one-to-one
-            %# matching between line numbers. Use a non-greedy match.
-          lines = regexp (in, ['.*?' eol], 'match');
-          %# spare memory
-          clear in;
-          try
-            dummy =  cellfun (@(x) regexp (x, eol), lines); 
-          catch  
-            error('line 245 -- binary garbage in the input file ? \n');
-          end
-          %# remove the EOL character(s)
-          lines(1 == dummy) = {''};
-          lines_out = {};
-           %# remove everything beyond the eol character (the character number dummy value found)
-          for kk = 1 : 1 : length(lines)
-                tmp_lines = lines{kk};
-                dummy_eol = dummy(kk);
-                if ( length(tmp_lines)>1)
-                    lines_out{kk} = tmp_lines(1:dummy_eol-1);
-                end
-          end
+        content = parse_file(tmp_filename,separator);
 
-          %# extract fields
-          content = cellfun (@(x) strsplit (x, separator, 'collapsedelimiters', false), lines_out, ...
-                               'UniformOutput', false); %# extract fields           
-        % ==========================================================
         % B.2) extract header from first row:
         tmp_header = content{1};
         tmp_colname = {};
@@ -359,3 +327,40 @@ if (archive_flag == 1)
 end
 
 end % end function
+
+% ==============   Helper Function =============================================
+function content = parse_file(tmp_filename,separator);
+    in = fileread(tmp_filename);
+    % ==========================================================
+    % use custom design for data import -> Copyright (C) 2009-2014 Pascal Dupuis <cdemills@gmail.com>: 
+    % code from his dataframe package, published under the GNU GPL
+    %# explicit list taken from 'man pcrepattern' -- we enclose all
+    %# vertical separators in case the underlying regexp engine
+    %# doesn't have them all.
+    eol = '(\r\n|\n|\v|\f|\r|\x85)';
+    %# cut into lines -- include the EOL to have a one-to-one
+    %# matching between line numbers. Use a non-greedy match.
+    lines = regexp (in, ['.*?' eol], 'match');
+    %# spare memory
+    clear in;
+    try
+    dummy =  cellfun (@(x) regexp (x, eol), lines); 
+    catch  
+    error('line 245 -- binary garbage in the input file ? \n');
+    end
+    %# remove the EOL character(s)
+    lines(1 == dummy) = {''};
+    lines_out = {};
+    %# remove everything beyond the eol character (the character number dummy value found)
+    for kk = 1 : 1 : length(lines)
+        tmp_lines = lines{kk};
+        dummy_eol = dummy(kk);
+        if ( length(tmp_lines)>1)
+            lines_out{kk} = tmp_lines(1:dummy_eol-1);
+        end
+    end
+
+    %# extract fields
+    content = cellfun (@(x) strsplit (x, separator, 'collapsedelimiters', false), lines_out, ...
+                       'UniformOutput', false); %# extract fields           
+end % parse_file

@@ -360,6 +360,13 @@ else
       else
         error ('set: expecting %s input value >>%s<< to be a numericscalar',any2str(val));
       end
+    % ============================     Case 8: struct    ========================= 
+    elseif ( strcmpi(type,'struct')) 
+      if (isstruct(val) )
+        retval = val;
+      else
+        error ('set: expecting %s input value >>%s<< to be a cell',any2str(val));
+      end
     else
         error ('return_checked_input: unknown input type >>%s<< not in [char,numeric,boolean,date,cell,charvnumber,numericscalar]',type);
     end
@@ -372,6 +379,7 @@ end
 %! obj.scenario_mc = [1;2;3;4];
 %! obj.timestep_mc = {'10d'};
 %! obj.cf_values_mc(:,:,1) = [1;2;3;4];
+%! obj.positions = struct();
 %! retval = return_checked_input(obj,'aaa ','name','char');
 %! assert(retval,'aaa')
 %! retval = return_checked_input(obj,234324.2135,'value','numeric');
@@ -398,3 +406,8 @@ end
 %! assert(retval,[12;23;145;15])
 %! retval = return_checked_input(obj,'250d','timestep_mc','special');
 %! assert(retval,{'10d','250d'})
+%! s = struct();
+%! s(1).id = 'AAA';
+%! s(1).object = obj;
+%! retval = return_checked_input(obj,s,'positions','struct');
+%! assert(retval,s)

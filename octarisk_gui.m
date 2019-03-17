@@ -27,7 +27,7 @@ if (isunix)
     input_path = '/home/schinzilord/Dokumente/Programmierung/octarisk/';
     parameter_file = 'parameter_unix.csv';
 else
-    input_path = 'C:/Dokumente/Work/octarisk/private_folder';
+    input_path = 'C:/Dokumente/Work/octarisk/testing_folder';
     parameter_file = 'parameter.csv';
 end
 
