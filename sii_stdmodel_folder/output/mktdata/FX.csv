@@ -1,0 +1,21 @@
+FX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR
+Index,FX_EURUSD,EUR_USD,Exchange Rate,EUR,EUR USD Exchange rate,1.08
+Index,FX_EURCAD,EUR_CAD,Exchange Rate,EUR,EUR CAD Exchange rate,1.25
+Index,FX_EURMYR,EUR_MYR,Exchange Rate,EUR,EUR MYR Exchange rate,1.11
+Index,FX_EURKRW,EUR_KRW,Exchange Rate,EUR,EUR KRW Exchange rate,1.12
+Index,FX_EURTHB,EUR_THB,Exchange Rate,EUR,EUR THB Exchange rate,1.21
+Index,FX_EURDKK,EUR_DKK,Exchange Rate,EUR,EUR DKK Exchange rate,1.24
+Index,FX_EURAUD,EUR_AUD,Exchange Rate,EUR,EUR AUD Exchange rate,1.45
+Index,FX_EURPHP,EUR_PHP,Exchange Rate,EUR,EUR PHP Exchange rate,1.32
+Index,FX_EURTRY,EUR_TRY,Exchange Rate,EUR,EUR TRY Exchange rate,1.32
+Index,FX_EUREGP,EUR_EGP,Exchange Rate,EUR,EUR EGP Exchange rate,1.32
+Index,FX_EURGBP,EUR_GBP,Exchange Rate,EUR,EUR GBP Exchange rate,1.32
+Index,FX_EURCNY,EUR_CNY,Exchange Rate,EUR,EUR CNY Exchange rate,1.32
+Index,FX_EURIDR,EUR_IDR,Exchange Rate,EUR,EUR IDR Exchange rate,1.32
+Index,FX_EURCHF,EUR_CHF,Exchange Rate,EUR,EUR CHF Exchange rate,1.32
+Index,FX_EURSGD,EUR_PHP,Exchange Rate,EUR,EUR PHP Exchange rate,1.32
+Index,FX_EURTWD,EUR_TWD,Exchange Rate,EUR,EUR TWD Exchange rate,1.32
+Index,FX_EURRUB,EUR_RUB,Exchange Rate,EUR,EUR RUB Exchange rate,1.32
+Index,FX_EURZAR,EUR_ZAR,Exchange Rate,EUR,EUR ZAR Exchange rate,1.32
+Index,FX_EURARS,EUR_ARS,Exchange Rate,EUR,EUR ARS Exchange rate,1.32
+

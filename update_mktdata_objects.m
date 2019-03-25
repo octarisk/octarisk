@@ -378,11 +378,20 @@ function retval = return_stress_shocks(obj,mktstruct)
     type        = mktstruct.type;
     shock_type  = mktstruct.shock_type;
     shock_value = mktstruct.shock_value;
+    minshock    = mktstruct.minshock;
+    maxshock    = mktstruct.maxshock;
     % type index
     if (strcmpi(type,'index'))
         base_value = obj.getValue('base');
         if (strcmpi(shock_type,'relative'))
-            retval = base_value .* shock_value;
+            appliedshock = base_value .* (shock_value - 1);
+            if ( ~isempty(minshock))
+                appliedshock(abs(appliedshock)<minshock) = sign(appliedshock).*minshock;
+            end
+            if ( ~isempty(maxshock))
+                appliedshock(abs(appliedshock)>maxshock) = sign(appliedshock).*maxshock;
+            end
+            retval = base_value + appliedshock;
         elseif (strcmpi(shock_type,'absolute'))
             retval = base_value + shock_value;
         elseif (strcmpi(shock_type,'value'))
@@ -405,7 +414,14 @@ function retval = return_stress_shocks(obj,mktstruct)
                                 mktstruct.shock_value, tmp_node, ...
                                 mktstruct.method_interpolation);
             if (strcmpi(shock_type,'relative'))
-                rates_stress(kk)  = rates_base(kk) .* shock_value;
+                appliedshock = rates_base(kk) .* (shock_value - 1);
+                if ( ~isempty(minshock))
+                    appliedshock(abs(appliedshock)<minshock) = sign(appliedshock).*minshock;
+                end
+                if ( ~isempty(maxshock))
+                    appliedshock(abs(appliedshock)>maxshock) = sign(appliedshock).*maxshock;
+                end
+                rates_stress(kk)  = rates_base(kk) + appliedshock;
             elseif (strcmpi(shock_type,'absolute'))
                 rates_stress(kk)  = rates_base(kk) + shock_value;
             elseif (strcmpi(shock_type,'value'))

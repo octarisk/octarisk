@@ -18,6 +18,7 @@ classdef Sensitivity < Instrument
         use_value_base = false; % boolean flag: use value_base for base valuation. Scenario shocks are added to base value
         use_taylor_exp = false; % boolean flag: if true, treat polynomial value 
             % as taylor expansion: f(x) = a*x^1 + 1/2*b*x^2 + ..., otherwise just f(x) = a*x^1 + b*x^2
+        sii_equity_type = 0;
     end
    
     properties (SetAccess = private)
@@ -105,6 +106,13 @@ classdef Sensitivity < Instrument
          end
          obj.model = model;
       end % Set.model
+      
+      function obj = set.sii_equity_type(obj,sii_equity_type)
+         if ~(sii_equity_type == 1 || sii_equity_type == 2 || sii_equity_type == 0)
+            error('Index SII equity type must be either 0, 1 or 2.')
+         end
+         obj.sii_equity_type = sii_equity_type;
+      end % Set.sii_equity_type
       
    end 
    

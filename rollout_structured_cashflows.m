@@ -1351,6 +1351,8 @@ function para = get_cfvalues_FRNCAPFLOOR(valuation_date, value_type, para, instr
                 else
                     moneyness_exponent = -1;
                 end
+                % prevent division by 0
+                forward_rate_curve(forward_rate_curve == 0.0) = 0.0001;
                 moneyness = (forward_rate_curve ./ X) .^ moneyness_exponent;
                 % get volatility according to moneyness and term
                 tenor   = fsd; % days until foward start date
@@ -1665,6 +1667,8 @@ function para = get_cfvalues_CMS_FLOATING_CAPFLOOR(valuation_date, value_type, p
                 if ( regexpi(surface.moneyness_type,'-')) % surface with absolute moneyness
                     moneyness = (X - cms_rate);
                 else % surface with relative moneyness
+                    % prevent division by 0
+                    cms_rate(cms_rate == 0.0) = 0.0001;
                     moneyness = (cms_rate ./ X) .^ moneyness_exponent; 
                 end
                 

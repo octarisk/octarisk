@@ -11,6 +11,7 @@ classdef Index      % Superclass
       index_function = 'sum';   
       index_parameter = 1;
       increments = {};
+      sii_equity_type = 0;
    end
    
     properties (SetAccess = protected )
@@ -70,10 +71,17 @@ classdef Index      % Superclass
            
       function obj = set.type(obj,type)
          if ~(sum(strcmpi(upper(type),{'EQUITY INDEX','BOND INDEX','VOLATILITY INDEX','COMMODITY INDEX','REAL ESTATE INDEX','EXCHANGE RATE','CPI','AGGREGATED INDEX'}))>0  )
-            error('Risk factor type must be either EQUITY INDEX, BOND INDEX, VOLATILITY INDEX, COMMODITY INDEX, REAL ESTATE INDEX,EXCHANGE RATE,CPI or AGGREGATED INDEX')
+            error('Index type must be either EQUITY INDEX, BOND INDEX, VOLATILITY INDEX, COMMODITY INDEX, REAL ESTATE INDEX,EXCHANGE RATE,CPI or AGGREGATED INDEX')
          end
          obj.type = type;
       end % Set.type
+      
+      function obj = set.sii_equity_type(obj,sii_equity_type)
+         if ~(sii_equity_type == 1 || sii_equity_type == 2 || sii_equity_type == 0)
+            error('Index SII equity type must be either 0, 1 or 2.')
+         end
+         obj.sii_equity_type = sii_equity_type;
+      end % Set.sii_equity_type
       
     end
     

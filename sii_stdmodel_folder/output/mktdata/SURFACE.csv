@@ -1,0 +1,3 @@
+SURFACE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,moneyness_typeCHAR,method_interpolationCHAR,riskfactorsCHAR
+Surface,RF_VOLA_EQ_DE,RF_VOLA_EQ_DE,IndexVol,Test description,K/S,linear,RF_VOLA_EQ_DE
+

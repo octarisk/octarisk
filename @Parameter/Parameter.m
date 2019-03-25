@@ -64,17 +64,21 @@ classdef Parameter
         nu = 10;
         rnd_number_gen = 'Mersenne-Twister';
         valuation_date = today;
+        reporting_date = today;
         no_stresstests = 1;
         use_sobol = false;
         sobol_seed = 1;
         filename_sobol_direction_number = 'new-joe-kuo-6.21201'; % Reference: http://web.maths.unsw.edu.au/~fkuo/sobol/
         path_sobol_direction_number = 'static';
 
+        % SII standard model specific variables
+        calc_sm_scr = false;
+        
         % Aggregation specific variables
         base_currency = 'EUR';
         aggregation_key = {'asset_class','currency','id'};
-        mc_timesteps = {'250d'};
-        scenario_set = {'250d','stress'};
+        mc_timesteps = {};
+        scenario_set = {'stress'};
 
         % specify unique runcode and timestamp:
         runcode = '';

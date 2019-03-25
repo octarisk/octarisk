@@ -1,0 +1,3 @@
+CASH,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,asset_classCHAR
+Item,Cash Account EUR,CASH_EUR,1,CASH,EUR Cash Account,EUR,cash
+

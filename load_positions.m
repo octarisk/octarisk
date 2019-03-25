@@ -317,10 +317,10 @@ if (archive_flag == 1)
 end
 
 % remove
-for kk = 1:1:length(port_obj_struct)
-    tmp_obj = port_obj_struct(kk).object;
-    tmp_obj
-end
+% for kk = 1:1:length(port_obj_struct)
+    % tmp_obj = port_obj_struct(kk).object;
+    % tmp_obj
+% end
 % for kk = 1:1:length(pos_obj_struct)
     % tmp_obj = pos_obj_struct(kk).object;
     % kk

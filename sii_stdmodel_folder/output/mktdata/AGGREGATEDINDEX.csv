@@ -1,0 +1,4 @@
+AGGREGATEDINDEX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,incrementsCHAR,index_functionCHAR,index_parameterNMBR
+Index,EQ_DE_FX_USD,EQ_DE_FX_USD,Aggregated Index,USD,,EQ_DE|FX_EURUSD,product,1
+Index,EQ_DE_FX_DOUBLED,EQ_DE_FX_DOUBLED,Aggregated Index,EUR,,EQ_DE,factor,2
+

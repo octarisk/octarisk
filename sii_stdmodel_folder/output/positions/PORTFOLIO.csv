@@ -1,0 +1,4 @@
+PORTFOLIO,idCHAR,nameCHAR,descriptionCHAR,currencyCHAR,port_idCHAR
+Item,FUND_AAA,Global Diversified,Global diversified test portfolio,EUR,XX12345678
+Item,FUND_BBB,Global Derivatives,Global derivatives test portfolio,EUR,YY12345678
+

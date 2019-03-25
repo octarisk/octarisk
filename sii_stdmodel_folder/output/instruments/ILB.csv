@@ -1,0 +1,3 @@
+ILB,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,notionalNMBR,coupon_rateNMBR,termNMBR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,compounding_freqCHAR,cpi_indexCHAR,infl_exp_curveCHAR,cpi_historical_curveCHAR,infl_exp_lagNMBR,use_indexation_lagBOOL
+Item,Test_ILB,Test_ILB,100,ILB,InflationLinkedBond,EUR,AGGR_EUR_FIN_BBB,100,0.01,12,Fixed Income,30-Sep-2016,28-Sep-2026,forward,simple,act/365,FALSE,FALSE,annual,CPI_INDEX,INFL_EXP_CURVE,CPI_HIST_CURVE,3,true
+

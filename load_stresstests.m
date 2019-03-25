@@ -314,6 +314,19 @@ for jj = 2 : 1 : length(content)
         else
             tmp_shock_value = 1;
         end
+        
+        if ( strcmpi(tmp_colname,'minshock') * tmpvec' > 0)
+            tmp_minshock = tmp_cell_struct{ strcmpi(tmp_colname,'minshock') * tmpvec' ,jj-1 };
+        else
+            tmp_minshock = [];
+        end
+        
+        if ( strcmpi(tmp_colname,'maxshock') * tmpvec' > 0)
+            tmp_maxshock = tmp_cell_struct{ strcmpi(tmp_colname,'maxshock') * tmpvec' ,jj-1 };
+        else
+            tmp_maxshock = [];
+        end
+        
     %b) fill object struct attributes
     [object_struct_tmp retcode] = get_sub_struct(substruct.objects,tmp_objects_id);
     if ( retcode == 0)
@@ -328,6 +341,8 @@ for jj = 2 : 1 : length(content)
         object_struct( index ).axis_z = tmp_axis_z;
         object_struct( index ).method_interpolation = tmp_method_interpolation;
         object_struct( index ).shock_value = tmp_shock_value;
+        object_struct( index ).minshock = tmp_minshock;
+        object_struct( index ).maxshock = tmp_maxshock;
     else
         fprintf('WARNING: duplicate entriy for stress >>%s<< and object id >>%s<<. Ignoring duplicate entry.\n',any2str(stress_id),any2str(tmp_objects_id));
         object_struct = substruct.objects;

@@ -1,6 +1,6 @@
 classdef Synthetic < Instrument
    
-    properties   % All properties of Class Debt with default values
+    properties
         instruments  = {'TEST_INSTRUMENT'};
         weights    = [1]; 
         compounding_type = 'cont';
@@ -9,6 +9,7 @@ classdef Synthetic < Instrument
         instr_vol_surfaces  = {'INSTRUMENT_VOL'};
         discount_curve = '';
         correlation_matrix = '';
+        sii_equity_type = 0;
         basket_vola_type = 'Levy'; % [Levy, VCV, Beisser] approximation for basket volatility calculation
     end
    
@@ -78,6 +79,14 @@ classdef Synthetic < Instrument
          end
          obj.basket_vola_type = basket_vola_type;
       end % set.basket_vola_type
+      
+      function obj = set.sii_equity_type(obj,sii_equity_type)
+         if ~(sii_equity_type == 1 || sii_equity_type == 2 || sii_equity_type == 0)
+            error('Index SII equity type must be either 0, 1 or 2.')
+         end
+         obj.sii_equity_type = sii_equity_type;
+      end % Set.sii_equity_type
+      
      
    end % end of methods
    

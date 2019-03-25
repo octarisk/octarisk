@@ -20,6 +20,7 @@ classdef Forward < Instrument
         cf_dates = [];
         cf_values = [];
         component_weight = 0.0;
+        sii_equity_type = 0;
         net_basis = 0.0;
         calc_price_from_netbasis = false;
         exposure_type = 'exposure_from_price'; % in {'exposure_from_price','exposure_from_value','delta_x_underlyingvalue'}
@@ -115,6 +116,12 @@ classdef Forward < Instrument
          obj.exposure_type = exposure_type;
       end % set.exposure_type
 
+      function obj = set.sii_equity_type(obj,sii_equity_type)
+         if ~(sii_equity_type == 1 || sii_equity_type == 2 || sii_equity_type == 0)
+            error('Index SII equity type must be either 0, 1 or 2.')
+         end
+         obj.sii_equity_type = sii_equity_type;
+      end % Set.sii_equity_type
       
       
    end 

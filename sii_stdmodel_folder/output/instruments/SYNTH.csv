@@ -1,0 +1,3 @@
+SYNTH,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,instrumentsCHAR,weightsCHAR,asset_classCHAR
+Item,Synthetic_test,SYNTH01,121.1,SYNTH,Synthetic test instrument,EUR,A0RM43|EQFORW01,0.4|0.6,Diversified
+

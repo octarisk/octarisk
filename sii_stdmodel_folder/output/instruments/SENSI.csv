@@ -1,0 +1,15 @@
+SENSI,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,idio_volaNMBR,asset_classCHAR,sii_equity_typeNMBR
+Item,ComStage ETF S&P 500,ETF012,199.94,EQU,ComStage ETF S&P 500,EUR,RF_EQ_NA,1,,Equity,2
+Item,db x-trackers Dow Jones Euro STOXX50,DBX1EU,35.28,EQU,db x-trackers Dow Jones Euro STOXX50,EUR,RF_EQ_EU,1,,Equity,1
+Item,ComStage ETF MSCI Pacific,ETF114,46.28,EQU,comstage EF MSCI Pacific,EUR,RF_EQ_AP,1,,Equity,1
+Item,iShares MSCI Japan,A0DPMW,11.63,EQU,iShares ETF MSCI Japan,EUR,RF_EQ_AP,1,,Equity,1
+Item,Comstage ETF MSCI Emerging Markets,ETF127,35.51,EQU,comstage ETF MSCI EM,EUR,RF_EQ_EM,1,,Equity,1
+Item,db x-trackers DJ STOXX 600,DBX1A7,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity,1
+Item,Lyxor ETF MSCI Emerging Markets,LYX0BX,8.89,EQU,Lyxor ETF MSCI Emerging Markets,EUR,RF_EQ_EM,1,,Equity,2
+Item,ComStage ETF DJ STOXX 600,ETF060,72.82,EQU,comstage ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity,1
+Item,Lyxor ETF MSCI World,LYX0AG,157.32,EQU,Lyxor ETF MSCI World,EUR,RF_EQ_NA|RF_EQ_EU|RF_EQ_AP,0.5|0.3|0.2,,Equity,1
+Item,iShares FTSE EPRA/NAREIT Global Property,A0LGQL,23.85,RET,iShares FTSE EPRA/NAREIT Global Property Dividend Plus,USD,RF_RE_DM,1,,REIT,2
+Item,QSC AG,513700,1.79,STK,QSC AG,EUR,RF_EQ_DE|IDIO,1.2|0.25,0.35,Equity,1
+Item,BASF SE,BASF11,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity,1
+Item,Bitcoins,BTCOIN,246.92,ALT,BitCoins,EUR,RF_ALT_BC,1,,Alternative,0
+

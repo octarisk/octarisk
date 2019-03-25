@@ -1,0 +1,3 @@
+SWAPT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,vola_surfaceCHAR,underlyingCHAR,discount_curveCHAR,tenorNMBR,no_paymentsNMBR,spotNMBR,strikeNMBR,compounding_typeCHAR,day_count_conventionCHAR,multiplierNMBR,maturity_dateDATE,asset_classCHAR,modelCHAR
+Item,IR Payer Swaption,SWAPTIONC20180317,0.90,SWAPT_PAY,IR Payer Swaption,EUR,RF_VOLA_IR_EUR,IR_EUR,IR_EUR,10,1,0.025,0.0175,disc,act/365,100,17-Mar-2018,Derivative,Black76
+

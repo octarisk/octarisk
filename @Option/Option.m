@@ -31,6 +31,7 @@ classdef Option < Instrument
         binary_type     = 'cash'; % ['gap','cash','asset','supershare']
         lookback_type   = 'floating_strike'; % ['floating_strike','fixed_strike']
         exposure_type = 'exposure_from_value'; % in {'exposure_from_value','delta_x_underlyingvalue'}
+        sii_equity_type = 0;
     end
  
     properties (SetAccess = private)
@@ -221,6 +222,14 @@ classdef Option < Instrument
          end
          obj.exposure_type = exposure_type;
       end % set.exposure_type
+      
+      function obj = set.sii_equity_type(obj,sii_equity_type)
+         if ~(sii_equity_type == 1 || sii_equity_type == 2 || sii_equity_type == 0)
+            error('Index SII equity type must be either 0, 1 or 2.')
+         end
+         obj.sii_equity_type = sii_equity_type;
+      end % Set.sii_equity_type
+      
    end 
 
   %static methods: 

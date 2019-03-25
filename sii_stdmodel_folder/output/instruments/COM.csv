@@ -1,0 +1,5 @@
+COM,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,asset_classCHAR,modelCHAR
+Item,ComStage ETF Commerzbank Commodity EW Index,ETF090,90.9,COM,ComStage ETF Commerzbank Commodity EW Index,EUR,RF_COM_DIV,1,Commodity,REL
+Item,Goldmuenze 1 Unze,GOLDPHYS,1050.18,COM,Goldmuenze 1 Unze,EUR,RF_COM_GOLD,1,Commodity
+Item,Silbermuenze 1 Unze,SILVERPHYS,14.04,COM,Silbermuenze 1 Unze,EUR,RF_COM_SILVER,1,Commodity
+

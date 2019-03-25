@@ -162,6 +162,7 @@ base_currency  = para_object.base_currency;
 aggregation_key = para_object.aggregation_key;
 mc_timesteps    = para_object.mc_timesteps;
 scenario_set    = para_object.scenario_set;
+mc_var_shock_pct = [];
 % specify unique runcode and timestamp:
 runcode = para_object.runcode;
 if ( strcmpi(runcode,''))
@@ -371,6 +372,7 @@ index_struct=struct();
 surface_struct=struct();
 [index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests,run_mc,stresstest_struct);   
 
+%c = get_sub_object(curve_struct,'IR_EUR')
 % c) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir,input_filename_surf_stoch,stresstest_struct,riskfactor_struct,run_mc);
 
@@ -480,9 +482,9 @@ for kk = 1:1:length(instrument_struct)
     obj = instrument_struct(kk).object;
     stressvec = obj.getValue('stress');
     if (length(stressvec) > 4)
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(4),stressvec(5),obj.currency);
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(4),any2str(obj.currency));
     else
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),stressvec(1),obj.currency);
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),any2str(obj.currency));
     end
 end
 

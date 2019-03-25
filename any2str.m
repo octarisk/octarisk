@@ -35,17 +35,22 @@ type = typeinfo(value);
 
 % convert input value depending on value type
 if ( regexp(type,'matrix'))
-    % check for 2 dimensions
-    [aa bb cc] = size(value);
-    if (cc == 1)
-        output = mat2str(value);
-    else
-        % matrix is three-dimensional
+    % check for emptiness ([])
+    if isempty(value)
         output = '';
-        for ii = 1 : 1 : cc
-            output = strcat(output,',',mat2str(value(:,:,ii)));
+    else
+        % check for 2 dimensions
+        [aa bb cc] = size(value);
+        if (cc == 1)
+            output = mat2str(value);
+        else
+            % matrix is three-dimensional
+            output = '';
+            for ii = 1 : 1 : cc
+                output = strcat(output,',',mat2str(value(:,:,ii)));
+            end
+            output = output(2:end);
         end
-        output = output(2:end);
     end
 elseif ( regexp(type,'scalar$'))
     if isfloat(value)       % single or double, real or complex
@@ -100,6 +105,7 @@ end % endfunction
 %!assert(any2str(true),'true')
 %!assert(any2str('true'),'true')
 %!assert(any2str(1),'1')
+%!assert(any2str([]),'')
 %!assert(any2str(-3),'-3')
 %!assert(any2str([1,2;3,4]),'[1 2;3 4]')
 %!assert(any2str([1,2]),'[1 2]')
@@ -117,4 +123,4 @@ end % endfunction
 %! s(2).id = 'ABC';
 %! s(2).value = [1,2;3,4];
 %! s(2).date = datenum('31-Dec-2015');
-%! assert(any2str(s),'(1)id->ABC |value->0 |date->[] (2)id->ABC |value->[1 2;3 4] |date->736329')
+%! assert(any2str(s),'(1)id->ABC |value->0 |date-> (2)id->ABC |value->[1 2;3 4] |date->736329')
