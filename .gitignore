@@ -21,3 +21,5 @@ octave-workspace
 /testing_folder/archive/*
 /prototype_folder/*
 /private_folder/*
+/sii_stdmodel_folder/output/*
+/sii_stdmodel_folder/archive/*
