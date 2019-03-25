@@ -80,7 +80,7 @@ integrationtests ('/path/to/octarisk-latest/testing_folder')
 ```
 All tests have to be successful (PASS only, no FAILS). Otherwise please make sure all C++ binaries were compiled and financial, io and statistical packages were installed properly. The integrationtests valuate all possible instrument types and calculates portfolio value-at-risk and stress figures (a full end to end test including scenario generation, instrument valuation and portfolio aggregation is performed).
 
-- adjust the paths to your working folder (second line) in parameter.csv or parameter_unix.csv (depending which OS you use)
+- open script file octarisk_gui.m and set the input path to your installation directory 'path/to/working_folder'. Furthermore adjust the link to the working folder in the second line of the central parameter file 'parameter.csv' or parameter_unix.csv (depending which OS you use)
 - start the GUI (which automatically calls octarisk main script) or just call the main script from the console
 
 
