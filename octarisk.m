@@ -503,31 +503,9 @@ confi_scenario = max(round(confi * mc),1);
 position_failed_cell = {};
 % before looping via all portfolio make one time Harrell Davis Vector:
 if (run_mc == true)
-    % quantile estimator is HD: try to load precalculated vector (performance reasons)
-    if ( strcmpi(quantile_estimator,'hd') )
-        % take values from file in static folder, if already calculated
-        tmp_filename = strcat(path_static,'/hd_vec_',num2str(mc),'.mat');
-        if ( exist(tmp_filename,'file'))
-            fprintf('HD Vector: Taking file >>%s<< from static folder\n',tmp_filename);
-            tmp_load_struct = load(tmp_filename);
-            hd_vec= tmp_load_struct.hd_vec;
-        else % otherwise calculate HD vector and save it to static folder
-            fprintf('New HD vector is calculated for %d MC scenarios and saved in static folder\n',mc);
-            minhd           = min(2*confi_scenario+1,mc);
-            threshold       = mc / 100;
-            hd_vec_min      = zeros(max(confi_scenario-threshold,0)-1,1);
-            hd_vec_max      = zeros(mc-min(confi_scenario+threshold,mc),1);
-            tt              = max(confi_scenario-threshold,1):1:min(confi_scenario+threshold,mc);
-            hd_vec_func     = get_quantile_estimator(quantile_estimator,mc, ...
-                                                tt,confi);
-            hd_vec          = [hd_vec_min ; hd_vec_func ; hd_vec_max ];
-            save ('-v7',tmp_filename,'hd_vec');
-        end
-    else  % generate other quantile estimator vectors
-        tt = 1:1:mc;
-        hd_vec = get_quantile_estimator(quantile_estimator,mc, ...
-                                                tt,confi,quantile_bandwidth); 
-    end
+     tt = 1:1:mc;
+     hd_vec = get_quantile_estimator(quantile_estimator,mc, ...
+                                                tt,confi,quantile_bandwidth);
 end
 
 % a) loop over all portfolios (outer loop) and via all positions (inner loop)
@@ -597,10 +575,10 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   %  i.) sort arrays
   endstaende_reldiff_shock = portfolio_shock ./ base_value;
   endstaende_sort_shock    = sort(endstaende_reldiff_shock);
-  [portfolio_shock_sort scen_order_shock] = sort(portfolio_shock');
-  p_l_absolut_shock        = portfolio_shock_sort - base_value;
-
-
+  [portfolio_shock_sort scen_order_shock] = sort(portfolio_shock' - base_value);
+  p_l_absolut_shock        = portfolio_shock_sort;
+	
+	
   % Preparing direct VAR measures:
     VAR50_shock      = p_l_absolut_shock(round(0.5*mc));
     VAR70_shock      = p_l_absolut_shock(round(0.3*mc));
@@ -628,18 +606,18 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   confi_scenarionumber_shock_m2 = scen_order_shock(confi_scenario - 2);
 
   % iv.) make vector with Harrel-Davis Weights
-  mc_var_shock_value_abs    = dot(hd_vec,portfolio_shock_sort);
-  mc_var_shock_value_rel    = dot(hd_vec,endstaende_sort_shock);
+  mc_var_shock_value_abs    = dot(hd_vec,p_l_absolut_shock)
+  mc_var_shock_value_rel    = dot(hd_vec,endstaende_sort_shock)
   mc_var_shock_diff_hd      = abs(portfolio_shock_sort(confi_scenario) - mc_var_shock_value_abs);
   fprintf('Absolute difference of Quantile Estimator VaR vs. VaR(confidence): %9.2f\n',mc_var_shock_diff_hd);
 
 
   mc_var_shock_pct  = -(1 - mc_var_shock_value_rel);
-  mc_var_shock      = base_value - mc_var_shock_value_abs;
+  mc_var_shock      = - mc_var_shock_value_abs;
 
 
   % d) Calculate Expected Shortfall as average of losses in sorted profit and loss vector from [1:confi_scenario-1]:
-  mc_es_shock           = base_value - mean(portfolio_shock_sort(1:confi_scenario-1));
+  mc_es_shock           = - mean(portfolio_shock_sort(1:confi_scenario-1));
   mc_es_shock_pct       = -(1 - mean(endstaende_sort_shock(1:confi_scenario-1)));
 
   % e) Print Report including position VaRs

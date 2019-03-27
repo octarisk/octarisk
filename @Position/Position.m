@@ -18,12 +18,18 @@ classdef Position
         varhd_abs = 0;
         varhd_rel = 0;
         var_abs = 0;
-        expshortfall_abs = 0;
-        scenario_numbers = [];
         var_positionsum = 0;
-        diversification_ratio = 0;
+        diversification_ratio = 0; % only filled for Portfolio
+        decomp_varhd = 0.0; % only filled for Positions
         valuation_date = today;
         reporting_date = today;
+        scenario_numbers = [];
+        mean_shock = 0;
+        std_shock = 0;
+        skewness_shock = 0;
+        kurtosis_shock = 0;   
+        expshortfall_rel = 0;
+        expshortfall_abs = 0;    
         % Tripartite Template attributes:
         % % Portfolio Attributes
         tpt_1 = 'PortfolioID'; % 1_Portfolio_identifying_data Portfolio / PortfolioID / Code
@@ -204,13 +210,14 @@ classdef Position
          fprintf('currency: %s\n',any2str(a.currency));
          fprintf('port_id: %s\n',any2str(a.port_id));
          % Get length of Value vector:
-         value_stress_rows = min(rows(a.value_stress),8);
+         value_stress_rows = min(rows(a.value_stress),5);
          value_mc_rows = min(rows(a.value_mc),5);
          value_mc_cols = min(length(a.timestep_mc),2);
          fprintf('value_base: %12.2f \n',a.value_base);
          fprintf('varhd_abs@%2.1f%%: %12.2f \n',a.var_confidence*100,a.varhd_abs);
          fprintf('varhd_rel@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.varhd_rel*100);
          fprintf('value_stress: %8.6f \n',a.value_stress(1:value_stress_rows));
+         fprintf('diversification_ratio: %2.1f%% \n',a.diversification_ratio*100);
          % TODO: print SCR stresses PnL if flag set
          % fprintf('\n');
          % % looping via first 5 MC scenario values
@@ -243,11 +250,21 @@ classdef Position
             fprintf('7_Reporting_date: %s\n',any2str(a.tpt_7)); 
             fprintf('9_Cash_ratio: %3.2f %%\n',a.tpt_9); 
             fprintf('124_Duration Portfolio: %s\n',any2str(a.tpt_124)); 
-            fprintf('Positions (Instrument ID and Quantity):\n');
+            fprintf('mean_shock: %3.2f \n',a.mean_shock); 
+            fprintf('std_shock: %3.2f \n',a.std_shock); 
+            fprintf('skewness_shock: %3.2f \n',a.skewness_shock); 
+            fprintf('kurtosis_shock: %3.2f \n',a.kurtosis_shock); 
+            fprintf('expshortfall_abs@%2.1f%%: %12.2f \n',a.var_confidence*100,a.expshortfall_abs);
+            fprintf('expshortfall_rel@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.expshortfall_rel*100);
+            fprintf('Positions (Instrument ID | Quantity | Currency | Base Value | Standalone VaR | Decomp VaR):\n');
             if ( length(a.positions) > 0)
                 for (ii = 2:1:length(a.positions))
                     tmp_pos_obj = a.positions(ii).object;
-                    fprintf('\t%s\t%s\n',tmp_pos_obj.id,any2str(tmp_pos_obj.quantity));
+                    tmp_id = tmp_pos_obj.id;
+                    if (length(tmp_id) <= 25)
+						tmp_id = strcat(tmp_id,char(repmat(95,1,25 - length(tmp_id))) );
+					end
+                    fprintf('\t%s | %8.2f | %s | %8.2f | %8.2f | %8.2f\n',tmp_id,tmp_pos_obj.quantity,a.currency,tmp_pos_obj.value_base,tmp_pos_obj.varhd_abs,tmp_pos_obj.decomp_varhd);
                 end
             end
          end

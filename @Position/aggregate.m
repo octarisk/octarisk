@@ -20,23 +20,28 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 pos_value_base = pos_obj_new.getValue('base');
                 pos_currency = pos_obj_new.get('currency');
                 % Get FX rate:
-                if ( strcmp(obj.currency,pos_currency) == 1 )
-                    tmp_fx_rate = 1;
-                    tmp_fx_rate_base = 1;
-                else
-                    tmp_fx_index        = strcat('FX_', obj.currency, pos_currency);
-                    [tmp_fx_struct_obj object_ret_code]  = get_sub_object(index_struct, tmp_fx_index);
-                    if ( object_ret_code == 0 )
-                        error('WARNING: No index_struct object found for FX id >>%s<<\n',tmp_fx_index);
-                    end 
-                    tmp_fx_rate       = tmp_fx_struct_obj.getValue(scen_set);   
-                    tmp_fx_rate_base  = tmp_fx_struct_obj.getValue('base');   
-                end
+                tmp_fx_rate = get_FX_rate(index_struct,obj.currency,pos_currency,scen_set);
+                tmp_fx_rate_base = get_FX_rate(index_struct,obj.currency,pos_currency,'base');
+
                 % Fill base and scenario values   
                 theo_value_pos = pos_value ./ tmp_fx_rate;  
                 theo_value_pos_base = pos_value_base ./ tmp_fx_rate_base;  
                 theo_value = theo_value + theo_value_pos;
-                if (strcmpi(scen_set,'base'))
+                % update Position vectors after currency conversion
+                pos_obj_new.set('currency',obj.currency);	% set to portfolio currency
+				if ( regexp(scen_set,'stress'))
+					pos_obj_new.value_stress = [];
+					pos_obj_new = pos_obj_new.set('value_stress',theo_value_pos);
+				elseif ( strcmp(scen_set,'base'))
+					pos_obj_new = pos_obj_new.set('value_base',theo_value_pos_base); 
+				else
+					pos_obj_new.timestep_mc = {};
+					pos_obj_new.value_mc = [];
+					pos_obj_new = pos_obj_new.set('timestep_mc',scen_set);
+					pos_obj_new = pos_obj_new.set('value_mc',theo_value_pos);
+				end
+        
+                if (strcmpi(scen_set,'base') && para.calc_sm_scr == true)
                     if ~isempty(pos_obj_new.tpt_90)
                         port_mod_dur = port_mod_dur + ...
                                             theo_value_pos * pos_obj_new.tpt_90;
@@ -55,7 +60,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                     theo_exposure = theo_exposure + theo_exp_pos;
                     pos_obj_new = pos_obj_new.set('tpt_28',theo_exp_pos);
                     pos_obj_new = pos_obj_new.set('tpt_30',theo_exp_pos);
-                elseif (strcmpi(scen_set,'stress'))    
+                elseif (strcmpi(scen_set,'stress') && para.calc_sm_scr == true)    
                     % convert SCR contributions to portfolio currency
                     scr_ir_up   = pos_obj_new.tpt_97 ./ tmp_fx_rate_base;
                     scr_ir_down = pos_obj_new.tpt_98 ./ tmp_fx_rate_base;
@@ -85,7 +90,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             end
         end
         % second loop via all positions to calculate valuation_weight = posvalue / NAV
-        if (strcmpi(scen_set,'base'))
+        if (strcmpi(scen_set,'base') && para.calc_sm_scr == true)
             for (ii=1:1:length(obj.positions))
                 pos_obj = obj.positions(ii).object;
                 pos_id = obj.positions(ii).id;
@@ -103,7 +108,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             end
          end
          % second loop via all positions to calculate valuation_weight = posvalue / NAV
-        if (strcmpi(scen_set,'stress'))
+        if (strcmpi(scen_set,'stress') && para.calc_sm_scr == true)
             for (ii=1:1:length(obj.positions))
                 pos_obj = obj.positions(ii).object;
                 pos_id = obj.positions(ii).id;
@@ -144,18 +149,8 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             end            
 
             % Get FX rate:
-            if ( strcmp(obj.currency,tmp_currency) == 1 )
-                tmp_fx_value_shock   = 1;
-                tmp_fx_rate_base = 1;
-            else
-                tmp_fx_index        = strcat('FX_', obj.currency, tmp_currency);
-                [tmp_fx_struct_obj object_ret_code]  = get_sub_object(index_struct, tmp_fx_index);
-                if ( object_ret_code == 0 )
-                    error('WARNING: No index_struct object found for FX id >>%s<<\n',tmp_fx_index);
-                end 
-                tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-                tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(scen_set);   
-            end
+            tmp_fx_value_shock = get_FX_rate(index_struct,obj.currency,tmp_currency,scen_set);
+            tmp_fx_rate_base = get_FX_rate(index_struct,obj.currency,tmp_currency,'base');
             
             % Fill base and scenario values
             if (strcmpi(scen_set,'base'))       
@@ -174,7 +169,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             end
             
             % Fill Tripartite template TODO: fill further attributes
-            if (strcmpi(scen_set,'base')) 
+            if (strcmpi(scen_set,'base') && para.calc_sm_scr == true) 
                 % Mod. Duration
                 if (tmp_instr_object.isProp('mod_duration'))
                     obj.tpt_90 = tmp_instr_object.get('mod_duration');
@@ -362,7 +357,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                     obj.tpt_69 = 99;   % type of ID code (other)
                 end
                 
-            elseif (strcmpi(scen_set,'stress')) 
+            elseif (strcmpi(scen_set,'stress') && para.calc_sm_scr == true) 
                 theo_value_base  = tmp_instr_object.getValue('base') ... 
                                         .*  tmp_quantity ./ tmp_fx_value_shock;
                 theo_value_stress  = tmp_instr_object.getValue('stress') ... 
@@ -408,14 +403,14 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
         obj = obj.set('value_base',theo_value(1)); 
         obj = obj.set('valuation_date',para.valuation_date);
         obj = obj.set('reporting_date',para.reporting_date);
-        if ( strcmpi(obj.type,'PORTFOLIO'))
+        if ( strcmpi(obj.type,'PORTFOLIO') && para.calc_sm_scr == true)
             obj.tpt_5 = theo_value; 
             % save weighted average of pos mod duration
             obj.tpt_124 = port_mod_dur / theo_value; 
             obj.tpt_126 = accr_int; 
             % set cash ratio
             obj.tpt_9 = 100.0 * cash_value / theo_value;
-        elseif ( strcmpi(obj.type,'POSITION'))
+        elseif ( strcmpi(obj.type,'POSITION') && para.calc_sm_scr == true)
             obj.tpt_22 = theo_value; 
             obj.tpt_23 = theo_value_clean; 
             obj.tpt_27 = theo_exposure;
@@ -428,6 +423,8 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
     
 end
 
+% ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------
 % Helper functions
 function cqs = get_cqs(rating)
 dict = struct(   ...
@@ -447,6 +444,7 @@ cqs = getfield(dict,upper(rating));
 
 end
 
+% ------------------------------------------------------------------------------
 function comp_freq = get_compfreq(comp_freq)
     if ischar(comp_freq)
         if ( strcmpi(comp_freq,'daily') || strcmpi(comp_freq,'day'))
@@ -469,3 +467,5 @@ function comp_freq = get_compfreq(comp_freq)
         comp_freq = 1;
     end
 end
+% ------------------------------------------------------------------------------
+% ------------------------------------------------------------------------------

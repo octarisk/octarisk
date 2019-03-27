@@ -62,19 +62,10 @@ for ii = 1 : 1 : length( position_struct )
         new_value_vec_shock      = tmp_instr_object.getValue(scen_set);              
        
         % Get FX rate:
-        if ( strcmp(fund_currency,tmp_currency) == 1 )
-            tmp_fx_value_shock   = 1;
-            tmp_fx_rate_base = 1;
-        else
-            %disp( ' Conversion of currency: ');
-            tmp_fx_index        = strcat('FX_', fund_currency, tmp_currency);
-            [tmp_fx_struct_obj object_ret_code]  = get_sub_object(index_struct, tmp_fx_index);
-            if ( object_ret_code == 0 )
-                error('octarisk: WARNING: No index_struct object found for FX id >>%s<<\n',tmp_fx_index);
-            end 
-            tmp_fx_rate_base    = tmp_fx_struct_obj.getValue('base');
-            tmp_fx_value_shock  = tmp_fx_struct_obj.getValue(scen_set);   
-        end
+		tmp_fx_value_shock  = get_FX_rate(index_struct,fund_currency, ...
+												tmp_currency,scen_set);
+		tmp_fx_rate_base 	= get_FX_rate(index_struct,fund_currency, ...
+												tmp_currency,'base');
         
         if (strcmpi(scen_set,'base'))       
             position_struct( ii ).basevalue = tmp_value .* tmp_quantity ./ tmp_fx_rate_base;
