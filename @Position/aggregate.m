@@ -178,7 +178,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 end
                 % coupon rate
                 if (tmp_instr_object.isProp('coupon_rate'))
-                    obj.tpt_33 = tmp_instr_object.get('coupon_rate');
+                    obj.tpt_33 = tmp_instr_object.get('coupon_rate') * 100;
                 end
                  % currency
                 if (tmp_instr_object.isProp('currency'))
@@ -289,7 +289,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                     obj.tpt_20 = tmp_instr_object.get('multiplier');
                 end
                 
-                % Bond subtype (Fixed, Floater, Variable)
+                % Bond subtype (Fixed, Floater, Variable), overwrite coupon rate
                 if (strcmpi(tmp_instr_object.type,'bond'))
                     sub_type = tmp_instr_object.sub_type;
                     if (strcmpi(sub_type,'FRB') || strcmpi(sub_type,'FAB') ...
@@ -301,9 +301,11 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                             || strcmpi(sub_type,'FVA') ...
                             || strcmpi(sub_type,'CDS_FLOATING'))
                         obj.tpt_32 = 'Floating';
+                        obj.tpt_33 = (tmp_instr_object.get('spread') + ...
+								tmp_instr_object.get('last_reset_rate')) * 100;
                         obj.tpt_34 = tmp_instr_object.reference_curve;
                         obj.tpt_36 = tmp_instr_object.reference_curve;
-                        obj.tpt_37 = tmp_instr_object.spread;
+                        obj.tpt_37 = tmp_instr_object.spread * 100;
                     else
                         obj.tpt_32 = 'Variable';
                     end

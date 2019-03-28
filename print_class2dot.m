@@ -92,6 +92,8 @@ for ii = 1:1:length(superclasses)
         Object = Curve;
     elseif ( strcmpi(tmp_class,'Index'))
         Object = Index;
+    elseif ( strcmpi(tmp_class,'Position'))
+        Object = Position;
     elseif ( strcmpi(tmp_class,'Parameter'))
         Object = Parameter;
     else

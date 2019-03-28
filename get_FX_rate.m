@@ -27,7 +27,6 @@
 %# @item @var{curB}: foreign currency [required] 
 %# @item @var{scen_set}: scenario set (e.g. base, stress or 250d) [required] 
 %# @end itemize
-
 %# @seealso{timefactor}
 %# @end deftypefn
 

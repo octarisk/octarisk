@@ -17,7 +17,7 @@ state-of-the-art methods and a light-weight and rapid
 calculation shall be implemented with free software only.
 
 The code is written in Octave and C++ language and will be useable right out-of-the box 
-with Octave version >= 4.4.0 and the Financial and Statistics package. The code 
+with Octave version >= 4.4.1 and the Financial and Statistics package. The code 
 is licensed under the GNU GPL.
 
 Further information:
@@ -39,7 +39,7 @@ Stefan Schloegl (schinzilord@octarisk.com)
 IRRer-Zins (IRRer-Zins@t-online.de)
 ## Installation
 
-You need Octave in Version >=4.4.0 with installed financial, io and statistics package.
+You need Octave in Version >=4.4.1 with installed financial, io and statistics package.
 Moreover, an efficient linear algebra package is strongly recommended (e.g. OpenBLAS / LaPACK)
 
 Just follow these steps:
@@ -96,13 +96,18 @@ and instrument and portfolio attributes and risk measures on your screen.
 - now you can start using the GUI, adjusting the input data (`/path/to/octarisk-latest/working_folder/input/ and /mktdata`) 
 or change the risk measurement settings directly in the `octarisk.m` script.
 
+- for Solvency II asset data regulatory reporting and generation of Tripartite v4.0 compliant reports call the script
+```
+solvency2_reporting('/path/to/octarisk-latest/sii_stdmodel_folder')
+```
+
 For a more detailed installation instruction please refer to this 
 [tutorial](http://www.octarisk.com/tutorial.html).
 
 ## Compatibility
 
 Octarisk runs on every system with a running [Octave](https://www.gnu.org/software/octave/) 
-environment in Version >= 4.0.0.
+environment in Version >= 4.4.1.
 To my knowledge, Octave binaries are provided for MS Windows and many Linux distributions.
 
 A system with at least 4Gb memory is recommended.
@@ -121,6 +126,8 @@ in order to provide full Matlab compatibility.
 
 ## Version history
 
+- Version 0.5.0	  introduction of Solvency II reporting according to Tripartitie v4.0 standard
+- Version 0.4.4  bug fixes, stability and performance improvements (dropped support for Octave 4.2)
 - Version 0.4.3   fixed compatibility issues with Octave 4.4.0 release, minor bug fixes, more statistical tests
 - Version 0.4.2   introduction of CDS and Sobol number generator, minor bug fixes
 - Version 0.4.1   introduction of a GUI and a batch mode, minor bug fixes

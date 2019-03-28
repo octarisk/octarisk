@@ -1,9 +1,15 @@
 # Version History 
 
-### next versions
-Possible new features:
-- Introduction of Total Return Swaps
-- Introduction of FX Swaps
+### 0.5.0, 2019/03/28
+Version v0.5.0 is a major release with additional features
+- Solvency II compliant reporting for asset data according to the Tripartite v4.0 standard
+- various refactoring and bugfixing
+
+
+### 0.4.4, 2019/02/12
+Version v0.4.4 is a minor release with bug fixes, stability and performance improvements
+- dropped support for Octave 4.2 due to compatility issues with Gnu++11 compiler
+- code refactoring for improved stability and performance
 
 ### 0.4.3, 2018/05/20
 Version v0.4.3 is a minor release with bug fixes and some more features
