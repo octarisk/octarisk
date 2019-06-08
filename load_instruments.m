@@ -159,6 +159,8 @@ for ii = 1 : 1 : length(tmp_list_files)
                 i = Option(); 
             elseif ( regexpi(tmp_instrument_type,'SWAPT') == 1)      % store data in Class Swaption
                 i = Swaption(); 
+            elseif ( regexpi(tmp_instrument_type,'RETAIL') == 1)      % store data in Class Retail
+                i = Retail(); 
             elseif ( sum(strcmpi(tmp_instrument_type,{'CASH'})) > 0)  % store data in Class Cash
                 i = Cash();                     
             end

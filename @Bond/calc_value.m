@@ -36,7 +36,7 @@ function obj = calc_value(bond,valuation_date,value_type,discount_curve,call_sch
                                     comp_freq, tmp_interp_discount, ...
                                     tmp_curve_comp_type, tmp_curve_basis, ...
                                     tmp_curve_comp_freq);
-
+                                
     % calculate embedded option value
     if ( bond.embedded_option_flag == true)
         if ( nargin < 6)
@@ -69,7 +69,9 @@ function obj = calc_value(bond,valuation_date,value_type,discount_curve,call_sch
             obj = obj.set('embedded_option_value',OptionValue(1));
         end
     end
-                                    
+	% theo value always dirty
+	obj = obj.set('clean_value_base',false);   
+										
     % store theo_value vector in appropriate class property
     if ( regexp(value_type,'stress'))
         obj = obj.set('value_stress',theo_value);

@@ -49,6 +49,8 @@ case 'option'
     obj = Option();
 case 'bond'
     obj = Bond();
+case 'retail'
+    obj = Retail();
 case 'instrument'
     obj = Instrument();
 case 'curve'

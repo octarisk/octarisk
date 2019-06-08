@@ -7,6 +7,30 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
     if ( regexp(scen_set,'stress') && para.calc_sm_scr == true) % SII portfolio and position SCR
         % TODO
         sii_SCR = 0.0
+        if ( strcmpi(obj.type,'PORTFOLIO'))
+			for (ii=1:1:length(obj.positions))
+				pos_obj = obj.positions(ii).object;
+				pos_id = obj.positions(ii).id;
+				if (isobject(pos_obj))
+					% Preaggregate position object
+					pos_obj_new = pos_obj.calc_risk(scen_set, instrument_struct, index_struct, para);
+					
+					% sum up position contributions to scr 
+					
+					% store position object in portfolio object
+					obj.positions(ii).object = pos_obj_new;
+				end
+			end
+		% calculate Spread risk for Positions
+        elseif ( strcmpi(obj.type,'POSITION'))
+			tmp_id = obj.id;
+			tmp_quantity = obj.quantity;
+			try 
+				% calculate SCR
+			catch   % if instrument not found raise warning and populate cell
+				fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
+			end
+		end
     elseif ( regexp(scen_set,'stress') && para.calc_sm_scr == false)
 		% do nothing
 		sii_SCR = 0.0;

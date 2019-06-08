@@ -87,8 +87,8 @@ classdef Instrument
                     || strcmpi(type,'swaption') ||  strcmpi(type,'option') ...
                     ||  strcmpi(type,'capfloor') || strcmpi(type,'forward') ...
                     || strcmpi(type,'sensitivity') || strcmpi(type,'synthetic') ...
-                    || strcmpi(type,'stochastic'))
-            error('Type must be either cash, bond, debt, option, swaption, forward, sensitivity, capfloor, stochastic or synthetic')
+                    || strcmpi(type,'stochastic') || strcmpi(type,'retail'))
+            error('Type must be either cash, bond, debt, option, swaption, forward, sensitivity, capfloor, stochastic, retail or synthetic')
          end
          obj.type = type;
       end % Set.type
