@@ -80,8 +80,11 @@ function obj = calc_key_rates(retail,valuation_date,discount_curve)
         end
         curve_keyrates = [curve_keyrate_down ; curve_keyrate_up];
         % calc bond values under key rate up and down shocks
-        c = discount_curve.set('rates_stress',curve_keyrates,'nodes',cf_dates);                           
-		obj_tmp = obj.calc_value(valuation_date,'stress',c);              
+        c = discount_curve.set('rates_stress',curve_keyrates,'nodes',cf_dates);  
+        obj_tmp = obj;
+        % set base CF values for evaluation of key rates
+        obj_tmp = obj_tmp.set('cf_values_stress',obj.getCF('base'));                         
+		obj_tmp = obj_tmp.calc_value(valuation_date,'stress',c);              
 		value_krs = obj_tmp.getValue('stress');                        
         value_krs_down  = value_krs(1);
         value_krs_up    = value_krs(2);

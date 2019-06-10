@@ -36,7 +36,7 @@ function obj = calc_value(retail,valuation_date,value_type,discount_curve)
     end
 
     if (strcmpi(obj.sub_type,'SAVPLAN') || strcmpi(obj.sub_type,'DCP'))
-		if ( obj.notice_period > 0 && length(tmp_cashflow_values) > 1)
+		if ( obj.notice_period > 0 && columns(tmp_cashflow_values) == 2)
 			% first column: cash flow under first put date, sec column: cf at maturity
 			theo_value_putable = pricing_npv(valuation_date, tmp_cashflow_dates(1), ...
 										tmp_cashflow_values(:,1), obj.soy, ...

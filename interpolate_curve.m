@@ -33,7 +33,9 @@
 %#                      different curve structure
 %# @item @var{timestep}: is a scalar, specifiying the interpolated timestep on 
 %#                      vector nodes
-%# @item @var{interp_method}: OPTIONAL: interpolation method
+%# @item @var{interp_method}: OPTIONAL: interpolation method: linear (default),
+%#						mm,exponential,loglinear,spline,
+%#           			smith-wilson,monotone-convex,constant,next,previous
 %# @item @var{ufr}:   OPTIONAL: (only used for smith-wilson): ultimate forward 
 %#                              rate (default: last liquid point)
 %# @item @var{alpha}: OPTIONAL: (only used for smith-wilson): reversion speed 
@@ -75,7 +77,7 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha,method_extr
         alpha = 0.19;
     elseif (nargin == 6)  
         if (alpha <= 0.0)
-            error('Error: interpolate_curve: A positive reversion speed rate must be provided.');    
+            error('interpolate_curve: A positive reversion speed rate must be provided.');    
         end
     end
     if isempty(alpha)
@@ -91,13 +93,17 @@ function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha,method_extr
 no_scen_nodes = columns(nodes);
 no_scen_rates = columns(rates);
 if ~( no_scen_nodes == no_scen_rates )
-    error('Error: interpolate_curve: Number of columns must be equivalent');
+    error('interpolate_curve: Number of columns must be equivalent');
 end
 
 if ~( issorted(abs(nodes)))
-    error('Error: interpolate_curve: Nodes have to be sorted')
+    error('interpolate_curve: Nodes have to be sorted')
 end
 
+% TODO: allow for this special behavior
+if (sum(sign(nodes)<0)>0 && sum(sign(nodes)>0)>0)
+	error('interpolate_curve: nodes: no change in sign allowed');
+end
 
 % short-cut: if timestep equals node, return rates at this node
 eq_vec = (timestep == nodes);
@@ -632,5 +638,5 @@ end
 %!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'constant'),0.0045624391,0.0000000001)
 %!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'previous'),0.0045624391,0.0000000001)
 %!assert(interpolate_curve ([365,730,1825,3650,4015], [0.0001002070,0.0001001034,0.0001000962,0.0045624391,0.0054502705], 3800, 'next'),0.0054502705,0.0000000001)
-
+%!error(interpolate_curve([-14,214,4018],[15583,18631,25323.14],1,'next'))
 

@@ -126,7 +126,7 @@ else   % make full calculations
         yy_diff -= 1;
         mm_diff = mod (m_val + mm_diff - 1, 12) + 1- m_val;
     % case 2: positive month difference
-    elseif ( mm_diff > 0 && mm_diff >= (12 - m_val)) 
+    elseif ( mm_diff > 0 && mm_diff > (12 - m_val)) 
         yy_diff += 1;
         mm_diff = mod (m_val + mm_diff - 1, 12) + 1 - m_val;
     end    
@@ -341,3 +341,4 @@ end
 %! assert(newdatevec,[2015 04 30 0 0 0])
 %! [newdatenum newdatevec] = addtodatefinancial(valuation_date, -10, 'days');
 %! assert(newdatevec,[2016 03 21 0 0 0])
+%! assert(addtodatefinancial(datenum('01-Apr-2019'), 8, 'months'),datenum('01-Dec-2019'))

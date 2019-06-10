@@ -1,3 +1,4 @@
+
 %# Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
@@ -314,16 +315,28 @@ function para = get_cfvalues_RETAIL(valuation_date, value_type, para, instrument
 	% get savings payment dates only in the past:
 	savdates = para.cf_datesnum(para.cf_datesnum <= valuation_date);
 	
+	% calculate savings rate vec
+	if isempty(instrument.savings_change_values)
+		savings_rate = instrument.savings_rate;
+	else
+		savings_rate = zeros(rows(savdates),1);
+		sav_change_dates = datenum(instrument.savings_change_dates);
+		for kk=1:1:length(sav_change_dates)
+			sav_chg_date = sav_change_dates(kk);
+			savings_rate(savdates>=sav_chg_date) = instrument.savings_change_values(kk);
+		end
+	end
 	% calculate interest an principal cf values
 	int_cf_values = ((1 ./ discount_factor(savdates, instrument.maturity_date, para.coupon_rate, ...
                                 para.compounding_type, para.dcc, ...
-                                para.compounding_freq))-1) .* instrument.savings_rate;
-	princ_cf_values = ones(length(int_cf_values),1) .* instrument.savings_rate;
+                                para.compounding_freq))-1) .* savings_rate;
+	princ_cf_values = ones(length(int_cf_values),1) .* savings_rate;
 	
 	% sum up all future values of cash flows
 	cf_interest = sum(int_cf_values);
 	cf_principal = sum(princ_cf_values);
 	
+	% take into account extra payments and redemption option
 	if strcmpi(instrument.sub_type,'SAVPLAN')
 		% calculate interest an principal cf values
 		[redemption_date] = addtodatefinancial(valuation_date, ...
@@ -331,7 +344,7 @@ function para = get_cfvalues_RETAIL(valuation_date, value_type, para, instrument
 		% putable cashflows
 		int_cf_values_putable = ((1 ./ discount_factor(savdates, redemption_date, para.coupon_rate, ...
 									para.compounding_type, para.dcc, ...
-									para.compounding_freq))-1) .* instrument.savings_rate;
+									para.compounding_freq))-1) .* savings_rate;
 		
 		% sum up all future values of cash flows
 		cf_interest_putable = sum(int_cf_values_putable);
@@ -364,25 +377,52 @@ function para = get_cfvalues_RETAIL(valuation_date, value_type, para, instrument
 		cf_principal_putable = cf_principal;
 	elseif strcmpi(instrument.sub_type,'DCP')
 		% take into account redemption values at next redemption date
-		redemption_dates 	= datenum(instrument.redemption_dates) - valuation_date;
-		redemption_values 	= instrument.redemption_values;
-		
-		% calculate interest an principal cf values
-		[redemption_date] = addtodatefinancial(valuation_date, ...
-						instrument.notice_period, instrument.notice_period_unit);
-						
-		% linear interpolation 
-		redemption_value = interpolate_curve(redemption_dates', ...
-							redemption_values,redemption_date- valuation_date);
-		
-						
+		if ~isempty(instrument.redemption_dates)
+		  redemption_dates 	= datenum(instrument.redemption_dates) - valuation_date;
+		  redemption_values 	= instrument.redemption_values;
+		  redemption_date_future = redemption_dates(redemption_dates>0);
+		  if ~isempty(redemption_date_future)		
+			redemption_date = valuation_date + redemption_date_future(1); 
+			redemption_dates(redemption_dates<0)=0;
+			redemption_value = interpolate_curve(redemption_dates', ...
+							redemption_values,1,'next');
+			% get PV of future savings and deduct FV from redemption value 
+			future_payment_days = para.cf_datesnum(para.cf_datesnum>valuation_date);
+			future_payment_days = future_payment_days(future_payment_days<=redemption_date);
+			% FV discount factor
+			fv_rate = interpolate_curve(para.tmp_nodes,para.tmp_rates, ...
+						redemption_date-valuation_date,para.method_interpolation);
+			fv_df = (1 ./ discount_factor(valuation_date, redemption_date, fv_rate, ...
+									para.compounding_type, para.dcc, ...
+									para.compounding_freq));
+			% get DF of	future_payment_days	
+			adj_red_value = 0;
+			for kk=1:1:length(future_payment_days)
+				tmp_date = future_payment_days(kk);
+				tmp_node = tmp_date-valuation_date;
+				pv_rate = interpolate_curve(para.tmp_nodes,para.tmp_rates, ...
+						tmp_node,para.method_interpolation);
+                    
+				pv_df = (discount_factor(valuation_date, tmp_date, pv_rate, ...
+									para.compounding_type, para.dcc, ...
+									para.compounding_freq)) ;										
+				adj_red_value = adj_red_value + pv_df .* fv_df .* savings_rate(end);
+			end
+		  end		
+		else
+			% floor: value of instrument cannot be negative
+			redemption_date  = valuation_date;
+			redemption_value = 0.0;
+			adj_red_value = 0.0;
+		end
+				
 		% sum up all future values of cash flows
 		cf_interest_putable = 0.0;
-		cf_principal_putable = redemption_value;
+		cf_principal_putable = redemption_value - adj_red_value;
 	end
-	ret_values = cf_interest + cf_principal;
 	ret_values_putable = cf_interest_putable + cf_principal_putable;
-	
+	ret_values = ones(rows(ret_values_putable),1) .* (cf_interest + cf_principal);
+	cf_principal =  ones(rows(ret_values_putable),1)  .* cf_principal;
 	
     % only final cash flow at maturity date
     para.cf_dates    = [para.issuevec;datevec(redemption_date);datevec(instrument.maturity_date)];

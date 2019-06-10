@@ -636,6 +636,60 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
     ret_instr_obj = bond;
     
 % ==============================================================================
+% ==============================================================================    
+% Cashflow Valuation: summing net present value of all cashflows according to cashflowdates
+elseif strcmpi(tmp_type,'retail')
+    % Using Retail class
+        obj = instr_obj;
+        
+    % check, whether instrument already valuated for current scenario --> delete properties
+       if ~(strcmpi(scenario,'base') || strcmpi(scenario,'stress'))
+           if ( sum(strcmpi(obj.timestep_mc_cf,scenario))>0)   % scenario already exists
+               obj = obj.set('timestep_mc_cf',{});
+               obj = obj.set('cf_values_mc',[]);
+           end
+       end
+
+    % a) Get curve parameters    
+      % get discount curve
+        tmp_discount_curve  = obj.get('discount_curve');
+        [tmp_curve_object object_ret_code]    = get_sub_object(curve_struct, tmp_discount_curve); 
+        if ( object_ret_code == 0 )
+            fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
+        end
+		tmp_sub_type
+    % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
+        if( sum(strcmpi(tmp_sub_type,{'SAVPLAN'})) > 0 )       % Savings Plan
+            % rollout cash flows for all scenarios
+            obj = obj.rollout('base',valuation_date);
+            % cash flow values are equal for base and all scenarios -> copy values without new rollout
+            if ( strcmpi(scenario,'stress') && ~strcmpi(scenario,'base'))
+               obj = obj.set('cf_values_stress',obj.get('cf_values'));
+            elseif ~(strcmpi(scenario,'stress') && strcmpi(scenario,'base'))
+               obj = obj.set('cf_values_mc',obj.get('cf_values'),'timestep_mc_cf',scenario);
+            end
+        elseif( strcmpi(tmp_sub_type,'DCP') )       % Defined Contribution Plan
+            % rollout cash flows for all scenarios
+                if (~strcmpi(scenario,'base') )
+                    obj = obj.rollout('base',valuation_date,tmp_curve_object);
+                end
+                obj = obj.rollout(scenario,valuation_date,tmp_curve_object);
+        else
+            fprintf('WARNING: instrument_valuation: unknown RETAIL sub_type >>%s<< for id >>%s<<\n',obj.id,tmp_sub_type);
+        end 
+	% c) final valuation of retail object (incl. base valuation)
+		if (~strcmpi(scenario,'base') )
+            obj = obj.calc_value (valuation_date,'base',tmp_curve_object);
+        end
+        obj = obj.calc_value (valuation_date,scenario,tmp_curve_object);
+    % d) calculate (key rate) durations and convexities
+		if (strcmpi(scenario,'base') )
+			obj = obj.calc_sensitivities(valuation_date,tmp_curve_object);
+			obj = obj.calc_key_rates(valuation_date,tmp_curve_object);
+        end    
+    % store retail object:
+    ret_instr_obj = obj;
+% ==============================================================================
 elseif ( strcmpi(tmp_type,'stochastic'))
     % Using Stochastic class
     stoch = instr_obj;

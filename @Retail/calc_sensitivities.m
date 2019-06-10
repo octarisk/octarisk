@@ -1,4 +1,4 @@
-function obj = calc_sensitivities (retail, valuation_date, discount_curve, reference_curve)
+function obj = calc_sensitivities (retail, valuation_date, discount_curve)
 obj = retail;
 
 if ischar(valuation_date)

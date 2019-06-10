@@ -41,6 +41,8 @@ classdef Retail < Instrument
         bonus_value_redemption = 0.0;
         extra_payment_values = []; % value of extra payments
         extra_payment_dates = '';  % at given dates
+        savings_change_values = []; % savings rate changes at given dates  
+        savings_change_dates = '';  % dates on which saving values changes
               
         % Key rate duration specific attributes
         key_term                = [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
@@ -132,7 +134,7 @@ classdef Retail < Instrument
 			fprintf('savings_startdate: %s\n',any2str(b.savings_startdate)); 
 			fprintf('savings_enddate: %s\n',any2str(b.savings_enddate)); 
 			fprintf('notice_period: %s %s\n',any2str(b.notice_period),b.notice_period_unit); 
-			fprintf('protection_scheme_limit: %s\n',any2str(b.protection_scheme_limit)); 
+			fprintf('protection_scheme_limit: %s %s\n',any2str(b.protection_scheme_limit),b.currency); 
 			fprintf('bonus_value_current: %s\n',any2str(b.bonus_value_current)); 
 			fprintf('bonus_value_redemption: %s\n',any2str(b.bonus_value_redemption)); 
 			fprintf('extra_payment_values: %s %s\n',any2str(b.extra_payment_values),b.currency); 
@@ -147,9 +149,11 @@ classdef Retail < Instrument
 			fprintf('savings_startdate: %s\n',any2str(b.savings_startdate)); 
 			fprintf('savings_enddate: %s\n',any2str(b.savings_enddate)); 
 			fprintf('notice_period: %s %s\n',any2str(b.notice_period),b.notice_period_unit); 
-			fprintf('protection_scheme_limit: %s\n',any2str(b.protection_scheme_limit)); 
+			fprintf('protection_scheme_limit: %s %s\n',any2str(b.protection_scheme_limit),b.currency); 
 			fprintf('extra_payment_values: %s %s\n',any2str(b.extra_payment_values),b.currency); 
 			fprintf('extra_payment_dates: %s\n',any2str(b.extra_payment_dates)); 
+			fprintf('savings_change_values: %s %s\n',any2str(b.savings_change_values),b.currency); 
+			fprintf('savings_change_dates: %s\n',any2str(b.savings_change_dates)); 
 			fprintf('embedded_option_value: %s %s\n',any2str(b.embedded_option_value),b.currency); 
 			fprintf('Breakeven rate redemption: %f %% %s %s\n',100* b.ytm,b.compounding_type,b.day_count_convention); 
          end

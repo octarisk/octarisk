@@ -26,24 +26,39 @@ r = r.calc_key_rates(valuation_date,c);
 assert(r.getValue('base'),56832.026205,0.00001);
 assert(r.getValue('stress')(1),72734.246324,0.00001);
 
-fprintf('\tdoc_instrument:\tPricing Defined Contribution Plan\n');
-
+fprintf('\tdoc_instrument:\tPricing Defined Contribution Plan A\n');
 r = Retail();
-r = r.set('Name','Test_DCP','sub_type','DCP','coupon_rate',0.00,'coupon_generation_method','forward','term',1,'term_unit','months');
+r = r.set('Name','Test_DCP_A','sub_type','DCP','coupon_rate',0.00,'coupon_generation_method','forward','term',1,'term_unit','months');
 r = r.set('maturity_date','01-Jun-2050','compounding_type','simple','savings_rate',192);
 r = r.set('savings_startdate','01-Apr-2019','savings_enddate','01-May-2050');
 r = r.set('redemption_values',[328.65,2603.40,25343.14],'redemption_dates',{'31-May-2019','31-May-2020','31-May-2030'});
-r = r.set('notice_period',1,'notice_period_unit','days');
-r = r.rollout('base',valuation_date);
-r = r.rollout('stress',valuation_date);
+r = r.set('notice_period',1,'notice_period_unit','years');
+r = r.rollout('base',valuation_date,c);
+r = r.rollout('stress',valuation_date,c);
 r = r.calc_value(valuation_date,'base',c);
 r = r.calc_value(valuation_date,'stress',c);
 r = r.calc_sensitivities(valuation_date,c);
 r = r.calc_key_rates(valuation_date,c);
-assert(r.getValue('base'),334.870458,0.00001);
+assert(r.getValue('base'),319.728947,0.00001);
 assert(r.getValue('stress')(1),1508.251741,0.00001)
+
+
+fprintf('\tdoc_instrument:\tPricing Defined Contribution Plan P\n');
+r = Retail();
+r = r.set('Name','Test_DCP_B','sub_type','DCP','coupon_rate',0.006442,'coupon_generation_method','forward','term',1,'term_unit','months');
+r = r.set('maturity_date','01-Jan-2048','compounding_type','simple','savings_rate',240);
+r = r.set('savings_startdate','01-Apr-2012','savings_enddate','01-Dec-2047');
+r = r.set('redemption_values',[15583,18631,25343.14],'redemption_dates',{'31-Dec-2018','31-Dec-2019','31-May-2030'});
+r = r.set('notice_period',1,'notice_period_unit','years');
+r = r.set('savings_change_values',[224,232,238,242,248,254,0,254],'savings_change_dates',{'01-Apr-2012','01-Jan-2013','01-Jan-2014','01-Jan-2015','01-Jan-2016','01-Jan-2017','01-Aug-2017','01-Dec-2018'});
+r = r.rollout('base',valuation_date,c);
+r = r.rollout('stress',valuation_date,c);
+r = r.calc_value(valuation_date,'base',c);
+r = r.calc_value(valuation_date,'stress',c);
+r = r.calc_sensitivities(valuation_date,c);
+r = r.calc_key_rates(valuation_date,c);
 r
- 
+% toco: append instrument to private portfolio and use these tests for doc_instrument integration tests
 
 
 end
