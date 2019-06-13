@@ -657,7 +657,7 @@ elseif strcmpi(tmp_type,'retail')
         if ( object_ret_code == 0 )
             fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_discount_curve);
         end
-		tmp_sub_type
+		
     % b) Get Cashflow dates and values of instrument depending on type (cash settlement):
         if( sum(strcmpi(tmp_sub_type,{'SAVPLAN'})) > 0 )       % Savings Plan
             % rollout cash flows for all scenarios

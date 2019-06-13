@@ -474,9 +474,6 @@ else
     fprintf('SUCCESS: All instruments valuated.\n');
 end
 
-tmpobj = get_sub_object(instrument_struct,'DKB_SPARPLAN')
-tmpobj = get_sub_object(instrument_struct,'PKDW')
-
 % print all base values
 fprintf('Instrument Base and stress Values: \n');
 fprintf('ID,Base,StressBase,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(4).name,stresstest_struct(5).name);

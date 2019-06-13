@@ -18,9 +18,6 @@ c = c.set('id','IR_EUR','nodes',[90,180,270,365,730,1095,1460,1825,2190,2555,292
 'rates_base',rates_base,'rates_stress',rates_stress,'method_interpolation','linear');
 r = r.calc_value(valuation_date,'base',c);
 r = r.calc_value(valuation_date,'stress',c);
-%r.getValue('base')
-%r.getValue('stress')
-
 r = r.calc_sensitivities(valuation_date,c);
 r = r.calc_key_rates(valuation_date,c);
 assert(r.getValue('base'),56832.026205,0.00001);
@@ -42,7 +39,6 @@ r = r.calc_key_rates(valuation_date,c);
 assert(r.getValue('base'),319.728947,0.00001);
 assert(r.getValue('stress')(1),1508.251741,0.00001)
 
-
 fprintf('\tdoc_instrument:\tPricing Defined Contribution Plan P\n');
 r = Retail();
 r = r.set('Name','Test_DCP_B','sub_type','DCP','coupon_rate',0.006442,'coupon_generation_method','forward','term',1,'term_unit','months');
@@ -57,7 +53,10 @@ r = r.calc_value(valuation_date,'base',c);
 r = r.calc_value(valuation_date,'stress',c);
 r = r.calc_sensitivities(valuation_date,c);
 r = r.calc_key_rates(valuation_date,c);
-r
+assert(r.getValue('base'),17311.498035,0.00001);
+assert(r.getValue('stress')(1),72369.277537,0.00001)
+assert(r.get('eff_duration'),17.9878,0.0001);
+
 % toco: append instrument to private portfolio and use these tests for doc_instrument integration tests
 
 

@@ -107,7 +107,7 @@ For a more detailed installation instruction please refer to this
 ## Compatibility
 
 Octarisk runs on every system with a running [Octave](https://www.gnu.org/software/octave/) 
-environment in Version >= 4.4.1.
+environment in Version 4.4.1.
 To my knowledge, Octave binaries are provided for MS Windows and many Linux distributions.
 
 A system with at least 4Gb memory is recommended.
@@ -126,6 +126,7 @@ in order to provide full Matlab compatibility.
 
 ## Version history
 
+- Version 0.5.1	  introduction of Retail class to allow for valuation of private investors banking and insurance products
 - Version 0.5.0	  introduction of Solvency II reporting according to Tripartitie v4.0 standard
 - Version 0.4.4  bug fixes, stability and performance improvements (dropped support for Octave 4.2)
 - Version 0.4.3   fixed compatibility issues with Octave 4.4.0 release, minor bug fixes, more statistical tests

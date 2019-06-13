@@ -1,5 +1,10 @@
 # Version History 
 
+### 0.5.1, 2019/06/13
+Version v0.5.1 is a minor release with additional features
+- Introduction of Retail class to allow for valuation of private investors banking and insurance products
+- various refactoring and bugfixing
+
 ### 0.5.0, 2019/03/28
 Version v0.5.0 is a major release with additional features
 - Solvency II compliant reporting for asset data according to the Tripartite v4.0 standard

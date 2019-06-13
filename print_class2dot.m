@@ -95,7 +95,7 @@ for ii = 1:1:length(superclasses)
     elseif ( strcmpi(tmp_class,'Position'))
         Object = Position;
     elseif ( strcmpi(tmp_class,'Parameter'))
-        Object = Parameter;
+        Object = Parameter;  
     else
         error('Unknown class %s',tmp_class);
     end
@@ -162,6 +162,8 @@ for ii = 1:1:length(instrument_classes)
         Object = Swaption;
     elseif ( strcmpi(tmp_class,'Synthetic'))
         Object = Synthetic;
+    elseif ( strcmpi(tmp_class,'Retail'))
+        Object = Retail;          
     else
         error('Unknown class %s',tmp_class);
     end

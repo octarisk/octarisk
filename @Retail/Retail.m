@@ -351,19 +351,18 @@ Methods for Retail object @var{obj}:\n\
 @item obj.get(@var{attribute}): Getter method. Query the value of specified attribute.\n\
 \n\
 @item obj.calc_value(@var{valuation_date},@var{scenario}, @var{discount_curve})\n\
-@item obj.calc_value(@var{valuation_date},@var{scenario}, @var{discount_curve}, @var{call_schedule}, @var{put_schedule}):\n\
 Calculate the net present value of cash flows of Bonds (including pricing of embedded options)\n\
 \n\
-@item obj.rollout(@var{scenario}, @var{valuation_date}): used for FRB and CASHFLOW  instruments\n\
-@item obj.rollout(@var{scenario}, @var{valuation_date}, @var{reference_curve}, @var{vola_surface}): used for CMS_FLOATING or FRN_SPECIAL\n\
+@item obj.rollout(@var{scenario}, @var{valuation_date}): used for SAVPLAN and DCP without redemption\n\
+@item obj.rollout(@var{scenario}, @var{valuation_date}, @var{discount_curve}): used for DCP with redemption\n\
 \n\
-@item obj.calc_sensitivities(@var{valuation_date},@var{discount_curve}, @var{reference_curve})\n\
-Calculate analytical and numerical sensitivities for the given Bond instrument.\n\
+@item obj.calc_sensitivities(@var{valuation_date},@var{discount_curve})\n\
+Calculate numerical sensitivities for the given Retail instrument.\n\
 \n\
 @item obj.calc_key_rates(@var{valuation_date},@var{discount_curve})\n\
-Calculate key rate sensitivities for the given Bond instrument.\n\
+Calculate key rate sensitivities for the given Retail instrument.\n\
 \n\
-@item obj.getValue(@var{scenario}): Return Bond value for given @var{scenario}.\n\
+@item obj.getValue(@var{scenario}): Return Retail value for given @var{scenario}.\n\
 Method inherited from Superclass @var{Instrument}\n\
 \n\
 @item Retail.help(@var{format},@var{returnflag}): show this message. Format can be [plain text, html or texinfo].\n\
@@ -388,35 +387,38 @@ MC values for several @var{timestep_mc} are stored in columns.\n\
 @end itemize\n\
 \n\
 For illustration see the following example:\n\
-A 9 month floating rate note instrument will be calibrated and priced.\n\
-The resulting spread over yield value (0.00398785481397732),\n\
-base value (99.7917725092950) and effective duration (3.93109370316470e-005)is retrieved:\n\
+A monthly savings plan with extra payments and bonus at maturity is valuated.\n\
+The resulting base value (52803.383344) and effective duration (4.9362)is retrieved:\n\
 @example\n\
 @group\n\
 \n\
-disp('Pricing Floating Rate Bond Object and calculating sensitivities')\n\
-b = Bond();\n\
-b = b.set('Name','Test_FRN','coupon_rate',0.00,'value_base',99.7527, ...\n\
-'coupon_generation_method','backward','compounding_type','simple');\n\
-b = b.set('maturity_date','30-Mar-2017','notional',100, ...\n\
-'compounding_type','simple','issue_date','21-Apr-2011');\n\
-b = b.set('term',3,'term_unit','months','last_reset_rate',-0.0024,'sub_Type','FRN','spread',0.003);\n\
-r = Curve();\n\
-r = r.set('id','REF_IR_EUR','nodes',[30,91,365,730], ...\n\
-'rates_base',[0.0001002740,0.0001002740,0.0001001390,0.0001000690], ...\n\
-'method_interpolation','linear');\n\
-b = b.rollout('base',r,'30-Jun-2016');\n\
+disp('Pricing Savings Plan');\n\
+rates_base = [0.0056,0.02456];\n\
+rates_stress = rates_base + [-0.05;-0.03;0.0;0.03;0.05];\n\
+valuation_date = '31-May-2019';\n\
+r = Retail();\n\
+r = r.set('Name','Test_SAVPLAN','sub_type','SAVPLAN', ...\n\
+'coupon_rate',0.0155,'coupon_generation_method', ...\n\
+'backward','term',1,'term_unit','months');\n\
+r = r.set('maturity_date','05-May-2024','compounding_type', ...\n\
+'simple','savings_rate',500);\n\
+r = r.set('savings_startdate','05-May-2014', ...\n\
+'savings_enddate','05-May-2021');\n\
+r = r.set('extra_payment_values',[17500], ...\n\
+'extra_payment_dates',cellstr('17-May-2019'), ...\n\
+'bonus_value_current',0.5,'bonus_value_redemption',0.15);\n\
+r = r.set('notice_period',3,'notice_period_unit','months');\n\
+r = r.rollout('base',valuation_date);\n\
+r = r.rollout('stress',valuation_date);\n\
 c = Curve();\n\
-c = c.set('id','IR_EUR','nodes',[30,90,180,365,730], ...\n\
-'rates_base',[0.0019002740,0.0019002740,0.0019002301,0.0019001390,0.001900069], ...\n\
-'method_interpolation','linear');\n\
-b = b.set('clean_value_base',99.7527,'spread',0.003);\n\
-b = b.calc_spread_over_yield('30-Jun-2016',c);\n\
-b.get('soy')\n\
-b = b.calc_value('30-Jun-2016','base',c);\n\
-b.getValue('base')\n\
-b = b.calc_sensitivities('30-Jun-2016',c,r);\n\
-b.get('eff_duration')\n\
+c = c.set('id','IR_EUR','nodes',[365,7300]);\n\
+c = c.set('rates_base',rates_base,'rates_stress',rates_stress);\n\
+c = c.set('method_interpolation','linear');\n\
+r = r.calc_value(valuation_date,'base',c);\n\
+r = r.calc_value(valuation_date,'stress',c);\n\
+r = r.calc_sensitivities(valuation_date,c);\n\
+r = r.calc_key_rates(valuation_date,c);\n\
+r\n\
 @end group\n\
 @end example\n\
 \n\
