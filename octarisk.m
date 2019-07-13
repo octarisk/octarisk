@@ -537,8 +537,7 @@ for mm = 1 : 1 : length( portfolio_struct )
 
     fprintf('==================================================================== \n');
     fprintf('=== Risk measures report for Portfolio %s ===\n',tmp_port_id);
-    fprintf('Portfolio currency: %s \n',fund_currency);
-    
+    fprintf('Portfolio base value: %9.2f %s \n',base_value,fund_currency); 
     fprintf(fid, '==================================================================== \n');
     fprintf(fid, '=== Risk measures report for Portfolio %s ===\n',tmp_port_id);
     fprintf(fid, 'Portfolio name: %s \n',tmp_port_name);
@@ -819,11 +818,26 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 
   fprintf(fid, 'Total Reduction in VaR via Diversification: \n');
   fprintf(fid, '|Portfolio VaR %s Diversification Effect| |%9.2f%%|\n',tmp_scen_set,(1 - mc_var_shock / total_var_undiversified)*100);
-
+  diversification_factor = mc_var_shock / total_var_undiversified;
+  fprintf( 'Diversification factor: %9.2f%%\n',(mc_var_shock / total_var_undiversified)*100);
+  fprintf('====================================================================\n');
+  if run_mc == true
+	fprintf('ValuationDate,Currency,BaseValue,VaR_absolute,VaR_rel,quantile,quantile_estimator,time_horizon,copula_type,copula_df,diversification_ratio,MCScenarios\n');
+	fprintf('%s,%s,%1.2f,%1.2f,%1.4f,%1.4f,%s,%s,%s,%d,%1.4f,%d\n',datestr(valuation_date),fund_currency,base_value,mc_var_shock,-mc_var_shock_pct,quantile,quantile_estimator,tmp_scen_set,copulatype,nu,diversification_factor,mc);
+	fprintf('Database insert query:\n');
+	fprintf('INSERT INTO `risk_report` (`valuation_date`,`currency_code`,`base_value`,`var_absolute`,`var_relative`,`quantile`,`quantile_estimator`,`time_horizon`,`copula_type`,`copula_df`,`diversification_ratio`,`mc_scenarios`)\n');
+	fprintf("VALUES ('%s','%s',%1.2f,%1.2f,%1.4f,%1.4f,'%s','%s','%s',%d,%1.4f,%d);\n",datestr(valuation_date,'YYYY-mm-DD'),fund_currency,base_value,mc_var_shock,-mc_var_shock_pct,quantile,quantile_estimator,tmp_scen_set,copulatype,nu,diversification_factor,mc);
   fprintf(fid, '====================================================================');
+  end
+  
+  
+
+
   fprintf(fid, '\n');
   aggr = toc;
-
+ 
+    
+    
   % --------------------------------------------------------------------------------------------------------------------
   % 8.  Plotting 
   tic

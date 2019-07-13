@@ -199,7 +199,7 @@ double bisection(const NDArray& w,
 		}
 	}
 	if (j > maxiter) {
-		std::cout << "No solution found after " << j << " steps. Returning latest value." << std::endl;
+		error("No solution found after maximum steps. Returning latest value.");
 	}
 	
     return p;

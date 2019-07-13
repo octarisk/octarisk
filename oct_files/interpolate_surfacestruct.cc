@@ -66,7 +66,6 @@ Input and output variables:\n\
   
   // get length of input struct
     int len = input_struct.contents (fieldname_id).numel ();
-    // std::cout << "Length of structure array:" << len << "\n";
   
   // initialize scenario dependent output:
 	dim_vector dim_scen (len, 1);

@@ -26,7 +26,13 @@ function s = calc_yield_to_mat (bond, valuation_date)
         fprintf('Taking only first scenario as base values.\n')
     end
         % generic call
-        objfunc = @ (x) phi_ytm(x, valuation_date, s.cf_dates, cf_values, s.value_base);
+		% get dirty value
+		if s.clean_value_base == true
+			value_dirty = s.value_base + s.accrued_interest;
+		else
+			value_dirty = s.value_base;
+		end
+        objfunc = @ (x) phi_ytm(x, valuation_date, s.cf_dates, cf_values, value_dirty);
         s.ytm = calibrate_generic(objfunc,x0,lb,ub);
   end
    
