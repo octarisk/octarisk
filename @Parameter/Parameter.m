@@ -45,6 +45,7 @@ classdef Parameter
 
         % Boolean variables
         plotting = 1;
+        calc_marg_incr_var = 0;
         saving = 0;
         archive_flag = 0;
         stable_seed = 1;

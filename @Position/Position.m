@@ -29,7 +29,17 @@ classdef Position
         skewness_shock = 0;
         kurtosis_shock = 0;   
         expshortfall_rel = 0;
-        expshortfall_abs = 0;    
+        expshortfall_abs = 0;   
+        var50_abs      = 0;
+		var70_abs      = 0;
+		var90_abs      = 0;
+		var95_abs      = 0;
+		var975_abs     = 0;
+		var99_abs      = 0;
+		var999_abs     = 0;
+		var9999_abs    = 0;
+		marg_var = 0; % only relevant for positions
+		incr_var = 0; % only relevant for positions 
         % Tripartite Template attributes:
         % % Portfolio Attributes
         tpt_1 = 'PortfolioID'; % 1_Portfolio_identifying_data Portfolio / PortfolioID / Code
@@ -170,7 +180,9 @@ classdef Position
         tpt_131 = '1'; % 131_Underlying_asset_category Position / Instrument/ UAC
         tpt_132 = []; % 132_Infrastructure_investment To be defined with Fundxml
         tpt_133 = ''; % 133_custodian_name To be defined with Fundxml
-        tpt_1000 = 'V4.0'; % 1000_tpt_Version  
+        tpt_1000 = 'V4.0'; % 1000_tpt_Version 
+        position_failed_cell = {}; 
+        aggr_key_struct = struct();
     end
     
     properties (SetAccess = protected )
@@ -180,6 +192,11 @@ classdef Position
       exposure_base = [];
       exposure_mc = [];
       exposure_stress = [];
+      cf_dates = [];
+      cf_values = [];
+      cf_values_mc  = [];
+      cf_values_stress = [];
+      timestep_mc_cf = {};
     end
  
    % Class methods
@@ -268,6 +285,57 @@ classdef Position
                 end
             end
          end
+
+		 % display all cash flow dates and values
+		 cf_stress_rows = min(rows(a.cf_values_stress),5);
+		 [mc_rows mc_cols mc_stack] = size(a.cf_values_mc);
+		 % looping via all cf_dates if defined
+		 if ( length(a.cf_dates) > 0 )
+			fprintf('CF dates:\n[ ');
+			for (ii = 1 : 1 : length(a.cf_dates))
+				fprintf('%d,',a.cf_dates(ii));
+			end
+			fprintf(' ]\n');
+		 end
+		 % looping via all cf base values if defined
+		 if ( length(a.cf_values) > 0 )
+			fprintf('CF Base values:\n[ ');
+			for ( kk = 1 : 1 : min(columns(a.cf_values),10))
+					fprintf('%f,',a.cf_values(kk));
+				end
+			fprintf(' ]\n');
+		 end   
+		  % looping via all stress rates if defined
+		 if ( rows(a.cf_values_stress) > 0 )
+			tmp_cf_values = a.getCF('stress');
+			fprintf('CF Stress values:\n[ ');
+			for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
+				for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
+					fprintf('%f,',tmp_cf_values(jj,kk));
+				end
+				fprintf(' ]\n');
+			end
+			fprintf('\n');
+		 end    
+		 % looping via first 3 MC scenario values
+		 for ( ii = 1 : 1 : mc_stack)
+			if ( length(a.timestep_mc_cf) >= ii )
+				tmp_cf_values = a.getCF(a.timestep_mc_cf{ii});
+				if (columns(tmp_cf_values)>0)
+					fprintf('MC timestep: %s\n',a.timestep_mc_cf{ii});
+					fprintf('CF Scenariovalue:\n[ ')
+					for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
+						for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
+							fprintf('%f,',tmp_cf_values(jj,kk));
+						end
+						fprintf(' ]\n');
+					end
+				fprintf('\n');
+				end
+			else
+				fprintf('MC timestep cf not defined\n');
+			end
+		 end
          %for (ii=1:1:length(props))
          %   fprintf('%s: %s\n',props{ii},any2str(a.(props{ii})));
          %end

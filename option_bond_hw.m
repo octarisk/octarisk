@@ -110,6 +110,9 @@ for jj = 1:1:length(put_dates)
     end
 end
 
+% unique entries only
+tree_dates = unique(tree_dates);
+
 tree_cf = zeros(rows(cf_values),columns(tree_dates));
 % map all bond cash flows to nearest tree date:
 for kk = 1 : 1 : length(cf_dates)
@@ -206,11 +209,11 @@ if ( length(call_dates) > 0 )   % only if call schedule has some dates
         %BondBaseValue = cppB(round(rows(cppB)/2),1)
         OptionValueCall += Call;
     end
-end        
+end       
 if ( length(put_dates) > 0 )   % only if put schedule has some dates
     for mm = 1 : 1 : length(put_dates)
         % get index of nearest neighbour of call maturity and cash flow dates
-        Mat = interp1(tree_dates,[1:length(tree_dates)],put_dates(mm),'nearest'); 
+        Mat = interp1(tree_dates,[1:length(tree_dates)],put_dates(mm),'nearest');
         if (isnan(Mat))
             Mat = length(tree_dates);
         end
@@ -220,7 +223,7 @@ if ( length(put_dates) > 0 )   % only if put schedule has some dates
         call_flag = false;
         % Call pricing funciton C++ 
         [Put cppB pu pm pd r Q] = pricing_callable_bond_cpp(call_flag,T,N,alpha,sigma,tree_dates, ...
-                    tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
+                    tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);         
         %BondBaseValue = cppB(round(rows(cppB)/2),1)
         OptionValuePut += Put;
     end

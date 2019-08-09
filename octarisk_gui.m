@@ -24,8 +24,8 @@
 
 % Specify path to parameter.csv (Recommendation for first try: /path/to/octarisk/ and parameter.csv)
 if (isunix)
-    input_path = '/home/schinzilord/Dokumente/Programmierung/octarisk/';
-    parameter_file = 'parameter_unix.csv';
+    input_path = '/home/schinzilord/Dokumente/Programmierung/octarisk/private_folder';
+    parameter_file = 'parameter.csv';
 else
     input_path = 'C:/Dokumente/Work/octarisk/testing_folder';
     parameter_file = 'parameter.csv';
@@ -235,7 +235,7 @@ function obj = plot_curve(obj)
         grid on;
         title(sprintf ("Curve ID %s", strrep(tmp_obj.id,'_','\_')), "fontsize",12);
         xlabel('Nodes (in days)', "fontsize",11);
-        ylabel('Term', "fontsize",11);
+        ylabel('Rates', "fontsize",11);
         if ( strcmpi(tmp_curve_prop,'rates_mc'))
             legend('Base Scenario Rates',strcat('VaR Scenario(', any2str(port_scen_number) ,') Rates'));
         elseif ( strcmpi(tmp_curve_prop,'rates_stress'))

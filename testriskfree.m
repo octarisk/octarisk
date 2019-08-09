@@ -86,7 +86,7 @@ r
 ! fprintf('\tdoc_instrument:\tPricing US Treasury Fixed Rate Bond Object\n');
 nodes = [30,60,90,182,365,730,1095,1825,2555,3650,7300,10950]
 rates_base = [0.0219,0.0215,0.0214,0.0212,0.0193,0.0174,0.0171,0.0176,0.0188,0.0201,0.0231,0.0252];
-rates_stress = rates_base + [-0.05;-0.03;0.0;0.03;0.05];
+rates_stress = rates_base + [0.01;0.0025]; %[-0.05;-0.03;-0.0025;0.0;0.0025;0.03;0.05];
 clean_price = 99.32
 valuation_date = '30-Jun-2019';
 b = Bond();
@@ -103,6 +103,31 @@ b = b.calc_value(valuation_date,'base',c);
 b = b.calc_value(valuation_date,'stress',c);
 b
 
+
+
+
+
+fprintf('\tdoc_instrument:\tPricing Fixed Rate Bond with embedded European Put Option\n');
+rates_base = 0.01*[-0.577008,-0.594517,-0.610788,-0.625215,-0.658149,-0.648486,-0.603025,-0.532882,-0.448536,-0.358186,-0.267574,-0.180361,-0.098635,-0.023387,0.04511,0.107023,0.162766,0.212872,0.257913,0.298448,0.335004,0.368056,0.398029,0.425294,0.450177,0.472958,0.49388,0.513155,0.530964,0.547465,0.562794,0.57707,0.590398];
+rates_stress = rates_base + [-0.05;-0.03;0.0;0.03;0.05];
+valuation_date = '31-May-2019';
+curve = Curve();
+curve = curve.set('id','IR_EUR','nodes',[90,180,270,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125,9490,9855,10220,10585,10950], ...
+'rates_base',rates_base,'rates_stress',rates_stress,'method_interpolation','linear');
+b = Bond();
+b = b.set('Name','FRB_TEST','coupon_rate',0.04,'coupon_generation_method','backward','term',12,'sub_type','FRB');
+b = b.set('maturity_date','31-May-2024','notional',100,'compounding_type','simple','issue_date','01-Jan-2016','day_count_convention','30/360E');
+b = b.set('treenodes',400,'put_schedule','PUT_SCHEDULE','embedded_option_flag',true);
+call_schedule = Curve();
+call_schedule = call_schedule.set('id','CALL_SCHEDULE','nodes',[],'rates_base',[],'type','Call Schedule','american_flag',false);
+put_schedule = Curve();
+put_schedule = put_schedule.set('id','PUT_SCHEDULE','nodes',[1,366,731],'rates_base',[1.2306,1.22293,1.2145077],'type','Put Schedule','american_flag',false);
+value_type = 'base';
+b = b.rollout(value_type,valuation_date);
+b = b.calc_value(valuation_date,value_type,curve,call_schedule,put_schedule);
+b
+base_value = b.getValue(value_type)
+option_value = b.get('embedded_option_value')
 
 
 end

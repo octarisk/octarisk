@@ -529,7 +529,6 @@ for mm = 1 : 1 : length( portfolio_struct )
     %   instrument base value, FX conversion rate, accumulated portfolio value)
     [position_struct position_failed_cell base_value] = aggregate_positions(position_struct, ...
             position_failed_cell,instrument_struct,index_struct,mc,'base',fund_currency,tmp_port_id,printflag);
-  
 
     % Fileoutput:
     filename = strcat(path_reports,'/VaR_report_',runcode,'_',tmp_port_id,'.txt');
@@ -566,7 +565,6 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     %  Loop via all positions and aggregate Position MC vector and get portfolio shock values
     [position_struct position_failed_cell portfolio_shock] = aggregate_positions(position_struct, ...
             position_failed_cell,instrument_struct,index_struct,mc,tmp_scen_set,fund_currency,tmp_port_id,'false');
-    
 
   % b.) VaR Calculation
   %  i.) sort arrays
@@ -590,9 +588,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   % ii.) Get Value of confidence scenario
 
   confi_scenarionumber_shock = scen_order_shock(confi_scenario);
+  stddev_shock			   = std(portfolio_shock) / base_value;
   skewness_shock           = skewness(endstaende_reldiff_shock);
   kurtosis_shock           = kurtosis(endstaende_reldiff_shock);
   fprintf('Scenarionumber according to confidence intervall: %d\n',confi_scenarionumber_shock);
+  fprintf('MC scenarios portfolio standard deviation (rel): %2.4f%%\n',stddev_shock);
   fprintf('MC scenarios portfolio skewness: %2.2f\n',skewness_shock);
   fprintf('MC scenarios portfolio kurtosis: %2.2f\n',kurtosis_shock);
 
@@ -622,8 +622,9 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   % Printing P&L test statistics
   fprintf(fid, 'Test statistics on portfolio level:\n');
   fprintf(fid, '|MC %s Tail scenario number\t |%i| \n',tmp_scen_set,confi_scenarionumber_shock);
-  fprintf(fid, '|MC %s P&L skewness  \t\t\t |%2.1f| \n',tmp_scen_set,skewness_shock);
-  fprintf(fid, '|MC %s P&L kurtosis  \t\t\t |%2.1f| \n',tmp_scen_set,kurtosis_shock);
+  fprintf(fid, '|MC %s P&L standard deviation (rel)\t |%2.2f%%| \n',tmp_scen_set,stddev_shock*100);
+  fprintf(fid, '|MC %s P&L skewness  \t\t\t |%2.2f| \n',tmp_scen_set,skewness_shock);
+  fprintf(fid, '|MC %s P&L kurtosis  \t\t\t |%2.2f| \n',tmp_scen_set,kurtosis_shock);
   % -------------------------------------------------------------------------------------------------------------------- 
 
   % 7.0) Print Report for all Risk factor scenario values around confidence scenario
@@ -670,7 +671,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
             tmp_pos_var = (tmp_basevalue ) - (tmp_values_shock(confi_scenario) * tmp_quantity  * sign(tmp_quantity));
             
             % calculate HD pos var
-            tmp_pos_var_hd = (tmp_basevalue ) -  (sum(octamat(scen_order_shock) .* hd_vec) * tmp_quantity  * sign(tmp_quantity));   
+            tmp_pos_var_hd = (tmp_basevalue ) -  (sum(tmp_values_shock .* hd_vec) * tmp_quantity  * sign(tmp_quantity));   
             tmp_decomp_var_shock_hd   = -((sum(octamat(scen_order_shock) .* hd_vec)) * tmp_quantity .* sign(tmp_quantity) - tmp_basevalue);     
         else
             tmp_decomp_var_shock    = 0.0;
@@ -728,11 +729,11 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
         end
         
        
-        total_var_undiversified = total_var_undiversified + tmp_pos_var;
+        total_var_undiversified = total_var_undiversified + tmp_pos_var_hd;
         % Store Values for piechart (Except CASH):
-        pie_chart_values_instr_shock(ii) = (tmp_pos_var) / abs(tmp_quantity);
+        pie_chart_values_instr_shock(ii) = (tmp_pos_var); % / abs(tmp_quantity);
         pie_chart_desc_instr_shock(ii) = cellstr( strcat(tmp_instr_object.id));
-        pie_chart_values_pos_shock(ii) = (tmp_decomp_var_shock) ;
+        pie_chart_values_pos_shock(ii) = (tmp_decomp_var_shock_hd) ;
         pie_chart_desc_pos_shock(ii) = cellstr( strcat(tmp_instr_object.id));
     catch   % if instrument not found raise warning and populate cell
         fprintf('Instrument ID %s not found for position. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);
@@ -774,6 +775,7 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
     fprintf(fid, ' Risk aggregation for key: %s \n', tmp_aggr_key_name);
     fprintf(fid, '|VaR %s | Key value   | Basevalue \t | Standalone HD VAR \t | Decomp %s VAR|\n',tmp_scen_set,upper(quantile_estimator));
 
+	
     
     for ii = 1 : 1 : length(tmp_aggr_cell)
         tmp_aggr_key_value          = tmp_aggr_cell{ii};
@@ -784,8 +786,55 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
         fprintf('|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
         fprintf(fid, '|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
     end
+    % Print Report to  LaTeX Template
+    if strcmpi(tmp_aggr_key_name,'asset_class')
+		latex_table_decomp = strcat(path_reports,'/table_port_',tmp_port_id,'_decomp.tex');
+		fild = fopen (latex_table_decomp, 'w');
+		%fprintf(fild, '\\begin{table}[!htb]\n');
+		fprintf(fild, '\\center\n');
+		%fprintf(fild, '\\caption{VaR decomposition on asset class level}\n');
+		fprintf(fild, '\\label{table_port_decomp}\n');
+		fprintf(fild, '\\begin{tabular}{l|r|r|r}\n');
+		fprintf(fild, 'Asset Class \& Basevalue \& Standalone VaR \& Decomp VaR\\\\\\hline\\hline\n');
+		fprintf(fild, 'Portfolio \& %9.0f %s \& %9.0f %s\& %9.0f %s\\\\\\hline\n',base_value,fund_currency,mc_var_shock,fund_currency,mc_var_shock,fund_currency);
+		for ii = 1 : 1 : length(tmp_aggr_cell)
+			tmp_aggr_key_value          = tmp_aggr_cell{ii};
+			tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
+			tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
+			tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
+			tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
+			tmp_aggr_key_value = strrep(tmp_aggr_key_value,"_","");
+			fprintf(fild, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
+		end
+		%fprintf(fild, '\\hline\n');
+		fprintf(fild, '\\end{tabular}\n');
+		%fprintf(fild, '\\end{table}\n');
+		fclose (fild);
+	end
+	 % Print Report to  LaTeX Template
+    if strcmpi(tmp_aggr_key_name,'id')
+		latex_table_decomp = strcat(path_reports,'/table_port_',tmp_port_id,'_decomp_id.tex');
+		fiid = fopen (latex_table_decomp, 'w');
+		fprintf(fiid, '\\center\n');
+		fprintf(fiid, '\\begin{tabular}{l|r|r|r}\n');
+		fprintf(fiid, 'Position ID \& Basevalue \& Standalone VaR \& Decomp VaR\\\\\\hline\\hline\n');
+		fprintf(fiid, 'Portfolio \& %9.0f %s \& %9.0f  %s\& %9.0f %s\\\\\\hline\n',base_value,fund_currency,mc_var_shock,fund_currency,mc_var_shock,fund_currency);
+		len = min(30,length(tmp_aggr_cell));
+		for ii = 1 : 1 : len
+			tmp_aggr_key_value          = tmp_aggr_cell{ii};
+			tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
+			tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
+			tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
+			tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
+			tmp_aggr_key_value = strrep(tmp_aggr_key_value,"_","");
+			fprintf(fiid, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
+		end;
+		fprintf(fiid, '\\end{tabular}\n');
+		fclose (fiid);
+	end
+	
   end
-
+  
   % Print Portfolio reports
   fprintf(fid, '\n');
   fprintf(fid, 'Total VaR undiversified: \n');
@@ -827,12 +876,31 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 	fprintf('Database insert query:\n');
 	fprintf('INSERT INTO `risk_report` (`valuation_date`,`currency_code`,`base_value`,`var_absolute`,`var_relative`,`quantile`,`quantile_estimator`,`time_horizon`,`copula_type`,`copula_df`,`diversification_ratio`,`mc_scenarios`)\n');
 	fprintf("VALUES ('%s','%s',%1.2f,%1.2f,%1.4f,%1.4f,'%s','%s','%s',%d,%1.4f,%d);\n",datestr(valuation_date,'YYYY-mm-DD'),fund_currency,base_value,mc_var_shock,-mc_var_shock_pct,quantile,quantile_estimator,tmp_scen_set,copulatype,nu,diversification_factor,mc);
-  fprintf(fid, '====================================================================');
+    fprintf(fid, '====================================================================');
+    
+    % print to LaTeX Table
+    latex_table_port_var = strcat(path_reports,'/table_port_',tmp_port_id,'_var.tex');
+    %latex_table_var_pos = strcat(path_reports,'/table_var_pos.tex');
+    filp = fopen (latex_table_port_var, 'w');
+		%fprintf(filp, '\\begin{table}[!htb]\n');
+		fprintf(filp, '\\center\n');
+		%fprintf(filp, '\\caption{VaR and Expected Shortfall metrics for the total portfolio.}\n');
+		fprintf(filp, '\\label{table_port_var}\n');
+		fprintf(filp, '\\begin{tabular}{l r}\n');
+		%fprintf(filp, 'Type \& Value \\\\ \\hline\n');
+		fprintf(filp, 'Valuation date \& %s\\\\\n',datestr(valuation_date));
+		fprintf(filp, 'Portfolio base value \& %9.2f %s\\\\\n',base_value,fund_currency);   
+		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.2f\\%%\\\\\n',tmp_scen_set,quantile.*100,mc_var_shock_pct*100);
+		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.2f %s\\\\\n',tmp_scen_set,quantile.*100,mc_var_shock,fund_currency);
+		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.2f\\%%\\\\\n',tmp_scen_set,quantile.*100,mc_es_shock_pct*100);
+		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.2f %s\\\\\n',tmp_scen_set,quantile.*100,mc_es_shock,fund_currency);
+		fprintf(filp, 'Portfolio VaR %s diversification benefit \& %9.2f\\%%\\\\ \n',tmp_scen_set,(1 - mc_var_shock / total_var_undiversified)*100);
+		%fprintf(filp, '\\hline\n');
+		fprintf(filp, '\\end{tabular}\n');
+		%fprintf(filp, '\\end{table}\n');
+    fclose (filp);
   end
   
-  
-
-
   fprintf(fid, '\n');
   aggr = toc;
  
@@ -842,18 +910,19 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   % 8.  Plotting 
   tic
   if ( plotting == 1 )
+	% 8.a) Plot VaR graphs
       plot_vec = 1:1:mc;
       %graphics_toolkit gnuplot;
       idx_figure = idx_figure + 1;
-      figure(idx_figure);
+      hf1 = figure(idx_figure);
       clf;
 
-      subplot (2, 2, 1)
+      subplot (1, 2, 1)
         hist(endstaende_reldiff_shock,40)
-        title_string = {tmp_port_name; tmp_port_description; strcat('Portfolio PnL ',tmp_scen_set);};
+        title_string = {'Histogram'; strcat('Portfolio PnL ',tmp_scen_set);};
         title (title_string,'fontsize',12);
         xlabel('Relative Portfoliovalue');
-      subplot (2, 2, 2)
+      subplot (1, 2, 2)
         plot ( plot_vec, p_l_absolut_shock,'linewidth',2);
         %area ( plot_vec, p_l_absolut_shock,'Facecolor','blue');
         hold on;
@@ -861,27 +930,156 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
         hold on;
         plot ( [1, mc], [0, 0], 'r','linewidth',1);
         h=get (gcf, 'currentaxes');
-        xlabel('MonteCarlo Scenario');
+        xlabel('MonteCarlo Scenarios');
         set(h,'xtick',[1 mc])
         set(h,'ytick',[min(p_l_absolut_shock) -20000 0 20000 max(p_l_absolut_shock)])
         h=text(0.025*mc,(-1.45*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
         h=text(0.025*mc,(-2.1*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
         %set(h,'fontweight','bold'); %,'rotation',90)
         ylabel(strcat('Absolute PnL (in ',fund_currency,')'));
-        title_string = strcat('Portfolio PnL ',tmp_scen_set);
+        title_string = {'Sorted PnL';strcat('Portfolio PnL ',tmp_scen_set);};
         title (title_string,'fontsize',12);
-      subplot (2, 2, 3)
-        pie(pie_chart_values_plot_pos_shock, pie_chart_desc_plot_pos_shock, plot_vec_pie);
+      % save plotting
+      filename_plot_var = strcat(path_reports,'/',tmp_port_id,'_var_plot.png');
+      print (hf1,filename_plot_var, "-dpng", "-S600,200");
+      
+      idx_figure = idx_figure + 1;
+      hf2 = figure(idx_figure);
+      clf;  
+      subplot (1, 2, 1)
+		desc_cell_pos = strrep(pie_chart_desc_plot_pos_shock,"_",""); %remove "_"
+        pie(pie_chart_values_plot_pos_shock, desc_cell_pos, plot_vec_pie);
         title_string = strcat('Position contribution to VaR',tmp_scen_set);
         title(title_string,'fontsize',12);
         axis ('tic', 'off');    
-      subplot (2, 2, 4)
-        pie(pie_chart_values_plot_instr_shock, pie_chart_desc_plot_instr_shock, plot_vec_pie);
-        title_string = strcat('Pie Chart of Riskiest Instruments (VaR',tmp_scen_set,')');
+      subplot (1, 2, 2)
+		desc_cell_instr = strrep(pie_chart_desc_plot_instr_shock,"_","");
+        pie(pie_chart_values_plot_instr_shock, desc_cell_instr , plot_vec_pie);
+        %pareto(pie_chart_values_plot_instr_shock,desc_cell_instr);
+        title_string = strcat('Riskiest Positions (Standalone VaR',tmp_scen_set,')');
         title(title_string,'fontsize',12);
         axis ('tic', 'off');
+      % save plotting
+      filename_plot_var_pos_instr = strcat(path_reports,'/',tmp_port_id,'_var_pos_instr.png');
+      print (hf2,filename_plot_var_pos_instr, "-dpng", "-S600,200");
+      
+      % 8.b) Plot market data
+      idx_figure = idx_figure + 1;
+      hmarket = figure(idx_figure);
+      clf;
+      % get mktdata curves
+      [curve_obj retcode] = get_sub_object(curve_struct,'IR_EUR');
+      if retcode == 1
+		  subplot (2, 1, 1)
+            nodes = any2str(curve_obj.get('nodes'));
+			rates_base = curve_obj.get('rates_base');
+			rates_mc = curve_obj.get('rates_mc');
+			%rates_mc = rates_mc(confi_scenarionumber_shock,:);
+		  % plot curves
+			%set (hmarket, "numbertitle", "off", "name", "Octarisk Curve Structure")
+			plot (curve_obj.get('nodes'),rates_base,'color','blue',"linewidth",1,'marker','x');
+			hold on;
+			plot (curve_obj.get('nodes'),rates_mc(confi_scenarionumber_shock_m1,:),'color','magenta',"linewidth",0.8);
+			hold on;
+			plot (curve_obj.get('nodes'),rates_mc(confi_scenarionumber_shock,:),'color','red',"linewidth",0.8);
+			hold on;
+			plot (curve_obj.get('nodes'),rates_mc(confi_scenarionumber_shock_p1,:),'color','cyan',"linewidth",0.8);
+			hold off;
+			grid off;
+			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);
+			xlabel('Nodes (in days)', "fontsize",12);
+			ylabel('Rates', "fontsize",12);
+		    legend('Base Scenario Rates','VaR scenario -1','VaR scenario','VaR scenario +1',"location","southeast");
+      end
+      [curve_obj retcode] = get_sub_object(curve_struct,'IR_USD');
+      if retcode == 1
+		  subplot (2, 1, 2)
+            nodes = any2str(curve_obj.get('nodes'));
+			rates_base = curve_obj.get('rates_base');
+			rates_mc = curve_obj.get('rates_mc');
+			%rates_mc = rates_mc(confi_scenarionumber_shock,:);
+		  % plot curves
+			%set (hmarket, "numbertitle", "off", "name", "Octarisk Curve Structure")
+			plot (curve_obj.get('nodes'),rates_base,'color','blue',"linewidth",1,'marker','x');
+			hold on;
+			plot (curve_obj.get('nodes'),rates_mc(confi_scenarionumber_shock_m1,:),'color','magenta',"linewidth",0.8);
+			hold on;
+			plot (curve_obj.get('nodes'),rates_mc(confi_scenarionumber_shock,:),'color','red',"linewidth",0.8);
+			hold on;
+			plot (curve_obj.get('nodes'),rates_mc(confi_scenarionumber_shock_p1,:),'color','cyan',"linewidth",0.8);
+			hold off;
+			grid off;
+			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);
+			xlabel('Nodes (in days)', "fontsize",12);
+			ylabel('Rates', "fontsize",12);
+		    legend('Base Scenario Rates','VaR scenario -1','VaR scenario','VaR scenario +1',"location","southeast");
+      end
+      % save plotting
+      filename_mktdata_curves = strcat(path_reports,'/',tmp_port_id,'_mktdata_curves.png');
+      print (hmarket,filename_mktdata_curves, "-dpng", "-S800,500");
+      
   end     % end plotting
   plottime = toc; % end plotting
+  
+  % calculate incremental and marginal VaRs
+  if (para_object.calc_marg_incr_var = true)
+	% print to LaTeX Table
+    latex_table_incr_var = strcat(path_reports,'/table_pos_',tmp_port_id,'_incr_var.tex');
+    fili = fopen (latex_table_incr_var, 'w');
+	fprintf(fili, '\\center\n');
+	fprintf(filp, '\\begin{tabular}{l|c|c|c }\n');
+	fprintf(fili, 'Position \& Basevalue \& Incremental VaR \& Marginal VaR\\\\ \\hline\n');
+	% for the 6 riskiest positions calculate incr. and marg. VaRs
+	for ii=1:1:length(pie_chart_desc_plot_pos_shock)
+		position_struct_new = position_struct;
+		portfolio_shock_new = [];
+		portfolio_shock_sort_new = [];
+		dummy_failed_cell = {};
+		base_value_new = base_value;
+		tmp_pos_id = pie_chart_desc_plot_pos_shock{ii};
+		% get position struct index
+		a = {position_struct_new.id};
+		b = 1:1:length(a);
+		c = strcmpi(a, tmp_pos_id);
+		idx_pos = b * c';
+	% calculate incremental VaR
+		pos_basevalue = position_struct_new(idx_pos).basevalue;
+		base_value_new = base_value - pos_basevalue;
+		%base_value_new = base_value - portfolio_struct_new(idx_port).position(idx_pos).basevalue
+		quantity_old = position_struct_new(idx_pos).quantity ;
+		position_struct_new(idx_pos).quantity = 0; % pos_quantity;
+		% calculate VaR of portfolio without position
+		[position_struct_new dummy_failed_cell portfolio_shock_new] = aggregate_positions(position_struct_new, ...
+			dummy_failed_cell,instrument_struct,index_struct,mc,tmp_scen_set,fund_currency,tmp_port_id,'false');
+		[portfolio_shock_sort_new] = sort(portfolio_shock_new' - base_value_new);
+		mc_var_shock_incr    = - dot(hd_vec,portfolio_shock_sort_new);
+		incr_var = mc_var_shock - mc_var_shock_incr;
+		
+	% calculate marginal VaR
+		position_struct_new = position_struct;
+		portfolio_shock_new = [];
+		portfolio_shock_sort_new = [];
+		dummy_failed_cell = {};
+		base_value_new = base_value;
+		pos_basevalue = position_struct_new(idx_pos).basevalue;
+		quantity_old = position_struct_new(idx_pos).quantity;
+		delta_pos = 1000/(pos_basevalue/quantity_old) ;
+		position_struct_new(idx_pos).quantity = quantity_old + delta_pos; % pos_quantity;
+		quantity_new = position_struct_new(idx_pos).quantity;
+		base_value_new = base_value + pos_basevalue * delta_pos/quantity_old;
+		% calculate VaR of portfolio without position
+		[position_struct_new dummy_failed_cell portfolio_shock_new] = aggregate_positions(position_struct_new, ...
+			dummy_failed_cell,instrument_struct,index_struct,mc,tmp_scen_set,fund_currency,tmp_port_id,'false');
+		[portfolio_shock_sort_new] = sort(portfolio_shock_new' - base_value_new);
+		mc_var_shock_marg    = - dot(hd_vec,portfolio_shock_sort_new);
+		marg_var = mc_var_shock_marg - mc_var_shock;
+		% TODO: save incr_var to position_struct
+		fprintf(fili, '%s \& %9.2f %s \& %9.2f %s \& %9.2f %s\\\\\n',tmp_pos_id,pos_basevalue,fund_currency,incr_var,fund_currency,marg_var,fund_currency);
+    end 
+    fprintf(fili, '\\end{tabular}\n');
+    fclose (fili);
+  end
+  % end incr and marginal var
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    END  MC REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
 
 
@@ -940,15 +1138,19 @@ elseif ( strcmpi(tmp_scen_set,'stress') )     % Stress scenario
         xx = 1:1:(no_stresstests-1);
         % Plot Stresstestdata
         idx_figure = idx_figure + 1;
-        figure(idx_figure);
+        hs = figure(idx_figure);
         clf;
-        barh(p_l_relativ_stress(1:end-1), 'facecolor', 'blue');
+        barh(p_l_relativ_stress(2:end), 'facecolor', 'blue');
         h=get (gcf, 'currentaxes');
         set(h,'ytick',xx);
-        set(h,'yticklabel',stresstest_plot_desc(1:end-1));
+        stresstest_plot_desc = strrep(stresstest_plot_desc,"_","");
+        set(h,'yticklabel',stresstest_plot_desc(2:end));
         xlabel('Relative PnL');
         %ylabel('Value');
-        title('Relative Stresstest Scenario Results','fontsize',12);
+        title('Stresstest Scenario Results','fontsize',12);
+        % save plotting
+        filename_plot_stress = strcat(path_reports,'/',tmp_port_id,'_stress_plot.png');
+        print (hs,filename_plot_stress, "-dpng", "-S600,300");
         plottime = plottime + toc;
     end     % end plotting
 end     % close if loop MC / Stress scenarioset
@@ -1017,6 +1219,7 @@ fprintf('=======================================================\n');
 fprintf('===   Ended octarisk market risk measurement tool   ===\n');
 fprintf('=======================================================\n');
 fprintf('\n');
+
 
 % Final clean up 
 
