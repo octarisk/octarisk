@@ -214,20 +214,49 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
 		  end
           % store aggr_key_struct
           obj = obj.set('aggr_key_struct',aggr_key_struct);
-
-          
-          % calculate incremental and marginal VaRs
-          for (ii=1:1:length(obj.positions))
+		
+		  % calculate incremental and marginal VaRs
+          if (para.calc_marg_incr_var = true)
+           for (ii=2:1:length(obj.positions))
             try
-              pos_obj_new = obj.positions(ii).object;
+              pos_obj = obj.positions(ii).object;
               pos_id = obj.positions(ii).id;
-              if (isobject(pos_obj_new))
-				% TODO
+              if (isobject(pos_obj))
+				port_obj_tmp = obj;
+				pos_obj_new = pos_obj;	% copy object
+				% calculate incremental VaR
+				pos_basevalue = pos_obj_new.getValue('base');
+				base_value = port_obj_tmp.getValue('base');
+				base_value_new = base_value - pos_basevalue;
+				portfolio_shock_new = port_obj_tmp.getValue(scen_set) - ...
+												pos_obj_new.getValue(scen_set);
+				[portfolio_shock_sort_new] = sort(portfolio_shock_new - ...
+												base_value_new);
+				mc_var_shock_incr    = - dot(hd_vec,portfolio_shock_sort_new);
+				incr_var = varhd_abs - mc_var_shock_incr;		
+				% store position object in portfolio object
+				pos_obj = pos_obj.set('incr_var',incr_var);
+				obj.positions(ii).object = pos_obj;
+				
+				% calculate marginal VaR
+				fraction_base = 1000/pos_basevalue;	% what fraction are 1000?
+				portfolio_shock_new = port_obj_tmp.getValue(scen_set) + ...
+								fraction_base .* pos_obj_new.getValue(scen_set);
+				base_value_new = base_value + 1000;				
+				[portfolio_shock_sort_new] = sort(portfolio_shock_new - ...
+												base_value_new);
+				mc_var_shock_marg    = - dot(hd_vec,portfolio_shock_sort_new);
+				marg_var = mc_var_shock_marg - varhd_abs;		
+				% store position object in portfolio object
+				pos_obj = pos_obj.set('marg_var',marg_var);
+				obj.positions(ii).object = pos_obj;
+		
               end
             catch
 				printf('There was an error for position id>>%s<<: %s\n',pos_id,lasterr);
 				position_failed_cell{ length(position_failed_cell) + 1 } =  pos_id;
             end
+           end
           end
           diversification_ratio = varhd_abs / var_positionsum;    
           

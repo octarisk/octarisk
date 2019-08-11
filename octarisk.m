@@ -786,52 +786,6 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
         fprintf('|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
         fprintf(fid, '|VaR %s | %s \t |%9.2f %s \t|%9.2f %s \t |%9.2f %s|\n',tmp_scen_set,tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
     end
-    % Print Report to  LaTeX Template
-    if strcmpi(tmp_aggr_key_name,'asset_class')
-		latex_table_decomp = strcat(path_reports,'/table_port_',tmp_port_id,'_decomp.tex');
-		fild = fopen (latex_table_decomp, 'w');
-		%fprintf(fild, '\\begin{table}[!htb]\n');
-		fprintf(fild, '\\center\n');
-		%fprintf(fild, '\\caption{VaR decomposition on asset class level}\n');
-		fprintf(fild, '\\label{table_port_decomp}\n');
-		fprintf(fild, '\\begin{tabular}{l|r|r|r}\n');
-		fprintf(fild, 'Asset Class \& Basevalue \& Standalone VaR \& Decomp VaR\\\\\\hline\\hline\n');
-		fprintf(fild, 'Portfolio \& %9.0f %s \& %9.0f %s\& %9.0f %s\\\\\\hline\n',base_value,fund_currency,mc_var_shock,fund_currency,mc_var_shock,fund_currency);
-		for ii = 1 : 1 : length(tmp_aggr_cell)
-			tmp_aggr_key_value          = tmp_aggr_cell{ii};
-			tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
-			tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
-			tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
-			tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
-			tmp_aggr_key_value = strrep(tmp_aggr_key_value,"_","");
-			fprintf(fild, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
-		end
-		%fprintf(fild, '\\hline\n');
-		fprintf(fild, '\\end{tabular}\n');
-		%fprintf(fild, '\\end{table}\n');
-		fclose (fild);
-	end
-	 % Print Report to  LaTeX Template
-    if strcmpi(tmp_aggr_key_name,'id')
-		latex_table_decomp = strcat(path_reports,'/table_port_',tmp_port_id,'_decomp_id.tex');
-		fiid = fopen (latex_table_decomp, 'w');
-		fprintf(fiid, '\\center\n');
-		fprintf(fiid, '\\begin{tabular}{l|r|r|r}\n');
-		fprintf(fiid, 'Position ID \& Basevalue \& Standalone VaR \& Decomp VaR\\\\\\hline\\hline\n');
-		fprintf(fiid, 'Portfolio \& %9.0f %s \& %9.0f  %s\& %9.0f %s\\\\\\hline\n',base_value,fund_currency,mc_var_shock,fund_currency,mc_var_shock,fund_currency);
-		len = min(30,length(tmp_aggr_cell));
-		for ii = 1 : 1 : len
-			tmp_aggr_key_value          = tmp_aggr_cell{ii};
-			tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
-			tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
-			tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
-			tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
-			tmp_aggr_key_value = strrep(tmp_aggr_key_value,"_","");
-			fprintf(fiid, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,fund_currency,tmp_standalone_aggr_key_var,fund_currency,tmp_decomp_aggr_key_var,fund_currency);
-		end;
-		fprintf(fiid, '\\end{tabular}\n');
-		fclose (fiid);
-	end
 	
   end
   
@@ -878,27 +832,6 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
 	fprintf("VALUES ('%s','%s',%1.2f,%1.2f,%1.4f,%1.4f,'%s','%s','%s',%d,%1.4f,%d);\n",datestr(valuation_date,'YYYY-mm-DD'),fund_currency,base_value,mc_var_shock,-mc_var_shock_pct,quantile,quantile_estimator,tmp_scen_set,copulatype,nu,diversification_factor,mc);
     fprintf(fid, '====================================================================');
     
-    % print to LaTeX Table
-    latex_table_port_var = strcat(path_reports,'/table_port_',tmp_port_id,'_var.tex');
-    %latex_table_var_pos = strcat(path_reports,'/table_var_pos.tex');
-    filp = fopen (latex_table_port_var, 'w');
-		%fprintf(filp, '\\begin{table}[!htb]\n');
-		fprintf(filp, '\\center\n');
-		%fprintf(filp, '\\caption{VaR and Expected Shortfall metrics for the total portfolio.}\n');
-		fprintf(filp, '\\label{table_port_var}\n');
-		fprintf(filp, '\\begin{tabular}{l r}\n');
-		%fprintf(filp, 'Type \& Value \\\\ \\hline\n');
-		fprintf(filp, 'Valuation date \& %s\\\\\n',datestr(valuation_date));
-		fprintf(filp, 'Portfolio base value \& %9.2f %s\\\\\n',base_value,fund_currency);   
-		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.2f\\%%\\\\\n',tmp_scen_set,quantile.*100,mc_var_shock_pct*100);
-		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.2f %s\\\\\n',tmp_scen_set,quantile.*100,mc_var_shock,fund_currency);
-		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.2f\\%%\\\\\n',tmp_scen_set,quantile.*100,mc_es_shock_pct*100);
-		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.2f %s\\\\\n',tmp_scen_set,quantile.*100,mc_es_shock,fund_currency);
-		fprintf(filp, 'Portfolio VaR %s diversification benefit \& %9.2f\\%%\\\\ \n',tmp_scen_set,(1 - mc_var_shock / total_var_undiversified)*100);
-		%fprintf(filp, '\\hline\n');
-		fprintf(filp, '\\end{tabular}\n');
-		%fprintf(filp, '\\end{table}\n');
-    fclose (filp);
   end
   
   fprintf(fid, '\n');
@@ -963,7 +896,12 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
       filename_plot_var_pos_instr = strcat(path_reports,'/',tmp_port_id,'_var_pos_instr.png');
       print (hf2,filename_plot_var_pos_instr, "-dpng", "-S600,200");
       
-      % 8.b) Plot market data
+      % 8.b) Plot SRRI classification
+      idx_figure = idx_figure + 1;
+      [ret idx_figure] = get_srri(mc_var_shock_pct,tmp_ts,quantile, ...
+								path_reports,tmp_port_id,idx_figure,base_value);
+      
+      % 8.c) Plot market data
       idx_figure = idx_figure + 1;
       hmarket = figure(idx_figure);
       clf;
@@ -1021,65 +959,13 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   end     % end plotting
   plottime = toc; % end plotting
   
-  % calculate incremental and marginal VaRs
-  if (para_object.calc_marg_incr_var = true)
-	% print to LaTeX Table
-    latex_table_incr_var = strcat(path_reports,'/table_pos_',tmp_port_id,'_incr_var.tex');
-    fili = fopen (latex_table_incr_var, 'w');
-	fprintf(fili, '\\center\n');
-	fprintf(filp, '\\begin{tabular}{l|c|c|c }\n');
-	fprintf(fili, 'Position \& Basevalue \& Incremental VaR \& Marginal VaR\\\\ \\hline\n');
-	% for the 6 riskiest positions calculate incr. and marg. VaRs
-	for ii=1:1:length(pie_chart_desc_plot_pos_shock)
-		position_struct_new = position_struct;
-		portfolio_shock_new = [];
-		portfolio_shock_sort_new = [];
-		dummy_failed_cell = {};
-		base_value_new = base_value;
-		tmp_pos_id = pie_chart_desc_plot_pos_shock{ii};
-		% get position struct index
-		a = {position_struct_new.id};
-		b = 1:1:length(a);
-		c = strcmpi(a, tmp_pos_id);
-		idx_pos = b * c';
-	% calculate incremental VaR
-		pos_basevalue = position_struct_new(idx_pos).basevalue;
-		base_value_new = base_value - pos_basevalue;
-		%base_value_new = base_value - portfolio_struct_new(idx_port).position(idx_pos).basevalue
-		quantity_old = position_struct_new(idx_pos).quantity ;
-		position_struct_new(idx_pos).quantity = 0; % pos_quantity;
-		% calculate VaR of portfolio without position
-		[position_struct_new dummy_failed_cell portfolio_shock_new] = aggregate_positions(position_struct_new, ...
-			dummy_failed_cell,instrument_struct,index_struct,mc,tmp_scen_set,fund_currency,tmp_port_id,'false');
-		[portfolio_shock_sort_new] = sort(portfolio_shock_new' - base_value_new);
-		mc_var_shock_incr    = - dot(hd_vec,portfolio_shock_sort_new);
-		incr_var = mc_var_shock - mc_var_shock_incr;
-		
-	% calculate marginal VaR
-		position_struct_new = position_struct;
-		portfolio_shock_new = [];
-		portfolio_shock_sort_new = [];
-		dummy_failed_cell = {};
-		base_value_new = base_value;
-		pos_basevalue = position_struct_new(idx_pos).basevalue;
-		quantity_old = position_struct_new(idx_pos).quantity;
-		delta_pos = 1000/(pos_basevalue/quantity_old) ;
-		position_struct_new(idx_pos).quantity = quantity_old + delta_pos; % pos_quantity;
-		quantity_new = position_struct_new(idx_pos).quantity;
-		base_value_new = base_value + pos_basevalue * delta_pos/quantity_old;
-		% calculate VaR of portfolio without position
-		[position_struct_new dummy_failed_cell portfolio_shock_new] = aggregate_positions(position_struct_new, ...
-			dummy_failed_cell,instrument_struct,index_struct,mc,tmp_scen_set,fund_currency,tmp_port_id,'false');
-		[portfolio_shock_sort_new] = sort(portfolio_shock_new' - base_value_new);
-		mc_var_shock_marg    = - dot(hd_vec,portfolio_shock_sort_new);
-		marg_var = mc_var_shock_marg - mc_var_shock;
-		% TODO: save incr_var to position_struct
-		fprintf(fili, '%s \& %9.2f %s \& %9.2f %s \& %9.2f %s\\\\\n',tmp_pos_id,pos_basevalue,fund_currency,incr_var,fund_currency,marg_var,fund_currency);
-    end 
-    fprintf(fili, '\\end{tabular}\n');
-    fclose (fili);
-  end
-  % end incr and marginal var
+  port_obj_tmp = port_obj_struct(1).object;
+  port_obj_tmp = port_obj_tmp.aggregate('base', instrument_struct, index_struct, para_object);
+  port_obj_tmp = port_obj_tmp.calc_risk('base', instrument_struct, index_struct, para_object);
+  port_obj_tmp = port_obj_tmp.aggregate(tmp_scen_set, instrument_struct, index_struct, para_object);
+  port_obj_tmp = port_obj_tmp.calc_risk(tmp_scen_set, instrument_struct, index_struct, para_object);
+  port_obj_tmp = port_obj_tmp.print_report(para_object,'LaTeX',tmp_scen_set);				
+  port_obj_tmp
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    END  MC REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
 
 

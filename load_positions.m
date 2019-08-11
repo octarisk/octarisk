@@ -209,14 +209,31 @@ for ii = 1 : 1 : length(tmp_list_files)
                 catch
                     error_flag = 1;
                 end
-                
-                % try to store items in object
+                                
                 try
-                    tmp_obj = tmp_obj.set(tmp_columnname,tmp_entry);
+                    % special cases:
+                    if ( sum(strcmp(tmp_columnname,{'aa_target_values'})) > 0)
+                        if ~( isempty(tmp_entry)) % split into vector
+                            %replace | with , and apply str2num
+                            tmp_entry = str2num( strrep(tmp_entry,'|',','));
+                        else
+                            tmp_entry = [];
+                        end
+                        tmp_obj = tmp_obj.set(tmp_columnname,tmp_entry);
+                    elseif ( sum(strcmp(tmp_columnname,{'aa_target_id'})) > 0)  % split into cell
+                        try
+                            tmp_entry = strsplit( tmp_entry, '|');
+                        catch
+                            tmp_entry = {};
+                        end 
+                        tmp_obj = tmp_obj.set(tmp_columnname,tmp_entry);
+                    else    % set new attribute, no special treatment
+                        tmp_obj = tmp_obj.set(tmp_columnname,tmp_entry);
+                    end % end special case
                 catch
+                    fprintf('Position/Portfolio attribute %s could not be set for line >>%d<< and column >>%d<<.\n There was an error: %s\n',tmp_columnname,jj,mm,lasterr);
                     error_flag = 1;
                 end
-                
             end  % end for loop via all attributes
             % B.3c) Error checking for positions / portfolio: 
             if ( error_flag > 0 )

@@ -107,7 +107,6 @@ function s = calc_spread_over_yield (bond,valuation_date,discount_curve,call_sch
         s.calibration_flag = 1;
      end
   end
-   
 end
 
 
@@ -118,7 +117,7 @@ end
 function obj = phi_soy (x,valuation_date,cf_dates,cf_values,act_value, ...
                 comp_type_curve, basis_curve, comp_freq_curve,rate_vec)
         % convert constant spread 
-        x = convert_curve_rates(valuation_date,valuation_date + cf_dates', ...
+        x = convert_curve_rates(valuation_date,cf_dates', ...
                         x,'continuous','annual',3, ...
                         comp_type_curve,comp_freq_curve,basis_curve)';
         % add spread to interpolated rates

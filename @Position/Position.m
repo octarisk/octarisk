@@ -24,6 +24,8 @@ classdef Position
         valuation_date = today;
         reporting_date = today;
         scenario_numbers = [];
+        aa_target_id = '';	% target asset allocation {'equity','alternative'}
+        aa_target_values = []; % taget asset allocation values [0.6,0.4]
         mean_shock = 0;
         std_shock = 0;
         skewness_shock = 0;
@@ -230,8 +232,8 @@ classdef Position
          value_stress_rows = min(rows(a.value_stress),5);
          value_mc_rows = min(rows(a.value_mc),5);
          value_mc_cols = min(length(a.timestep_mc),2);
-         fprintf('value_base: %12.2f \n',a.value_base);
-         fprintf('varhd_abs@%2.1f%%: %12.2f \n',a.var_confidence*100,a.varhd_abs);
+         fprintf('value_base: %12.2f %s\n',a.value_base,a.currency);
+         fprintf('varhd_abs@%2.1f%%: %12.2f %s\n',a.var_confidence*100,a.varhd_abs,a.currency);
          fprintf('varhd_rel@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.varhd_rel*100);
          fprintf('value_stress: %8.6f \n',a.value_stress(1:value_stress_rows));
          fprintf('diversification_ratio: %2.1f%% \n',a.diversification_ratio*100);
@@ -248,6 +250,8 @@ classdef Position
          % end
          %props = fieldnames(a);
          if (strcmpi(a.type,'Position'))
+            fprintf('Incremental VaR: %s %s\n',any2str(a.incr_var),a.currency);
+            fprintf('Marginal VaR: %s %s\n',any2str(a.marg_var),a.currency);
             fprintf('TPT Position data:\n');
             fprintf('1_Portfolio_identifying_data: %s\n',any2str(a.tpt_1));
             fprintf('14_Identification_code_of_the_instrument: %s\n',any2str(a.tpt_14));
@@ -273,7 +277,17 @@ classdef Position
             fprintf('kurtosis_shock: %3.2f \n',a.kurtosis_shock); 
             fprintf('expshortfall_abs@%2.1f%%: %12.2f \n',a.var_confidence*100,a.expshortfall_abs);
             fprintf('expshortfall_rel@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.expshortfall_rel*100);
-            fprintf('Positions (Instrument ID | Quantity | Currency | Base Value | Standalone VaR | Decomp VaR):\n');
+            
+            if ( length(a.aa_target_values) == length(a.aa_target_id) && length(a.aa_target_values) > 0 )
+				fprintf('Target Asset Allocation:\n');
+				for ii=1:1:length(a.aa_target_values)
+					if (length(a.aa_target_id{ii}) <= 25)
+						tmp_id = strcat(a.aa_target_id{ii},char(repmat(95,1,25 - length(a.aa_target_id{ii}))) );
+					end
+					fprintf('\t%s%2.0f%%\n',tmp_id,a.aa_target_values(ii)*100);
+				end
+            end
+            fprintf('Positions (Instrument ID | Quantity | Currency | Base Value | Standalone VaR | Decomp VaR | Incr VaR | Marg VaR):\n');
             if ( length(a.positions) > 0)
                 for (ii = 2:1:length(a.positions))
                     tmp_pos_obj = a.positions(ii).object;
@@ -281,7 +295,7 @@ classdef Position
                     if (length(tmp_id) <= 25)
 						tmp_id = strcat(tmp_id,char(repmat(95,1,25 - length(tmp_id))) );
 					end
-                    fprintf('\t%s | %8.2f | %s | %8.2f | %8.2f | %8.2f\n',tmp_id,tmp_pos_obj.quantity,a.currency,tmp_pos_obj.value_base,tmp_pos_obj.varhd_abs,tmp_pos_obj.decomp_varhd);
+                    fprintf('\t%s | %8.2f | %s | %8.2f | %8.2f | %8.2f | %8.2f | %8.2f\n',tmp_id,tmp_pos_obj.quantity,a.currency,tmp_pos_obj.value_base,tmp_pos_obj.varhd_abs,tmp_pos_obj.decomp_varhd,tmp_pos_obj.incr_var,tmp_pos_obj.marg_var);
                 end
             end
          end
