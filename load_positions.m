@@ -212,7 +212,8 @@ for ii = 1 : 1 : length(tmp_list_files)
                                 
                 try
                     % special cases:
-                    if ( sum(strcmp(tmp_columnname,{'aa_target_values'})) > 0)
+                    if ( sum(strcmp(tmp_columnname,{'aa_target_values', ...
+							'hist_base_values','hist_var_abs'})) > 0)
                         if ~( isempty(tmp_entry)) % split into vector
                             %replace | with , and apply str2num
                             tmp_entry = str2num( strrep(tmp_entry,'|',','));
@@ -220,7 +221,8 @@ for ii = 1 : 1 : length(tmp_list_files)
                             tmp_entry = [];
                         end
                         tmp_obj = tmp_obj.set(tmp_columnname,tmp_entry);
-                    elseif ( sum(strcmp(tmp_columnname,{'aa_target_id'})) > 0)  % split into cell
+                    elseif ( sum(strcmp(tmp_columnname,{'aa_target_id', ...
+								'hist_report_dates'})) > 0)  % split into cell
                         try
                             tmp_entry = strsplit( tmp_entry, '|');
                         catch

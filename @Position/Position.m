@@ -25,7 +25,10 @@ classdef Position
         reporting_date = today;
         scenario_numbers = [];
         aa_target_id = '';	% target asset allocation {'equity','alternative'}
-        aa_target_values = []; % taget asset allocation values [0.6,0.4]
+        aa_target_values = []; % target asset allocation values [0.6,0.4]
+        hist_base_values = [];	% historical base values
+        hist_var_abs = []; % historical VaR absolute
+        hist_report_dates = ''; % historical reporting dates
         mean_shock = 0;
         std_shock = 0;
         skewness_shock = 0;
@@ -287,7 +290,15 @@ classdef Position
 					fprintf('\t%s%2.0f%%\n',tmp_id,a.aa_target_values(ii)*100);
 				end
             end
-            fprintf('Positions (Instrument ID | Quantity | Currency | Base Value | Standalone VaR | Decomp VaR | Incr VaR | Marg VaR):\n');
+            if ( iscell(a.hist_report_dates) && length(a.hist_base_values) == length(a.hist_var_abs))
+				fprintf('Historical report values: \n');
+				fprintf('\tReport Date | Base Value | VaR abs. | VaR rel.:\n');
+				for(kk=1:1:length(a.hist_base_values))
+					fprintf('\t%s | %8.2f | %8.2f | %2.2f%%\n',a.hist_report_dates{kk},a.hist_base_values(kk),a.hist_var_abs(kk),100*a.hist_var_abs(kk)/a.hist_base_values(kk));
+				end
+				fprintf('\n');
+            end
+            fprintf('Positions (Instrument ID) | Quantity | Currency | Base Value | Standalone VaR | Decomp VaR | Incr VaR | Marg VaR):\n');
             if ( length(a.positions) > 0)
                 for (ii = 2:1:length(a.positions))
                     tmp_pos_obj = a.positions(ii).object;
@@ -305,7 +316,7 @@ classdef Position
 		 [mc_rows mc_cols mc_stack] = size(a.cf_values_mc);
 		 % looping via all cf_dates if defined
 		 if ( length(a.cf_dates) > 0 )
-			fprintf('CF dates:\n[ ');
+			fprintf('Next 12 end of month CF dates:\n[ ');
 			for (ii = 1 : 1 : length(a.cf_dates))
 				fprintf('%d,',a.cf_dates(ii));
 			end
@@ -313,7 +324,7 @@ classdef Position
 		 end
 		 % looping via all cf base values if defined
 		 if ( length(a.cf_values) > 0 )
-			fprintf('CF Base values:\n[ ');
+			fprintf('Projected CF Base values:\n[ ');
 			for ( kk = 1 : 1 : min(columns(a.cf_values),10))
 					fprintf('%f,',a.cf_values(kk));
 				end

@@ -55,7 +55,8 @@ classdef Riskfactor
          % Get length of Value vector:
          scenario_stress_rows = min(rows(a.scenario_stress),5);
          scenario_mc_rows = min(rows(a.scenario_mc),5);
-         scenario_mc_cols = min(length(a.scenario_mc),2);
+         scenario_mc_cols = min(columns(a.scenario_mc),2);
+
          fprintf('name: %s\nid: %s\ndescription: %s\ntype: %s\nmodel: %s\n', ... 
             a.name,a.id,a.description,a.type,a.model);
          fprintf('mean: %f\nstandard deviation: %f\nskewness: %f\nkurtosis: %f\n', ... 
@@ -73,17 +74,17 @@ classdef Riskfactor
          end
          if ( length(a.scenario_stress) > 0 ) 
             fprintf('Scenario stress: %8.5f \n',a.scenario_stress(1:scenario_stress_rows));
-            fprintf('Shifttype stress: %d \n',a.shift_type(1:scenario_stress_rows));
+            fprintf('Shifttype stress: %d \n',a.shift_type(1:min(rows(a.shift_type),5)));
             fprintf('\n');
          end
          % looping via first 5 MC scenario values
          for ( ii = 1 : 1 : scenario_mc_cols)
-            if ( length(a.timestep_mc) >= ii )
-                fprintf('MC timestep: %s\n',a.timestep_mc{ii});
-                fprintf('Scenariovalue: %8.5f \n',a.scenario_mc(1:scenario_mc_rows,ii));
-            end
-            
-            fprintf('\n');
+			fprintf('MC timestep: %s\n',a.timestep_mc{ii});
+			fprintf('Scenariovalues:\n[ ')
+                for ( jj = 1 : 1 : scenario_mc_rows)
+                    fprintf('%8.6f,\n',a.scenario_mc(jj,ii));
+                end
+            fprintf(' ]\n');
          end
       end % disp
       

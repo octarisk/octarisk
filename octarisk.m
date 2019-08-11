@@ -959,13 +959,13 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
   end     % end plotting
   plottime = toc; % end plotting
   
-  port_obj_tmp = port_obj_struct(1).object;
-  port_obj_tmp = port_obj_tmp.aggregate('base', instrument_struct, index_struct, para_object);
-  port_obj_tmp = port_obj_tmp.calc_risk('base', instrument_struct, index_struct, para_object);
-  port_obj_tmp = port_obj_tmp.aggregate(tmp_scen_set, instrument_struct, index_struct, para_object);
-  port_obj_tmp = port_obj_tmp.calc_risk(tmp_scen_set, instrument_struct, index_struct, para_object);
-  port_obj_tmp = port_obj_tmp.print_report(para_object,'LaTeX',tmp_scen_set);				
-  port_obj_tmp
+  %~ port_obj_tmp = port_obj_struct(1).object;
+  %~ port_obj_tmp = port_obj_tmp.aggregate('base', instrument_struct, index_struct, para_object);
+  %~ port_obj_tmp = port_obj_tmp.calc_risk('base', instrument_struct, index_struct, para_object);
+  %~ port_obj_tmp = port_obj_tmp.aggregate(tmp_scen_set, instrument_struct, index_struct, para_object);
+  %~ port_obj_tmp = port_obj_tmp.calc_risk(tmp_scen_set, instrument_struct, index_struct, para_object);
+  %~ port_obj_tmp = port_obj_tmp.print_report(para_object,'LaTeX',tmp_scen_set);				
+  %~ port_obj_tmp
 % %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#    END  MC REPORTS    %#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%# 
 
 
@@ -1105,7 +1105,6 @@ fprintf('=======================================================\n');
 fprintf('===   Ended octarisk market risk measurement tool   ===\n');
 fprintf('=======================================================\n');
 fprintf('\n');
-
 
 % Final clean up 
 

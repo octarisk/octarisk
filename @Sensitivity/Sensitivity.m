@@ -47,6 +47,7 @@ classdef Sensitivity < Instrument
       
       function disp(b)
          disp@Instrument(b)
+         fprintf('model: %s\n',b.model);   
          fprintf('sub_type: %s\n',b.sub_type);              
          if (strcmpi(b.sub_type,'SENSI'))
             
