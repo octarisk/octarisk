@@ -12,12 +12,6 @@ if (strcmpi(type,'decomp'))
   else
 	  fund_currency = obj.getValue('currency');
 	  aggr_key_struct = obj.get('aggr_key_struct');
-	  % Print aggregation key report:  
-	  %path_reports = strcat(para_object.path_working_folder,'/',para_object.folder_output,'/',para_object.folder_output_reports);
-	  %filename = strcat(path_reports,'/',datestr(obj.valuation_date,'yyyymmdd'), ...
-	  %					'_decomp_',obj.port_id,'_',datestr(obj.reporting_date,'yyyymmdd'), ...
-	  %					'_','octarisk','.csv');
-	  %fid = fopen (filename, 'w');
 	
 	  fprintf('=== Aggregation Key Reporting for Portfolio %s === \n',obj.get('id'));  
 	  for jj = 1:1:length(aggr_key_struct)
@@ -40,30 +34,6 @@ if (strcmpi(type,'decomp'))
 		end
 	  end
   end
-% ------------------    liquidity risk reporting     -------------------
-%~ elseif (strcmpi(type,'liquidity'))  
-%~ % dependent on scen_set
-%~ if ( strcmpi(scen_set,'base'))
-%~ % roll out end of month buckets for next 12 months
-
-%~ % map position cash flows to these buckets
-	%~ for (ii=1:1:length(obj.positions))
-		  %~ pos_obj = obj.positions(ii).object;
-		  %~ if (isobject(pos_obj))
-			%~ try
-				%~ % retrieve instrument
-				%~ instr_obj = get_sub_object(instrument_struct,pos_id);
-				
-				
-			%~ catch
-			  %~ printf('There was an error for position id>>%s<<: %s\n',pos_id,lasterr);
-			%~ end
-		  %~ end
-	%~ end
-			
-%~ % print out report
-
-%~ end
 
 % ---------------------------------    LaTeX    --------------------------------
 elseif (strcmpi(type,'latex'))  
@@ -71,7 +41,12 @@ elseif (strcmpi(type,'latex'))
 	  fprintf('print_report: No LaTeX report exists for scenario set >>%s<<\n',scen_set);
   else 
 	  % get path
-	  path_reports = strcat(para_object.path_working_folder,'/', ...
+	  if ( strcmpi(para_object.path_working_folder,''))
+		path_main = pwd;
+	  else
+		path_main = para_object.path_working_folder;
+	  end
+	  path_reports = strcat(path_main,'/', ...
 					para_object.folder_output,'/',para_object.folder_output_reports);
 	  
 	  % ####  print portfolio risk metrics report
@@ -227,19 +202,7 @@ elseif (strcmpi(type,'stress'))
 	else
 		fprintf('print_report: No stresstest_struct input provided.\n');
 	end
-	%~ for kk = 1:1:length(instrument_struct)
-		%~ obj = instrument_struct(kk).object;
-		%~ stressvec = obj.getValue('stress');
-		%~ fprintf('%s,%9.8f,',obj.id,obj.getValue('base'));
-		%~ if (length(stressvec) >= length(stressnames))
-			%~ for jj=1:1:length(stressvec)
-				%~ fprintf('%9.8f,',stressvec(jj));
-			%~ end
-		%~ else
-			%~ fprintf('%9.8f,',stressvec(1));
-		%~ end
-		%~ fprintf('%s\n',any2str(obj.currency));
-	%~ end
+
   end
 elseif (strcmpi(type,'TPT'))
 	  % A) Specify fieldnames <-> types key/value pairs

@@ -1,5 +1,5 @@
-HeaderPORTFOLIO,idCHAR,nameCHAR,descriptionCHAR,currencyCHAR
-Item,FUND_AAA,Global Diversified,Global diversified test portfolio,EUR
+HeaderPORTFOLIO,idCHAR,nameCHAR,descriptionCHAR,currencyCHAR,hist_base_valuesCHAR,hist_var_absCHAR,hist_report_datesCHAR
+Item,FUND_AAA,Global Diversified,Global diversified test portfolio,EUR,135256|125654|145253,32543|33562|34254,31-Oct-2015|31-Dec-2015|30-Mar-2016
 Item,FUND_BBB,Global Derivatives,Global derivatives test portfolio,EUR
 HeaderPOSITION,port_idCHAR,idCHAR,quantityNMBR,tpt_17bCHAR
 Item,FUND_AAA,A0RFFT,65,A

@@ -35,7 +35,7 @@ function [instrument_struct, curve_struct, index_struct, surface_struct, para_ob
 %   3. Processing Positions data
 %   4. Processing Stresstest data
 
-% II) ###########           CALCULATION                ###########
+% II) ###########     CALCULATION, AGGREGATION & REPORTING             ###########
 %   1. Model Riskfactor Scenario Generation
 %       a) Load input correlation matrix
 %       b) Get distribution parameters from riskfactors
@@ -48,12 +48,11 @@ function [instrument_struct, curve_struct, index_struct, surface_struct, para_ob
 %   6. Portfolio Aggregation
 %       a) loop over all portfolios / positions
 %       b) VaR Calculation
-%           i.) sort arrays
-%           ii.) Get Value of confidence scenario
-%           iii.) make vector with Harrel-Davis Weights
-%       d) Calculate Expected Shortfall 
-%   7. Print Report including position VaRs
+%       d) aggregate according to aggregation keys
+%   7. Reporting
 %   8. Plotting 
+%   9. Statistics
+%   10. Cleanup
 
 % III) ###########         HELPER FUNCTIONS              ###########
 
@@ -290,7 +289,7 @@ parseinput = toc;
 
 
 
-% II) ##################            CALCULATION                ##################
+% II) ###########     CALCULATION, AGGREGATION & REPORTING             ###########
 
  
 % 1.) Model Riskfactor Scenario Generation
@@ -340,17 +339,20 @@ if (run_mc == true)
     end
     % --------------------------------------------------------------------------------------------------------------------
     % 2.) Monte Carlo Riskfactor Simulation for all timesteps
-    [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
+    [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios( ...
+				riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
 end
 
 % update riskfactor with stresses
-[riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses(riskfactor_struct,stresstest_struct);
+[riskfactor_struct rf_failed_cell ] = load_riskfactor_stresses( ...
+				riskfactor_struct,stresstest_struct);
 
 scengen = toc;
 
 tic;
 if ( saving == 1 )
-    [save_cell] = save_objects(path_output,riskfactor_struct,instrument_struct,portfolio_struct,stresstest_struct);
+    [save_cell] = save_objects(path_output,riskfactor_struct, ...
+				instrument_struct,portfolio_struct,stresstest_struct);
 end
 saving_time = toc;
 
@@ -364,22 +366,31 @@ tic;
 % a) Processing yield curves
 
 curve_struct=struct();
-[rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving,run_mc);
+[rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct, ...
+			riskfactor_struct,mc_timesteps,path_output,saving,run_mc);
 
         
 % b) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 index_struct=struct();
 surface_struct=struct();
-[index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests,run_mc,stresstest_struct);   
+[index_struct curve_struct surface_struct id_failed_cell] = ...
+			update_mktdata_objects(valuation_date,instrument_struct, ...
+			mktdata_struct,index_struct,riskfactor_struct, ...
+			curve_struct,surface_struct,mc_timesteps,mc, ...
+			no_stresstests,run_mc,stresstest_struct);   
 
 %c = get_sub_object(curve_struct,'IR_EUR')
 % c) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
-[surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir,input_filename_surf_stoch,stresstest_struct,riskfactor_struct,run_mc);
+[surface_struct vola_failed_cell] = load_volacubes(surface_struct, ...
+			path_mktdata,input_filename_vola_index, ...
+			input_filename_vola_ir,input_filename_surf_stoch, ...
+			stresstest_struct,riskfactor_struct,run_mc);
 
 
 % e) Loading matrix objects
 matrix_struct=struct();
-[matrix_struct matrix_failed_cell] = load_matrix_objects(matrix_struct,path_mktdata,input_filename_matrix);
+[matrix_struct matrix_failed_cell] = load_matrix_objects(matrix_struct, ...
+			path_mktdata,input_filename_matrix);
  
 
 curve_gen_time = toc;
@@ -401,42 +412,46 @@ for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps and ot
   else
       scen_number = mc;
   end
-  % store current scenario number in object
+  % store current amount of scenarios in object
   para_object.scen_number = scen_number;
         
   fprintf('== Full valuation | scenario set %s | number of scenarios %d | timestep in days %d ==\n',tmp_scenario, scen_number,tmp_ts);
   for ii = 1 : 1 : length( instrument_struct )
     try
-    % TODO: loop via positions_cell -> get id from instrument struct -> valuate these instruments only
-    % store in special valuated_instruments struct -> aggregate from these struct only
     tmp_id = instrument_struct( ii ).id;
     tic;
         % =================    Full valuation    ===============================
-        
         tmp_instr_obj = get_sub_object(instrument_struct, tmp_id); 
-        % Call instrument object method valuate
+
         tmp_instr_obj = tmp_instr_obj.valuate(valuation_date, tmp_scenario, ...
                                 instrument_struct, surface_struct, ...
                                 matrix_struct, curve_struct, index_struct, ...
                                 riskfactor_struct, para_object);
-        % store valuated instrument in struct
+
         instrument_struct( ii ).object = tmp_instr_obj;
-        % print status message:
+
         if ( mod(ii,round(number_instruments/10)) == 0 )
-            %fprintf('%s Pct. processed. Continuing...\n',any2str(round((ii/number_instruments)*100)));
             fprintf('|%s %s|\n',any2str(char(repmat(61,1,round((ii/number_instruments)*10)))),any2str(char(repmat(95,1,10-round((ii/number_instruments)*10)))));
         end
         % =================  End Full valuation  ===============================
         
      % store performance data into cell array
-     fulvia_performance{end + 1} = strcat(tmp_instr_obj.get('type'),'|',tmp_instr_obj.get('sub_type'),'|',tmp_id,'|',num2str(scen_number),'|',num2str(toc),'|s');
+     fulvia_performance{end + 1} = strcat(tmp_instr_obj.get('type'),'|', ...
+				tmp_instr_obj.get('sub_type'),'|',tmp_id,'|', ...
+				num2str(scen_number),'|',num2str(toc),'|s');
      fulvia = fulvia + toc ;  
     catch   % catch error in instrument valuation
         fprintf('octarisk:Instrument valuation for %s failed. There was an error: >>%s<< File: >>%s<< Line: >>%d<<\n',tmp_id,lasterr,lasterror.stack.file,lasterror.stack.line);
         instrument_valuation_failed_cell{ length(instrument_valuation_failed_cell) + 1 } =  tmp_id;
-        % FALLBACK: store instrument as Cash instrument with fixed value_base for all scenarios (use different variable for scen_number to avoid collisions)
+        % FALLBACK: store instrument as Cash instrument with fixed 
+        % value_base for all scenarios (use different variable 
+        % for scen_number to avoid collisions)
         cc = Cash();
-        cc = cc.set('id',tmp_instr_obj.get('id'),'name',tmp_instr_obj.get('name'),'asset_class',tmp_instr_obj.get('asset_class'),'currency',tmp_instr_obj.get('currency'),'value_base',tmp_instr_obj.get('value_base'));
+        cc = cc.set('id',tmp_instr_obj.get('id'), ...
+					'name',tmp_instr_obj.get('name'), ...
+					'asset_class',tmp_instr_obj.get('asset_class'), ...
+					'currency',tmp_instr_obj.get('currency'), ...
+					'value_base',tmp_instr_obj.get('value_base'));
         for pp = 1 : 1 : length(scenario_set);
             if ( strcmp(scenario_set{pp},'stress'))
                 scen_number_catch = no_stresstests;
@@ -474,20 +489,34 @@ else
     fprintf('SUCCESS: All instruments valuated.\n');
 end
 
+% print all instruments
+%for kk = 1:1:length(instrument_struct)
+%    obj = instrument_struct(kk).object
+%end
+
 % print all base values
-fprintf('Instrument Base and stress Values: \n');
-fprintf('ID,Base,StressBase,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(4).name,stresstest_struct(5).name);
-for kk = 1:1:length(instrument_struct)
-    obj = instrument_struct(kk).object;
-    stressvec = obj.getValue('stress');
-    if (length(stressvec) > 4)
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(4),any2str(obj.currency));
-    else
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),any2str(obj.currency));
-    end
-end
-
-
+%~ fprintf('Instrument Base and stress Values: \n');
+%~ stressnames = {stresstest_struct.name};
+%~ fprintf('\n');
+%~ fprintf('ID,Base,StressBase,');
+%~ for jj=2:1:length(stressnames)
+    %~ fprintf('%s,',stressnames{jj});
+%~ end
+%~ fprintf('\n');
+%fprintf('ID,Base,StressBase,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(4).name,stresstest_struct(5).name);
+%~ for kk = 1:1:length(instrument_struct)
+    %~ obj = instrument_struct(kk).object;
+    %~ stressvec = obj.getValue('stress');
+    %~ fprintf('%s,%9.8f,',obj.id,obj.getValue('base'));
+    %~ if (length(stressvec) >= length(stressnames))
+        %~ for jj=1:1:length(stressvec)
+            %~ fprintf('%9.8f,',stressvec(jj));
+        %~ end
+    %~ else
+        %~ fprintf('%9.8f,',stressvec(1));
+    %~ end
+    %~ fprintf('%s\n',any2str(obj.currency));
+%~ end
 
 % ----------------------------------------------------------------------
 % 6. Portfolio Aggregation
@@ -536,6 +565,8 @@ reporting_time = 0;
 tic;
 for ii = 1:1:length(port_obj_struct)
 	port_obj = port_obj_struct(ii).object;
+    
+    port_obj = port_obj.print_report(para_object,'decomp',scenario_set{1});
     port_obj = port_obj.print_report(para_object,'LaTeX','base');	
     
     % aggregation and risk calculation for all scenario sets
@@ -553,23 +584,7 @@ reporting_time = toc;
 % 8. Portfolio Plotting
 tic;
 for ii = 1:1:length(port_obj_struct)
-	port_obj = port_obj_struct(ii).object;
-	
-	port_obj = port_obj.plot(para_object,'stress','stress', ...
-											stresstest_struct);
-											
-	% aggregation and risk calculation for all scenario sets
-	for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
-		tmp_scen_set  = scenario_set{ kk };    % get timestep string
-		port_obj = port_obj.plot(para_object,'srri',tmp_scen_set, ...
-											stresstest_struct);
-		port_obj = port_obj.plot(para_object,'marketdata',tmp_scen_set, ...
-											stresstest_struct,curve_struct);
-		port_obj = port_obj.plot(para_object,'var',tmp_scen_set);		
-		port_obj = port_obj.plot(para_object,'history',tmp_scen_set);								
-	end
-    port_obj_struct(ii).object = port_obj;	
-    									
+	% TODO
 end	
 plottime = toc;
 
@@ -605,4 +620,3 @@ fprintf('\n');
     end
 
 end     % ending MAIN function octarisk
-
