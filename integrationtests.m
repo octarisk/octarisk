@@ -77,26 +77,21 @@ end
     fprintf('\nCall Octarisk in batch mode:\n');
     % call octarisk script
     function_cell(end + 1) = 'octarisk';
-    octarisk(path_testing_folder);
-    % get report files and compare with known VaR figures:
-    try
-        reportstr_fund_aaa = fileread(strcat(path_testing_folder,'/output/reports/VaR_report_2016Q3_FUND_AAA.txt'));
-        reportstr_fund_bbb = fileread(strcat(path_testing_folder,'/output/reports/VaR_report_2016Q3_FUND_BBB.txt'));
-    catch
-        reportstr_fund_aaa = '';
-        reportstr_fund_bbb  = '';
-    end
-    % because of unknown reasons, VaR is different on Windows and Unix systems...
-    if ( isempty(regexpi(reportstr_fund_aaa,'34055.07 EUR')) || isempty(regexpi(reportstr_fund_bbb,'10562.33 EUR')))
-        tests_fail = tests_fail + 1;
-        fprintf('WARNING: failed tests for function >>octarisk<<. Fund VaR figures not as expected (VaR Fund AAA 34055.07 EUR and VaR Fund BBB 10562.33 EUR.\n');
-        M(end + 1,1) = 0;
-        M(end,2) = 2;
-    else
+    [instrument_struct, curve_struct, index_struct, surface_struct, para_object, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct, mc_var_shock_pct, port_obj_struct] = octarisk(path_testing_folder);
+    
+    fund_aaa = get_sub_object(port_obj_struct,'FUND_AAA');
+    fund_bbb = get_sub_object(port_obj_struct,'FUND_BBB');
+	
+    if ( abs(fund_aaa.varhd_abs - 34055.07012)<0.0001 && abs(fund_bbb.varhd_abs-10562.32652)<0.0001 )
         tests_total = tests_total + 1;
         fprintf('SUCCESS: >>octarisk<<. All Fund VaR figures are correct.\n');
         M(end + 1,1) = 2;
         M(end,2) = 0;
+    else
+        tests_fail = tests_fail + 1;
+        fprintf('WARNING: failed tests for function >>octarisk<<. Fund VaR figures not as expected (VaR Fund AAA 34055.07 EUR and VaR Fund BBB 10562.33 EUR.\n');
+        M(end + 1,1) = 0;
+        M(end,2) = 2;
     end
     
 % 5) Print statistics

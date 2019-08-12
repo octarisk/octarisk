@@ -40,26 +40,41 @@ elseif (strcmpi(type,'history'))
 	  fprintf('plot: No history VaR plots exists for scenario set >>%s<<\n',scen_set);
   else
 	  fprintf('plot: Plotting VaR history results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
-	  hist_bv = obj.hist_base_values
-	  hist_var = obj.hist_var_abs
-	  hist_dates = obj.hist_report_dates
-	  length(hist_bv)
-	  length(hist_var)
-	  length(hist_dates)
+	  hist_bv = [obj.hist_base_values,obj.getValue('base')]
+	  hist_var = [obj.hist_var_abs,obj.varhd_abs]
+	  hist_dates = [obj.hist_report_dates,datestr(para_object.valuation_date)]
 	  if (length(hist_bv)>0 && length(hist_bv) == length(hist_var) ...
 						&& length(hist_dates) == length(hist_var) ...
 						&& length(hist_bv) == length(hist_dates))  	
 		hvar = figure(3);
 		clf;
-		xx=1:1:length(hist_dates);
-		plot(xx, hist_bv);
-		h=get (gcf, 'currentaxes');
-		set(h,'xtick',xx);
-		set(h,'xticklabel',hist_dates);
-		xlabel('Relative PnL');
-		ylabel('Base Value');
-		title('History of Portfolio VaR and Base Value','fontsize',12);
-					
+		xx=1:1:length(hist_bv);
+
+		[ax h1 h2] = plotyy (xx,hist_bv, xx,hist_var, @plot, @plot);
+        xlabel(ax(1),'Reporting Date','fontsize',12);
+        set(ax(1),'xtick',xx);
+        set(ax(1),'xlim',[0, length(xx)+1]);
+        set(ax(1),'ylim',[0.98*min(hist_bv), 1.02*max(hist_bv)]);
+		set(ax(1),'xticklabel',hist_dates);
+		set(ax(2),'xtick',xx);
+		set(ax(2),'xlim',[0, length(xx)+1]);
+		set(ax(2),'ylim',[0.98*min(hist_var), 1.02*max(hist_var)]);
+		set(ax(2),'xticklabel',{});
+		set (h1,'linewidth',1);
+		set (h1,'marker','o');
+		set (h1,'markerfacecolor','auto');
+		set (h2,'linewidth',1);
+		set (h2,'marker','o');
+		set (h2,'markerfacecolor','auto');
+
+		ylabel (ax(1), strcat('Base Value (',obj.currency,')'),'fontsize',12);
+		ylabel (ax(2), strcat('VaR absolute (',obj.currency,')'),'fontsize',12);
+		%~ text (0.5, 0.5, "Base Values (left axis)", ...
+		   %~ "color", "red", "horizontalalignment", "center", "parent", ax(1));
+		%~ text (4.5, 80, "VaR (right axis)", ...
+		   %~ "color", "blue", "horizontalalignment", "center", "parent", ax(2));
+		title ('History of Portfolio Base Value and VaR','fontsize',14);
+ 			
 		% save plotting
 		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.png');
 		print (hvar,filename_plot_varhist, "-dpng", "-S600,300");		

@@ -552,7 +552,8 @@ reporting_time = toc;
 % ----------------------------------------------------------------------
 % 8. Portfolio Plotting
 tic;
-for ii = 1:1:length(port_obj_struct)
+if ( para_object.plotting )
+  for ii = 1:1:length(port_obj_struct)
 	port_obj = port_obj_struct(ii).object;
 	
 	port_obj = port_obj.plot(para_object,'stress','stress', ...
@@ -570,7 +571,8 @@ for ii = 1:1:length(port_obj_struct)
 	end
     port_obj_struct(ii).object = port_obj;	
     									
-end	
+  end	
+end
 plottime = toc;
 
 
