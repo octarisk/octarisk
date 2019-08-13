@@ -56,12 +56,12 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filp, '\\label{table_port_var}\n');
 		fprintf(filp, '\\begin{tabular}{l r}\n');
 		fprintf(filp, 'Valuation date \& %s\\\\\n',datestr(para_object.valuation_date));
-		fprintf(filp, 'Portfolio base value \& %9.2f %s\\\\\n',obj.getValue('base'),obj.currency);   
-		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.2f\\%%\\\\\n',scen_set,para_object.quantile.*100,obj.varhd_rel*100);
-		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.2f %s\\\\\n',scen_set,para_object.quantile.*100,obj.varhd_abs,obj.currency);
-		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.2f\\%%\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_rel*100);
-		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.2f %s\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_abs,obj.currency);
-		fprintf(filp, 'Portfolio VaR %s diversification benefit \& %9.2f\\%%\\\\ \n',scen_set,(1 - obj.diversification_ratio)*100);
+		fprintf(filp, 'Portfolio base value \& %9.0f %s\\\\\n',obj.getValue('base'),obj.currency);   
+		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.varhd_rel*100);
+		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.varhd_abs,obj.currency);
+		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.expshortfall_rel*100);
+		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_abs,obj.currency);
+		fprintf(filp, 'Portfolio VaR %s diversification benefit \& %9.1f\\%%\\\\ \n',scen_set,(1 - obj.diversification_ratio)*100);
 		fprintf(filp, '\\end{tabular}\n');
 	    fclose (filp);
   

@@ -1,7 +1,0 @@
-Component1CHAR,Component2CHAR,CorrelationNMBR
-AA,AA,1.0
-AA,BB,0.5
-AA,CC,0.2
-BB,CC,-0.3
-BB,BB,1.0
-CC,CC,1.0

@@ -1,5 +1,0 @@
-DBT,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,durationNMBR,convexityNMBR,asset_classCHAR,termNMBR
-Item,IRSensi1,IRSensi1,1904257234.73,DBT,IR Sensi Instrument,EUR,IR_EUR,11.15,202,Fixed Income,15
-Item,IRSensi2,IRSensi2,1904257234.73,DBT,IR Sensi Instrument,EUR,IR_EUR,11,300,Fixed Income,11
-Item,IRSensi3,IRSensi3,1904257234.73,DBT,IR Sensi Instrument,EUR,IR_EUR,18,300,Fixed Income,18
-

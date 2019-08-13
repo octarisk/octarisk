@@ -1,3 +1,0 @@
-CASHFLOW,nameCHAR,idCHAR,value_baseNMBR,clean_value_baseBOOL,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,compounding_freqCHAR,calibration_flagBOOL
-Item,CustomCF,CustomCF,16.50931,FALSE,CASHFLOW,Cashflow instrument with cashflow vector,EUR,EUR-SWAP-VA,30-Dec-2023|28-Dec-2028|27-Dec-2033|26-Dec-2038,3250000000|-1080000000|-5020000000|5220000000,Fixed Income,cont,act/365,FALSE,FALSE,annual,TRUE
-

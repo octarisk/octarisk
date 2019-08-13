@@ -206,6 +206,18 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
 					cf_values = tmp_instr_object.getCF(scen_set) ...
 									.*  tmp_quantity ./ tmp_fx_value_shock;
 					cf_dates = tmp_instr_object.get('cf_dates');
+				elseif (strcmpi(tmp_instr_object.type,'Sensitivity'))	
+					cf_values = tmp_instr_object.getValue('base') ...
+										.* tmp_instr_object.div_yield ...
+										.* tmp_quantity ./ tmp_fx_value_shock;
+					if ( cf_values == 0)
+						cf_dates = [];
+						cf_values = [];
+					else					
+						val_datevec= datevec(datenum(datestr(para.valuation_date)));
+						cf_dates = datenum([val_datevec(1),tmp_instr_object.div_month,15]) ...
+										- datenum(datestr(para.valuation_date));
+					end
 				else
 					cf_values = [];
 					cf_dates = [];
@@ -312,14 +324,14 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                             obj.tpt_42 = 'Call';
                             obj.tpt_60 = 'Call';
                             obj.tpt_43 = (tmp_instr_object.call_schedule.nodes(1) + ...
-                                                    para_object.valuation_date);
+                                                    para.valuation_date);
                             obj.tpt_45  = tmp_instr_object.call_schedule.rates_base(1);
                             obj.tpt_61  = tmp_instr_object.call_schedule.rates_base(1);
                         elseif isobject(tmp_instr_object.put_schedule)
                             obj.tpt_42 = 'Put';
                             obj.tpt_60 = 'Put';
                             obj.tpt_43 = (tmp_instr_object.put_schedule.nodes(1) + ...
-                                                    para_object.valuation_date);
+                                                    para.valuation_date);
                             obj.tpt_45  = tmp_instr_object.call_schedule.rates_base(1);
                             obj.tpt_61  = tmp_instr_object.call_schedule.rates_base(1);
                         end                        

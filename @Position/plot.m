@@ -29,7 +29,23 @@ end
 % --------------    Liquidity Plotting     -----------------------------
 if (strcmpi(type,'liquidity'))    
   if ( strcmpi(scen_set,'base'))
-	  fprintf('plot: No decomp report exists for scenario set >>%s<<\n',scen_set);
+		fprintf('plot: Plotting liquidity information for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+		cf_dates = obj.get('cf_dates');
+		cf_values = obj.getCF('base');
+		xx=1:1:length(cf_values);
+		plot_desc = datestr(datenum(datestr(para_object.valuation_date)) + cf_dates,'mmm');
+		hs = figure(3); 
+		clf;
+		bar(cf_values, 'facecolor', 'blue');
+		h=get (gcf, 'currentaxes');
+		set(h,'xtick',xx);
+		set(h,'xticklabel',plot_desc);
+		xlabel('Cash flow date');
+		ylabel(strcat('Cash flow amount (in ',obj.currency,')'));
+		title('Projected future cash flows','fontsize',12);
+		% save plotting
+		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot.png');
+		print (hs,filename_plot_cf, "-dpng", "-S600,200");
   else
 	  fprintf('No liquidity plotting possible for scenario set %s === \n',scen_set);  
   end  
@@ -40,25 +56,25 @@ elseif (strcmpi(type,'history'))
 	  fprintf('plot: No history VaR plots exists for scenario set >>%s<<\n',scen_set);
   else
 	  fprintf('plot: Plotting VaR history results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
-	  hist_bv = [obj.hist_base_values,obj.getValue('base')]
-	  hist_var = [obj.hist_var_abs,obj.varhd_abs]
-	  hist_dates = [obj.hist_report_dates,datestr(para_object.valuation_date)]
+	  hist_bv = [obj.hist_base_values,obj.getValue('base')];
+	  hist_var = [obj.hist_var_abs,obj.varhd_abs];
+	  hist_dates = [obj.hist_report_dates,datestr(para_object.valuation_date)];
 	  if (length(hist_bv)>0 && length(hist_bv) == length(hist_var) ...
 						&& length(hist_dates) == length(hist_var) ...
 						&& length(hist_bv) == length(hist_dates))  	
-		hvar = figure(3);
+		hvar = figure(1);
 		clf;
 		xx=1:1:length(hist_bv);
-
-		[ax h1 h2] = plotyy (xx,hist_bv, xx,hist_var, @plot, @plot);
+		hist_var_rel = 100 .* hist_var ./ hist_bv;
+		[ax h1 h2] = plotyy (xx,hist_bv, xx,hist_var_rel, @plot, @plot);
         xlabel(ax(1),'Reporting Date','fontsize',12);
         set(ax(1),'xtick',xx);
-        set(ax(1),'xlim',[0, length(xx)+1]);
+        set(ax(1),'xlim',[0.8, length(xx)+0.2]);
         set(ax(1),'ylim',[0.98*min(hist_bv), 1.02*max(hist_bv)]);
 		set(ax(1),'xticklabel',hist_dates);
 		set(ax(2),'xtick',xx);
-		set(ax(2),'xlim',[0, length(xx)+1]);
-		set(ax(2),'ylim',[0.98*min(hist_var), 1.02*max(hist_var)]);
+		set(ax(2),'xlim',[0.8, length(xx)+0.2]);
+		set(ax(2),'ylim',[floor(min(hist_var_rel)), ceil(max(hist_var_rel))]);
 		set(ax(2),'xticklabel',{});
 		set (h1,'linewidth',1);
 		set (h1,'marker','o');
@@ -68,7 +84,7 @@ elseif (strcmpi(type,'history'))
 		set (h2,'markerfacecolor','auto');
 
 		ylabel (ax(1), strcat('Base Value (',obj.currency,')'),'fontsize',12);
-		ylabel (ax(2), strcat('VaR absolute (',obj.currency,')'),'fontsize',12);
+		ylabel (ax(2), strcat('VaR relative (in Pct)'),'fontsize',12);
 		%~ text (0.5, 0.5, "Base Values (left axis)", ...
 		   %~ "color", "red", "horizontalalignment", "center", "parent", ax(1));
 		%~ text (4.5, 80, "VaR (right axis)", ...
@@ -93,14 +109,10 @@ elseif (strcmpi(type,'stress'))
 		fprintf('plot: Plotting stress results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);
 		% prepare stresstest plotting and report output
 		stresstest_plot_desc = {stresstest_struct.name};
-		 
-		% Calc absolute and relative stress values
-		p_l_absolut_stress      = obj.getValue('stress') - ...
-												obj.getValue('base');
-		p_l_relativ_stress      = (obj.getValue('stress') - ...
+		p_l_relativ_stress      = 100.*(obj.getValue('stress') - ...
 						obj.getValue('base') )./ obj.getValue('base');
 
-        xx = 1:1:(para_object.no_stresstests-1);
+        xx = 1:1:length(p_l_relativ_stress)-1;
         hs = figure(1,"visible", false); % works for graphic_toolkit gnuplot only, not for qt
         clf;
         barh(p_l_relativ_stress(2:end), 'facecolor', 'blue');
@@ -108,8 +120,8 @@ elseif (strcmpi(type,'stress'))
         set(h,'ytick',xx);
         stresstest_plot_desc = strrep(stresstest_plot_desc,"_","");
         set(h,'yticklabel',stresstest_plot_desc(2:end));
-        xlabel('Relative PnL');
-        title('Stresstest Scenario Results','fontsize',12);
+        xlabel('Relative PnL (in Pct)');
+        title('Stresstest Results','fontsize',12);
         % save plotting
         filename_plot_stress = strcat(path_reports,'/',obj.id,'_stress_plot.png');
         print (hs,filename_plot_stress, "-dpng", "-S600,300");

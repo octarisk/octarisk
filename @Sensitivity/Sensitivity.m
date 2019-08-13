@@ -19,6 +19,8 @@ classdef Sensitivity < Instrument
         use_taylor_exp = false; % boolean flag: if true, treat polynomial value 
             % as taylor expansion: f(x) = a*x^1 + 1/2*b*x^2 + ..., otherwise just f(x) = a*x^1 + b*x^2
         sii_equity_type = 0;
+        div_yield = 0;	% used for fund modelling (forecast dividend yield)
+        div_month = 12; % used for fund modelling (dividend payment month)
     end
    
     properties (SetAccess = private)
@@ -246,6 +248,8 @@ Notion (GBM) or Brownian Notion (BM). (Default: 'GBM')\n\
 @item @var{shock_type}: cell array of shock types for each underlying [value, relative, absolute]\n\
 @item @var{sensi_prefactor}: vector with prefactors (a in a*x^b)\n\
 @item @var{sensi_exponent}: vector with exponents (b in a*x^b)\n\
+@item @var{div_yield}: forecast dividend yield\n\
+@item @var{div_month}: dividend paymend month\n\
 @item @var{sensi_cross}: vector with cross terms [0 = single; 1,2,3, ... link cross terms]\n\
 @item @var{use_value_base}: boolean flag: use value_base for base valuation. Scenario shocks are added to base value (default: false)\n\
 @item @var{use_taylor_exp}: boolean flag: if true, treat polynomial value as Taylor expansion(default: false)\n\

@@ -1,3 +1,0 @@
-FRB,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,reference_curveCHAR,clean_value_baseBOOL,notionalNMBR,coupon_rateNMBR,termNMBR,term_unitCHAR,last_reset_rateNMBR,enable_business_day_ruleBOOL,business_day_ruleNMBR,business_day_directionNMBR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR,issue_dateDATE,maturity_dateDATE,coupon_generation_methodCHAR,compounding_typeCHAR,day_count_conventionCHAR,long_first_periodBOOL,long_last_periodBOOL,compounding_freqCHAR,calibration_flagBOOL
-Item,FRB13,FRB13,1904257234.73,FRB,FRB Synthetic,EUR,EUR-SWAP-VA,,FALSE,1600000000,0.02625,1,years,0,0,1,1,,,Fixed Income,31-Dec-2018,31-Dec-2031,backward,cont,act/365,FALSE,FALSE,annual,FALSE
-

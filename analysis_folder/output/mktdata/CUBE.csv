@@ -1,3 +1,0 @@
-CUBE,idCHAR,nameCHAR,typeCHAR,descriptionCHAR,moneyness_typeCHAR,method_interpolationCHAR,riskfactorsCHAR
-Surface,RF_VOLA_IR_EUR,RF_VOLA_IR_EUR,IRVol,Test description,K-S,linear,RF_VOLA_IR_EUR_730_365|RF_VOLA_IR_EUR_1825_3650
-

@@ -1,6 +1,0 @@
-INDEX,idCHAR,nameCHAR,typeCHAR,currencyCHAR,descriptionCHAR,value_baseNMBR
-Index,EQ_DE,DAX30,Equity Index,EUR,DAX Equity Index German Blue Chips,9820
-Index,REIT_GLOBAL,EPRANAREIT Global Dev,Real Estate Index,EUR,Real Estate Index,1236
-Index,COM_GOLD,Gold,Commodity Index,USD,Gold 1 Ounce USD,1073
-Index,CPI_INDEX,CPI_INDEX,CPI,EUR,Consumer Price Index,103.234
-

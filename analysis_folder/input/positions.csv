@@ -1,6 +1,0 @@
-HeaderPORTFOLIO,idCHAR,nameCHAR,descriptionCHAR,currencyCHAR
-Item,FUND_TEST,Global Diversified,Global diversified test portfolio,EUR
-HeaderPOSITION,port_idCHAR,idCHAR,quantityNMBR
-Item,FUND_TEST,FRB13,1
-Item,FUND_TEST,CustomCF,1
-Item,FUND_TEST,SyntheticBasket,1

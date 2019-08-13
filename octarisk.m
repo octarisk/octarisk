@@ -558,7 +558,7 @@ if ( para_object.plotting )
 	
 	port_obj = port_obj.plot(para_object,'stress','stress', ...
 											stresstest_struct);
-											
+	port_obj = port_obj.plot(para_object,'liquidity','base');										
 	% aggregation and risk calculation for all scenario sets
 	for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
 		tmp_scen_set  = scenario_set{ kk };    % get timestep string
