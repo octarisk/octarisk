@@ -18,7 +18,7 @@
 %# @seealso{}
 %# @end deftypefn
 
-function [ret idx_figure] = get_srri(vola_act,horizon=250,quantile=normcdf(1),filepath="",port_id="",idx_figure=1,basevalue=0)
+function [ret idx_figure] = get_srri(vola_act,horizon=250,quantile=normcdf(1),filepath="",port_id="",idx_figure=1,basevalue=0,srri_target=0)
 try
 	if (strcmpi(filepath,""))
 		saveflag = false;
@@ -75,9 +75,31 @@ try
 	r6 = rectangle ("Position", [0.6, 0.1, 0.1, 0.2], "Curvature", [0.0, 0.0]);
 	hold on;
 	r7 = rectangle ("Position", [0.7, 0.1, 0.1, 0.2], "Curvature", [0.0, 0.0]);
+	
+	color_green = [0.56863   0.81961   0.13333];
+	switch (srri_target)
+		case 1
+			set(r1,"facecolor",color_green);
+		case 2
+			set(r2,"facecolor",color_green);
+		case 3
+			set(r3,"facecolor",color_green);
+		case 4
+			set(r4,"facecolor",color_green);
+		case 5
+			set(r5,"facecolor",color_green);
+		case 6
+			set(r6,"facecolor",color_green);
+		case 7
+			set(r7,"facecolor",color_green);
+	end
+
 	switch (act_lvl)
 	  case 1
 		set(r1,"facecolor",[0.8 0.8 0.8]);
+		if (srri_target == 1)
+			set(r1,"facecolor",color_green);
+		end
 		upper_limit = vola_limit(act_lvl);
 		lower_limit = vola_limit_shifted(act_lvl);
 		distance = upper_limit - lower_limit;
@@ -92,6 +114,9 @@ try
 		text( 0.2-0.03,0.08,upper_label,"fontsize", 15);
 	  case 2
 		set(r2,"facecolor",[0.8 0.8 0.8]);
+		if (srri_target == 2)
+			set(r2,"facecolor",color_green);
+		end
 		upper_limit = vola_limit(act_lvl);
 		lower_limit = vola_limit_shifted(act_lvl);
 		distance = upper_limit - lower_limit;
@@ -106,6 +131,9 @@ try
 		text( 0.3-0.03,0.08,upper_label,"fontsize", 15);
 	  case 3
 		set(r3,"facecolor",[0.8 0.8 0.8]);
+		if (srri_target == 3)
+			set(r3,"facecolor",color_green);
+		end
 		upper_limit = vola_limit(act_lvl);
 		lower_limit = vola_limit_shifted(act_lvl);
 		distance = upper_limit - lower_limit;
@@ -120,6 +148,9 @@ try
 		text( 0.4-0.03,0.08,upper_label,"fontsize", 15);
 	  case 4
 		set(r4,"facecolor",[0.8 0.8 0.8]);
+		if (srri_target == 4)
+			set(r4,"facecolor",color_green);
+		end
 		upper_limit = vola_limit(act_lvl);
 		lower_limit = vola_limit_shifted(act_lvl);
 		distance = upper_limit - lower_limit;
@@ -136,6 +167,9 @@ try
 		
 	  case 5
 		set(r5,"facecolor",[0.8 0.8 0.8]);
+		if (srri_target == 5)
+			set(r5,"facecolor",color_green);
+		end
 		upper_limit = vola_limit(act_lvl);
 		lower_limit = vola_limit_shifted(act_lvl);
 		distance = upper_limit - lower_limit;
@@ -150,6 +184,9 @@ try
 		text( 0.6-0.03,0.08,upper_label,"fontsize", 15);
 	  case 6
 		set(r6,"facecolor",[0.8 0.8 0.8]);
+		if (srri_target == 6)
+			set(r6,"facecolor",color_green);
+		end
 		upper_limit = vola_limit(act_lvl);
 		lower_limit = vola_limit_shifted(act_lvl);
 		distance = upper_limit - lower_limit;
@@ -164,6 +201,9 @@ try
 		text( 0.7-0.03,0.08,upper_label,"fontsize", 15);
 	  case 7
 		set(r7,"facecolor",[0.8 0.8 0.8]); 
+		if (srri_target == 7)
+			set(r7,"facecolor",color_green);
+		end
 		upper_limit = vola_limit(act_lvl);
 		lower_limit = vola_limit_shifted(act_lvl);
 		distance = upper_limit - lower_limit;

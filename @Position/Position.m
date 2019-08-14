@@ -29,6 +29,7 @@ classdef Position
         hist_base_values = [];	% historical base values
         hist_var_abs = []; % historical VaR absolute
         hist_report_dates = ''; % historical reporting dates
+        srri_target = 4; % portfolio only: target SRRI class
         mean_shock = 0;
         std_shock = 0;
         skewness_shock = 0;
@@ -280,6 +281,7 @@ classdef Position
             fprintf('kurtosis_shock: %3.2f \n',a.kurtosis_shock); 
             fprintf('expshortfall_abs@%2.1f%%: %12.2f \n',a.var_confidence*100,a.expshortfall_abs);
             fprintf('expshortfall_rel@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.expshortfall_rel*100);
+            fprintf('srri_target: %d \n',a.srri_target); 
             
             if ( length(a.aa_target_values) == length(a.aa_target_id) && length(a.aa_target_values) > 0 )
 				fprintf('Target Asset Allocation:\n');
@@ -330,37 +332,37 @@ classdef Position
 				end
 			fprintf(' ]\n');
 		 end   
-		  % looping via all stress rates if defined
-		 if ( rows(a.cf_values_stress) > 0 )
-			tmp_cf_values = a.getCF('stress');
-			fprintf('CF Stress values:\n[ ');
-			for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
-				for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
-					fprintf('%f,',tmp_cf_values(jj,kk));
-				end
-				fprintf(' ]\n');
-			end
-			fprintf('\n');
-		 end    
-		 % looping via first 3 MC scenario values
-		 for ( ii = 1 : 1 : mc_stack)
-			if ( length(a.timestep_mc_cf) >= ii )
-				tmp_cf_values = a.getCF(a.timestep_mc_cf{ii});
-				if (columns(tmp_cf_values)>0)
-					fprintf('MC timestep: %s\n',a.timestep_mc_cf{ii});
-					fprintf('CF Scenariovalue:\n[ ')
-					for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
-						for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
-							fprintf('%f,',tmp_cf_values(jj,kk));
-						end
-						fprintf(' ]\n');
-					end
-				fprintf('\n');
-				end
-			else
-				fprintf('MC timestep cf not defined\n');
-			end
-		 end
+		  %~ % looping via all stress rates if defined
+		 %~ if ( rows(a.cf_values_stress) > 0 )
+			%~ tmp_cf_values = a.getCF('stress');
+			%~ fprintf('CF Stress values:\n[ ');
+			%~ for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
+				%~ for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
+					%~ fprintf('%f,',tmp_cf_values(jj,kk));
+				%~ end
+				%~ fprintf(' ]\n');
+			%~ end
+			%~ fprintf('\n');
+		 %~ end    
+		 %~ % looping via first 3 MC scenario values
+		 %~ for ( ii = 1 : 1 : mc_stack)
+			%~ if ( length(a.timestep_mc_cf) >= ii )
+				%~ tmp_cf_values = a.getCF(a.timestep_mc_cf{ii});
+				%~ if (columns(tmp_cf_values)>0)
+					%~ fprintf('MC timestep: %s\n',a.timestep_mc_cf{ii});
+					%~ fprintf('CF Scenariovalue:\n[ ')
+					%~ for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
+						%~ for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
+							%~ fprintf('%f,',tmp_cf_values(jj,kk));
+						%~ end
+						%~ fprintf(' ]\n');
+					%~ end
+				%~ fprintf('\n');
+				%~ end
+			%~ else
+				%~ fprintf('MC timestep cf not defined\n');
+			%~ end
+		 %~ end
          %for (ii=1:1:length(props))
          %   fprintf('%s: %s\n',props{ii},any2str(a.(props{ii})));
          %end

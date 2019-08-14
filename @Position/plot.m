@@ -136,7 +136,7 @@ elseif (strcmpi(type,'srri'))
 	  fprintf('plot: No SRRI plots exists for scenario set >>%s<<\n',scen_set);
   else
       [ret idx_figure] = get_srri(obj.varhd_rel,tmp_ts,para_object.quantile, ...
-								path_reports,obj.id,1,obj.getValue('base')); 
+					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 
 	  fprintf('plot: Plotting SRRI results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);						
   end
  

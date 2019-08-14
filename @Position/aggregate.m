@@ -210,22 +210,26 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
 					payout_vec = tmp_instr_object.payout_yield;
 					month_vec = tmp_instr_object.div_month;
 					if (length(payout_vec) == length(month_vec))
-						
-					
-					else
-						fprintf('Warning: payout yield and month attributes unequal length for id >>%s<<\n',tmp_instr_object.id);
-					end
-					
-					cf_values = tmp_instr_object.getValue('base') ...
-										.* tmp_instr_object.payout_yield ...
-										.* tmp_quantity ./ tmp_fx_value_shock;
-					if ( cf_values == 0)
 						cf_dates = [];
 						cf_values = [];
-					else					
 						val_datevec= datevec(datenum(datestr(para.valuation_date)));
-						cf_dates = datenum([val_datevec(1),tmp_instr_object.div_month,15]) ...
+						for kk=1:1:length(month_vec)
+							cf_value = tmp_instr_object.getValue('base') ...
+										.* payout_vec(kk) ...
+										.* tmp_quantity ./ tmp_fx_value_shock;
+							cf_values = [cf_values, cf_value];
+							month_act = val_datevec(2);
+							if (month_vec(kk) < month_act) % cf next year
+								cf_date = datenum([val_datevec(1)+1,month_vec(kk),15]) ...
 										- datenum(datestr(para.valuation_date));
+							else % this year
+								cf_date = datenum([val_datevec(1),month_vec(kk),15]) ...
+										- datenum(datestr(para.valuation_date));
+							end
+							cf_dates = [cf_dates, cf_date];			
+						end
+					else
+						fprintf('Warning: payout yield and month attributes unequal length for id >>%s<<\n',tmp_instr_object.id);
 					end
 				else
 					cf_values = [];
