@@ -19,19 +19,19 @@ Item,iShares Barclays Capital Emerging Market Local Govt Bond,A1JB4Q,60.5,DBT,iS
 Item,iShares Citigroup Global Government Bond,A0RM43,102.48,DBT,iShares Citigroup Global Government Bond,USD,IR_USD,5.6,0.0,Fixed Income,5.6
 Item,iShares JPMorgan $ Emerging Markets Bond Fund,A0RFFT,99.93,DBT,iShares JPMorgan $ Emerging Markets Bond Fund,USD,IR_USD,7.8,0.0,Fixed Income,7.8
 Item,iShares Global Corporate Bond,A1J7CK,95.98,DBT,iShares Global Corporate Bond,USD,IR_EUR,12.1,0.0,Fixed Income,12.1
-HeaderSENSI,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,idio_volaNMBR,asset_classCHAR
-Item,ComStage ETF S&P 500,ETF012,199.94,EQU,ComStage ETF S&P 500,EUR,RF_EQ_NA,1,,Equity
-Item,db x-trackers Dow Jones Euro STOXX50,DBX1EU,35.28,EQU,db x-trackers Dow Jones Euro STOXX50,EUR,RF_EQ_EU,1,,Equity
-Item,ComStage ETF MSCI Pacific,ETF114,46.28,EQU,comstage EF MSCI Pacific,EUR,RF_EQ_AP,1,,Equity
-Item,iShares MSCI Japan,A0DPMW,11.63,EQU,iShares ETF MSCI Japan,EUR,RF_EQ_AP,1,,Equity
-Item,Comstage ETF MSCI Emerging Markets,ETF127,35.51,EQU,comstage ETF MSCI EM,EUR,RF_EQ_EM,1,,Equity
-Item,db x-trackers DJ STOXX 600,DBX1A7,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
-Item,Lyxor ETF MSCI Emerging Markets,LYX0BX,8.89,EQU,Lyxor ETF MSCI Emerging Markets,EUR,RF_EQ_EM,1,,Equity
-Item,ComStage ETF DJ STOXX 600,ETF060,72.82,EQU,comstage ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity
+HeaderSENSI,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,riskfactorsCHAR,sensitivitiesCHAR,idio_volaNMBR,asset_classCHAR,payout_yieldCHAR,div_monthCHAR
+Item,ComStage ETF S&P 500,ETF012,199.94,EQU,ComStage ETF S&P 500,EUR,RF_EQ_NA,1,,Equity,0.031,3
+Item,db x-trackers Dow Jones Euro STOXX50,DBX1EU,35.28,EQU,db x-trackers Dow Jones Euro STOXX50,EUR,RF_EQ_EU,1,,Equity,0.032,4
+Item,ComStage ETF MSCI Pacific,ETF114,46.28,EQU,comstage EF MSCI Pacific,EUR,RF_EQ_AP,1,,Equity,0.028,5
+Item,iShares MSCI Japan,A0DPMW,11.63,EQU,iShares ETF MSCI Japan,EUR,RF_EQ_AP,1,,Equity,0.034,6
+Item,Comstage ETF MSCI Emerging Markets,ETF127,35.51,EQU,comstage ETF MSCI EM,EUR,RF_EQ_EM,1,,Equity,0.034,7
+Item,db x-trackers DJ STOXX 600,DBX1A7,72.67,EQU,db x-trackers ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity,0.034,8
+Item,Lyxor ETF MSCI Emerging Markets,LYX0BX,8.89,EQU,Lyxor ETF MSCI Emerging Markets,EUR,RF_EQ_EM,1,,Equity,0.034,9
+Item,ComStage ETF DJ STOXX 600,ETF060,72.82,EQU,comstage ETF Dow Jones STOXX600,EUR,RF_EQ_EU,1,,Equity,0.013|0.016,6|12
 Item,Lyxor ETF MSCI World,LYX0AG,157.32,EQU,Lyxor ETF MSCI World,EUR,RF_EQ_NA|RF_EQ_EU|RF_EQ_AP,0.5|0.3|0.2,,Equity
-Item,iShares FTSE EPRA/NAREIT Global Property,A0LGQL,23.85,RET,iShares FTSE EPRA/NAREIT Global Property Dividend Plus,USD,RF_RE_DM,1,,REIT
-Item,QSC AG,513700,1.79,STK,QSC AG,EUR,RF_EQ_DE|IDIO,1.2|0.25,0.35,Equity
-Item,BASF SE,BASF11,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity
+Item,iShares FTSE EPRA/NAREIT Global Property,A0LGQL,23.85,RET,iShares FTSE EPRA/NAREIT Global Property Dividend Plus,USD,RF_RE_DM,1,,REIT,0.009|0.009|0.0085|0.009,2|5|8|11
+Item,QSC AG,513700,1.79,STK,QSC AG,EUR,RF_EQ_DE|IDIO,1.2|0.25,0.35,Equity,0.005|5
+Item,BASF SE,BASF11,78.34,STK,BASF SE,EUR,RF_EQ_DE|IDIO,1.15|0.25,0.35,Equity,0.04|5
 Item,Bitcoins,BTCOIN,246.92,ALT,BitCoins,EUR,RF_ALT_BC,1,,Alternative
 HeaderCASHFLOW,nameCHAR,idCHAR,value_baseNMBR,typeCHAR,descriptionCHAR,currencyCHAR,discount_curveCHAR,spread_curveCHAR,cf_datesCHAR,cf_valuesCHAR,asset_classCHAR
 Item,Cashflowinstrument,CFANLEIHE1,105,CASHFLOW,Cashflow instrument with cashflow vector,EUR,IR_EUR,SPREAD_EUR_HY,17-Jul-2015|16-Jul-2016|17-Jul-2017,3.0|3.0|103.00,Fixed Income

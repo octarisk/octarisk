@@ -207,8 +207,17 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
 									.*  tmp_quantity ./ tmp_fx_value_shock;
 					cf_dates = tmp_instr_object.get('cf_dates');
 				elseif (strcmpi(tmp_instr_object.type,'Sensitivity'))	
+					payout_vec = tmp_instr_object.payout_yield;
+					month_vec = tmp_instr_object.div_month;
+					if (length(payout_vec) == length(month_vec))
+						
+					
+					else
+						fprintf('Warning: payout yield and month attributes unequal length for id >>%s<<\n',tmp_instr_object.id);
+					end
+					
 					cf_values = tmp_instr_object.getValue('base') ...
-										.* tmp_instr_object.div_yield ...
+										.* tmp_instr_object.payout_yield ...
 										.* tmp_quantity ./ tmp_fx_value_shock;
 					if ( cf_values == 0)
 						cf_dates = [];

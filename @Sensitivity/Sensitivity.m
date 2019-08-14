@@ -19,7 +19,7 @@ classdef Sensitivity < Instrument
         use_taylor_exp = false; % boolean flag: if true, treat polynomial value 
             % as taylor expansion: f(x) = a*x^1 + 1/2*b*x^2 + ..., otherwise just f(x) = a*x^1 + b*x^2
         sii_equity_type = 0;
-        div_yield = 0;	% used for fund modelling (forecast dividend yield)
+        payout_yield = 0;	% used for fund modelling (forecast dividend yield)
         div_month = 12; % used for fund modelling (dividend payment month)
     end
    
@@ -94,6 +94,8 @@ classdef Sensitivity < Instrument
                 fprintf('Riskfactor: %s | Sensitivity: %f\n',b.riskfactors{ii},b.sensitivities(ii));            
              end
              fprintf('idio_vola: %f\n',b.idio_vola); 
+             fprintf('payout yield: %s\n',any2str(b.payout_yield)); 
+             fprintf('dividend payment month: %s\n',any2str(b.div_month)); 
          end
       end
       function obj = set.sub_type(obj,sub_type)
