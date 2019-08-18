@@ -160,7 +160,7 @@ valuation_date = para_object.valuation_date;
 % Aggregation parameters
 base_currency  = para_object.base_currency;
 aggregation_key = para_object.aggregation_key;
-mc_timesteps    = para_object.mc_timesteps;
+mc_timestep    = para_object.mc_timestep;
 scenario_set    = para_object.scenario_set;
 mc_var_shock_pct = [];
 % specify unique runcode and timestamp:
@@ -181,10 +181,10 @@ pkg load statistics;    % load statistics packages (needed throughout all script
 
 plottime = 0;   % initializing plottime
 aggr = 0;       % initializing aggregation time
-if length(mc_timesteps) > 0
-    run_mc = true;
-else
+if isempty(mc_timestep)
     run_mc = false;
+else
+    run_mc = true;
 end
 % set seed of random number generator
 if ( stable_seed == 1)
@@ -237,17 +237,20 @@ fprintf('Valuation date: %s\n',any2str(datestr(valuation_date)));
 % I) #########            INPUT                 #########
 tic;
 % 0. Processing timestep values
-mc_timestep_days = zeros(length(mc_timesteps),1);
-for kk = 1:1:length(mc_timesteps)
-    tmp_ts = mc_timesteps{kk};
-    if ( strcmpi(tmp_ts(end),'d') )
-        mc_timestep_days(kk) = str2num(tmp_ts(1:end-1));  % get timestep days
-    elseif ( strcmp(to_lower(tmp_ts(end)),'y'))
-        mc_timestep_days(kk) = 365 * str2num(tmp_ts(1:end-1));  % get timestep days
-    else
-        error('Unknown number of days in timestep: %s\n',tmp_ts);
-    end
+if (iscell(mc_timestep))
+	error('octarisk: only one mc_timestep can be specified');
 end
+
+if ( strcmpi(mc_timestep(end),'d') )
+	mc_timestep_days = str2num(mc_timestep(1:end-1));  % get timestep days
+	para_object.mc_timestep_days = mc_timestep_days;
+elseif ( strcmp(to_lower(mc_timestep(end)),'y'))
+	mc_timestep_days = 365 * str2num(mc_timestep(1:end-1));  % get timestep days
+	para_object.mc_timestep_days = mc_timestep_days;
+else
+	error('Unknown number of days in timestep: %s\n',mc_timestep);
+end
+
 if (run_mc == true)
     scenario_ts_days = [mc_timestep_days; 0];
 else
@@ -334,13 +337,10 @@ if (run_mc == true)
     end
     % Generate Structure with Risk factor scenario values: scale values according to timestep
     M_struct = struct();
-    for kk = 1:1:length(mc_timestep_days)       % workaround: take only one random matrix and derive all other timesteps from them
-            % [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,mc_timestep_days(kk)); % uncomment, if new random numbers needed for each timestep
-            M_struct( kk ).matrix = R_250 ./ sqrt(250/mc_timestep_days(kk));
-    end
+    M_struct( 1 ).matrix = R_250 ./ sqrt(250/mc_timestep_days);
     % --------------------------------------------------------------------------------------------------------------------
     % 2.) Monte Carlo Riskfactor Simulation for all timesteps
-    [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timesteps,mc_timestep_days);
+    [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timestep,mc_timestep_days);
 end
 
 % update riskfactor with stresses
@@ -364,15 +364,17 @@ tic;
 % a) Processing yield curves
 
 curve_struct=struct();
-[rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timesteps,path_output,saving,run_mc);
+[rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves(curve_struct,riskfactor_struct,mc_timestep,path_output,saving,run_mc);
 
         
 % b) Updating Marketdata Curves and Indizes with scenario dependent risk factor values
 index_struct=struct();
 surface_struct=struct();
-[index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timesteps,mc,no_stresstests,run_mc,stresstest_struct);   
+[index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timestep,mc,no_stresstests,run_mc,stresstest_struct);   
 
-%c = get_sub_object(curve_struct,'IR_EUR')
+%~ c = get_sub_object(riskfactor_struct,'RF_IR_EUR_1Y')
+%~ c = get_sub_object(curve_struct,'IR_EUR')
+%~ c = get_sub_object(curve_struct,'RF_IR_EUR')
 % c) Processing Vola surfaces: Load in all vola marketdata and fill Surface object with values
 [surface_struct vola_failed_cell] = load_volacubes(surface_struct,path_mktdata,input_filename_vola_index,input_filename_vola_ir,input_filename_surf_stoch,stresstest_struct,riskfactor_struct,run_mc);
 
@@ -541,7 +543,7 @@ for ii = 1:1:length(port_obj_struct)
     % aggregation and risk calculation for all scenario sets
 	for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
 		tmp_scen_set  = scenario_set{ kk };    % get timestep string
-		port_obj = port_obj.print_report(para_object,'LaTeX',tmp_scen_set);	
+		port_obj = port_obj.print_report(para_object,'LaTeX',tmp_scen_set,stresstest_struct,instrument_struct);	
 		port_obj = port_obj.print_report(para_object,'decomp',tmp_scen_set);
 	end
     port_obj
@@ -567,7 +569,10 @@ if ( para_object.plotting )
 		port_obj = port_obj.plot(para_object,'marketdata',tmp_scen_set, ...
 											stresstest_struct,curve_struct);
 		port_obj = port_obj.plot(para_object,'var',tmp_scen_set);		
-		port_obj = port_obj.plot(para_object,'history',tmp_scen_set);								
+		port_obj = port_obj.plot(para_object,'history',tmp_scen_set);	
+		port_obj = port_obj.plot(para_object,'liquidity',tmp_scen_set);								
+		port_obj = port_obj.plot(para_object,'riskfactor',tmp_scen_set, ...
+							stresstest_struct,curve_struct,riskfactor_struct);								
 	end
     port_obj_struct(ii).object = port_obj;	
     									

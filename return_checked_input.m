@@ -33,23 +33,12 @@ if ( strcmpi(type,'special'))
     % ====================== set scenario_mc: if isvector -> append to 
     %           existing vector / matrix, if ismatrix -> replace existing value
     if (ischar (prop) && strcmp (prop, 'scenario_mc'))   
-      if (isvector (val) && isreal (val))
-        tmp_vector = [obj.scenario_mc];
-        if ( rows(tmp_vector) > 0 ) % appending vector to existing vector
-            if ( rows(tmp_vector) == rows(val) )
-                retval = [tmp_vector, val];
-            else
-                error ('set: expecting equal number of rows')
-            end
-        else    % setting vector
-            retval = val;
-        end      
-      % replacing scenario_mc matrix with new matrix
-      elseif (ismatrix(val) && isreal(val)) 
-        retval = val;
-      else
-        error ('set: expecting scenario_mc to be a real vector');
+	  if (isvector (val) && isreal (val))
+		 retval = val;
+	  else
+		error ('set: expecting scenario_mc to be a real vector');
       end
+        
      % ====================== set rates_mc: if isvector -> append to existing 
      %              vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'rates_mc'))   
@@ -61,24 +50,7 @@ if ( strcmpi(type,'special'))
         if ( isnumeric(obj.cap) )
             val = min(val,obj.cap);
         end
-        [mc_rows mc_cols mc_stack] = size(obj.rates_mc);
-        tmp_cell = obj.rates_mc;
-        if ( mc_cols > 0 || mc_rows > 0) % appending vector to existing vector
-            if ( length(val) == length(obj.rates_mc(:,:,mc_stack)))
-                tmp_cell(:,:,mc_stack + 1) = val;
-                retval = tmp_cell;
-            else
-                error('set: expecting length of new input vector to equal length of already existing rate vector');
-            end
-        else    % setting vector
-            [val_rows val_cols val_stack] = size(val);
-            if val_stack == 1   % is matrix
-                tmp_cell(:,:,1) = val;
-                retval = tmp_cell;
-            else
-                retval = val;
-            end
-        end      
+        retval = val;   
       else
         error ('set: expecting the mc values to be real ');
       end
@@ -106,125 +78,50 @@ if ( strcmpi(type,'special'))
         if ( isnumeric(obj.cap) )
             val = min(val,obj.cap);
         end
-        retval = val;
+		retval = val';
       else
-        error ('set: expecting the base values to be a real vector');
+        error ('set: expecting the base values to be a real row vector');
       end
     % =========== set timestep_mc: appending or setting timestep vector ========
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc'))   
-      if (iscell(val) && length(val) == 1)
-        tmp_cell = obj.timestep_mc;
-        if ( length(tmp_cell) > 0 ) % appending vector to existing vector
-            tmp_cell{length(tmp_cell) + 1} = char(val);
-            retval = tmp_cell;
-        else    % setting vector
-            retval = val;
-        end      
-      % replacing timestep_mc cell vector with new vector
-      elseif (iscell(val) && length(val) > 1) 
-        retval = val;
-      elseif ( ischar(val) )
-        tmp_cell = obj.timestep_mc;
-        if ( length(tmp_cell) > 0 ) % appending vector to existing vector
-            tmp_cell{length(tmp_cell) + 1} = char(val);
-            retval = tmp_cell;
-        else    % setting vector
-            retval = cellstr(val);
-        end 
-      else
-        if (iscell(val) && length(val) == 0)
-            retval = {};
-        else
-            error ('set: expecting timestep_mc to be a cell vector');
-        end
-      end
+	  if (iscell(val) )
+			retval = val;
+	  elseif (ischar(val))
+			retval = {val};
+	  else
+			error ('set: expecting timestep_mc to be a character');
+	  end
     % =========== set timestep_mc_cf: appending or setting timestep vector =====
     elseif (ischar (prop) && strcmp (prop, 'timestep_mc_cf'))   
-      if (iscell(val) && length(val) == 1)
-        tmp_cell = obj.timestep_mc_cf;
-        if ( length(tmp_cell) > 0 ) % appending vector to existing vector
-            tmp_cell{length(tmp_cell) + 1} = char(val);
-            retval = tmp_cell;
-        else    % setting vector
-            retval = val;
-        end    
-      % replacing timestep_mc_cf cell vector with new vector
-      elseif (iscell(val) && length(val) > 1) 
-        retval = val;
-      elseif ( ischar(val) )
-        tmp_cell = obj.timestep_mc_cf;
-        if ( length(tmp_cell) > 0 ) % appending vector to existing vector
-            tmp_cell{length(tmp_cell) + 1} = char(val);
-            retval = tmp_cell;
-        else    % setting vector
-            retval = cellstr(val);
-        end 
-      else
-        if (iscell(val) && length(val) == 0)
-            retval = {};
-        else
-            error ('set: expecting the cell value to be a cell vector');
-        end
-     end
+      if (iscell(val) )
+			retval = val;
+	  elseif (ischar(val))
+			retval = {val};
+	  else
+			error ('set: expecting timestep_mc_cf to be a char or cell');
+	  end
     % ====================== set scenario_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'scenario_stress'))   
-      
       if (isvector (val) && isreal (val))   % append to existing stress vector
-        retval = [obj.scenario_stress; val];
+			retval = val;
       else
-        if ( isempty(val))
-            retval = [];
-        else
-            error ('set: expecting scenario_stress to be a real vector');
-        end
+			error ('set: expecting scenario_stress to be a real vector');
       end 
     % ====================== set cf_values_mc: if isvector -> append 
     % to existing vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'cf_values_mc'))   
       if (isreal (val))
-        [mc_rows mc_cols mc_stack] = size(obj.cf_values_mc);
-        tmp_cell = obj.cf_values_mc;
-        if ( mc_cols > 0 || mc_rows > 0) % appending vector to existing vector
-            if ( length(val) == length(obj.cf_values_mc(:,:,mc_stack)))
-                tmp_cell(:,:,mc_stack + 1) = val;
-                retval = tmp_cell;
-            else
-                if isempty(val)
-                    retval = [];
-                else
-                    error('set: expecting length of new input vector for cf_values_mc to equal length of already existing rate vector');
-                end
-            end
-        else    % setting vector
-            tmp_cell(:,:,1) = val;
-            retval = tmp_cell;
-        end  
+			retval = val; 
       else
-        error ('set: expecting cf_values_mc to be real ');
+			error ('set: expecting cf_values_mc to be real ');
       end
     % ====================== set value_mc: if isvector -> append to 
     %       existing vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'value_mc'))   
       if (isvector (val) && isreal (val))
-        tmp_vector = [obj.value_mc];
-        if ( rows(tmp_vector) > 0 ) % appending vector to existing vector
-            if ( rows(tmp_vector) == rows(val) )
-                retval = [tmp_vector, val];
-            else
-                error ('set: expecting equal number of rows of value_mc')
-            end
-        else    % setting vector
-            retval = val;
-        end    
-      % replacing value_mc matrix with new matrix
-      elseif (ismatrix(val) && isreal(val)) 
-        retval = val;
+			retval = val;
       else
-        if ( isempty(val))
-            retval = [];
-        else
-            error ('set: expecting value_mc to be a real vector');
-        end
+			error ('set: expecting value_mc to be a real vector');
       end
     % ====================== set value_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'value_stress'))   
@@ -241,36 +138,17 @@ if ( strcmpi(type,'special'))
     %       existing vector / matrix, if ismatrix -> replace existing value
     elseif (ischar (prop) && strcmp (prop, 'exposure_mc'))   
       if (isvector (val) && isreal (val))
-        tmp_vector = [obj.exposure_mc];
-        if ( rows(tmp_vector) > 0 ) % appending vector to existing vector
-            if ( rows(tmp_vector) == rows(val) )
-                retval = [tmp_vector, val];
-            else
-                error ('set: expecting equal number of rows of exposure_mc')
-            end
-        else    % setting vector
-            retval = val;
-        end    
-      % replacing exposure_mc matrix with new matrix
-      elseif (ismatrix(val) && isreal(val)) 
-        retval = val;
-      else
-        if ( isempty(val))
-            retval = [];
-        else
-            error ('set: expecting exposure_mc to be a real vector');
-        end
+		 retval = val;
+	  else
+		 error ('set: expecting exposure_mc to be a real vector');
       end
+
     % ====================== set exposure_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'exposure_stress'))   
       if (isvector (val) && isreal (val))
-        retval = val;
+			retval = val;
       else
-        if ( isempty(val))
-            retval = [];
-        else
-            error ('set: expecting exposure_stress to be a real vector');
-        end
+			error ('set: expecting exposure_stress to be a real vector');
       end
     % ====================== set floor ======================
     elseif (ischar (prop) && strcmp (prop, 'floor'))  
@@ -398,14 +276,13 @@ end
 %! retval = return_checked_input(obj,'30-Sep-2016','maturity_date','date');
 %! assert(retval,'30-Sep-2016')
 %! retval = return_checked_input(obj,[1;2;3;4],'scenario_mc','special');
-%! assert(retval,[1,1;2,2;3,3;4,4])
+%! assert(retval,[1;2;3;4])
 %! retval = return_checked_input(obj,[5;6;7;8],'cf_values_mc','special');
-%! assert(retval(:,:,1),[1;2;3;4])
-%! assert(retval(:,:,2),[5;6;7;8])
+%! assert(retval,[5;6;7;8])
 %! retval = return_checked_input(obj,[12;23;145;15],'scenario_stress','special');
 %! assert(retval,[12;23;145;15])
 %! retval = return_checked_input(obj,'250d','timestep_mc','special');
-%! assert(retval,{'10d','250d'})
+%! assert(retval,{'250d'})
 %! s = struct();
 %! s(1).id = 'AAA';
 %! s(1).object = obj;

@@ -26,6 +26,8 @@ classdef Position
         scenario_numbers = [];
         aa_target_id = '';	% target asset allocation {'equity','alternative'}
         aa_target_values = []; % target asset allocation values [0.6,0.4]
+        equity_target_region_id = ''; % target region allocation {'Europe','NorthAmerica'}
+		equity_target_region_values = []; % target asset allocation values [0.6,0.4]
         hist_base_values = [];	% historical base values
         hist_var_abs = []; % historical VaR absolute
         hist_report_dates = ''; % historical reporting dates
@@ -38,6 +40,7 @@ classdef Position
         expshortfall_abs = 0;   
         var50_abs      = 0;
 		var70_abs      = 0;
+		var84_abs      = 0;
 		var90_abs      = 0;
 		var95_abs      = 0;
 		var975_abs     = 0;
@@ -292,6 +295,15 @@ classdef Position
 					fprintf('\t%s%2.0f%%\n',tmp_id,a.aa_target_values(ii)*100);
 				end
             end
+            if ( length(a.equity_target_region_values) == length(a.equity_target_region_id) && length(a.equity_target_region_values) > 0 )
+				fprintf('Target Equity Region Allocation:\n');
+				for ii=1:1:length(a.equity_target_region_values)
+					if (length(a.equity_target_region_id{ii}) <= 25)
+						tmp_id = strcat(a.equity_target_region_id{ii},char(repmat(95,1,25 - length(a.equity_target_region_id{ii}))) );
+					end
+					fprintf('\t%s%2.0f%%\n',tmp_id,a.equity_target_region_values(ii)*100);
+				end
+            end
             if ( iscell(a.hist_report_dates) && length(a.hist_base_values) == length(a.hist_var_abs))
 				fprintf('Historical report values: \n');
 				fprintf('\tReport Date | Base Value | VaR abs. | VaR rel.:\n');
@@ -332,40 +344,40 @@ classdef Position
 				end
 			fprintf(' ]\n');
 		 end   
-		  %~ % looping via all stress rates if defined
-		 %~ if ( rows(a.cf_values_stress) > 0 )
-			%~ tmp_cf_values = a.getCF('stress');
-			%~ fprintf('CF Stress values:\n[ ');
-			%~ for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
-				%~ for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
-					%~ fprintf('%f,',tmp_cf_values(jj,kk));
-				%~ end
-				%~ fprintf(' ]\n');
-			%~ end
-			%~ fprintf('\n');
-		 %~ end    
-		 %~ % looping via first 3 MC scenario values
-		 %~ for ( ii = 1 : 1 : mc_stack)
-			%~ if ( length(a.timestep_mc_cf) >= ii )
-				%~ tmp_cf_values = a.getCF(a.timestep_mc_cf{ii});
-				%~ if (columns(tmp_cf_values)>0)
-					%~ fprintf('MC timestep: %s\n',a.timestep_mc_cf{ii});
-					%~ fprintf('CF Scenariovalue:\n[ ')
-					%~ for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
-						%~ for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
-							%~ fprintf('%f,',tmp_cf_values(jj,kk));
-						%~ end
-						%~ fprintf(' ]\n');
-					%~ end
-				%~ fprintf('\n');
-				%~ end
-			%~ else
-				%~ fprintf('MC timestep cf not defined\n');
-			%~ end
-		 %~ end
-         %for (ii=1:1:length(props))
-         %   fprintf('%s: %s\n',props{ii},any2str(a.(props{ii})));
-         %end
+		  % looping via all stress rates if defined
+		 if ( rows(a.cf_values_stress) > 0 )
+			tmp_cf_values = a.getCF('stress');
+			fprintf('CF Stress values:\n[ ');
+			for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
+				for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
+					fprintf('%f,',tmp_cf_values(jj,kk));
+				end
+				fprintf(' ]\n');
+			end
+			fprintf('\n');
+		 end    
+		 % looping via first 3 MC scenario values
+		 for ( ii = 1 : 1 : mc_stack)
+			if ( length(a.timestep_mc_cf) >= ii )
+				tmp_cf_values = a.getCF(a.timestep_mc_cf{ii});
+				if (columns(tmp_cf_values)>0)
+					fprintf('MC timestep: %s\n',a.timestep_mc_cf{ii});
+					fprintf('CF Scenariovalue:\n[ ')
+					for ( jj = 1 : 1 : min(rows(tmp_cf_values),5))
+						for ( kk = 1 : 1 : min(columns(tmp_cf_values),10))
+							fprintf('%f,',tmp_cf_values(jj,kk));
+						end
+						fprintf(' ]\n');
+					end
+				fprintf('\n');
+				end
+			else
+				fprintf('MC timestep cf not defined\n');
+			end
+		 end
+         %~ %for (ii=1:1:length(props))
+         %~ %   fprintf('%s: %s\n',props{ii},any2str(a.(props{ii})));
+         %~ %end
          
       end % disp
            

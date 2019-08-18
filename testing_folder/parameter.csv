@@ -52,7 +52,7 @@ path_sobol_direction_numberCHAR,static
 % Aggregation specific variables
 base_currencyCHAR,EUR
 aggregation_keyCELL,asset_class|currency|id
-mc_timestepsCELL,250d
+mc_timestepCHAR,250d
 scenario_setCELL,250d|stress
 
 % specify unique runcode and timestamp:

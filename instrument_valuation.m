@@ -434,13 +434,13 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
     % Using Bond class
         bond = instr_obj;
         
-    % check, whether instrument already valuated for current scenario --> delete properties
-       if ~(strcmpi(scenario,'base') || strcmpi(scenario,'stress'))
-           if ( sum(strcmpi(bond.timestep_mc_cf,scenario))>0)   % scenario already exists
-               bond = bond.set('timestep_mc_cf',{});
-               bond = bond.set('cf_values_mc',[]);
-           end
-       end
+    %~ % check, whether instrument already valuated for current scenario --> delete properties
+       %~ if ~(strcmpi(scenario,'base') || strcmpi(scenario,'stress'))
+           %~ if ( sum(strcmpi(bond.timestep_mc_cf,scenario))>0)   % scenario already exists
+               %~ bond = bond.set('timestep_mc_cf',{});
+               %~ bond = bond.set('cf_values_mc',[]);
+           %~ end
+       %~ end
 
     % a) Get curve parameters    
       % get discount curve

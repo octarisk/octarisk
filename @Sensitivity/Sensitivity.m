@@ -21,6 +21,10 @@ classdef Sensitivity < Instrument
         sii_equity_type = 0;
         payout_yield = 0;	% used for fund modelling (forecast dividend yield)
         div_month = 12; % used for fund modelling (dividend payment month)
+        region_id = {'Europe','NorthAmerica','Pacific','EmergingMarkets'};
+        region_values = []; 
+        style_id = {'LargeValue','LargeBlend','LargeGrowth','MidValue','MidBlend','MidGrowth','SmallValue','SmallBlend','SmallGrowth'};
+        style_values = []; 
     end
    
     properties (SetAccess = private)

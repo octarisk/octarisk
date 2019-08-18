@@ -37,8 +37,8 @@ for kk = 1 : 1 : length( riskfactor_struct )        % check whether risk factor 
                     if ( retcode == 1)      % object_id is contained in stress
                             stress_values(ii) = return_stress_shocks(tmp_object,shockstruct);
                     else
-                            % apply base value
-                            stress_values(ii) = tmp_object.getValue('base');
+                            % apply stress shock base value
+                            stress_values(ii) = 0.0; % tmp_object.getValue('base');
                     end
             end
             % set instrument stress vector

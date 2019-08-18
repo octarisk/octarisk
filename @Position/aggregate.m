@@ -13,11 +13,12 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
         accr_int = 0.0;
         if ( strcmpi(scen_set,'base'))
 			cf_values = zeros(1,12);
-			cf_dates = get_eom_dates(para.valuation_date,12);
-		else
-			cf_values = [];
-			cf_dates = [];
+		elseif ( strcmpi(scen_set,'stress'))
+			cf_values = zeros(para.scen_number,12);
+		else % MC scenarios
+			cf_values = zeros(para.mc,12);
         end
+        cf_dates = get_eom_dates(para.valuation_date,12);
 		
         for (ii=1:1:length(obj.positions))
             pos_obj = obj.positions(ii).object;
@@ -51,26 +52,25 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
 				end
 
                 % Fill portfolio cash flow attribute with position base values
-				if ( strcmpi(scen_set,'base'))
-					pos_cf_values = pos_obj_new.getCF('base');
-					pos_cf_dates = pos_obj_new.get('cf_dates');
-					% only for next 12 months
-					for mm=1:1:length(cf_dates)
-						if ( mm == 1)
-							eom_intervall_start = 0;
-							eom_intervall_end = cf_dates(1);
-						else
-							eom_intervall_start = cf_dates(mm-1);
-							eom_intervall_end = cf_dates(mm);
-						end 
-						pos_cf_values_tmp = pos_cf_values(	pos_cf_dates<=eom_intervall_end);
-						pos_cf_dates_tmp  = pos_cf_dates(	pos_cf_dates<=eom_intervall_end);
-						pos_cf_values_tmp = pos_cf_values_tmp(	pos_cf_dates_tmp>eom_intervall_start);
-						if ~isempty(pos_cf_values_tmp)
-							cf_values(:,mm) = cf_values(:,mm) + sum(pos_cf_values_tmp,2);
-						end
+				pos_cf_values = pos_obj_new.getCF(scen_set);
+				pos_cf_dates = pos_obj_new.get('cf_dates');
+				% only for next 12 months
+				for mm=1:1:length(cf_dates)
+					if ( mm == 1)
+						eom_intervall_start = 0;
+						eom_intervall_end = cf_dates(1);
+					else
+						eom_intervall_start = cf_dates(mm-1);
+						eom_intervall_end = cf_dates(mm);
+					end 
+					pos_cf_values_tmp = pos_cf_values(	:,pos_cf_dates<=eom_intervall_end);
+					pos_cf_dates_tmp  = pos_cf_dates(	pos_cf_dates<=eom_intervall_end);
+					pos_cf_values_tmp = pos_cf_values_tmp(	:,pos_cf_dates_tmp>eom_intervall_start);					
+					if ~isempty(pos_cf_values_tmp)
+						cf_values(:,mm) = cf_values(:,mm) + sum(pos_cf_values_tmp,2);
 					end
 				end
+					
         
 				% fill TPT attributes regardless of sm_scr flag
                 if (strcmpi(scen_set,'base')) %&& para.calc_sm_scr == false)
@@ -201,40 +201,38 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             end
             
             % Fill cash flow values
-            if ( strcmpi(scen_set,'base'))
-				if (strcmpi(tmp_instr_object.type,'Bond') || strcmpi(tmp_instr_object.type,'CapFloor'))
-					cf_values = tmp_instr_object.getCF(scen_set) ...
-									.*  tmp_quantity ./ tmp_fx_value_shock;
-					cf_dates = tmp_instr_object.get('cf_dates');
-				elseif (strcmpi(tmp_instr_object.type,'Sensitivity'))	
-					payout_vec = tmp_instr_object.payout_yield;
-					month_vec = tmp_instr_object.div_month;
-					if (length(payout_vec) == length(month_vec))
-						cf_dates = [];
-						cf_values = [];
-						val_datevec= datevec(datenum(datestr(para.valuation_date)));
-						for kk=1:1:length(month_vec)
-							cf_value = tmp_instr_object.getValue('base') ...
-										.* payout_vec(kk) ...
-										.* tmp_quantity ./ tmp_fx_value_shock;
-							cf_values = [cf_values, cf_value];
-							month_act = val_datevec(2);
-							if (month_vec(kk) < month_act) % cf next year
-								cf_date = datenum([val_datevec(1)+1,month_vec(kk),15]) ...
-										- datenum(datestr(para.valuation_date));
-							else % this year
-								cf_date = datenum([val_datevec(1),month_vec(kk),15]) ...
-										- datenum(datestr(para.valuation_date));
-							end
-							cf_dates = [cf_dates, cf_date];			
+			if (strcmpi(tmp_instr_object.type,'Bond') || strcmpi(tmp_instr_object.type,'CapFloor'))
+				cf_values = tmp_instr_object.getCF(scen_set) ...
+								.*  tmp_quantity ./ tmp_fx_value_shock;
+				cf_dates = tmp_instr_object.get('cf_dates');
+			elseif (strcmpi(tmp_instr_object.type,'Sensitivity'))	
+				payout_vec = tmp_instr_object.payout_yield;
+				month_vec = tmp_instr_object.div_month;
+				if (length(payout_vec) == length(month_vec))
+					cf_dates = [];
+					cf_values = [];
+					val_datevec= datevec(datenum(datestr(para.valuation_date)));
+					for kk=1:1:length(month_vec)
+						cf_value = tmp_instr_object.getValue(scen_set) ...
+									.* payout_vec(kk) ...
+									.* tmp_quantity ./ tmp_fx_value_shock;		
+						cf_values = cat(2,cf_values,cf_value);
+						month_act = val_datevec(2);
+						if (month_vec(kk) < month_act) % cf next year
+							cf_date = datenum([val_datevec(1)+1,month_vec(kk),15]) ...
+									- datenum(datestr(para.valuation_date));
+						else % this year
+							cf_date = datenum([val_datevec(1),month_vec(kk),15]) ...
+									- datenum(datestr(para.valuation_date));
 						end
-					else
-						fprintf('Warning: payout yield and month attributes unequal length for id >>%s<<\n',tmp_instr_object.id);
+						cf_dates = [cf_dates, cf_date];			
 					end
 				else
-					cf_values = [];
-					cf_dates = [];
+					fprintf('Warning: payout yield and month attributes unequal length for id >>%s<<\n',tmp_instr_object.id);
 				end
+			else
+				cf_values = [];
+				cf_dates = [];
 			end
 				
             
@@ -473,6 +471,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
     % store theo_value vector
     if ( regexp(scen_set,'stress'))
         obj = obj.set('value_stress',theo_value);
+        obj = obj.set('cf_values_stress',cf_values);
     elseif ( strcmp(scen_set,'base'))
         obj = obj.set('value_base',theo_value(1)); 
         obj = obj.set('valuation_date',para.valuation_date);
@@ -494,7 +493,9 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
         end  
     else
         obj = obj.set('timestep_mc',scen_set);
+        obj = obj.set('timestep_mc_cf',scen_set);
         obj = obj.set('value_mc',theo_value);
+        obj = obj.set('cf_values_mc',cf_values);
     end
     % in any case store failed position cell
     obj = obj.set('position_failed_cell',position_failed_cell);

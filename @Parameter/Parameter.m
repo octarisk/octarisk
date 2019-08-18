@@ -79,7 +79,8 @@ classdef Parameter
         % Aggregation specific variables
         base_currency = 'EUR';
         aggregation_key = {'asset_class','currency','id'};
-        mc_timesteps = {};
+        mc_timestep = '';
+        mc_timestep_days = 0;
         scenario_set = {'stress'};
 
         % specify unique runcode and timestamp:

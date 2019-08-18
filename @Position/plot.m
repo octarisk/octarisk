@@ -1,5 +1,5 @@
 % @Position/plot: Plot figures
-function obj = plot(obj, para_object,type,scen_set,stresstest_struct = [],curve_struct = [])
+function obj = plot(obj, para_object,type,scen_set,stresstest_struct = [],curve_struct = [],riskfactor_struct = [])
   if (nargin < 4)   
 		print_usage();
   end
@@ -25,18 +25,22 @@ else
 		error('Unknown number of days in timestep: %s\n',scen_set);
 	end
 end
- 
+
+% set colors
+or_green = [0.56863   0.81961   0.13333]; 
+or_blue  = [0.085938   0.449219   0.761719]; 
+or_orange =  [0.945312   0.398438   0.035156];
 % --------------    Liquidity Plotting     -----------------------------
 if (strcmpi(type,'liquidity'))    
   if ( strcmpi(scen_set,'base'))
 		fprintf('plot: Plotting liquidity information for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 		cf_dates = obj.get('cf_dates');
 		cf_values = obj.getCF('base');
-		xx=1:1:length(cf_values);
+		xx=1:1:columns(cf_values);
 		plot_desc = datestr(datenum(datestr(para_object.valuation_date)) + cf_dates,'mmm');
 		hs = figure(3); 
 		clf;
-		bar(cf_values, 'facecolor', 'blue');
+		bar(cf_values, 'facecolor', or_blue);
 		h=get (gcf, 'currentaxes');
 		set(h,'xtick',xx);
 		set(h,'xticklabel',plot_desc);
@@ -46,10 +50,72 @@ if (strcmpi(type,'liquidity'))
 		% save plotting
 		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot.png');
 		print (hs,filename_plot_cf, "-dpng", "-S600,200");
+  elseif ~( strcmpi(scen_set,'base') || strcmpi(scen_set,'stress'))
+		fprintf('plot: Plotting liquidity information for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+		cf_dates = obj.get('cf_dates');
+		cf_values_base = obj.getCF('base');
+		cf_values_mc = obj.getCF(scen_set);
+		% take only tail scenarios
+		cf_values_mc = mean(cf_values_mc(obj.scenario_numbers,:),1);
+		xx=1:1:columns(cf_values_base);
+		plot_desc = datestr(datenum(datestr(para_object.valuation_date)) + cf_dates,'mmm');
+		hs = figure(3); 
+		clf;
+		hb = bar([cf_values_base;cf_values_mc]');
+		set (hb(1), "facecolor", or_blue);
+		set (hb(2), "facecolor", or_orange);
+		ha =get (gcf, 'currentaxes');
+		set(ha,'xtick',xx);
+		set(ha,'xticklabel',plot_desc);
+		xlabel('Cash flow date','fontsize',11);
+		ylabel(strcat('Cash flow amount (in ',obj.currency,')'),'fontsize',11);
+		title('Projected future cash flows','fontsize',12);
+		%legend('Base Scenario','Average Tail Scenario');
+		% save plotting
+		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot_mc.png');
+		print (hs,filename_plot_cf, "-dpng", "-S600,200");
   else
-	  fprintf('No liquidity plotting possible for scenario set %s === \n',scen_set);  
+	  fprintf('plot: No liquidity plotting possible for scenario set %s === \n',scen_set);  
   end  
-    					
+% --------------    Risk Factor Shock Plotting   -----------------------------
+elseif (strcmpi(type,'riskfactor'))    
+  if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
+	  fprintf('plot: Risk Factor Shock plots exists for scenario set >>%s<<\n',scen_set);
+  else
+	  fprintf('plot: Plotting Risk Factor Shock results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+	  if isstruct(riskfactor_struct)
+	    abs_rf_shocks_mean = [];
+	    rf_plot_desc = {};
+		for kk=1:1:length(riskfactor_struct)
+			rf_obj = riskfactor_struct(kk).object;
+			if (isobject(rf_obj))
+				abs_rf_shocks = rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base');
+				abs_rf_shocks = abs_rf_shocks(obj.scenario_numbers,:);
+				if ( sum(strcmpi(rf_obj.model,{'GBM','BKM','REL'})) > 0 ) % store relative shocks only
+					abs_rf_shocks_mean = [abs_rf_shocks_mean, mean(abs_rf_shocks)];
+					rf_plot_desc = [rf_plot_desc, rf_obj.description];
+				end
+			end
+		end
+		abs_rf_shocks_mean = 100 .* abs_rf_shocks_mean;
+		% Plot risk factor shocks in meaningful way?!? Spider chart, bar chart?
+		xx = 1:1:length(abs_rf_shocks_mean);
+        hs = figure(1);
+        clf;
+        barh(abs_rf_shocks_mean(1:end), 'facecolor', or_blue);
+        h=get (gcf, 'currentaxes');
+        set(h,'ytick',xx);
+        rf_plot_desc = strrep(rf_plot_desc,"RF_","");
+        rf_plot_desc = strrep(rf_plot_desc,"_","-");
+        set(h,'yticklabel',rf_plot_desc(1:end));
+        xlabel('Risk factor shocks (in pct.)','fontsize',14);
+        %title('Risk factor shocks in ATS scenarios','fontsize',14);
+        grid on;
+        % save plotting
+        filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.png');
+        print (hs,filename_plot_rf, "-dpng", "-S600,250");
+      end
+  end	      					
 % --------------    VaR History Plotting   -----------------------------
 elseif (strcmpi(type,'history'))    
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
@@ -77,11 +143,15 @@ elseif (strcmpi(type,'history'))
 		set(ax(2),'ylim',[floor(min(hist_var_rel)), ceil(max(hist_var_rel))]);
 		set(ax(2),'xticklabel',{});
 		set (h1,'linewidth',1);
+		set (h1,'color',or_blue);
 		set (h1,'marker','o');
-		set (h1,'markerfacecolor','auto');
+		set (h1,'markerfacecolor',or_blue);
+		set (h1,'markeredgecolor',or_blue);
 		set (h2,'linewidth',1);
+		set (h2,'color',or_orange);
 		set (h2,'marker','o');
-		set (h2,'markerfacecolor','auto');
+		set (h2,'markerfacecolor',or_orange);
+		set (h2,'markeredgecolor',or_orange);
 
 		ylabel (ax(1), strcat('Base Value (',obj.currency,')'),'fontsize',12);
 		ylabel (ax(2), strcat('VaR relative (in Pct)'),'fontsize',12);
@@ -89,11 +159,11 @@ elseif (strcmpi(type,'history'))
 		   %~ "color", "red", "horizontalalignment", "center", "parent", ax(1));
 		%~ text (4.5, 80, "VaR (right axis)", ...
 		   %~ "color", "blue", "horizontalalignment", "center", "parent", ax(2));
-		title ('History of Portfolio Base Value and VaR','fontsize',14);
+		%title ('History of Portfolio Base Value and VaR','fontsize',14);
  			
 		% save plotting
 		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.png');
-		print (hvar,filename_plot_varhist, "-dpng", "-S600,300");		
+		print (hvar,filename_plot_varhist, "-dpng", "-S600,250");		
       else
 		fprintf('plot: Plotting VaR history not possible for portfolio >>%s<<, attributes are either not filled or not identical in length\n',obj.id);	
       end	
@@ -113,15 +183,16 @@ elseif (strcmpi(type,'stress'))
 						obj.getValue('base') )./ obj.getValue('base');
 
         xx = 1:1:length(p_l_relativ_stress)-1;
-        hs = figure(1,"visible", false); % works for graphic_toolkit gnuplot only, not for qt
+        hs = figure(1);
         clf;
-        barh(p_l_relativ_stress(2:end), 'facecolor', 'blue');
+        barh(p_l_relativ_stress(2:end), 'facecolor', or_blue);
         h=get (gcf, 'currentaxes');
         set(h,'ytick',xx);
         stresstest_plot_desc = strrep(stresstest_plot_desc,"_","");
         set(h,'yticklabel',stresstest_plot_desc(2:end));
-        xlabel('Relative PnL (in Pct)');
-        title('Stresstest Results','fontsize',12);
+        xlabel('Relative PnL (in Pct)','fontsize',14);
+        title('Stresstest Results','fontsize',14);
+        grid on;
         % save plotting
         filename_plot_stress = strcat(path_reports,'/',obj.id,'_stress_plot.png');
         print (hs,filename_plot_stress, "-dpng", "-S600,300");
@@ -162,88 +233,109 @@ elseif (strcmpi(type,'var'))
       hf1 = figure(1);
       clf;
       subplot (1, 2, 1)
-        hist(endstaende_reldiff_shock.*100,40);
+        hist(endstaende_reldiff_shock.*100,40,'facecolor',or_blue);
         title_string = {'Histogram'; strcat('Portfolio PnL ',scen_set);};
         title (title_string,'fontsize',12);
         xlabel('Relative shock to portflio (in Pct)');
       subplot (1, 2, 2)
-        plot ( plot_vec, p_l_absolut_shock,'linewidth',2);
+		plot ( [1, mc], [0, 0], 'color',[0.3 0.3 0.3],'linewidth',1);
+		hold on;
+        plot ( plot_vec, p_l_absolut_shock,'linewidth',2, 'color',or_blue);
         hold on;
-        plot ( [1, mc], [-mc_var_shock, -mc_var_shock], '-','linewidth',1);
-        hold on;
-        plot ( [1, mc], [0, 0], 'r','linewidth',1);
+        plot ( [1, mc], [-mc_var_shock, -mc_var_shock], '-','linewidth',1, 'color',or_orange);
         h=get (gcf, 'currentaxes');
         xlabel('MonteCarlo Scenarios');
         set(h,'xtick',[1 mc])
-        set(h,'ytick',[min(p_l_absolut_shock) -20000 0 20000 max(p_l_absolut_shock)])
-        h=text(0.025*mc,(-1.45*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
-        h=text(0.025*mc,(-2.1*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
+        set(h,'ytick',[min(p_l_absolut_shock) -mc_var_shock/2 0 mc_var_shock/2 max(p_l_absolut_shock)])
+        h=text(0.025*mc,(-0.75*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
+        h=text(0.025*mc,(-1.3*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
         ylabel(strcat('Absolute PnL (in ',fund_currency,')'));
         title_string = {'Sorted PnL';strcat('Portfolio PnL ',scen_set);};
         title (title_string,'fontsize',12);
+        %axis ([1 mc -1.3*mc_var_shock 1.3*mc_var_shock]);
 		% save plotting
 		filename_plot_var = strcat(path_reports,'/',obj.id,'_var_plot.png');
 		print (hf1,filename_plot_var, "-dpng", "-S600,200");
 
 		% Plot 2: position contributions
-		% reset vectors for charts of riskiest instruments and positions
-		pie_chart_values_instr_shock = [];
-		pie_chart_desc_instr_shock = {};
+	    mc_var_shock = obj.varhd_abs;
+	    fund_currency = obj.currency; 	
 		pie_chart_values_pos_shock = [];
+		pie_chart_values_pos_base = [];
 		pie_chart_desc_pos_shock = {};
-		%~ % loop through all positions
+		pie_chart_desc_pos_base = {};
+		% loop through all positions
 		for (ii=1:1:length(obj.positions))
 			try
 			  pos_obj = obj.positions(ii).object;
 			  if (isobject(pos_obj))
-					% Store Values for piechart (Except CASH):
-					pie_chart_values_instr_shock(ii) = pos_obj.varhd_abs;
-					pie_chart_desc_instr_shock(ii) = cellstr( strcat(pos_obj.id));
 					pie_chart_values_pos_shock(ii) = (pos_obj.decomp_varhd) ;
+					pie_chart_values_pos_base(ii) = pos_obj.getValue('base') ;
 					pie_chart_desc_pos_shock(ii) = cellstr( strcat(pos_obj.id));
+					pie_chart_desc_pos_base(ii) = cellstr( strcat(pos_obj.id));
 			  end
 			catch
-				printf('Portfolio.plot: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+				printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
 			end
 		end
-	  
 		% prepare vector for piechart:
-		[pie_chart_values_sorted_instr_shock sorted_numbers_instr_shock ] = sort(pie_chart_values_instr_shock,'descend');
 		[pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock,'descend');
+		[pie_chart_values_sorted_pos_base sorted_numbers_pos_base ] = sort(pie_chart_values_pos_base,'descend');
+		
+		% plot Top 5 Positions Decomp
 		idx = 1; 
-
-		% plot only maximum 6 highest values
-		%for ii = length(pie_chart_values_instr_shock):-1:max(0,length(pie_chart_values_instr_shock)-5)
-		for ii = 1:1:min(length(pie_chart_values_instr_shock),6)
-			pie_chart_values_plot_instr_shock(idx)   = pie_chart_values_sorted_instr_shock(ii) ;
-			pie_chart_desc_plot_instr_shock(idx)     = pie_chart_desc_instr_shock(sorted_numbers_instr_shock(ii));
+		max_positions = 5;
+		for ii = 1:1:min(length(pie_chart_values_pos_shock),max_positions);
 			pie_chart_values_plot_pos_shock(idx)     = pie_chart_values_sorted_pos_shock(ii) ;
 			pie_chart_desc_plot_pos_shock(idx)       = pie_chart_desc_pos_shock(sorted_numbers_pos_shock(ii));
 			idx = idx + 1;
 		end
-		plot_vec_pie = zeros(1,length(pie_chart_values_plot_instr_shock));
-		plot_vec_pie(1) = 1;
-		pie_chart_values_plot_instr_shock = pie_chart_values_plot_instr_shock ./ sum(pie_chart_values_plot_instr_shock);
+		% append remaining part
+		if (idx == (max_positions + 1))
+			pie_chart_values_plot_pos_shock(idx)     = mc_var_shock - sum(pie_chart_values_plot_pos_shock) ;
+			pie_chart_desc_plot_pos_shock(idx)       = "Other";
+		end
 		pie_chart_values_plot_pos_shock = pie_chart_values_plot_pos_shock ./ sum(pie_chart_values_plot_pos_shock);
-		  
+		
+		% plot Top 5 Positions Basevalue
+		idx = 1; 
+		max_positions = 5;
+		for ii = 1:1:min(length(pie_chart_values_pos_base),max_positions);
+			pie_chart_values_plot_pos_base(idx)     = pie_chart_values_sorted_pos_base(ii) ;
+			pie_chart_desc_plot_pos_base(idx)       = pie_chart_desc_pos_base(sorted_numbers_pos_base(ii));
+			idx = idx + 1;
+		end
+		% append remaining part
+		if (idx == (max_positions + 1))
+			pie_chart_values_plot_pos_base(idx)     = obj.getValue('base') - sum(pie_chart_values_plot_pos_base) ;
+			pie_chart_desc_plot_pos_base(idx)       = "Other";
+		end
+		
+		pie_chart_values_plot_pos_base = pie_chart_values_plot_pos_base ./ sum(pie_chart_values_plot_pos_base);
+		pie_chart_values_plot_pos_shock = pie_chart_values_plot_pos_shock ./ sum(pie_chart_values_plot_pos_shock);
+		plot_vec_pie = zeros(1,length(pie_chart_values_plot_pos_shock));
+		plot_vec_pie(1) = 1; 
+		
 		hf2 = figure(2);
-		clf;  
-		subplot (1, 2, 1)
+		clf; 
+		% Position Basevalue contribution
+		subplot (1, 2, 1) 
+		desc_cell_pos = strrep(pie_chart_desc_plot_pos_base,"_",""); %remove "_"
+		pie(pie_chart_values_plot_pos_base, desc_cell_pos, plot_vec_pie);
+		%title_string = strcat('Position contribution to Portfolio Basevalue');
+		%title(title_string,'fontsize',12);
+		axis ('tic', 'off');   
+		
+		% Position VaR Contribution
+		subplot (1, 2, 2) 
 		desc_cell_pos = strrep(pie_chart_desc_plot_pos_shock,"_",""); %remove "_"
 		pie(pie_chart_values_plot_pos_shock, desc_cell_pos, plot_vec_pie);
-		title_string = strcat('Position contribution to VaR',scen_set);
-		title(title_string,'fontsize',12);
-		axis ('tic', 'off');    
-		subplot (1, 2, 2)
-		desc_cell_instr = strrep(pie_chart_desc_plot_instr_shock,"_","");
-		pie(pie_chart_values_plot_instr_shock, desc_cell_instr , plot_vec_pie);
-		%pareto(pie_chart_values_plot_instr_shock,desc_cell_instr);
-		title_string = strcat('Riskiest Positions (Standalone VaR',scen_set,')');
-		title(title_string,'fontsize',12);
-		axis ('tic', 'off');
+		%title_string = strcat('Position contribution to Portfolio VaR');
+		%title(title_string,'fontsize',12);
+		axis ('tic', 'off');   
 		% save plotting
 		filename_plot_var_pos_instr = strcat(path_reports,'/',obj.id,'_var_pos_instr.png');
-		print (hf2,filename_plot_var_pos_instr, "-dpng", "-S600,200");
+		print (hf2,filename_plot_var_pos_instr, "-dpng", "-S700,200");
   end  
       
 % -------------    Market Data Curve plotting    ----------------------------- 
@@ -255,6 +347,7 @@ elseif (strcmpi(type,'marketdata'))
     hmarket = figure(1);
     clf;
     % get mktdata curves
+    ats_scen = round(length(obj.scenario_numbers)/2);
     if isstruct(curve_struct)
       [curve_obj retcode] = get_sub_object(curve_struct,'IR_EUR');
       if retcode == 0
@@ -264,15 +357,15 @@ elseif (strcmpi(type,'marketdata'))
             nodes = any2str(curve_obj.get('nodes'));
 			rates_base = curve_obj.get('rates_base');
 			rates_mc = curve_obj.get('rates_mc');
-			plot (curve_obj.get('nodes'),rates_base,'color','blue',"linewidth",1,'marker','x');
+			plot (curve_obj.get('nodes'),rates_base,'color',or_blue,"linewidth",1,'marker','x');
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(1),:),'color',[0.5 0.5 0.5],"linewidth",0.8);
+			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen-2),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(2),:),'color',[0.5 0.5 0.5],"linewidth",0.8);
+			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen-1),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(4),:),'color',[0.5 0.5 0.5],"linewidth",0.8);
+			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen+1),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(5),:),'color',[0.5 0.5 0.5],"linewidth",0.8);
+			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen+2),:),'color',or_orange,"linewidth",0.8);
 			hold off;
 			grid off;
 			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);
@@ -288,15 +381,15 @@ elseif (strcmpi(type,'marketdata'))
             nodes = any2str(curve_obj.get('nodes'));
 			rates_base = curve_obj.get('rates_base');
 			rates_mc = curve_obj.get('rates_mc');
-			plot (curve_obj.get('nodes'),rates_base,'color','blue',"linewidth",1,'marker','x');
+			plot (curve_obj.get('nodes'),rates_base,'color',or_blue,"linewidth",1,'marker','x');
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(1),:),'color',[0.5 0.5 0.5],"linewidth",0.8);
+			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen-2),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(2),:),'color',[0.5 0.5 0.5],"linewidth",0.8);
+			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen-1),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(4),:),'color',[0.5 0.5 0.5],"linewidth",0.8);
+			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen+1),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(5),:),'color',[0.5 0.5 0.5],"linewidth",0.8);
+			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen+2),:),'color',or_orange,"linewidth",0.8);
 			hold off;
 			grid off;
 			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);

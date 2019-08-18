@@ -1,5 +1,5 @@
 % @Position/print_report: Print reports
-function obj = print_report(obj, para_object,type,scen_set,stresstest_struct = [])
+function obj = print_report(obj, para_object,type,scen_set,stresstest_struct = [],instrument_struct = [])
   if (nargin < 3)
         type = 'TPT';
   elseif (nargin < 4)   
@@ -56,37 +56,28 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filp, '\\label{table_port_var}\n');
 		fprintf(filp, '\\begin{tabular}{l r}\n');
 		fprintf(filp, 'Valuation date \& %s\\\\\n',datestr(para_object.valuation_date));
-		fprintf(filp, 'Portfolio base value \& %9.0f %s\\\\\n',obj.getValue('base'),obj.currency);   
-		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.varhd_rel*100);
-		fprintf(filp, 'Portfolio VaR %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.varhd_abs,obj.currency);
-		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.expshortfall_rel*100);
-		fprintf(filp, 'Portfolio ES  %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_abs,obj.currency);
-		fprintf(filp, 'Portfolio VaR %s diversification benefit \& %9.1f\\%%\\\\ \n',scen_set,(1 - obj.diversification_ratio)*100);
+		fprintf(filp, 'Portfolio value in reporting currency \& %9.0f %s\\\\\n',obj.getValue('base'),obj.currency);   
+		fprintf(filp, 'Value at Risk (abs.) %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.varhd_rel*100);
+		fprintf(filp, 'Value at Risk (rel.) %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.varhd_abs,obj.currency);
+		fprintf(filp, 'Expected Shortfall %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.expshortfall_rel*100);
+		fprintf(filp, 'Expected Shortfall %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_abs,obj.currency);
+		fprintf(filp, 'Volatility (annualized) \& %3.1f\\%%\\\\\n',100 * obj.var84_abs * sqrt(250/para_object.mc_timestep_days) / obj.getValue('base'));
+		fprintf(filp, 'Diversification benefit \& %9.1f\\%%\\\\ \n',(1 - obj.diversification_ratio)*100);
 		fprintf(filp, '\\end{tabular}\n');
 	    fclose (filp);
   
-	  % #### print Incremental and Marginal VaR Report
-	  if (para_object.calc_marg_incr_var = true)
-		latex_table_incr_var = strcat(path_reports,'/table_pos_',obj.id,'_incr_var.tex');
-		fili = fopen (latex_table_incr_var, 'w');
-		fprintf(fili, '\\center\n');
-		fprintf(fili, '\\begin{tabular}{l|r|r|r }\n');
-		fprintf(fili, 'Position ID\& Basevalue \& Incremental VaR \& Marginal VaR\\\\ \\hline\n');
-		for (ii=2:1:min(length(obj.positions),25))
-          pos_obj = obj.positions(ii).object;
-          pos_id = obj.positions(ii).id;
-          if (isobject(pos_obj))
-			fprintf(fili, '%s \& %9.0f %s \& %9.0f %s\& %9.0f %s\\\\\n',strrep(pos_id,"_",""),pos_obj.getValue('base'),obj.currency,pos_obj.incr_var,obj.currency,pos_obj.marg_var,obj.currency);
-	      end
-		end
-		fprintf(fili, '\\end{tabular}\n');
-		fclose (fili);
-	  end
+	  
 	  
 	  % #### Print Aggregation Key Asset Class report
 	  aggr_key_struct = obj.get('aggr_key_struct');
 	  aa_target_id = obj.get('aa_target_id');
 	  aa_target_values = obj.get('aa_target_values');
+	  latex_table_decomp = strcat(path_reports,'/table_port_',obj.id,'_decomp.tex');
+	  fild = fopen (latex_table_decomp, 'w');
+	  fprintf(fild, '\\center\n');
+	  fprintf(fild, '\\label{table_port_decomp}\n');
+	  fprintf(fild, '\\begin{tabular}{l|r|r|r|r|r}\n');
+	  
 	  for jj = 1:1:length(aggr_key_struct)
 		tmp_aggr_key_name  = aggr_key_struct( jj ).key_name;
 		tmp_aggr_cell               = aggr_key_struct( jj ).key_values;
@@ -96,20 +87,16 @@ elseif (strcmpi(type,'latex'))
 		tmp_aggregation_decomp_shock  = [aggr_key_struct( jj ).aggregation_decomp_shock];
 		tmp_aggregation_standalone_shock  = [aggr_key_struct( jj ).aggregation_standalone_shock];
 		  if strcmpi(tmp_aggr_key_name,'asset_class')
-			latex_table_decomp = strcat(path_reports,'/table_port_',obj.id,'_decomp.tex');
 			latex_table_aa = strcat(path_reports,'/table_port_',obj.id,'_aa.tex');
-			fild = fopen (latex_table_decomp, 'w');
 			fiaa = fopen (latex_table_aa, 'w');
-			fprintf(fild, '\\center\n');
-			fprintf(fild, '\\label{table_port_decomp}\n');
-			fprintf(fild, '\\begin{tabular}{l|r|r|r|r|r}\n');
-			fprintf(fild, 'Asset Class \& Basevalue \& Standalone VaR \& Decomp VaR \& Target AA \& Actual AA\\\\\\hline\\hline\n');
-			fprintf(fild, 'Portfolio \& %9.0f %s \& %9.0f %s\& %9.0f %s \& %3.0f\\%% \& %3.0f\\%%\\\\\\hline\n',obj.getValue('base'),obj.currency,obj.varhd_abs,obj.currency,obj.varhd_abs,obj.currency,100,100);
+			fprintf(fild, 'Asset Class \& Basevalue \& Pct. \& Standalone VaR \& Decomp VaR\& Pct.\\\\\\hline\\hline\n');
+			fprintf(fild, 'Portfolio \& %9.0f %s \& %3.1f\\%% \& %9.0f %s\& %9.0f %s\& %3.1f\\%%\\\\\\hline\n',obj.getValue('base'),obj.currency,100,obj.varhd_abs,obj.currency,obj.varhd_abs,obj.currency,100);
 			fprintf(fiaa, '\\center\n');
 			fprintf(fiaa, '\\label{table_port_aa}\n');
-			fprintf(fiaa, '\\begin{tabular}{l|r|r|r}\n');
-			fprintf(fiaa, 'Asset Class \& Basevalue \& Target AA \& Actual AA\\\\\\hline\\hline\n');
-			fprintf(fiaa, 'Portfolio \& %9.0f %s \& %3.0f\\%% \& %3.0f\\%%\\\\\\hline\n',obj.getValue('base'),obj.currency,100,100);
+			fprintf(fiaa, '\\begin{tabular}{l|r|r|r|r|r}\n');
+			fprintf(fiaa, 'Asset Class \& Basevalue \& Target AA \& Actual AA \& Deviation \& Risk Impact\\\\\\hline\\hline\n');
+			devation_sum = 0;
+			risk_impact_sum = 0;
 			for ii = 1 : 1 : min(length(tmp_aggr_cell),25)
 				tmp_aggr_key_value          = tmp_aggr_cell{ii};
 				tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
@@ -123,38 +110,204 @@ elseif (strcmpi(type,'latex'))
 						aa_target = aa_target_values(kk);
 					end
 				end
-				fprintf(fild, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s \& %3.0f\\%% \& %3.0f\\%% \\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,tmp_standalone_aggr_key_var,obj.currency,tmp_decomp_aggr_key_var,obj.currency,aa_target*100,tmp_aggregation_basevalue_pos*100/obj.getValue('base'));
-				fprintf(fiaa, '%s \& %9.0f %s \& %3.0f\\%% \& %3.0f\\%% \\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,aa_target*100,tmp_aggregation_basevalue_pos*100/obj.getValue('base'));
+				aa_current = tmp_aggregation_basevalue_pos/obj.getValue('base');
+				tmp_deviation = (aa_current - aa_target) * obj.getValue('base');
+				tmp_risk_impact = (tmp_deviation / tmp_aggregation_basevalue_pos) * tmp_decomp_aggr_key_var;
+				risk_impact_sum = risk_impact_sum + tmp_risk_impact;
+				devation_sum = devation_sum + abs(tmp_deviation);
+				fprintf(fild, '%s \& %9.0f %s \& %3.1f\\%% \& %9.0f %s \& %9.0f %s \& %3.1f\\%%\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,100*tmp_aggregation_basevalue_pos/obj.getValue('base'),tmp_standalone_aggr_key_var,obj.currency,tmp_decomp_aggr_key_var,obj.currency,100*tmp_decomp_aggr_key_var/obj.varhd_abs);
+				fprintf(fiaa, '%s \& %9.0f %s \& %3.1f\\%% \& %3.1f\\%% \& %9.0f %s \& %9.0f  %s\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,aa_target*100,aa_current*100,tmp_deviation,obj.currency,tmp_risk_impact,obj.currency);
 			end
-			fprintf(fild, '\\end{tabular}\n');
+			fprintf(fiaa, '\\\hline Portfolio \& %9.0f %s \& %3.0f\\%% \& %3.0f\\%% \&  %9.0f %s \& %9.0f  %s\\\\\\hline\n',obj.getValue('base'),obj.currency,100,100,devation_sum,obj.currency,risk_impact_sum,obj.currency);
+			%fprintf(fild, '\\end{tabular}\n');
 			fprintf(fiaa, '\\end{tabular}\n');
-			fclose (fild);
+			%fclose (fild);
 			fclose (fiaa);
-		  end
-		  % #### Print Aggregation Key ID report
-		  if strcmpi(tmp_aggr_key_name,'id')
-			latex_table_decomp = strcat(path_reports,'/table_port_',obj.id,'_decomp_id.tex');
-			fiid = fopen (latex_table_decomp, 'w');
-			fprintf(fiid, '\\center\n');
-			fprintf(fiid, '\\begin{tabular}{l|r|r|r}\n');
-			fprintf(fiid, 'Position ID \& Basevalue \& Standalone VaR \& Decomp VaR\\\\\\hline\\hline\n');
-			fprintf(fiid, 'Portfolio \& %9.0f %s \& %9.0f  %s\& %9.0f %s\\\\\\hline\n',obj.getValue('base'),obj.currency,obj.varhd_abs,obj.currency,obj.varhd_abs,obj.currency);
-			len = min(25,length(tmp_aggr_cell));
-			for ii = 1 : 1 : len
+		  % plot currency decomposition
+		  elseif strcmpi(tmp_aggr_key_name,'currency')
+			%latex_table_decomp_cur = strcat(path_reports,'/table_port_',obj.id,'_decomp_cur.tex');
+			%fild = fopen (latex_table_decomp_cur, 'w');
+			%fprintf(fild, '\\center\n');
+			%fprintf(fild, '\\label{table_port_decomp_cur}\n');
+			%fprintf(fild, '\\begin{tabular}{l|r|r|r|r|r}\n');
+			fprintf(fild, '\\\hline Currency \& Basevalue \& Pct. \& Standalone VaR \& Decomp VaR\& Pct.\\\\\\hline\n');
+			%fprintf(fild, 'Portfolio \& %9.0f %s \& %2.1f\\%% \& %9.0f %s\& %9.0f %s\& %2.1f\\%%\\\\\\hline\n',obj.getValue('base'),obj.currency,100,obj.varhd_abs,obj.currency,obj.varhd_abs,obj.currency,100);
+			devation_sum = 0;
+			risk_impact_sum = 0;
+			for ii = 1 : 1 : min(length(tmp_aggr_cell),25)
 				tmp_aggr_key_value          = tmp_aggr_cell{ii};
 				tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
 				tmp_standalone_aggr_key_var = tmp_aggregation_standalone_shock(ii);
 				tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
 				tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
 				tmp_aggr_key_value = strrep(tmp_aggr_key_value,"_","");
-				fprintf(fiid, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,tmp_standalone_aggr_key_var,obj.currency,tmp_decomp_aggr_key_var,obj.currency);
-			end;
-			fprintf(fiid, '\\end{tabular}\n');
-			fclose (fiid);
+				fprintf(fild, '%s \& %9.0f %s \& %3.1f\\%%\& %9.0f %s \& %9.0f %s \& %3.1f\\%%\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,100*tmp_aggregation_basevalue_pos/obj.getValue('base'),tmp_standalone_aggr_key_var,obj.currency,tmp_decomp_aggr_key_var,obj.currency,100*tmp_decomp_aggr_key_var/obj.varhd_abs);
+			end
+			
 		  end
+		  
 	  end
+	  fprintf(fild, '\\end{tabular}\n');
+	  fclose (fild);
 	
+	  % #### Position ID Decomp LaTeX Table
+	  mc_var_shock = obj.varhd_abs;
+	  fund_currency = obj.currency; 	
+		pie_chart_values_pos_shock = [];
+		pie_chart_desc_pos_shock = {};
+		% loop through all positions
+		for (ii=1:1:length(obj.positions))
+			try
+			  pos_obj = obj.positions(ii).object;
+			  if (isobject(pos_obj))
+					pie_chart_values_pos_shock(ii) = (pos_obj.decomp_varhd) ;
+					pie_chart_desc_pos_shock(ii) = cellstr( strcat(pos_obj.id));
+			  end
+			catch
+				printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+			end
+		end
+		% prepare vector for piechart:
+		[pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock,'descend');
+		idx = 1; 
+		% plot Top 10 Positions
+		max_positions = 10;
+		for ii = 1:1:min(length(pie_chart_values_pos_shock),max_positions);
+			pie_chart_values_plot_pos_shock(idx)     = pie_chart_values_sorted_pos_shock(ii) ;
+			pie_chart_desc_plot_pos_shock(idx)       = pie_chart_desc_pos_shock(sorted_numbers_pos_shock(ii));
+			idx = idx + 1;
+		end
+		% append remaining part
+		if (idx == (max_positions + 1))
+			pie_chart_values_plot_pos_shock(idx)     = mc_var_shock - sum(pie_chart_values_plot_pos_shock) ;
+			pie_chart_desc_plot_pos_shock(idx)       = "Other";
+		end
+		pie_chart_values_plot_pos_shock = pie_chart_values_plot_pos_shock ./ sum(pie_chart_values_plot_pos_shock);
   
+		% Plot LaTeX table Decomp ID
+		other_var = obj.varhd_abs;
+		other_value = obj.getValue('base');
+		latex_table_decomp = strcat(path_reports,'/table_port_',obj.id,'_decomp_id.tex');
+		fiid = fopen (latex_table_decomp, 'w');
+		fprintf(fiid, '\\center\n');
+		fprintf(fiid, '\\begin{tabular}{l|r|r|r|r}\n');
+		fprintf(fiid, 'Position ID \& Basevalue \& Standalone VaR \& Decomp VaR \& Pct.\\\\\\hline\\hline\n');
+		fprintf(fiid, 'Portfolio \& %9.0f %s \& %9.0f  %s\& %9.0f %s \& %3.1f\\%%\\\\\\hline\n',obj.getValue('base'),obj.currency,obj.varhd_abs,obj.currency,obj.varhd_abs,obj.currency,100);
+		for kk=1:1:length(pie_chart_desc_plot_pos_shock)
+			pos_id = pie_chart_desc_plot_pos_shock{kk};
+			[pos_obj retcode] = get_sub_object(obj.positions,pos_id);
+			if ( retcode == 1)
+				tmp_id = strrep(pos_obj.id,"_","");
+				other_var = other_var - pos_obj.decomp_varhd;
+				other_value = other_value - pos_obj.getValue('base');
+				fprintf(fiid, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\& %3.1f\\%%\\\\\n',tmp_id,pos_obj.getValue('base'),pos_obj.currency,pos_obj.varhd_abs,obj.currency,pos_obj.decomp_varhd,obj.currency,100*pos_obj.decomp_varhd/obj.varhd_abs);
+			end
+		end
+		fprintf(fiid, '%s \& %9.0f %s \& %s \& %9.0f %s\& %3.1f\\%%\\\\\n','Other',other_value,obj.currency,'--',other_var,obj.currency,100*other_var/obj.varhd_abs);
+		fprintf(fiid, '\\end{tabular}\n');
+		fclose (fiid);
+		
+		% #### print Incremental and Marginal VaR Report
+		if (para_object.calc_marg_incr_var = true)
+			latex_table_incr_var = strcat(path_reports,'/table_pos_',obj.id,'_incr_var.tex');
+			fili = fopen (latex_table_incr_var, 'w');
+			fprintf(fili, '\\center\n');
+			fprintf(fili, '\\begin{tabular}{l|r|r|r }\n');
+			fprintf(fili, 'Position ID\& Basevalue \& Incremental VaR \& Marginal VaR\\\\ \\hline\n');
+		for kk=1:1:length(pie_chart_desc_plot_pos_shock)
+			pos_id = pie_chart_desc_plot_pos_shock{kk};
+			[pos_obj retcode] = get_sub_object(obj.positions,pos_id);
+			if ( retcode == 1)
+				fprintf(fili, '%s \& %9.0f %s \& %9.0f %s\& %9.0f %s\\\\\n',strrep(pos_id,"_",""),pos_obj.getValue('base'),obj.currency,pos_obj.incr_var,obj.currency,pos_obj.marg_var,obj.currency);
+			  end
+		end
+			fprintf(fili, '\\end{tabular}\n');
+			fclose (fili);
+		end
+	  
+	    % Equity Region Allocation
+	    % loop through all positions
+	    if (isstruct(instrument_struct))
+			region_cell = obj.equity_target_region_id;
+			region_current_values = zeros(1,length(region_cell));
+			region_current_decomp = zeros(1,length(region_cell));
+			style_port_values = zeros(1,9);
+			for (ii=1:1:length(obj.positions))
+				try
+				  pos_obj = obj.positions(ii).object;
+				  if (isobject(pos_obj))
+				   pos_id = pos_obj.id;
+				   instr_obj = get_sub_object(instrument_struct,pos_id);
+				   if (instr_obj.isProp('asset_class'))
+					 if (strcmpi(instr_obj.get('asset_class'),'Equity'))
+						region_cell_pos  = instr_obj.region_id;
+						if (abs(sum(instr_obj.region_values) - 1) > 0.01)
+							fprintf('WARNING: Position.print_report: >>5s<< has region allocation not equal to 1\n',instr_obj.id);
+						end
+						region_values_abs  = instr_obj.region_values .* pos_obj.getValue('base');
+						region_decomp_abs  = instr_obj.region_values .* pos_obj.decomp_varhd;
+						for kk=1:1:length(region_cell)
+							tmp_region = region_cell{kk};
+							for jj=1:1:length(region_cell_pos)
+								if ( strcmpi(tmp_region,region_cell_pos{jj}))
+									region_current_values(kk) = region_current_values(kk) + region_values_abs(jj);
+									region_current_decomp(kk) = region_current_decomp(kk) + region_decomp_abs(jj);
+								end
+							end
+						end
+					  end
+					  % save portfolio equity style box
+					  if (strcmpi(instr_obj.get('asset_class'),'Equity'))
+						style_cell_pos  = instr_obj.style_id;
+						style_pos_values = instr_obj.style_values .* pos_obj.getValue('base');
+						style_port_values = style_port_values + style_pos_values;
+					  end
+					end
+				  end
+				catch
+					printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+				end
+			end
+			
+			% print Equity region allocation to LaTeX Table
+			latex_table_equity_region = strcat(path_reports,'/table_pos_',obj.id,'_equity_region.tex');
+			fiaa = fopen (latex_table_equity_region, 'w');
+			fprintf(fiaa, '\\center\n');
+			fprintf(fiaa, '\\begin{tabular}{l|r|r|r|r|r}\n');
+			fprintf(fiaa, 'Region \& Basevalue \& Target AA \& Actual AA \& Deviation \& Risk Impact\\\\\\hline\\hline\n');	
+			for kk=1:1:length(region_cell)
+				region = region_cell{kk};
+				region_val = region_current_values(kk);
+				region_decomp = region_current_decomp(kk);
+				region_sum = sum(region_current_values);
+				aa_target = obj.equity_target_region_values(kk);
+				aa_current = region_val ./ region_sum;
+				tmp_deviation = (aa_current - aa_target) * region_sum;
+				tmp_risk_impact = (tmp_deviation / region_val) * region_decomp;
+				risk_impact_sum = risk_impact_sum + tmp_risk_impact;
+				devation_sum = devation_sum + abs(tmp_deviation);
+				fprintf(fiaa, '%s \& %9.0f %s \& %3.1f\\%% \& %3.1f\\%% \& %9.0f %s\& %9.0f %s\\\\\n',region,region_val,obj.currency,aa_target*100,aa_current*100,tmp_deviation,obj.currency,tmp_risk_impact,obj.currency);
+			end
+			fprintf(fiaa, '\\\hline Equity \& %9.0f %s \& %3.1f\\%% \& %3.1f\\%% \& %9.0f %s\& %9.0f %s\\\\\\hline\n',region_sum,obj.currency,100,100,devation_sum,obj.currency,risk_impact_sum,obj.currency);
+			fprintf(fiaa, '\\end{tabular}\n');
+			fclose (fiaa);
+			
+			% print Equity style box to LaTeX Table
+			style_cell_pos
+			style_port_values
+			estab = 100 .* style_port_values / sum(region_sum);
+			latex_table_equity_style = strcat(path_reports,'/table_pos_',obj.id,'_equity_style.tex');
+			fies = fopen (latex_table_equity_style, 'w');
+			fprintf(fies, '\\center\n');
+			fprintf(fies, '\\begin{tabular}{l|c c c|r}\n');
+			fprintf(fies, 'Size/Style \& Value \& Blend \& Growth \& Sum \\\\\\hline\n');	
+			fprintf(fies, 'Large Cap \& %3.1f\\%% \& %3.1f\\%% \& %3.1f\\%% \& %3.1f\\%% \\\\\n',estab(1),estab(2),estab(3),sum(estab(1:3)));	
+			fprintf(fies, 'Mid Cap \& %3.1f\\%% \& %3.1f\\%% \& %3.1f\\%% \& %3.1f\\%% \\\\\n',estab(4),estab(5),estab(6),sum(estab(4:6)));	
+			fprintf(fies, 'Small Cap \& %3.1f\\%% \& %3.1f\\%% \& %3.1f\\%% \& %3.1f\\%% \\\\\\hline\n',estab(7),estab(8),estab(9),sum(estab(7:9)));	
+			fprintf(fies, 'Sum \& %3.1f\\%% \& %3.1f\\%% \& %3.1f\\%% \& %3.1f\\%% \\\\\n',sum([estab(1),estab(4),estab(7)]),sum([estab(2),estab(5),estab(8)]),sum([estab(3),estab(6),estab(9)]),sum(estab));	
+			fprintf(fies, '\\end{tabular}\n');
+			fclose (fies);
+		end
   end
 % ------------------------------------------------------------------------------  
 elseif (strcmpi(type,'stress'))

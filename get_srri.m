@@ -232,7 +232,7 @@ try
 	text( 0.635,0.20,"6","fontsize", 40);
 	text( 0.735,0.20,"7","fontsize", 40);
 	time = strcat(num2str(horizon),"days");
-	titlestring = strcat("SRRI classification"); %,time,",",num2str(quantile*100),"%)");
+	titlestring = strcat('SRRI classification target:',' ',num2str(srri_target)); %,time,",",num2str(quantile*100),"%)");
 	title (titlestring,"fontsize", 16);
 	 
 	% plot png to file

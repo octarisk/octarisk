@@ -154,23 +154,5 @@ function obj = set(obj, varargin)
     % store property in object
     obj.(prop) = retval;
     
-        % additional checks: condense if doubled entries for time step
-    if ( length( obj.timestep_mc{end}) > 0)   
-		last_ts = obj.timestep_mc{end};
-		if ( length(obj.timestep_mc) > 1)
-			for (kk=1:1:length(obj.timestep_mc)-1)
-				tmp_ts = obj.timestep_mc{kk};
-				if (strcmpi(last_ts,tmp_ts))
-					obj.timestep_mc = obj.timestep_mc(1:end-1);
-					if (columns(obj.value_mc) > kk)
-						% replace kkth column with last added column 
-						obj.value_mc(:,kk) = obj.value_mc(:,end);
-						% and delete last column
-						obj.value_mc(:,end) = [];
-					end 
-				end
-			end
-		end
-	end
   end
 end   

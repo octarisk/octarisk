@@ -453,7 +453,7 @@ aggr_curve_function   = tmp_object.get('curve_function');
 aggr_curve_parameter  = tmp_object.get('curve_parameter');
 aggr_curve_rates_base = zeros(1,length(aggr_curve_nodes));                      % make base rate curve
 aggr_curve_rates_stress = zeros(no_stresstests,length(aggr_curve_nodes));       % make two dimensional rates surface for stess rates
-aggr_curve_rates_mc = zeros(mc,length(aggr_curve_nodes),length(timesteps_mc));   % make three dimensional cube with zero mc rates
+aggr_curve_rates_mc = zeros(mc,length(aggr_curve_nodes),1);   % make three dimensional cube with zero mc rates
 % sort nodes and accordingly base rates:
 [aggr_curve_nodes tmp_indizes] = sort(aggr_curve_nodes);
 
@@ -521,28 +521,25 @@ for kk = 1 : 1 : length(aggr_curve_increments)
         % loop through all timesteps_mc
         if ( run_mc == true)
             tmp_aggr_curve_rates_mc = [];
-            
-            for kk = 1 : 1 : length(timesteps_mc)
-                tmp_value_type = timesteps_mc{kk};
-                %incr_shock_rates    = tmp_incr_object.getValue(tmp_value_type);
-                % loop through all IR Curve nodes and get interpolated shock value from risk factor
-                tmp_ir_shock_matrix = [];
-                for ii = 1 : 1 : length(aggr_curve_nodes)
-                    tmp_node = aggr_curve_nodes(ii);
-                    % get interpolated shock vector at node
-                    rate_shock_origin    = tmp_incr_object.getRate(tmp_value_type,tmp_node);
-                    % convert from comp type / dcc of increment curve to comp type / dcc of aggregated curve
-                    tmp_shock_rate = convert_curve_rates(valuation_date,tmp_node,rate_shock_origin,comp_type_origin,comp_freq_origin, ...
-                        dcc_basis_origin, comp_type_target,comp_freq_target,dcc_basis_target);
-                    % generate total shock matrix
-                    tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock_rate);
-                end
-                %disp("add mc rates to tmp aggre")
-                %tmp_value_type
-                %tmp_ir_shock_matrix(1:min(5,rows(tmp_ir_shock_matrix)),:)
-                tmp_aggr_curve_rates_mc = cat(3,tmp_aggr_curve_rates_mc,tmp_ir_shock_matrix);
-                %tmp_aggr_curve_rates_mc(1:min(5,rows(tmp_aggr_curve_rates_mc)),:,:)
-            end
+			tmp_value_type = timesteps_mc;
+			%incr_shock_rates    = tmp_incr_object.getValue(tmp_value_type);
+			% loop through all IR Curve nodes and get interpolated shock value from risk factor
+			tmp_ir_shock_matrix = [];
+			for ii = 1 : 1 : length(aggr_curve_nodes)
+				tmp_node = aggr_curve_nodes(ii);
+				% get interpolated shock vector at node
+				rate_shock_origin    = tmp_incr_object.getRate(tmp_value_type,tmp_node);
+				% convert from comp type / dcc of increment curve to comp type / dcc of aggregated curve
+				tmp_shock_rate = convert_curve_rates(valuation_date,tmp_node,rate_shock_origin,comp_type_origin,comp_freq_origin, ...
+					dcc_basis_origin, comp_type_target,comp_freq_target,dcc_basis_target);
+				% generate total shock matrix
+				tmp_ir_shock_matrix = horzcat(tmp_ir_shock_matrix,tmp_shock_rate);
+			end
+			%disp("add mc rates to tmp aggre")
+			%tmp_value_type
+			%tmp_ir_shock_matrix(1:min(5,rows(tmp_ir_shock_matrix)),:)
+			tmp_aggr_curve_rates_mc = cat(3,tmp_aggr_curve_rates_mc,tmp_ir_shock_matrix);
+			%tmp_aggr_curve_rates_mc(1:min(5,rows(tmp_aggr_curve_rates_mc)),:,:)
             %disp("calc mc rates")
             %aggr_curve_rates_mc(1:min(5,rows(aggr_curve_rates_mc)),:,:)
             % Matlab Adaption
@@ -662,11 +659,9 @@ for kk = 1 : 1 : length(aggr_index_increments)
         if ( run_mc == true)
             tmp_aggr_index_rates_mc = [];
             % get increment scenario shock values
-            for jj = 1 : 1 : length(timesteps_mc)
-                tmp_value_type = timesteps_mc{jj};
+                tmp_value_type = timesteps_mc;
                 tmp_aggr_index_col = tmp_incr_object.getValue(tmp_value_type);
                 tmp_aggr_index_rates_mc = cat(2,tmp_aggr_index_rates_mc,tmp_aggr_index_col);
-            end
             % combine all increment rates depending on function
             if ( strcmpi(aggr_index_function,'sum'))
                 if ( kk == 1)   % first increment: aggr_index_mc = zeros(mc,1);

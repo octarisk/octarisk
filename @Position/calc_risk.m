@@ -62,15 +62,8 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
           kurtosis_shock        = kurtosis(pnl_abs);
 
           % iii.) Extract confidence scenarionumbers around quantile scenario
-          confi_scenarionumber_shock_p1 = scen_order_shock(confi_scenario + 1);
-          confi_scenarionumber_shock_p2 = scen_order_shock(confi_scenario + 2);
-          confi_scenarionumber_shock_m1 = scen_order_shock(confi_scenario - 1);
-          confi_scenarionumber_shock_m2 = scen_order_shock(confi_scenario - 2);
-          scenario_numbers = [confi_scenarionumber_shock_m2, ...
-                            confi_scenarionumber_shock_m1, ...
-                            confi_scenarionumber_shock, ...
-                            confi_scenarionumber_shock_p1, ...
-                            confi_scenarionumber_shock_p2];
+          ats_limit = 10;
+          scenario_numbers = scen_order_shock(confi_scenario-ats_limit:confi_scenario+ats_limit);
           
           % iv.) make vector with Harrel-Davis Weights
           varhd_abs     = - dot(hd_vec,pnl_abs_sorted);
@@ -263,6 +256,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
           % Optional:
             var50_abs      = -pnl_abs_sorted(ceil(0.5*no_scen));
 			var70_abs      = -pnl_abs_sorted(ceil(0.3*no_scen));
+			var84_abs      = -pnl_abs_sorted(ceil((1-normcdf(1))*no_scen));
 			var90_abs      = -pnl_abs_sorted(ceil(0.10*no_scen));
 			var95_abs      = -pnl_abs_sorted(ceil(0.05*no_scen));
 			var975_abs     = -pnl_abs_sorted(ceil(0.025*no_scen));
@@ -308,6 +302,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
 			obj = obj.set('expshortfall_rel',expshortfall_rel);
 			obj = obj.set('var50_abs',var50_abs);
 			obj = obj.set('var70_abs',var70_abs);
+			obj = obj.set('var84_abs',var84_abs);
 			obj = obj.set('var90_abs',var90_abs);
 			obj = obj.set('var95_abs',var95_abs);
 			obj = obj.set('var975_abs',var975_abs);
