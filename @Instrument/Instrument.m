@@ -31,9 +31,15 @@ classdef Instrument
       value_base = 0;      
       currency = 'EUR';
       asset_class = 'Unknown';   
-      type = 'Unknown';      
+      type = 'Unknown';
+      region_values = [0,0,0,0]; 
+      style_values = [0,0,0,0,0,0,0,0,0];
+      rating_values = [0,0,0];
+      duration_values = [0,0,0]; 
+      country_values = [1,0];  
+      esg_score = []; 
     end
-   
+ 
     properties (SetAccess = protected )
       value_stress = [];
       value_mc = [];
@@ -41,6 +47,11 @@ classdef Instrument
       exposure_base = [];
       exposure_mc = [];
       exposure_stress = [];
+      region_id = {'Europe','NorthAmerica','Pacific','EmergingMarkets'};
+      rating_id = {'HighGrade','InvGrade','HighYield'};
+      style_id = {'LargeValue','LargeBlend','LargeGrowth','MidValue','MidBlend','MidGrowth','SmallValue','SmallBlend','SmallGrowth'};
+      duration_id = {'Low<3','Mid3-7','High>7'};
+      country_id = {'US','Other'};
     end
    
    % Class methods

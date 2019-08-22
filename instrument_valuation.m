@@ -667,7 +667,7 @@ elseif strcmpi(tmp_type,'retail')
                obj = obj.set('cf_values_stress',obj.get('cf_values'));
             elseif ~(strcmpi(scenario,'stress') && strcmpi(scenario,'base'))
                obj = obj.set('cf_values_mc',obj.get('cf_values'),'timestep_mc_cf',scenario);
-            end
+            end         
         elseif( strcmpi(tmp_sub_type,'DCP') )       % Defined Contribution Plan
             % rollout cash flows for all scenarios
                 if (~strcmpi(scenario,'base') )
@@ -683,10 +683,10 @@ elseif strcmpi(tmp_type,'retail')
         end
         obj = obj.calc_value (valuation_date,scenario,tmp_curve_object);
     % d) calculate (key rate) durations and convexities
-		if (strcmpi(scenario,'base') )
+		%if (strcmpi(scenario,'base') )
 			obj = obj.calc_sensitivities(valuation_date,tmp_curve_object);
-			obj = obj.calc_key_rates(valuation_date,tmp_curve_object);
-        end    
+			%obj = obj.calc_key_rates(valuation_date,tmp_curve_object);
+        %end    
     % store retail object:
     ret_instr_obj = obj;
 % ==============================================================================

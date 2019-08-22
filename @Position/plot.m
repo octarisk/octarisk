@@ -26,6 +26,9 @@ else
 	end
 end
 
+% get report_struct from Portfolio object
+repstruct = obj.report_struct;
+
 % set colors
 or_green = [0.56863   0.81961   0.13333]; 
 or_blue  = [0.085938   0.449219   0.761719]; 
@@ -38,7 +41,7 @@ if (strcmpi(type,'liquidity'))
 		cf_values = obj.getCF('base');
 		xx=1:1:columns(cf_values);
 		plot_desc = datestr(datenum(datestr(para_object.valuation_date)) + cf_dates,'mmm');
-		hs = figure(3); 
+		hs = figure(1); 
 		clf;
 		bar(cf_values, 'facecolor', or_blue);
 		h=get (gcf, 'currentaxes');
@@ -59,7 +62,7 @@ if (strcmpi(type,'liquidity'))
 		cf_values_mc = mean(cf_values_mc(obj.scenario_numbers,:),1);
 		xx=1:1:columns(cf_values_base);
 		plot_desc = datestr(datenum(datestr(para_object.valuation_date)) + cf_dates,'mmm');
-		hs = figure(3); 
+		hs = figure(1); 
 		clf;
 		hb = bar([cf_values_base;cf_values_mc]');
 		set (hb(1), "facecolor", or_blue);
@@ -114,6 +117,72 @@ elseif (strcmpi(type,'riskfactor'))
         % save plotting
         filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.png');
         print (hs,filename_plot_rf, "-dpng", "-S600,250");
+        
+        % ----------------------------------------------------------------------
+        % plot RF vs quantile smoothing average
+        % Idea: sort all risk factor shocks by portfolio PnL, splinefit for
+        % smoothing and plotting of most relevant risk factors
+        tmp_rf_shocks = rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base');
+        [sortPnL sortedscennumbers] = sort(obj.getValue(scen_set) - obj.getValue('base'));
+        
+        spline_struct = struct();
+        spline_struct(1).pp = 'dummy';
+        len_tail = 0.2*para_object.mc;
+        xx=1:1:len_tail;
+        rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_IR_EUR_5Y','RF_IR_USD_5Y','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+        for kk=1:1:length(rf_cell)
+			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
+			if (retcode == 1)
+				if ( sum(strcmpi(rf_obj.model,{'GBM','BKM','REL'})) > 0 ) % store relative shocks only
+					tmp_rf_shocks = rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base');
+					tmp_rf_shocks = tmp_rf_shocks(sortedscennumbers,:);
+					tmp_rf_shocks = tmp_rf_shocks(1:len_tail,:);
+					pp = splinefit (xx', tmp_rf_shocks, 6, "order", 2);
+					spline_struct( length(spline_struct) + 1).pp = pp;
+					spline_struct( length(spline_struct)).id = strrep(rf_obj.description,'_','');
+					spline_struct( length(spline_struct)).distr = tmp_rf_shocks;
+				else % BM model scale by 100
+					tmp_rf_shocks = 100*(rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base'));
+					tmp_rf_shocks = tmp_rf_shocks(sortedscennumbers,:);
+					tmp_rf_shocks = tmp_rf_shocks(1:len_tail,:);
+					pp = splinefit (xx', tmp_rf_shocks, 6, "order", 2);
+					spline_struct( length(spline_struct) + 1).pp = pp;
+					spline_struct( length(spline_struct)).id = strrep(rf_obj.description,'_','');
+					spline_struct( length(spline_struct)).distr = tmp_rf_shocks;
+				end
+			end
+		end
+		% Plot
+		hq = figure(1);
+		clf;
+		id_cell = {};
+		for jj=2:1:length(spline_struct)
+			pp = spline_struct(jj).pp;
+			%~ distr = spline_struct(jj).distr .* 100;
+			id_cell(jj) = spline_struct(jj).id;
+			y = ppval (pp, xx') .* 100;
+			plot(xx,y,'linewidth',1.2);
+			hold on;
+			%~ plot(xx,distr,'.');
+			%~ hold on;
+		end
+		hold off;
+		ha =get (gcf, 'currentaxes');
+		quantile_999 = 0.001 * para_object.mc;
+		quantile_95 = 0.05 * para_object.mc;
+		quantile_90 = 0.1 * para_object.mc;
+		quantile_84 = para_object.mc - normcdf(1)*para_object.mc;
+		set(ha,'xtick',[quantile_999 quantile_95 quantile_90 quantile_84 ]);
+		set(ha,'xticklabel',{'99.9%','95%','90%','84.1%'});
+		xlabel('Quantile','fontsize',14);
+		ylabel('Risk Factor Shock (in Pct.)','fontsize',14);
+		%title('Risk Factor tail dependency','fontsize',14);
+		legend(cellstr(id_cell)(2:end),'fontsize',14,'location','southeast');
+		grid on;
+		% save plotting
+        filename_plot_rf_quantile = strcat(path_reports,'/',obj.id,'_rf_quantile_plot.png');
+        print (hq,filename_plot_rf_quantile, "-dpng", "-S1000,400")
+		% ----------------------------------------------------------------------
       end
   end	      					
 % --------------    VaR History Plotting   -----------------------------
@@ -128,19 +197,30 @@ elseif (strcmpi(type,'history'))
 	  if (length(hist_bv)>0 && length(hist_bv) == length(hist_var) ...
 						&& length(hist_dates) == length(hist_var) ...
 						&& length(hist_bv) == length(hist_dates))  	
+		
 		hvar = figure(1);
 		clf;
 		xx=1:1:length(hist_bv);
 		hist_var_rel = 100 .* hist_var ./ hist_bv;
+		% TODO: limit plotting in figure
+		upper_warning 	= ones(1,length(hist_bv)) .* hist_var_rel(end) .* 1.02;
+		upper_limit 	= ones(1,length(hist_bv)) .* max(hist_var_rel) .* 1.02;
+		lower_warning 	= ones(1,length(hist_bv)) .* hist_var_rel(end) .* 0.98;
+		lower_limit 	= ones(1,length(hist_bv)) .* min(hist_var_rel) .* 0.98;
+		
 		[ax h1 h2] = plotyy (xx,hist_bv, xx,hist_var_rel, @plot, @plot);
         xlabel(ax(1),'Reporting Date','fontsize',12);
+        set(ax(1),'visible','on');
+ 		set(ax(2),'visible','on');
+        set(ax(1),'layer','top');
         set(ax(1),'xtick',xx);
         set(ax(1),'xlim',[0.8, length(xx)+0.2]);
         set(ax(1),'ylim',[0.98*min(hist_bv), 1.02*max(hist_bv)]);
 		set(ax(1),'xticklabel',hist_dates);
+		set(ax(2),'layer','top');
 		set(ax(2),'xtick',xx);
 		set(ax(2),'xlim',[0.8, length(xx)+0.2]);
-		set(ax(2),'ylim',[floor(min(hist_var_rel)), ceil(max(hist_var_rel))]);
+		set(ax(2),'ylim',[floor(0.97*min(hist_var_rel)), ceil(1.03*max(hist_var_rel))]);
 		set(ax(2),'xticklabel',{});
 		set (h1,'linewidth',1);
 		set (h1,'color',or_blue);
@@ -152,15 +232,8 @@ elseif (strcmpi(type,'history'))
 		set (h2,'marker','o');
 		set (h2,'markerfacecolor',or_orange);
 		set (h2,'markeredgecolor',or_orange);
-
 		ylabel (ax(1), strcat('Base Value (',obj.currency,')'),'fontsize',12);
 		ylabel (ax(2), strcat('VaR relative (in Pct)'),'fontsize',12);
-		%~ text (0.5, 0.5, "Base Values (left axis)", ...
-		   %~ "color", "red", "horizontalalignment", "center", "parent", ax(1));
-		%~ text (4.5, 80, "VaR (right axis)", ...
-		   %~ "color", "blue", "horizontalalignment", "center", "parent", ax(2));
-		%title ('History of Portfolio Base Value and VaR','fontsize',14);
- 			
 		% save plotting
 		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.png');
 		print (hvar,filename_plot_varhist, "-dpng", "-S600,250");		
@@ -234,8 +307,8 @@ elseif (strcmpi(type,'var'))
       clf;
       subplot (1, 2, 1)
         hist(endstaende_reldiff_shock.*100,40,'facecolor',or_blue);
-        title_string = {'Histogram'; strcat('Portfolio PnL ',scen_set);};
-        title (title_string,'fontsize',12);
+        %title_string = {'Histogram'; strcat('Portfolio PnL ',scen_set);};
+        %title (title_string,'fontsize',12);
         xlabel('Relative shock to portflio (in Pct)');
       subplot (1, 2, 2)
 		plot ( [1, mc], [0, 0], 'color',[0.3 0.3 0.3],'linewidth',1);
@@ -245,17 +318,18 @@ elseif (strcmpi(type,'var'))
         plot ( [1, mc], [-mc_var_shock, -mc_var_shock], '-','linewidth',1, 'color',or_orange);
         h=get (gcf, 'currentaxes');
         xlabel('MonteCarlo Scenarios');
-        set(h,'xtick',[1 mc])
-        set(h,'ytick',[min(p_l_absolut_shock) -mc_var_shock/2 0 mc_var_shock/2 max(p_l_absolut_shock)])
+        set(h,'xtick',[1 mc]);
+        set(h,'ytick',[round(min(p_l_absolut_shock)) round(-mc_var_shock/2) 0 ...
+							round(mc_var_shock/2) round(max(p_l_absolut_shock))]);
         h=text(0.025*mc,(-0.75*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
         h=text(0.025*mc,(-1.3*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
         ylabel(strcat('Absolute PnL (in ',fund_currency,')'));
-        title_string = {'Sorted PnL';strcat('Portfolio PnL ',scen_set);};
-        title (title_string,'fontsize',12);
+        %title_string = {'Sorted PnL';strcat('Portfolio PnL ',scen_set);};
+        %title (title_string,'fontsize',12);
         %axis ([1 mc -1.3*mc_var_shock 1.3*mc_var_shock]);
 		% save plotting
 		filename_plot_var = strcat(path_reports,'/',obj.id,'_var_plot.png');
-		print (hf1,filename_plot_var, "-dpng", "-S600,200");
+		print (hf1,filename_plot_var, "-dpng", "-S600,150");
 
 		% Plot 2: position contributions
 	    mc_var_shock = obj.varhd_abs;
@@ -405,5 +479,8 @@ elseif (strcmpi(type,'marketdata'))
 % -------------------    else    ------------------------------------       
 else
 	fprintf('plot: Unknown type %s. Doing nothing.\n',type);
-end 								
+end 		
+
+% update report_struct in object
+obj = obj.set('report_struct',repstruct);						
 end 

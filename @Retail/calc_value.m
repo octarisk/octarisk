@@ -31,7 +31,7 @@ function obj = calc_value(retail,valuation_date,value_type,discount_curve)
 		comp_type   = obj.compounding_type;
 		comp_freq   = obj.compounding_freq;
     
-    if ( columns(tmp_cashflow_values) == 0 || rows(tmp_cashflow_values) == 0 )
+    if ( isempty(tmp_cashflow_values) )
         error('No cash flow values set. CF rollout done?');    
     end
 

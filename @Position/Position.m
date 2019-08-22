@@ -28,6 +28,7 @@ classdef Position
         aa_target_values = []; % target asset allocation values [0.6,0.4]
         equity_target_region_id = ''; % target region allocation {'Europe','NorthAmerica'}
 		equity_target_region_values = []; % target asset allocation values [0.6,0.4]
+		min_req_cash = 0;
         hist_base_values = [];	% historical base values
         hist_var_abs = []; % historical VaR absolute
         hist_report_dates = ''; % historical reporting dates
@@ -192,6 +193,18 @@ classdef Position
         tpt_1000 = 'V4.0'; % 1000_tpt_Version 
         position_failed_cell = {}; 
         aggr_key_struct = struct();
+        report_struct = struct();
+        region_values = [0,0,0,0]; 
+		style_values = [0,0,0,0,0,0,0,0,0];
+		rating_values = [0,0,0];
+		duration_values = [0,0,0]; 
+		country_values = [1,0];
+		region_id = {'Europe','NorthAmerica','Pacific','EmergingMarkets'};
+		rating_id = {'HighGrade','InvGrade','HighYield'};
+		style_id = {'LargeValue','LargeBlend','LargeGrowth','MidValue','MidBlend','MidGrowth','SmallValue','SmallBlend','SmallGrowth'};
+		duration_id = {'Low<3','Mid3-7','High>7'};
+		country_id = {'US','Other'};
+		esg_score = [];
     end
     
     properties (SetAccess = protected )
@@ -304,10 +317,12 @@ classdef Position
 					fprintf('\t%s%2.0f%%\n',tmp_id,a.equity_target_region_values(ii)*100);
 				end
             end
-            if ( iscell(a.hist_report_dates) && length(a.hist_base_values) == length(a.hist_var_abs))
+            if ( iscell(a.hist_report_dates) && ...
+					numel(a.hist_report_dates) == length(a.hist_base_values) && ...
+					length(a.hist_base_values) == length(a.hist_var_abs))
 				fprintf('Historical report values: \n');
 				fprintf('\tReport Date | Base Value | VaR abs. | VaR rel.:\n');
-				for(kk=1:1:length(a.hist_base_values))
+				for(kk=1:1:numel(a.hist_base_values))
 					fprintf('\t%s | %8.2f | %8.2f | %2.2f%%\n',a.hist_report_dates{kk},a.hist_base_values(kk),a.hist_var_abs(kk),100*a.hist_var_abs(kk)/a.hist_base_values(kk));
 				end
 				fprintf('\n');

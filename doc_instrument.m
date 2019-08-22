@@ -1647,4 +1647,4 @@ end
 %! r = r.calc_key_rates(valuation_date,c);
 %! assert(r.getValue('base'),17311.498035,0.00001);
 %! assert(r.getValue('stress')(1),72369.277537,0.00001)
-%! assert(r.get('eff_duration'),17.9878,0.0001);
+%! assert(r.get('eff_duration'),18.0048,0.0001);

@@ -9,7 +9,8 @@ end
 % Get base cf values and dates
 cashflow_dates  = obj.cf_dates;
 cashflow_values = obj.getCF('base');
-if ( columns(cashflow_values) == 0 || rows(cashflow_values) == 0 )
+
+if ( isempty(cashflow_values) )
     error('No cash flow values set. CF rollout done?');    
 end
 
@@ -35,8 +36,10 @@ end
                     rates_discount + 0.0001];
                     
     % calculate values under shock
-    c = discount_curve.set('rates_stress',rates_eff_sensis);                           
-    obj_tmp = obj.calc_value(valuation_date,'stress',c);              
+    c = discount_curve.set('rates_stress',rates_eff_sensis);   
+    obj_tmp = obj;
+    obj_tmp = obj_tmp.rollout('stress',valuation_date,c);                              
+    obj_tmp = obj_tmp.calc_value(valuation_date,'stress',c);              
     value_vec = obj_tmp.getValue('stress');               
     theo_value              = value_vec(1);
     theo_value_100bpdown    = value_vec(2);
