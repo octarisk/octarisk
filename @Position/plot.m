@@ -53,6 +53,8 @@ if (strcmpi(type,'liquidity'))
 		% save plotting
 		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot.png');
 		print (hs,filename_plot_cf, "-dpng", "-S600,200");
+		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot.pdf');
+		print (hs,filename_plot_cf, "-dpdf", "-S600,200");
   elseif ~( strcmpi(scen_set,'base') || strcmpi(scen_set,'stress'))
 		fprintf('plot: Plotting liquidity information for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 		cf_dates = obj.get('cf_dates');
@@ -77,6 +79,8 @@ if (strcmpi(type,'liquidity'))
 		% save plotting
 		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot_mc.png');
 		print (hs,filename_plot_cf, "-dpng", "-S600,200");
+		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot_mc.pdf');
+		print (hs,filename_plot_cf, "-dpdf", "-S600,200");
   else
 	  fprintf('plot: No liquidity plotting possible for scenario set %s === \n',scen_set);  
   end  
@@ -117,6 +121,8 @@ elseif (strcmpi(type,'riskfactor'))
         % save plotting
         filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.png');
         print (hs,filename_plot_rf, "-dpng", "-S600,250");
+        filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.pdf');
+        print (hs,filename_plot_rf, "-dpdf", "-S600,250");
         
         % ----------------------------------------------------------------------
         % plot RF vs quantile smoothing average
@@ -182,6 +188,8 @@ elseif (strcmpi(type,'riskfactor'))
 		% save plotting
         filename_plot_rf_quantile = strcat(path_reports,'/',obj.id,'_rf_quantile_plot.png');
         print (hq,filename_plot_rf_quantile, "-dpng", "-S1000,400")
+        filename_plot_rf_quantile = strcat(path_reports,'/',obj.id,'_rf_quantile_plot.pdf');
+        print (hq,filename_plot_rf_quantile, "-dpdf", "-S1000,400")
 		% ----------------------------------------------------------------------
       end
   end	      					
@@ -236,7 +244,9 @@ elseif (strcmpi(type,'history'))
 		ylabel (ax(2), strcat('VaR relative (in Pct)'),'fontsize',12);
 		% save plotting
 		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.png');
-		print (hvar,filename_plot_varhist, "-dpng", "-S600,250");		
+		print (hvar,filename_plot_varhist, "-dpng", "-S600,260");	
+		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.pdf');
+		print (hvar,filename_plot_varhist, "-dpdf", "-S600,260");		
       else
 		fprintf('plot: Plotting VaR history not possible for portfolio >>%s<<, attributes are either not filled or not identical in length\n',obj.id);	
       end	
@@ -269,6 +279,8 @@ elseif (strcmpi(type,'stress'))
         % save plotting
         filename_plot_stress = strcat(path_reports,'/',obj.id,'_stress_plot.png');
         print (hs,filename_plot_stress, "-dpng", "-S600,300");
+        filename_plot_stress = strcat(path_reports,'/',obj.id,'_stress_plot.pdf');
+        print (hs,filename_plot_stress, "-dpdf", "-S600,300");
     end % end inner if condition nargin
   end % end stress scen_set condition
 
@@ -309,7 +321,7 @@ elseif (strcmpi(type,'var'))
         hist(endstaende_reldiff_shock.*100,40,'facecolor',or_blue);
         %title_string = {'Histogram'; strcat('Portfolio PnL ',scen_set);};
         %title (title_string,'fontsize',12);
-        xlabel('Relative shock to portflio (in Pct)');
+        xlabel('Relative shock to portfolio (in Pct)');
       subplot (1, 2, 2)
 		plot ( [1, mc], [0, 0], 'color',[0.3 0.3 0.3],'linewidth',1);
 		hold on;
@@ -327,9 +339,11 @@ elseif (strcmpi(type,'var'))
         %title_string = {'Sorted PnL';strcat('Portfolio PnL ',scen_set);};
         %title (title_string,'fontsize',12);
         %axis ([1 mc -1.3*mc_var_shock 1.3*mc_var_shock]);
-		% save plotting
-		filename_plot_var = strcat(path_reports,'/',obj.id,'_var_plot.png');
-		print (hf1,filename_plot_var, "-dpng", "-S600,150");
+	  % save plotting
+	  filename_plot_var = strcat(path_reports,'/',obj.id,'_var_plot.png');
+	  print (hf1,filename_plot_var, "-dpng", "-S600,150");
+	  filename_plot_var = strcat(path_reports,'/',obj.id,'_var_plot.pdf');
+	  print (hf1,filename_plot_var, "-dpdf", "-S600,150");
 
 		% Plot 2: position contributions
 	    mc_var_shock = obj.varhd_abs;
@@ -410,6 +424,8 @@ elseif (strcmpi(type,'var'))
 		% save plotting
 		filename_plot_var_pos_instr = strcat(path_reports,'/',obj.id,'_var_pos_instr.png');
 		print (hf2,filename_plot_var_pos_instr, "-dpng", "-S700,200");
+		filename_plot_var_pos_instr = strcat(path_reports,'/',obj.id,'_var_pos_instr.pdf');
+		print (hf2,filename_plot_var_pos_instr, "-dpdf", "-S700,200");
   end  
       
 % -------------    Market Data Curve plotting    ----------------------------- 
@@ -474,6 +490,8 @@ elseif (strcmpi(type,'marketdata'))
       % save plotting
       filename_mktdata_curves = strcat(path_reports,'/',obj.id,'_mktdata_curves.png');
       print (hmarket,filename_mktdata_curves, "-dpng", "-S800,500");
+      filename_mktdata_curves = strcat(path_reports,'/',obj.id,'_mktdata_curves.pdf');
+      print (hmarket,filename_mktdata_curves, "-dpdf", "-S800,500");
     end
   end      
 % -------------------    else    ------------------------------------       

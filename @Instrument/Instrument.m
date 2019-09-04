@@ -38,6 +38,13 @@ classdef Instrument
       duration_values = [0,0,0]; 
       country_values = [1,0];  
       esg_score = []; 
+      issuer = ''; % in case of direct holdings in stocks or bonds
+      counterparty = ''; % in case of swap etfs --> counterparty of swap
+      country_of_origin = '';
+      designated_sponsor = '';
+      market_maker = '';
+      custodian_bank_underlyings = '';
+      fund_replication = ''; % in {'full','sampling','swap'}
     end
  
     properties (SetAccess = protected )
@@ -118,6 +125,14 @@ classdef Instrument
          obj.value_stress = val;
          obj.exposure_stress = val;
       end % automatically set exposure from value
+      
+      function obj = set.fund_replication(obj,fund_replication)
+         if ~(strcmpi(fund_replication,'full') || strcmpi(fund_replication,'sampling') ...
+                || strcmpi(fund_replication,'swap') )
+            error('Instrument fund_replication must be either full, sampling, swap: >>%s<< for id >>%s<<.\n',fund_replication,obj.id);
+         end
+         obj.fund_replication = tolower(fund_replication);
+      end % set.fund_replication
       
     end
     

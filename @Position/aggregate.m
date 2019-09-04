@@ -462,6 +462,9 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
         catch   % if instrument not found raise warning and populate cell
             fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
             position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
+            cash_object = Cash();
+            cash_object = cash_object.set('id',tmp_id,'value_base',0.0);
+            obj = cash_object;
         end
         
     else

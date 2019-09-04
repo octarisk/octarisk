@@ -33,6 +33,7 @@ classdef Position
         hist_var_abs = []; % historical VaR absolute
         hist_report_dates = ''; % historical reporting dates
         srri_target = 4; % portfolio only: target SRRI class
+        custodian_bank = '';	% information about where lies security
         mean_shock = 0;
         std_shock = 0;
         skewness_shock = 0;

@@ -247,6 +247,31 @@ elseif (strcmpi(type,'latex'))
 	    cash_amount = 0;
 	    country_cell = obj.country_id;
 		country_exposure = zeros(1,numel(country_cell));
+		issuer_cell = {};
+		issuer_exposure = [];		
+		custodian_bank_cell = {};
+		custodian_bank_exposure = [];		
+		counterparty_cell = {};
+		counterparty_exposure = [];		
+		designated_sponsor_cell = {};
+		designated_sponsor_exposure = [];		
+		market_maker_cell = {};
+		market_maker_exposure = [];		
+		custodian_bank_underlyings_cell = {};
+		custodian_bank_underlyings_exposure = [];		
+		country_of_origin_cell = {};
+		country_of_origin_exposure = [];		
+		fund_replication_cell = {};
+		fund_replication_exposure = [];	
+		entity_cell = {};
+		entity_exposure = [];
+		entity_relationship_cell = {};
+		issuer = '';
+	    country_of_origin = '';
+	    custodian_bank_underlyings = '';
+	    designated_sponsor = '';
+	    custodian_bank = '';
+	    counterparty = '';	  
 		esg_score = 0;
 		esg_basevalue = 0;
 		region_sum = 0;
@@ -335,13 +360,144 @@ elseif (strcmpi(type,'latex'))
 								pos_obj.getValue('base'));
 						  esg_basevalue = esg_basevalue + pos_obj.getValue('base');
 					  end
+					  % get further instrument properties and load into cell exposure vector
+					  %~ issuer
+					  if ( ~isnull(instr_obj.issuer))
+							[issuer_cell, issuer_exposure] = add_to_exposure_cell(...
+									issuer_cell, issuer_exposure, ...
+									instr_obj.issuer,pos_obj.getValue('base'));
+							[entity_cell, entity_exposure] = add_to_exposure_cell(...
+									entity_cell, entity_exposure, ...
+									instr_obj.issuer,pos_obj.getValue('base'));
+					  end
+					  %~ custodian_bank
+					  if ( ~isnull(pos_obj.custodian_bank))
+							[custodian_bank_cell, custodian_bank_exposure] = add_to_exposure_cell(...
+									custodian_bank_cell, custodian_bank_exposure, ...
+									pos_obj.custodian_bank,pos_obj.getValue('base'));
+							[entity_cell, entity_exposure] = add_to_exposure_cell(...
+									entity_cell, entity_exposure, ...
+									pos_obj.custodian_bank,pos_obj.getValue('base'));
+									
+							if ( ~isnull(instr_obj.issuer))
+								tmpstr = strcat('"',pos_obj.custodian_bank,'"->"',instr_obj.issuer,'" [colorscheme=greys9 color =9]');
+								if (strcmpi(entity_relationship_cell,tmpstr) == false || isempty(strcmpi(entity_relationship_cell,tmpstr)))
+									entity_relationship_cell = [entity_relationship_cell,tmpstr];
+								end
+							end
+								
+					  end
+					  %~ counterparty
+					  if ( ~isnull(instr_obj.counterparty))
+							[counterparty_cell, counterparty_exposure] = add_to_exposure_cell(...
+									counterparty_cell, counterparty_exposure, ...
+									instr_obj.counterparty,pos_obj.getValue('base'));
+							[entity_cell, entity_exposure] = add_to_exposure_cell(...
+									entity_cell, entity_exposure, ...
+									instr_obj.counterparty,pos_obj.getValue('base'));
+									
+							if ( ~isnull(instr_obj.issuer))
+								tmpstr = strcat('"',instr_obj.issuer,'"->"',instr_obj.counterparty,'" [colorscheme=greys9 color =8]');
+								if (strcmpi(entity_relationship_cell,tmpstr) == false  || isempty(strcmpi(entity_relationship_cell,tmpstr)))
+									entity_relationship_cell = [entity_relationship_cell,tmpstr];
+								end
+							end		
+					  end
+					  %~ designated_sponsor
+					  if ( ~isnull(instr_obj.designated_sponsor))
+							[designated_sponsor_cell, designated_sponsor_exposure] = add_to_exposure_cell(...
+									designated_sponsor_cell, designated_sponsor_exposure, ...
+									instr_obj.designated_sponsor,pos_obj.getValue('base'));
+							[entity_cell, entity_exposure] = add_to_exposure_cell(...
+									entity_cell, entity_exposure, ...
+									instr_obj.designated_sponsor,pos_obj.getValue('base'));
+									
+							if ( ~isnull(instr_obj.issuer))
+								tmpstr = strcat('"',instr_obj.issuer,'"->"',instr_obj.designated_sponsor,'" [colorscheme=greys9 color =7]');
+								if (strcmpi(entity_relationship_cell,tmpstr) == false  || isempty(strcmpi(entity_relationship_cell,tmpstr)))
+									entity_relationship_cell = [entity_relationship_cell,tmpstr];
+								end
+							end			
+					  end
+					  %~ market_maker
+					  if ( ~isnull(instr_obj.market_maker))
+							[market_maker_cell, market_maker_exposure] = add_to_exposure_cell(...
+									market_maker_cell, market_maker_exposure, ...
+									instr_obj.market_maker,pos_obj.getValue('base'));
+					  end
+					  %~ custodian_bank_underlyings
+					  if ( ~isnull(instr_obj.custodian_bank_underlyings))
+							[custodian_bank_underlyings_cell, custodian_bank_underlyings_exposure] = add_to_exposure_cell(...
+									custodian_bank_underlyings_cell, custodian_bank_underlyings_exposure, ...
+									instr_obj.custodian_bank_underlyings,pos_obj.getValue('base'));
+							[entity_cell, entity_exposure] = add_to_exposure_cell(...
+									entity_cell, entity_exposure, ...
+									instr_obj.custodian_bank_underlyings,pos_obj.getValue('base'));
+									
+							if ( ~isnull(instr_obj.issuer))
+								tmpstr = strcat('"',instr_obj.issuer,'"->"',instr_obj.custodian_bank_underlyings,'"  [colorscheme=greys9 color =6]');
+								if (strcmpi(entity_relationship_cell,tmpstr) == false  || isempty(strcmpi(entity_relationship_cell,tmpstr)))
+									entity_relationship_cell = [entity_relationship_cell,tmpstr];
+								end
+							end	
+					  end
+					  %~ country_of_origin
+					  if ( ~isnull(instr_obj.country_of_origin))
+							[country_of_origin_cell, country_of_origin_exposure] = add_to_exposure_cell(...
+									country_of_origin_cell, country_of_origin_exposure, ...
+									instr_obj.country_of_origin,pos_obj.getValue('base'));
+							[entity_cell, entity_exposure] = add_to_exposure_cell(...
+									entity_cell, entity_exposure, ...
+									instr_obj.country_of_origin,pos_obj.getValue('base'));
+									
+							if ( ~isnull(instr_obj.custodian_bank_underlyings))
+								tmpstr = strcat('"',instr_obj.custodian_bank_underlyings,'"->"',instr_obj.country_of_origin,'" [colorscheme=greys9 color =5]');
+								if (strcmpi(entity_relationship_cell,tmpstr) == false  || isempty(strcmpi(entity_relationship_cell,tmpstr)))
+									entity_relationship_cell = [entity_relationship_cell,tmpstr];
+								end
+							end	
+					  end
+					  %~ fund_replication
+					  if ( ~isnull(instr_obj.fund_replication))
+							[fund_replication_cell, fund_replication_exposure] = add_to_exposure_cell(...
+									fund_replication_cell, fund_replication_exposure, ...
+									instr_obj.fund_replication,pos_obj.getValue('base'));
+					  end					  
 					end
 				  end
 				catch
 					printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
 				end
 			end
+			entity_cell;
+			entity_exposure;
+			entity_relationship_cell;
+			tmpfilename = strcat(path_reports,'/',obj.id,'_entity_relationship.dot');
+			retval = print_graphviz(tmpfilename,entity_cell,entity_exposure,entity_relationship_cell);
 			
+			repstruct.issuer_cell = issuer_cell;
+			repstruct.issuer_exposure = issuer_exposure;	
+			repstruct.entity_cell = entity_cell;
+			repstruct.entity_exposure = entity_exposure;
+			repstruct.custodian_bank_cell = custodian_bank_cell;
+			repstruct.custodian_bank_exposure = custodian_bank_exposure;
+			repstruct.counterparty_cell = counterparty_cell;
+			repstruct.counterparty_exposure = counterparty_exposure;
+			repstruct.designated_sponsor_cell = designated_sponsor_cell;
+			repstruct.designated_sponsor_exposure = designated_sponsor_exposure;	
+			repstruct.market_maker_cell = market_maker_cell;
+			repstruct.market_maker_exposure	 = market_maker_exposure;
+			repstruct.custodian_bank_underlyings_cell = custodian_bank_underlyings_cell;
+			repstruct.custodian_bank_underlyings_exposure = custodian_bank_underlyings_exposure;
+			repstruct.country_of_origin_cell = country_of_origin_cell;
+			repstruct.country_of_origin_exposure = country_of_origin_exposure;
+			repstruct.fund_replication_cell = fund_replication_cell;
+			repstruct.fund_replication_exposure = fund_replication_exposure;
+		
+			% TODO:
+			% calculate HHI of all cells/exposures
+			% calculate geomean HHI of all concentration risks
+			% plot pie charts
 			if ( abs(esg_basevalue) > 0)
 				esg_score = esg_score / esg_basevalue;
 				esg_rating = get_esg_rating(esg_score);
@@ -450,7 +606,7 @@ elseif (strcmpi(type,'latex'))
 			fprintf(fice, '\\tikzset{set state val/.style args={#1/#2}{#1={fill=octariskgreen!#2}}};\n');
 			fprintf(fice, '\\tikzset{set state val/.list={%s}};\n',em_string);
 			fprintf(fice, '\\definecolor{customgrey}{RGB}{204, 204, 204}\n');
-			fprintf(fice, '\\node[draw,align=left] at (13.5,-8.5) {\\textcolor{octariskblue}{$\\blacksquare$} Developed Markets %2.0f\\%%  \\textcolor{octariskgreen}{$\\blacksquare$} Emerging Markets %2.0f\\%%  \\textcolor{customgrey}{$\\blacksquare$} Other %2.0f\\%%};\n',dm_exp,em_exp,other_exp);
+			fprintf(fice, '\\node[draw,align=left] at (13.5,-8.78) {\\textcolor{octariskblue}{$\\blacksquare$} Developed Markets %2.0f\\%%  \\textcolor{octariskgreen}{$\\blacksquare$} Emerging Markets %2.0f\\%%  \\textcolor{customgrey}{$\\blacksquare$} Other %2.0f\\%%};\n',dm_exp,em_exp,other_exp);
 			
 			% Plot legends for DM and EM
 			[dm_exp_sorted sort_numbers] = sort(dm_exposure_vec,'descend');
@@ -466,14 +622,14 @@ elseif (strcmpi(type,'latex'))
 				orbluecustom = (0.75 - (0.75 * sqrt(dm_exp_sorted(kk) / max(dm_exp_sorted)))) .* orbluediff + orblue;
 				fprintf(fice, '\\definecolor{orbluecustom%d}{RGB}{%3.0f, %3.0f, %3.0f}\n',kk,orbluecustom(1),orbluecustom(2),orbluecustom(3));
 			end
-			fprintf(fice, '\\node[draw,align=left] at (2.0,-7.43) {');
+			fprintf(fice, '\\node[draw,align=left] at (2.0,-7.73) {');
 			for kk=1:1:dm_limit
-				inform_score = get_informscore(dm_exposure_cell{kk});
-				inform_class = get_informclass(inform_score);
+				readiness_score = get_readinessscore(dm_exposure_cell{kk});
+				readiness_class = get_readinessclass(readiness_score);
 				if (kk==1)
-					fprintf(fice, 'Exposure \\& Risk \\\\ \\textcolor{orbluecustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,dm_exposure_cell{kk},dm_exp_sorted(kk),inform_class);
+					fprintf(fice, 'Exposure \\& Risk \\\\ \\textcolor{orbluecustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,dm_exposure_cell{kk},dm_exp_sorted(kk),readiness_class);
 				else
-					fprintf(fice, '\\\\ \\textcolor{orbluecustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,dm_exposure_cell{kk},dm_exp_sorted(kk),inform_class);
+					fprintf(fice, '\\\\ \\textcolor{orbluecustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,dm_exposure_cell{kk},dm_exp_sorted(kk),readiness_class);
 				end
 			end
 			fprintf(fice, '};\n');
@@ -490,7 +646,7 @@ elseif (strcmpi(type,'latex'))
 				orgreencustom = (0.75 - (0.75 * sqrt(dm_exp_sorted(kk) / max(dm_exp_sorted)))) .* orgreendiff + orgreen;
 				fprintf(fice, '\\definecolor{orgreencustom%d}{RGB}{%3.0f, %3.0f, %3.0f}\n',kk,orgreencustom(1),orgreencustom(2),orgreencustom(3));
 			end
-			fprintf(fice, '\\node[draw,align=left] at (4.9,-7.43) {');
+			fprintf(fice, '\\node[draw,align=left] at (4.9,-7.73) {');
 			for kk=1:1:em_limit
 				inform_score = get_informscore(em_exposure_cell{kk});
 				inform_class = get_informclass(inform_score);
@@ -520,7 +676,7 @@ elseif (strcmpi(type,'latex'))
 			
 			fprintf(fifi, '\\center\n');
 			fprintf(fifi, '\\begin{tabular}{r | c || r | c }\n');
-			fprintf(fifi, 'Rating \& Allocation \& Eff. Duration \& Allocation \\\\\\hline\\hline\n');	
+			fprintf(fifi, 'Credit Rating \& Allocation \& Eff. Duration \& Allocation \\\\\\hline\\hline\n');	
 			fprintf(fifi, '%s \& %3.1f\\%% \& %s \& %3.1f\\%%  \\\\\n','High (AAA-AA)',ratingtable(1),durationdesc{1},durationtable(1));	
 			fprintf(fifi, '%s \& %3.1f\\%% \& %s \& %3.1f\\%%  \\\\\n','Mid (A-BBB)',ratingtable(2),durationdesc{2},durationtable(2))
 			fprintf(fifi, '%s \& %3.1f\\%% \& %s \& %3.1f\\%%  \\\\\\hline\n','Low (BB-C)',ratingtable(3),durationdesc{3},durationtable(3))	
@@ -570,6 +726,23 @@ elseif (strcmpi(type,'latex'))
 			fprintf(fies, '\\end{tabular}\n');
 			fclose (fies);
 		end
+		% get portfolio READINESS risk score and class
+		readiness_score = 0;
+		for jj=1:1:numel(country_cell)
+			ctry = country_cell{jj};
+			if ~(strcmpi(ctry,'Other'))
+				ctry_readiness_risk = get_readinessscore(ctry);
+				exposure = country_exposure(jj) / 100;
+				readiness_score = readiness_score + exposure * ctry_readiness_risk;
+			else
+				exp_other = country_exposure(jj) / 100;
+			end
+		end
+		readiness_score = readiness_score / (1 - exp_other);
+		readiness_class = get_readinessclass(readiness_score);
+		repstruct.readiness_score = readiness_score;
+		repstruct.readiness_class = readiness_class;
+		
 		% get portfolio INFORM risk score and class
 		inform_score = 0;
 		for jj=1:1:numel(country_cell)
@@ -668,14 +841,14 @@ elseif (strcmpi(type,'latex'))
 				status_str = '\colorbox{octariskorange}{action required}';
 			end
 			fprintf(fikpi, '%s \& %s \& >%9.0f %s \& %9.0f %s \& %s \\\\\\hline\n','Allocation','Cash',obj.min_req_cash,obj.currency,cash_amount,obj.currency,status_str);
-		% 5) INFORM risk class
-			% Risk | INFORM score | (very) low | low | on track v action
-			if ( strcmpi(inform_class,'very low') || strcmpi(inform_class,'low') )
+		% 5) READINESS risk class
+			% Risk | Country Risk | (very) low | low | on track v action
+			if ( strcmpi(readiness_class,'very low') || strcmpi(readiness_class,'low') )
 				status_str = '\colorbox{octariskgreen}{on track}';
 			else
 				status_str = '\colorbox{octariskorange}{action required}';
 			end
-			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','INFORM score','(very) low',inform_class,status_str);
+			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','Country Risk','(very) low',readiness_class,status_str);
 		% 6) ESG rating
 			% Risk | ESG rating | A-AAA | A | on track v action
 			if (esg_score > 0)
@@ -688,7 +861,7 @@ elseif (strcmpi(type,'latex'))
 			else
 				status_str = '\colorbox{yellow}{not evaluated}';
 			end
-			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','ESG rating','A-AAA',esg_rating,status_str);	
+			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','ESG Rating','AAA-A',esg_rating,status_str);	
 			
 		% end
 		fprintf(fikpi, '\\end{tabular}\n');
@@ -991,4 +1164,99 @@ function retcode = isdevelopedmarket(code)
 	else
 		retcode = false;
 	end
+end
+
+% append or add to cell
+function [id_cell, x_cell] = add_to_exposure_cell(id_cell,x_cell,id,exposure)
+	if ( ~isempty(id) && ~isnull(exposure))	
+		if (strcmpi(id_cell,id) == false || isempty(strcmpi(id_cell,id)))
+			id_cell = [id_cell,id];
+			x_cell = [x_cell,0];
+		end
+		idx_vec = linspace(1,numel(id_cell),numel(id_cell))'; % find index
+		idx = strcmpi(id_cell,id) * idx_vec;
+		x_cell(idx) = x_cell(idx) + exposure;
+	end
+end
+
+% print graphviz file for entity relationship network graph
+function retval = print_graphviz(tmpfilename,entity_cell,entity_exposure,entity_relationship_cell)
+	retval = 1;
+	entity_exposure_scaled = entity_exposure.^2;
+	entity_exposure_scaled = entity_exposure_scaled ./ sum(entity_exposure_scaled); % make sure normalized vector
+	entity_exposure_scaled = entity_exposure_scaled .* 1 + 0.4;
+
+
+fid = fopen (tmpfilename, 'w');
+
+% define header
+    fprintf(fid, 'digraph G {\n');
+    fprintf(fid, '\tfontname = "Bitstream Vera Sans"\n');
+    fprintf(fid, '\tfontsize = 5\n');
+    fprintf(fid, '\tnode [\n');
+    fprintf(fid, '\t\tfontname = "Bitstream Vera Sans"\n');
+    fprintf(fid, '\t\tfontsize = 5\n');
+    fprintf(fid, '\t\tshape = "record"\n');
+    fprintf(fid, '\t]\n');
+    fprintf(fid, '\tedge [\n');
+    fprintf(fid, '\t\tfontname = "Bitstream Vera Sans"\n');
+    fprintf(fid, '\t\tfontsize = 4\n');
+    fprintf(fid, '\t\tarrowsize=0.25\n');
+    %fprintf(fid, '\t\tarrowhead=none\n');
+    fprintf(fid, '\t\tcolor="black"\n');
+    fprintf(fid, '\t]\n');
+    %fprintf(fid, '\tgraph [splines=ortho];\n');
+    %fprintf(fid, '\trankdir=UD;\n');
+    fprintf(fid, '\t\toverlap=scalexy;\n');
+    fprintf(fid, '\t\tsplines=true;\n');
+    
+% define nodes
+	for kk=1:1:length(entity_cell)
+		id = entity_cell{kk};
+		expo = entity_exposure_scaled(kk);
+		rating_color = get_entity_rating(id);
+		fprintf(fid, '\t\t"%s" [label="%s" margin=0 fontcolor=black fontsize=5 width=%1.2f shape=circle style=filled fixedsize=shape colorscheme=rdylgn8 fillcolor=%d ];\n',id,id,expo,rating_color);
+	end
+% relationships
+	for kk=1:1:length(entity_relationship_cell)
+		rel = entity_relationship_cell{kk};
+		fprintf(fid, '\t\t%s;\n',rel);
+	end
+
+% end and close file
+fprintf(fid,'}\n');
+fclose(fid);
+
+end
+
+% ##############################################################################
+% get rating score per entity
+function rating = get_entity_rating(id)
+
+% get credit rating (AAA-D)
+credit_rating = get_credit_rating(id);
+% convert to number 1-8 ( NR = 3 )
+switch (credit_rating)
+  case 'AAA'
+    rating = 8;
+  case 'AA'
+    rating = 7;
+  case 'A'
+    rating = 6;
+  case 'BBB'
+    rating = 5;
+  case 'BB'
+    rating = 4;
+  case 'B'
+    rating = 3;
+  case 'C'
+    rating = 2;
+  case 'D'
+    rating = 1;
+  case 'NR'
+    rating = 5;              
+  otherwise
+    rating = 5;   
+end
+
 end
