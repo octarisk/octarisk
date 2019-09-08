@@ -87,7 +87,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
                 pos_currency = pos_obj_new.get('currency');
                 % Get FX rate:
                 fx_rate 		= get_FX_rate(index_struct,obj.currency, ...
-														pos_currency,scen_set);
+														pos_currency,scen_set);						
 				fx_rate_base 	= get_FX_rate(index_struct,obj.currency, ...
 														pos_currency,'base');
 				pos_value_portcur = pos_value ./ fx_rate;

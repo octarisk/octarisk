@@ -289,6 +289,7 @@ mktdata_struct=struct();
             path_mktdata,input_filename_mktdata,path_output_mktdata, ...
             path_archive,timestamp,archive_flag);
 
+
 parseinput = toc;
 
 
@@ -310,6 +311,7 @@ if (run_mc == true)
     %corr_matrix = load(input_filename_corr_matrix); % path to correlation matrix
 
     [corr_matrix riskfactor_cell] = load_correlation_matrix(path_mktdata,input_filename_corr_matrix,path_archive,timestamp,archive_flag);
+    	
     %corr_matrix = eye(length(riskfactor_struct));  % for test cases
 
     % b) Get distribution parameters: all four moments and return for marginal distributions are taken directly from riskfactors
@@ -341,6 +343,12 @@ if (run_mc == true)
     % --------------------------------------------------------------------------------------------------------------------
     % 2.) Monte Carlo Riskfactor Simulation for all timesteps
     [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timestep,mc_timestep_days);
+    
+    % map risk factors 
+    % Processing MC Mapping file
+	[riskfactor_struct riskfactor_cell mapping_failed_cell] = ...
+				load_riskfactor_mapping(riskfactor_struct, riskfactor_cell, ...
+				path_input,para_object.input_filename_mc_mapping);
 end
 
 % update riskfactor with stresses
@@ -371,7 +379,8 @@ curve_struct=struct();
 index_struct=struct();
 surface_struct=struct();
 [index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,mc_timestep,mc,no_stresstests,run_mc,stresstest_struct);   
-
+%~ c = get_sub_object(index_struct,'FX_EURCAD')
+%~ c = get_sub_object(index_struct,'FX_EURCHF')
 %~ c = get_sub_object(riskfactor_struct,'RF_IR_EUR_1Y')
 %~ c = get_sub_object(curve_struct,'IR_EUR')
 %~ c = get_sub_object(curve_struct,'RF_IR_EUR')
@@ -561,6 +570,7 @@ if ( para_object.plotting )
 	port_obj = port_obj.plot(para_object,'stress','stress', ...
 											stresstest_struct);
 	port_obj = port_obj.plot(para_object,'liquidity','base');										
+	port_obj = port_obj.plot(para_object,'concentration','base');										
 	% aggregation and risk calculation for all scenario sets
 	for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
 		tmp_scen_set  = scenario_set{ kk };    % get timestep string

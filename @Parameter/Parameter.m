@@ -36,6 +36,7 @@ classdef Parameter
         input_filename_positions = 'positions.csv';
         input_filename_mktdata = 'mktdata.csv';
         input_filename_seed = 'random_seed.dat';
+        input_filename_mc_mapping = 'mc-mapping.csv';
 
         % set filenames for vola surfaces
         input_filename_vola_index = 'vol_index_';

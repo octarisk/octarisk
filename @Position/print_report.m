@@ -74,9 +74,9 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filp, '\\begin{tabular}{l r}\n');
 		fprintf(filp, 'Valuation date \& %s\\\\\n',datestr(para_object.valuation_date));
 		fprintf(filp, 'Portfolio value in reporting currency \& %9.0f %s\\\\\n',obj.getValue('base'),obj.currency);   
-		fprintf(filp, 'Value at Risk (abs.) %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.varhd_rel*100);
-		fprintf(filp, 'Value at Risk (rel.) %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.varhd_abs,obj.currency);
-		fprintf(filp, 'Expected Shortfall %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.expshortfall_rel*100);
+		fprintf(filp, 'Value at Risk (rel.) %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.varhd_rel*100);
+		fprintf(filp, 'Value at Risk (abs.) %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.varhd_abs,obj.currency);
+		%fprintf(filp, 'Expected Shortfall %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.expshortfall_rel*100);
 		fprintf(filp, 'Expected Shortfall %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_abs,obj.currency);
 		fprintf(filp, 'Volatility (annualized) \& %3.1f\\%%\\\\\n',100 * obj.var84_abs * sqrt(250/para_object.mc_timestep_days) / obj.getValue('base'));
 		fprintf(filp, 'Diversification benefit \& %9.1f\\%%\\\\ \n',(1 - obj.diversification_ratio)*100);
@@ -493,10 +493,23 @@ elseif (strcmpi(type,'latex'))
 			repstruct.country_of_origin_exposure = country_of_origin_exposure;
 			repstruct.fund_replication_cell = fund_replication_cell;
 			repstruct.fund_replication_exposure = fund_replication_exposure;
-		
-			% TODO:
+			
 			% calculate HHI of all cells/exposures
+			HHI_issuer = calc_HHI(issuer_exposure);
+			HHI_custodian = calc_HHI(custodian_bank_exposure);
+			HHI_counterparty = calc_HHI(counterparty_exposure);
+			HHI_dessponsor = calc_HHI(designated_sponsor_exposure);
+			HHI_custund = calc_HHI(custodian_bank_underlyings_exposure);
+			HHI_coo = calc_HHI(country_of_origin_exposure);
 			% calculate geomean HHI of all concentration risks
+			exp_vec = [HHI_issuer,HHI_custodian, ...
+						HHI_counterparty,HHI_dessponsor,HHI_custund,HHI_coo];
+			if (sum(isnan(exp_vec))>0)
+				HHI_weighted = 0;
+			else			
+				[HHI_weighted] = geomean(abs([HHI_issuer,HHI_custodian, ...
+						HHI_counterparty,HHI_dessponsor,HHI_custund,HHI_coo]));
+			end
 			% plot pie charts
 			if ( abs(esg_basevalue) > 0)
 				esg_score = esg_score / esg_basevalue;
@@ -862,7 +875,29 @@ elseif (strcmpi(type,'latex'))
 				status_str = '\colorbox{yellow}{not evaluated}';
 			end
 			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','ESG Rating','AAA-A',esg_rating,status_str);	
-			
+		
+		% 7) Concentration Risk
+			% Risk | Concentration | low-mid | XX  | on track v action HHI_risk
+			if HHI_weighted <= 0
+				HHI_risk = "NA";
+			elseif HHI_weighted < 100
+				HHI_risk = "very low";
+			elseif HHI_weighted < 1500
+				HHI_risk = "low";
+			elseif HHI_weighted < 2500
+				HHI_risk = "mid";
+			elseif HHI_weighted < 6400
+				HHI_risk = "high";
+			else
+				HHI_risk = "very high";
+			end
+			if ( strcmpi(HHI_risk,'very high') || strcmpi(HHI_risk,'high'))
+				status_str = '\colorbox{octariskorange}{action required}';
+			else
+				status_str = '\colorbox{octariskgreen}{on track}';
+			end
+			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','Concentration','low-mid',HHI_risk,status_str);	
+				
 		% end
 		fprintf(fikpi, '\\end{tabular}\n');
 		fclose (fikpi);
@@ -1210,6 +1245,9 @@ fid = fopen (tmpfilename, 'w');
     fprintf(fid, '\t\toverlap=scalexy;\n');
     fprintf(fid, '\t\tsplines=true;\n');
     
+    fprintf(fid, '\t\ta[label = "" image="legend_arrows.png" imagescale=true fixedsize=true imagepos=mc shape="rectangle" width=1.5 height=0.5];\n');
+    fprintf(fid, '\t\tr[label = "" image="legend_rating.png" imagescale=true fixedsize=true imagepos=mc shape="rectangle" width=0.166 height=1 color=white];\n');
+    
 % define nodes
 	for kk=1:1:length(entity_cell)
 		id = entity_cell{kk};
@@ -1259,4 +1297,24 @@ switch (credit_rating)
     rating = 5;   
 end
 
+end
+
+% ##############################################################################
+% sort cell and vector
+function [vec_plot, cell_plot] = sort_cells(vec_unsorted,cell_unsorted,max_elems = 5);
+
+	[vec_sorted sorted_numbers ] = sort(vec_unsorted,'descend');
+
+	% Top 5 Positions Basevalue
+	idx = 1; 
+	for ii = 1:1:min(numel(vec_sorted),max_elems);
+		vec_plot(idx)  = vec_sorted(ii) ;
+		cell_plot(idx) = cell_unsorted(sorted_numbers(ii));
+		idx = idx + 1;
+	end
+	%append remaining part
+	if (idx == (max_elems + 1))
+		vec_plot(idx)    = sum(vec_unsorted) - sum(vec_plot) ;
+		cell_plot(idx)   = "Other";
+	end
 end

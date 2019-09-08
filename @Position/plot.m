@@ -91,25 +91,47 @@ elseif (strcmpi(type,'riskfactor'))
   else
 	  fprintf('plot: Plotting Risk Factor Shock results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 	  if isstruct(riskfactor_struct)
-	    abs_rf_shocks_mean = [];
-	    rf_plot_desc = {};
+	    [sortPnL sortedscennumbers] = sort(obj.getValue(scen_set) - obj.getValue('base'));
+	    % calculate numbers of selected quantiles
+	    quantile_9999 = round(max(1,0.0001 * para_object.mc));
+	    quantile_9997 = round(max(1,0.0003 * para_object.mc));
+		quantile_9995 = round(max(1,0.0005 * para_object.mc));
+		quantile_999  = round(max(1,0.001 * para_object.mc));
+		quantile_95   = round(max(1,0.05 * para_object.mc));
+		quantile_90   = round(max(1,0.1 * para_object.mc));
+		quantile_84   = round(para_object.mc - normcdf(1)*para_object.mc);
+		quantile_ats  = round(max(1,(1-para_object.quantile)*para_object.mc));
+		% prefill risk factor and portfolio shock vectors
+	    abs_rf_shocks_mean = [sortPnL(quantile_ats)/obj.getValue('base')];
+	    rf_shocks_9999 = [sortPnL(quantile_9999)/obj.getValue('base')];
+	    rf_shocks_9997 = [sortPnL(quantile_9997)/obj.getValue('base')];
+	    rf_shocks_9995 = [sortPnL(quantile_9995)/obj.getValue('base')];
+	    rf_plot_desc = {'Portfolio'};
+	    
 		for kk=1:1:length(riskfactor_struct)
 			rf_obj = riskfactor_struct(kk).object;
 			if (isobject(rf_obj))
 				abs_rf_shocks = rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base');
-				abs_rf_shocks = abs_rf_shocks(obj.scenario_numbers,:);
+				abs_rf_shocks_quantile = abs_rf_shocks(obj.scenario_numbers,:);
+				tmp_rf_shocks = abs_rf_shocks(sortedscennumbers,:);
+				tmp_rf_shocks_9999 = tmp_rf_shocks(quantile_9999,:);
+				tmp_rf_shocks_9997 = tmp_rf_shocks(quantile_9997,:);
+				tmp_rf_shocks_9995 = tmp_rf_shocks(quantile_9995,:);
 				if ( sum(strcmpi(rf_obj.model,{'GBM','BKM','REL'})) > 0 ) % store relative shocks only
-					abs_rf_shocks_mean = [abs_rf_shocks_mean, mean(abs_rf_shocks)];
-					rf_plot_desc = [rf_plot_desc, rf_obj.description];
+					abs_rf_shocks_mean = [abs_rf_shocks_mean, mean(abs_rf_shocks_quantile)];
+					rf_plot_desc = [rf_plot_desc, rf_obj.description];			
+					rf_shocks_9999 = [rf_shocks_9999, tmp_rf_shocks_9999];
+					rf_shocks_9997 = [rf_shocks_9997, tmp_rf_shocks_9997];
+					rf_shocks_9995 = [rf_shocks_9995, tmp_rf_shocks_9995];
 				end
 			end
 		end
-		abs_rf_shocks_mean = 100 .* abs_rf_shocks_mean;
+		abs_rf_shocks_mean_plot = 100 .* abs_rf_shocks_mean;
 		% Plot risk factor shocks in meaningful way?!? Spider chart, bar chart?
 		xx = 1:1:length(abs_rf_shocks_mean);
         hs = figure(1);
         clf;
-        barh(abs_rf_shocks_mean(1:end), 'facecolor', or_blue);
+        barh(abs_rf_shocks_mean_plot(1:end), 'facecolor', or_blue);
         h=get (gcf, 'currentaxes');
         set(h,'ytick',xx);
         rf_plot_desc = strrep(rf_plot_desc,"RF_","");
@@ -123,18 +145,42 @@ elseif (strcmpi(type,'riskfactor'))
         print (hs,filename_plot_rf, "-dpng", "-S600,250");
         filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.pdf');
         print (hs,filename_plot_rf, "-dpdf", "-S600,250");
-        
+
+        % plot bar charts of selected extreme tail scenarios
+        rf_shocks_extreme = [rf_shocks_9999;rf_shocks_9997;rf_shocks_9995;abs_rf_shocks_mean]' .* 100;
+        xx = 1:1:numel(rf_plot_desc);
+        hs = figure(3);
+        clf;
+        hb = barh(rf_shocks_extreme);
+        set (hb(1), "facecolor", [0.738,0.839,0.902]);
+		set (hb(2), "facecolor", [0.417,0.679,0.835]);
+		set (hb(3), "facecolor", [0.191,0.507,0.738]);
+		set (hb(4), "facecolor", [0.031,0.316,0.609]);
+        h=get (gcf, 'currentaxes');
+        set(h,'ytick',xx);
+        rf_plot_desc = strrep(rf_plot_desc,"RF_","");
+        rf_plot_desc = strrep(rf_plot_desc,"_","-");
+        set(h,'yticklabel',rf_plot_desc(1:end));
+        xlabel('Risk factor shocks (in pct.)','fontsize',12);
+        %title('Risk factor shocks in ATS scenarios','fontsize',14);
+        legend('99.99%','99.97%','99.95%',['VaR Quantile ',num2str((para_object.quantile)*100),'%']);
+        grid on;
+        % save plotting
+        filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.png');
+        print (hs,filename_plot_rf_ext, "-dpng", "-S700,700");
+        filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.pdf');
+        print (hs,filename_plot_rf_ext, "-dpdf", "-S700,700");
+
         % ----------------------------------------------------------------------
         % plot RF vs quantile smoothing average
         % Idea: sort all risk factor shocks by portfolio PnL, splinefit for
         % smoothing and plotting of most relevant risk factors
-        tmp_rf_shocks = rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base');
-        [sortPnL sortedscennumbers] = sort(obj.getValue(scen_set) - obj.getValue('base'));
-        
+
         spline_struct = struct();
         spline_struct(1).pp = 'dummy';
         len_tail = 0.2*para_object.mc;
         xx=1:1:len_tail;
+        smooth_para = 200;
         rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_IR_EUR_5Y','RF_IR_USD_5Y','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
         for kk=1:1:length(rf_cell)
 			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
@@ -143,18 +189,18 @@ elseif (strcmpi(type,'riskfactor'))
 					tmp_rf_shocks = rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base');
 					tmp_rf_shocks = tmp_rf_shocks(sortedscennumbers,:);
 					tmp_rf_shocks = tmp_rf_shocks(1:len_tail,:);
-					pp = splinefit (xx', tmp_rf_shocks, 6, "order", 2);
-					spline_struct( length(spline_struct) + 1).pp = pp;
-					spline_struct( length(spline_struct)).id = strrep(rf_obj.description,'_','');
+					spline_struct( length(spline_struct) + 1).id = strrep(rf_obj.description,'_','');
 					spline_struct( length(spline_struct)).distr = tmp_rf_shocks;
+					yh = smoothts(tmp_rf_shocks,smooth_para);
+					spline_struct( length(spline_struct)).smoothts = yh;
 				else % BM model scale by 100
 					tmp_rf_shocks = 100*(rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base'));
 					tmp_rf_shocks = tmp_rf_shocks(sortedscennumbers,:);
 					tmp_rf_shocks = tmp_rf_shocks(1:len_tail,:);
-					pp = splinefit (xx', tmp_rf_shocks, 6, "order", 2);
-					spline_struct( length(spline_struct) + 1).pp = pp;
-					spline_struct( length(spline_struct)).id = strrep(rf_obj.description,'_','');
+					spline_struct( length(spline_struct)+ 1).id = strrep(rf_obj.description,'_','');
 					spline_struct( length(spline_struct)).distr = tmp_rf_shocks;
+					yh = smoothts(tmp_rf_shocks,smooth_para);
+					spline_struct( length(spline_struct)).smoothts = yh;
 				end
 			end
 		end
@@ -166,7 +212,7 @@ elseif (strcmpi(type,'riskfactor'))
 			pp = spline_struct(jj).pp;
 			%~ distr = spline_struct(jj).distr .* 100;
 			id_cell(jj) = spline_struct(jj).id;
-			y = ppval (pp, xx') .* 100;
+			y = spline_struct(jj).smoothts .* 100;
 			plot(xx,y,'linewidth',1.2);
 			hold on;
 			%~ plot(xx,distr,'.');
@@ -174,23 +220,48 @@ elseif (strcmpi(type,'riskfactor'))
 		end
 		hold off;
 		ha =get (gcf, 'currentaxes');
-		quantile_999 = 0.001 * para_object.mc;
-		quantile_95 = 0.05 * para_object.mc;
-		quantile_90 = 0.1 * para_object.mc;
-		quantile_84 = para_object.mc - normcdf(1)*para_object.mc;
 		set(ha,'xtick',[quantile_999 quantile_95 quantile_90 quantile_84 ]);
 		set(ha,'xticklabel',{'99.9%','95%','90%','84.1%'});
 		xlabel('Quantile','fontsize',14);
 		ylabel('Risk Factor Shock (in Pct.)','fontsize',14);
 		%title('Risk Factor tail dependency','fontsize',14);
-		legend(cellstr(id_cell)(2:end),'fontsize',14,'location','southeast');
+		legend(cellstr(id_cell)(2:end),'fontsize',14,'location','northeast');
 		grid on;
 		% save plotting
         filename_plot_rf_quantile = strcat(path_reports,'/',obj.id,'_rf_quantile_plot.png');
         print (hq,filename_plot_rf_quantile, "-dpng", "-S1000,400")
         filename_plot_rf_quantile = strcat(path_reports,'/',obj.id,'_rf_quantile_plot.pdf');
         print (hq,filename_plot_rf_quantile, "-dpdf", "-S1000,400")
+        
 		% ----------------------------------------------------------------------
+		% plot extreme tail < MC.quantile only
+		hqt = figure(1);
+		clf;
+		id_cell = {};
+		ext_tail = (1-para_object.quantile)*para_object.mc;
+		for jj=2:1:length(spline_struct);
+			distr = spline_struct(jj).distr .* 100;
+			id_cell(jj) = spline_struct(jj).id;
+			y = spline_struct(jj).smoothts .* 100;
+			%plot(xx(1:ext_tail),y(1:ext_tail),'linewidth',1.2);
+			%hold on;
+			plot(xx(1:ext_tail),distr(1:ext_tail),'linewidth',1.2);
+			hold on;
+		end
+		hold off;
+		hat =get (gcf, 'currentaxes');
+		set(hat,'xtick',[quantile_9999 quantile_9995 quantile_999]);
+		set(hat,'xticklabel',{'99.99%','99.95%','99.9%'});
+		xlabel('Quantile','fontsize',14);
+		ylabel('Risk Factor Shock (in Pct.)','fontsize',14);
+		%title('Risk Factor tail dependency','fontsize',14);
+		legend(cellstr(id_cell)(2:end),'fontsize',14,'location','northeast');
+		grid on;
+		% save plotting
+        filename_plot_rf_quantile_ext = strcat(path_reports,'/',obj.id,'_rf_quantile_plot_tail.png');
+        print (hqt,filename_plot_rf_quantile_ext, "-dpng", "-S1000,400")
+        filename_plot_rf_quantile_ext = strcat(path_reports,'/',obj.id,'_rf_quantile_plot_tail.pdf');
+        print (hqt,filename_plot_rf_quantile_ext, "-dpdf", "-S1000,400")
       end
   end	      					
 % --------------    VaR History Plotting   -----------------------------
@@ -295,8 +366,18 @@ elseif (strcmpi(type,'srri'))
 					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 
 	  fprintf('plot: Plotting SRRI results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);						
   end
+
  
- 
+% -------------    Concentration Risk plotting    ----------------------------- 
+elseif (strcmpi(type,'concentration'))
+  if ~( strcmpi(scen_set,'base'))
+	  fprintf('plot: No concentration plots exists for scenario set >>%s<<\n',scen_set);
+  else
+      fprintf('plot: Plotting concentration risk results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);						
+	  repstruct = plot_HHI_piecharts(repstruct,path_reports,obj);						
+  end
+  
+  
 % -------------    VaR plotting    ----------------------------- 
 elseif (strcmpi(type,'var'))
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
@@ -502,3 +583,22 @@ end
 % update report_struct in object
 obj = obj.set('report_struct',repstruct);						
 end 
+
+% ##############################################################################
+
+% helper function
+function yh = smoothts(y,n)
+
+if columns(y) == 1
+	y = y';
+end
+nmean=max(1,round(n/10));
+yd = [mean(y(1:nmean)).*ones(1,n),y,mean(y(end-nmean:end)).*ones(1,n)];
+yd =    filter(ones(1,n)/n, eye(n,1), yd);
+yh = yd(n+1:end-n);
+
+if columns(y) == 1
+	yh = yh';
+end
+end
+% ------------------------------------------------------------------------------

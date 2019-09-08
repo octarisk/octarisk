@@ -32,7 +32,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 % Get FX rate:
                 tmp_fx_rate = get_FX_rate(index_struct,obj.currency,pos_currency,scen_set);
                 tmp_fx_rate_base = get_FX_rate(index_struct,obj.currency,pos_currency,'base');
-
+                
                 % Fill base and scenario values   
                 theo_value_pos = pos_value ./ tmp_fx_rate;  
                 theo_value_pos_base = pos_value_base ./ tmp_fx_rate_base;  
