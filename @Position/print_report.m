@@ -66,7 +66,7 @@ elseif (strcmpi(type,'latex'))
 	  path_reports = strcat(path_main,'/', ...
 					para_object.folder_output,'/',para_object.folder_output_reports);
 	  
-	  % ####  print portfolio risk metrics report
+	  % ####  print portfolio risk metrics report as table
 	    latex_table_port_var = strcat(path_reports,'/table_port_',obj.id,'_var.tex');
 	    filp = fopen (latex_table_port_var, 'w');
 		fprintf(filp, '\\center\n');
@@ -82,12 +82,29 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filp, 'Expected Shortfall (rel.) %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.expshortfall_rel*100);
 		fprintf(filp, 'Expected Shortfall (abs.) %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_abs,obj.currency);
 		fprintf(filp, '\\rowcolor{cblightblue}\n');
-		fprintf(filp, 'Volatility (annualized) \& %3.1f\\%%\\\\\n',100 * obj.var84_abs * sqrt(250/para_object.mc_timestep_days) / obj.getValue('base'));
-		fprintf(filp, 'Diversification benefit \& %9.1f\\%%\\\\ \n',(1 - obj.diversification_ratio)*100);
+		vola_pa = 100 * obj.var84_abs * sqrt(250/para_object.mc_timestep_days) / obj.getValue('base');
+		div_benefit = (1 - obj.diversification_ratio)*100;
+		fprintf(filp, 'Volatility (annualized) \& %3.1f\\%%\\\\\n',vola_pa);
+		fprintf(filp, 'Diversification benefit \& %9.1f\\%%\\\\ \n',div_benefit);
 		fprintf(filp, '\\end{tabular}\n');
 	    fclose (filp);
   
-	  
+	  %  ####  print portfolio risk metrics report as graph
+		latex_port_key_figures = strcat(path_reports,'/',obj.id,'_key_figures.tex');
+	    filp = fopen (latex_port_key_figures, 'w');  
+	    fprintf(filp, '\\node [anchor=west] (bv) at (2.2,0.75) {\\large \\textcolor{octariskblue}{%d k%s}};\n',round(obj.getValue('base')/1000),obj.currency);
+	    fprintf(filp, '\\node [anchor=west] (bvdesc) at (2.2,0.40) {\\small \\textcolor{octariskgrey}{Base Value}};\n');
+		fprintf(filp, '\\node [anchor=west] (repdate) at (2.20,1.65) {\\large \\textcolor{octariskblue}{%s}};\n',datestr(para_object.valuation_date));
+		fprintf(filp, '\\node [anchor=west] (repdatedesc) at (2.20,1.25) {\\small  \\textcolor{octariskgrey}{Reporting Date}};\n');
+		fprintf(filp, '\\node [anchor=west] (varabs) at (5,0.75) {\\large \\textcolor{octariskblue}{%d %s}};\n',round(obj.varhd_abs),obj.currency);
+		fprintf(filp, '\\node [anchor=west] (varabsdesc) at (5,0.4) {\\small \\textcolor{octariskgrey}{VaR (abs.)}};\n');
+		fprintf(filp, '\\node [anchor=west] (varrel) at (5,1.65) {\\large \\textcolor{octariskblue}{VaR %3.1f\\%%}};\n',-obj.varhd_rel*100);
+		fprintf(filp, '\\node [anchor=west] (varreldesc) at (5,1.25) {\\small  \\textcolor{octariskgrey}{%s@%2.1f\\%%}};\n',scen_set,para_object.quantile.*100);
+		fprintf(filp, '\\node [anchor=west] (div) at (7.7,0.75) {\\large \\textcolor{octariskblue}{%3.1f\\%%}};\n',div_benefit);
+		fprintf(filp, '\\node [anchor=west] (divdesc) at (7.7,0.4) {\\small \\textcolor{octariskgrey}{Diversification}};\n');
+		fprintf(filp, '\\node [anchor=west] (vola) at (7.7,1.65) {\\large \\textcolor{octariskblue}{%3.1f\\%%}};\n',vola_pa);
+		fprintf(filp, '\\node [anchor=west] (voladesc) at (7.7,1.25) {\\small  \\textcolor{octariskgrey}{Volatility p.a.}};\n');
+		fclose (filp);
 	  
 	  % #### Print Aggregation Key Asset Class report
 	  aggr_key_struct = obj.get('aggr_key_struct');

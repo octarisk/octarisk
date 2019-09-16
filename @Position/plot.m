@@ -73,8 +73,8 @@ if (strcmpi(type,'liquidity'))
 		hf = figure(1);
 		clf; 
 		pie(liq_exp,liq_cell);
-		titlestring =  ['Liquidity classes'];
-		title(titlestring,'fontsize',12);
+		%titlestring =  ['Liquidity classes'];
+		%title(titlestring,'fontsize',12);
 		%legend(desc_cell,'location','west');
 		axis(1.2.*[-1,1,-1,1]);
 		axis ('tic', 'off'); 	
@@ -111,12 +111,12 @@ if (strcmpi(type,'liquidity'))
 		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot_mc.pdf');
 		print (hs,filename_plot_cf, "-dpdf", "-S600,200");
   else
-	  fprintf('plot: No liquidity plotting possible for scenario set %s === \n',scen_set);  
+	  %fprintf('plot: No liquidity plotting possible for scenario set %s === \n',scen_set);  
   end  
 % --------------    Risk Factor Shock Plotting   -----------------------------
 elseif (strcmpi(type,'riskfactor'))    
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
-	  fprintf('plot: Risk Factor Shock plots exists for scenario set >>%s<<\n',scen_set);
+	  %fprintf('plot: Risk Factor Shock plots exists for scenario set >>%s<<\n',scen_set);
   else
 	  fprintf('plot: Plotting Risk Factor Shock results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 	  if isstruct(riskfactor_struct)
@@ -296,67 +296,17 @@ elseif (strcmpi(type,'riskfactor'))
 % --------------    VaR History Plotting   -----------------------------
 elseif (strcmpi(type,'history'))    
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
-	  fprintf('plot: No history VaR plots exists for scenario set >>%s<<\n',scen_set);
+	  %fprintf('plot: No history VaR plots exists for scenario set >>%s<<\n',scen_set);
   else
 	  fprintf('plot: Plotting VaR history results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
-	  hist_bv = [obj.hist_base_values,obj.getValue('base')];
-	  hist_var = [obj.hist_var_abs,obj.varhd_abs];
-	  hist_dates = [obj.hist_report_dates,datestr(para_object.valuation_date)];
-	  if (length(hist_bv)>0 && length(hist_bv) == length(hist_var) ...
-						&& length(hist_dates) == length(hist_var) ...
-						&& length(hist_bv) == length(hist_dates))  	
-		
-		hvar = figure(1);
-		clf;
-		xx=1:1:length(hist_bv);
-		hist_var_rel = 100 .* hist_var ./ hist_bv;
-		% TODO: limit plotting in figure
-		upper_warning 	= ones(1,length(hist_bv)) .* hist_var_rel(end) .* 1.02;
-		upper_limit 	= ones(1,length(hist_bv)) .* max(hist_var_rel) .* 1.02;
-		lower_warning 	= ones(1,length(hist_bv)) .* hist_var_rel(end) .* 0.98;
-		lower_limit 	= ones(1,length(hist_bv)) .* min(hist_var_rel) .* 0.98;
-		
-		[ax h1 h2] = plotyy (xx,hist_bv, xx,hist_var_rel, @plot, @plot);
-        xlabel(ax(1),'Reporting Date','fontsize',12);
-        set(ax(1),'visible','on');
- 		set(ax(2),'visible','on');
-        set(ax(1),'layer','top');
-        set(ax(1),'xtick',xx);
-        set(ax(1),'xlim',[0.8, length(xx)+0.2]);
-        set(ax(1),'ylim',[0.98*min(hist_bv), 1.02*max(hist_bv)]);
-		set(ax(1),'xticklabel',hist_dates);
-		set(ax(2),'layer','top');
-		set(ax(2),'xtick',xx);
-		set(ax(2),'xlim',[0.8, length(xx)+0.2]);
-		set(ax(2),'ylim',[floor(0.97*min(hist_var_rel)), ceil(1.03*max(hist_var_rel))]);
-		set(ax(2),'xticklabel',{});
-		set (h1,'linewidth',1);
-		set (h1,'color',or_blue);
-		set (h1,'marker','o');
-		set (h1,'markerfacecolor',or_blue);
-		set (h1,'markeredgecolor',or_blue);
-		set (h2,'linewidth',1);
-		set (h2,'color',or_orange);
-		set (h2,'marker','o');
-		set (h2,'markerfacecolor',or_orange);
-		set (h2,'markeredgecolor',or_orange);
-		ylabel (ax(1), ["Base Value (",obj.currency,")"],'fontsize',12);
-		ylabel (ax(2), strcat('VaR relative (in Pct)'),'fontsize',12);
-		% save plotting
-		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.png');
-		print (hvar,filename_plot_varhist, "-dpng", "-S600,260");	
-		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.pdf');
-		print (hvar,filename_plot_varhist, "-dpdf", "-S600,260");		
-      else
-		fprintf('plot: Plotting VaR history not possible for portfolio >>%s<<, attributes are either not filled or not identical in length\n',obj.id);	
-      end	
+	  retcode = plot_hist_var(obj,para_object,path_reports);
   end
 
 
 % -------------    Stress test plotting    ----------------------------- 
 elseif (strcmpi(type,'stress'))
   if ~( strcmpi(scen_set,'stress'))
-	  fprintf('plot: No stress report exists for scenario set >>%s<<\n',scen_set);
+	  %fprintf('plot: No stress report exists for scenario set >>%s<<\n',scen_set);
   else
     if (length(stresstest_struct)>0 && nargin == 5)
 		fprintf('plot: Plotting stress results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);
@@ -389,7 +339,7 @@ elseif (strcmpi(type,'stress'))
 % -------------    SRRI plotting    ----------------------------- 
 elseif (strcmpi(type,'srri'))
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
-	  fprintf('plot: No SRRI plots exists for scenario set >>%s<<\n',scen_set);
+	  %fprintf('plot: No SRRI plots exists for scenario set >>%s<<\n',scen_set);
   else
       [ret idx_figure] = get_srri(obj.varhd_rel,tmp_ts,para_object.quantile, ...
 					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 
@@ -400,7 +350,7 @@ elseif (strcmpi(type,'srri'))
 % -------------    Concentration Risk plotting    ----------------------------- 
 elseif (strcmpi(type,'concentration'))
   if ~( strcmpi(scen_set,'base'))
-	  fprintf('plot: No concentration plots exists for scenario set >>%s<<\n',scen_set);
+	  %fprintf('plot: No concentration plots exists for scenario set >>%s<<\n',scen_set);
   else
       fprintf('plot: Plotting concentration risk results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);						
 	  repstruct = plot_HHI_piecharts(repstruct,path_reports,obj);						
@@ -410,7 +360,7 @@ elseif (strcmpi(type,'concentration'))
 % -------------    VaR plotting    ----------------------------- 
 elseif (strcmpi(type,'var'))
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
-	  fprintf('plot: No VaR plots exists for scenario set >>%s<<\n',scen_set);
+	  %fprintf('plot: No VaR plots exists for scenario set >>%s<<\n',scen_set);
   else
 	  printf('plot: Plotting VaR results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);
 	  % required input
@@ -546,7 +496,7 @@ elseif (strcmpi(type,'var'))
 % -------------    Market Data Curve plotting    ----------------------------- 
 elseif (strcmpi(type,'marketdata'))
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
-	fprintf('plot: No mktdata plots exists for scenario set >>%s<<\n',scen_set);
+	%fprintf('plot: No mktdata plots exists for scenario set >>%s<<\n',scen_set);
   else
     fprintf('plot: Plotting Market Data results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);		
     hmarket = figure(1);
