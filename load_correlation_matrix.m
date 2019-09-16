@@ -155,7 +155,7 @@ if ~( (number_theo_corr == number_set_corr) )
 end
 
 % C) return final matrix and cells  
-fprintf('SUCCESS: loaded correlations for >>%d<< riskfactors. \n',number_rf);
+fprintf('SUCCESS: loaded correlations for >>%d<< riskfactors. \n',numel(cell_unique));
 
 % D) save correlation matrix to folder archive
 if (archive_flag == 1)

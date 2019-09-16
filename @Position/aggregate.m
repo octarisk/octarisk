@@ -29,7 +29,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 pos_value = pos_obj_new.getValue(scen_set);
                 pos_value_base = pos_obj_new.getValue('base');
                 pos_currency = pos_obj_new.get('currency');
-                % Get FX rate:
+                % Get FX rate: conversion from position currency to portfolio currency
                 tmp_fx_rate = get_FX_rate(index_struct,obj.currency,pos_currency,scen_set);
                 tmp_fx_rate_base = get_FX_rate(index_struct,obj.currency,pos_currency,'base');
                 
@@ -180,7 +180,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 tmp_value_clean = tmp_value_clean - accr_interest;
             end            
 
-            % Get FX rate:
+            % Get FX rate: conversion from instrument currency to position currency
             tmp_fx_value_shock = get_FX_rate(index_struct,obj.currency,tmp_currency,scen_set);
             tmp_fx_rate_base = get_FX_rate(index_struct,obj.currency,tmp_currency,'base');
             
@@ -197,7 +197,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             else    % MC scenario set
                 % Store new MC Values in Position's struct
                 theo_value   = tmp_instr_object.getValue(scen_set) ...
-                                        .* tmp_quantity ./ tmp_fx_value_shock; % convert position PnL into fund currency
+                                        .* tmp_quantity ./ tmp_fx_value_shock;
             end
             
             % Fill cash flow values
@@ -464,6 +464,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
             cash_object = Cash();
             cash_object = cash_object.set('id',tmp_id,'value_base',0.0);
+            theo_value = 0;
             obj = cash_object;
         end
         

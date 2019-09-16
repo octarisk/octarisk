@@ -56,6 +56,9 @@ function s = getValue (riskfactor, property, abs_flag, sensitivity) % method get
   end
   if nargin >= 3
     if ( strcmp(abs_flag,'abs') )
+		if isempty(obj.value_base)
+			error('Riskfactor: non-empty value_base required to calculate absolute shock value for risk factor >>%s<<\n',obj.id);
+		end
         s = Riskfactor.get_abs_values(obj.model, s, obj.value_base, sensi);
     else
         s = s;

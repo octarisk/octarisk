@@ -506,32 +506,32 @@ aggr = 0;
 position_failed_cell = {};
 
 if (aggregation_flag == true) % aggregation and reporting batch
-tic;
+	tic;
 
-% aggregate and calc_risk for all portfolios
-for ii = 1:1:length(port_obj_struct)
-	port_obj = port_obj_struct(ii).object;
-	% Base aggregation and risk calculation
-	port_obj = port_obj.aggregate('base', instrument_struct, ...
-											index_struct, para_object);
-	ort_obj = port_obj.calc_risk('base', instrument_struct, ...
-											index_struct, para_object);
-	% aggregation and risk calculation for all scenario sets
-	for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
-		tmp_scen_set  = scenario_set{ kk };    % get timestep string
-		port_obj = port_obj.aggregate(tmp_scen_set, instrument_struct, ...
-											index_struct, para_object);
-		port_obj = port_obj.calc_risk(tmp_scen_set, instrument_struct, ...
-											index_struct, para_object);									
-    end
+	% aggregate and calc_risk for all portfolios
+	for ii = 1:1:length(port_obj_struct)
+		port_obj = port_obj_struct(ii).object;
+		% Base aggregation and risk calculation
+		port_obj = port_obj.aggregate('base', instrument_struct, ...
+												index_struct, para_object);
+		ort_obj = port_obj.calc_risk('base', instrument_struct, ...
+												index_struct, para_object);
+		% aggregation and risk calculation for all scenario sets
+		for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
+			tmp_scen_set  = scenario_set{ kk };    % get timestep string
+			port_obj = port_obj.aggregate(tmp_scen_set, instrument_struct, ...
+												index_struct, para_object);
+			port_obj = port_obj.calc_risk(tmp_scen_set, instrument_struct, ...
+												index_struct, para_object);									
+		end
 
-    position_failed_cell = port_obj.get('position_failed_cell');
-    port_obj_struct(ii).object = port_obj;
-end
+		position_failed_cell = port_obj.get('position_failed_cell');
+		port_obj_struct(ii).object = port_obj;
+	end
 
-aggr = toc;
+	aggr = toc;
 
-% error handling
+	% error handling
 	position_failed_cell = unique(position_failed_cell);
 	if ( length(position_failed_cell) >= 1 )
 		fprintf('\nWARNING: Failed aggregation for %d positions: \n',length(position_failed_cell));
@@ -604,7 +604,7 @@ fprintf('Total time for aggregation:  %6.2f s\n', aggr);
 fprintf('Total time for plotting:  %6.2f s\n', plottime);
 fprintf('Total time for reporting:  %6.2f s\n', reporting_time);
 fprintf('Total time for saving data:  %6.2f s\n', saving_time);
-totaltime = round((parseinput + scengen + curve_gen_time + fulvia + saving_time)*10)/10;
+totaltime = round((parseinput + scengen + curve_gen_time + fulvia + saving_time + plottime + aggr + reporting_time)*10)/10;
 fprintf('Total Runtime:  %6.2f s\n',totaltime);
 
 fprintf('\n');

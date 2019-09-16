@@ -71,13 +71,17 @@ elseif (strcmpi(type,'latex'))
 	    filp = fopen (latex_table_port_var, 'w');
 		fprintf(filp, '\\center\n');
 		fprintf(filp, '\\label{table_port_var}\n');
-		fprintf(filp, '\\begin{tabular}{l r}\n');
-		fprintf(filp, 'Valuation date \& %s\\\\\n',datestr(para_object.valuation_date));
+		fprintf(filp, '\\begin{tabular}{r r}\n');
+		fprintf(filp, '\\rowcolor{cblightblue}\n');
+		fprintf(filp, 'Reporting date \& %s\\\\\n',datestr(para_object.valuation_date));
 		fprintf(filp, 'Portfolio value in reporting currency \& %9.0f %s\\\\\n',obj.getValue('base'),obj.currency);   
+		fprintf(filp, '\\rowcolor{cblightblue}\n');
 		fprintf(filp, 'Value at Risk (rel.) %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.varhd_rel*100);
 		fprintf(filp, 'Value at Risk (abs.) %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.varhd_abs,obj.currency);
-		%fprintf(filp, 'Expected Shortfall %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.expshortfall_rel*100);
-		fprintf(filp, 'Expected Shortfall %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_abs,obj.currency);
+		fprintf(filp, '\\rowcolor{cblightblue}\n');
+		fprintf(filp, 'Expected Shortfall (rel.) %s@%2.1f\\%% \& %9.1f\\%%\\\\\n',scen_set,para_object.quantile.*100,-obj.expshortfall_rel*100);
+		fprintf(filp, 'Expected Shortfall (abs.) %s@%2.1f\\%% \& %9.0f %s\\\\\n',scen_set,para_object.quantile.*100,obj.expshortfall_abs,obj.currency);
+		fprintf(filp, '\\rowcolor{cblightblue}\n');
 		fprintf(filp, 'Volatility (annualized) \& %3.1f\\%%\\\\\n',100 * obj.var84_abs * sqrt(250/para_object.mc_timestep_days) / obj.getValue('base'));
 		fprintf(filp, 'Diversification benefit \& %9.1f\\%%\\\\ \n',(1 - obj.diversification_ratio)*100);
 		fprintf(filp, '\\end{tabular}\n');
@@ -247,6 +251,8 @@ elseif (strcmpi(type,'latex'))
 	    cash_amount = 0;
 	    country_cell = obj.country_id;
 		country_exposure = zeros(1,numel(country_cell));
+		liquidity_class_cell = {};
+		liquidity_class_exposure = [];
 		issuer_cell = {};
 		issuer_exposure = [];		
 		custodian_bank_cell = {};
@@ -369,6 +375,12 @@ elseif (strcmpi(type,'latex'))
 							[entity_cell, entity_exposure] = add_to_exposure_cell(...
 									entity_cell, entity_exposure, ...
 									instr_obj.issuer,pos_obj.getValue('base'));
+					  end
+					  %-  liquidity class
+					  if ( ~isnull(instr_obj.liquidity_class))
+							[liquidity_class_cell, liquidity_class_exposure] = add_to_exposure_cell(...
+									liquidity_class_cell, liquidity_class_exposure, ...
+									instr_obj.liquidity_class,pos_obj.getValue('base'));
 					  end
 					  %~ custodian_bank
 					  if ( ~isnull(pos_obj.custodian_bank))
@@ -493,6 +505,9 @@ elseif (strcmpi(type,'latex'))
 			repstruct.country_of_origin_exposure = country_of_origin_exposure;
 			repstruct.fund_replication_cell = fund_replication_cell;
 			repstruct.fund_replication_exposure = fund_replication_exposure;
+			repstruct.liquidity_class_cell = liquidity_class_cell;
+			repstruct.liquidity_class_exposure = liquidity_class_exposure;
+			
 			
 			% calculate HHI of all cells/exposures
 			HHI_issuer = calc_HHI(issuer_exposure);
@@ -897,7 +912,17 @@ elseif (strcmpi(type,'latex'))
 				status_str = '\colorbox{octariskgreen}{on track}';
 			end
 			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','Concentration','low-mid',HHI_risk,status_str);	
-				
+		% 7) Liquidity Risk
+			% Allocation | Liquidity | high | >50%  | on track v action HHI_risk
+			idx = get_idx_cell(liquidity_class_cell,'high')
+			liq_exp_high = liquidity_class_exposure(idx) ./ sum(liquidity_class_exposure)
+			liq_exp_limit = 0.5;
+			if ( liq_exp_high >=liq_exp_limit )
+				status_str = '\colorbox{octariskgreen}{on track}';
+			else
+				status_str = '\colorbox{octariskorange}{action required}';
+			end
+			fprintf(fikpi, '%s \& %s \& high: >%3.0f\\%%\& high: %3.0f\\%%\& %s \\\\\\hline\n','Allocation','Liquidity',liq_exp_limit*100,liq_exp_high*100,status_str);		
 		% end
 		fprintf(fikpi, '\\end{tabular}\n');
 		fclose (fikpi);
@@ -1316,5 +1341,14 @@ function [vec_plot, cell_plot] = sort_cells(vec_unsorted,cell_unsorted,max_elems
 	if (idx == (max_elems + 1))
 		vec_plot(idx)    = sum(vec_unsorted) - sum(vec_plot) ;
 		cell_plot(idx)   = "Other";
+	end
+end
+
+% get index of certain item in cell
+function idx = get_idx_cell(incell,item)
+	idx_vec = [1:1:numel(incell)]';
+	idx = strcmpi(incell,item) * idx_vec;
+	if  ~isscalar(idx)
+		idx = 0;
 	end
 end

@@ -257,7 +257,13 @@ fprintf('SUCCESS: generated >>%d<< aggregated curve objects from marketdata. \n'
 % Calculate reciprocal FX conversion factors (it is only required to define one conversion factor for each currency.
 % regardless, whether there is an attached risk factor, the reciprocal base (and scenario) values are taken
 % for the corresponding FX exchange rate
+% moreover all possible combinations between base and foreign currencies are generated
+% to allow for arbitrary reporting and instrument currency (precondition:
+% at least there has to be a path between currency pairs (e.g. EURUSD and EURCAD specified
+% to allow for CADUSD and USDCAD conversion)
 new_fx_reciprocal_objects = 0;
+base_cur_cell = {};
+foreign_cur_cell = {};
 for ii = 1 : 1 : length(index_struct)
     tmp_object = index_struct(ii).object;
     tmp_class = lower(class(tmp_object));
@@ -265,7 +271,9 @@ for ii = 1 : 1 : length(index_struct)
         if ( strcmp(tmp_object.type,'Exchange Rate') )    % FX have type 'Exchange Rate'
             tmp_id = tmp_object.id;
             tmp_base_cur = tmp_id(4:6);
+            base_cur_cell = [base_cur_cell,tmp_base_cur];
             tmp_foreign_cur = tmp_id(7:9);
+            foreign_cur_cell = [foreign_cur_cell,tmp_foreign_cur];
             tmp_reciproc_id = strcat('FX_',tmp_foreign_cur,tmp_base_cur);
             try
                 % deriving new Exchange rate parameters
@@ -302,8 +310,60 @@ for ii = 1 : 1 : length(index_struct)
     end
     
 end % end for loop for FX conversion factors
-
-fprintf('SUCCESS: generated >>%d<< reciprocal FX index objects. \n',new_fx_reciprocal_objects);
+base_cur_cell = unique(base_cur_cell);
+foreign_cur_cell = unique(foreign_cur_cell);
+combined_cur_cell = [base_cur_cell, foreign_cur_cell];
+for kk=1:1:numel(combined_cur_cell)
+	for mm=1:1:length(combined_cur_cell)
+		curA = combined_cur_cell{kk};
+		curB = combined_cur_cell{mm};
+		curid = ['FX_',curA,curB];
+		% capture all currency combinations not already covered
+		[curobj retcode] = get_sub_object(index_struct,curid);
+		if (retcode == 0 && ~strcmpi(curA,curB))
+			% TODO: go path curA * FX_EURcurA * FX_curBEUR = curB
+			% therefore make sure EUR refered objects exists, otherwise skip
+			try
+                % deriving new Exchange rate parameters
+                tmp_new_name = strcat(curA,'_',curB);
+                tmp_description = strcat(curA,' ',curB,' Exchange Rate');
+                fx_EUR_A = ['FX_','EUR',curA];
+                fx_B_EUR = ['FX_',curB,'EUR'];
+                [fx_EUR_A_obj retcodeA] = get_sub_object(index_struct,fx_EUR_A);
+                [fx_B_EUR_obj retcodeB] = get_sub_object(index_struct,fx_B_EUR);
+                % new FX object only possible if EUR_XXX are available
+                if ( retcodeA == 1 && retcodeB == 1)
+					tmp_value_base = fx_EUR_A_obj.getValue('base') .* fx_B_EUR_obj.getValue('base');
+					tmp_scenario_stress = fx_EUR_A_obj.getValue('stress') .* fx_B_EUR_obj.getValue('stress');				
+					% invoke new object of class indes:
+					tmp_new_fx_object = Index();
+					tmp_new_fx_object = tmp_new_fx_object.set('name',curid,'id',curid,'description',tmp_description, ...
+						'type',tmp_object.type,'currency',curB,'value_base',tmp_value_base, ...
+						'scenario_stress',tmp_scenario_stress);
+					% store scenario_mc only, if scenario_mc vector contains values (if base Exchange rate has attached risk factor):
+					if ( run_mc == true)
+						tmp_scenario_mc_A = fx_EUR_A_obj.get('scenario_mc');
+						tmp_scenario_mc_B = fx_B_EUR_obj.get('scenario_mc');
+						tmp_timestep_mc = fx_EUR_A_obj.get('timestep_mc');
+						if ~(isempty(tmp_scenario_mc_A)) && ~(isempty(tmp_scenario_mc_B))
+							tmp_scenario_mc = tmp_scenario_mc_A .* tmp_scenario_mc_B;
+							tmp_new_fx_object = tmp_new_fx_object.set('timestep_mc',tmp_timestep_mc,'scenario_mc',tmp_scenario_mc);
+						end
+					end
+					tmp_len_indexstruct = length(index_struct) + 1;
+					index_struct( tmp_len_indexstruct ).id = tmp_reciproc_id;
+					index_struct( tmp_len_indexstruct ).object = tmp_new_fx_object;
+					new_fx_reciprocal_objects = new_fx_reciprocal_objects + 1;
+				end
+            catch
+                fprintf('ERROR: There has been an error for new FX object: >>%s<<. Message: >>%s<< \n',curid,lasterr);
+                id_failed_cell{ length(id_failed_cell) + 1 } =  curid;
+            end
+			
+		end
+	end
+end
+fprintf('SUCCESS: generated >>%d<< new FX index objects. \n',new_fx_reciprocal_objects);
 
 % ##################              Index Stacking         #######################
 aggr_index_objects = 0;

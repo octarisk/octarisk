@@ -26,7 +26,7 @@
 %# @itemize @bullet
 %# @item @var{valdate}: start date for date manipulation
 %# @item @var{arg1}: value to add or subtract
-%# @item @var{arg2}: unit (days, months, years)
+%# @item @var{arg2}: unit (day(s), month(s), year(s))
 %# @end itemize
 %# Single date input possible only. Example call:
 %# @example

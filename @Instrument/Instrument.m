@@ -40,6 +40,7 @@ classdef Instrument
       esg_score = []; 
       issuer = ''; % in case of direct holdings in stocks or bonds
       counterparty = ''; % in case of swap etfs --> counterparty of swap
+      liquidity_class = 'high';
       country_of_origin = '';
       designated_sponsor = '';
       market_maker = '';
@@ -134,6 +135,14 @@ classdef Instrument
          obj.fund_replication = tolower(fund_replication);
       end % set.fund_replication
       
+      function obj = set.liquidity_class(obj,liquidity_class)
+         if ~(strcmpi(liquidity_class,'low') || strcmpi(liquidity_class,'mid') ...
+                || strcmpi(liquidity_class,'high') )
+            error('Instrument liquidity_class must be either low,mid,high: >>%s<< for id >>%s<<.\n',liquidity_class,obj.id);
+         end
+         obj.liquidity_class = tolower(liquidity_class);
+      end % set.liquidity_class
+
     end
     
     methods (Static = true)

@@ -33,6 +33,16 @@ repstruct = obj.report_struct;
 or_green = [0.56863   0.81961   0.13333]; 
 or_blue  = [0.085938   0.449219   0.761719]; 
 or_orange =  [0.945312   0.398438   0.035156];
+
+colorbrewer_map = [ ...
+		239,243,255;
+		198,219,239;
+		158,202,225;
+		107,174,214;
+		49,130,189;
+		8,81,156 ...
+		] ./255;
+		
 % --------------    Liquidity Plotting     -----------------------------
 if (strcmpi(type,'liquidity'))    
   if ( strcmpi(scen_set,'base'))
@@ -55,6 +65,25 @@ if (strcmpi(type,'liquidity'))
 		print (hs,filename_plot_cf, "-dpng", "-S600,200");
 		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot.pdf');
 		print (hs,filename_plot_cf, "-dpdf", "-S600,200");
+		
+		% plot exposure to liquidity classes:
+		liq_cell = repstruct.liquidity_class_cell;
+		liq_exp = repstruct.liquidity_class_exposure;
+		colormap (colorbrewer_map);
+		hf = figure(1);
+		clf; 
+		pie(liq_exp,liq_cell);
+		titlestring =  ['Liquidity classes'];
+		title(titlestring,'fontsize',12);
+		%legend(desc_cell,'location','west');
+		axis(1.2.*[-1,1,-1,1]);
+		axis ('tic', 'off'); 	
+		% save plotting
+		filename_plot_liq = strcat(path_reports,'/',obj.id,'_liquidity_classes.png');
+		print (hs,filename_plot_liq, "-dpng", "-S200,200");
+		filename_plot_liq = strcat(path_reports,'/',obj.id,'_liquidity_classes.pdf');
+		print (hs,filename_plot_liq, "-dpdf", "-S200,200");
+		
   elseif ~( strcmpi(scen_set,'base') || strcmpi(scen_set,'stress'))
 		fprintf('plot: Plotting liquidity information for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 		cf_dates = obj.get('cf_dates');
@@ -73,7 +102,7 @@ if (strcmpi(type,'liquidity'))
 		set(ha,'xtick',xx);
 		set(ha,'xticklabel',plot_desc);
 		xlabel('Cash flow date','fontsize',11);
-		ylabel(strcat('Cash flow amount (in ',obj.currency,')'),'fontsize',11);
+		ylabel(["Cash flow amount (in ",obj.currency,")"],'fontsize',11);
 		title('Projected future cash flows','fontsize',12);
 		%legend('Base Scenario','Average Tail Scenario');
 		% save plotting
@@ -107,10 +136,10 @@ elseif (strcmpi(type,'riskfactor'))
 	    rf_shocks_9997 = [sortPnL(quantile_9997)/obj.getValue('base')];
 	    rf_shocks_9995 = [sortPnL(quantile_9995)/obj.getValue('base')];
 	    rf_plot_desc = {'Portfolio'};
-	    
-		for kk=1:1:length(riskfactor_struct)
-			rf_obj = riskfactor_struct(kk).object;
-			if (isobject(rf_obj))
+	    rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_5Y','RF_IR_USD_5Y','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+		for kk=1:1:length(rf_cell)
+			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
+			if (retcode == 1)
 				abs_rf_shocks = rf_obj.getValue(scen_set,'abs') - rf_obj.getValue('base');
 				abs_rf_shocks_quantile = abs_rf_shocks(obj.scenario_numbers,:);
 				tmp_rf_shocks = abs_rf_shocks(sortedscennumbers,:);
@@ -181,7 +210,7 @@ elseif (strcmpi(type,'riskfactor'))
         len_tail = 0.2*para_object.mc;
         xx=1:1:len_tail;
         smooth_para = 200;
-        rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_IR_EUR_5Y','RF_IR_USD_5Y','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+         rf_cell = {'RF_EQ_EU','RF_IR_EUR_5Y','RF_IR_USD_5Y','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
         for kk=1:1:length(rf_cell)
 			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
 			if (retcode == 1)
@@ -311,7 +340,7 @@ elseif (strcmpi(type,'history'))
 		set (h2,'marker','o');
 		set (h2,'markerfacecolor',or_orange);
 		set (h2,'markeredgecolor',or_orange);
-		ylabel (ax(1), strcat('Base Value (',obj.currency,')'),'fontsize',12);
+		ylabel (ax(1), ["Base Value (",obj.currency,")"],'fontsize',12);
 		ylabel (ax(2), strcat('VaR relative (in Pct)'),'fontsize',12);
 		% save plotting
 		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.png');
@@ -399,7 +428,11 @@ elseif (strcmpi(type,'var'))
       hf1 = figure(1);
       clf;
       subplot (1, 2, 1)
-        hist(endstaende_reldiff_shock.*100,40,'facecolor',or_blue);
+		% limit up shocks
+		diffshocks = endstaende_reldiff_shock.*100;
+		XX=abs(min(diffshocks));
+		diffshocks(diffshocks>XX)=XX;	
+        hist(diffshocks,40,'facecolor',or_blue);
         %title_string = {'Histogram'; strcat('Portfolio PnL ',scen_set);};
         %title (title_string,'fontsize',12);
         xlabel('Relative shock to portfolio (in Pct)');
@@ -416,10 +449,10 @@ elseif (strcmpi(type,'var'))
 							round(mc_var_shock/2) round(max(p_l_absolut_shock))]);
         h=text(0.025*mc,(-0.75*mc_var_shock),num2str(round(-mc_var_shock)));   %add MC Value
         h=text(0.025*mc,(-1.3*mc_var_shock),strcat(num2str(round(mc_var_shock_pct*1000)/10),' %'));   %add MC Value
-        ylabel(strcat('Absolute PnL (in ',fund_currency,')'));
+        ylabel(["Absolute PnL (in ",fund_currency,")"]);
         %title_string = {'Sorted PnL';strcat('Portfolio PnL ',scen_set);};
         %title (title_string,'fontsize',12);
-        %axis ([1 mc -1.3*mc_var_shock 1.3*mc_var_shock]);
+        axis ([1 mc -1.5*mc_var_shock 1.5*mc_var_shock]);
 	  % save plotting
 	  filename_plot_var = strcat(path_reports,'/',obj.id,'_var_plot.png');
 	  print (hf1,filename_plot_var, "-dpng", "-S600,150");
@@ -484,8 +517,9 @@ elseif (strcmpi(type,'var'))
 		pie_chart_values_plot_pos_shock = pie_chart_values_plot_pos_shock ./ sum(pie_chart_values_plot_pos_shock);
 		plot_vec_pie = zeros(1,length(pie_chart_values_plot_pos_shock));
 		plot_vec_pie(1) = 1; 
-		
+		colormap (colorbrewer_map);
 		hf2 = figure(2);
+		colormap (colorbrewer_map);
 		clf; 
 		% Position Basevalue contribution
 		subplot (1, 2, 1) 

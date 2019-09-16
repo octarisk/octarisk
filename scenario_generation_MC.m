@@ -84,6 +84,8 @@ if ( exist(tmp_filename,'file') && (stable_seed == 1))
     if (frob_norm > frob_norm_limit)
         fprintf('scenario_generation_MC: WARNING: Frobenius norm %s of correlation matrix drawn from random numbers minus correlation settings > %s. New random numbers will be drawn.\n',any2str(frob_norm),any2str(frob_norm_limit));
         new_corr = true;
+    else
+		fprintf('scenario_generation_MC: Frobenius norm %s of correlation matrix drawn from random numbers minus correlation settings <= %s. No new random numbers will be drawn.\n',any2str(frob_norm),any2str(frob_norm_limit));
     end
 % otherwise draw new random numbers and save to static folder for next run
 else 
@@ -149,9 +151,9 @@ distr_type = zeros(1,columns(Z));
 for ii = 1 : 1 : columns(Z);
     tmp_ucr = Z(:,ii);
     % mu needs geometric compounding adjustment
-    tmp_mu      = P(1,ii) .^(1/factor_time_horizon); 
+    tmp_mu      = P(1,ii) .^(1/factor_time_horizon);
     % volatility needs adjustment with sqr(t)-rule 
-    tmp_sigma   = P(2,ii) ./ sqrt(factor_time_horizon); 
+    tmp_sigma   = P(2,ii) ./ sqrt(factor_time_horizon);
     tmp_skew    = P(3,ii);
     tmp_kurt    = P(4,ii);
     %generate distribution based on Pearson System (Type 1-7)
