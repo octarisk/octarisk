@@ -52,6 +52,27 @@ if (strcmpi(type,'decomp'))
 	  end
   end
 
+% --------------    Decomp VaRAggregating Key reporting     ------------
+elseif (strcmpi(type,'sql'))  
+  if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
+	  fprintf('print_report: No sql report exist for scenario set >>%s<<\n',scen_set);
+  else
+	  %~ fund_currency = obj.getValue('currency');
+	  %~ aggr_key_struct = obj.get('aggr_key_struct');
+	%~ datestr(para_object.valuation_date)
+	%~ obj.varhd_rel
+	%~ para_object.quantile
+	%~ obj.expshortfall_abs
+	%~ vola_pa = 100 * obj.var84_abs * sqrt(250/para_object.mc_timestep_days) / obj.getValue('base');
+		%~ div_benefit = (1 - obj.diversification_ratio)*100;
+	%~ obj.getValue('base')	
+	%~ obj.varhd_abs
+	% TODO: call sql statements for DB insert of relevant data
+	
+	
+		
+  end
+  
 % ---------------------------------    LaTeX    --------------------------------
 elseif (strcmpi(type,'latex'))  
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
@@ -105,7 +126,28 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filp, '\\node [anchor=west] (vola) at (7.7,1.65) {\\large \\textcolor{octariskblue}{%3.1f\\%%}};\n',vola_pa);
 		fprintf(filp, '\\node [anchor=west] (voladesc) at (7.7,1.25) {\\small  \\textcolor{octariskgrey}{Volatility p.a.}};\n');
 		fclose (filp);
-	  
+		
+	  %  ####  print portfolio risk metrics for simple portfolio
+		latex_port_key_figures = strcat(path_reports,'/',obj.id,'_key_figures_simple.tex');
+	    filp = fopen (latex_port_key_figures, 'w');  
+	    fprintf(filp, '\\node [anchor=west] (repdate) at (3.02,10.455) {\\large \\textcolor{white}{%s}};\n',datestr(para_object.valuation_date));
+		fprintf(filp, '\\node [anchor=west] (repdatedesc) at (3.0,10.10) {\\small  \\textcolor{white}{Reporting Date}};\n');
+	    fprintf(filp, '\\node [anchor=west] (bv) at (6.60,10.45) {\\large \\textcolor{white}{%d k%s}};\n',round(obj.getValue('base')/1000),obj.currency);
+	    fprintf(filp, '\\node [anchor=west] (bvdesc) at (6.60,10.10) {\\small \\textcolor{white}{Base Value}};\n');
+	    fprintf(filp, '\\node [anchor=west] (var) at (1.9,6.68) {\\normalsize \\textcolor{white}{%dk}};\n',round(obj.getValue('base')/1000));
+	    vola_30d = vola_pa/100 * obj.getValue('base') / sqrt(12);
+	    if vola_30d < 1000
+			vola_30d_rounded = round(vola_30d/100)/10;
+	    else
+			vola_30d_rounded = round(vola_30d/1000);
+	    end
+	    
+	    fprintf(filp, '\\node [anchor=west] (var) at (3.45,6.64) {\\footnotesize \\textcolor{white}{most likely $\\pm$%9.1fk}};\n',vola_30d_rounded);
+	    prob = round(1/(1-para_object.quantile));
+	    var_30d = obj.varhd_abs * sqrt(20/para_object.mc_timestep_days);
+	    fprintf(filp, '\\node [anchor=west] (var) at (2.0,5.6) {\\normalsize \\textcolor{white}{1 in %d: <%dk / -%9.1fk}};\n',prob,round((obj.getValue('base') - var_30d)/1000),round(var_30d/100)/10);
+		fclose (filp);	
+
 	  % #### Print Aggregation Key Asset Class report
 	  aggr_key_struct = obj.get('aggr_key_struct');
 	  aa_target_id = obj.get('aa_target_id');
@@ -136,6 +178,8 @@ elseif (strcmpi(type,'latex'))
 			fprintf(fiaa, 'Asset Class \& Basevalue \& Target AA \& Actual AA \& Deviation \& Risk Impact\\\\\\hline\\hline\n');
 			devation_sum = 0;
 			risk_impact_sum = 0;
+			aa_cell = {};
+			aa_exposure = [];
 			for ii = 1 : 1 : min(length(tmp_aggr_cell),25)
 				tmp_aggr_key_value          = tmp_aggr_cell{ii};
 				tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
@@ -149,7 +193,9 @@ elseif (strcmpi(type,'latex'))
 						aa_target = aa_target_values(kk);
 					end
 				end
+				aa_cell = [aa_cell,tmp_aggr_key_value];
 				aa_current = tmp_aggregation_basevalue_pos/obj.getValue('base');
+				aa_exposure =[aa_exposure,aa_current];
 				tmp_deviation = (aa_current - aa_target) * obj.getValue('base');
 				tmp_risk_impact = (tmp_deviation / tmp_aggregation_basevalue_pos) * tmp_decomp_aggr_key_var;
 				risk_impact_sum = risk_impact_sum + tmp_risk_impact;
@@ -164,6 +210,8 @@ elseif (strcmpi(type,'latex'))
 			saa_riskimpact = risk_impact_sum;
 			repstruct.saa_deviation = devation_sum;
 			repstruct.saa_riskimpact = risk_impact_sum;
+			repstruct.aa_exposure = aa_exposure;
+			repstruct.aa_cell = aa_cell;
 		  % plot currency decomposition
 		  elseif strcmpi(tmp_aggr_key_name,'currency')
 			fprintf(fild,'\\\hline ');

@@ -112,5 +112,4 @@ else
 	fprintf('plot: Plotting VaR history not possible for portfolio >>%s<<, attributes are either not filled or not identical in length\n',obj.id);	
 end
 
-
 end

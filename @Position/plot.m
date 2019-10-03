@@ -254,7 +254,7 @@ elseif (strcmpi(type,'riskfactor'))
 		xlabel('Quantile','fontsize',14);
 		ylabel('Risk Factor Shock (in Pct.)','fontsize',14);
 		%title('Risk Factor tail dependency','fontsize',14);
-		legend(cellstr(id_cell)(2:end),'fontsize',14,'location','northeast');
+		legend(cellstr(id_cell)(2:end),'fontsize',12,'location','southeast');
 		grid on;
 		% save plotting
         filename_plot_rf_quantile = strcat(path_reports,'/',obj.id,'_rf_quantile_plot.png');
@@ -284,7 +284,7 @@ elseif (strcmpi(type,'riskfactor'))
 		xlabel('Quantile','fontsize',14);
 		ylabel('Risk Factor Shock (in Pct.)','fontsize',14);
 		%title('Risk Factor tail dependency','fontsize',14);
-		legend(cellstr(id_cell)(2:end),'fontsize',14,'location','northeast');
+		legend(cellstr(id_cell)(2:end),'fontsize',12,'location','southeast');
 		grid on;
 		% save plotting
         filename_plot_rf_quantile_ext = strcat(path_reports,'/',obj.id,'_rf_quantile_plot_tail.png');
@@ -300,8 +300,17 @@ elseif (strcmpi(type,'history'))
   else
 	  fprintf('plot: Plotting VaR history results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 	  retcode = plot_hist_var(obj,para_object,path_reports);
+	  retcode = plot_hist_var_simple(obj,para_object,path_reports);
   end
 
+
+% --------------    AA Pie Chart Plotting   -----------------------------
+elseif (strcmpi(type,'asset_allocation'))    
+  if ( strcmpi(scen_set,'base'))
+	  fprintf('plot: Plotting Asset Allocation pie chart results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+	  repstruct = plot_AA_piecharts(repstruct,path_reports,obj);	
+  end
+			
 
 % -------------    Stress test plotting    ----------------------------- 
 elseif (strcmpi(type,'stress'))
@@ -343,6 +352,8 @@ elseif (strcmpi(type,'srri'))
   else
       [ret idx_figure] = get_srri(obj.varhd_rel,tmp_ts,para_object.quantile, ...
 					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 
+	  [ret idx_figure] = get_srri_simple(obj.varhd_rel,tmp_ts,para_object.quantile, ...
+					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 				
 	  fprintf('plot: Plotting SRRI results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);						
   end
 
@@ -526,7 +537,7 @@ elseif (strcmpi(type,'marketdata'))
 			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);
 			xlabel('Nodes (in days)', "fontsize",12);
 			ylabel('Rates', "fontsize",12);
-		    legend('Base Scenario Rates','VaR scenarios',"location","southeast");
+		    legend({"Base Scenario Rates","VaR scenarios"},"fontsize",12,"location","southeast");
       end
       [curve_obj retcode] = get_sub_object(curve_struct,'IR_USD');
       if retcode == 0
@@ -550,7 +561,7 @@ elseif (strcmpi(type,'marketdata'))
 			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);
 			xlabel('Nodes (in days)', "fontsize",12);
 			ylabel('Rates', "fontsize",12);
-		    legend('Base Scenario Rates','VaR scenarios',"location","southeast");
+		    legend({"Base Scenario Rates","VaR scenarios"},"fontsize",12,"location","southeast");
       end
       % save plotting
       filename_mktdata_curves = strcat(path_reports,'/',obj.id,'_mktdata_curves.png');
