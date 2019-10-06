@@ -301,6 +301,8 @@ for kk = 1 : 1 : length(pos_obj_struct)
         % append pos_id to port_obj.positions{}
         tmp_positions_struct = tmp_port_obj.positions;
         len_positions = length(tmp_positions_struct);
+        % set position currency to portfolio currency
+        tmp_pos_obj = tmp_pos_obj.set('currency',tmp_port_obj.currency);
         tmp_positions_struct( len_positions + 1 ).object = tmp_pos_obj;
         tmp_positions_struct( len_positions + 1 ).id = tmp_pos_obj.id;
         tmp_port_obj.positions = tmp_positions_struct;

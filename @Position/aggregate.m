@@ -29,13 +29,17 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 pos_value = pos_obj_new.getValue(scen_set);
                 pos_value_base = pos_obj_new.getValue('base');
                 pos_currency = pos_obj_new.get('currency');
+                port_currency = obj.currency;
                 % Get FX rate: conversion from position currency to portfolio currency
-                tmp_fx_rate = get_FX_rate(index_struct,obj.currency,pos_currency,scen_set);
-                tmp_fx_rate_base = get_FX_rate(index_struct,obj.currency,pos_currency,'base');
+                tmp_fx_rate = get_FX_rate(index_struct,pos_currency,port_currency,scen_set);
+                tmp_fx_rate_base = get_FX_rate(index_struct,pos_currency,port_currency,'base');
+                
+                %fprintf('%s Pos: %s -> Port: %s Rate: %s Std: %s\n',pos_id,pos_currency,obj.currency,any2str(tmp_fx_rate_base),any2str(std(tmp_fx_rate)));
                 
                 % Fill base and scenario values   
-                theo_value_pos = pos_value ./ tmp_fx_rate;  
-                theo_value_pos_base = pos_value_base ./ tmp_fx_rate_base;  
+                theo_value_pos = pos_value .* tmp_fx_rate;  
+                theo_value_pos_base = pos_value_base .* tmp_fx_rate_base;  
+                %fprintf('%s %s --> %s %s\n',any2str(pos_value_base),pos_currency,any2str(theo_value_pos_base),port_currency);
                 theo_value = theo_value + theo_value_pos;
                 % update Position vectors after currency conversion
                 pos_obj_new.set('currency',obj.currency);	% set to portfolio currency
@@ -82,29 +86,29 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                     pos_obj_new = pos_obj_new.set('tpt_24',theo_value_pos);
                     pos_obj_new = pos_obj_new.set('tpt_26',theo_value_pos);
                     % clean market value in portfolio currency
-                    theo_value_pos_clean = pos_obj_new.tpt_23 ./ tmp_fx_rate;
+                    theo_value_pos_clean = pos_obj_new.tpt_23 .* tmp_fx_rate;
                     pos_obj_new = pos_obj_new.set('tpt_25',theo_value_pos_clean);
                     % accrued interest
-                    accr_int_pos = pos_obj_new.tpt_125 ./ tmp_fx_rate;
+                    accr_int_pos = pos_obj_new.tpt_125 .* tmp_fx_rate;
                     accr_int = accr_int + accr_int_pos;
                     % exposure in portfolio currency
-                    theo_exp_pos = pos_obj_new.tpt_27 ./ tmp_fx_rate;
+                    theo_exp_pos = pos_obj_new.tpt_27 .* tmp_fx_rate;
                     theo_exposure = theo_exposure + theo_exp_pos;
                     pos_obj_new = pos_obj_new.set('tpt_28',theo_exp_pos);
                     pos_obj_new = pos_obj_new.set('tpt_30',theo_exp_pos);
                 elseif (strcmpi(scen_set,'stress') && para.calc_sm_scr == true)    
                     % convert SCR contributions to portfolio currency
-                    scr_ir_up   = pos_obj_new.tpt_97 ./ tmp_fx_rate_base;
-                    scr_ir_down = pos_obj_new.tpt_98 ./ tmp_fx_rate_base;
+                    scr_ir_up   = pos_obj_new.tpt_97 .* tmp_fx_rate_base;
+                    scr_ir_down = pos_obj_new.tpt_98 .* tmp_fx_rate_base;
                     pos_obj_new = pos_obj_new.set('tpt_97',scr_ir_up);
                     pos_obj_new = pos_obj_new.set('tpt_98',scr_ir_down);
                     % equity risk
-                    scr_eq_down_type1 = pos_obj_new.tpt_99 ./ tmp_fx_rate_base;
-                    scr_eq_down_type2 = pos_obj_new.tpt_100 ./ tmp_fx_rate_base;
+                    scr_eq_down_type1 = pos_obj_new.tpt_99 .* tmp_fx_rate_base;
+                    scr_eq_down_type2 = pos_obj_new.tpt_100 .* tmp_fx_rate_base;
                     pos_obj_new = pos_obj_new.set('tpt_99',scr_eq_down_type1);
                     pos_obj_new = pos_obj_new.set('tpt_100',scr_eq_down_type2);
                     % property risk
-                    scr_prop_down = pos_obj_new.tpt_101 ./ tmp_fx_rate_base;
+                    scr_prop_down = pos_obj_new.tpt_101 .* tmp_fx_rate_base;
                     pos_obj_new = pos_obj_new.set('tpt_101',scr_prop_down);
                     % FX risk
                     PnL_stress = theo_value_pos - theo_value_pos_base;
@@ -172,7 +176,8 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             % get instrument value / exposure
             tmp_exposure = tmp_instr_object.get('exposure_base');;
             tmp_value = tmp_instr_object.getValue('base');
-            tmp_currency = tmp_instr_object.get('currency'); 
+            tmp_currency = tmp_instr_object.get('currency');
+            pos_currency = obj.currency;
             tmp_value_clean = tmp_value; 
             accr_interest = 0.0;
             if ( tmp_instr_object.isProp('accrued_interest'))
@@ -181,29 +186,32 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             end            
 
             % Get FX rate: conversion from instrument currency to position currency
-            tmp_fx_value_shock = get_FX_rate(index_struct,obj.currency,tmp_currency,scen_set);
-            tmp_fx_rate_base = get_FX_rate(index_struct,obj.currency,tmp_currency,'base');
+            tmp_fx_value_shock = get_FX_rate(index_struct,tmp_currency,pos_currency,scen_set);
+            tmp_fx_rate_base = get_FX_rate(index_struct,tmp_currency,pos_currency,'base');
+            
+            %fprintf('%s Instr: %s -> Pos: %s Rate: %s Std: %s\n',tmp_id,tmp_currency,pos_currency,any2str(tmp_fx_rate_base),any2str(std(tmp_fx_value_shock)));
             
             % Fill base and scenario values
             if (strcmpi(scen_set,'base'))       
-                theo_value = tmp_value .* tmp_quantity ./ tmp_fx_rate_base;
-                theo_exposure = tmp_exposure .* tmp_quantity ./ tmp_fx_rate_base;
-                theo_value_clean = tmp_value_clean .* tmp_quantity ./ tmp_fx_rate_base;
-                accr_interest = accr_interest .* tmp_quantity ./ tmp_fx_rate_base;
+                theo_value = tmp_value .* tmp_quantity .* tmp_fx_rate_base;
+                %fprintf('%s %s --> %s %s\n',any2str(tmp_value.* tmp_quantity),tmp_currency,any2str(theo_value),pos_currency);
+                theo_exposure = tmp_exposure .* tmp_quantity .* tmp_fx_rate_base;
+                theo_value_clean = tmp_value_clean .* tmp_quantity .* tmp_fx_rate_base;
+                accr_interest = accr_interest .* tmp_quantity .* tmp_fx_rate_base;
             elseif (strcmpi(scen_set,'stress'))  % Stress scenario set
                 % Store new Values in Position's struct
                 theo_value  = tmp_instr_object.getValue(scen_set) ... 
-                                        .*  tmp_quantity ./ tmp_fx_value_shock;
+                                        .*  tmp_quantity .* tmp_fx_value_shock;
             else    % MC scenario set
                 % Store new MC Values in Position's struct
                 theo_value   = tmp_instr_object.getValue(scen_set) ...
-                                        .* tmp_quantity ./ tmp_fx_value_shock;
+                                        .* tmp_quantity .* tmp_fx_value_shock;
             end
             
             % Fill cash flow values
 			if (strcmpi(tmp_instr_object.type,'Bond') || strcmpi(tmp_instr_object.type,'CapFloor'))
 				cf_values = tmp_instr_object.getCF(scen_set) ...
-								.*  tmp_quantity ./ tmp_fx_value_shock;
+								.*  tmp_quantity .* tmp_fx_value_shock;
 				cf_dates = tmp_instr_object.get('cf_dates');
 			elseif (strcmpi(tmp_instr_object.type,'Sensitivity'))	
 				payout_vec = tmp_instr_object.payout_yield;
@@ -215,7 +223,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
 					for kk=1:1:length(month_vec)
 						cf_value = tmp_instr_object.getValue(scen_set) ...
 									.* payout_vec(kk) ...
-									.* tmp_quantity ./ tmp_fx_value_shock;		
+									.* tmp_quantity .* tmp_fx_value_shock;		
 						cf_values = cat(2,cf_values,cf_value);
 						month_act = val_datevec(2);
 						if (month_vec(kk) < month_act) % cf next year
@@ -430,9 +438,9 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 
             elseif (strcmpi(scen_set,'stress') && para.calc_sm_scr == true) 
                 theo_value_base  = tmp_instr_object.getValue('base') ... 
-                                        .*  tmp_quantity ./ tmp_fx_value_shock;
+                                        .*  tmp_quantity .* tmp_fx_value_shock;
                 theo_value_stress  = tmp_instr_object.getValue('stress') ... 
-                                        .*  tmp_quantity ./ tmp_fx_value_shock;
+                                        .*  tmp_quantity .* tmp_fx_value_shock;
                 PnL_stress = theo_value_stress - theo_value_base;
                 % set properties for SCR contribution calculation
                 if ( length(PnL_stress) > 3 )

@@ -321,20 +321,21 @@ for kk=1:1:numel(combined_cur_cell)
 		% capture all currency combinations not already covered
 		[curobj retcode] = get_sub_object(index_struct,curid);
 		if (retcode == 0 && ~strcmpi(curA,curB))
-			% TODO: go path curA * FX_EURcurA * FX_curBEUR = curB
+			% TODO: go path (curA/EUR) / (curB/EUR) = curA/curB
+			% equals (curA in EUR) / (curB in EUR) = curA in curB
 			% therefore make sure EUR refered objects exists, otherwise skip
 			try
                 % deriving new Exchange rate parameters
                 tmp_new_name = strcat(curA,'_',curB);
                 tmp_description = strcat(curA,' ',curB,' Exchange Rate');
-                fx_EUR_A = ['FX_','EUR',curA];
+                fx_A_EUR = ['FX_',curA,'EUR'];
                 fx_B_EUR = ['FX_',curB,'EUR'];
-                [fx_EUR_A_obj retcodeA] = get_sub_object(index_struct,fx_EUR_A);
+                [fx_A_EUR_obj retcodeA] = get_sub_object(index_struct,fx_A_EUR);
                 [fx_B_EUR_obj retcodeB] = get_sub_object(index_struct,fx_B_EUR);
                 % new FX object only possible if EUR_XXX are available
                 if ( retcodeA == 1 && retcodeB == 1)
-					tmp_value_base = fx_EUR_A_obj.getValue('base') .* fx_B_EUR_obj.getValue('base');
-					tmp_scenario_stress = fx_EUR_A_obj.getValue('stress') .* fx_B_EUR_obj.getValue('stress');				
+					tmp_value_base = fx_A_EUR_obj.getValue('base') ./ fx_B_EUR_obj.getValue('base');
+					tmp_scenario_stress = fx_A_EUR_obj.getValue('stress') ./ fx_B_EUR_obj.getValue('stress');				
 					% invoke new object of class indes:
 					tmp_new_fx_object = Index();
 					tmp_new_fx_object = tmp_new_fx_object.set('name',curid,'id',curid,'description',tmp_description, ...
@@ -342,16 +343,16 @@ for kk=1:1:numel(combined_cur_cell)
 						'scenario_stress',tmp_scenario_stress);
 					% store scenario_mc only, if scenario_mc vector contains values (if base Exchange rate has attached risk factor):
 					if ( run_mc == true)
-						tmp_scenario_mc_A = fx_EUR_A_obj.get('scenario_mc');
+						tmp_scenario_mc_A = fx_A_EUR_obj.get('scenario_mc');
 						tmp_scenario_mc_B = fx_B_EUR_obj.get('scenario_mc');
-						tmp_timestep_mc = fx_EUR_A_obj.get('timestep_mc');
+						tmp_timestep_mc = fx_A_EUR_obj.get('timestep_mc');
 						if ~(isempty(tmp_scenario_mc_A)) && ~(isempty(tmp_scenario_mc_B))
-							tmp_scenario_mc = tmp_scenario_mc_A .* tmp_scenario_mc_B;
+							tmp_scenario_mc = tmp_scenario_mc_A ./ tmp_scenario_mc_B;
 							tmp_new_fx_object = tmp_new_fx_object.set('timestep_mc',tmp_timestep_mc,'scenario_mc',tmp_scenario_mc);
 						end
 					end
 					tmp_len_indexstruct = length(index_struct) + 1;
-					index_struct( tmp_len_indexstruct ).id = tmp_reciproc_id;
+					index_struct( tmp_len_indexstruct ).id = curid;
 					index_struct( tmp_len_indexstruct ).object = tmp_new_fx_object;
 					new_fx_reciprocal_objects = new_fx_reciprocal_objects + 1;
 				end

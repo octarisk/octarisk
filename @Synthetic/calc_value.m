@@ -30,16 +30,11 @@ for jj = 1 : 1 : length(tmp_weights)
     underlying_value_vec        = und_obj.getValue(value_type);  
     % Get FX rate:
     tmp_underlying_currency = und_obj.currency; 
-    if ( strcmp(tmp_underlying_currency,tmp_currency) == 1 )
-        tmp_fx_rate_base    = 1;
-        tmp_fx_value        = 1; %ones(scen_number,1);
-    else
-        %Conversion of currency:;
-        tmp_fx_index = strcat('FX_', tmp_currency, tmp_underlying_currency);
-        tmp_fx_struct_obj = get_sub_object(index_struct, tmp_fx_index);
-        tmp_fx_rate_base  = tmp_fx_struct_obj.getValue('base');
-        tmp_fx_value      = tmp_fx_struct_obj.getValue(value_type);
-    end
+    %Conversion of currency:
+    tmp_fx_rate_base = get_FX_rate(index_struct,tmp_currency,tmp_underlying_currency,'base');
+    tmp_fx_value = get_FX_rate(index_struct,tmp_currency,tmp_underlying_currency,value_type);
+
+	% calc value
     tmp_value_base      = tmp_value_base    + tmp_weights(jj) .* underlying_value_base ./ tmp_fx_rate_base;
     tmp_value           = tmp_value      + tmp_weights(jj) .* underlying_value_vec ./ tmp_fx_value;
 end

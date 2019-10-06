@@ -52,27 +52,6 @@ if (strcmpi(type,'decomp'))
 	  end
   end
 
-% --------------    Decomp VaRAggregating Key reporting     ------------
-elseif (strcmpi(type,'sql'))  
-  if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
-	  fprintf('print_report: No sql report exist for scenario set >>%s<<\n',scen_set);
-  else
-	  %~ fund_currency = obj.getValue('currency');
-	  %~ aggr_key_struct = obj.get('aggr_key_struct');
-	%~ datestr(para_object.valuation_date)
-	%~ obj.varhd_rel
-	%~ para_object.quantile
-	%~ obj.expshortfall_abs
-	%~ vola_pa = 100 * obj.var84_abs * sqrt(250/para_object.mc_timestep_days) / obj.getValue('base');
-		%~ div_benefit = (1 - obj.diversification_ratio)*100;
-	%~ obj.getValue('base')	
-	%~ obj.varhd_abs
-	% TODO: call sql statements for DB insert of relevant data
-	
-	
-		
-  end
-  
 % ---------------------------------    LaTeX    --------------------------------
 elseif (strcmpi(type,'latex'))  
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
@@ -105,6 +84,8 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filp, '\\rowcolor{cblightblue}\n');
 		vola_pa = 100 * obj.var84_abs * sqrt(250/para_object.mc_timestep_days) / obj.getValue('base');
 		div_benefit = (1 - obj.diversification_ratio)*100;
+		repstruct.vola_pa = vola_pa;
+		repstruct.div_benefit = div_benefit;
 		fprintf(filp, 'Volatility (annualized) \& %3.1f\\%%\\\\\n',vola_pa);
 		fprintf(filp, 'Diversification benefit \& %9.1f\\%%\\\\ \n',div_benefit);
 		fprintf(filp, '\\end{tabular}\n');
@@ -180,6 +161,8 @@ elseif (strcmpi(type,'latex'))
 			risk_impact_sum = 0;
 			aa_cell = {};
 			aa_exposure = [];
+			aa_sa = [];
+			aa_decomp = [];
 			for ii = 1 : 1 : min(length(tmp_aggr_cell),25)
 				tmp_aggr_key_value          = tmp_aggr_cell{ii};
 				tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
@@ -196,6 +179,8 @@ elseif (strcmpi(type,'latex'))
 				aa_cell = [aa_cell,tmp_aggr_key_value];
 				aa_current = tmp_aggregation_basevalue_pos/obj.getValue('base');
 				aa_exposure =[aa_exposure,aa_current];
+				aa_sa =[aa_sa,tmp_standalone_aggr_key_var];
+				aa_decomp =[aa_decomp,tmp_decomp_aggr_key_var];
 				tmp_deviation = (aa_current - aa_target) * obj.getValue('base');
 				tmp_risk_impact = (tmp_deviation / tmp_aggregation_basevalue_pos) * tmp_decomp_aggr_key_var;
 				risk_impact_sum = risk_impact_sum + tmp_risk_impact;
@@ -212,6 +197,8 @@ elseif (strcmpi(type,'latex'))
 			repstruct.saa_riskimpact = risk_impact_sum;
 			repstruct.aa_exposure = aa_exposure;
 			repstruct.aa_cell = aa_cell;
+			repstruct.aa_sa = aa_sa;
+			repstruct.aa_decomp = aa_decomp;
 		  % plot currency decomposition
 		  elseif strcmpi(tmp_aggr_key_name,'currency')
 			fprintf(fild,'\\\hline ');
@@ -862,6 +849,7 @@ elseif (strcmpi(type,'latex'))
 		% 1) VaR SRRI level
 			% VaR | SRRI level | 4 | 4 | on track v rebalancing
 			srri_actual = get_srri_level(abs(obj.varhd_rel),tmp_ts,para_object.quantile);
+			repstruct.srri_actual = srri_actual;
 			if ( srri_actual == obj.srri_target )
 				status_str = '\colorbox{octariskgreen}{on track}';
 			else
@@ -979,8 +967,8 @@ elseif (strcmpi(type,'latex'))
 			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','Concentration','low-mid',HHI_risk,status_str);	
 		% 7) Liquidity Risk
 			% Allocation | Liquidity | high | >50%  | on track v action HHI_risk
-			idx = get_idx_cell(liquidity_class_cell,'high')
-			liq_exp_high = liquidity_class_exposure(idx) ./ sum(liquidity_class_exposure)
+			idx = get_idx_cell(liquidity_class_cell,'high');
+			liq_exp_high = liquidity_class_exposure(idx) ./ sum(liquidity_class_exposure);
 			liq_exp_limit = 0.5;
 			if ( liq_exp_high >=liq_exp_limit )
 				status_str = '\colorbox{octariskgreen}{on track}';
