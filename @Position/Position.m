@@ -17,9 +17,14 @@ classdef Position
         var_confidence = 0.995;
         varhd_abs = 0;
         varhd_rel = 0;
+        varhd_abs_at = 0; % after tax VaR
+        varhd_rel_at = 0; % after tax VaR
         var_abs = 0;
         var_positionsum = 0;
         diversification_ratio = 0; % only filled for Portfolio
+        tax_benefit = 0.0;	% portfolio attribute
+        tax_rate = 0.0;	% position attribute
+        dtl = 0.0;	% deferred tax liability, portfolio attribute
         decomp_varhd = 0.0; % only filled for Positions
         valuation_date = today;
         reporting_date = today;
@@ -213,6 +218,7 @@ classdef Position
     properties (SetAccess = protected )
       value_stress = [];
       value_mc = [];
+      value_mc_at = [];
       timestep_mc = {};
       exposure_base = [];
       exposure_mc = [];
@@ -275,6 +281,7 @@ classdef Position
          if (strcmpi(a.type,'Position'))
             fprintf('Incremental VaR: %s %s\n',any2str(a.incr_var),a.currency);
             fprintf('Marginal VaR: %s %s\n',any2str(a.marg_var),a.currency);
+            fprintf('tax_rate: %3.4f\n',a.tax_rate); 
             fprintf('TPT Position data:\n');
             fprintf('1_Portfolio_identifying_data: %s\n',any2str(a.tpt_1));
             fprintf('14_Identification_code_of_the_instrument: %s\n',any2str(a.tpt_14));
@@ -284,7 +291,7 @@ classdef Position
             fprintf('21_Quotation_currency_(A): %s\n',any2str(a.tpt_21));
             fprintf('22_Market_valuation_in_quotation_currency_(A): %12.2f\n',a.tpt_22);        
             fprintf('32_Interest_rate_type: %s\n',a.tpt_32);        
-            fprintf('90_Modified_duration_to_maturity_date: %s\n',any2str(a.tpt_90));        
+            fprintf('90_Modified_duration_to_maturity_date: %s\n',any2str(a.tpt_90));  
          elseif (strcmpi(a.type,'Portfolio'))
             fprintf('TPT Portfolio data:\n');
             fprintf('1_Portfolio_identifying_data: %s\n',any2str(a.tpt_1));
@@ -300,6 +307,10 @@ classdef Position
             fprintf('kurtosis_shock: %3.2f \n',a.kurtosis_shock); 
             fprintf('expshortfall_abs@%2.1f%%: %12.2f \n',a.var_confidence*100,a.expshortfall_abs);
             fprintf('expshortfall_rel@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.expshortfall_rel*100);
+            fprintf('varhd_abs_after_tax@%2.1f%%: %12.2f %s\n',a.var_confidence*100,a.varhd_abs_at,a.currency);
+			fprintf('varhd_rel_after_tax@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.varhd_rel_at*100);
+			fprintf('tax_benefit: %12.2f %s\n',a.tax_benefit,a.currency); 
+			fprintf('deferred_tax_liability: %12.2f %s\n',a.dtl,a.currency); 
             fprintf('srri_target: %d \n',a.srri_target); 
             
             if ( length(a.aa_target_values) == length(a.aa_target_id) && length(a.aa_target_values) > 0 )

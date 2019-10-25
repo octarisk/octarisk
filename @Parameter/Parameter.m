@@ -83,6 +83,7 @@ classdef Parameter
         mc_timestep = '';
         mc_timestep_days = 0;
         scenario_set = {'stress'};
+        tax_rate = 0.0;
 
         % specify unique runcode and timestamp:
         runcode = '';

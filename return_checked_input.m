@@ -115,13 +115,19 @@ if ( strcmpi(type,'special'))
       else
 			error ('set: expecting cf_values_mc to be real ');
       end
-    % ====================== set value_mc: if isvector -> append to 
-    %       existing vector / matrix, if ismatrix -> replace existing value
+    % ====================== set value_mc  ======================
     elseif (ischar (prop) && strcmp (prop, 'value_mc'))   
       if (isvector (val) && isreal (val))
 			retval = val;
       else
 			error ('set: expecting value_mc to be a real vector');
+      end
+    % ====================== set value_mc_at  ======================
+    elseif (ischar (prop) && strcmp (prop, 'value_mc_at'))   
+      if (isvector (val) && isreal (val))
+			retval = val;
+      else
+			error ('set: expecting value_mc_at to be a real vector');
       end
     % ====================== set value_stress ======================
     elseif (ischar (prop) && strcmp (prop, 'value_stress'))   
@@ -134,8 +140,7 @@ if ( strcmpi(type,'special'))
             error ('set: expecting value_stress to be a real vector');
         end
       end
-    % ====================== set exposure_mc: if isvector -> append to 
-    %       existing vector / matrix, if ismatrix -> replace existing value
+    % ====================== set exposure_mc  ======================
     elseif (ischar (prop) && strcmp (prop, 'exposure_mc'))   
       if (isvector (val) && isreal (val))
 		 retval = val;

@@ -11,12 +11,16 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
         port_mod_dur = 0.0;
         cash_value = 0.0;
         accr_int = 0.0;
+        position_tax = 0.0;
         if ( strcmpi(scen_set,'base'))
 			cf_values = zeros(1,12);
+			portfolio_tax = 0.0;
 		elseif ( strcmpi(scen_set,'stress'))
 			cf_values = zeros(para.scen_number,12);
+			portfolio_tax = zeros(para.scen_number,1);
 		else % MC scenarios
 			cf_values = zeros(para.mc,12);
+			portfolio_tax = zeros(para.mc,1);
         end
         cf_dates = get_eom_dates(para.valuation_date,12);
 		
@@ -53,6 +57,10 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
 					pos_obj_new.value_mc = [];
 					pos_obj_new = pos_obj_new.set('timestep_mc',scen_set);
 					pos_obj_new = pos_obj_new.set('value_mc',theo_value_pos);
+					% calculate position tax and add to portfolio tax
+					position_tax = pos_obj_new.tax_rate .* (theo_value_pos - theo_value_pos_base);
+					portfolio_tax = portfolio_tax + position_tax;
+					pos_obj_new = pos_obj_new.set('value_mc_at',theo_value_pos - position_tax);
 				end
 
                 % Fill portfolio cash flow attribute with position base values
@@ -164,7 +172,16 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 end
             end
          end
-        
+         
+         % portfolio: calculate after tax, capped at deferred tax liability (dtl)
+         % change in scenario value due to using loss absorbing capacity of dtl:
+         dtl_scen = min(0, obj.dtl - portfolio_tax) - obj.dtl;
+         theo_value_at = theo_value + dtl_scen;
+         %~ port_tax = portfolio_tax(1:min(5,rows(portfolio_tax)))
+         %~ val = theo_value(1:min(5,rows(theo_value)))
+         %~ dtl = dtl_scen(1:min(5,rows(dtl_scen)))
+         %~ vat_at = theo_value_at(1:min(5,rows(theo_value_at)))
+         
     elseif ( strcmpi(obj.type,'POSITION'))
         tmp_id = obj.id;
         tmp_quantity = obj.quantity;
@@ -206,6 +223,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 % Store new MC Values in Position's struct
                 theo_value   = tmp_instr_object.getValue(scen_set) ...
                                         .* tmp_quantity .* tmp_fx_value_shock;
+                theo_value_at = theo_value - (theo_value - obj.getValue('base')) .* obj.tax_rate;
             end
             
             % Fill cash flow values
@@ -507,6 +525,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
         obj = obj.set('timestep_mc',scen_set);
         obj = obj.set('timestep_mc_cf',scen_set);
         obj = obj.set('value_mc',theo_value);
+        obj = obj.set('value_mc_at',theo_value_at);
         obj = obj.set('cf_values_mc',cf_values);
     end
     % in any case store failed position cell

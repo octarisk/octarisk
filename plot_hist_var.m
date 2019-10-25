@@ -1,15 +1,32 @@
 function retcode = plot_hist_var(obj,para_object,path_reports)
 
 retcode = 1;
-hist_bv = [obj.hist_base_values,obj.getValue('base')];
-hist_var = [obj.hist_var_abs,obj.varhd_abs];
-hist_dates = [obj.hist_report_dates,datestr(para_object.valuation_date)];
-
+% fill variables
+hist_bv = [obj.hist_base_values];
+hist_var = [obj.hist_var_abs];
+hist_dates = [obj.hist_report_dates];
 if isempty(obj.hist_cashflow)
-	cashinoutflow = [zeros(1,numel(hist_dates)), obj.current_cashflow];
+	cashinoutflow = [zeros(1,numel(hist_dates))];
 else
-	cashinoutflow = [obj.hist_cashflow, obj.current_cashflow];	  
-end
+	cashinoutflow = [obj.hist_cashflow];	  
+end	
+% make sure hist_date before valuation date
+% remove all values equal or after valuation date
+hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+cashinoutflow(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+% lastly remove from hist_dates
+hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+
+% append current values	
+if isempty(obj.current_cashflow)
+	cashinoutflow = [cashinoutflow, 0];
+else
+	cashinoutflow = [cashinoutflow, obj.current_cashflow];	
+end	
+hist_bv = [hist_bv,obj.getValue('base')];
+hist_var = [hist_var,obj.varhd_abs];
+hist_dates = [hist_dates,datestr(para_object.valuation_date)];
   
 % set colors
 or_green = [0.56863   0.81961   0.13333]; 
@@ -31,8 +48,8 @@ if (numel(hist_bv)>0 && numel(hist_bv) == numel(hist_var) ...
 		cashinoutflow = cashinoutflow(idxstart:end);
 		hist_var = hist_var(idxstart:end);
 		hist_dates = hist_dates(idxstart:end);
-		nextmonthend = datestr(addtodatefinancial(datenum(hist_dates(end)),1,'months'));
-		
+		nextmonthend = datestr(addtodatefinancial(datenum(datestr(para_object.valuation_date)),1,'months'));
+
 		% start plotting
 		hvar = figure(1);
 		clf;

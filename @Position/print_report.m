@@ -129,6 +129,18 @@ elseif (strcmpi(type,'latex'))
 	    fprintf(filp, '\\node [anchor=west] (var) at (2.0,5.6) {\\normalsize \\textcolor{white}{1 in %d: <%dk / -%9.1fk}};\n',prob,round((obj.getValue('base') - var_30d)/1000),round(var_30d/100)/10);
 		fclose (filp);	
 
+	  % ####  print tax details as table
+	    latex_table_var_tax = strcat(path_reports,'/table_port_',obj.id,'_var_tax.tex');
+	    filt = fopen (latex_table_var_tax, 'w');
+		fprintf(filt, '\\center\n');
+		fprintf(filt, '\\label{table_port_var_tax}\n');
+		fprintf(filt, '\\begin{tabular}{c|c|c|c|c}\n');
+		fprintf(filt, 'VaR after tax \& VaR before Tax \& Tax benefit \& Tax benefit (rel.) \& DTL \\\\\\hline\n');
+		tb_rel = abs(100*obj.tax_benefit/obj.varhd_abs);
+		fprintf(filt, '%9.0f %s \& %9.0f %s \& %9.0f %s \& %3.1f\\%% \& %9.0f %s \\\\\n',obj.varhd_abs_at,obj.currency,obj.varhd_abs,obj.currency,obj.tax_benefit,obj.currency,tb_rel,abs(obj.dtl),obj.currency);
+		fprintf(filt, '\\end{tabular}\n');
+	    fclose (filt);
+	    
 	  % #### Print Aggregation Key Asset Class report
 	  aggr_key_struct = obj.get('aggr_key_struct');
 	  aa_target_id = obj.get('aa_target_id');
@@ -860,7 +872,11 @@ elseif (strcmpi(type,'latex'))
 			% Risk | VaR trend | -> | up | on track v action required
 			hist_var = obj.hist_var_abs;
 			hist_bv = obj.hist_base_values;
-			hist_var_rel = hist_var ./ hist_bv;
+			if ( numel(hist_var) == numel(hist_bv) )
+				hist_var_rel = hist_var ./ hist_bv;
+			else
+				error('print_report: Length of historical base values and VaR does not match.\n');
+			end
 			var_rel = abs(obj.varhd_rel);
 			if (length(hist_var_rel) >= 1)
 				arrow_str = '$\rightarrow$'; % default if inside +-2% last VaR (MC error)
@@ -1265,7 +1281,7 @@ end
 % ##############################################################################
 % 			Helper Functions
 %
-% Return true is ISO code contained in developed market cell
+% Return true if ISO code contained in developed market cell
 function retcode = isdevelopedmarket(code)
 
 	DM_cell = {'GB','FR','CH','DE','NL','ES', ...

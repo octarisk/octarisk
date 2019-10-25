@@ -554,7 +554,6 @@ for ii = 1:1:length(port_obj_struct)
 		tmp_scen_set  = scenario_set{ kk };    % get timestep string
 		port_obj = port_obj.print_report(para_object,'LaTeX',tmp_scen_set,stresstest_struct,instrument_struct);	
 		port_obj = port_obj.print_report(para_object,'decomp',tmp_scen_set);
-		port_obj = port_obj.print_report(para_object,'sql',tmp_scen_set);
 	end
     port_obj
     port_obj_struct(ii).object = port_obj;

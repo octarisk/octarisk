@@ -43,6 +43,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
           
           base_value = obj.getValue('base');
           pnl_abs = obj.getValue(scen_set) .- base_value;
+          pnl_abs_at = obj.get('value_mc_at') .- base_value;
           tt = 1:1:no_scen;
           confi = 1 - para.quantile;
           confi_scenario = max(round(confi * no_scen),1);
@@ -52,7 +53,9 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
           
           %  i.) sort arrays
           pnl_relative = pnl_abs ./ base_value;
+          pnl_relative_at = pnl_abs_at ./ base_value;
           [pnl_abs_sorted scen_order_shock] = sort(pnl_abs);
+          [pnl_abs_sorted_at scen_order_shock_at] = sort(pnl_abs_at);
 
           % ii.) Get Value of confidence scenario
           confi_scenarionumber_shock = scen_order_shock(confi_scenario);
@@ -68,9 +71,14 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
           % iv.) make vector with Harrel-Davis Weights
           varhd_abs     = - dot(hd_vec,pnl_abs_sorted);
           varhd_rel     = dot(hd_vec,sort(pnl_relative));
+          varhd_abs_at   = - dot(hd_vec,pnl_abs_sorted_at);
+          varhd_rel_at  = dot(hd_vec,sort(pnl_relative_at));
           var_abs       = - pnl_abs_sorted(confi_scenario);
           var_diff_hd   = abs(var_abs - varhd_abs);
 
+          % v.) make after tax risk calculations
+          tax_benefit = varhd_abs - varhd_abs_at;
+          
           % d) Calculate Expected Shortfall as average of losses in sorted profit and loss vector from [1:confi_scenario-1]:
           expshortfall_abs      = - mean(pnl_abs_sorted(1:confi_scenario-1));
           expshortfall_rel      = - expshortfall_abs ./ base_value;
@@ -286,9 +294,12 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
     else
 		if ( strcmpi(obj.type,'PORTFOLIO'))
 			obj = obj.set('varhd_abs',varhd_abs);
+			obj = obj.set('varhd_abs_at',varhd_abs_at);
+			obj = obj.set('tax_benefit',tax_benefit);
 			obj = obj.set('var_confidence',para.quantile);
 			obj = obj.set('var_abs',var_abs);
 			obj = obj.set('varhd_rel',varhd_rel);
+			obj = obj.set('varhd_rel_at',varhd_rel_at);
 			obj = obj.set('expshortfall_abs',expshortfall_abs);
 			obj = obj.set('scenario_numbers',scenario_numbers);
 			obj = obj.set('diversification_ratio',diversification_ratio);
