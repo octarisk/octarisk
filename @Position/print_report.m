@@ -872,6 +872,13 @@ elseif (strcmpi(type,'latex'))
 			% Risk | VaR trend | -> | up | on track v action required
 			hist_var = obj.hist_var_abs;
 			hist_bv = obj.hist_base_values;
+			hist_dates = obj.hist_report_dates;
+			% remove all values equal or after valuation date
+			hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+			hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+			% lastly remove from hist_dates
+			hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+
 			if ( numel(hist_var) == numel(hist_bv) )
 				hist_var_rel = hist_var ./ hist_bv;
 			else

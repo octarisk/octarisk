@@ -92,7 +92,7 @@ if ~(isnan(HHI_cusbank_undr) && isnan(HHI_des_sponsor) && isnan(HHI_custodian) &
 
 	% Position cusbank_undr_exp distribution
 		subplot (3, 2, 5) 
-		desc_cell = strrep(des_spons_cell,"_",""); %remove "_"
+		desc_cell = strrep(cusbank_undr_cell,"_",""); %remove "_"
 		%plot_vec_pie = zeros(1,numel(desc_cell));
 		%plot_vec_pie(counterparty_exposure==max(counterparty_exposure)) = 1; 
 		pie(cusbank_undr_exp, desc_cell);
@@ -103,7 +103,7 @@ if ~(isnan(HHI_cusbank_undr) && isnan(HHI_des_sponsor) && isnan(HHI_custodian) &
 
 	% Position des_sponsor_exp distribution
 		subplot (3, 2, 6) 
-		desc_cell = strrep(cusbank_undr_cell,"_",""); %remove "_"
+		desc_cell = strrep(des_spons_cell,"_",""); %remove "_"
 		%plot_vec_pie = zeros(1,numel(desc_cell));
 		%plot_vec_pie(counterparty_exposure==max(counterparty_exposure)) = 1; 
 		pie(des_sponsor_exp, desc_cell);

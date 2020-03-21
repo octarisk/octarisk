@@ -9,7 +9,13 @@ if isempty(obj.hist_cashflow)
 else
 	cashinoutflow = [obj.hist_cashflow, obj.current_cashflow];	  
 end
-
+% make sure hist_date before valuation date
+% remove all values equal or after valuation date
+hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+cashinoutflow(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+% lastly remove from hist_dates
+hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
   
 % set colors
 or_green = [0.56863   0.81961   0.13333]; 
