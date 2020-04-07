@@ -36,7 +36,7 @@ classdef Instrument
       style_values = [0,0,0,0,0,0,0,0,0];
       rating_values = [0,0,0];
       duration_values = [0,0,0]; 
-      country_values = [1,0];  
+      country_values = [];  
       esg_score = []; 
       issuer = ''; % in case of direct holdings in stocks or bonds
       counterparty = ''; % in case of swap etfs --> counterparty of swap
@@ -59,7 +59,7 @@ classdef Instrument
       rating_id = {'HighGrade','InvGrade','HighYield'};
       style_id = {'LargeValue','LargeBlend','LargeGrowth','MidValue','MidBlend','MidGrowth','SmallValue','SmallBlend','SmallGrowth'};
       duration_id = {'Low<3','Mid3-7','High>7'};
-      country_id = {'US','Other'};
+      country_id = {};
     end
    
    % Class methods

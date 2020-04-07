@@ -119,7 +119,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
             end
           end
           
-          % fill aggregation keys
+          % 1) fill aggregation keys
           aggr_key_struct = obj.get('aggr_key_struct');
           aggr_key_struct( 1 ).key_name = {};
 		  aggr_key_struct( 1 ).key_values = {};
@@ -215,6 +215,104 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
 		  end
           % store aggr_key_struct
           obj = obj.set('aggr_key_struct',aggr_key_struct);
+          
+          % 2) fill aggregation key struct for assets only
+          aggr_key_struct_assets = obj.get('aggr_key_struct_assets');
+          aggr_key_struct_assets( 1 ).key_name = {};
+		  aggr_key_struct_assets( 1 ).key_values = {};
+		  aggr_key_struct_assets( 1 ).aggregation_mat = [];
+		  aggr_key_struct_assets( 1 ).aggregation_basevalue = 0;
+		  aggr_key_struct_assets( 1 ).aggregation_decomp_shock = 0;
+          aggregation_key = para.aggregation_key;
+          tmp_flag1 = false;
+          tmp_flag2 = false;
+          for (ii=1:1:length(obj.positions))
+            try
+			  pos_obj_new = obj.positions(ii).object;
+			  if (isobject(pos_obj_new) && strcmpi('Asset',pos_obj_new.balance_sheet_item)) % only Assets taken into account
+				if (tmp_flag1 == true)
+					tmp_flag2 = true;
+				end
+				tmp_flag1 = true;
+				pos_id = obj.positions(ii).id;
+				pos_value = pos_obj_new.getValue(scen_set);
+				fund_currency = pos_obj_new.getValue('currency');
+				tmp_basevalue = pos_obj_new.getValue('base');
+				pos_decomp_varhd = pos_obj_new.get('decomp_varhd');
+				% retrieve instrument
+				tmp_instr_object = get_sub_object(instrument_struct,pos_id);
+				
+                % Aggregate positional data according to aggregation keys:
+				for jj = 1 : 1 : length(aggregation_key)
+					if ( tmp_flag1 == true & tmp_flag2 == false)   % first use of struct
+						tmp_aggr_cell = {};
+						aggregation_mat = [];
+						aggregation_basevalue = [];
+						aggregation_decomp_shock = 0;
+					else            % reading from struct from previous instrument
+						tmp_aggr_cell           = aggr_key_struct_assets( jj ).key_values;
+						aggregation_mat         = [aggr_key_struct_assets( jj ).aggregation_mat];
+						aggregation_basevalue   = [aggr_key_struct_assets( jj ).aggregation_basevalue];
+						aggregation_decomp_shock  = [aggr_key_struct_assets( jj ).aggregation_decomp_shock];
+					end
+					if (isProp(tmp_instr_object,aggregation_key{jj}) == 1)
+						tmp_aggr_key_value = getfield(tmp_instr_object,aggregation_key{jj});
+						if (ischar(tmp_aggr_key_value))
+							if ( strcmp(tmp_aggr_key_value,'') == 1 )
+								tmp_aggr_key_value = 'Unknown';
+							end
+							% Assign P&L to aggregation key
+							% check, wether aggr key already exist in cell array
+							if (sum(strcmp(tmp_aggr_cell,tmp_aggr_key_value)) > 0)   % aggregation key found
+								tmp_vec_xx = 1:1:length(tmp_aggr_cell);
+								tmp_aggr_key_index = strcmp(tmp_aggr_cell,tmp_aggr_key_value)*tmp_vec_xx';
+								aggregation_basevalue(:,tmp_aggr_key_index) = aggregation_basevalue(:,tmp_aggr_key_index) + tmp_basevalue;
+								aggregation_mat(:,tmp_aggr_key_index) = aggregation_mat(:,tmp_aggr_key_index) + (pos_value - tmp_basevalue);
+								aggregation_decomp_shock(tmp_aggr_key_index) = aggregation_decomp_shock(tmp_aggr_key_index) + pos_decomp_varhd;
+							else    % aggregation key not found -> set value for first time
+								tmp_aggr_cell{end+1} = tmp_aggr_key_value;
+								tmp_aggr_key_index = length(tmp_aggr_cell);
+								aggregation_basevalue(:,tmp_aggr_key_index) = tmp_basevalue;
+								aggregation_mat(:,tmp_aggr_key_index)       = (pos_value - tmp_basevalue);
+								aggregation_decomp_shock(tmp_aggr_key_index)  = pos_decomp_varhd;
+							end
+						else
+							printf('Aggregation key not valid');
+						end
+					else
+						printf('Aggregation key not found in instrument definition');
+					end
+					% storing updated values in struct
+					aggr_key_struct_assets( jj ).key_name = aggregation_key{jj};
+					aggr_key_struct_assets( jj ).key_values = tmp_aggr_cell;
+					aggr_key_struct_assets( jj ).aggregation_mat = aggregation_mat;
+					aggr_key_struct_assets( jj ).aggregation_basevalue = aggregation_basevalue;
+					aggr_key_struct_assets( jj ).aggregation_decomp_shock = aggregation_decomp_shock;
+				end          
+			  end
+            catch
+				printf('There was an error for position id>>%s<<: %s\n',pos_id,lasterr);
+				position_failed_cell{ length(position_failed_cell) + 1 } =  pos_id;
+            end
+          
+          
+          % Calculate standalone report:  
+		  for jj = 1:1:length(aggr_key_struct_assets)
+			% load values from aggr_key_struct:
+			tmp_aggr_cell               = aggr_key_struct_assets( jj ).key_values;
+			tmp_aggr_key_name           = aggr_key_struct_assets( jj ).key_name;
+			tmp_aggregation_mat         = [aggr_key_struct_assets( jj ).aggregation_mat];
+			aggregation_standalone_shock = zeros(length(length(tmp_aggr_cell)),1);
+			for ii = 1 : 1 : length(tmp_aggr_cell)
+				tmp_aggr_key_value          = tmp_aggr_cell{ii};
+				tmp_sorted_aggr_mat         = sort(tmp_aggregation_mat(:,ii));  
+				tmp_standalone_aggr_key_var = abs(dot(hd_vec,tmp_sorted_aggr_mat));
+				aggregation_standalone_shock(ii)  = tmp_standalone_aggr_key_var;
+			end
+			aggr_key_struct_assets( jj ).aggregation_standalone_shock = aggregation_standalone_shock;
+		  end
+          end	% end fill aggregation key struct for assets only
+          obj = obj.set('aggr_key_struct_assets',aggr_key_struct_assets);
 		
 		  % calculate incremental and marginal VaRs
           if (para.calc_marg_incr_var = true)

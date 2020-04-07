@@ -498,7 +498,18 @@ for kk = 1:1:length(instrument_struct)
     end
 end
 
+% print all IR sensitivities
+fprintf('Instrument IR Sensitivities: \n');
+fprintf('ID,EffDuration,EffConvexity\n');
+for kk = 1:1:length(instrument_struct)
+    obj = instrument_struct(kk).object;
+    if (isProp(obj,'eff_convexity') && isProp(obj,'eff_duration'))
+		fprintf('%s,%3.1f,%3.1f \n',obj.id,obj.eff_duration,obj.eff_convexity);
+    end
+end
 
+%tmp_obj = get_sub_object(instrument_struct, 'GOVPENSION'); 
+%tmp_obj
 
 % ----------------------------------------------------------------------
 % 6. Portfolio Aggregation

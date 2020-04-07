@@ -14,6 +14,8 @@ classdef Position
         port_id  = 'PortfolioID';       % equal tpt_1 --> Position/Portfolio contained in this portfolio
         positions = struct(); % struct containing all underlying position objects;
         % risk figures
+        solvency_ratio = [];
+        balance_sheet_item = 'Asset'; %['Asset','Liability']
         var_confidence = 0.995;
         varhd_abs = 0;
         varhd_rel = 0;
@@ -201,6 +203,7 @@ classdef Position
         tpt_1000 = 'V4.0'; % 1000_tpt_Version 
         position_failed_cell = {}; 
         aggr_key_struct = struct();
+        aggr_key_struct_assets = struct();
         report_struct = struct();
         region_values = [0,0,0,0]; 
 		style_values = [0,0,0,0,0,0,0,0,0];
@@ -282,6 +285,7 @@ classdef Position
             fprintf('Incremental VaR: %s %s\n',any2str(a.incr_var),a.currency);
             fprintf('Marginal VaR: %s %s\n',any2str(a.marg_var),a.currency);
             fprintf('tax_rate: %3.4f\n',a.tax_rate); 
+            fprintf('balance_sheet_item: %s\n',a.balance_sheet_item); 
             fprintf('TPT Position data:\n');
             fprintf('1_Portfolio_identifying_data: %s\n',any2str(a.tpt_1));
             fprintf('14_Identification_code_of_the_instrument: %s\n',any2str(a.tpt_14));
@@ -310,6 +314,7 @@ classdef Position
             fprintf('varhd_abs_after_tax@%2.1f%%: %12.2f %s\n',a.var_confidence*100,a.varhd_abs_at,a.currency);
 			fprintf('varhd_rel_after_tax@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.varhd_rel_at*100);
 			fprintf('tax_benefit: %12.2f %s\n',a.tax_benefit,a.currency); 
+			fprintf('solvency_ratio: %4.1f%%\n',a.solvency_ratio * 100); 
 			fprintf('deferred_tax_liability: %12.2f %s\n',a.dtl,a.currency); 
             fprintf('srri_target: %d \n',a.srri_target); 
             
@@ -417,6 +422,31 @@ classdef Position
          obj.type = type;
       end % Set.type
 
+	  function obj = set.balance_sheet_item(obj,balance_sheet_item)
+         if ~(strcmpi(balance_sheet_item,'Asset') || strcmpi(balance_sheet_item,'Liability')  )
+            error('Balance Sheet Item must be Asset or Liability')
+         end
+         obj.balance_sheet_item = balance_sheet_item;
+      end % Set.balance_sheet_item
+
+	  function obj = set.value_base(obj,value_base)
+         if obj.varhd_abs == 0
+			obj.solvency_ratio = [];
+         else
+			obj.solvency_ratio = value_base / obj.varhd_abs;
+         end
+         obj.value_base = value_base;
+      end % Set.value_base --> calculate solvency_ratio
+		
+	  function obj = set.varhd_abs(obj,varhd_abs)
+         if varhd_abs == 0
+			obj.solvency_ratio = [];
+         else
+			obj.solvency_ratio = obj.value_base / varhd_abs;
+         end
+         obj.varhd_abs = varhd_abs;
+      end % Set.varhd_abs --> calculate solvency_ratio	 
+		
       % port_id sets tpt_1 
       function obj = set.port_id(obj,port_id)
          obj.port_id = port_id;

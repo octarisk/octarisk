@@ -66,6 +66,24 @@ elseif (strcmpi(type,'latex'))
 	  path_reports = strcat(path_main,'/', ...
 					para_object.folder_output,'/',para_object.folder_output_reports);
 	  
+	  % get asset and liability base values
+	  port_basevalue_assets = 0.000001;
+	  port_basevalue_liabs = 0.000001;
+	    for (ii=1:1:length(obj.positions))
+			try
+			  pos_obj = obj.positions(ii).object;
+			  if (isobject(pos_obj))
+				if (strcmpi(pos_obj.balance_sheet_item,'Asset'))
+					port_basevalue_assets = port_basevalue_assets + pos_obj.getValue('base');
+				else
+					port_basevalue_liabs = port_basevalue_liabs + pos_obj.getValue('base');
+				end
+			  end
+			catch
+				printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+			end
+		end
+		
 	  % ####  print portfolio risk metrics report as table
 	    latex_table_port_var = strcat(path_reports,'/table_port_',obj.id,'_var.tex');
 	    filp = fopen (latex_table_port_var, 'w');
@@ -142,7 +160,7 @@ elseif (strcmpi(type,'latex'))
 	    fclose (filt);
 	    
 	  % #### Print Aggregation Key Asset Class report
-	  aggr_key_struct = obj.get('aggr_key_struct');
+	  aggr_key_struct = obj.get('aggr_key_struct_assets');
 	  aa_target_id = obj.get('aa_target_id');
 	  aa_target_values = obj.get('aa_target_values');
 	  latex_table_decomp = strcat(path_reports,'/table_port_',obj.id,'_decomp.tex');
@@ -189,18 +207,18 @@ elseif (strcmpi(type,'latex'))
 					end
 				end
 				aa_cell = [aa_cell,tmp_aggr_key_value];
-				aa_current = tmp_aggregation_basevalue_pos/obj.getValue('base');
+				aa_current = tmp_aggregation_basevalue_pos/port_basevalue_assets;
 				aa_exposure =[aa_exposure,aa_current];
 				aa_sa =[aa_sa,tmp_standalone_aggr_key_var];
 				aa_decomp =[aa_decomp,tmp_decomp_aggr_key_var];
-				tmp_deviation = (aa_current - aa_target) * obj.getValue('base');
+				tmp_deviation = (aa_current - aa_target) * port_basevalue_assets;
 				tmp_risk_impact = (tmp_deviation / tmp_aggregation_basevalue_pos) * tmp_decomp_aggr_key_var;
 				risk_impact_sum = risk_impact_sum + tmp_risk_impact;
 				devation_sum = devation_sum + abs(tmp_deviation);
 				fprintf(fild, '%s \& %9.0f %s \& %3.1f\\%% \& %9.0f %s \& %9.0f %s \& %3.1f\\%%\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,100*tmp_aggregation_basevalue_pos/obj.getValue('base'),tmp_standalone_aggr_key_var,obj.currency,tmp_decomp_aggr_key_var,obj.currency,100*tmp_decomp_aggr_key_var/obj.varhd_abs);
 				fprintf(fiaa, '%s \& %9.0f %s \& %3.1f\\%% \& %3.1f\\%% \& %9.0f %s \& %9.0f  %s\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,aa_target*100,aa_current*100,tmp_deviation,obj.currency,tmp_risk_impact,obj.currency);
 			end
-			fprintf(fiaa, '\\\hline Portfolio \& %9.0f %s \& %3.0f\\%% \& %3.0f\\%% \&  %9.0f %s \& %9.0f  %s\\\\\\hline\n',obj.getValue('base'),obj.currency,100,100,devation_sum,obj.currency,risk_impact_sum,obj.currency);
+			fprintf(fiaa, '\\\hline Assets \& %9.0f %s \& %3.0f\\%% \& %3.0f\\%% \&  %9.0f %s \& %9.0f  %s\\\\\\hline\n',port_basevalue_assets,obj.currency,100,100,devation_sum,obj.currency,risk_impact_sum,obj.currency);
 			fprintf(fiaa, '\\end{tabular}\n');
 			fclose (fiaa);
 			saa_deviation = devation_sum;
@@ -383,29 +401,31 @@ elseif (strcmpi(type,'latex'))
 						style_port_values = style_port_values + style_pos_values;
 					  end
 					  % save portfolio rating / duration box
-					  if (strcmpi(instr_obj.type,'Debt'))
-							if ( instr_obj.duration < 3 )
-								port_duration(1) = port_duration(1) + pos_obj.getValue('base');
-							elseif ( instr_obj.duration >= 3 && instr_obj.duration < 7  )
-								port_duration(2) = port_duration(2) + pos_obj.getValue('base');
-							elseif ( instr_obj.duration >= 7 )
-								port_duration(3) = port_duration(3) + pos_obj.getValue('base');
+					  if (strcmpi(pos_obj.balance_sheet_item,'Asset'))
+						  if (strcmpi(instr_obj.type,'Debt'))
+								if ( instr_obj.duration < 3 )
+									port_duration(1) = port_duration(1) + pos_obj.getValue('base');
+								elseif ( instr_obj.duration >= 3 && instr_obj.duration < 7  )
+									port_duration(2) = port_duration(2) + pos_obj.getValue('base');
+								elseif ( instr_obj.duration >= 7 )
+									port_duration(3) = port_duration(3) + pos_obj.getValue('base');
+								end
+						  else 
+							if ( instr_obj.isProp('eff_duration'))
+								if ( instr_obj.eff_duration < 3 )
+									port_duration(1) = port_duration(1) + pos_obj.getValue('base');
+								elseif ( instr_obj.eff_duration >= 3 && instr_obj.eff_duration < 7  )
+									port_duration(2) = port_duration(2) + pos_obj.getValue('base');
+								elseif ( instr_obj.eff_duration >= 7 )
+									port_duration(3) = port_duration(3) + pos_obj.getValue('base');
+								end
 							end
-					  else 
-						if ( instr_obj.isProp('eff_duration'))
-							if ( instr_obj.eff_duration < 3 )
-								port_duration(1) = port_duration(1) + pos_obj.getValue('base');
-							elseif ( instr_obj.eff_duration >= 3 && instr_obj.eff_duration < 7  )
-								port_duration(2) = port_duration(2) + pos_obj.getValue('base');
-							elseif ( instr_obj.eff_duration >= 7 )
-								port_duration(3) = port_duration(3) + pos_obj.getValue('base');
-							end
-						end
-					  end
-					  % get rating
-					  if ( sum(instr_obj.rating_values) > 0)
-						port_rating = port_rating + instr_obj.rating_values .* pos_obj.getValue('base');
-					  end
+						  end
+						  % get rating
+						  if ( sum(instr_obj.rating_values) > 0)
+							port_rating = port_rating + instr_obj.rating_values .* pos_obj.getValue('base');
+						  end
+					  end %end balance_sheet_item Asset Loop
 					  % required for KPI reporting
 					  if (strcmpi(instr_obj.get('asset_class'),'Cash'))
 					      cash_amount = cash_amount + pos_obj.getValue('base');	
@@ -426,9 +446,11 @@ elseif (strcmpi(type,'latex'))
 					  end
 					  % get ESG score
 					  if (~isempty(instr_obj.esg_score))
-						  esg_score = esg_score + (instr_obj.esg_score * ...
-								pos_obj.getValue('base'));
-						  esg_basevalue = esg_basevalue + pos_obj.getValue('base');
+						  if (instr_obj.esg_score > 0)
+							  esg_score = esg_score + (instr_obj.esg_score * ...
+									abs(pos_obj.getValue('base')));
+							  esg_basevalue = esg_basevalue + abs(pos_obj.getValue('base'));
+						  end
 					  end
 					  % get further instrument properties and load into cell exposure vector
 					  %~ issuer
@@ -608,15 +630,53 @@ elseif (strcmpi(type,'latex'))
 				if ( idx_IRdown == 0 || idx_IRup == 0)
 					fprintf('print_report: No portfolio duration calculation. Cannot find IR-100bp or IR+100bp.\n');
 				else
-					port_eff_duration = ( obj.getValue('stress')(idx_IRdown) - ...
-						obj.getValue('stress')(idx_IRup) ) ...
-						/ ( 2 * obj.getValue('base') * 0.01 );
-							
-					port_eff_convexity =(  obj.getValue('stress')(idx_IRdown) + ...
-						obj.getValue('stress')(idx_IRup) - 2 * obj.getValue('base') ) ...
-						/ ( obj.getValue('base') * 0.0001  );
+					[port_eff_duration 	port_eff_convexity] = ...
+							calc_eff_sensitivities(obj.getValue('base'), ...
+											obj.getValue('stress')(idx_IRup), ...
+											obj.getValue('stress')(idx_IRdown));
+
+
+					% TODO: calculate asset and liability duration and duration mismatch  
+					% loop through all positions als cumulate asset / liability shock values
+					port_assets_basevalue = 0;
+					port_assets_IRup = 0;
+					port_assets_IRdown = 0;
+					port_liabilities_basevalue = 0;
+					port_liabilities_IRup = 0;
+					port_liabilities_IRdown = 0;
+					
+					for (ii=1:1:length(obj.positions))
+						try
+						  pos_obj = obj.positions(ii).object;
+						  if (isobject(pos_obj))
+							pos_id = pos_obj.id;
+							if (strcmpi(pos_obj.balance_sheet_item,'Asset'))
+								port_assets_basevalue = port_assets_basevalue + pos_obj.getValue('base');
+								port_assets_IRup = port_assets_IRup + pos_obj.getValue('stress')(idx_IRup);
+								port_assets_IRdown = port_assets_IRdown + pos_obj.getValue('stress')(idx_IRdown);
+							else
+								port_liabilities_basevalue = port_liabilities_basevalue + pos_obj.getValue('base');
+								port_liabilities_IRup = port_liabilities_IRup + pos_obj.getValue('stress')(idx_IRup);
+								port_liabilities_IRdown = port_liabilities_IRdown + pos_obj.getValue('stress')(idx_IRdown);
+							end
+						  end
+						catch
+							printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+						end
+					end
+					% calculate port_eff_duration_assets and liabs
+					[port_asset_duration port_asset_convexity] = ...
+							calc_eff_sensitivities(port_assets_basevalue, ...
+											port_assets_IRup, ...
+											port_assets_IRdown)
+					
+					[port_liab_duration port_liab_convexity] = ...
+							calc_eff_sensitivities(port_liabilities_basevalue, ...
+											port_liabilities_IRup, ...
+											port_liabilities_IRdown)
                 end
-            end                
+            end   
+                       
 			repstruct.port_eff_duration = port_eff_duration;
 			repstruct.port_eff_convexity = port_eff_convexity;
 			% print Fixed Income style box to LaTeX Table
@@ -645,6 +705,8 @@ elseif (strcmpi(type,'latex'))
 				tmp_ctry = country_cell{kk};
 				if ( strcmpi(tmp_ctry,'Other'))
 					other_exp = country_exposure(kk);
+				elseif ( strcmpi(tmp_ctry,'')) 
+					% do nothing
 				else
 					if (isdevelopedmarket(tmp_ctry))
 						dm_exp = dm_exp + country_exposure(kk);	
@@ -666,7 +728,7 @@ elseif (strcmpi(type,'latex'))
 			% get string
 			for kk=1:1:numel(country_cell)
 				tmp_ctry = country_cell{kk};
-				if ( strcmpi(tmp_ctry,'Other'))
+				if ( strcmpi(tmp_ctry,'Other')) || (strcmpi(tmp_ctry,''))
 					% do nothing
 				else
 					if (isdevelopedmarket(tmp_ctry))
@@ -760,15 +822,16 @@ elseif (strcmpi(type,'latex'))
 			latex_table_fi_style = strcat(path_reports,'/table_pos_',obj.id,'_fi_style.tex');
 			fifi = fopen (latex_table_fi_style, 'w');
 			fprintf(fifi, '\\center\n');
-			fprintf(fifi, '\\begin{tabular}{r | c}\n');
-			fprintf(fifi, 'Overall Portfolio \& Sensitivity \\\\\\hline\\hline\n');	
-			fprintf(fifi, 'Effective Duration \& %3.1f \\\\\n',port_eff_duration);	
-			fprintf(fifi, 'Effective Convexity \& %3.1f \\\\\n',port_eff_convexity);	
+			fprintf(fifi, '\\begin{tabular}{r | c || c | c || c}\n');
+			fprintf(fifi, 'Sensitivity \& Overall Portfolio \& Assets \& Liabilities \& Mismatch\\\\\\hline\\hline\n');	
+			fprintf(fifi, 'Effective Duration \& %3.1f \& %3.1f \& %3.1f \& %3.1f\\\\\n',port_eff_duration,port_asset_duration,port_liab_duration,port_asset_duration-port_liab_duration);	
+			fprintf(fifi, 'Effective Convexity \& %3.1f \& %3.1f \& %3.1f \& %3.1f\\\\\n',port_eff_convexity,port_asset_convexity,port_liab_convexity,port_asset_convexity-port_liab_convexity);	
 			fprintf(fifi, '\\end{tabular}\n');
+			% TODO: print asset and liability duration
 			
 			fprintf(fifi, '\\center\n');
 			fprintf(fifi, '\\begin{tabular}{r | c || r | c }\n');
-			fprintf(fifi, 'Credit Rating \& Allocation \& Eff. Duration \& Allocation \\\\\\hline\\hline\n');	
+			fprintf(fifi, 'Asset Credit Rating \& Allocation \& Eff. Duration \& Asset Allocation \\\\\\hline\\hline\n');	
 			fprintf(fifi, '%s \& %3.1f\\%% \& %s \& %3.1f\\%%  \\\\\n','High (AAA-AA)',ratingtable(1),durationdesc{1},durationtable(1));	
 			fprintf(fifi, '%s \& %3.1f\\%% \& %s \& %3.1f\\%%  \\\\\n','Mid (A-BBB)',ratingtable(2),durationdesc{2},durationtable(2))
 			fprintf(fifi, '%s \& %3.1f\\%% \& %s \& %3.1f\\%%  \\\\\\hline\n','Low (BB-C)',ratingtable(3),durationdesc{3},durationtable(3))	
@@ -824,10 +887,10 @@ elseif (strcmpi(type,'latex'))
 			ctry = country_cell{jj};
 			if ~(strcmpi(ctry,'Other'))
 				ctry_readiness_risk = get_readinessscore(ctry);
-				exposure = country_exposure(jj) / 100;
+				exposure = abs(country_exposure(jj)) / 100;
 				readiness_score = readiness_score + exposure * ctry_readiness_risk;
 			else
-				exp_other = country_exposure(jj) / 100;
+				exp_other = abs(country_exposure(jj)) / 100;
 			end
 		end
 		readiness_score = readiness_score / (1 - exp_other);
@@ -841,10 +904,10 @@ elseif (strcmpi(type,'latex'))
 			ctry = country_cell{jj};
 			if ~(strcmpi(ctry,'Other'))
 				ctry_inform_risk = get_informscore(ctry);
-				exposure = country_exposure(jj) / 100;
+				exposure = abs(country_exposure(jj)) / 100;
 				inform_score = inform_score + exposure * ctry_inform_risk;
 			else
-				exp_other = country_exposure(jj) / 100;
+				exp_other = abs(country_exposure(jj)) / 100;
 			end
 		end
 		inform_score = inform_score / (1 - exp_other);
@@ -859,7 +922,7 @@ elseif (strcmpi(type,'latex'))
 		fprintf(fikpi, 'Category \& Measure \& Target \& Actual \& Status \\\\\\hline\\hline\n');	
 		
 		% 1) VaR SRRI level
-			% VaR | SRRI level | 4 | 4 | on track v rebalancing
+			% Risk | SRRI level | 4 | 4 | on track v rebalancing
 			srri_actual = get_srri_level(abs(obj.varhd_rel),tmp_ts,para_object.quantile);
 			repstruct.srri_actual = srri_actual;
 			if ( srri_actual == obj.srri_target )
@@ -868,6 +931,17 @@ elseif (strcmpi(type,'latex'))
 				status_str = '\colorbox{octariskorange}{action required}';
 			end
 			fprintf(fikpi, '%s \& %s \& %d \& %d \& %s \\\\\\hline\n','Risk','SRRI class',obj.srri_target,srri_actual,status_str);	
+		 %1b) Solvency Ratio
+			% Risk | Solvency Ratio | 195% | >100% | on track v rebalancing
+			sr_actual = obj.solvency_ratio;
+			sr_limit = 1.0;
+			repstruct.solvency_ratio = sr_actual;
+			if ( sr_actual >= sr_limit )
+				status_str = '\colorbox{octariskgreen}{on track}';
+			else
+				status_str = '\colorbox{octariskorange}{action required}';
+			end
+			fprintf(fikpi, '%s \& %s \& %4.1f\\%% \& >%4.1f\\%% \& %s \\\\\\hline\n','Risk','Solvency Ratio',sr_actual*100,sr_limit*100,status_str);	
 		% 2) VaR trend
 			% Risk | VaR trend | -> | up | on track v action required
 			hist_var = obj.hist_var_abs;
@@ -1427,4 +1501,15 @@ function idx = get_idx_cell(incell,item)
 	if  ~isscalar(idx)
 		idx = 0;
 	end
+end
+
+% calculate effective duration and convexity
+function [dur convex] = calc_eff_sensitivities(base,IRup,IRdown)
+	if (isreal(base) && isreal(IRup) && isreal(IRdown) && abs(base)>0)
+		dur = ( IRdown - IRup ) / ( 2 * base * 0.01 );						
+		convex =(  IRdown + IRup - 2 * base ) / ( base * 0.0001);
+	else
+		dur = 0;
+		convex = 0;
+	end						
 end

@@ -30,6 +30,7 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
             if (isobject(pos_obj))
                 % Preaggregate position object
                 pos_obj_new = pos_obj.aggregate(scen_set, instrument_struct, index_struct, para);
+                position_failed_cell = [position_failed_cell, pos_obj_new.get('position_failed_cell')];
                 pos_value = pos_obj_new.getValue(scen_set);
                 pos_value_base = pos_obj_new.getValue('base');
                 pos_currency = pos_obj_new.get('currency');
@@ -488,10 +489,18 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
         catch   % if instrument not found raise warning and populate cell
             fprintf('Instrument ID %s not found for position. There was an error: %s\n',tmp_id,lasterr);
             position_failed_cell{ length(position_failed_cell) + 1 } =  tmp_id;
-            cash_object = Cash();
-            cash_object = cash_object.set('id',tmp_id,'value_base',0.0);
-            theo_value = 0;
-            obj = cash_object;
+            %cash_object = Cash();
+            %cash_object = cash_object.set('id',tmp_id,'value_base',0.0);
+            %obj = cash_object;
+            theo_value = 0.0;
+            theo_value_at = 0.0;
+			theo_exposure = 0.0;
+			theo_value_clean = 0.0;
+			cash_value = 0.0;
+			accr_int = 0.0;
+			accr_interest = 0.0;
+			cf_values = [];
+			cf_dates = [];   
         end
         
     else
