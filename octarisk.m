@@ -391,7 +391,7 @@ surface_struct=struct();
 % e) Loading matrix objects
 matrix_struct=struct();
 [matrix_struct matrix_failed_cell] = load_matrix_objects(matrix_struct,path_mktdata,input_filename_matrix);
- 
+
 
 curve_gen_time = toc;
 
@@ -508,8 +508,13 @@ for kk = 1:1:length(instrument_struct)
     end
 end
 
-%tmp_obj = get_sub_object(instrument_struct, 'GOVPENSION'); 
-%tmp_obj
+%~ tmp_obj = get_sub_object(instrument_struct, 'LIABILITY'); 
+%~ tmp_obj
+%~ tmp_obj = get_sub_object(curve_struct, 'IR_INFL_EUR'); 
+%~ tmp_obj.get('rates_base')'
+%~ tmp_obj_infl = get_sub_object(riskfactor_struct, 'RF_INFL_EXP_CURVE')
+%~ distritmp = tmp_obj_infl.getValue('10d');
+
 
 % ----------------------------------------------------------------------
 % 6. Portfolio Aggregation
@@ -583,6 +588,7 @@ if ( para_object.plotting )
 	port_obj = port_obj.plot(para_object,'liquidity','base');										
 	port_obj = port_obj.plot(para_object,'concentration','base');										
 	port_obj = port_obj.plot(para_object,'asset_allocation','base');										
+	port_obj = port_obj.plot(para_object,'ir_sensitivity','base');										
 	% aggregation and risk calculation for all scenario sets
 	for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
 		tmp_scen_set  = scenario_set{ kk };    % get timestep string

@@ -60,6 +60,8 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
 					pos_obj_new = pos_obj_new.set('value_mc',theo_value_pos);
 					% calculate position tax and add to portfolio tax
 					position_tax = pos_obj_new.tax_rate .* (theo_value_pos - theo_value_pos_base);
+					%max_pos_tax = sort(position_tax,"descend")(1:min(10,length(position_tax)))
+					%min_pos_tax = sort(position_tax,"ascend")(1:min(10,length(position_tax)))
 					portfolio_tax = portfolio_tax + position_tax;
 					pos_obj_new = pos_obj_new.set('value_mc_at',theo_value_pos - position_tax);
 				end

@@ -238,10 +238,10 @@ try
 	% plot png to file
 	if (saveflag == true)
 		filename_h1 = strcat(filepath,"/",port_id,"_SRRI_classes_chart.png");
-		filename_h2 = strcat(filepath,"/",port_id,"_SRRI_classes_scale.png");
+		filename_h2 = strcat(filepath,"/",port_id,"_risk_scale.png");
 		print (h1, filename_h1, "-dpng", "-S800,300");
 		print (h2, filename_h2, "-dpng", "-S800,150");
-		filename_h2 = strcat(filepath,"/",port_id,"_SRRI_classes_scale.pdf");
+		filename_h2 = strcat(filepath,"/",port_id,"_risk_scale.pdf");
 		print (h2, filename_h2, "-dpdf", "-S800,150");
 	end
 	ret = 0;

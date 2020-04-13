@@ -21,7 +21,6 @@
 %# @end deftypefn
 
 function [A_scaled pos_sem_def_bool]= correct_correlation_matrix(M)
-fprintf('\n'); 
 pos_sem_def_bool = testpsd(M);
 if (pos_sem_def_bool == true)
     fprintf  ('Input matrix is positive semidefinite\n')

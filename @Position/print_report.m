@@ -67,8 +67,8 @@ elseif (strcmpi(type,'latex'))
 					para_object.folder_output,'/',para_object.folder_output_reports);
 	  
 	  % get asset and liability base values
-	  port_basevalue_assets = 0.000001;
-	  port_basevalue_liabs = 0.000001;
+	  port_basevalue_assets = 0.0;
+	  port_basevalue_liabs = 0.0;
 	    for (ii=1:1:length(obj.positions))
 			try
 			  pos_obj = obj.positions(ii).object;
@@ -83,7 +83,8 @@ elseif (strcmpi(type,'latex'))
 				printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
 			end
 		end
-		
+		repstruct.port_basevalue_assets = port_basevalue_assets;
+		repstruct.port_basevalue_liabs = port_basevalue_liabs;
 	  % ####  print portfolio risk metrics report as table
 	    latex_table_port_var = strcat(path_reports,'/table_port_',obj.id,'_var.tex');
 	    filp = fopen (latex_table_port_var, 'w');
@@ -118,8 +119,13 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filp, '\\node [anchor=west] (repdatedesc) at (2.20,1.25) {\\small  \\textcolor{octariskgrey}{Reporting Date}};\n');
 		fprintf(filp, '\\node [anchor=west] (varabs) at (5,0.75) {\\large \\textcolor{octariskblue}{%d %s}};\n',round(obj.varhd_abs),obj.currency);
 		fprintf(filp, '\\node [anchor=west] (varabsdesc) at (5,0.4) {\\small \\textcolor{octariskgrey}{VaR (abs.)}};\n');
-		fprintf(filp, '\\node [anchor=west] (varrel) at (5,1.65) {\\large \\textcolor{octariskblue}{VaR %3.1f\\%%}};\n',-obj.varhd_rel*100);
-		fprintf(filp, '\\node [anchor=west] (varreldesc) at (5,1.25) {\\small  \\textcolor{octariskgrey}{%s@%2.1f\\%%}};\n',scen_set,para_object.quantile.*100);
+		if (abs(port_basevalue_liabs) == 0)	% liability exposure not available
+			fprintf(filp, '\\node [anchor=west] (varrel) at (5,1.65) {\\large \\textcolor{octariskblue}{VaR %3.1f\\%%}};\n',-obj.varhd_rel*100);
+			fprintf(filp, '\\node [anchor=west] (varreldesc) at (5,1.25) {\\small  \\textcolor{octariskgrey}{%s@%2.1f\\%%}};\n',scen_set,para_object.quantile.*100);
+		else
+			fprintf(filp, '\\node [anchor=west] (varrel) at (5,1.65) {\\large \\textcolor{octariskblue}{Ratio %3.0f\\%%}};\n',obj.solvency_ratio*100);
+			fprintf(filp, '\\node [anchor=west] (varreldesc) at (5,1.25) {\\small  \\textcolor{octariskgrey}{%s@%2.1f\\%%}};\n',scen_set,para_object.quantile.*100);
+		end
 		fprintf(filp, '\\node [anchor=west] (div) at (7.7,0.75) {\\large \\textcolor{octariskblue}{%3.1f\\%%}};\n',div_benefit);
 		fprintf(filp, '\\node [anchor=west] (divdesc) at (7.7,0.4) {\\small \\textcolor{octariskgrey}{Diversification}};\n');
 		fprintf(filp, '\\node [anchor=west] (vola) at (7.7,1.65) {\\large \\textcolor{octariskblue}{%3.1f\\%%}};\n',vola_pa);
@@ -272,7 +278,7 @@ elseif (strcmpi(type,'latex'))
 		[pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock,'descend');
 		idx = 1; 
 		% plot Top 10 Positions
-		max_positions = 10;
+		max_positions = 20;
 		for ii = 1:1:min(length(pie_chart_values_pos_shock),max_positions);
 			pie_chart_values_plot_pos_shock(idx)     = pie_chart_values_sorted_pos_shock(ii) ;
 			pie_chart_desc_plot_pos_shock(idx)       = pie_chart_desc_pos_shock(sorted_numbers_pos_shock(ii));
@@ -463,11 +469,13 @@ elseif (strcmpi(type,'latex'))
 									instr_obj.issuer,pos_obj.getValue('base'));
 					  end
 					  %-  liquidity class
-					  if ( ~isnull(instr_obj.liquidity_class))
-							[liquidity_class_cell, liquidity_class_exposure] = add_to_exposure_cell(...
-									liquidity_class_cell, liquidity_class_exposure, ...
-									instr_obj.liquidity_class,pos_obj.getValue('base'));
-					  end
+					  if (strcmpi(pos_obj.balance_sheet_item,'Asset'))
+						  if ( ~isnull(instr_obj.liquidity_class))
+								[liquidity_class_cell, liquidity_class_exposure] = add_to_exposure_cell(...
+										liquidity_class_cell, liquidity_class_exposure, ...
+										instr_obj.liquidity_class,pos_obj.getValue('base'));
+						  end
+					  end % liquidity classification for assets only
 					  %~ custodian_bank
 					  if ( ~isnull(pos_obj.custodian_bank))
 							[custodian_bank_cell, custodian_bank_exposure] = add_to_exposure_cell(...
@@ -622,6 +630,14 @@ elseif (strcmpi(type,'latex'))
 			repstruct.esg_score = esg_score;
 			repstruct.esg_rating = esg_rating;
 		% calculate portfolio effective duration / convexity
+		    port_eff_duration = 0;          
+            port_eff_convexity = 0;          
+            port_asset_duration = 0;          
+            port_asset_convexity = 0;          
+            port_liab_duration = 0;          
+            port_liab_convexity = 0;          
+            port_liabilities_basevalue = 0;          
+            port_assets_basevalue = 0; 
 			if (isstruct(stresstest_struct))
 				stresstest_names = {stresstest_struct.name};
 				idx_vec = linspace(1,length(stresstest_names),length(stresstest_names))';
@@ -635,8 +651,6 @@ elseif (strcmpi(type,'latex'))
 											obj.getValue('stress')(idx_IRup), ...
 											obj.getValue('stress')(idx_IRdown));
 
-
-					% TODO: calculate asset and liability duration and duration mismatch  
 					% loop through all positions als cumulate asset / liability shock values
 					port_assets_basevalue = 0;
 					port_assets_IRup = 0;
@@ -651,13 +665,19 @@ elseif (strcmpi(type,'latex'))
 						  if (isobject(pos_obj))
 							pos_id = pos_obj.id;
 							if (strcmpi(pos_obj.balance_sheet_item,'Asset'))
-								port_assets_basevalue = port_assets_basevalue + pos_obj.getValue('base');
-								port_assets_IRup = port_assets_IRup + pos_obj.getValue('stress')(idx_IRup);
-								port_assets_IRdown = port_assets_IRdown + pos_obj.getValue('stress')(idx_IRdown);
+								port_assets_basevalue = port_assets_basevalue + ...
+											pos_obj.getValue('base');
+								port_assets_IRup = port_assets_IRup + ...
+											pos_obj.getValue('stress')(idx_IRup);
+								port_assets_IRdown = port_assets_IRdown + ...
+											pos_obj.getValue('stress')(idx_IRdown);
 							else
-								port_liabilities_basevalue = port_liabilities_basevalue + pos_obj.getValue('base');
-								port_liabilities_IRup = port_liabilities_IRup + pos_obj.getValue('stress')(idx_IRup);
-								port_liabilities_IRdown = port_liabilities_IRdown + pos_obj.getValue('stress')(idx_IRdown);
+								port_liabilities_basevalue = port_liabilities_basevalue + ...
+											pos_obj.getValue('base');
+								port_liabilities_IRup = port_liabilities_IRup + ...
+											pos_obj.getValue('stress')(idx_IRup);
+								port_liabilities_IRdown = port_liabilities_IRdown + ...
+											pos_obj.getValue('stress')(idx_IRdown);
 							end
 						  end
 						catch
@@ -667,18 +687,23 @@ elseif (strcmpi(type,'latex'))
 					% calculate port_eff_duration_assets and liabs
 					[port_asset_duration port_asset_convexity] = ...
 							calc_eff_sensitivities(port_assets_basevalue, ...
-											port_assets_IRup, ...
-											port_assets_IRdown)
+									port_assets_IRup, port_assets_IRdown);
 					
 					[port_liab_duration port_liab_convexity] = ...
 							calc_eff_sensitivities(port_liabilities_basevalue, ...
-											port_liabilities_IRup, ...
-											port_liabilities_IRdown)
+									port_liabilities_IRup, port_liabilities_IRdown);
                 end
             end   
-                       
+    
 			repstruct.port_eff_duration = port_eff_duration;
-			repstruct.port_eff_convexity = port_eff_convexity;
+			repstruct.port_eff_convexity = port_eff_convexity;			
+			repstruct.port_asset_duration = port_asset_duration;
+			repstruct.port_asset_convexity = port_asset_convexity;
+			repstruct.port_liab_duration = port_liab_duration;
+			repstruct.port_liab_convexity = port_liab_convexity;
+			repstruct.port_liabilities_basevalue = port_liabilities_basevalue;
+			repstruct.port_assets_basevalue = port_assets_basevalue;
+			
 			% print Fixed Income style box to LaTeX Table
 		% calculate rating, duration style boxes 
 			port_rating = port_rating ./ sum(port_rating);
@@ -819,15 +844,24 @@ elseif (strcmpi(type,'latex'))
 			ratingdesc = obj.rating_id;
 			durationdesc = obj.duration_id;
 			durationtable = 100 .* port_duration;
+			al_ratio = abs(port_basevalue_liabs)/abs(port_basevalue_assets);
 			latex_table_fi_style = strcat(path_reports,'/table_pos_',obj.id,'_fi_style.tex');
 			fifi = fopen (latex_table_fi_style, 'w');
-			fprintf(fifi, '\\center\n');
-			fprintf(fifi, '\\begin{tabular}{r | c || c | c || c}\n');
-			fprintf(fifi, 'Sensitivity \& Overall Portfolio \& Assets \& Liabilities \& Mismatch\\\\\\hline\\hline\n');	
-			fprintf(fifi, 'Effective Duration \& %3.1f \& %3.1f \& %3.1f \& %3.1f\\\\\n',port_eff_duration,port_asset_duration,port_liab_duration,port_asset_duration-port_liab_duration);	
-			fprintf(fifi, 'Effective Convexity \& %3.1f \& %3.1f \& %3.1f \& %3.1f\\\\\n',port_eff_convexity,port_asset_convexity,port_liab_convexity,port_asset_convexity-port_liab_convexity);	
-			fprintf(fifi, '\\end{tabular}\n');
-			% TODO: print asset and liability duration
+			if (abs(port_basevalue_liabs) > 0)	% liability exposure available
+				fprintf(fifi, '\\center\n');
+				fprintf(fifi, '\\begin{tabular}{r | c | c || c}\n');
+				fprintf(fifi, 'Sensitivity \& Assets \& Liabilities \& Gap\\\\\\hline\\hline\n');	
+				fprintf(fifi, 'Effective Duration \& %3.1f \& %3.1f \& %3.1f\\\\\n',port_asset_duration,port_liab_duration,port_asset_duration-port_liab_duration*al_ratio);	
+				fprintf(fifi, 'Effective Convexity \& %3.1f \& %3.1f \& %3.1f\\\\\n',port_asset_convexity,port_liab_convexity,port_asset_convexity-port_liab_convexity*al_ratio);	
+				fprintf(fifi, '\\end{tabular}\n');
+			else % print only overall portfolio sensitivities (liability exposure zero)
+				fprintf(fifi, '\\center\n');
+				fprintf(fifi, '\\begin{tabular}{r | c }\n');
+				fprintf(fifi, 'Sensitivity \& Overall Portfolio \\\\\\hline\\hline\n');	
+				fprintf(fifi, 'Effective Duration \& %3.1f  \\\\\n',port_eff_duration);	
+				fprintf(fifi, 'Effective Convexity \& %3.1f \\\\\n',port_eff_convexity);	
+				fprintf(fifi, '\\end{tabular}\n');
+			end
 			
 			fprintf(fifi, '\\center\n');
 			fprintf(fifi, '\\begin{tabular}{r | c || r | c }\n');
@@ -921,27 +955,34 @@ elseif (strcmpi(type,'latex'))
 		fprintf(fikpi, '\\begin{tabular}{l|c|c|c|c}\n');
 		fprintf(fikpi, 'Category \& Measure \& Target \& Actual \& Status \\\\\\hline\\hline\n');	
 		
-		% 1) VaR SRRI level
-			% Risk | SRRI level | 4 | 4 | on track v rebalancing
-			srri_actual = get_srri_level(abs(obj.varhd_rel),tmp_ts,para_object.quantile);
-			repstruct.srri_actual = srri_actual;
-			if ( srri_actual == obj.srri_target )
-				status_str = '\colorbox{octariskgreen}{on track}';
-			else
-				status_str = '\colorbox{octariskorange}{action required}';
+		% 1) VaR Risklevel
+			% a) SRRI level
+			if (abs(port_basevalue_liabs) == 0)	% asset portfolio only
+				% Risk | SRRI level | 4 | 4 | on track v rebalancing
+				srri_actual = get_srri_level(abs(obj.varhd_rel),tmp_ts,para_object.quantile);
+				repstruct.srri_actual = srri_actual;
+				if ( srri_actual == obj.srri_target )
+					status_str = '\colorbox{octariskgreen}{on track}';
+				else
+					status_str = '\colorbox{octariskorange}{action required}';
+				end
+				fprintf(fikpi, '%s \& %s \& %d \& %d \& %s \\\\\\hline\n','Risk','SRRI class',obj.srri_target,srri_actual,status_str);	
+			else % asset and liability portfolio
+			 % b) Solvency Ratio
+				% Risk | Solvency Ratio | >200% | 195% | on track v rebalancing v monitoring
+				sr_actual = obj.solvency_ratio;
+				sr_limit_lower = 1.0;
+				sr_limit_higher = 2.0;
+				repstruct.solvency_ratio = sr_actual;
+				if ( sr_actual >= sr_limit_lower && sr_actual < sr_limit_higher )
+					status_str = '\colorbox{yellow}{monitor}';
+				elseif ( sr_actual >= 2.0 )
+					status_str = '\colorbox{octariskgreen}{on track}';	
+				else
+					status_str = '\colorbox{octariskorange}{action required}';
+				end
+				fprintf(fikpi, '%s \& %s \& >%3.1f\\%% \& %4.1f\\%% \& %s \\\\\\hline\n','Risk','Solvency Ratio',sr_limit_higher*100,sr_actual*100,status_str);	
 			end
-			fprintf(fikpi, '%s \& %s \& %d \& %d \& %s \\\\\\hline\n','Risk','SRRI class',obj.srri_target,srri_actual,status_str);	
-		 %1b) Solvency Ratio
-			% Risk | Solvency Ratio | 195% | >100% | on track v rebalancing
-			sr_actual = obj.solvency_ratio;
-			sr_limit = 1.0;
-			repstruct.solvency_ratio = sr_actual;
-			if ( sr_actual >= sr_limit )
-				status_str = '\colorbox{octariskgreen}{on track}';
-			else
-				status_str = '\colorbox{octariskorange}{action required}';
-			end
-			fprintf(fikpi, '%s \& %s \& %4.1f\\%% \& >%4.1f\\%% \& %s \\\\\\hline\n','Risk','Solvency Ratio',sr_actual*100,sr_limit*100,status_str);	
 		% 2) VaR trend
 			% Risk | VaR trend | -> | up | on track v action required
 			hist_var = obj.hist_var_abs;

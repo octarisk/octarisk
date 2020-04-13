@@ -136,7 +136,7 @@ elseif (strcmpi(type,'riskfactor'))
 	    rf_shocks_9997 = [sortPnL(quantile_9997)/obj.getValue('base')];
 	    rf_shocks_9995 = [sortPnL(quantile_9995)/obj.getValue('base')];
 	    rf_plot_desc = {'Portfolio'};
-	    rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_5Y','RF_IR_USD_5Y','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+	    rf_cell = {'RF_EQ_EU','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
 		for kk=1:1:length(rf_cell)
 			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
 			if (retcode == 1)
@@ -210,7 +210,7 @@ elseif (strcmpi(type,'riskfactor'))
         len_tail = 0.2*para_object.mc;
         xx=1:1:len_tail;
         smooth_para = 200;
-         rf_cell = {'RF_EQ_EU','RF_IR_EUR_5Y','RF_IR_USD_5Y','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+         rf_cell = {'RF_EQ_EU','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
         for kk=1:1:length(rf_cell)
 			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
 			if (retcode == 1)
@@ -310,7 +310,14 @@ elseif (strcmpi(type,'asset_allocation'))
 	  fprintf('plot: Plotting Asset Allocation pie chart results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 	  repstruct = plot_AA_piecharts(repstruct,path_reports,obj);	
   end
-			
+
+% --------------    IR sensitivity   -----------------------------
+elseif (strcmpi(type,'ir_sensitivity'))    
+  if ( strcmpi(scen_set,'base'))
+	  fprintf('plot: Plotting IR sensitivity for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+	  repstruct = plot_sensitivities(obj,repstruct,path_reports);	
+  end
+					
 
 % -------------    Stress test plotting    ----------------------------- 
 elseif (strcmpi(type,'stress'))
@@ -321,9 +328,9 @@ elseif (strcmpi(type,'stress'))
 		fprintf('plot: Plotting stress results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);
 		% prepare stresstest plotting and report output
 		stresstest_plot_desc = {stresstest_struct.name};
-		p_l_relativ_stress      = 100.*(obj.getValue('stress') - ...
-						obj.getValue('base') )./ obj.getValue('base');
-
+		%p_l_relativ_stress      = 100.*(obj.getValue('stress') - ...
+		%				obj.getValue('base') )./ obj.getValue('base');
+		p_l_relativ_stress = (obj.getValue('stress') - obj.getValue('base'))./1000;
         xx = 1:1:length(p_l_relativ_stress)-1;
         hs = figure(1);
         clf;
@@ -332,7 +339,8 @@ elseif (strcmpi(type,'stress'))
         set(h,'ytick',xx);
         stresstest_plot_desc = strrep(stresstest_plot_desc,"_","");
         set(h,'yticklabel',stresstest_plot_desc(2:end));
-        xlabel('Relative PnL (in Pct)','fontsize',14);
+        xlabelstr = ['Absolute PnL (in k',obj.currency,')'];
+        xlabel(xlabelstr,'fontsize',14);
         title('Stresstest Results','fontsize',14);
         grid on;
         % save plotting
@@ -350,11 +358,20 @@ elseif (strcmpi(type,'srri'))
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
 	  %fprintf('plot: No SRRI plots exists for scenario set >>%s<<\n',scen_set);
   else
+	if (abs(repstruct.port_basevalue_liabs) == 0) % plot SRRI classes for asset only portfolio
       [ret idx_figure] = get_srri(obj.varhd_rel,tmp_ts,para_object.quantile, ...
 					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 
 	  [ret idx_figure] = get_srri_simple(obj.varhd_rel,tmp_ts,para_object.quantile, ...
 					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 				
-	  fprintf('plot: Plotting SRRI results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);						
+	  fprintf('plot: Plotting SRRI results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+	else  %plot solvency ratio classes for asset liability portfolii
+	  [ret idx_figure] = plot_solvencyratio(obj.solvency_ratio, ...
+					path_reports,obj.id,1);
+	  fprintf('plot: Plotting solvency ratio charts for portfolio >>%s<< into folder: %s\n',obj.id,path_reports); 
+	  [ret idx_figure] = get_srri_simple(obj.varhd_rel,tmp_ts,para_object.quantile, ...
+					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 				
+	  fprintf('plot: Plotting SRRI results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);
+	end  					
   end
 
  
@@ -519,19 +536,23 @@ elseif (strcmpi(type,'marketdata'))
       if retcode == 0
 		 printf('plot: Warning: no curve object found for id  >>%s<<\n',obj.id);	
       else
-		  subplot (2, 1, 1)
-            nodes = any2str(curve_obj.get('nodes'));
-			rates_base = curve_obj.get('rates_base');
-			rates_mc = curve_obj.get('rates_mc');
-			plot (curve_obj.get('nodes'),rates_base,'color',or_blue,"linewidth",1,'marker','x');
+		  subplot (3, 1, 1)
+            nodes = [365:365:10950];
+			rates_base = zeros(1,length(nodes));
+			rates_mc = zeros(para_object.mc,length(nodes));
+			for ii=1:length(nodes)
+				rates_base(ii) 	= curve_obj.getRate('base',nodes(ii));
+				rates_mc(:,ii) 	= curve_obj.getRate(scen_set,nodes(ii));
+			end
+			plot (nodes,rates_base,'color',or_blue,"linewidth",1,'marker','x');
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen-2),:),'color',or_orange,"linewidth",0.8);
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen-2),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen-1),:),'color',or_orange,"linewidth",0.8);
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen-1),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen+1),:),'color',or_orange,"linewidth",0.8);
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen+1),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen+2),:),'color',or_orange,"linewidth",0.8);
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen+2),:),'color',or_orange,"linewidth",0.8);
 			hold off;
 			grid off;
 			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);
@@ -543,19 +564,51 @@ elseif (strcmpi(type,'marketdata'))
       if retcode == 0
 		 printf('plot: Warning: no curve object found for id  >>%s<<\n',obj.id);	
       else
-		  subplot (2, 1, 2)
-            nodes = any2str(curve_obj.get('nodes'));
-			rates_base = curve_obj.get('rates_base');
-			rates_mc = curve_obj.get('rates_mc');
-			plot (curve_obj.get('nodes'),rates_base,'color',or_blue,"linewidth",1,'marker','x');
+		  subplot (3, 1, 2)
+            nodes = [365:365:10950];
+			rates_base = zeros(1,length(nodes));
+			rates_mc = zeros(para_object.mc,length(nodes));
+			for ii=1:length(nodes)
+				rates_base(ii) 	= curve_obj.getRate('base',nodes(ii));
+				rates_mc(:,ii) 	= curve_obj.getRate(scen_set,nodes(ii));
+			end
+			plot (nodes,rates_base,'color',or_blue,"linewidth",1,'marker','x');
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen-2),:),'color',or_orange,"linewidth",0.8);
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen-2),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen-1),:),'color',or_orange,"linewidth",0.8);
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen-1),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen+1),:),'color',or_orange,"linewidth",0.8);
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen+1),:),'color',or_orange,"linewidth",0.8);
 			hold on;
-			plot (curve_obj.get('nodes'),rates_mc(obj.scenario_numbers(ats_scen+2),:),'color',or_orange,"linewidth",0.8);
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen+2),:),'color',or_orange,"linewidth",0.8);
+			hold off;
+			grid off;
+			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);
+			xlabel('Nodes (in days)', "fontsize",12);
+			ylabel('Rates', "fontsize",12);
+		    legend({"Base Scenario Rates","VaR scenarios"},"fontsize",12,"location","southeast");
+      end
+      [curve_obj retcode] = get_sub_object(curve_struct,'INFL_EXP_EUR');
+      if retcode == 0
+		 printf('plot: Warning: no curve object found for id  >>%s<<\n',obj.id);	
+      else
+		  subplot (3, 1, 3)
+            nodes = [365:365:10950];
+			rates_base = zeros(1,length(nodes));
+			rates_mc = zeros(para_object.mc,length(nodes));
+			for ii=1:length(nodes)
+				rates_base(ii) 	= curve_obj.getRate('base',nodes(ii));
+				rates_mc(:,ii) 	= curve_obj.getRate(scen_set,nodes(ii));
+			end
+			plot (nodes,rates_base,'color',or_blue,"linewidth",1,'marker','x');
+			hold on;
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen-2),:),'color',or_orange,"linewidth",0.8);
+			hold on;
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen-1),:),'color',or_orange,"linewidth",0.8);
+			hold on;
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen+1),:),'color',or_orange,"linewidth",0.8);
+			hold on;
+			plot (nodes,rates_mc(obj.scenario_numbers(ats_scen+2),:),'color',or_orange,"linewidth",0.8);
 			hold off;
 			grid off;
 			title(sprintf ("Curve ID %s", strrep(curve_obj.id,'_','\_')), "fontsize",12);
@@ -565,9 +618,9 @@ elseif (strcmpi(type,'marketdata'))
       end
       % save plotting
       filename_mktdata_curves = strcat(path_reports,'/',obj.id,'_mktdata_curves.png');
-      print (hmarket,filename_mktdata_curves, "-dpng", "-S800,500");
+      print (hmarket,filename_mktdata_curves, "-dpng", "-S800,750");
       filename_mktdata_curves = strcat(path_reports,'/',obj.id,'_mktdata_curves.pdf');
-      print (hmarket,filename_mktdata_curves, "-dpdf", "-S800,500");
+      print (hmarket,filename_mktdata_curves, "-dpdf", "-S800,750");
     end
   end      
 % -------------------    else    ------------------------------------       
