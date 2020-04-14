@@ -33,20 +33,23 @@ if ~(isnumeric(score))
     error('get_readinessclass: score not numeric >>%s<<..\n',any2str(score));
 end
 
-if ( score < 0)
-	error('get_readinessclass: not a valid score 0 < score <= 1: >>%s<<.\n',any2str(score));
-elseif (score <= 0.2)
-	class = 'very high';
-elseif (score <= 0.4)
-	class = 'high';
-elseif (score <= 0.6)
-	class = 'medium';
-elseif (score <= 0.8)
-	class = 'low';
-elseif (score <= 1)
-	class = 'very low';
+if isnan(score)
+	class = 'n/a';
 else
-	error('get_readinessclass: not a valid score  0 < score <= 1: >>%s<<.\n',any2str(score));
+	if ( score < 0)
+		error('get_readinessclass: not a valid score 0 < score <= 1: >>%s<<.\n',any2str(score));
+	elseif (score <= 0.2)
+		class = 'very high';
+	elseif (score <= 0.4)
+		class = 'high';
+	elseif (score <= 0.6)
+		class = 'medium';
+	elseif (score <= 0.8)
+		class = 'low';
+	elseif (score <= 1)
+		class = 'very low';
+	else
+		error('get_readinessclass: not a valid score  0 < score <= 1: >>%s<<.\n',any2str(score));
+	end
 end
-
 end 

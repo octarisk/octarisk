@@ -33,23 +33,25 @@ end
 if ~(isnumeric(score))
     error('get_informclass: score not numeric >>%s<<..\n',any2str(score));
 end
-
-if ( score < 0)
-	error('get_informclass: not a valid score 0 < score <= 10: >>%s<<.\n',any2str(score));
-elseif (score <= 1.9)
-	class = 'very low';
-elseif (score <= 3.4)
-	class = 'low';
-elseif (score <= 4.9)
-	class = 'medium';
-elseif (score <= 6.4)
-	class = 'high';
-elseif (score <= 10)
-	class = 'very high';
+if isnan(score)
+	class = 'n/a';
 else
-	error('get_informclass: not a valid score  0 < score <= 10: >>%s<<.\n',any2str(score));
+	if ( score < 0)
+		error('get_informclass: not a valid score 0 < score <= 10: >>%s<<.\n',any2str(score));
+	elseif (score <= 1.9)
+		class = 'very low';
+	elseif (score <= 3.4)
+		class = 'low';
+	elseif (score <= 4.9)
+		class = 'medium';
+	elseif (score <= 6.4)
+		class = 'high';
+	elseif (score <= 10)
+		class = 'very high';
+	else
+		error('get_informclass: not a valid score  0 < score <= 10: >>%s<<.\n',any2str(score));
+	end
 end
-
 end 
 %!assert(get_informclass(2.1),'low')
 %!error(get_informclass(11))

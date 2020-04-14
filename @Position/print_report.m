@@ -988,37 +988,42 @@ elseif (strcmpi(type,'latex'))
 			hist_var = obj.hist_var_abs;
 			hist_bv = obj.hist_base_values;
 			hist_dates = obj.hist_report_dates;
-			% remove all values equal or after valuation date
-			hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
-			hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
-			% lastly remove from hist_dates
-			hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+			if (length(hist_dates) > 0 && length(hist_var) > 0 && length(hist_bv) > 0)
+				% remove all values equal or after valuation date		
+				hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+				hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+				% lastly remove from hist_dates
+				hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
 
-			if ( numel(hist_var) == numel(hist_bv) )
-				hist_var_rel = hist_var ./ hist_bv;
-			else
-				error('print_report: Length of historical base values and VaR does not match.\n');
-			end
-			var_rel = abs(obj.varhd_rel);
-			if (length(hist_var_rel) >= 1)
-				arrow_str = '$\rightarrow$'; % default if inside +-2% last VaR (MC error)
-				status_str = '\colorbox{octariskgreen}{on track}';
-				if ( var_rel >= 1.02*hist_var_rel(end))
-					arrow_str = '$\nearrow$';
-					status_str = '\colorbox{yellow}{monitor}';
-					if ( var_rel > 1.02*max(hist_var_rel))
-						arrow_str = '$\uparrow$';
-						status_str = '\colorbox{octariskorange}{action required}';
-					end
-				elseif ( var_rel <= 0.98*hist_var_rel(end))
-					arrow_str = '$\searrow$';
-					status_str = '\colorbox{yellow}{monitor}';
-					if ( var_rel < 0.98*min(hist_var_rel))
-						arrow_str = '$\downarrow$';
-						status_str = '\colorbox{octariskorange}{action required}';
-					end
+				if ( numel(hist_var) == numel(hist_bv) )
+					hist_var_rel = hist_var ./ hist_bv;
+				else
+					error('print_report: Length of historical base values and VaR does not match.\n');
 				end
-			else
+				var_rel = abs(obj.varhd_rel);
+				if (length(hist_var_rel) >= 1)
+					arrow_str = '$\rightarrow$'; % default if inside +-2% last VaR (MC error)
+					status_str = '\colorbox{octariskgreen}{on track}';
+					if ( var_rel >= 1.02*hist_var_rel(end))
+						arrow_str = '$\nearrow$';
+						status_str = '\colorbox{yellow}{monitor}';
+						if ( var_rel > 1.02*max(hist_var_rel))
+							arrow_str = '$\uparrow$';
+							status_str = '\colorbox{octariskorange}{action required}';
+						end
+					elseif ( var_rel <= 0.98*hist_var_rel(end))
+						arrow_str = '$\searrow$';
+						status_str = '\colorbox{yellow}{monitor}';
+						if ( var_rel < 0.98*min(hist_var_rel))
+							arrow_str = '$\downarrow$';
+							status_str = '\colorbox{octariskorange}{action required}';
+						end
+					end
+				else
+					arrow_str = '$\rightarrow$';
+					status_str = '\colorbox{octariskgreen}{no history}';
+				end
+			else % no historical values set
 				arrow_str = '$\rightarrow$';
 				status_str = '\colorbox{octariskgreen}{no history}';
 			end
