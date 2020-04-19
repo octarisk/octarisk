@@ -23,28 +23,28 @@
 function [ret_dates ret_values ret_interest_values ret_principal_values ...
                                     accrued_interest last_coupon_date] = ...
                     rollout_retail_cashflows(valuation_date, value_type, ...
-                    instrument, ref_curve, surface,riskfactor)
+                    instrument, obj1, obj2, obj3)
 
 % Input checks
 if nargin < 3 || nargin > 6
     print_usage ();
 end
 if nargin < 4
-    ref_curve = [];
-    surface = [];
-    riskfactor = [];
+    obj1 = [];
+    obj2 = [];
+    obj3 = [];
 end  
 if nargin < 5
-    surface = [];
-    riskfactor = [];
+    obj2 = [];
+    obj3 = [];
 end  
 if nargin < 6
-    riskfactor = [];
+    obj3 = [];
 end  
 
 % ######################   Initial fill of para structure ###################### 
 para = fill_para_struct(nargin,valuation_date, value_type, ...
-                    instrument, ref_curve, surface,riskfactor);
+                    instrument, obj1, obj2, obj3);
 
 % ######################   Calculate Cash Flow dates  ##########################   
 para = get_cf_dates(para);
@@ -56,7 +56,15 @@ switch (para.type)
 % Type Retail instruments
 case {'SAVPLAN' 'DCP'}
     para = get_cfvalues_RETAIL(para.valuation_date, value_type, para, instrument);
-    
+
+case {'RETEXP' }
+    para = get_cfvalues_RETEXP(para.valuation_date, value_type, para, ...
+		instrument, obj1, obj2);
+		
+case {'GOVPEN' }
+    para = get_cfvalues_GOVPEN(para.valuation_date, value_type, para, ...
+		instrument, obj1, obj2); 
+		       
 otherwise
     error('rollout_retail_cashflows: Unknown instrument type >>%s<<',any2str(para.type));
 end
@@ -260,6 +268,9 @@ end
     if ( strcmpi(para.type,'SAVPLAN') || strcmpi(para.type,'DCP')) 
 		para.maturity_date = instrument.savings_enddate;
 		para.issue_date = instrument.savings_startdate;
+	elseif ( strcmpi(para.type,'RETEXP') || strcmpi(para.type,'GOVPEN') ) 
+		para.maturity_date = instrument.retirement_enddate;
+		para.issue_date = instrument.retirement_startdate;	
     end
     if ( para.term != 0)
         if ( strcmpi(para.term_unit,'months'))
@@ -306,6 +317,138 @@ end  % end fill_para
 %                  Instrument Cash Flow rollout Functions
 %-------------------------------------------------------------------------------
 
+% ##############################################################################
+function para = get_cfvalues_GOVPEN(valuation_date, value_type, para, instrument, iec, longev)
+
+    d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
+    d2 = para.cf_datesnum(2:length(para.cf_datesnum));
+
+	year_valdate = datevec(valuation_date)(1);
+	birthyear = instrument.year_of_birth - instrument.mortality_shift_years;
+	age_valdate = year_valdate - birthyear;
+	
+	% get expense payment dates only in the past up to age 120:
+	pensiondates = para.cf_datesnum(para.cf_datesnum >= valuation_date);
+	[yy tmp_mm tmp_dd] = datevec(valuation_date);
+    new_yy = birthyear + 120;
+    max_date =   datenum([new_yy tmp_mm tmp_dd]);
+    pensiondates = pensiondates(para.cf_datesnum <= max_date);
+        	
+	% calculate expense values per expdate
+	yearly_pension_value = instrument.pension_scores * ...
+				instrument.value_per_score * (1 - instrument.tax_rate) * 12;
+	pension_values = ones(1,length(pensiondates)) * yearly_pension_value;
+	
+	% get survival probabilities and extend until age 120
+	survival_probs = longev.get('rates_base');
+	survival_years = longev.get('nodes');
+	if max(survival_years) < 120
+		delta_years = [max(survival_years)+1:1:120];
+		delta_probs = ones(1,length(delta_years)) .* survival_probs(end);
+	end
+	survival_probs = [survival_probs,delta_probs];
+	survival_years = [survival_years,delta_years];
+	
+	ier = iec.getRate(value_type,1);
+	ret_values = zeros(rows(ier),length(pensiondates));
+	for ii=1:1:length(pensiondates)
+		% adjust expense values for inflation
+		term_days = pensiondates(ii) - valuation_date;
+		ier = iec.getRate(value_type,term_days);
+		infl_factor = 1 ./ discount_factor(valuation_date, pensiondates(ii), ier, ...
+                                iec.compounding_type, iec.day_count_convention, ...
+                                iec.compounding_freq);
+        % adjust expense values for mortality
+        year_cf = datevec(pensiondates(ii))(1);
+        age_cf = year_cf - birthyear;
+        survival_years_tmp = survival_years(survival_years>age_valdate);
+        survival_probs_tmp = survival_probs(survival_years>age_valdate);
+        survival_years_tmp = survival_years_tmp(survival_years_tmp<=age_cf);
+        survival_probs_tmp = survival_probs_tmp(survival_years_tmp<=age_cf);
+        cum_survival = prod(survival_probs_tmp,2);                                
+		ret_values(:,ii) = cum_survival .* infl_factor .* pension_values(ii);
+	end
+
+	cf_interest = zeros(rows(ret_values),columns(ret_values));
+    cf_principal = ret_values;
+    
+    % return struct
+    para.ret_values     = ret_values;
+    para.cf_interest    = cf_interest;
+    para.cf_principal   = cf_principal;
+	
+end       
+        
+% ##############################################################################
+function para = get_cfvalues_RETEXP(valuation_date, value_type, para, instrument, iec, longev)
+
+    d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
+    d2 = para.cf_datesnum(2:length(para.cf_datesnum));
+
+	year_valdate = datevec(valuation_date)(1);
+	birthyear = instrument.year_of_birth - instrument.mortality_shift_years;
+	age_valdate = year_valdate - birthyear;
+	
+	% get expense payment dates only in the past:
+	expdates = para.cf_datesnum(para.cf_datesnum >= valuation_date);
+	[yy tmp_mm tmp_dd] = datevec(valuation_date);
+	new_yy = birthyear + 120;
+    max_date =   datenum([new_yy tmp_mm tmp_dd]);
+    expdates = expdates(para.cf_datesnum <= max_date);
+    
+	% calculate expense values per expdate
+	if isempty(instrument.expense_values)
+		error('rollout_retail_cashflows: no expenses set.');
+	else
+		expense_values = zeros(rows(expdates),1);
+		exp_change_dates = datenum(instrument.expense_dates);
+		for kk=1:1:length(exp_change_dates)
+			exp_chg_date = exp_change_dates(kk);
+			expense_values(expdates>=exp_chg_date) = instrument.expense_values(kk);
+		end
+	end
+	
+	% get survival probabilities and extend until age 120
+	survival_probs = longev.get('rates_base');
+	survival_years = longev.get('nodes');
+	if max(survival_years) < 120
+		delta_years = [max(survival_years)+1:1:120];
+		delta_probs = ones(1,length(delta_years)) .* survival_probs(end);
+	end
+	survival_probs = [survival_probs,delta_probs];
+	survival_years = [survival_years,delta_years];
+	
+	
+	
+	ier = iec.getRate(value_type,1);
+	ret_values = zeros(rows(ier),length(expdates));
+	for ii=1:1:length(expdates)
+		% adjust expense values for inflation
+		term_days = expdates(ii) - valuation_date;
+		ier = iec.getRate(value_type,term_days);
+		infl_factor = 1 ./ discount_factor(valuation_date, expdates(ii), ier, ...
+                                iec.compounding_type, iec.day_count_convention, ...
+                                iec.compounding_freq);
+        % adjust expense values for mortality
+        year_cf = datevec(expdates(ii))(1);
+        age_cf = year_cf - birthyear;
+        survival_years_tmp = survival_years(survival_years>age_valdate);
+        survival_probs_tmp = survival_probs(survival_years>age_valdate);
+        survival_years_tmp = survival_years_tmp(survival_years_tmp<=age_cf);
+        survival_probs_tmp = survival_probs_tmp(survival_years_tmp<=age_cf);
+        cum_survival = prod(survival_probs_tmp,2);                                
+		ret_values(:,ii) = cum_survival .* infl_factor .* expense_values(ii);
+	end
+
+	cf_interest = zeros(rows(ret_values),columns(ret_values));
+    cf_principal = ret_values;
+    
+    % return struct
+    para.ret_values     = ret_values;
+    para.cf_interest    = cf_interest;
+    para.cf_principal   = cf_principal;
+	
+end
 % ##############################################################################
 function para = get_cfvalues_RETAIL(valuation_date, value_type, para, instrument)
 

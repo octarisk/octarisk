@@ -1648,3 +1648,66 @@ end
 %! assert(r.getValue('base'),17311.498035,0.00001);
 %! assert(r.getValue('stress')(1),72369.277537,0.00001)
 %! assert(r.get('eff_duration'),18.0048,0.0001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Savings Plan\n');
+%! age_years = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100];
+%! sy = [0.99644,0.99972,0.99984,0.99989,0.99989,0.9999,0.99991,0.99991,0.99991,0.99992,0.99992,0.99992,0.99993,0.9999,0.99986,0.99984,0.99975,0.99973,0.99962,0.9996,0.99957,0.99959,0.99955,0.99959,0.99953,0.99956,0.99954,0.99954,0.99952,0.99948,0.99944,0.99938,0.99937,0.99927,0.99923,0.9992,0.99914,0.99902,0.99893,0.99889,0.99876,0.99867,0.99856,0.99846,0.9982,0.99804,0.99782,0.99763,0.99734,0.99703,0.99668,0.9963,0.99586,0.9953,0.99468,0.99409,0.99341,0.99267,0.99184,0.99106,0.99017,0.98918,0.98806,0.98702,0.98575,0.98458,0.98339,0.982,0.98082,0.9789,0.9777,0.97536,0.97382,0.97125,0.96891,0.96638,0.96283,0.9593,0.95453,0.94953,0.94358,0.93547,0.92734,0.91854,0.90801,0.89532,0.88229,0.8679,0.8513,0.83489,0.81844,0.80092,0.77462,0.75658,0.72999,0.70987,0.67763,0.66342,0.63915,0.6162,0.59394];
+%! rates_base = [-0.00643796,-0.00645068,-0.00647146,-0.00649504,-0.00655056,-0.00646984,-0.00623856,-0.00588843,-0.00546171,-0.00499647,-0.00452194,-0.00405828,-0.00361805,-0.00320813,-0.00283141,-0.00248813,-0.00217698,-0.00189573,-0.00164176,-0.00141235,-0.00120486,-0.00101681,-0.00084598,-0.00069036,-0.00054818,-0.00041791,-0.00029819,-0.00018784,-0.00008585,0.00000867,0.00009649,0.00017829,0.00025467];
+%! rates_stress = rates_base + [0.01];
+%! valuation_date = '31-Mar-2020';
+%! r = Retail();
+%! r = r.set('Name','Test_RETEXP','sub_type','RETEXP','term',1,'term_unit','years');
+%! r = r.set('compounding_type','simple','year_of_birth',1983);
+%! r = r.set('retirement_startdate','31-May-2051','retirement_enddate','31-May-2100');
+%! r = r.set('expense_values',[60000,60000],'expense_dates',{'31-May-2040','31-May-2060'});
+%! r = r.set('mortality_shift_years',-6,'infl_exp_curve','INFL_EXP_CURVE');
+%! r = r.set('longevity_table','LONGEV_DE_MALE');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[90,180,270,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125,9490,9855,10220,10585,10950], ...
+%! 'rates_base',rates_base,'rates_stress',rates_stress,'method_interpolation','linear','compounding_type','continuous');
+%! longev = Curve();
+%! longev = longev.set('id','LONGEV_DE_MALE','nodes', age_years, 'type', 'Longevity Table', 'rates_base',sy,'method_interpolation','linear','compounding_type','simple');
+%! i = Curve();
+%! i = i.set('id','INFL_EXP_CURVE','nodes',[365,7300], 'type', 'Inflation Expectation Curve', 'rates_base',[0.015,0.015],'rates_stress',[0.015,0.015;0.005,0.005;0.03,0.03],'method_interpolation','linear', 'method_extrapolation','constant','compounding_type','continuous','compounding_freq','annual');
+%! r = r.rollout('base',valuation_date,i,longev);
+%! r = r.rollout('stress',valuation_date,i,longev);
+%! r = r.calc_value(valuation_date,'base',c);
+%! r = r.calc_value(valuation_date,'stress',c);
+%! r = r.calc_sensitivities(valuation_date,c);
+%! r = r.calc_key_rates(valuation_date,c);
+%! assert(r.getValue('base'),1999296.527628,0.00001);
+%! assert(r.getValue('stress')(2),847886.869783,0.00001);
+
+%!test
+%! fprintf('\tdoc_instrument:\tPricing Government Pensions\n');
+%! age_years = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100];
+%! sy = [0.99644,0.99972,0.99984,0.99989,0.99989,0.9999,0.99991,0.99991,0.99991,0.99992,0.99992,0.99992,0.99993,0.9999,0.99986,0.99984,0.99975,0.99973,0.99962,0.9996,0.99957,0.99959,0.99955,0.99959,0.99953,0.99956,0.99954,0.99954,0.99952,0.99948,0.99944,0.99938,0.99937,0.99927,0.99923,0.9992,0.99914,0.99902,0.99893,0.99889,0.99876,0.99867,0.99856,0.99846,0.9982,0.99804,0.99782,0.99763,0.99734,0.99703,0.99668,0.9963,0.99586,0.9953,0.99468,0.99409,0.99341,0.99267,0.99184,0.99106,0.99017,0.98918,0.98806,0.98702,0.98575,0.98458,0.98339,0.982,0.98082,0.9789,0.9777,0.97536,0.97382,0.97125,0.96891,0.96638,0.96283,0.9593,0.95453,0.94953,0.94358,0.93547,0.92734,0.91854,0.90801,0.89532,0.88229,0.8679,0.8513,0.83489,0.81844,0.80092,0.77462,0.75658,0.72999,0.70987,0.67763,0.66342,0.63915,0.6162,0.59394];
+%! rates_base = [-0.00643796,-0.00645068,-0.00647146,-0.00649504,-0.00655056,-0.00646984,-0.00623856,-0.00588843,-0.00546171,-0.00499647,-0.00452194,-0.00405828,-0.00361805,-0.00320813,-0.00283141,-0.00248813,-0.00217698,-0.00189573,-0.00164176,-0.00141235,-0.00120486,-0.00101681,-0.00084598,-0.00069036,-0.00054818,-0.00041791,-0.00029819,-0.00018784,-0.00008585,0.00000867,0.00009649,0.00017829,0.00025467];
+%! rates_stress = rates_base + [0.01];
+%! valuation_date = '31-Mar-2020';
+%! r = Retail();
+%! r = r.set('Name','Test_GOVPEN','sub_type','GOVPEN','term',1,'term_unit','years');
+%! r = r.set('compounding_type','simple','year_of_birth',1983);
+%! r = r.set('retirement_startdate','31-May-2051','retirement_enddate','31-May-2100');
+%! r = r.set('pension_scores',75.318,'value_per_score',33.05,'tax_rate',0.27);
+%! r = r.set('mortality_shift_years',-6,'infl_exp_curve','INFL_EXP_CURVE');
+%! r = r.set('longevity_table','LONGEV_DE_MALE');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[90,180,270,365,730,1095,1460,1825,2190,2555,2920,3285,3650,4015,4380,4745,5110,5475,5840,6205,6570,6935,7300,7665,8030,8395,8760,9125,9490,9855,10220,10585,10950]);
+%! c = c.set('rates_base',rates_base,'rates_stress',rates_stress,'method_interpolation','linear','compounding_type','continuous');
+%! longev = Curve();
+%! longev = longev.set('id','LONGEV_DE_MALE','nodes', age_years, 'type', 'Longevity Table');
+%! longev = longev.set('rates_base',sy,'method_interpolation','linear','compounding_type','simple');
+%! i = Curve();
+%! i = i.set('id','INFL_EXP_CURVE','nodes',[365,7300], 'type', 'Inflation Expectation Curve');
+%! i = i.set('rates_base',[0.015,0.015],'rates_stress',[0.015,0.015;0.005,0.005;0.03,0.03]);
+%! i = i.set('method_interpolation','linear', 'method_extrapolation','constant','compounding_type','continuous','compounding_freq','annual');
+%! r = r.rollout('base',valuation_date,i,longev);
+%! r = r.rollout('stress',valuation_date,i,longev);
+%! r = r.calc_value(valuation_date,'base',c);
+%! r = r.calc_value(valuation_date,'stress',c);
+%! r = r.calc_sensitivities(valuation_date,c);
+%! r = r.calc_key_rates(valuation_date,c);
+%! assert(r.getValue('base'),726608.226467,0.00001);
+%! assert(r.getValue('stress')(2),308149.174565,0.00001);

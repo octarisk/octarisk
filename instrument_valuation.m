@@ -674,6 +674,25 @@ elseif strcmpi(tmp_type,'retail')
                     obj = obj.rollout('base',valuation_date,tmp_curve_object);
                 end
                 obj = obj.rollout(scenario,valuation_date,tmp_curve_object);
+        elseif( strcmpi(tmp_sub_type,'RETEXP') || strcmpi(tmp_sub_type,'GOVPEN'))       % Retirement Expenses or Government Pension
+			% get inflation expectation curve
+			tmp_infl_exp_curve  = obj.get('infl_exp_curve');
+			[infl_curve object_ret_code]    = get_sub_object(curve_struct, tmp_infl_exp_curve); 
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_infl_exp_curve);
+			end
+			% get longevity table
+			tmp_longev_table  = obj.get('longevity_table');
+			[longev_table object_ret_code]    = get_sub_object(curve_struct, tmp_longev_table); 
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_longev_table);
+			end
+			
+            % rollout cash flows for all scenarios
+			if (~strcmpi(scenario,'base') )
+				obj = obj.rollout('base',valuation_date,infl_curve,longev_table);
+			end
+			obj = obj.rollout(scenario,valuation_date,infl_curve,longev_table);
         else
             fprintf('WARNING: instrument_valuation: unknown RETAIL sub_type >>%s<< for id >>%s<<\n',obj.id,tmp_sub_type);
         end 

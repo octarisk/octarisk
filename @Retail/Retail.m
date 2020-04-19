@@ -43,7 +43,23 @@ classdef Retail < Instrument
         extra_payment_dates = '';  % at given dates
         savings_change_values = []; % savings rate changes at given dates  
         savings_change_dates = '';  % dates on which saving values changes
-              
+             
+        % Retirement Expenses attributes
+        year_of_birth	= '1983';	% start date for all longevity calculations
+		retirement_startdate = '';
+		retirement_enddate = '';
+		expense_values = [];  % value of expenses
+		expense_dates = '';	  % valid starting at given dates
+		infl_exp_curve = '';
+		longevity_table = '';
+		mortality_table = '';
+		mortality_shift_years = 0;	% number in years, how to shift survival/mortality values
+      
+        % Retirement Government pension
+        pension_scores = 0; 	% Rentenpunkte
+        value_per_score = 0;	% Wert pro Rentenpunkt: gross_pension = value_per_score x pension_scores
+        tax_rate = 0;			% tax rate: net pension = gross penion x (1- tax_rate)
+        
         % Key rate duration specific attributes
         key_term                = [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
         key_rate_shock          = 0.01; % key rate shock size (cont, act/365)
@@ -127,6 +143,28 @@ classdef Retail < Instrument
          fprintf('last_coupon_date: %d\n',b.last_coupon_date);
          fprintf('prorated: %s\n',any2str(b.prorated)); 
          fprintf('in_arrears: %s\n',any2str(b.in_arrears)); 
+         if strcmpi( b.sub_type,'RETEXP') 
+			fprintf('year_of_birth: %d\n',b.year_of_birth); 
+			fprintf('retirement_startdate: %s\n',b.retirement_startdate); 
+			fprintf('retirement_enddate: %s\n',b.retirement_enddate); 
+			fprintf('mortality_shift_years: %f\n',b.mortality_shift_years); 
+			fprintf('infl_exp_curve: %s\n',b.infl_exp_curve); 
+			fprintf('longevity_table: %s\n',b.longevity_table); 
+			fprintf('mortality_table: %s\n',b.mortality_table); 
+			fprintf('expense_values: %s\n',any2str(b.expense_values)); 
+			fprintf('expense_dates: %s\n',any2str(b.expense_dates)); 
+         end
+         if strcmpi( b.sub_type,'GOVPEN') 
+			fprintf('retirement_startdate: %s\n',b.retirement_startdate); 
+			fprintf('retirement_enddate: %s\n',b.retirement_enddate); 
+			fprintf('mortality_shift_years: %f\n',b.mortality_shift_years); 
+			fprintf('infl_exp_curve: %s\n',b.infl_exp_curve); 
+			fprintf('longevity_table: %s\n',b.longevity_table); 
+			fprintf('mortality_table: %s\n',b.mortality_table); 
+			fprintf('pension_scores: %f\n',b.pension_scores); 
+			fprintf('value_per_score: %f\n',b.value_per_score); 
+			fprintf('tax_rate: %f\n',b.tax_rate); 
+         end
          if strcmpi( b.sub_type,'SAVPLAN')
 			fprintf('savings_rate: %f  %s\n',b.savings_rate,b.currency); 
 			fprintf('redemption_values: %s\n',any2str(b.redemption_values)); 
@@ -224,8 +262,9 @@ classdef Retail < Instrument
 
       end
       function obj = set.sub_type(obj,sub_type)
-         if ~(strcmpi(sub_type,'DCP') || strcmpi(sub_type,'SAVPLAN') )
-            error('Retail sub_type must be either DCP, or SAVPLAN: %s',sub_type)
+         if ~(strcmpi(sub_type,'DCP') || strcmpi(sub_type,'SAVPLAN') ...
+				|| strcmpi(sub_type,'RETEXP') || strcmpi(sub_type,'GOVPEN') )
+            error('Retail sub_type must be either DCP, RETEXP, GOVPEN or SAVPLAN: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
@@ -331,13 +370,15 @@ textstring = "@deftypefn{Octarisk Class} {@var{object}} = Retail(@var{id})\n\
 @deftypefnx{Octarisk Class} {@var{object}} = Retail()\n\
 \n\
 Class for setting up various Retail objects like saving plans with bonus or\n\
-defined contribution pension plans.\n\
+defined contribution pension plans and retirement expenses.\n\
 Cash flows are generated specific for each Retail sub type and subsequently\n\
 discounted to calculate the Retail value.\n\
 \n\
 @itemize @bullet\n\
 @item DCP: Defined contribution savings plan with guaranteed value at maturity and surrender value.\n\
 @item SAVPLAN: Savings plan with optional bonus at maturity.\n\
+@item RETEXP: Modelling retirement expenses depending on survival rates and inflation expectation rates.\n\
+@item GOVPEN: Modelling government pensions depending on survival rates and inflation expectation rates.\n\
 @end itemize\n\
 \n\
 In the following, all methods and attributes are explained and a code example is given.\n\
@@ -355,6 +396,7 @@ Calculate the net present value of cash flows of Bonds (including pricing of emb
 \n\
 @item obj.rollout(@var{scenario}, @var{valuation_date}): used for SAVPLAN and DCP without redemption\n\
 @item obj.rollout(@var{scenario}, @var{valuation_date}, @var{discount_curve}): used for DCP with redemption\n\
+@item obj.rollout(@var{scenario}, @var{valuation_date}, @var{inflation_exp_curve}, @var{longevity_table}): used for retirement expenses and government pensions\n\
 \n\
 @item obj.calc_sensitivities(@var{valuation_date},@var{discount_curve})\n\
 Calculate numerical sensitivities for the given Retail instrument.\n\

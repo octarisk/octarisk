@@ -5,29 +5,43 @@ retcode = 1;
 hist_bv = [obj.hist_base_values];
 hist_var = [obj.hist_var_abs];
 hist_dates = [obj.hist_report_dates];
+
+% check for empty hist_dates
+if isempty(hist_dates)
+	% doing nothing
+else
+	if isempty(hist_dates{1})
+		hist_dates = {};
+	end
+end
+
 if isempty(obj.hist_cashflow)
 	cashinoutflow = [zeros(1,numel(hist_dates))];
 else
 	cashinoutflow = [obj.hist_cashflow];	  
 end	
-% make sure hist_date before valuation date
-% remove all values equal or after valuation date
-hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
-hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
-cashinoutflow(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
-% lastly remove from hist_dates
-hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
 
+if (numel(hist_bv)>0 && numel(hist_var)>0 && numel(hist_dates)>0)
+	% make sure hist_date before valuation date
+	% remove all values equal or after valuation date
+	hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+	hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+	cashinoutflow(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+	% lastly remove from hist_dates
+	hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+end
 % append current values	
+cashinoutflow = zeros(1,numel(hist_dates));
 if isempty(obj.current_cashflow)
-	cashinoutflow = [cashinoutflow, 0];
+	cashinoutflow = [cashinoutflow,0];
 else
 	cashinoutflow = [cashinoutflow, obj.current_cashflow];	
 end	
-hist_bv = [hist_bv,obj.getValue('base')];
+%hist_bv = [hist_bv,obj.getValue('base')]	% undo once funtional
+hist_bv = [hist_bv,obj.value_base];
 hist_var = [hist_var,obj.varhd_abs];
 hist_dates = [hist_dates,datestr(para_object.valuation_date)];
-  
+
 % set colors
 or_green = [0.56863   0.81961   0.13333]; 
 or_blue  = [0.085938   0.449219   0.761719]; 
@@ -130,3 +144,60 @@ else
 end
 
 end
+
+%~ % testing
+%~ obj = struct();
+%~ para_object = struct();
+%~ % fill variables
+%~ obj.id = 'Testportfolio'
+%~ obj.hist_base_values = []
+%~ obj.hist_var_abs = []
+%~ obj.hist_report_dates = {}
+%~ obj.hist_cashflow = []
+%~ obj.current_cashflow = 22
+%~ obj.varhd_abs = 150
+%~ obj.value_base = 1005
+%~ obj.currency = 'EUR'
+%~ para_object.mc_timestep_days = 10
+%~ para_object.valuation_date = datenum('31-Mar-2020')
+%~ path_reports = '/home/schinzilord/null';
+%~ retcode = plot_hist_var(obj,para_object,path_reports)
+%~ retcode = plot_hist_var_simple(obj,para_object,path_reports)
+
+%~ % works with only 1 past value
+%~ obj = struct();
+%~ para_object = struct();
+%~ % fill variables
+%~ obj.id = 'Testportfolio'
+%~ obj.hist_base_values = [1000]
+%~ obj.hist_var_abs = [100]
+%~ obj.hist_report_dates = {'29-Feb-2020'}
+%~ obj.hist_cashflow = [24]
+%~ obj.current_cashflow = 22
+%~ obj.varhd_abs = 150
+%~ obj.value_base = 1005
+%~ obj.currency = 'EUR'
+%~ para_object.mc_timestep_days = 10
+%~ para_object.valuation_date = datenum('31-Mar-2020')
+%~ path_reports = '/home/schinzilord/null';
+%~ retcode = plot_hist_var(obj,para_object,path_reports)
+%~ retcode = plot_hist_var_simple(obj,para_object,path_reports)
+
+%~ % works with 2 past values
+%~ obj = struct();
+%~ para_object = struct();
+%~ % fill variables
+%~ obj.id = 'Testportfolio'
+%~ obj.hist_base_values = [1000,1010]
+%~ obj.hist_var_abs = [100,200]
+%~ obj.hist_report_dates = {'31-Jan-2020','29-Feb-2020'}
+%~ obj.hist_cashflow = [24,26]
+%~ obj.current_cashflow = 22
+%~ obj.varhd_abs = 150
+%~ obj.value_base = 1005
+%~ obj.currency = 'EUR'
+%~ para_object.mc_timestep_days = 10
+%~ para_object.valuation_date = datenum('31-Mar-2020')
+%~ path_reports = '/home/schinzilord/null';
+%~ retcode = plot_hist_var(obj,para_object,path_reports)
+%~ retcode = plot_hist_var_simple(obj,para_object,path_reports)

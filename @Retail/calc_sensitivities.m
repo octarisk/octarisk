@@ -34,11 +34,17 @@ end
                     rates_discount + obj.ir_shock; ...
                     rates_discount - 0.0001; ...
                     rates_discount + 0.0001];
-                    
+               
     % calculate values under shock
     c = discount_curve.set('rates_stress',rates_eff_sensis);   
     obj_tmp = obj;
-    obj_tmp = obj_tmp.rollout('stress',valuation_date,c);                              
+    % roll out only for DCP
+    if strcmpi(obj.sub_type,'DCP') || strcmpi(obj.sub_type,'SAVPLAN')
+		obj_tmp = obj_tmp.rollout('stress',valuation_date,c);  
+	elseif strcmpi(obj.sub_type,'RETEXP') || strcmpi(obj.sub_type,'GOVPEN')
+		% special case RETEXP: cash flow not dependent on IR --> set to base 
+		obj_tmp = obj_tmp.set('cf_values_stress',obj.get('cf_values'));
+	end                           
     obj_tmp = obj_tmp.calc_value(valuation_date,'stress',c);              
     value_vec = obj_tmp.getValue('stress');               
     theo_value              = value_vec(1);

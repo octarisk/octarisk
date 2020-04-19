@@ -961,6 +961,9 @@ elseif (strcmpi(type,'latex'))
 				% Risk | SRRI level | 4 | 4 | on track v rebalancing
 				srri_actual = get_srri_level(abs(obj.varhd_rel),tmp_ts,para_object.quantile);
 				repstruct.srri_actual = srri_actual;
+				sr_actual = obj.solvency_ratio;
+				repstruct.solvency_ratio = sr_actual;
+				
 				if ( srri_actual == obj.srri_target )
 					status_str = '\colorbox{octariskgreen}{on track}';
 				else
@@ -970,6 +973,10 @@ elseif (strcmpi(type,'latex'))
 			else % asset and liability portfolio
 			 % b) Solvency Ratio
 				% Risk | Solvency Ratio | >200% | 195% | on track v rebalancing v monitoring
+				% get and store srri in any case
+				srri_actual = get_srri_level(abs(obj.varhd_rel),tmp_ts,para_object.quantile);
+				repstruct.srri_actual = srri_actual;
+				
 				sr_actual = obj.solvency_ratio;
 				sr_limit_lower = 1.0;
 				sr_limit_higher = 2.0;

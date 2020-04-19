@@ -445,23 +445,26 @@ elseif (strcmpi(type,'var'))
 		pie_chart_desc_pos_shock = {};
 		pie_chart_desc_pos_base = {};
 		% loop through all positions
+		kk = 0;
 		for (ii=1:1:length(obj.positions))
 			try
 			  pos_obj = obj.positions(ii).object;
 			  if (isobject(pos_obj))
-					pie_chart_values_pos_shock(ii) = (pos_obj.decomp_varhd) ;
-					pie_chart_values_pos_base(ii) = pos_obj.getValue('base') ;
-					pie_chart_desc_pos_shock(ii) = cellstr( strcat(pos_obj.id));
-					pie_chart_desc_pos_base(ii) = cellstr( strcat(pos_obj.id));
+					kk = kk + 1;
+					pie_chart_values_pos_shock(kk) = (pos_obj.decomp_varhd) ;
+					pie_chart_values_pos_base(kk) = pos_obj.getValue('base') ;
+					pie_chart_desc_pos_shock(kk) = cellstr( strcat(pos_obj.id));
+					pie_chart_desc_pos_base(kk) = cellstr( strcat(pos_obj.id));
 			  end
 			catch
 				printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
 			end
 		end
+		
 		% prepare vector for piechart:
 		[pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock,'descend');
 		[pie_chart_values_sorted_pos_base sorted_numbers_pos_base ] = sort(pie_chart_values_pos_base,'descend');
-		
+
 		% plot Top 5 Positions Decomp
 		idx = 1; 
 		max_positions = 5;
@@ -470,6 +473,7 @@ elseif (strcmpi(type,'var'))
 			pie_chart_desc_plot_pos_shock(idx)       = pie_chart_desc_pos_shock(sorted_numbers_pos_shock(ii));
 			idx = idx + 1;
 		end
+
 		% append remaining part
 		if (idx == (max_positions + 1))
 			pie_chart_values_plot_pos_shock(idx)     = mc_var_shock - sum(pie_chart_values_plot_pos_shock) ;

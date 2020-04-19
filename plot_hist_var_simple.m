@@ -1,21 +1,49 @@
 function retcode = plot_hist_var_simple(obj,para_object,path_reports)
 
 retcode = 1;
-hist_bv = [obj.hist_base_values,obj.getValue('base')];
-hist_var = [obj.hist_var_abs,obj.varhd_abs];
-hist_dates = [obj.hist_report_dates,datestr(para_object.valuation_date)];
-if isempty(obj.hist_cashflow)
-	cashinoutflow = [zeros(1,numel(hist_dates)), obj.current_cashflow];
+
+% fill variables
+hist_bv = [obj.hist_base_values];
+hist_var = [obj.hist_var_abs];
+hist_dates = [obj.hist_report_dates];
+
+% check for empty hist_dates
+if isempty(hist_dates)
+	% doing nothing
 else
-	cashinoutflow = [obj.hist_cashflow, obj.current_cashflow];	  
+	if isempty(hist_dates{1})
+		hist_dates = {};
+	end
 end
-% make sure hist_date before valuation date
-% remove all values equal or after valuation date
-hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
-hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
-cashinoutflow(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
-% lastly remove from hist_dates
-hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+
+if isempty(obj.hist_cashflow)
+	cashinoutflow = [zeros(1,numel(hist_dates))];
+else
+	cashinoutflow = [obj.hist_cashflow];	  
+end	
+
+if (numel(hist_bv)>0 && numel(hist_var)>0 && numel(hist_dates)>0)
+	% make sure hist_date before valuation date
+	% remove all values equal or after valuation date
+	hist_var(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+	hist_bv(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+	cashinoutflow(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+	% lastly remove from hist_dates
+	hist_dates(datenum(hist_dates)>=datenum(datestr(para_object.valuation_date)))=[];
+end
+% append current values	
+cashinoutflow = zeros(1,numel(hist_dates));
+if isempty(obj.current_cashflow)
+	cashinoutflow = [cashinoutflow,0];
+else
+	cashinoutflow = [cashinoutflow, obj.current_cashflow];	
+end	
+%hist_bv = [hist_bv,obj.getValue('base')]	% undo once funtional
+hist_bv = [hist_bv,obj.value_base];
+hist_var = [hist_var,obj.varhd_abs];
+hist_dates = [hist_dates,datestr(para_object.valuation_date)];
+
+
   
 % set colors
 or_green = [0.56863   0.81961   0.13333]; 
@@ -24,7 +52,10 @@ or_orange =  [0.945312   0.398438   0.035156];
 light_blue = [0.50000   0.69922   0.99609];
 
 
-if (numel(hist_bv)>0 && numel(hist_bv) == numel(hist_var))  	
+if (numel(hist_bv)>0 && numel(hist_bv) == numel(hist_var) ...
+						&& numel(hist_dates) == numel(hist_var) ...
+						&& numel(hist_bv) == numel(hist_dates) ...
+						&& numel(hist_bv) == numel(cashinoutflow) )  	
 		
 		% take only into account 6 last reporting dates
 		len = numel(hist_bv);
@@ -64,19 +95,6 @@ if (numel(hist_bv)>0 && numel(hist_bv) == numel(hist_var))
 		set (h1,'marker','o');
 		set (h1,'markersize',12);
 		set (h1,'markerfacecolor',or_blue);
-
-		
-		% doing a replot
-		var_bv_min = zeros(1,numel(hist_bv));
-		%for kk=numel(hist_bv)-1:1:numel(hist_bv)-1
-		kk=numel(hist_bv)-1;
-		dip = numel(busdays(datenum(hist_dates(kk)),datenum(hist_dates(kk+1))));
-		dd = [kk:1/dip:kk+1];
-		zz = [0:1/dip:1];
-		var_limit= [hist_bv(kk) - hist_var(kk) .* sqrt(dip) ./ ...
-				sqrt(10).* sqrt(zz)] + ...
-				zz.* cashinoutflow(kk+1);
-		var_bv_min(kk) = var_limit(end);
 		
 		dip = 10;
 		kk = numel(hist_bv);
