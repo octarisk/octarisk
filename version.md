@@ -1,5 +1,12 @@
 # Version History 
 
+### 0.6.0, 2020/04/26
+Version v0.6.0 is a major release introducing a new reporting framework
+- Extension of Retail class
+- Rework of Position class
+- Refactoring and extension of reporting functionality (e.g. high-quality graphical output)
+- various refactoring and bugfixing
+
 ### 0.5.1, 2019/06/13
 Version v0.5.1 is a minor release with additional features
 - Introduction of Retail class to allow for valuation of private investors banking and insurance products

@@ -17,7 +17,7 @@ state-of-the-art methods and a light-weight and rapid
 calculation shall be implemented with free software only.
 
 The code is written in Octave and C++ language and will be useable right out-of-the box 
-with Octave version >= 4.4.1 and the Financial and Statistics package. The code 
+with Octave version 4.4.1 and the Financial and Statistics package. The code 
 is licensed under the GNU GPL.
 
 Further information:
@@ -39,7 +39,7 @@ Stefan Schloegl (schinzilord@octarisk.com)
 IRRer-Zins (IRRer-Zins@t-online.de)
 ## Installation
 
-You need Octave in Version >=4.4.1 with installed financial, io and statistics package.
+You need Octave in Version 4.4.1 with installed financial, io and statistics package.
 Moreover, an efficient linear algebra package is strongly recommended (e.g. OpenBLAS / LaPACK)
 
 Just follow these steps:
@@ -107,28 +107,25 @@ For a more detailed installation instruction please refer to this
 ## Compatibility
 
 Octarisk runs on every system with a running [Octave](https://www.gnu.org/software/octave/) 
-environment in Version 4.4.1.
+environment in Version 4.4.1. Due to compilation issues of Octave 5 on Ubuntu bases system still
+full support is only given Version 4.4.1.
 To my knowledge, Octave binaries are provided for MS Windows and many Linux distributions.
 
 A system with at least 4Gb memory is recommended.
 
 Matlab Compatibility:
-In the upcomming releases there will be enhanced compatilibity to Matlab provided.
-However, more adjustments (regarding automatic broadcasting vs. bsxfun) are necessary. 
-In the future for each major Octave release there will be
-detailed instructions how full compatibility with Matlab can be reached and / or 
-a Matlab version will be released.
-However, further code development will be still accomplished with Octave (because 
+Due to recent lack of a Matlab programming platform the support for Matlab was entirely skipped.
+In theory it should be possible to adjust the code, but unknown effort is required to do so.
+Further code development will only be accomplished with Octave (because 
 it is *free* and everybody can contribute and run the code.)
 Write me an Email if you need assistance in porting the code basis to Matlab.
-Octave's oct-files with c++ pricing functions needs to be ported to mex-files
-in order to provide full Matlab compatibility.
 
 ## Version history
 
-- Version 0.5.1	  introduction of Retail class to allow for valuation of private investors banking and insurance products
-- Version 0.5.0	  introduction of Solvency II reporting according to Tripartitie v4.0 standard
-- Version 0.4.4  bug fixes, stability and performance improvements (dropped support for Octave 4.2)
+- Version 0.6.0   introduction of enhanced reporting framework
+- Version 0.5.1   introduction of Retail class to allow for valuation of private investors banking and insurance products
+- Version 0.5.0   introduction of Solvency II reporting according to Tripartitie v4.0 standard
+- Version 0.4.4   bug fixes, stability and performance improvements (dropped support for Octave 4.2)
 - Version 0.4.3   fixed compatibility issues with Octave 4.4.0 release, minor bug fixes, more statistical tests
 - Version 0.4.2   introduction of CDS and Sobol number generator, minor bug fixes
 - Version 0.4.1   introduction of a GUI and a batch mode, minor bug fixes
