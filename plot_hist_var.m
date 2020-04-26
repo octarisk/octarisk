@@ -68,12 +68,13 @@ if (numel(hist_bv)>0 && numel(hist_bv) == numel(hist_var) ...
 		hvar = figure(1);
 		clf;
 		xx=1:1:length(hist_bv)+1;
-		hist_var_rel = 100 .* hist_var ./ hist_bv;
+		hist_var_rel = 100 .* hist_var ./ abs(hist_bv);
 
 		annotation("textbox",[0.7,0.15,0.1,0.1],"string", ...
 				"Base value threshold \nimposed by pre-date VaR","edgecolor",'white', ...
 				"backgroundcolor","white","color",or_blue);
 		[ax h1 h2] = plotyy (xx(1:end-1),hist_bv, xx(1:end-1),hist_var_rel, @plot, @plot);
+
 		hold on;
         xlabel(ax(1),'Reporting Date','fontsize',12);
         set(ax(1),'visible','on');

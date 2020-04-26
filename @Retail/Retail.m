@@ -46,19 +46,24 @@ classdef Retail < Instrument
              
         % Retirement Expenses attributes
         year_of_birth	= '1983';	% start date for all longevity calculations
+        year_of_birth_widow	= '1983';	% start date for all longevity calculations
 		retirement_startdate = '';
 		retirement_enddate = '';
 		expense_values = [];  % value of expenses
 		expense_dates = '';	  % valid starting at given dates
 		infl_exp_curve = '';
 		longevity_table = '';
+		longevity_table_widow = '';
 		mortality_table = '';
 		mortality_shift_years = 0;	% number in years, how to shift survival/mortality values
-      
+		mortality_shift_years_widow = 0;	% number in years, how to shift survival/mortality values
+		 
         % Retirement Government pension
         pension_scores = 0; 	% Rentenpunkte
+        widow_pension_rate = 0.6; 	% Ratio of Widow pension
         value_per_score = 0;	% Wert pro Rentenpunkt: gross_pension = value_per_score x pension_scores
         tax_rate = 0;			% tax rate: net pension = gross penion x (1- tax_rate)
+        widow_pension_flag = 0;	% boolean: take into account pension payments for widow
         
         % Key rate duration specific attributes
         key_term                = [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
@@ -155,15 +160,20 @@ classdef Retail < Instrument
 			fprintf('expense_dates: %s\n',any2str(b.expense_dates)); 
          end
          if strcmpi( b.sub_type,'GOVPEN') 
+			fprintf('year_of_birth: %d\n',b.year_of_birth); 
+			fprintf('year_of_birth_widow: %d\n',b.year_of_birth_widow);
 			fprintf('retirement_startdate: %s\n',b.retirement_startdate); 
 			fprintf('retirement_enddate: %s\n',b.retirement_enddate); 
 			fprintf('mortality_shift_years: %f\n',b.mortality_shift_years); 
+			fprintf('mortality_shift_years_widow: %f\n',b.mortality_shift_years_widow); 
 			fprintf('infl_exp_curve: %s\n',b.infl_exp_curve); 
 			fprintf('longevity_table: %s\n',b.longevity_table); 
+			fprintf('longevity_table_widow: %s\n',b.longevity_table_widow); 
 			fprintf('mortality_table: %s\n',b.mortality_table); 
 			fprintf('pension_scores: %f\n',b.pension_scores); 
 			fprintf('value_per_score: %f\n',b.value_per_score); 
 			fprintf('tax_rate: %f\n',b.tax_rate); 
+			fprintf('widow_pension_flag: %s\n',any2str(b.widow_pension_flag)); 
          end
          if strcmpi( b.sub_type,'SAVPLAN')
 			fprintf('savings_rate: %f  %s\n',b.savings_rate,b.currency); 

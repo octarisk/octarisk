@@ -1,0 +1,16 @@
+SourceRF,TargetRF,Description
+RF_ALT_HIGH,RF_ALT_BTC,Riskfactor Bitcoin EUR
+RF_COM_HIGH,RF_COM_GOLD,Riskfactor Physical Gold
+RF_COM_HIGH,RF_COM_SILVER,Riskfactor Physical Silver
+RF_EQ_HIGH,RF_EQ_ALLIANZ,Riskfactor Equity Allianz
+RF_EQ_HIGH,RF_EQ_EM,Riskfactor Equity EmergingMarkets
+RF_EQ_LOW,RF_EQ_AP,Riskfactor Equity AsiaPacific
+RF_EQ_LOW,RF_EQ_EU,Riskfactor Equity Europe
+RF_EQ_LOW,RF_EQ_NA,Riskfactor Equity NorthAmerica
+RF_FX_HIGH,RF_FX_EURCAD,Forex EUR CAD
+RF_FX_HIGH,RF_FX_EURCHF,Riskfactor Forex EUR CHF
+RF_FX_HIGH,RF_FX_EURGBP,Riskfactor Forex EUR GBP
+RF_FX_HIGH,RF_FX_EURJPY,Riskfactor Forex EUR JPY
+RF_FX_HIGH,RF_FX_EURUSD,Riskfactor Forex EUR USD
+RF_RE_HIGH,RF_RE_DM,Riskfactor RealEstate World DM
+RF_VOLA_HIGH,RF_VOLA_EQ_US,Riskfactor Impl Vola Equity US CBOE

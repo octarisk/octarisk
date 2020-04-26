@@ -63,7 +63,7 @@ case {'RETEXP' }
 		
 case {'GOVPEN' }
     para = get_cfvalues_GOVPEN(para.valuation_date, value_type, para, ...
-		instrument, obj1, obj2); 
+		instrument, obj1, obj2, obj3); 
 		       
 otherwise
     error('rollout_retail_cashflows: Unknown instrument type >>%s<<',any2str(para.type));
@@ -318,7 +318,7 @@ end  % end fill_para
 %-------------------------------------------------------------------------------
 
 % ##############################################################################
-function para = get_cfvalues_GOVPEN(valuation_date, value_type, para, instrument, iec, longev)
+function para = get_cfvalues_GOVPEN(valuation_date, value_type, para, instrument, iec, longev, longev_widow)
 
     d1 = para.cf_datesnum(1:length(para.cf_datesnum)-1);
     d2 = para.cf_datesnum(2:length(para.cf_datesnum));
@@ -326,6 +326,11 @@ function para = get_cfvalues_GOVPEN(valuation_date, value_type, para, instrument
 	year_valdate = datevec(valuation_date)(1);
 	birthyear = instrument.year_of_birth - instrument.mortality_shift_years;
 	age_valdate = year_valdate - birthyear;
+	
+	if instrument.widow_pension_flag == true
+		birthyear_widow = instrument.year_of_birth_widow - instrument.mortality_shift_years_widow;
+		age_valdate_widow = year_valdate - birthyear_widow;
+	end
 	
 	% get expense payment dates only in the past up to age 120:
 	pensiondates = para.cf_datesnum(para.cf_datesnum >= valuation_date);
@@ -345,9 +350,23 @@ function para = get_cfvalues_GOVPEN(valuation_date, value_type, para, instrument
 	if max(survival_years) < 120
 		delta_years = [max(survival_years)+1:1:120];
 		delta_probs = ones(1,length(delta_years)) .* survival_probs(end);
+		survival_probs = [survival_probs,delta_probs];
+		survival_years = [survival_years,delta_years];
 	end
-	survival_probs = [survival_probs,delta_probs];
-	survival_years = [survival_years,delta_years];
+	
+	
+	if instrument.widow_pension_flag == true	% widow
+		% get survival probabilities and extend until age 120
+		survival_probs_widow = longev_widow.get('rates_base');
+		survival_years_widow = longev_widow.get('nodes');
+		if max(survival_years) < 120
+			delta_years_widow = [max(survival_years_widow)+1:1:120];
+			delta_probs_widow = ones(1,length(delta_years_widow)) .* survival_probs_widow(end);
+			survival_probs_widow = [survival_probs_widow,delta_probs_widow];
+			survival_years_widow = [survival_years_widow,delta_years_widow];
+		end
+		
+	end
 	
 	ier = iec.getRate(value_type,1);
 	ret_values = zeros(rows(ier),length(pensiondates));
@@ -365,8 +384,21 @@ function para = get_cfvalues_GOVPEN(valuation_date, value_type, para, instrument
         survival_probs_tmp = survival_probs(survival_years>age_valdate);
         survival_years_tmp = survival_years_tmp(survival_years_tmp<=age_cf);
         survival_probs_tmp = survival_probs_tmp(survival_years_tmp<=age_cf);
-        cum_survival = prod(survival_probs_tmp,2);                                
+        cum_survival = prod(survival_probs_tmp,2) ;                              
 		ret_values(:,ii) = cum_survival .* infl_factor .* pension_values(ii);
+		
+		% adjust for widow pension:
+		if instrument.widow_pension_flag == true
+			age_cf_widow = year_cf - birthyear_widow;
+			survival_years_tmp = survival_years_widow(survival_years_widow>age_valdate_widow);
+			survival_probs_tmp = survival_probs_widow(survival_years_widow>age_valdate_widow);
+			survival_years_tmp = survival_years_tmp(survival_years_tmp<=age_cf_widow);
+			survival_probs_tmp = survival_probs_tmp(survival_years_tmp<=age_cf_widow);
+			cum_survival_widow = prod(survival_probs_tmp,2);
+			widow_pension = instrument.widow_pension_rate .* (1-cum_survival) ...
+						.* cum_survival_widow .* infl_factor .* pension_values(ii);
+			ret_values(:,ii) = 	ret_values(:,ii) + 	widow_pension;	
+		end
 	end
 
 	cf_interest = zeros(rows(ret_values),columns(ret_values));

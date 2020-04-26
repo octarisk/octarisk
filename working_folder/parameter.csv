@@ -1,63 +1,48 @@
-% Input folder
-path_working_folderCHAR,/home/w79ccl6/programming/octarisk/working_folder
+%attribute,value
+aggregation_flagBOOL,1
+aggregation_keyCELL,asset_class|currency|id
+archive_flagBOOL,0
+base_currencyCHAR,EUR
+calc_marg_incr_varBOOL,1
+copulatypeCHAR,t
+first_evalBOOL,1
 folder_archiveCHAR,archive
 folder_inputCHAR,input
-folder_staticCHAR,static
 folder_mktdataCHAR,mktdata
-
-% output folder
 folder_outputCHAR,output
 folder_output_instrumentsCHAR,instruments
+folder_output_mktdataCHAR,mktdata
+folder_output_positionsCHAR,positions
+folder_output_reportsCHAR,reports
 folder_output_riskfactorsCHAR,riskfactors
 folder_output_stresstestsCHAR,stresstests
-folder_output_positionsCHAR,positions
-folder_output_mktdataCHAR,mktdata
-folder_output_reportsCHAR,reports
-
-% input filenames
+folder_staticCHAR,static
+frob_norm_limitNMBR,0.25
+input_filename_corr_matrixCHAR,corr_SII_SM.csv
 input_filename_instrumentsCHAR,instruments.csv
-input_filename_corr_matrixCHAR,corr.csv
-input_filename_stresstestsCHAR,stresstests.csv
-input_filename_riskfactorsCHAR,riskfactors.csv
-input_filename_positionsCHAR,positions.csv
+input_filename_matrixCHAR,matrix_
 input_filename_mktdataCHAR,mktdata.csv
+input_filename_positionsCHAR,positions.csv
+input_filename_riskfactorsCHAR,riskfactors.csv
 input_filename_seedCHAR,random_seed.dat
-
-% set filenames for vola surfaces
+input_filename_stresstestsCHAR,stresstests.csv
+input_filename_surf_stochCHAR,surf_stochastic_
 input_filename_vola_indexCHAR,vol_index_
 input_filename_vola_irCHAR,vol_ir_
-input_filename_surf_stochCHAR,surf_stochastic_
-input_filename_matrixCHAR,matrix_
-
-% Boolean variables
-plottingBOOL,1
-savingBOOL,0
-archive_flagBOOL,0
-stable_seedBOOL,1
-mc_scen_analysisBOOL,0
-aggregation_flagBOOL,true
-first_evalBOOL,1
-
-% VAR specific variables
 mcNMBR,50000
-quantile_estimatorCHAR,hd
+mc_scen_analysisBOOL,0
+mc_timestepCHAR,10d
+nuNMBR,7
+path_working_folderCHAR,/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder
+plottingBOOL,1
+quantileNMBR,0.999
 quantile_bandwitdhNMBR,50
-quantileNMBR,0.995
-copulatypeCHAR,Gaussian
-nuNMBR,10
+quantile_estimatorCHAR,hd
 rnd_number_genCHAR,Mersenne-Twister
-use_sobolBOOL,false
-sobol_seedNMBR,32000
-valuation_dateDATE,30-Jun-2016
-filename_sobol_direction_numberCHAR,new-joe-kuo-6.21201
-path_sobol_direction_numberCHAR,static
-
-% Aggregation specific variables
-base_currencyCHAR,EUR
-aggregation_keyCELL,asset_class|currency|id
-mc_timestepCHAR,250d
-scenario_setCELL,250d|stress
-
-% specify unique runcode and timestamp:
-runcodeCHAR,2016Q3
-timestampCHAR,20160424_175042
+runcodeCHAR,20200331
+savingBOOL,0
+scenario_setCELL,10d|stress
+stable_seedBOOL,1
+tax_rateNMBR,0.2638
+timestampCHAR,20200331_1445
+valuation_dateDATE,31-Mar-2020

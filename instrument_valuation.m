@@ -688,11 +688,27 @@ elseif strcmpi(tmp_type,'retail')
 				fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_longev_table);
 			end
 			
-            % rollout cash flows for all scenarios
-			if (~strcmpi(scenario,'base') )
-				obj = obj.rollout('base',valuation_date,infl_curve,longev_table);
+			if (obj.widow_pension_flag == false)
+				% rollout cash flows for all scenarios
+				if (~strcmpi(scenario,'base') )
+					obj = obj.rollout('base',valuation_date,infl_curve,longev_table);
+				end
+				obj = obj.rollout(scenario,valuation_date,infl_curve,longev_table);
+			elseif (obj.widow_pension_flag == true)
+				% get longevity table widow
+				tmp_longev_table_widow  = obj.get('longevity_table_widow');
+				[longev_table2 object_ret_code]    = get_sub_object(curve_struct, tmp_longev_table_widow); 
+				if ( object_ret_code == 0 )
+					fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_longev_table_widow);
+				end
+				% rollout cash flows for all scenarios
+				if (~strcmpi(scenario,'base') )
+					obj = obj.rollout('base',valuation_date,infl_curve,longev_table,longev_table2);
+				end
+				obj = obj.rollout(scenario,valuation_date,infl_curve,longev_table,longev_table2);
 			end
-			obj = obj.rollout(scenario,valuation_date,infl_curve,longev_table);
+			
+
         else
             fprintf('WARNING: instrument_valuation: unknown RETAIL sub_type >>%s<< for id >>%s<<\n',obj.id,tmp_sub_type);
         end 

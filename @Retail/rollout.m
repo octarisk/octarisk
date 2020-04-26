@@ -13,6 +13,11 @@ function s = rollout (retail, value_type, arg1, arg2, arg3, arg4)
 		valuation_date = arg1;	
 		curve1_object = arg2;
 		curve2_object = arg3;
+	elseif ( nargin == 6)
+		valuation_date = arg1;	
+		curve1_object = arg2;
+		curve2_object = arg3;	
+		curve3_object = arg4;	
 	else
 		error('Wrong number of arguments');
 	end
@@ -24,12 +29,27 @@ function s = rollout (retail, value_type, arg1, arg2, arg3, arg4)
 	elseif strcmpi(s.sub_type,'SAVPLAN')
 		[ret_dates ret_values ret_int ret_principal accr_int last_coupon_date] = ...
 					rollout_retail_cashflows(valuation_date,value_type,s);
-	elseif strcmpi(s.sub_type,'RETEXP') || strcmpi(s.sub_type,'GOVPEN') 	% retirements expenses
+	elseif strcmpi(s.sub_type,'RETEXP')		% retirements expenses		
 		% curve1_object = inflation expectation curve
 		% curve2_object = longevity table
 		[ret_dates ret_values ret_int ret_principal accr_int last_coupon_date] = ...
 					rollout_retail_cashflows(valuation_date,value_type,s, ...
-					curve1_object, curve2_object);		
+					curve1_object, curve2_object);				
+	elseif strcmpi(s.sub_type,'GOVPEN') 	
+		% curve1_object = inflation expectation curve
+		% curve2_object = longevity table
+		% curve3_object = longevity table for widow calculation (if flag set)
+		if (s.widow_pension_flag == false)
+			[ret_dates ret_values ret_int ret_principal accr_int last_coupon_date] = ...
+					rollout_retail_cashflows(valuation_date,value_type,s, ...
+					curve1_object, curve2_object);	
+		elseif (s.widow_pension_flag == true && nargin == 6) 
+			[ret_dates ret_values ret_int ret_principal accr_int last_coupon_date] = ...
+					rollout_retail_cashflows(valuation_date,value_type,s, ...
+					curve1_object, curve2_object, curve3_object);
+		else
+			error('Wrong number of arguments for widow_pension_flag set.');		
+		end	
 	else
 		% not defined
 	end				

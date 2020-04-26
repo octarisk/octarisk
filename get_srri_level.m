@@ -11,7 +11,7 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{m} =} get_srri_level (@var{vola}, @var{horizon}, @var{quantile}})
+%# @deftypefn {Function File} {@var{m} =} get_srri_level (@var{vola}, @var{horizon}, @var{quantile})
 %# Calculate current SRRI level per given vola, time horizon and quantile.
 %#
 %# @seealso{}
