@@ -69,6 +69,7 @@ elseif (strcmpi(type,'latex'))
 	  % get asset and liability base values
 	  port_basevalue_assets = 0.0;
 	  port_basevalue_liabs = 0.0;
+	  port_basevalue_dtl = 0.0;
 	    for (ii=1:1:length(obj.positions))
 			try
 			  pos_obj = obj.positions(ii).object;
@@ -77,6 +78,9 @@ elseif (strcmpi(type,'latex'))
 					port_basevalue_assets = port_basevalue_assets + pos_obj.getValue('base');
 				else
 					port_basevalue_liabs = port_basevalue_liabs + pos_obj.getValue('base');
+					if (isempty(regexpi(pos_obj.id,'DTL')) == 0)
+						port_basevalue_dtl = port_basevalue_dtl + pos_obj.getValue('base');
+					end
 				end
 			  end
 			catch
@@ -85,6 +89,7 @@ elseif (strcmpi(type,'latex'))
 		end
 		repstruct.port_basevalue_assets = port_basevalue_assets;
 		repstruct.port_basevalue_liabs = port_basevalue_liabs;
+		repstruct.port_basevalue_dtl = port_basevalue_dtl;
 	  % ####  print portfolio risk metrics report as table
 	    latex_table_port_var = strcat(path_reports,'/table_port_',obj.id,'_var.tex');
 	    filp = fopen (latex_table_port_var, 'w');
@@ -119,7 +124,7 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filp, '\\node [anchor=west] (repdatedesc) at (2.20,1.25) {\\small  \\textcolor{octariskgrey}{Reporting Date}};\n');
 		fprintf(filp, '\\node [anchor=west] (varabs) at (5,0.75) {\\large \\textcolor{octariskblue}{%d %s}};\n',round(obj.varhd_abs),obj.currency);
 		fprintf(filp, '\\node [anchor=west] (varabsdesc) at (5,0.4) {\\small \\textcolor{octariskgrey}{VaR (abs.)}};\n');
-		if (abs(port_basevalue_liabs) == 0)	% liability exposure not available
+		if (abs(port_basevalue_liabs - port_basevalue_dtl) < 0.01)	% asset portfolio only
 			fprintf(filp, '\\node [anchor=west] (varrel) at (5,1.65) {\\large \\textcolor{octariskblue}{VaR %3.1f\\%%}};\n',-obj.varhd_rel*100);
 			fprintf(filp, '\\node [anchor=west] (varreldesc) at (5,1.25) {\\small  \\textcolor{octariskgrey}{%s@%2.1f\\%%}};\n',scen_set,para_object.quantile.*100);
 		else
@@ -343,6 +348,8 @@ elseif (strcmpi(type,'latex'))
 		liquidity_class_exposure = [];
 		issuer_cell = {};
 		issuer_exposure = [];		
+		category_cell = {};
+		category_exposure = [];	
 		custodian_bank_cell = {};
 		custodian_bank_exposure = [];		
 		counterparty_cell = {};
@@ -468,6 +475,14 @@ elseif (strcmpi(type,'latex'))
 									entity_cell, entity_exposure, ...
 									instr_obj.issuer,pos_obj.getValue('base'));
 					  end
+					  
+					  %~ category
+					  if ( ~isnull(pos_obj.category))
+							[category_cell, category_exposure] = add_to_exposure_cell(...
+									category_cell, category_exposure, ...
+									pos_obj.category,pos_obj.getValue('base'));
+					  end
+
 					  %-  liquidity class
 					  if (strcmpi(pos_obj.balance_sheet_item,'Asset'))
 						  if ( ~isnull(instr_obj.liquidity_class))
@@ -583,6 +598,8 @@ elseif (strcmpi(type,'latex'))
 			
 			repstruct.issuer_cell = issuer_cell;
 			repstruct.issuer_exposure = issuer_exposure;	
+			repstruct.category_cell = category_cell;
+			repstruct.category_exposure = category_exposure;
 			repstruct.entity_cell = entity_cell;
 			repstruct.entity_exposure = entity_exposure;
 			repstruct.custodian_bank_cell = custodian_bank_cell;
@@ -777,6 +794,12 @@ elseif (strcmpi(type,'latex'))
 				end
 			end
 			
+			% Print MVBS Balance Sheet
+			latex_table_mvbs = strcat(path_reports,'/',obj.id,'_mvbs.tex');
+			latex_table_reconciliation = strcat(path_reports,'/',obj.id,'_recon.csv');
+			retcode = print_table_categories(obj,repstruct, ...
+								latex_table_mvbs,latex_table_reconciliation);
+			
 			% Plot overall exposure map
 			latex_table_country_exposure = strcat(path_reports,'/',obj.id,'_world_map_exposure.tex');
 			fice = fopen (latex_table_country_exposure, 'w');	
@@ -847,7 +870,7 @@ elseif (strcmpi(type,'latex'))
 			al_ratio = abs(port_basevalue_liabs)/abs(port_basevalue_assets);
 			latex_table_fi_style = strcat(path_reports,'/table_pos_',obj.id,'_fi_style.tex');
 			fifi = fopen (latex_table_fi_style, 'w');
-			if (abs(port_basevalue_liabs) > 0)	% liability exposure available
+			if (abs(port_basevalue_liabs - obj.dtl) > 0.01)	% liability exposure available (ignoring deferred tax liability)
 				fprintf(fifi, '\\center\n');
 				fprintf(fifi, '\\begin{tabular}{r | c | c || c}\n');
 				fprintf(fifi, 'Sensitivity \& Assets \& Liabilities \& Gap\\\\\\hline\\hline\n');	
@@ -957,7 +980,7 @@ elseif (strcmpi(type,'latex'))
 		
 		% 1) VaR Risklevel
 			% a) SRRI level
-			if (abs(port_basevalue_liabs) == 0)	% asset portfolio only
+			if (abs(port_basevalue_liabs - port_basevalue_dtl) < 0.01)	% asset portfolio only
 				% Risk | SRRI level | 4 | 4 | on track v rebalancing
 				srri_actual = get_srri_level(abs(obj.varhd_rel),tmp_ts,para_object.quantile);
 				repstruct.srri_actual = srri_actual;

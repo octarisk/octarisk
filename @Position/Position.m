@@ -16,6 +16,7 @@ classdef Position
         % risk figures
         solvency_ratio = [];
         balance_sheet_item = 'Asset'; %['Asset','Liability']
+        category = ''; %[Solvency II MVBS Category]
         var_confidence = 0.995;
         varhd_abs = 0;
         varhd_rel = 0;
@@ -24,6 +25,7 @@ classdef Position
         var_abs = 0;
         var_positionsum = 0;
         diversification_ratio = 0; % only filled for Portfolio
+        diversification_amount = 0; % only filled for Portfolio
         tax_benefit = 0.0;	% portfolio attribute
         tax_rate = 0.0;	% position attribute
         dtl = 0.0;	% deferred tax liability, portfolio attribute
@@ -268,7 +270,7 @@ classdef Position
          fprintf('varhd_abs@%2.1f%%: %12.2f %s\n',a.var_confidence*100,a.varhd_abs,a.currency);
          fprintf('varhd_rel@%2.1f%%: %2.1f%% \n',a.var_confidence*100,a.varhd_rel*100);
          fprintf('value_stress: %8.6f \n',a.value_stress(1:value_stress_rows));
-         fprintf('diversification_ratio: %2.1f%% \n',a.diversification_ratio*100);
+         
          % TODO: print SCR stresses PnL if flag set
          % fprintf('\n');
          % % looping via first 5 MC scenario values
@@ -286,6 +288,7 @@ classdef Position
             fprintf('Marginal VaR: %s %s\n',any2str(a.marg_var),a.currency);
             fprintf('tax_rate: %3.4f\n',a.tax_rate); 
             fprintf('balance_sheet_item: %s\n',a.balance_sheet_item); 
+            fprintf('category: %s\n',a.category); 
             fprintf('TPT Position data:\n');
             fprintf('1_Portfolio_identifying_data: %s\n',any2str(a.tpt_1));
             fprintf('14_Identification_code_of_the_instrument: %s\n',any2str(a.tpt_14));
@@ -297,15 +300,9 @@ classdef Position
             fprintf('32_Interest_rate_type: %s\n',a.tpt_32);        
             fprintf('90_Modified_duration_to_maturity_date: %s\n',any2str(a.tpt_90));  
          elseif (strcmpi(a.type,'Portfolio'))
-            fprintf('TPT Portfolio data:\n');
-            fprintf('1_Portfolio_identifying_data: %s\n',any2str(a.tpt_1));
-            fprintf('4_Portfolio_currency_(B): %s\n',any2str(a.tpt_4));
-            fprintf('5_Net_asset_valuation_of_the_portfolio_or_the_share_class_in_portfolio_currency: %12.2f\n',a.tpt_5);
-            fprintf('6_Valuation_date: %s\n',any2str(a.tpt_6));
-            fprintf('7_Reporting_date: %s\n',any2str(a.tpt_7)); 
-            fprintf('9_Cash_ratio: %3.2f %%\n',a.tpt_9); 
-            fprintf('124_Duration Portfolio: %s\n',any2str(a.tpt_124)); 
-            fprintf('mean_shock: %3.2f \n',a.mean_shock); 
+			fprintf('diversification_ratio: %2.1f%% \n',a.diversification_ratio*100);
+			fprintf('diversification_amount: %12.2f%% \n',a.diversification_amount);
+			fprintf('mean_shock: %3.2f \n',a.mean_shock); 
             fprintf('std_shock: %3.2f \n',a.std_shock); 
             fprintf('skewness_shock: %3.2f \n',a.skewness_shock); 
             fprintf('kurtosis_shock: %3.2f \n',a.kurtosis_shock); 
@@ -317,7 +314,15 @@ classdef Position
 			fprintf('solvency_ratio: %4.1f%%\n',a.solvency_ratio * 100); 
 			fprintf('deferred_tax_liability: %12.2f %s\n',a.dtl,a.currency); 
             fprintf('srri_target: %d \n',a.srri_target); 
-            
+            fprintf('TPT Portfolio data:\n');
+            fprintf('1_Portfolio_identifying_data: %s\n',any2str(a.tpt_1));
+            fprintf('4_Portfolio_currency_(B): %s\n',any2str(a.tpt_4));
+            fprintf('5_Net_asset_valuation_of_the_portfolio_or_the_share_class_in_portfolio_currency: %12.2f\n',a.tpt_5);
+            fprintf('6_Valuation_date: %s\n',any2str(a.tpt_6));
+            fprintf('7_Reporting_date: %s\n',any2str(a.tpt_7)); 
+            fprintf('9_Cash_ratio: %3.2f %%\n',a.tpt_9); 
+            fprintf('124_Duration Portfolio: %s\n',any2str(a.tpt_124)); 
+             
             if ( length(a.aa_target_values) == length(a.aa_target_id) && length(a.aa_target_values) > 0 )
 				fprintf('Target Asset Allocation:\n');
 				for ii=1:1:length(a.aa_target_values)

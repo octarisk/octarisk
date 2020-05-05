@@ -1,3 +1,23 @@
+%# Copyright (C) 2019 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
+
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{repstruct} =} plot_HHI_piecharts (@var{repstruct}, @var{path_reports}, @var{obj})
+%# Plot HHI piecharts for all categories (custodian bank, designated sponsor,
+%# custodian bank of underlying, issuer, counterparty and country of origin.
+%#
+%# @seealso{}
+%# @end deftypefn
+
 function repstruct = plot_HHI_piecharts(repstruct,path_reports,obj)
 
 cusbank_undr_exp = repstruct.custodian_bank_underlyings_exposure;

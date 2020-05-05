@@ -358,6 +358,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
            end
           end
           diversification_ratio = varhd_abs / var_positionsum;    
+          diversification_amount = var_positionsum - varhd_abs;
           
           % Optional:
             var50_abs      = -pnl_abs_sorted(ceil(0.5*no_scen));
@@ -401,6 +402,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
 			obj = obj.set('expshortfall_abs',expshortfall_abs);
 			obj = obj.set('scenario_numbers',scenario_numbers);
 			obj = obj.set('diversification_ratio',diversification_ratio);
+			obj = obj.set('diversification_amount',diversification_amount);
 			obj = obj.set('var_positionsum',var_positionsum);
 			obj = obj.set('scenario_numbers',scenario_numbers);
 			obj = obj.set('mean_shock',mean_shock);

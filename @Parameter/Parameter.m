@@ -74,8 +74,15 @@ classdef Parameter
         filename_sobol_direction_number = 'new-joe-kuo-6.21201'; % Reference: http://web.maths.unsw.edu.au/~fkuo/sobol/
         path_sobol_direction_number = 'static';
 
-        % SII standard model specific variables
+        % WRT amd SII standard model specific variables
         calc_sm_scr = false;
+        type_of_undertaking 	= 'Retail';		% S.01.02.01 General QRT
+        country_authorization 	= 'Germany';	% S.01.02.01 General QRT
+        language_reporting 		= 'English';	% S.01.02.01 General QRT
+        financial_year_end 		= '12/31';		% S.01.02.01 General QRT
+        submission_type 		= 'Regular';	% S.01.02.01 General QRT
+        accounting_standards 	= 'Custom';		% S.01.02.01 General QRT
+        scr_calculation_method 	= 'MC Full Valuation';	% S.01.02.01 General QRT
         
         % Aggregation specific variables
         base_currency = 'EUR';

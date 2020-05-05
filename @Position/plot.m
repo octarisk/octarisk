@@ -358,7 +358,7 @@ elseif (strcmpi(type,'srri'))
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
 	  %fprintf('plot: No SRRI plots exists for scenario set >>%s<<\n',scen_set);
   else
-	if (abs(repstruct.port_basevalue_liabs) == 0) % plot SRRI classes for asset only portfolio
+	if (abs(repstruct.port_basevalue_liabs - repstruct.port_basevalue_dtl) < 0.01) % plot SRRI classes for asset only portfolio (excep DTL)
       [ret idx_figure] = get_srri(obj.varhd_rel,tmp_ts,para_object.quantile, ...
 					path_reports,obj.id,1,obj.getValue('base'),obj.srri_target); 
 	  [ret idx_figure] = get_srri_simple(obj.varhd_rel,tmp_ts,para_object.quantile, ...

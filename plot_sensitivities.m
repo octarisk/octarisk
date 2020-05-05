@@ -1,3 +1,22 @@
+%# Copyright (C) 2019 Stefan Schloegl <schinzilord@octarisk.com>
+%#
+%# This program is free software; you can redistribute it and/or modify it under
+%# the terms of the GNU General Public License as published by the Free Software
+%# Foundation; either version 3 of the License, or (at your option) any later
+%# version.
+%#
+%# This program is distributed in the hope that it will be useful, but WITHOUT
+%# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+%# details.
+
+%# -*- texinfo -*-
+%# @deftypefn {Function File} {@var{repstruct} =} plot_sensitivities (@var{obj}, @var{repstruct}, @var{path_reports})
+%# Plot interest rate sensitivities of assets, liabilities and total portfolio.
+%#
+%# @seealso{}
+%# @end deftypefn
+
 function repstruct = plot_sensitivities(obj,repstruct,path_reports)
 
 or_green = [0.56863   0.81961   0.13333]; 
@@ -13,7 +32,7 @@ convex_l = repstruct.port_liab_convexity;
 bv_p = bv_a + bv_l;
 x = linspace(-0.02,0.02,101);
 
-if (abs(bv_l) > 0) % plot asset and liability 
+if (abs(repstruct.port_liabilities_basevalue - repstruct.port_basevalue_dtl) > 0.01) % plot asset and liability 
 	y_a = bv_a .* evaluate_sensi(x,dur_a,convex_a) / 1000;
 	y_l = bv_l .* evaluate_sensi(x,dur_l,convex_l) / 1000;
 	y_p = y_a + y_l;
