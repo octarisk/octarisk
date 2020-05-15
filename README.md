@@ -151,15 +151,7 @@ Quantlib libraries, but is fully proprietary)
 - [QuantLib](http://quantlib.org/index.shtml) is an open source library for 
 instrument pricing. The QuantLib repository could serve as a basis for Octave 
 code adaptions
-
-Up to my knowledge, there is only one free and open solution for measuring market risk
-- [OpenGamma](http://www.opengamma.com/solutions/market-risk) including tools for 
-measuring market risk and a margining toolset.
-
-You can also download the code of the OpenGamma platform from 
-[Github](https://github.com/OpenGamma/Strata). 
-However, I have not tested their solution and can neither compare the performance 
-nor the features between Octarisk and OpenGamma.
+- [Opengamma Strata risk analytics platform](https://github.com/OpenGamma/Strata) is also an open source library for instruments (mainly derivatives) pricing.
 
 Octarisk focusses on being fast, light-weight and easy to set up and maintain. 
 Therefore it contrasts the feature-rich proprietary solutions with massive overheads 
