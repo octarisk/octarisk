@@ -797,9 +797,14 @@ elseif (strcmpi(type,'latex'))
 			% Print MVBS Balance Sheet
 			latex_table_mvbs = strcat(path_reports,'/',obj.id,'_mvbs.tex');
 			latex_table_reconciliation = strcat(path_reports,'/',obj.id,'_recon.csv');
-			retcode = print_table_categories(obj,repstruct, ...
+			[retcode repstruct] = print_table_categories(obj,repstruct, ...
 								latex_table_mvbs,latex_table_reconciliation);
 			
+			% Print QRT reporting file
+			latex_table_qrt = strcat(path_reports,'/',obj.id,'_qrt.csv');
+			[retcode repstruct] = print_qrt_cells(obj,repstruct, ...
+								para_object,latex_table_qrt);						
+								
 			% Plot overall exposure map
 			latex_table_country_exposure = strcat(path_reports,'/',obj.id,'_world_map_exposure.tex');
 			fice = fopen (latex_table_country_exposure, 'w');	

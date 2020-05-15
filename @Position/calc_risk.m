@@ -79,6 +79,9 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
           % v.) make after tax risk calculations
           tax_benefit = varhd_abs - varhd_abs_at;
           
+          % vi.) include capital add-on into after tax var
+          varhd_abs_at_addon = varhd_abs_at + obj.capital_add_on;
+          
           % d) Calculate Expected Shortfall as average of losses in sorted profit and loss vector from [1:confi_scenario-1]:
           expshortfall_abs      = - mean(pnl_abs_sorted(1:confi_scenario-1));
           expshortfall_rel      = - expshortfall_abs ./ base_value;
@@ -394,6 +397,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
 		if ( strcmpi(obj.type,'PORTFOLIO'))
 			obj = obj.set('varhd_abs',varhd_abs);
 			obj = obj.set('varhd_abs_at',varhd_abs_at);
+			obj = obj.set('varhd_abs_at_addon',varhd_abs_at_addon);
 			obj = obj.set('tax_benefit',tax_benefit);
 			obj = obj.set('var_confidence',para.quantile);
 			obj = obj.set('var_abs',var_abs);

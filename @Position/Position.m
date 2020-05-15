@@ -22,8 +22,10 @@ classdef Position
         varhd_rel = 0;
         varhd_abs_at = 0; % after tax VaR
         varhd_rel_at = 0; % after tax VaR
+        varhd_abs_at_addon = 0; % after tax after add-on VaR
         var_abs = 0;
         var_positionsum = 0;
+        capital_add_on = 0;
         diversification_ratio = 0; % only filled for Portfolio
         diversification_amount = 0; % only filled for Portfolio
         tax_benefit = 0.0;	% portfolio attribute

@@ -19,7 +19,7 @@
 %# 
 %# @end deftypefn
 
-function retcode = print_table_categories(port_obj,repstruct,filepathtex,filepathrecon)
+function [retcode repstruct] = print_table_categories(port_obj,repstruct,filepathtex,filepathrecon)
 retcode = 1;
 fprintf('print: Printing  MVBS table for portfolio >>%s<< into file: %s\n',port_obj.id,filepathtex);	
 fprintf('print: Printing  MVBS reconciliation for portfolio >>%s<< into file: %s\n',port_obj.id,filepathrecon);	
@@ -61,6 +61,7 @@ fprintf(fqrt, '\\begin{tabular}{| l | r |} \\hline\n');
 fprintf(fqrt, '\\textbf{Assets} \& in %s \\\\\\hline\n',port_obj.currency);	
 
 asset_startcell = 14;
+asset_exposure = zeros(1,length(assets));
 for ii=1:1:length(assets)
 	cat = assets{ii};
 	exp = 0;
@@ -137,9 +138,11 @@ for ii=1:1:length(assets)
 			fprintf(frecon, '%s,%1.0f\n',cat,exp);	
 		end
 	end
-			
+	asset_exposure(ii) = exp;		
 end
  
+repstruct.mvbs_assets = assets;
+repstruct.mvbs_asset_exposure = asset_exposure;
 
 fprintf('=============== Liabilities ===============\n');
 fprintf(frecon, 'Liabilities\n');
@@ -161,6 +164,7 @@ if abs(total_liabs) ~= 0
 end
 
 liabs_cell = 56;
+liab_exposure = zeros(1,length(liabilities));
 for ii=1:1:length(liabilities)
 	cat = liabilities{ii};
 	exp = 0;
@@ -220,8 +224,10 @@ for ii=1:1:length(liabilities)
 			fprintf(frecon, '%s,%.0f\n',cat,exp);
 		end
 	end
+	liab_exposure(ii) = exp;
 end
-
+repstruct.mvbs_liabilities = liabilities;
+repstruct.mvbs_liab_exposure = liab_exposure;
 % 
 % Own funds
 tax = getfield(catstruct,'Deferred tax assets') + getfield(catstruct,'Deferred tax liabilities');
@@ -248,6 +254,12 @@ fprintf(frecon, 'Own Funds after tax,%1.0f\n',of_at);
 fprintf(fqrt, '\\end{tabular}\n');
 fclose (fqrt);
 fclose (frecon);
+
+ownfunds = {'Own Funds before tax','Deferred tax','Own Funds after tax'};
+ownfunds_exposure = [of_bt;tax;of_at];
+
+repstruct.mvbs_ownfunds = ownfunds;
+repstruct.mvbs_ownfunds_exposure = ownfunds_exposure;
 
 end
 % ##############################################################################
