@@ -67,7 +67,7 @@ for ii=1:1:length(assets)
 	exp = 0;
 	if strcmpi(cat,'Investments (other than assets held for index-linked and unit-linked contracts)')
 		exp = getfield(catstruct,'Property (other than for own use)') + ...
-				getfield(catstruct,'Holdings in related undertakings, including participations') + ...
+				getfield(catstruct,'Holdings in related undertakings including participations') + ...
 				getfield(catstruct,'Equities - listed') + ...
 				getfield(catstruct,'Equities - unlisted') + ...
 				getfield(catstruct,'Government Bonds') + ...
@@ -110,7 +110,7 @@ for ii=1:1:length(assets)
 		exp = getfield(catstruct,'Non-life excluding health') + ...
 			getfield(catstruct,'Health similar to non-life');
 
-	elseif strcmpi(cat,'Life and health similar to life, excluding health and index-linked and unit-linked')
+	elseif strcmpi(cat,'Life and health similar to life excluding health and index-linked and unit-linked')
 		exp = getfield(catstruct,'Life excluding health and index-linked and unit-linked') + ...
 			getfield(catstruct,'Health similar to life');
 
@@ -173,15 +173,15 @@ for ii=1:1:length(liabilities)
 		exp = getfield(catstruct,'Subordinated liabilities not in Basic Own Funds') + ...
 			getfield(catstruct,'Subordinated liabilities in Basic Own Funds');
 
-	elseif strcmpi(cat,'Technical provisions – non-life')
-		exp = getfield(catstruct,'Technical provisions – non-life (excluding health)') + ...
+	elseif strcmpi(cat,'Technical provisions - non-life')
+		exp = getfield(catstruct,'Technical provisions - non-life (excluding health)') + ...
 			getfield(catstruct,'Technical provisions - health (similar to non-life)');
 
 	elseif strcmpi(cat,'Technical provisions - life (excluding index-linked and unit-linked)')
 		exp = getfield(catstruct,'Technical provisions - health (similar to life)') + ...
-			getfield(catstruct,'Technical provisions – life (excluding health and index-linked and unit-linked)');
+			getfield(catstruct,'Technical provisions - life (excluding health and index-linked and unit-linked)');
 
-	elseif strcmpi(cat,'Technical provisions – non-life (excluding health)')
+	elseif strcmpi(cat,'Technical provisions - non-life (excluding health)')
 		exp = getfield(catstruct,cat);
 
 	elseif strcmpi(cat,'Technical provisions - health (similar to non-life)')
@@ -190,7 +190,7 @@ for ii=1:1:length(liabilities)
 	elseif strcmpi(cat,'Technical provisions - health (similar to life)')
 		exp = getfield(catstruct,cat);
 
-	elseif strcmpi(cat,'Technical provisions – life (excluding health and index-linked and unit-linked)')
+	elseif strcmpi(cat,'Technical provisions - life (excluding health and index-linked and unit-linked)')
 		exp = getfield(catstruct,cat);	
 		
 	elseif strcmpi(cat,'Total liabilities')
@@ -200,11 +200,11 @@ for ii=1:1:length(liabilities)
 		exp = getfield(catstruct,cat);
 	end
 	% print to file
-	if (strcmpi(cat,'Technical provisions – non-life (excluding health)') || 
+	if (strcmpi(cat,'Technical provisions - non-life (excluding health)') || 
 		strcmpi(cat,'Technical provisions - health (similar to non-life)') ||
 		strcmpi(cat,'Technical provisions - health (similar to life)') ||
-		strcmpi(cat,'Technical provisions – life (excluding health and index-linked and unit-linked)') ||
-		strcmpi(cat,'Technical provisions – index-linked and unit-linked')) 
+		strcmpi(cat,'Technical provisions - life (excluding health and index-linked and unit-linked)') ||
+		strcmpi(cat,'Technical provisions - index-linked and unit-linked')) 
 			liabs_cell = liabs_cell + 3;
 	end
 
@@ -270,10 +270,10 @@ assets = {
 'Intangible assets', 
 'Deferred tax assets', 
 'Pension benefit surplus', 
-'Property, plant & equipment held for own use', 
+'Property plant and equipment held for own use', 
 'Investments (other than assets held for index-linked and unit-linked contracts)', 
 'Property (other than for own use)', 
-'Holdings in related undertakings, including participations', 
+'Holdings in related undertakings including participations', 
 'Equities', 
 'Equities - listed', 
 'Equities - unlisted', 
@@ -295,7 +295,7 @@ assets = {
 'Non-life and health similar to non-life', 
 'Non-life excluding health', 
 'Health similar to non-life', 
-'Life and health similar to life, excluding health and index-linked and unit-linked', 
+'Life and health similar to life excluding health and index-linked and unit-linked', 
 'Health similar to life', 
 'Life excluding health and index-linked and unit-linked', 
 'Life index-linked and unit-linked', 
@@ -305,24 +305,24 @@ assets = {
 'Pension claims from insurance companies',
 'Other insurance receivables',
 'Reinsurance receivables', 
-'Receivables (trade, not insurance)', 
+'Receivables (trade not insurance)', 
 'Own shares (held directly)', 
 'Amounts due in respect of own fund items or initial fund called up but not yet paid in', 
 'Cash and cash equivalents', 
 'Physical commodities', 
 'Cryptocurrencies',
-'Any other assets, not elsewhere shown', 
+'Any other assets', 
 'Total assets'
 };
 
 liabilities = {
-'Technical provisions – non-life',
-'Technical provisions – non-life (excluding health)',
+'Technical provisions - non-life',
+'Technical provisions - non-life (excluding health)',
 'Technical provisions - health (similar to non-life)',
 'Technical provisions - life (excluding index-linked and unit-linked)',
 'Technical provisions - health (similar to life)',
-'Technical provisions – life (excluding health and index-linked and unit-linked)',
-'Technical provisions – index-linked and unit-linked',
+'Technical provisions - life (excluding health and index-linked and unit-linked)',
+'Technical provisions - index-linked and unit-linked',
 'Other technical provisions',
 'Contingent liabilities',
 'Provisions other than technical provisions',
@@ -332,19 +332,19 @@ liabilities = {
 'Derivatives',
 'Debts owed to credit institutions',
 'Financial liabilities other than debts owed to credit institutions',
-'Insurance & intermediaries payables',
+'Insurance and intermediaries payables',
 'Reinsurance payables',
-'Payables (trade, not insurance)',
+'Payables (trade not insurance)',
 'Subordinated liabilities',
 'Subordinated liabilities not in Basic Own Funds',
 'Subordinated liabilities in Basic Own Funds',
-'Any other liabilities, not elsewhere shown',
+'Any other liabilities',
 'Total liabilities'
 };
 
 cell_indentation = {
 'Property (other than for own use)', 
-'Holdings in related undertakings, including participations', 
+'Holdings in related undertakings including participations', 
 'Equities', 
 'Bonds', 
 'Collective Investments Undertakings', 
@@ -358,12 +358,12 @@ cell_indentation = {
 'Pension claims from insurance companies',
 'Other insurance receivables',
 'Non-life and health similar to non-life', 
-'Life and health similar to life, excluding health and index-linked and unit-linked', 
+'Life and health similar to life excluding health and index-linked and unit-linked', 
 'Life index-linked and unit-linked', 
-'Technical provisions – non-life (excluding health)',
+'Technical provisions - non-life (excluding health)',
 'Technical provisions - health (similar to non-life)',
 'Technical provisions - health (similar to life)',
-'Technical provisions – life (excluding health and index-linked and unit-linked)',
+'Technical provisions - life (excluding health and index-linked and unit-linked)',
 'Subordinated liabilities not in Basic Own Funds',
 'Subordinated liabilities in Basic Own Funds'
 };

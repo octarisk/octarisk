@@ -89,6 +89,15 @@ if (strcmpi(type,'liquidity'))
 		cf_dates = obj.get('cf_dates');
 		cf_values_base = obj.getCF('base');
 		cf_values_mc = obj.getCF(scen_set);
+		
+		% get excess liquidity and add to cashflows:
+		cf_values_excess = ones(1,numel(cf_values_base)) .* ...
+					(obj.get('monthly_income') - obj.get('monthly_expenses'));
+		cf_values_base 	= cf_values_base + cf_values_excess;
+		cf_values_mc 	= cf_values_mc + cf_values_excess;
+		
+		amount_base = sum(cf_values_base);
+		amount_mc = sum(cf_values_mc);
 		% take only tail scenarios
 		cf_values_mc = mean(cf_values_mc(obj.scenario_numbers,:),1);
 		xx=1:1:columns(cf_values_base);
@@ -104,12 +113,39 @@ if (strcmpi(type,'liquidity'))
 		xlabel('Cash flow date','fontsize',11);
 		ylabel(["Cash flow amount (in ",obj.currency,")"],'fontsize',11);
 		title('Projected future cash flows','fontsize',12);
+		hb=text(8,0.8*max(cf_values_base),['Total amount in base case: ',num2str(round(amount_base)),' ',obj.currency]);   %add total amount to graph
 		%legend('Base Scenario','Average Tail Scenario');
 		% save plotting
 		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot_mc.png');
 		print (hs,filename_plot_cf, "-dpng", "-S600,200");
 		filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot_mc.pdf');
 		print (hs,filename_plot_cf, "-dpdf", "-S600,200");
+		
+				%~ fprintf('plot: Plotting liquidity information for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+		%~ cf_dates = obj.get('cf_dates');
+		%~ cf_values_base = obj.getCF('base');
+		%~ cf_values_mc = obj.getCF(scen_set);
+		%~ % take only tail scenarios
+		%~ cf_values_mc = mean(cf_values_mc(obj.scenario_numbers,:),1);
+		%~ xx=1:1:columns(cf_values_base);
+		%~ plot_desc = datestr(datenum(datestr(para_object.valuation_date)) + cf_dates,'mmm');
+		%~ hs = figure(1); 
+		%~ clf;
+		%~ hb = bar([cf_values_base;cf_values_mc]');
+		%~ set (hb(1), "facecolor", or_blue);
+		%~ set (hb(2), "facecolor", or_orange);
+		%~ ha =get (gcf, 'currentaxes');
+		%~ set(ha,'xtick',xx);
+		%~ set(ha,'xticklabel',plot_desc);
+		%~ xlabel('Cash flow date','fontsize',11);
+		%~ ylabel(["Cash flow amount (in ",obj.currency,")"],'fontsize',11);
+		%~ title('Projected future cash flows','fontsize',12);
+		%~ %legend('Base Scenario','Average Tail Scenario');
+		%~ % save plotting
+		%~ filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot_mc.png');
+		%~ print (hs,filename_plot_cf, "-dpng", "-S600,200");
+		%~ filename_plot_cf = strcat(path_reports,'/',obj.id,'_cf_plot_mc.pdf');
+		%~ print (hs,filename_plot_cf, "-dpdf", "-S600,200");
   else
 	  %fprintf('plot: No liquidity plotting possible for scenario set %s === \n',scen_set);  
   end  
@@ -136,7 +172,9 @@ elseif (strcmpi(type,'riskfactor'))
 	    rf_shocks_9997 = [sortPnL(quantile_9997)/obj.getValue('base')];
 	    rf_shocks_9995 = [sortPnL(quantile_9995)/obj.getValue('base')];
 	    rf_plot_desc = {'Portfolio'};
-	    rf_cell = {'RF_EQ_EU','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+	    rf_cell = repstruct.rf_sensitive_cell;
+	    % TODO: selection of risk factor for analysis dependent on real exposure
+	    tmp_rf_plot=0;
 		for kk=1:1:length(rf_cell)
 			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
 			if (retcode == 1)
@@ -147,6 +185,7 @@ elseif (strcmpi(type,'riskfactor'))
 				tmp_rf_shocks_9997 = tmp_rf_shocks(quantile_9997,:);
 				tmp_rf_shocks_9995 = tmp_rf_shocks(quantile_9995,:);
 				if ( sum(strcmpi(rf_obj.model,{'GBM','BKM','REL'})) > 0 ) % store relative shocks only
+					tmp_rf_plot = tmp_rf_plot + 1;
 					abs_rf_shocks_mean = [abs_rf_shocks_mean, mean(abs_rf_shocks_quantile)];
 					rf_plot_desc = [rf_plot_desc, rf_obj.description];			
 					rf_shocks_9999 = [rf_shocks_9999, tmp_rf_shocks_9999];
@@ -155,6 +194,7 @@ elseif (strcmpi(type,'riskfactor'))
 				end
 			end
 		end
+
 		abs_rf_shocks_mean_plot = 100 .* abs_rf_shocks_mean;
 		% Plot risk factor shocks in meaningful way?!? Spider chart, bar chart?
 		xx = 1:1:length(abs_rf_shocks_mean);
@@ -169,37 +209,68 @@ elseif (strcmpi(type,'riskfactor'))
         xlabel('Risk factor shocks (in pct.)','fontsize',14);
         %title('Risk factor shocks in ATS scenarios','fontsize',14);
         grid on;
-        % save plotting
-        filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.png');
-        print (hs,filename_plot_rf, "-dpng", "-S600,250");
-        filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.pdf');
-        print (hs,filename_plot_rf, "-dpdf", "-S600,250");
+        if ( tmp_rf_plot>0)
+			% save plotting
+			filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.png');
+			print (hs,filename_plot_rf, "-dpng", "-S600,250");
+			filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.pdf');
+			print (hs,filename_plot_rf, "-dpdf", "-S600,250");
+		else
+			% save plotting
+			filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.png');
+			print (hs,filename_plot_rf, "-dpng", "-S600,100");
+			filename_plot_rf = strcat(path_reports,'/',obj.id,'_rf_plot.pdf');
+			print (hs,filename_plot_rf, "-dpdf", "-S600,100");
+		end
 
         % plot bar charts of selected extreme tail scenarios
         rf_shocks_extreme = [rf_shocks_9999;rf_shocks_9997;rf_shocks_9995;abs_rf_shocks_mean]' .* 100;
-        xx = 1:1:numel(rf_plot_desc);
-        hs = figure(3);
-        clf;
-        hb = barh(rf_shocks_extreme);
-        set (hb(1), "facecolor", [0.738,0.839,0.902]);
-		set (hb(2), "facecolor", [0.417,0.679,0.835]);
-		set (hb(3), "facecolor", [0.191,0.507,0.738]);
-		set (hb(4), "facecolor", [0.031,0.316,0.609]);
-        h=get (gcf, 'currentaxes');
-        set(h,'ytick',xx);
-        rf_plot_desc = strrep(rf_plot_desc,"RF_","");
-        rf_plot_desc = strrep(rf_plot_desc,"_","-");
-        set(h,'yticklabel',rf_plot_desc(1:end));
-        xlabel('Risk factor shocks (in pct.)','fontsize',12);
-        %title('Risk factor shocks in ATS scenarios','fontsize',14);
-        legend('99.99%','99.97%','99.95%',['VaR Quantile ',num2str((para_object.quantile)*100),'%']);
-        grid on;
-        % save plotting
-        filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.png');
-        print (hs,filename_plot_rf_ext, "-dpng", "-S700,700");
-        filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.pdf');
-        print (hs,filename_plot_rf_ext, "-dpdf", "-S700,700");
-
+        if (tmp_rf_plot>0)
+			xx = 1:1:numel(rf_plot_desc);
+			hs = figure(3);
+			clf;
+			hb = barh(rf_shocks_extreme);
+			set (hb(1), "facecolor", [0.738,0.839,0.902]);
+			set (hb(2), "facecolor", [0.417,0.679,0.835]);
+			set (hb(3), "facecolor", [0.191,0.507,0.738]);
+			set (hb(4), "facecolor", [0.031,0.316,0.609]);
+			h=get (gcf, 'currentaxes');
+			set(h,'ytick',xx);
+			rf_plot_desc = strrep(rf_plot_desc,"RF_","");
+			rf_plot_desc = strrep(rf_plot_desc,"_","-");
+			set(h,'yticklabel',rf_plot_desc(1:end));
+			xlabel('Risk factor shocks (in pct.)','fontsize',12);
+			%title('Risk factor shocks in ATS scenarios','fontsize',14);
+			legend('99.99%','99.97%','99.95%',['VaR Quantile ',num2str((para_object.quantile)*100),'%']);
+			grid on;
+			% save plotting
+			filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.png');
+			print (hs,filename_plot_rf_ext, "-dpng", "-S700,700");
+			filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.pdf');
+			print (hs,filename_plot_rf_ext, "-dpdf", "-S700,700");
+		else % total portfolio quantile analysis
+			%~ hs = figure(3);
+			%~ clf;
+			%~ rectangle ("Position", [0.05, 0.05, 0.9, 0.9], "Curvature", [0.5, 0.5]);
+			%~ text(0.4,0.4,'Not sensitive to risk factors beside IR or INFL');
+			hs = figure(3);
+			clf;
+			hb = barh(rf_shocks_extreme);
+			set (hb(1), "facecolor", or_blue);
+			h=get (gcf, 'currentaxes');
+			xx = 1:1:numel(rf_shocks_extreme);
+			set(h,'ytick',xx);
+			set(h,'yticklabel',{'99.99%','99.97%','99.95%',['VaR Quantile ',num2str((para_object.quantile)*100),'%']});
+			xlabel('Risk factor shocks (in pct.)','fontsize',12);
+			%title('Risk factor shocks in ATS scenarios','fontsize',14);
+			legend('Portfolio');
+			grid on;
+			% save plotting
+			filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.png');
+			print (hs,filename_plot_rf_ext, "-dpng", "-S700,300");
+			filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.pdf');
+			print (hs,filename_plot_rf_ext, "-dpdf", "-S700,300");
+		end
         % ----------------------------------------------------------------------
         % plot RF vs quantile smoothing average
         % Idea: sort all risk factor shocks by portfolio PnL, splinefit for
@@ -210,7 +281,8 @@ elseif (strcmpi(type,'riskfactor'))
         len_tail = 0.2*para_object.mc;
         xx=1:1:len_tail;
         smooth_para = 200;
-         rf_cell = {'RF_EQ_EU','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+        %rf_cell = {'RF_EQ_EU','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+        rf_cell = repstruct.rf_sensitive_cell; 
         for kk=1:1:length(rf_cell)
 			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
 			if (retcode == 1)
@@ -331,6 +403,11 @@ elseif (strcmpi(type,'stress'))
 		%p_l_relativ_stress      = 100.*(obj.getValue('stress') - ...
 		%				obj.getValue('base') )./ obj.getValue('base');
 		p_l_relativ_stress = (obj.getValue('stress') - obj.getValue('base'))./1000;
+		% take only first few stresstests to plot:
+		no_stresstest_plot = para_object.no_stresstest_plot;
+		stresstest_plot_desc = stresstest_plot_desc(1:no_stresstest_plot);
+		p_l_relativ_stress = p_l_relativ_stress(1:no_stresstest_plot);
+		
         xx = 1:1:length(p_l_relativ_stress)-1;
         hs = figure(1);
         clf;

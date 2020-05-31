@@ -45,6 +45,8 @@ classdef Position
         hist_report_dates = ''; % historical reporting dates
         hist_cashflow = [];	% portfolio cash in or outflows per historic report date
         current_cashflow = 0; % cash in or outflow of current reporting date
+        monthly_expenses = 0; % average monthly expense used for liquidity planning
+        monthly_income = 0; % average monthly income used for liquidity planning
         srri_target = 4; % portfolio only: target SRRI class
         custodian_bank = '';	% information about where lies security
         mean_shock = 0;

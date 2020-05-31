@@ -53,6 +53,7 @@ classdef Parameter
         stable_seed = 1;
         mc_scen_analysis = 0;
         aggregation_flag = 0;
+        no_stresstest_plot = 1;
         first_eval = 1;
         frob_norm_limit = 0.05;   % Frobenius Norm: threshold of rlzd corrmat and 
                             % input corrmat, where to draw new random numbers

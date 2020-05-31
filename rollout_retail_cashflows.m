@@ -270,7 +270,22 @@ end
 		para.issue_date = instrument.savings_startdate;
 	elseif ( strcmpi(para.type,'RETEXP') || strcmpi(para.type,'GOVPEN') ) 
 		para.maturity_date = instrument.retirement_enddate;
-		para.issue_date = instrument.retirement_startdate;	
+		if isnumeric(valuation_date)
+			tmp_valdate = valuation_date;
+		else
+			tmp_valdate = datenum(valuation_date);
+		end
+		if isnumeric(instrument.retirement_startdate)
+			tmp_retdate = instrument.retirement_startdate;
+		else
+			tmp_retdate = datenum(instrument.retirement_startdate);
+		end
+		if tmp_valdate > tmp_retdate
+			tmp_issue_date = datestr(valuation_date);
+		else
+			tmp_issue_date = instrument.retirement_startdate;
+		end
+		para.issue_date = tmp_issue_date;
     end
     if ( para.term != 0)
         if ( strcmpi(para.term_unit,'months'))

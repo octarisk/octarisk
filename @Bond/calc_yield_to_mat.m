@@ -25,15 +25,15 @@ function s = calc_yield_to_mat (bond, valuation_date)
         fprintf('WARNING: More than one cash flow value scenario provided.')
         fprintf('Taking only first scenario as base values.\n')
     end
-        % generic call
-		% get dirty value
-		if s.clean_value_base == true
-			value_dirty = s.value_base + s.accrued_interest;
-		else
-			value_dirty = s.value_base;
-		end
-        objfunc = @ (x) phi_ytm(x, valuation_date, s.cf_dates, cf_values, value_dirty);
-        s.ytm = calibrate_generic(objfunc,x0,lb,ub);
+	% generic call
+	% get dirty value
+	if s.clean_value_base == true
+		value_dirty = s.value_base + s.accrued_interest;
+	else
+		value_dirty = s.value_base;
+	end
+	objfunc = @ (x) phi_ytm(x, valuation_date, s.cf_dates, cf_values, value_dirty);
+	s.ytm = calibrate_generic(objfunc,x0,lb,ub);
   end
    
 end

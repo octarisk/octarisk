@@ -508,7 +508,7 @@ for kk = 1:1:length(instrument_struct)
     end
 end
 
-%~ tmp_obj = get_sub_object(instrument_struct, 'LIABILITY'); 
+%~ tmp_obj = get_sub_object(instrument_struct, '103057'); 
 %~ tmp_obj
 %~ tmp_obj = get_sub_object(curve_struct, 'IR_INFL_EUR'); 
 %~ tmp_obj.get('rates_base')'

@@ -721,6 +721,11 @@ elseif (strcmpi(type,'latex'))
 			repstruct.port_liabilities_basevalue = port_liabilities_basevalue;
 			repstruct.port_assets_basevalue = port_assets_basevalue;
 			
+			% get all risk factors where portfolio is sensitive:
+			rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+			ret_cell = get_rf_sensitivities(obj,stresstest_struct)
+			repstruct.rf_sensitive_cell = ret_cell;
+			
 			% print Fixed Income style box to LaTeX Table
 		% calculate rating, duration style boxes 
 			port_rating = port_rating ./ sum(port_rating);
@@ -775,6 +780,9 @@ elseif (strcmpi(type,'latex'))
 				else
 					if (isdevelopedmarket(tmp_ctry))
 						colordepth = 25 + (75 * sqrt(country_exposure(kk) / max_exp_dm));
+						if isnan(colordepth)
+							colordepth = 25;
+						end
 						%colordepth = 100;
 						if ( length(dm_string) == 0)
 							dm_string = strcat(tmp_ctry,'/',num2str(colordepth));
@@ -784,6 +792,9 @@ elseif (strcmpi(type,'latex'))
 						
 					else	% emerging market country
 						colordepth = 25 + (75 * sqrt(country_exposure(kk) / max_exp_em));
+						if isnan(colordepth)
+							colordepth = 25;
+						end
 						%colordepth = 100;
 						if ( length(em_string) == 0)
 							em_string = strcat(tmp_ctry,'/',num2str(colordepth));
@@ -1066,7 +1077,7 @@ elseif (strcmpi(type,'latex'))
 		% 3) Strategic Asset Allocation
 			% SAA | Deviation  | <10% | 6% | on track v action
 			max_deviation = 10;
-			saa_deviation_rel = 100 * saa_deviation / obj.getValue('base');
+			saa_deviation_rel = 100 * saa_deviation / port_basevalue_assets;
 			if ( saa_deviation_rel <= max_deviation )
 				status_str = '\colorbox{octariskgreen}{on track}';
 			else
@@ -1593,4 +1604,36 @@ function [dur convex] = calc_eff_sensitivities(base,IRup,IRdown)
 		dur = 0;
 		convex = 0;
 	end						
+end
+
+% get all sensitivity to risk factor categories
+function [ret_cell] = get_rf_sensitivities(obj,stresstest_struct,rf_cell = {})
+% todo: screen stress test names for types (e.g. EQ,IR,INFL,SPREAD etc.)
+% and see whether portfolio obj has non-zero pnl --> count this rf type as
+% sensitive for portfolio (to be used then for specific rf plotting)
+ret_cell = {};
+if isempty(rf_cell)
+	rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+end
+if (isstruct(stresstest_struct))
+	stresstest_names = {stresstest_struct.name};
+	obj_pnl = obj.getValue('stress') - obj.getValue('base');
+	for kk = 1:1:numel(rf_cell)
+		tmp_rf = rf_cell{kk}
+		idx_rf = get_idx_cell(stresstest_names,tmp_rf)
+	
+		if ( idx_rf == 0)
+			fprintf('print_report: Stress test struct has no stress test named >>%s<<.\n',tmp_rf);
+		else
+			abs(obj_pnl(idx_rf))
+			if (abs(obj_pnl(idx_rf)) == 0)
+				fprintf('print_report: Portfolio not sensitive to risk factor %s.\n',tmp_rf);
+			else
+				fprintf('print_report: Portfolio sensitive to risk factor %s.\n',tmp_rf);
+				ret_cell(length(ret_cell)+1) = tmp_rf;
+			end
+		end
+	end
+end
+
 end
