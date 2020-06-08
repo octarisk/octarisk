@@ -87,6 +87,7 @@ classdef Bond < Instrument
         cpi_historical_curve    = ''; % Curve with historical values for CPI
         infl_exp_lag            = ''; % inflation expectation lag (in months)
         use_indexation_lag      = false; % Bool: true -> use infl_exp_lag
+        break_even_inflation	= 0.0;
         
         % Key rate duration specific attributes
         key_term                = [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
@@ -279,6 +280,7 @@ classdef Bond < Instrument
             fprintf('cpi_historical_curve: %s\n',b.cpi_historical_curve); 
             fprintf('infl_exp_lag: %s\n',any2str(b.infl_exp_lag));
             fprintf('use_indexation_lag: %s\n',any2str(b.use_indexation_lag));
+            fprintf('break_even_inflation: %f %% cont act/365\n',b.break_even_inflation .* 100); 
          end
         
          %fprintf('spot_value: %f %s\n',b.spot_value,b.currency);
@@ -296,9 +298,9 @@ classdef Bond < Instrument
          % looping via all cf base values if defined
          if ( length(b.cf_values) > 0 )
             fprintf('CF Base values:\n[ ');
-            for ( kk = 1 : 1 : min(columns(b.cf_values),10))
-                    fprintf('%f,',b.cf_values(kk));
-                end
+            for ( kk = 1 : 1 : length(b.cf_values))
+                fprintf('%f,',b.cf_values(kk));
+            end
             fprintf(' ]\n');
          end   
           % looping via all stress rates if defined
@@ -313,7 +315,7 @@ classdef Bond < Instrument
             end
             fprintf('\n');
          end    
-         % looping via first 3 MC scenario values
+         % looping via first 5 MC scenario values
          for ( ii = 1 : 1 : mc_stack)
             if ( length(b.timestep_mc_cf) >= ii )
                 fprintf('MC timestep: %s\n',b.timestep_mc_cf{ii});

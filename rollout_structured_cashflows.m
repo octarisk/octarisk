@@ -1077,6 +1077,7 @@ function para = get_cfvalues_ILB(valuation_date, value_type, para, instrument, r
         days_from_issuedate = para.issuedatenum - para.valuation_date;
         cpi_initial = hist.getRate(value_type,days_from_issuedate);
     end
+
     % preallocate memory
     no_scen = max(length(iec.getRate(value_type,0)),length(cpi_level));
     cf_values = zeros(no_scen,length(d1));

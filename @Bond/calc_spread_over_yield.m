@@ -5,9 +5,7 @@ function s = calc_spread_over_yield (bond,valuation_date,discount_curve,call_sch
    lb = -1;
    ub = 1;
 
-   if ( nargin == 2)
-        valuation_date = today;
-   elseif ( nargin < 2)
+   if ( nargin < 3)
         error('Error: No  discount curve set. Aborting.');
    end
    

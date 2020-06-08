@@ -433,14 +433,6 @@ elseif ( strcmpi(tmp_type,'synthetic'))
 elseif ( sum(strcmpi(tmp_type,'bond')) > 0 ) 
     % Using Bond class
         bond = instr_obj;
-        
-    %~ % check, whether instrument already valuated for current scenario --> delete properties
-       %~ if ~(strcmpi(scenario,'base') || strcmpi(scenario,'stress'))
-           %~ if ( sum(strcmpi(bond.timestep_mc_cf,scenario))>0)   % scenario already exists
-               %~ bond = bond.set('timestep_mc_cf',{});
-               %~ bond = bond.set('cf_values_mc',[]);
-           %~ end
-       %~ end
 
     % a) Get curve parameters    
       % get discount curve
@@ -630,6 +622,10 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         % calculate yield to maturity
         if (strcmpi(scenario,'base') )
             bond = bond.calc_yield_to_mat(valuation_date);
+            if( strcmpi(tmp_sub_type,'ILB')) % calculate break even inflation rate
+				bond = bond.calc_ilb_break_even (valuation_date, ...
+							   tmp_curve_object,iec_curve,hist_curve,cpi_index);				
+            end
         end
 
     % e) store bond object:

@@ -173,7 +173,6 @@ elseif (strcmpi(type,'riskfactor'))
 	    rf_shocks_9995 = [sortPnL(quantile_9995)/obj.getValue('base')];
 	    rf_plot_desc = {'Portfolio'};
 	    rf_cell = repstruct.rf_sensitive_cell;
-	    % TODO: selection of risk factor for analysis dependent on real exposure
 	    tmp_rf_plot=0;
 		for kk=1:1:length(rf_cell)
 			[rf_obj retcode]= get_sub_object(riskfactor_struct,rf_cell{kk});
