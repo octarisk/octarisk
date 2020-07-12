@@ -162,12 +162,12 @@ mvbs_of_struct = struct( ...
 );
 
 
-print_to_file_from_obj(obj,para,general_struct,'S.01.02.01',filepathqrt,'w')
-print_to_file_from_obj(obj,para,own_funds_struct,'S.23.01.01.01',filepathqrt,'a')
-print_to_file_from_obj(obj,para,scr_struct,'S.25.03.01.02',filepathqrt,'a')
-print_to_file_from_cell(assets,assets_exp,assets_struct,'S.02.01.02.01',filepathqrt,'a')
-print_to_file_from_cell(liabs,liabs_exp,liabilities_struct,'S.02.01.02.01',filepathqrt,'a')
-print_to_file_from_cell(ownfunds,ownfunds_exp,mvbs_of_struct,'S.02.01.02.01',filepathqrt,'a')
+print_to_file_from_obj(obj,para,general_struct,'S.01.02.01',filepathqrt,'w');
+print_to_file_from_obj(obj,para,own_funds_struct,'S.23.01.01.01',filepathqrt,'a');
+print_to_file_from_obj(obj,para,scr_struct,'S.25.03.01.02',filepathqrt,'a');
+print_to_file_from_cell(assets,assets_exp,assets_struct,'S.02.01.02.01',filepathqrt,'a');
+print_to_file_from_cell(liabs,liabs_exp,liabilities_struct,'S.02.01.02.01',filepathqrt,'a');
+print_to_file_from_cell(ownfunds,ownfunds_exp,mvbs_of_struct,'S.02.01.02.01',filepathqrt,'a');
 
 
 end
@@ -201,7 +201,7 @@ function print_to_file_from_cell(listcell,expvec,tmpstruct,sheet,filename,write_
 			type = 'NMBR';
 			%error('Cell has not field >>%s<<\n',objkey);
 		end
-		printf('%s,%s,%1.2f,%s\n',tmp_field,objkey,objval,type);
+		%printf('%s,%s,%1.2f,%s\n',tmp_field,objkey,objval,type);
 		fprintf(fqrt, '%s,%s,%1.2f,%s\n',sheet,tmp_field,objval,type);
 	end
 	fclose (fqrt);
@@ -239,10 +239,10 @@ function print_to_file_from_obj(obj,para,tmpstruct,sheet,filename,write_or_appen
 			objval = datestr(objval);
 		end
 		if strcmpi(type,'NMBR')
-			printf('%s,%s,%1.2f,%s\n',tmp_field,objkey,objval,type);
+			%printf('%s,%s,%1.2f,%s\n',tmp_field,objkey,objval,type);
 			fprintf(fqrt, '%s,%s,%1.2f,%s\n',sheet,tmp_field,objval,type);
 		else
-			printf('%s,%s,%s,%s\n',tmp_field,objkey,any2str(objval),type);
+			%printf('%s,%s,%s,%s\n',tmp_field,objkey,any2str(objval),type);
 			fprintf(fqrt, '%s,%s,%s,%s\n',sheet,tmp_field,any2str(objval),type);
 		end
 		

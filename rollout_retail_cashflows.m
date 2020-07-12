@@ -64,7 +64,11 @@ case {'RETEXP' }
 case {'GOVPEN' }
     para = get_cfvalues_GOVPEN(para.valuation_date, value_type, para, ...
 		instrument, obj1, obj2, obj3); 
-		       
+
+case {'HC' }
+    para = get_cfvalues_HC(para.valuation_date, value_type, para, ...
+		instrument, obj1, obj2, obj3); 
+				       
 otherwise
     error('rollout_retail_cashflows: Unknown instrument type >>%s<<',any2str(para.type));
 end
@@ -286,6 +290,24 @@ end
 			tmp_issue_date = instrument.retirement_startdate;
 		end
 		para.issue_date = tmp_issue_date;
+	elseif ( strcmpi(para.type,'HC') ) 
+		para.maturity_date = instrument.salary_enddate;
+		if isnumeric(valuation_date)
+			tmp_valdate = valuation_date;
+		else
+			tmp_valdate = datenum(valuation_date);
+		end
+		if isnumeric(instrument.salary_startdate)
+			tmp_retdate = instrument.salary_startdate;
+		else
+			tmp_retdate = datenum(instrument.salary_startdate);
+		end
+		if tmp_valdate > tmp_retdate
+			tmp_issue_date = datestr(valuation_date);
+		else
+			tmp_issue_date = instrument.salary_startdate;
+		end
+		para.issue_date = tmp_issue_date;	
     end
     if ( para.term != 0)
         if ( strcmpi(para.term_unit,'months'))
@@ -331,6 +353,16 @@ end  % end fill_para
 %-------------------------------------------------------------------------------
 %                  Instrument Cash Flow rollout Functions
 %-------------------------------------------------------------------------------
+% ##############################################################################
+function para = get_cfvalues_HC(valuation_date, value_type, para, instrument, iec, longev, longev_widow)
+	len_cf = numel(para.cf_datesnum);
+        
+    % return struct
+    para.ret_values     = zeros(1,len_cf);
+    para.cf_interest    = zeros(1,len_cf);
+    para.cf_principal   = zeros(1,len_cf);
+	
+end       
 
 % ##############################################################################
 function para = get_cfvalues_GOVPEN(valuation_date, value_type, para, instrument, iec, longev, longev_widow)

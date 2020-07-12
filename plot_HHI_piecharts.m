@@ -146,7 +146,10 @@ end
 % ##############################################################################
 % sort cell and vector
 function [vec_plot, cell_plot] = sort_cells(vec_unsorted,cell_unsorted,max_elems = 5);
-
+if isempty(vec_unsorted)
+	vec_plot = 0;
+	cell_plot = {'Not Available'};
+else
 	[vec_sorted sorted_numbers ] = sort(vec_unsorted,'descend');
 
 	% Top 5 Positions Basevalue
@@ -161,4 +164,5 @@ function [vec_plot, cell_plot] = sort_cells(vec_unsorted,cell_unsorted,max_elems
 		vec_plot(idx)    = sum(vec_unsorted) - sum(vec_plot) ;
 		cell_plot(idx)   = "Other";
 	end
+end
 end

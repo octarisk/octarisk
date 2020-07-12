@@ -178,6 +178,15 @@ first_eval      = para_object.first_eval;
 % load packages
 pkg load financial;     % load financial packages (needed throughout all scripts)
 pkg load statistics;    % load statistics packages (needed throughout all scripts)
+if (isunix && para_object.use_parallel_pkg == true)
+	global use_parallel_pkg = true;
+	global number_parallel_cores = para_object.number_parallel_cores;
+	pkg load parallel; 	% load parallel packages (required for some cpp pricing functions
+	pkg load ndpar; 	% only load if use_parallel_pkg parameter was set
+else
+	global use_parallel_pkg = false;
+	global number_parallel_cores = nproc-1;
+end
 
 plottime = 0;   % initializing plottime
 aggr = 0;       % initializing aggregation time
@@ -510,11 +519,19 @@ end
 
 %~ tmp_obj = get_sub_object(instrument_struct, '103057'); 
 %~ tmp_obj
+%~ tmp_obj = get_sub_object(instrument_struct, 'A188AL'); 
+%~ tmp_obj
 %~ tmp_obj = get_sub_object(curve_struct, 'IR_INFL_EUR'); 
 %~ tmp_obj.get('rates_base')'
 %~ tmp_obj_infl = get_sub_object(riskfactor_struct, 'RF_INFL_EXP_CURVE')
 %~ distritmp = tmp_obj_infl.getValue('10d');
-
+%~ tmp_obj = get_sub_object(curve_struct, 'IR_EUR'); 
+%~ tmp_obj
+%~ tmp_obj = get_sub_object(curve_struct, 'SPREAD_EUR_IG'); 
+%~ tmp_obj
+%~ tmp_obj = get_sub_object(curve_struct, 'EUR_CORP_IG'); 
+%~ tmp_obj
+%~ tmp_obj.get('rates_stress')'
 
 % ----------------------------------------------------------------------
 % 6. Portfolio Aggregation

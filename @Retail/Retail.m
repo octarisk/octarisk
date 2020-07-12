@@ -45,8 +45,8 @@ classdef Retail < Instrument
         savings_change_dates = '';  % dates on which saving values changes
              
         % Retirement Expenses attributes
-        year_of_birth	= '1983';	% start date for all longevity calculations
-        year_of_birth_widow	= '1983';	% start date for all longevity calculations
+        year_of_birth	= 1983;	% start date for all longevity calculations
+        year_of_birth_widow	= 1983;	% start date for all longevity calculations
 		retirement_startdate = '';
 		retirement_enddate = '';
 		expense_values = [];  % value of expenses
@@ -64,6 +64,22 @@ classdef Retail < Instrument
         value_per_score = 0;	% Wert pro Rentenpunkt: gross_pension = value_per_score x pension_scores
         tax_rate = 0;			% tax rate: net pension = gross penion x (1- tax_rate)
         widow_pension_flag = 0;	% boolean: take into account pension payments for widow
+        
+        % Human Capital specific attributes
+        income_fix = 0;			% fixed (steady) component of salary
+		income_bonus = 0;		% bonus (risky) component of salary
+		mu_risky 	= 0.0;		% drift of risky component
+		s_risky  	= 0.0;		% Volatility of risky (equity like) component
+		corr		= 0.0;		% correlation between risky and steady component
+		mu_labor	= 0.0;		% real drift of fix and bonus components
+		s_labor		= 0.0;		% volatility of steady salary growth
+		nmc			= 100;		% Number of inner MC scenarios (100-500 should be enough)
+		bonus_cap	= 0.0;		% maximum increase of bonus component
+		bonus_floor = 0.0;		% maximum decrease of bonus component
+		spread_risky = 0.0;	% spread applied to discount curve used for discounting future income stream        
+        salary_startdate = '';	% start date of salary income
+        salary_enddate = '';	% end date of salary
+        equity_riskfactor = '';	% Equity risk factor (used for calculation of first bonus payment
         
         % Key rate duration specific attributes
         key_term                = [365,730,1095,1460,1825,2190,2555,2920,3285,3650]; % term structure of key rates
@@ -205,6 +221,26 @@ classdef Retail < Instrument
 			fprintf('embedded_option_value: %s %s\n',any2str(b.embedded_option_value),b.currency); 
 			fprintf('Breakeven rate redemption: %f %% %s %s\n',100* b.ytm,b.compounding_type,b.day_count_convention); 
          end
+         if strcmpi( b.sub_type,'HC')
+			fprintf('income_fix: %f  %s\n',b.income_fix,b.currency); 
+			fprintf('income_bonus: %f  %s\n',b.income_bonus,b.currency); 
+			fprintf('mu_risky: %f\n',b.mu_risky); 
+			fprintf('s_risky: %f\n',b.s_risky); 
+			fprintf('corr: %f\n',b.corr); 
+			fprintf('mu_labor: %f\n',b.mu_labor); 
+			fprintf('s_labor: %f\n',b.s_labor); 
+			fprintf('nmc: %d\n',b.nmc); 
+			fprintf('bonus_cap: %f\n',b.bonus_cap); 
+			fprintf('bonus_floor: %f\n',b.bonus_floor); 
+			fprintf('spread_risky: %f\n',b.spread_risky); 
+			fprintf('year_of_birth: %d\n',b.year_of_birth); 
+			fprintf('salary_startdate: %s\n',b.salary_startdate); 
+			fprintf('salary_enddate: %s\n',b.salary_enddate); 
+			fprintf('mortality_shift_years: %f\n',b.mortality_shift_years); 
+			fprintf('infl_exp_curve: %s\n',b.infl_exp_curve); 
+			fprintf('longevity_table: %s\n',b.longevity_table);  
+			fprintf('equity_riskfactor: %s\n',b.equity_riskfactor);  
+         end
          if ~( isempty(b.mac_duration))
             fprintf('eff_duration: %s\n',any2str(b.eff_duration)); 
             fprintf('eff_convexity: %s\n',any2str(b.eff_convexity)); 
@@ -271,13 +307,15 @@ classdef Retail < Instrument
          end
 
       end
+      
       function obj = set.sub_type(obj,sub_type)
          if ~(strcmpi(sub_type,'DCP') || strcmpi(sub_type,'SAVPLAN') ...
-				|| strcmpi(sub_type,'RETEXP') || strcmpi(sub_type,'GOVPEN') )
-            error('Retail sub_type must be either DCP, RETEXP, GOVPEN or SAVPLAN: %s',sub_type)
+				|| strcmpi(sub_type,'RETEXP') || strcmpi(sub_type,'GOVPEN') || strcmpi(sub_type,'HC'))
+            error('Retail sub_type must be either DCP, RETEXP, GOVPEN, HC or SAVPLAN: %s',sub_type)
          end
          obj.sub_type = sub_type;
       end % set.sub_type
+      
       function obj = set.day_count_convention(obj,day_count_convention)
          obj.day_count_convention = day_count_convention;
          % Call superclass method to set basis
@@ -352,6 +390,10 @@ classdef Retail < Instrument
             error('Retail term_unit must be in [days,months,years] : >>%s<< for id >>%s<<.\n',term_unit,obj.id);
          end
          obj.term_unit = tolower(term_unit);
+         
+         if ( strcmpi(obj.sub_type,'HC') && ~(strcmpi(term_unit,'years')))
+			error('Retail type HC must have term unit 1 years.');
+         end
       end % set.term_unit
             
    end % end methods

@@ -583,9 +583,7 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
         if rows(nodes_input_y) < columns(nodes_input_y)
             nodes_input_y = nodes_input_y';
         end
-    % transpose rates input matrix (each vector rates(nodes) per scenario has 
-    % to be in columns)
-            rates_input = rates_input';        
+
     % checking for nodes_input to be in years instead of days
         if ( max(nodes_input_y) > 120)
             %disp('WARNING: Nodes_input seems to be defined in days, 
@@ -597,9 +595,12 @@ function [P, R] = interpolate_smith_wilson(tt,rates_input,nodes_input_y, ...
     % Calculate chi via solving linear equations  
         % 1. calculate vector mu and m
         mu = exp(- ufrc .* nodes_input_y);
-        % fast implementation of: m  = exp(-log(1+rates_input) .* nodes_input_y) 
-        m = (1+rates_input).^(-nodes_input_y);
-        
+        % alternative calculation (litte bit slower)
+        % TODO: evaluate precalculation of discount factors only once as input
+        %		to SW interpolation (e.g. once per curve)
+        %m = (1+rates_input').^(-nodes_input_y);
+        m  = exp(-log(1+rates_input') .* nodes_input_y);
+          
         % 2. calculate matrix W (size length(rates)^2)
         [X,Y] = meshgrid(nodes_input_y,nodes_input_y);
         W = Wilson_function(X,Y,ufrc,alpha);

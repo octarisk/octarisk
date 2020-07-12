@@ -1,4 +1,4 @@
-function obj = calc_value(retail,valuation_date,value_type,discount_curve)
+function obj = calc_value(retail,valuation_date,value_type,discount_curve,iec,longev,equity)
     obj = retail;
     if ( nargin < 3)
         error('No value_type set. [stress,1d,10d,...]');
@@ -22,20 +22,31 @@ function obj = calc_value(retail,valuation_date,value_type,discount_curve)
         tmp_curve_comp_type = discount_curve.compounding_type;
         tmp_curve_comp_freq = discount_curve.compounding_freq;
         
-    % Get cf values and dates
-		tmp_cashflow_dates  = obj.cf_dates;
-		tmp_cashflow_values = obj.getCF(value_type);
-    
     % Get bond related basis and conventions
 		basis       = obj.basis;
 		comp_type   = obj.compounding_type;
 		comp_freq   = obj.compounding_freq;
     
-    if ( isempty(tmp_cashflow_values) )
-        error('No cash flow values set. CF rollout done?');    
-    end
+    if strcmpi(obj.sub_type,'HC')
+		if ( nargin < 6)
+			error('Error: No  discount curve,iec,longev set. Aborting.');
+		end
+		if (nargin == 6)
+			equity = Riskfactor();
+		end
+		% call wrapper function
+		theo_value = pricing_humancapital(obj,valuation_date,value_type, ...
+											discount_curve,iec,longev,equity);
+    else
+		% Get cf values and dates
+		tmp_cashflow_dates  = obj.cf_dates;
+		tmp_cashflow_values = obj.getCF(value_type);
+		
+		if ( isempty(tmp_cashflow_values) )
+			error('No cash flow values set. CF rollout done?');    
+		end
 
-    if (strcmpi(obj.sub_type,'SAVPLAN') || strcmpi(obj.sub_type,'DCP'))
+		if (strcmpi(obj.sub_type,'SAVPLAN') || strcmpi(obj.sub_type,'DCP'))
 		if ( obj.notice_period > 0 && columns(tmp_cashflow_values) == 2)
 			% first column: cash flow under first put date, sec column: cf at maturity
 			theo_value_putable = pricing_npv(valuation_date, tmp_cashflow_dates(1), ...
@@ -71,14 +82,15 @@ function obj = calc_value(retail,valuation_date,value_type,discount_curve)
 										tmp_curve_comp_type, tmp_curve_basis, ...
 										tmp_curve_comp_freq);
 		end 
-	else	% RETEXP: just discounting of cash flows
+		else	% RETEXP: just discounting of cash flows
 			theo_value = pricing_npv(valuation_date, tmp_cashflow_dates, ...
 										tmp_cashflow_values, obj.soy, ...
 										tmp_nodes, tmp_rates, basis, comp_type, ...
 										comp_freq, tmp_interp_discount, ...
 										tmp_curve_comp_type, tmp_curve_basis, ...
 										tmp_curve_comp_freq);
-	end
+		end
+	end % end HC else condition
                                     
 										
     % store theo_value vector

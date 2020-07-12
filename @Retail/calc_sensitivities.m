@@ -1,19 +1,25 @@
-function obj = calc_sensitivities (retail, valuation_date, discount_curve)
+function obj = calc_sensitivities (retail, valuation_date, discount_curve,iec,longev)
 obj = retail;
 
 if ischar(valuation_date)
     valuation_date = datenum(valuation_date,1);
 end
 
-% A) get bond related attributes
-% Get base cf values and dates
-cashflow_dates  = obj.cf_dates;
-cashflow_values = obj.getCF('base');
 
-if ( isempty(cashflow_values) )
-    error('No cash flow values set. CF rollout done?');    
+if strcmpi(obj.sub_type,'HC')
+	if ( nargin < 5)
+		error('Error: No valuation date,discount curve,iec,longev set. Aborting.');
+	end
+else
+	% A) get bond related attributes
+	% Get base cf values and dates
+	cashflow_dates  = obj.cf_dates;
+	cashflow_values = obj.getCF('base');
+
+	if ( isempty(cashflow_values) )
+		error('No cash flow values set. CF rollout done?');    
+	end
 end
-
 
 % B) get discount curve attributes
     nodes_discount    = discount_curve.nodes;
@@ -44,8 +50,16 @@ end
 	elseif strcmpi(obj.sub_type,'RETEXP') || strcmpi(obj.sub_type,'GOVPEN')
 		% special case RETEXP: cash flow not dependent on IR --> set to base 
 		obj_tmp = obj_tmp.set('cf_values_stress',obj.get('cf_values'));
-	end                           
-    obj_tmp = obj_tmp.calc_value(valuation_date,'stress',c);              
+	end    
+	if strcmpi(obj.sub_type,'HC')
+		iec_tmp = iec;
+		iec_tmp = iec_tmp.set('rates_stress',iec.get('rates_base'));
+		longev_tmp = longev;
+		longev_tmp = longev_tmp.set('rates_stress',longev.get('rates_base'));
+		obj_tmp = obj_tmp.calc_value(valuation_date,'stress',c,iec_tmp,longev_tmp);   
+	else                       
+		obj_tmp = obj_tmp.calc_value(valuation_date,'stress',c);              
+	end
     value_vec = obj_tmp.getValue('stress');               
     theo_value              = value_vec(1);
     theo_value_100bpdown    = value_vec(2);

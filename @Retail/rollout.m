@@ -1,7 +1,6 @@
 function s = rollout (retail, value_type, arg1, arg2, arg3, arg4)
   s = retail;
   
-  % all other retail types (like FRB etc.)
 	if ( nargin < 3)
 		valuation_date = today;
 	elseif ( nargin == 3)
@@ -50,6 +49,16 @@ function s = rollout (retail, value_type, arg1, arg2, arg3, arg4)
 		else
 			error('Wrong number of arguments for widow_pension_flag set.');		
 		end	
+	elseif strcmpi(s.sub_type,'HC') 
+		[ret_dates ret_values ret_int ret_principal accr_int last_coupon_date] = ...
+					rollout_retail_cashflows(valuation_date,value_type,s);	
+		%~ fprintf('No cash flow rollout for Human Capital calculation required.\n');	
+		%~ ret_dates 	= 0;
+		%~ ret_values 	= 0;
+		%~ ret_int 	= 0;
+		%~ ret_principal = 0;
+		accr_int 	= 0;
+		last_coupon_date = 0;
 	else
 		% not defined
 	end				

@@ -703,20 +703,51 @@ elseif strcmpi(tmp_type,'retail')
 				end
 				obj = obj.rollout(scenario,valuation_date,infl_curve,longev_table,longev_table2);
 			end
+		
+		elseif( strcmpi(tmp_sub_type,'HC'))       % Retirement Expenses or Government Pension
+			% get inflation expectation curve
+			tmp_infl_exp_curve  = obj.get('infl_exp_curve');
+			[infl_curve object_ret_code]    = get_sub_object(curve_struct, tmp_infl_exp_curve); 
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_infl_exp_curve);
+			end
+			% get longevity table
+			tmp_longev_table  = obj.get('longevity_table');
+			[longev_table object_ret_code]    = get_sub_object(curve_struct, tmp_longev_table); 
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No curve_struct object found for id >>%s<<\n',tmp_longev_table);
+			end
+			% get underlying equity risk factor
+			tmp_equity_rf  = obj.get('equity_riskfactor');
+			[equity_rf object_ret_code]    = get_sub_object(riskfactor_struct, tmp_equity_rf); 
+			if ( object_ret_code == 0 )
+				fprintf('WARNING: instrument_valuation: No riskfactor_struct object found for id >>%s<<\n',tmp_equity_rf);
+			end
 			
-
+			% no rollout of cash flows required
         else
             fprintf('WARNING: instrument_valuation: unknown RETAIL sub_type >>%s<< for id >>%s<<\n',obj.id,tmp_sub_type);
         end 
 	% c) final valuation of retail object (incl. base valuation)
-		if (~strcmpi(scenario,'base') )
-            obj = obj.calc_value (valuation_date,'base',tmp_curve_object);
+		if( strcmpi(tmp_sub_type,'HC')) 
+			if (~strcmpi(scenario,'base') )
+				obj = obj.calc_value (valuation_date,'base',tmp_curve_object, infl_curve, longev_table, equity_rf);
+			end
+			obj = obj.calc_value (valuation_date,scenario,tmp_curve_object, infl_curve, longev_table, equity_rf);
+		else
+			if (~strcmpi(scenario,'base') )
+				obj = obj.calc_value (valuation_date,'base',tmp_curve_object);
+			end
+			obj = obj.calc_value (valuation_date,scenario,tmp_curve_object);
         end
-        obj = obj.calc_value (valuation_date,scenario,tmp_curve_object);
     % d) calculate (key rate) durations and convexities
 		%if (strcmpi(scenario,'base') )
+		if( strcmpi(tmp_sub_type,'HC')) 
+			obj = obj.calc_sensitivities (valuation_date, tmp_curve_object, infl_curve, longev_table);
+		else
 			obj = obj.calc_sensitivities(valuation_date,tmp_curve_object);
 			%obj = obj.calc_key_rates(valuation_date,tmp_curve_object);
+		end
         %end    
     % store retail object:
     ret_instr_obj = obj;

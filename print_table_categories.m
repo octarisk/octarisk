@@ -311,6 +311,7 @@ assets = {
 'Cash and cash equivalents', 
 'Physical commodities', 
 'Cryptocurrencies',
+'Human Capital',
 'Any other assets', 
 'Total assets'
 };

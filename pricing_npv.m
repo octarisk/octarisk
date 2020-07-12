@@ -155,8 +155,8 @@ spread_constant_vec = convert_curve_rates(valuation_date,cashflow_dates', ...
 
 % get discount rate from discount curve
 % distinguish between interpolation methods
-if ( strcmpi(interp_discount,'linear'))
-    rate_curve_vec = interpolate_curve_vectorized(discount_nodes, ...
+if ( strcmpi(interp_discount,'linear'))		
+	rate_curve_vec = interpolate_curve_vectorized(discount_nodes, ...
                         discount_rates, cashflow_dates);
 else
     rate_curve_vec = zeros(rows(discount_rates),length(cashflow_dates));

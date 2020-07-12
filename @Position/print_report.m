@@ -84,7 +84,7 @@ elseif (strcmpi(type,'latex'))
 				end
 			  end
 			catch
-				printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+				printf('Portfolio.print_report: get asset and liability base values: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
 			end
 		end
 		repstruct.port_basevalue_assets = port_basevalue_assets;
@@ -276,14 +276,14 @@ elseif (strcmpi(type,'latex'))
 					pie_chart_desc_pos_shock(ii) = cellstr( strcat(pos_obj.id));
 			  end
 			catch
-				printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+				printf('Portfolio.print_report: decomp there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
 			end
 		end
 		% prepare vector for piechart:
 		[pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock,'descend');
 		idx = 1; 
-		% plot Top 10 Positions
-		max_positions = 20;
+		% plot Top 25 Positions
+		max_positions = 25;
 		for ii = 1:1:min(length(pie_chart_values_pos_shock),max_positions);
 			pie_chart_values_plot_pos_shock(idx)     = pie_chart_values_sorted_pos_shock(ii) ;
 			pie_chart_desc_plot_pos_shock(idx)       = pie_chart_desc_pos_shock(sorted_numbers_pos_shock(ii));
@@ -390,7 +390,7 @@ elseif (strcmpi(type,'latex'))
 				   pos_id = pos_obj.id;
 				   instr_obj = get_sub_object(instrument_struct,pos_id);
 				   if (instr_obj.isProp('asset_class'))
-					 if (strcmpi(instr_obj.get('asset_class'),'Equity'))
+					  if (strcmpi(instr_obj.get('asset_class'),'Equity'))
 						region_cell_pos  = instr_obj.region_id;
 						if (abs(sum(instr_obj.region_values) - 1) > 0.01)
 							fprintf('WARNING: Position.print_report: >>%s<< has region allocation not equal to 1\n',instr_obj.id);
@@ -587,7 +587,7 @@ elseif (strcmpi(type,'latex'))
 					end
 				  end
 				catch
-					printf('Portfolio.print_report: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+					printf('Portfolio.print_report: cell and exposure: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
 				end
 			end
 			entity_cell;
@@ -595,7 +595,7 @@ elseif (strcmpi(type,'latex'))
 			entity_relationship_cell;
 			tmpfilename = strcat(path_reports,'/',obj.id,'_entity_relationship.dot');
 			retval = print_graphviz(tmpfilename,entity_cell,entity_exposure,entity_relationship_cell);
-			
+		
 			repstruct.issuer_cell = issuer_cell;
 			repstruct.issuer_exposure = issuer_exposure;	
 			repstruct.category_cell = category_cell;
@@ -618,7 +618,6 @@ elseif (strcmpi(type,'latex'))
 			repstruct.fund_replication_exposure = fund_replication_exposure;
 			repstruct.liquidity_class_cell = liquidity_class_cell;
 			repstruct.liquidity_class_exposure = liquidity_class_exposure;
-			
 			
 			% calculate HHI of all cells/exposures
 			HHI_issuer = calc_HHI(issuer_exposure);
@@ -722,8 +721,10 @@ elseif (strcmpi(type,'latex'))
 			repstruct.port_assets_basevalue = port_assets_basevalue;
 			
 			% get all risk factors where portfolio is sensitive:
-			rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
-			ret_cell = get_rf_sensitivities(obj,stresstest_struct)
+			rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_EQ_EM','RF_FX_EURUSD', ...
+							'RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD', ...
+							'RF_ALT_BTC','RF_RE_DM','RF_SPREAD_EUR_IG_5Y'};
+			ret_cell = get_rf_sensitivities(obj,stresstest_struct);
 			repstruct.rf_sensitive_cell = ret_cell;
 			
 			% print Fixed Income style box to LaTeX Table
@@ -1613,19 +1614,18 @@ function [ret_cell] = get_rf_sensitivities(obj,stresstest_struct,rf_cell = {})
 % sensitive for portfolio (to be used then for specific rf plotting)
 ret_cell = {};
 if isempty(rf_cell)
-	rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM'};
+	rf_cell = {'RF_EQ_EU','RF_EQ_NA','RF_EQ_EM','RF_FX_EURUSD','RF_IR_EUR_10Y','RF_INFL_EXP_EUR','RF_COM_GOLD','RF_ALT_BTC','RF_RE_DM','RF_SPREAD_EUR_IG_5Y'};
 end
 if (isstruct(stresstest_struct))
 	stresstest_names = {stresstest_struct.name};
 	obj_pnl = obj.getValue('stress') - obj.getValue('base');
 	for kk = 1:1:numel(rf_cell)
-		tmp_rf = rf_cell{kk}
-		idx_rf = get_idx_cell(stresstest_names,tmp_rf)
+		tmp_rf = rf_cell{kk};
+		idx_rf = get_idx_cell(stresstest_names,tmp_rf);
 	
 		if ( idx_rf == 0)
 			fprintf('print_report: Stress test struct has no stress test named >>%s<<.\n',tmp_rf);
 		else
-			abs(obj_pnl(idx_rf))
 			if (abs(obj_pnl(idx_rf)) == 0)
 				fprintf('print_report: Portfolio not sensitive to risk factor %s.\n',tmp_rf);
 			else
@@ -1635,5 +1635,4 @@ if (isstruct(stresstest_struct))
 		end
 	end
 end
-
 end

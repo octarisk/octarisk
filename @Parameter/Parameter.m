@@ -55,6 +55,8 @@ classdef Parameter
         aggregation_flag = 0;
         no_stresstest_plot = 1;
         first_eval = 1;
+        use_parallel_pkg = 0;
+        number_parallel_cores = 4;
         frob_norm_limit = 0.05;   % Frobenius Norm: threshold of rlzd corrmat and 
                             % input corrmat, where to draw new random numbers
             
