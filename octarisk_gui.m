@@ -24,7 +24,7 @@
 
 % Specify path to parameter.csv (Recommendation for first try: /path/to/octarisk/ and parameter.csv)
 if (isunix)
-    input_path = '/home/schinzilord/Dokumente/Programmierung/octarisk/private_folder';
+    input_path = '/home/schinzilord/Dokumente/Programmierung/octarisk/testing_folder';
     parameter_file = 'parameter.csv';
 else
     input_path = 'C:/Dokumente/Work/octarisk/testing_folder';
@@ -264,7 +264,7 @@ function obj = update_plot(obj,inst_id,var)
     global valuation_date;
     % get instrument data
     tmp_obj = get_sub_object(instrument_struct,inst_id);
-    yy = tmp_obj.getValue(para_object.mc_timesteps{1}) .- tmp_obj.getValue('base');
+    yy = tmp_obj.getValue(para_object.mc_timestep) .- tmp_obj.getValue('base');
     yy_sorted = sort(yy);
     xx = 1:1:length(yy);
     %ax_instrument = gca (h.ax_instrument);
@@ -398,7 +398,7 @@ function aggregate_portfolio(obj)
     tmp_pos_selected_base = tmp_pos_struct_selected.basevalue;  
     [tmp_pos_struct position_failed_cell scenario_values] = aggregate_positions(tmp_pos_struct, ...
             position_failed_cell,instrument_struct,index_struct, ...
-            para_object.mc,para_object.mc_timesteps{1},fund_currency,tmp_port_id,false);
+            para_object.mc,para_object.mc_timestep,fund_currency,tmp_port_id,false);
     [yy_sorted idx] = sort(scenario_values - base_value);
     var = yy_sorted(confi_scenario);
     
@@ -482,7 +482,7 @@ function calculate_value(obj)
     
     % recalc in MC
     para_object.scen_number = para_object.mc;
-    tmp_obj = tmp_obj.valuate(valuation_date, para_object.mc_timesteps{1}, ...
+    tmp_obj = tmp_obj.valuate(valuation_date, para_object.mc_timestep, ...
                             instrument_struct, surface_struct, ...
                             matrix_struct, curve_struct, index_struct, ...
                             riskfactor_struct, para_object);
@@ -496,7 +496,7 @@ function calculate_value(obj)
     % print instrument value
     v = sprintf ("%.8f", tmp_obj.getValue('base'));
     set (h.instrument_value_value, "string", v);
-    yy = tmp_obj.getValue(para_object.mc_timesteps{1}) .- tmp_obj.getValue('base');
+    yy = tmp_obj.getValue(para_object.mc_timestep) .- tmp_obj.getValue('base');
     yy_sorted = sort(yy);
     var = yy_sorted(max(round((1 - para_object.quantile) * para_object.mc),1));
     set (h.instrument_var_value, "string", sprintf ("%.8f", var));
@@ -613,7 +613,7 @@ h.position_currency_var_label = uicontrol ("style", "text",
                                 
 h.position_var_label = uicontrol ("style", "text",
                                 "units", "normalized",
-                                "string", strcat("Value at Risk (", para_object.mc_timesteps{1} ,",", any2str(para_object.quantile),"):"),
+                                "string", strcat("Value at Risk (", para_object.mc_timestep ,",", any2str(para_object.quantile),"):"),
                                 "horizontalalignment", "left",
                                 "position", [0.51 0.71 0.18 0.03]);
 h.position_var_value = uicontrol ("style", "edit",
@@ -632,7 +632,7 @@ h.position_currency_base_label = uicontrol ("style", "text",
 %   Portfolio var results
 h.position_var_label_pct = uicontrol ("style", "text",
                                 "units", "normalized",
-                                "string", strcat("Value at Risk (", para_object.mc_timesteps{1} ,",", any2str(para_object.quantile),"):"),
+                                "string", strcat("Value at Risk (", para_object.mc_timestep ,",", any2str(para_object.quantile),"):"),
                                 "horizontalalignment", "left",
                                 "position", [0.51 0.66 0.18 0.03]);
 h.position_var_value_pct = uicontrol ("style", "edit",
@@ -779,7 +779,7 @@ h.instrument_value_currency = uicontrol ("style", "text",
                                 
 h.instrument_var_label = uicontrol ("style", "text",
                                 "units", "normalized",
-                                "string", strcat("Value at Risk (", para_object.mc_timesteps{1} ,",", any2str(para_object.quantile),"):"),
+                                "string", strcat("Value at Risk (", para_object.mc_timestep ,",", any2str(para_object.quantile),"):"),
                                 "horizontalalignment", "left",
                                 "position", [0.01 0.71 0.18 0.03]);
                                 
@@ -798,7 +798,7 @@ h.instrument_var_currency = uicontrol ("style", "text",
 
 h.instrument_var_label_pct = uicontrol ("style", "text",
                                 "units", "normalized",
-                                "string", strcat("Value at Risk (", para_object.mc_timesteps{1} ,",", any2str(para_object.quantile),"):"),
+                                "string", strcat("Value at Risk (", para_object.mc_timestep ,",", any2str(para_object.quantile),"):"),
                                 "horizontalalignment", "left",
                                 "position", [0.01 0.66 0.18 0.03]);
                                 

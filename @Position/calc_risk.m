@@ -335,7 +335,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
 				[portfolio_shock_sort_new] = sort(portfolio_shock_new - ...
 												base_value_new);
 				mc_var_shock_incr    = - dot(hd_vec,portfolio_shock_sort_new);
-				incr_var = varhd_abs - mc_var_shock_incr;		
+				incr_var = (varhd_abs - mc_var_shock_incr) * sign(pos_basevalue);		
 				% store position object in portfolio object
 				pos_obj = pos_obj.set('incr_var',incr_var);
 				obj.positions(ii).object = pos_obj;
@@ -348,7 +348,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
 				[portfolio_shock_sort_new] = sort(portfolio_shock_new - ...
 												base_value_new);
 				mc_var_shock_marg    = - dot(hd_vec,portfolio_shock_sort_new);
-				marg_var = mc_var_shock_marg - varhd_abs;		
+				marg_var = (mc_var_shock_marg - varhd_abs) * sign(pos_basevalue);		
 				% store position object in portfolio object
 				pos_obj = pos_obj.set('marg_var',marg_var);
 				obj.positions(ii).object = pos_obj;

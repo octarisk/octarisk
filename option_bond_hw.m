@@ -188,8 +188,10 @@ end
 % ------------------------------------------------------------------------------
 
 % D) Calculate call value for all call/put dates
-% tic;
-% disp("C++")
+global use_parallel_pkg;
+global number_parallel_cores;
+%number_parallel_cores = nproc-1;
+
 OptionValueCall = 0.0;
 OptionValuePut = 0.0;
 if ( length(call_dates) > 0 )   % only if call schedule has some dates
@@ -203,10 +205,19 @@ if ( length(call_dates) > 0 )   % only if call schedule has some dates
         K = call_strike(mm) * notional;
         american_flag = callschedule.american_flag;
         call_flag = true;
-        % Call pricing funciton C++ 
-        [Call cppB] = pricing_callable_bond_cpp(call_flag,T,N,alpha,sigma,tree_dates, ...
+        
+        % ##########     use ndpar package   ###################################
+		if use_parallel_pkg == true
+			[Call]  = ndpar_arrayfun(number_parallel_cores,@pricing_callable_bond_cpp, ...
+						call_flag,T,N,alpha,sigma,tree_dates, ...
+						tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag, ...
+						"Vectorized",true,"ChunksPerProc",1, ...
+						"CatDimensions", [1],"VerboseLevel", 0, "IdxDimensions", [0 0 0 0 1 0 1 1 0 0 0 0 0 1 0]);   
+		else
+			[Call] = pricing_callable_bond_cpp(call_flag,T,N,alpha,sigma,tree_dates, ...
                     tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
-        %BondBaseValue = cppB(round(rows(cppB)/2),1)
+			%BondBaseValue = cppB(round(rows(cppB)/2),1)
+		end					
         OptionValueCall += Call;
     end
 end       
@@ -220,11 +231,19 @@ if ( length(put_dates) > 0 )   % only if put schedule has some dates
         % calculate strike value
         K = put_strike(mm) * notional;
         american_flag = putschedule.american_flag;
-        call_flag = false;
-        % Call pricing funciton C++ 
-        [Put cppB pu pm pd r Q] = pricing_callable_bond_cpp(call_flag,T,N,alpha,sigma,tree_dates, ...
-                    tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);         
-        %BondBaseValue = cppB(round(rows(cppB)/2),1)
+        call_flag = false;   
+        % ##########     use ndpar package   ###################################
+        if use_parallel_pkg == true
+			[Put]  = ndpar_arrayfun(number_parallel_cores,@pricing_callable_bond_cpp, ...
+						call_flag,T,N,alpha,sigma,tree_dates, ...
+						tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag, ...
+						"Vectorized",true,"ChunksPerProc",1, ...
+						"CatDimensions", [1],"VerboseLevel", 0, "IdxDimensions", [0 0 0 0 1 0 1 1 0 0 0 0 0 1 0]);    
+		else
+			[Put] = pricing_callable_bond_cpp(call_flag,T,N,alpha,sigma,tree_dates, ...
+                    tree_cf,R_matrix,dt,Timevec,notional,Mat,K,accr_int,american_flag);
+            %BondBaseValue = cppB(round(rows(cppB)/2),1)        
+		end     
         OptionValuePut += Put;
     end
 end        
