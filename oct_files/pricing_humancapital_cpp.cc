@@ -207,8 +207,10 @@ Input variables:\n\
 	
 	
 	// generate random numbers --> make norminv. Same random set for all outer scenarios
-	Z_equity = octave_rand::nd_array(dim_rnd);
-	Z_income = octave_rand::nd_array(dim_rnd);
+	// Z_equity = octave_rand::nd_array(dim_rnd); // deprecated way of declaration
+	// Z_income = octave_rand::nd_array(dim_rnd); // deprecated way of declaration
+	Z_equity = octave::rand::nd_array(dim_rnd);
+	Z_income = octave::rand::nd_array(dim_rnd);
 	for (octave_idx_type mm = 0; mm < nmc/2; ++mm) 
 	{	
 		for (octave_idx_type ii = 1; ii <= col_nodes; ++ii) 

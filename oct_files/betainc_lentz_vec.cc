@@ -117,8 +117,7 @@ Input and output variables:\n\
                beta_m = a(ii) + 2 * m + ((m * (b(ii) - m)) / (a(ii) + 2 * m - 1) - ((a(ii) + m) * (a(ii) + b(ii) + m)) / (a(ii) + 2 * m + 1)) * x(ii);
                m++;
              }
-           if (! error_state)
-            f(ii) = f_tmp;
+          f(ii) = f_tmp;
         }
 		outargs(0) = f;
       }

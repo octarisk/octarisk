@@ -102,10 +102,9 @@ Input and output variables:\n\
               aj = j * (a(ii) - j);
               j++;
             }
-          if (! error_state)
-            f(ii) = y;
-		 outargs(0) = f;
+          f(ii) = y;
         }
+		outargs(0) = f;
 	}
   return octave_value (outargs);
 }

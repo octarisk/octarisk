@@ -208,7 +208,7 @@ ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S,
 			int& n)
 {
 	// rework required, placeholder template for Asian style MC valuations
-	octave_rand::distribution("normal");// initialize distribution
+	octave::rand::distribution("normal");// initialize distribution
 	dim_vector dim_scen (len, 1);
 	ColumnVector OptionVec (dim_scen);
 	double  TF_oo, DF, dt, P, S_tt, sqrdt, P_at, S_tt_at;
@@ -242,7 +242,7 @@ ColumnVector get_ASIAN_option_price_MC(const bool& call_flag, const NDArray& S,
 		DF = exp(-r(oo) * TF_oo);
 		// generate random numbers (use antithetic paths)
 		dim_vector dim_timesteps(timesteps,n/2);
-		rnd_vec = octave_rand::nd_array(dim_timesteps);
+		rnd_vec = octave::rand::nd_array(dim_timesteps);
 		// precalculate inner scenario independent terms
 		drift = (r(oo) - q(oo) - 0.5 * sigma(oo) * sigma(oo)) * dt;
 		sigmasqrdt = sigma(oo) * sqrdt;
