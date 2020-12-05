@@ -17,8 +17,9 @@ state-of-the-art methods and a light-weight and rapid
 calculation shall be implemented with free software only.
 
 The code is written in Octave and C++ language and will be useable right out-of-the box 
-with Octave version 4.4.1 and the Financial and Statistics package. The code 
-is licensed under the GNU GPL.
+with Octave version 4.4.1 (up to Octarisk v0.6.0) and the Financial, IO, Struct, Parallel and Statistics package. 
+Starting from Octarisk v0.7.0 only Octave versions 5.2.0 or higher are supported.
+The code is licensed under the GNU GPL.
 
 Further information:
 [website](http://www.octarisk.com)
@@ -39,18 +40,24 @@ Stefan Schloegl (schinzilord@octarisk.com)
 IRRer-Zins (IRRer-Zins@t-online.de)
 ## Installation
 
-You need Octave in Version 4.4.1 with installed financial, io and statistics package.
-Moreover, an efficient linear algebra package is strongly recommended (e.g. OpenBLAS / LaPACK)
+Up to Octarisk v0.6.0:
+You need Octave in Version 4.4.1 with installed financial, io, struct, parallel and statistics packages.
+From Octarisk v0.7.0 or higher:
+You need Octave in Version 5.2.0 or 6.1.0 with installed financial, io, struct, parallel and statistics packages.
+
+Moreover, an efficient linear algebra package is strongly recommended (e.g. OpenBLAS / LaPACK).
 
 Just follow these steps:
 - install Octave either from your distro repository (`sudo apt-get install octave` 
 or `yum install octave-forge`) or directly from the binaries
-- install Financial, IO and Statistics package. Therefore type at the Octave command line
+- install Financial, IO, Struct, Parallel and Statistics package. Therefore type at the Octave command line
 (installation may take some minutes to complete):
 
 ```
 pkg install -forge financial
 pkg install -forge io
+pkg install -forge struct
+pkg install -forge parallel
 pkg install -forge statistics
 ```
 
@@ -96,20 +103,15 @@ and instrument and portfolio attributes and risk measures on your screen.
 - now you can start using the GUI, adjusting the input data (`/path/to/octarisk-latest/working_folder/input/ and /mktdata`) 
 or change the risk measurement settings directly in the `octarisk.m` script.
 
-- for Solvency II asset data regulatory reporting and generation of Tripartite v4.0 compliant reports call the script
-```
-solvency2_reporting('/path/to/octarisk-latest/sii_stdmodel_folder')
-```
-
 For a more detailed installation instruction please refer to this 
 [tutorial](http://www.octarisk.com/tutorial.html).
 
 ## Compatibility
 
 Octarisk runs on every system with a running [Octave](https://www.gnu.org/software/octave/) 
-environment in Version 4.4.1. Due to compilation issues of Octave 5 on Ubuntu bases system still
-full support is only given Version 4.4.1.
-To my knowledge, Octave binaries are provided for MS Windows and many Linux distributions.
+environment in Version 4.4.1 just up to v0.6.0. Due to deprecated Octave libraries starting with Octave 5.2.0, the latest releases (starting from v0.7.0) are only supported on Octave 5.2.0 or 6.1.0.
+
+To my knowledge, these Octave binaries are provided for MS Windows and many Linux distributions.
 
 A system with at least 4Gb memory is recommended.
 
@@ -122,6 +124,7 @@ Write me an Email if you need assistance in porting the code basis to Matlab.
 
 ## Version history
 
+- Version 0.7.0   supporting Octave 5.2.0 and 6.1.0, but dropping support for Octave 4.4 or below.
 - Version 0.6.0   introduction of enhanced reporting framework
 - Version 0.5.1   introduction of Retail class to allow for valuation of private investors banking and insurance products
 - Version 0.5.0   introduction of Solvency II reporting according to Tripartitie v4.0 standard
