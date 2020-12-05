@@ -1,4 +1,7 @@
 # Version History 
+### 0.7.0, 2020/12/05
+Version v0.7.0 is a major release providing compatibility with Octave 5.2 and 6.1
+- dropping support for Octave 4.4
 
 ### 0.6.0, 2020/04/26
 Version v0.6.0 is a major release introducing a new reporting framework
