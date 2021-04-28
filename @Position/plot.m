@@ -73,9 +73,10 @@ if (strcmpi(type,'liquidity'))
 		hf = figure(1);
 		clf; 
 		pie(liq_exp,liq_cell);
+		set(findobj(hf,'type','text'),'fontsize',35)
 		%titlestring =  ['Liquidity classes'];
 		%title(titlestring,'fontsize',12);
-		%legend(desc_cell,'location','west');
+		%legend(desc_cell,'location','west','fontsize',12);
 		axis(1.2.*[-1,1,-1,1]);
 		axis ('tic', 'off'); 	
 		% save plotting

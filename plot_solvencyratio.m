@@ -57,18 +57,18 @@ try
 	% plot label
 	hold on;
 	curr_label = strcat(num2str(sratio_act),"%");
-	text( 0.08+min(0.2*sratio/100,0.695),0.33,curr_label,"fontsize", 15,"color", or_blue);
+	text( 0.08+min(0.2*sratio/100,0.695),0.33,curr_label,"fontsize", 12,"color", or_blue);
 	hold off;
-	text( 0.15,0.082,"0-100%","fontsize", 15,"color", "black");
-	text( 0.35,0.082,"100-200%","fontsize", 15,"color", "black");
-	text( 0.55,0.082,"200-300%","fontsize", 15,"color", "black");
-	text( 0.72,0.082,">300%","fontsize", 15,"color", "black");
-	text( 0.17,0.20,"Action","fontsize", 20,"rotation",0);
-	text( 0.37,0.20,"Alert","fontsize", 20,"rotation",0);
-	text( 0.56,0.20,"Comfort","fontsize", 20,"rotation",0);
-	text( 0.715,0.20,"Riskier","fontsize", 20,"rotation",0);
+	text( 0.15,0.082,"0-100%","fontsize", 12,"color", "black");
+	text( 0.35,0.082,"100-200%","fontsize", 12,"color", "black");
+	text( 0.55,0.082,"200-300%","fontsize", 12,"color", "black");
+	text( 0.72,0.082,">300%","fontsize", 12,"color", "black");
+	text( 0.17,0.20,"Action","fontsize", 12,"rotation",0);
+	text( 0.37,0.20,"Alert","fontsize", 12,"rotation",0);
+	text( 0.56,0.20,"Comfort","fontsize", 12,"rotation",0);
+	text( 0.715,0.20,"Rerisk","fontsize", 12,"rotation",0);
 	titlestring = ["Solvency Ratio"]; 
-	title (titlestring,"fontsize", 16);
+	title (titlestring,"fontsize", 15);
 	 
 	% plot png to file
 	if (saveflag == true)

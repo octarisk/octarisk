@@ -54,9 +54,9 @@ try
 	hold on;
 	plot(act_lvl,current,'*','linewidth',5,'color','red');
 	hold off;
-	xlabel('SRRI level','fontsize',15);
-	ylabel(y_label,'fontsize',15);
-	title ("Indexing of Portfolio VaR inside SRRI classes",'fontsize',16);
+	xlabel('SRRI level','fontsize',12);
+	ylabel(y_label,'fontsize',12);
+	title ("Indexing of Portfolio VaR inside SRRI classes",'fontsize',14);
 
 	idx_figure = idx_figure + 1;
 	h2 = figure(2);
@@ -109,9 +109,9 @@ try
 		curr_label = strcat(num2str(current),pct_label);
 		lower_label = strcat(num2str(val_shifted(act_lvl)),pct_label);
 		upper_label = strcat(num2str(val(act_lvl)),pct_label);
-		text( 0.1+pixelshift-0.005,0.325,curr_label,"fontsize", 15,"color", "r");
-		text( 0.1-0.03,0.08,lower_label,"fontsize", 15);
-		text( 0.2-0.03,0.08,upper_label,"fontsize", 15);
+		text( 0.1+pixelshift-0.005,0.325,curr_label,"fontsize", 12,"color", "r");
+		text( 0.1-0.03,0.08,lower_label,"fontsize", 12);
+		text( 0.2-0.03,0.08,upper_label,"fontsize", 12);
 	  case 2
 		set(r2,"facecolor",[0.8 0.8 0.8]);
 		if (srri_target == 2)
@@ -126,9 +126,9 @@ try
 		curr_label = strcat(num2str(current),pct_label);
 		lower_label = strcat(num2str(val_shifted(act_lvl)),pct_label);
 		upper_label = strcat(num2str(val(act_lvl)),pct_label);
-		text( 0.2+pixelshift-0.005,0.325,curr_label,"fontsize", 15,"color", "r");
-		text( 0.2-0.03,0.08,lower_label,"fontsize", 15);
-		text( 0.3-0.03,0.08,upper_label,"fontsize", 15);
+		text( 0.2+pixelshift-0.005,0.325,curr_label,"fontsize", 12,"color", "r");
+		text( 0.2-0.03,0.08,lower_label,"fontsize", 12);
+		text( 0.3-0.03,0.08,upper_label,"fontsize", 12);
 	  case 3
 		set(r3,"facecolor",[0.8 0.8 0.8]);
 		if (srri_target == 3)
@@ -143,9 +143,9 @@ try
 		curr_label = strcat(num2str(current),pct_label);
 		lower_label = strcat(num2str(val_shifted(act_lvl)),pct_label);
 		upper_label = strcat(num2str(val(act_lvl)),pct_label);
-		text( 0.3+pixelshift-0.005,0.325,curr_label,"fontsize", 15,"color", "r");
-		text( 0.3-0.03,0.08,lower_label,"fontsize", 15);
-		text( 0.4-0.03,0.08,upper_label,"fontsize", 15);
+		text( 0.3+pixelshift-0.005,0.325,curr_label,"fontsize", 12,"color", "r");
+		text( 0.3-0.03,0.08,lower_label,"fontsize", 12);
+		text( 0.4-0.03,0.08,upper_label,"fontsize", 12);
 	  case 4
 		set(r4,"facecolor",[0.8 0.8 0.8]);
 		if (srri_target == 4)
@@ -161,9 +161,9 @@ try
 		curr_label = strcat(num2str(current),pct_label);
 		lower_label = strcat(num2str(val_shifted(act_lvl)),pct_label);
 		upper_label = strcat(num2str(val(act_lvl)),pct_label);
-		text( 0.4+pixelshift-0.005,0.325,curr_label,"fontsize", 15,"color", "r");
-		text( 0.4-0.03,0.08,lower_label,"fontsize", 15);
-		text( 0.5-0.03,0.08,upper_label,"fontsize", 15);
+		text( 0.4+pixelshift-0.005,0.325,curr_label,"fontsize", 12,"color", "r");
+		text( 0.4-0.03,0.08,lower_label,"fontsize", 12);
+		text( 0.5-0.03,0.08,upper_label,"fontsize", 12);
 		
 	  case 5
 		set(r5,"facecolor",[0.8 0.8 0.8]);
@@ -179,9 +179,9 @@ try
 		curr_label = strcat(num2str(current),pct_label);
 		lower_label = strcat(num2str(val_shifted(act_lvl)),pct_label);
 		upper_label = strcat(num2str(val(act_lvl)),pct_label);
-		text( 0.5+pixelshift-0.005,0.325,curr_label,"fontsize", 15,"color", "r");
-		text( 0.5-0.03,0.08,lower_label,"fontsize", 15);
-		text( 0.6-0.03,0.08,upper_label,"fontsize", 15);
+		text( 0.5+pixelshift-0.005,0.325,curr_label,"fontsize", 12,"color", "r");
+		text( 0.5-0.03,0.08,lower_label,"fontsize", 12);
+		text( 0.6-0.03,0.08,upper_label,"fontsize", 12);
 	  case 6
 		set(r6,"facecolor",[0.8 0.8 0.8]);
 		if (srri_target == 6)
@@ -196,9 +196,9 @@ try
 		curr_label = strcat(num2str(current),pct_label);
 		lower_label = strcat(num2str(val_shifted(act_lvl)),pct_label);
 		upper_label = strcat(num2str(val(act_lvl)),pct_label);
-		text( 0.6+pixelshift-0.005,0.325,curr_label,"fontsize", 15,"color", "r");
-		text( 0.6-0.03,0.08,lower_label,"fontsize", 15);
-		text( 0.7-0.03,0.08,upper_label,"fontsize", 15);
+		text( 0.6+pixelshift-0.005,0.325,curr_label,"fontsize", 12,"color", "r");
+		text( 0.6-0.03,0.08,lower_label,"fontsize", 12);
+		text( 0.7-0.03,0.08,upper_label,"fontsize", 12);
 	  case 7
 		set(r7,"facecolor",[0.8 0.8 0.8]); 
 		if (srri_target == 7)
@@ -213,27 +213,27 @@ try
 		curr_label = strcat(num2str(current),pct_label);
 		lower_label = strcat(num2str(val_shifted(act_lvl)),pct_label);
 		upper_label = strcat(num2str(val(act_lvl)),pct_label);
-		text( 0.7+pixelshift-0.005,0.325,curr_label,"fontsize", 15,"color", "r");
-		text( 0.7-0.03,0.08,lower_label,"fontsize", 15);
-		text( 0.8-0.03,0.08,upper_label,"fontsize", 15);   
+		text( 0.7+pixelshift-0.005,0.325,curr_label,"fontsize", 12,"color", "r");
+		text( 0.7-0.03,0.08,lower_label,"fontsize", 12);
+		text( 0.8-0.03,0.08,upper_label,"fontsize", 12);   
 	end
 	hold on;
 	% plot current SRRI level
 				 
 	annotation ("doublearrow", [0.15,0.88], [0.88,0.88])
 	hold off;
-	text( 0.14,0.40,"lower risk","fontsize", 15);
-	text( 0.68,0.40,"higher risk","fontsize", 15);
-	text( 0.135,0.20,"1","fontsize", 40);
-	text( 0.235,0.20,"2","fontsize", 40);
-	text( 0.335,0.20,"3","fontsize", 40);
-	text( 0.435,0.20,"4","fontsize", 40);
-	text( 0.535,0.20,"5","fontsize", 40);
-	text( 0.635,0.20,"6","fontsize", 40);
-	text( 0.735,0.20,"7","fontsize", 40);
+	text( 0.14,0.40,"lower risk","fontsize", 12);
+	text( 0.68,0.40,"higher risk","fontsize", 12);
+	text( 0.135,0.20,"1","fontsize", 30);
+	text( 0.235,0.20,"2","fontsize", 30);
+	text( 0.335,0.20,"3","fontsize", 30);
+	text( 0.435,0.20,"4","fontsize", 30);
+	text( 0.535,0.20,"5","fontsize", 30);
+	text( 0.635,0.20,"6","fontsize", 30);
+	text( 0.735,0.20,"7","fontsize", 30);
 	time = strcat(num2str(horizon),"days");
 	titlestring = ["SRRI classification target: ",num2str(srri_target)]; %,time,",",num2str(quantile*100),"%)");
-	title (titlestring,"fontsize", 16);
+	title (titlestring,"fontsize", 15);
 	 
 	% plot png to file
 	if (saveflag == true)

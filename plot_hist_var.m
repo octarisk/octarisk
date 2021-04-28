@@ -151,12 +151,12 @@ if (numel(hist_bv)>0 && numel(hist_bv) == numel(hist_var) ...
 		var_bv_min(kk) = var_limit_lower(end);
 		plot(xx(2:end),var_bv_min,'color',light_blue,'linestyle','-','linewidth',1);
 		hold off;
-		
+		legend('Base Value','VaR (rel.)');
 		% save plotting
 		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.png');
-		print (hvar,filename_plot_varhist, "-dpng", "-S600,300");	
+		print (hvar,filename_plot_varhist, "-dpng", "-S600,350");	
 		filename_plot_varhist = strcat(path_reports,'/',obj.id,'_var_history.pdf');
-		print (hvar,filename_plot_varhist, "-dpdf", "-S600,300");	
+		print (hvar,filename_plot_varhist, "-dpdf", "-S600,350");	
 		
 else
 	retcode = 0;
