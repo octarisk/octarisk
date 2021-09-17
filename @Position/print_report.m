@@ -170,6 +170,22 @@ elseif (strcmpi(type,'latex'))
 		fprintf(filt, '\\end{tabular}\n');
 	    fclose (filt);
 	    
+	    
+	     % ####  print comment as table to file
+	    comments_cell = obj.get('comments_items_cell');
+	    latex_table_comments = strcat(path_reports,'/table_port_',obj.id,'_comments.tex');
+	    filc = fopen (latex_table_comments, 'w');
+	    fprintf(filc, 'Notably the following assumptions are made:\n');
+	    fprintf(filc, '\\begin{itemize}\n');
+	    fprintf(filc, '\\itemsep0pt\n');
+	    fprintf(filc, '\\label{table_port_comments}\n');
+	    for kk=1:1:length(comments_cell)
+			fprintf(filc, '\\item %s\n',comments_cell{kk});
+	    end
+	    fprintf(filc, '\\end{itemize}\n');
+	    fclose (filc);
+	    
+	    
 	  % #### Print Aggregation Key Asset Class report
 	  aggr_key_struct = obj.get('aggr_key_struct_assets');
 	  aa_target_id = obj.get('aa_target_id');

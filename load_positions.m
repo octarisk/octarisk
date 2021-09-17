@@ -227,7 +227,12 @@ for ii = 1 : 1 : length(tmp_list_files)
                     elseif ( sum(strcmp(tmp_columnname,{'aa_target_id', ...
 						'hist_report_dates', 'equity_target_region_id', ...
 						'region_id','rating_id','style_id', ...
-						'duration_id','country_id'})) > 0)  % split into cell
+						'duration_id','country_id','comments_items_cell'})) > 0)  % split into cell
+                        if (strcmp(tmp_columnname,'comments_items_cell'))
+                            % experimental: convert ; into , in comment cell
+                            tmp_entry = strrep(tmp_entry, ';', ',');
+                        end
+                        
                         try
                             tmp_entry = strsplit( tmp_entry, '|');
                         catch
