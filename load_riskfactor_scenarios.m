@@ -11,11 +11,11 @@
 %# details.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} load_riskfactor_scenarios(@var{riskfactor_struct}, @var{M_struct}, @var{mc_timestep}, @var{mc_timestep_days})
+%# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} load_riskfactor_scenarios(@var{riskfactor_struct}, @var{M_struct}, @var{mc_timestep}, @var{mc_timestep_days},@var{para_object})
 %# Generate MC scenario shock values for risk factor curve objects. Store all MC scenario shock values in provided struct and return the final struct and a cell containing all failed risk factor ids.
 %# @end deftypefn
 
-function [tmp_riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timestep,mc_timestep_days)
+function [tmp_riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timestep,mc_timestep_days,para_object)
 
 % reorder tmp_riskfactor_struct
 tmp_riskfactor_struct = struct();
@@ -29,6 +29,7 @@ end
 rf_failed_cell = {};
 number_riskfactors = 0;
 tmp_id = 'Dummy';
+shred_type = para_object.shred_type;
 % calculate risk factor MC scenario value
 
 try
@@ -37,6 +38,7 @@ try
 	Y_tmp   = M_struct( 1 ).matrix; % get matrix with correlated random numbers for all risk factors
 	for ii = 1 : 1 : length( riskfactor_cell )    % loop via all risk factors in order of their appearance in corr_matrix: 
 		rf_id = riskfactor_cell{ii};              % calculate risk factor deltas in each MC scenario
+        tmp_rf_type = strsplit(rf_id,'_'){2};
 		rf_object = tmp_riskfactor_struct(ii).object;
 		tmp_model = rf_object.model;
 		tmp_drift = rf_object.mean / 250;
@@ -45,6 +47,8 @@ try
 		% correlated random variables vector from corr. random matrix M:
 		Y       = Y_tmp(:,ii);
 		% Case Dependency:
+        % only update risk factor if risk factor type is part of shred
+        if (strcmpi(shred_type,'TOTAL') || (sum(strcmpi(tmp_rf_type,shred_type))>0 ))
 			% Geometric Brownian Motion Riskfactor Modeling
 				if ( strcmpi(tmp_model,'GBM') || strcmpi(tmp_model,'SLN')  )
 					tmp_delta       = Y + ((tmp_drift - 0.5 .* (tmp_sigma./ sqrt(250)).^2) .* ts);
@@ -75,9 +79,15 @@ try
 					if (2 * tmp_mr_rate * tmp_mr_level < std(Y).^2)
 						fprintf('WARNING: load_riskfactor_scenarios: Square root diffusion process can lead to negative values for risk factor >>%s<<: 2*mr_rate*mr_level <= volatility^2.\n',tmp_id);
 					end
-				end     
-		% store increment for actual riskfactor and scenario number
-		rf_object = rf_object.set('scenario_mc',tmp_delta,'timestep_mc',tmp_ts);
+				end
+        else % risk factor NOT to be shocked - not part of shred! Default case:
+            fprintf('OCTARISK::load_riskfactor_scenarios: Riskfactor >>%s<< not part of shred, providing base values\n',tmp_id);
+            % do not store shocked scenarios
+            tmp_delta = rf_object.value_base .* ones(numel(Y),1);
+        end
+		
+        % store increment for actual riskfactor and scenario number
+        rf_object = rf_object.set('scenario_mc',tmp_delta,'timestep_mc',tmp_ts);
 		% store risk factor object back into struct:
 		tmp_riskfactor_struct( ii ).object = rf_object;   
 		number_riskfactors = number_riskfactors + 1;
@@ -111,3 +121,33 @@ end
 
 end
 
+
+
+%~ % C) Apply marginal distributions to uniform distributed multivariate random numbers
+%~ R = zeros(mc,columns(corr_matrix));
+%~ distr_type = zeros(1,columns(Z));
+%~ shred_type = para_object.shred_type;
+%~ % now loop via all columns of Z and apply individual marginal distribution
+%~ for ii = 1 : 1 : columns(Z);
+    %~ % only update marginal distribution if risk factor type is part of shred
+    %~ tmp_rf_id = riskfactor_cell{ii}
+    %~ tmp_rf_type = strsplit(tmp_rf_id,'_'){2};
+    %~ if (strcmpi(shred_type,'TOTAL') || (sum(strcmpi(tmp_rf_type,shred_type))>0 ))
+        %~ % mu needs geometric compounding adjustment
+        %~ tmp_mu      = P(1,ii) .^(1/factor_time_horizon);
+        %~ % volatility needs adjustment with sqr(t)-rule 
+        %~ tmp_sigma   = P(2,ii) ./ sqrt(factor_time_horizon);
+        %~ tmp_skew    = P(3,ii);
+        %~ tmp_kurt    = P(4,ii);
+        %~ tmp_ucr = Z(:,ii);
+        %~ %generate distribution based on Pearson System (Type 1-7)
+        %~ [ret_vec type]= get_marginal_distr_pearson(tmp_mu,tmp_sigma, ...
+                                                    %~ tmp_skew,tmp_kurt,tmp_ucr); 
+        %~ distr_type(ii) = type;
+    %~ else
+        %~ % risk factor NOT to be shocked - not part of shred! Default case:
+        %~ ret_vec = zeros(mc,1);
+    %~ end
+    
+    %~ R(:,ii) = ret_vec;
+%~ end

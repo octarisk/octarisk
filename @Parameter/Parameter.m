@@ -76,6 +76,8 @@ classdef Parameter
         sobol_seed = 1;
         filename_sobol_direction_number = 'new-joe-kuo-6.21201'; % Reference: http://web.maths.unsw.edu.au/~fkuo/sobol/
         path_sobol_direction_number = 'static';
+        shred_type = {'TOTAL'}; %{'IR','EQ'};
+        cvar_type = 'base';
 
         % WRT amd SII standard model specific variables
         calc_sm_scr = false;
@@ -148,6 +150,23 @@ classdef Parameter
          end
          obj.type = type;
       end % Set.type
+      
+       function obj = set.shred_type(obj,shred_type)
+         for (kk = 1:numel(shred_type))
+            tmp_shred = shred_type{kk};
+             if ~(sum(strcmpi(tmp_shred,{'TOTAL','IR','SPREAD','COM','EQ','VOLA','ALT','RE','FX','INFL'}))>0  )
+                error('Shred type must be either TOTAL, IR, SPREAD, COM, RE, EQ, VOLA, ALT, INFL or FX')
+             end
+         end
+         obj.shred_type = shred_type;
+      end % Set.shred_type
+      
+      function obj = set.cvar_type(obj,cvar_type)
+         if ~(sum(strcmpi(cvar_type,'base'))>0 )
+            error('CVaR type must be (either) BASE')
+         end
+         obj.cvar_type = cvar_type;
+      end % Set.cvar_type
       
       
       function obj = set.valuation_date(obj,valuation_date) % convert to datenum

@@ -351,7 +351,7 @@ if (run_mc == true)
     M_struct( 1 ).matrix = R_250 ./ sqrt(250/mc_timestep_days);
     % --------------------------------------------------------------------------------------------------------------------
     % 2.) Monte Carlo Riskfactor Simulation for all timesteps
-    [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timestep,mc_timestep_days);
+    [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timestep,mc_timestep_days,para_object);
     
     % map risk factors 
     % Processing MC Mapping file

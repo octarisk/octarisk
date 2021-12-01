@@ -240,6 +240,7 @@ elseif (strcmpi(type,'latex'))
 				aa_decomp =[aa_decomp,tmp_decomp_aggr_key_var];
 				tmp_deviation = (aa_current - aa_target) * port_basevalue_assets;
 				tmp_risk_impact = (tmp_deviation / tmp_aggregation_basevalue_pos) * tmp_decomp_aggr_key_var;
+                tmp_risk_impact(isnan(tmp_risk_impact)) = 0;    % replace NaN with 0
 				risk_impact_sum = risk_impact_sum + tmp_risk_impact;
 				devation_sum = devation_sum + abs(tmp_deviation);
 				fprintf(fild, '%s \& %9.0f %s \& %3.1f\\%% \& %9.0f %s \& %9.0f %s \& %3.1f\\%%\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,100*tmp_aggregation_basevalue_pos/obj.getValue('base'),tmp_standalone_aggr_key_var,obj.currency,tmp_decomp_aggr_key_var,obj.currency,100*tmp_decomp_aggr_key_var/obj.varhd_abs);
@@ -269,6 +270,10 @@ elseif (strcmpi(type,'latex'))
 				tmp_decomp_aggr_key_var     = tmp_aggregation_decomp_shock(ii);
 				tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue(ii);
 				tmp_aggr_key_value = strrep(tmp_aggr_key_value,"_","");
+				% subtract DTL from EUR position
+				if ( strcmpi(tmp_aggr_key_value,'EUR'))
+					tmp_aggregation_basevalue_pos = tmp_aggregation_basevalue_pos + port_basevalue_dtl;
+				end
 				fprintf(fild, '%s \& %9.0f %s \& %3.1f\\%%\& %9.0f %s \& %9.0f %s \& %3.1f\\%%\\\\\n',tmp_aggr_key_value,tmp_aggregation_basevalue_pos,obj.currency,100*tmp_aggregation_basevalue_pos/obj.getValue('base'),tmp_standalone_aggr_key_var,obj.currency,tmp_decomp_aggr_key_var,obj.currency,100*tmp_decomp_aggr_key_var/obj.varhd_abs);
 			end
 			
@@ -413,6 +418,7 @@ elseif (strcmpi(type,'latex'))
 						end
 						region_values_abs  = instr_obj.region_values .* pos_obj.getValue('base');
 						region_decomp_abs  = instr_obj.region_values .* pos_obj.decomp_varhd;
+                        
 						for kk=1:1:length(region_cell)
 							tmp_region = region_cell{kk};
 							for jj=1:1:length(region_cell_pos)
@@ -636,6 +642,9 @@ elseif (strcmpi(type,'latex'))
 			repstruct.liquidity_class_exposure = liquidity_class_exposure;
 			
 			% calculate HHI of all cells/exposures
+            HHI_total_sum = sum(issuer_exposure) + sum(custodian_bank_exposure) ...
+                    + sum(counterparty_exposure) + sum(designated_sponsor_exposure) + ...
+                    sum(custodian_bank_underlyings_exposure) + sum(country_of_origin_exposure);
 			HHI_issuer = calc_HHI(issuer_exposure);
 			HHI_custodian = calc_HHI(custodian_bank_exposure);
 			HHI_counterparty = calc_HHI(counterparty_exposure);
@@ -647,9 +656,16 @@ elseif (strcmpi(type,'latex'))
 						HHI_counterparty,HHI_dessponsor,HHI_custund,HHI_coo];
 			if (sum(isnan(exp_vec))>0)
 				HHI_weighted = 0;
+                HHI_exp_weighted = 0;
 			else			
 				[HHI_weighted] = geomean(abs([HHI_issuer,HHI_custodian, ...
-						HHI_counterparty,HHI_dessponsor,HHI_custund,HHI_coo]));
+						HHI_counterparty,HHI_dessponsor,HHI_custund,HHI_coo]))
+                 HHI_exp_weighted =   (HHI_issuer *  sum(issuer_exposure) + ...  
+                        HHI_custodian *  sum(custodian_bank_exposure) + ... 
+                        HHI_counterparty *  sum(counterparty_exposure) + ... 
+                        HHI_dessponsor *  sum(designated_sponsor_exposure) + ... 
+                        HHI_custund *  sum(custodian_bank_underlyings_exposure) + ... 
+                        HHI_coo *  sum(country_of_origin_exposure)) / HHI_total_sum;
 			end
 			% plot pie charts
 			if ( abs(esg_basevalue) > 0)
@@ -943,8 +959,14 @@ elseif (strcmpi(type,'latex'))
 				aa_target = obj.equity_target_region_values(kk);
 				aa_current = region_val ./ region_sum;
 				tmp_deviation = (aa_current - aa_target) * region_sum;
-				tmp_risk_impact = (tmp_deviation / region_val) * region_decomp;
-				risk_impact_sum = risk_impact_sum + tmp_risk_impact;
+                
+                if (region_val == 0)
+                    tmp_risk_impact = NaN;
+                else
+                    tmp_risk_impact = (tmp_deviation / region_val) * region_decomp;
+                    risk_impact_sum = risk_impact_sum + tmp_risk_impact;
+                end
+				
 				devation_sum = devation_sum + abs(tmp_deviation);
 				fprintf(fiaa, '%s \& %9.0f %s \& %3.1f\\%% \& %3.1f\\%% \& %9.0f %s\& %9.0f %s\\\\\n',region,region_val,obj.currency,aa_target*100,aa_current*100,tmp_deviation,obj.currency,tmp_risk_impact,obj.currency);
 			end
@@ -1152,15 +1174,15 @@ elseif (strcmpi(type,'latex'))
 		
 		% 7) Concentration Risk
 			% Risk | Concentration | low-mid | XX  | on track v action HHI_risk
-			if HHI_weighted <= 0
+			if HHI_exp_weighted <= 0
 				HHI_risk = "NA";
-			elseif HHI_weighted < 100
+			elseif HHI_exp_weighted < 100
 				HHI_risk = "very low";
-			elseif HHI_weighted < 1500
+			elseif HHI_exp_weighted < 1500
 				HHI_risk = "low";
-			elseif HHI_weighted < 2500
+			elseif HHI_exp_weighted < 2500
 				HHI_risk = "mid";
-			elseif HHI_weighted < 6400
+			elseif HHI_exp_weighted < 6400
 				HHI_risk = "high";
 			else
 				HHI_risk = "very high";

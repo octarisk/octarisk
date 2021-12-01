@@ -149,13 +149,13 @@ R = zeros(mc,columns(corr_matrix));
 distr_type = zeros(1,columns(Z));
 % now loop via all columns of Z and apply individual marginal distribution
 for ii = 1 : 1 : columns(Z);
-    tmp_ucr = Z(:,ii);
     % mu needs geometric compounding adjustment
     tmp_mu      = P(1,ii) .^(1/factor_time_horizon);
     % volatility needs adjustment with sqr(t)-rule 
     tmp_sigma   = P(2,ii) ./ sqrt(factor_time_horizon);
     tmp_skew    = P(3,ii);
     tmp_kurt    = P(4,ii);
+    tmp_ucr = Z(:,ii);
     %generate distribution based on Pearson System (Type 1-7)
     [ret_vec type]= get_marginal_distr_pearson(tmp_mu,tmp_sigma, ...
                                                 tmp_skew,tmp_kurt,tmp_ucr); 

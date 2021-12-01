@@ -103,6 +103,7 @@ classdef Riskfactor
          end
          obj.type = type;
       end % Set.type
+
       
       % function obj = set.shift_type(obj,shift_type)
         % if ( rows(obj.scenario_stress) > 1)

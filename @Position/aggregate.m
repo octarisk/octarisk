@@ -69,6 +69,35 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 % Fill portfolio cash flow attribute with position base values
 				pos_cf_values = pos_obj_new.getCF(scen_set);
 				pos_cf_dates = pos_obj_new.get('cf_dates');
+                
+                %~ % temp start
+                %~ disp("=====================================================")
+                %~ disp("====== start output from yearly cash flows ==========")
+                %~ cf_dates = get_yearly_dates(para.valuation_date,10);
+                %~ cf_dates
+                %~ pos_obj_new.id
+                %~ pos_cf_dates
+                %~ pos_cf_values(1,:)
+                %~ for mm=1:1:length(cf_dates)
+					%~ if ( mm == 1)
+						%~ eom_intervall_start = 0;
+						%~ eom_intervall_end = cf_dates(1);
+					%~ else
+						%~ eom_intervall_start = cf_dates(mm-1);
+						%~ eom_intervall_end = cf_dates(mm);
+					%~ end 
+					%~ pos_cf_values_tmp = pos_cf_values(	:,pos_cf_dates<=eom_intervall_end);
+					%~ pos_cf_dates_tmp  = pos_cf_dates(	pos_cf_dates<=eom_intervall_end);
+					%~ pos_cf_values_tmp = pos_cf_values_tmp(	:,pos_cf_dates_tmp>eom_intervall_start);					
+					%~ if ~isempty(pos_cf_values_tmp)
+						%~ cf_values(:,mm) = cf_values(:,mm) + sum(pos_cf_values_tmp,2);
+					%~ end
+				%~ end
+                %~ cf_values(1,:)
+                %~ disp("====== end output from yearly cash flows ==========")
+                %~ % temp end
+                
+                
 				% only for next 12 months
 				for mm=1:1:length(cf_dates)
 					if ( mm == 1)
@@ -85,6 +114,8 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
 						cf_values(:,mm) = cf_values(:,mm) + sum(pos_cf_values_tmp,2);
 					end
 				end
+                
+                
 					
         
 				% fill TPT attributes regardless of sm_scr flag
@@ -614,4 +645,15 @@ eom_dates = eom_dates - valuation_date;
 
 end
 % ------------------------------------------------------------------------------
+function yearly_dates = get_yearly_dates(valuation_date,years)
+
+yearly_dates = zeros(1,years);
+
+for ii=1:1:years
+    yearly_dates(ii) = addtodatefinancial(valuation_date,ii,"years");
+end
+
+yearly_dates = yearly_dates - valuation_date;
+
+end
 % ------------------------------------------------------------------------------
