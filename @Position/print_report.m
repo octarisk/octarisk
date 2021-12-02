@@ -52,6 +52,15 @@ if (strcmpi(type,'decomp'))
 	  end
   end
 
+% ---------------------------------    Shred    --------------------------------
+elseif (strcmpi(type,'shred'))  
+  if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
+	  fprintf('print_report: No Shred report exists for scenario set >>%s<<\n',scen_set);
+  else 
+      fprintf('print_report: Shred reporting for shred >>%s<< \n',any2str(para_object.shred_type));
+      fprintf('|VaR %s | Portfolio  \t | Currency | Basevalue \t | Shred HD VAR \t|\n',scen_set);
+      fprintf('|VaR %s | %s  \t | %s \t    | %9.2f  \t  | %9.2f   \t|\n',scen_set,obj.id,obj.get('currency'),obj.get('value_base'),obj.get('varhd_abs'));
+  end
 % ---------------------------------    LaTeX    --------------------------------
 elseif (strcmpi(type,'latex'))  
   if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))

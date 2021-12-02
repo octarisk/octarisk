@@ -67,17 +67,22 @@ fprintf('=======================================================\n');
 fprintf('\n');
 
 % 0) ###########            DEFINITION OF VARIABLES    ###########
+
 if nargin == 0
     error('octarisk: Please provide path and name of parameter file');
 end
-if (nargin == 1)    % assume parameter file called "parameter.csv"
-    fprintf('Assuming default parameter file name >>%s\\parameter.csv<<.\n',path_parameter);
-    filename_parameter = 'parameter.csv';
-end
 
-% load parameter file
 para_failed_cell = {};
-[para_object para_failed_cell] = load_parameter(path_parameter,filename_parameter);
+if isstr(path_parameter)
+    % load parameter file
+    if (nargin == 1)    % assume parameter file called "parameter.csv"
+        fprintf('Assuming default parameter file name >>%s\\parameter.csv<<.\n',path_parameter);
+        filename_parameter = 'parameter.csv';
+    end
+    [para_object para_failed_cell] = load_parameter(path_parameter,filename_parameter);
+elseif isobject(path_parameter)
+    para_object = path_parameter;
+end
 
 % 1. general variables -> path dependent on operating system
 path = para_object.path_working_folder;   % general load and save path for all input and output files
@@ -365,6 +370,9 @@ end
 
 scengen = toc;
 
+%~ tmp_obj_high = get_sub_object(riskfactor_struct, 'RF_ALT_HIGH')
+%~ tmp_obj_btc = get_sub_object(riskfactor_struct, 'RF_ALT_BTC')
+
 tic;
 if ( saving == 1 )
     [save_cell] = save_objects(path_output,riskfactor_struct,instrument_struct,portfolio_struct,stresstest_struct);
@@ -547,7 +555,7 @@ if (aggregation_flag == true) % aggregation and reporting batch
 		% Base aggregation and risk calculation
 		port_obj = port_obj.aggregate('base', instrument_struct, ...
 												index_struct, para_object);
-		ort_obj = port_obj.calc_risk('base', instrument_struct, ...
+		port_obj = port_obj.calc_risk('base', instrument_struct, ...
 												index_struct, para_object);
 		% aggregation and risk calculation for all scenario sets
 		for kk = 1 : 1 : length( scenario_set )      % loop via all MC time steps
@@ -585,8 +593,13 @@ for ii = 1:1:length(port_obj_struct)
     % aggregation and risk calculation for all scenario sets
 	for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
 		tmp_scen_set  = scenario_set{ kk };    % get timestep string
-		port_obj = port_obj.print_report(para_object,'LaTeX',tmp_scen_set,stresstest_struct,instrument_struct);	
-		port_obj = port_obj.print_report(para_object,'decomp',tmp_scen_set);
+        % standard reporting: Total shred
+        if strcmpi(para_object.shred_type,'TOTAL')
+            port_obj = port_obj.print_report(para_object,'LaTeX',tmp_scen_set,stresstest_struct,instrument_struct);	
+            port_obj = port_obj.print_report(para_object,'decomp',tmp_scen_set);
+        else % special shred reporting
+            port_obj = port_obj.print_report(para_object,'shred',tmp_scen_set,stresstest_struct,instrument_struct);	
+        end
 	end
     port_obj
     port_obj_struct(ii).object = port_obj;
@@ -600,25 +613,30 @@ if ( para_object.plotting )
   for ii = 1:1:length(port_obj_struct)
 	port_obj = port_obj_struct(ii).object;
 	
-	port_obj = port_obj.plot(para_object,'stress','stress', ...
-											stresstest_struct);
-	port_obj = port_obj.plot(para_object,'liquidity','base');										
-	port_obj = port_obj.plot(para_object,'concentration','base');										
-	port_obj = port_obj.plot(para_object,'asset_allocation','base');										
-	port_obj = port_obj.plot(para_object,'ir_sensitivity','base');										
-	% aggregation and risk calculation for all scenario sets
-	for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
-		tmp_scen_set  = scenario_set{ kk };    % get timestep string
-		port_obj = port_obj.plot(para_object,'srri',tmp_scen_set, ...
-											stresstest_struct);
-		port_obj = port_obj.plot(para_object,'marketdata',tmp_scen_set, ...
-											stresstest_struct,curve_struct);
-		port_obj = port_obj.plot(para_object,'var',tmp_scen_set);		
-		port_obj = port_obj.plot(para_object,'history',tmp_scen_set);	
-		port_obj = port_obj.plot(para_object,'liquidity',tmp_scen_set);								
-		port_obj = port_obj.plot(para_object,'riskfactor',tmp_scen_set, ...
-							stresstest_struct,curve_struct,riskfactor_struct);								
-	end
+    % standard reporting: Total shred
+    if strcmpi(para_object.shred_type,'TOTAL')
+        port_obj = port_obj.plot(para_object,'stress','stress', ...
+                                                stresstest_struct);
+        port_obj = port_obj.plot(para_object,'liquidity','base');										
+        port_obj = port_obj.plot(para_object,'concentration','base');										
+        port_obj = port_obj.plot(para_object,'asset_allocation','base');										
+        port_obj = port_obj.plot(para_object,'ir_sensitivity','base');										
+        % aggregation and risk calculation for all scenario sets
+        for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
+            tmp_scen_set  = scenario_set{ kk };    % get timestep string
+            port_obj = port_obj.plot(para_object,'srri',tmp_scen_set, ...
+                                                stresstest_struct);
+            port_obj = port_obj.plot(para_object,'marketdata',tmp_scen_set, ...
+                                                stresstest_struct,curve_struct);
+            port_obj = port_obj.plot(para_object,'var',tmp_scen_set);		
+            port_obj = port_obj.plot(para_object,'history',tmp_scen_set);	
+            port_obj = port_obj.plot(para_object,'liquidity',tmp_scen_set);								
+            port_obj = port_obj.plot(para_object,'riskfactor',tmp_scen_set, ...
+                                stresstest_struct,curve_struct,riskfactor_struct);								
+        end
+    else % special shred plotting
+        % currently no shred plot implemented
+    end
     port_obj_struct(ii).object = port_obj;	
     									
   end	

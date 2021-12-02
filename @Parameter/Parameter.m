@@ -53,6 +53,7 @@ classdef Parameter
         stable_seed = 1;
         mc_scen_analysis = 0;
         aggregation_flag = 0;
+        cvar_flag = 0;
         no_stresstest_plot = 1;
         first_eval = 1;
         use_parallel_pkg = 0;
@@ -76,7 +77,7 @@ classdef Parameter
         sobol_seed = 1;
         filename_sobol_direction_number = 'new-joe-kuo-6.21201'; % Reference: http://web.maths.unsw.edu.au/~fkuo/sobol/
         path_sobol_direction_number = 'static';
-        shred_type = {'TOTAL'}; %{'IR','EQ'};
+        shred_type =  {'TOTAL'}; %{'IR','EQ'}; %
         cvar_type = 'base';
 
         % WRT amd SII standard model specific variables

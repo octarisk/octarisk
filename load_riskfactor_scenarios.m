@@ -83,7 +83,8 @@ try
         else % risk factor NOT to be shocked - not part of shred! Default case:
             fprintf('OCTARISK::load_riskfactor_scenarios: Riskfactor >>%s<< not part of shred, providing base values\n',tmp_id);
             % do not store shocked scenarios
-            tmp_delta = rf_object.value_base .* ones(numel(Y),1);
+            %tmp_delta = rf_object.value_base .* ones(numel(Y),1);
+            tmp_delta = zeros(numel(Y),1);
         end
 		
         % store increment for actual riskfactor and scenario number
