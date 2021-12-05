@@ -227,7 +227,7 @@ elseif (strcmpi(type,'riskfactor'))
         rf_shocks_extreme = [rf_shocks_9999;rf_shocks_9997;rf_shocks_9995;abs_rf_shocks_mean]' .* 100;
         if (tmp_rf_plot>0)
 			xx = 1:1:numel(rf_plot_desc);
-			hs = figure(3);
+			hs = figure(1);
 			clf;
 			hb = barh(rf_shocks_extreme);
 			set (hb(1), "facecolor", [0.738,0.839,0.902]);
@@ -249,11 +249,11 @@ elseif (strcmpi(type,'riskfactor'))
 			filename_plot_rf_ext = strcat(path_reports,'/',obj.id,'_rf_plot_tail.pdf');
 			print (hs,filename_plot_rf_ext, "-dpdf", "-S700,700");
 		else % total portfolio quantile analysis
-			%~ hs = figure(3);
+			%~ hs = figure(1);
 			%~ clf;
 			%~ rectangle ("Position", [0.05, 0.05, 0.9, 0.9], "Curvature", [0.5, 0.5]);
 			%~ text(0.4,0.4,'Not sensitive to risk factors beside IR or INFL');
-			hs = figure(3);
+			hs = figure(1);
 			clf;
 			hb = barh(rf_shocks_extreme);
 			set (hb(1), "facecolor", or_blue);
@@ -577,7 +577,7 @@ elseif (strcmpi(type,'var'))
 		plot_vec_pie = zeros(1,length(pie_chart_values_plot_pos_shock));
 		plot_vec_pie(1) = 1; 
 		colormap (colorbrewer_map);
-		hf2 = figure(2);
+		hf2 = figure(1);
 		colormap (colorbrewer_map);
 		clf; 
 		% Position Basevalue contribution

@@ -121,15 +121,17 @@ end
 
 % Clean up reporting directory
 % A.1) delete all old files in path_output
-oldfiles = dir(path_reports);
-try
+if ( para_object.reporting )
+  oldfiles = dir(path_reports);
+  try
     for ii = 1 : 1 : length(oldfiles)
             tmp_file = oldfiles(ii).name;
             if ( length(tmp_file) > 3 )
                 delete(strcat(path_reports,'/',tmp_file));
             end
     end
-end    
+  end    
+end
 
 % set filenames for input:
 input_filename_instruments  = para_object.input_filename_instruments;
@@ -586,7 +588,8 @@ end % close aggregation_flag condition
 % 7. Portfolio Reporting
 reporting_time = 0;
 tic;
-for ii = 1:1:length(port_obj_struct)
+if ( para_object.reporting )
+  for ii = 1:1:length(port_obj_struct)
 	port_obj = port_obj_struct(ii).object;
     port_obj = port_obj.print_report(para_object,'LaTeX','base');	
     
@@ -603,7 +606,8 @@ for ii = 1:1:length(port_obj_struct)
 	end
     port_obj
     port_obj_struct(ii).object = port_obj;
-end	
+  end	
+end
 reporting_time = toc;
 
 % ----------------------------------------------------------------------

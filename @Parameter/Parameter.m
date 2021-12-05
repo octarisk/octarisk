@@ -46,6 +46,7 @@ classdef Parameter
 
         % Boolean variables
         plotting = 1;
+        reporting = 1;
         idx_figure = 1;
         calc_marg_incr_var = 0;
         saving = 0;
