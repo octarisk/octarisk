@@ -467,7 +467,8 @@ function para = get_cfvalues_RETEXP(valuation_date, value_type, para, instrument
 	year_valdate = datevec(valuation_date)(1);
 	birthyear = instrument.year_of_birth - instrument.mortality_shift_years;
 	age_valdate = year_valdate - birthyear;
-	
+	infl_exp_adj_factor = 1.0; % TODO: infl_exp_adj_factor = instrument.infl_exp_adj_factor;
+    
 	% get expense payment dates only in the past:
 	expdates = para.cf_datesnum(para.cf_datesnum >= valuation_date);
 	[yy tmp_mm tmp_dd] = datevec(valuation_date);
@@ -504,7 +505,7 @@ function para = get_cfvalues_RETEXP(valuation_date, value_type, para, instrument
 	for ii=1:1:length(expdates)
 		% adjust expense values for inflation
 		term_days = expdates(ii) - valuation_date;
-		ier = iec.getRate(value_type,term_days);
+		ier = iec.getRate(value_type,term_days) .* infl_exp_adj_factor; % TODO: give possibility to adjust / scale inflation rates of expenses relative to inflation expectation curve (for e.g. account for differences in personal expense inflation vs.consumer price index development 
 		infl_factor = 1 ./ discount_factor(valuation_date, expdates(ii), ier, ...
                                 iec.compounding_type, iec.day_count_convention, ...
                                 iec.compounding_freq);

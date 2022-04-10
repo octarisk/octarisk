@@ -79,7 +79,7 @@ classdef Parameter
         filename_sobol_direction_number = 'new-joe-kuo-6.21201'; % Reference: http://web.maths.unsw.edu.au/~fkuo/sobol/
         path_sobol_direction_number = 'static';
         shred_type =  {'TOTAL'}; %{'IR','EQ'}; %
-        cvar_type = 'base';
+        cvar_type = 'base'; %
 
         % WRT amd SII standard model specific variables
         calc_sm_scr = false;
@@ -164,8 +164,8 @@ classdef Parameter
       end % Set.shred_type
       
       function obj = set.cvar_type(obj,cvar_type)
-         if ~(sum(strcmpi(cvar_type,'base'))>0 )
-            error('CVaR type must be (either) BASE')
+         if ~(sum(strcmpi(cvar_type,{'base','IR+100bp'}))>0  )
+            error('CVaR type must be (either) BASE or IR+100bp')
          end
          obj.cvar_type = cvar_type;
       end % Set.cvar_type

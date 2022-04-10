@@ -188,6 +188,7 @@ elseif (strcmpi(type,'latex'))
 	    fprintf(filc, '\\begin{itemize}\n');
 	    fprintf(filc, '\\itemsep0pt\n');
 	    fprintf(filc, '\\label{table_port_comments}\n');
+        fprintf(filc, '\\item Runcode for report: %s\n',para_object.runcode);
 	    for kk=1:1:length(comments_cell)
 			fprintf(filc, '\\item %s\n',comments_cell{kk});
 	    end

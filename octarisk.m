@@ -303,7 +303,7 @@ para_object.no_stresstests = no_stresstests;
 mktdata_struct=struct();
 [mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct, ...
             path_mktdata,input_filename_mktdata,path_output_mktdata, ...
-            path_archive,timestamp,archive_flag);
+            path_archive,timestamp,archive_flag,para_object);
 
 
 parseinput = toc;

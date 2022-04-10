@@ -264,7 +264,7 @@ function obj = update_plot(obj,inst_id,var)
     global valuation_date;
     % get instrument data
     tmp_obj = get_sub_object(instrument_struct,inst_id);
-    yy = tmp_obj.getValue(para_object.mc_timestep) .- tmp_obj.getValue('base');
+    yy = tmp_obj.getValue(para_object.mc_timestep) - tmp_obj.getValue('base');
     yy_sorted = sort(yy);
     xx = 1:1:length(yy);
     %ax_instrument = gca (h.ax_instrument);
@@ -433,7 +433,7 @@ function aggregate_portfolio(obj)
     b = 1:1:length(a);
     c = strcmpi(a, stress_name);
     idx_stress = b * c';
-    tmp_port_stress_value = stress_values(idx_stress) .- base_value;
+    tmp_port_stress_value = stress_values(idx_stress) - base_value;
     set (h.portfolio_stressvalue_value, "string", sprintf ("%.4f", tmp_port_stress_value));
     
     % update plot
@@ -496,7 +496,7 @@ function calculate_value(obj)
     % print instrument value
     v = sprintf ("%.8f", tmp_obj.getValue('base'));
     set (h.instrument_value_value, "string", v);
-    yy = tmp_obj.getValue(para_object.mc_timestep) .- tmp_obj.getValue('base');
+    yy = tmp_obj.getValue(para_object.mc_timestep) - tmp_obj.getValue('base');
     yy_sorted = sort(yy);
     var = yy_sorted(max(round((1 - para_object.quantile) * para_object.mc),1));
     set (h.instrument_var_value, "string", sprintf ("%.8f", var));

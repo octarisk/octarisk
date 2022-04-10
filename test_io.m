@@ -105,6 +105,7 @@ fprintf('\n');
     timestamp = strftime ('%Y%m%d_%H%M%S', localtime (time ()));
     valuation_date = datenum('31-Dec-2015'); % valuation date
     first_eval      = 0;
+    para_object = Parameter();
 
     % A.8) set seed of random number generator
     if ( stable_seed == 1)
@@ -367,7 +368,7 @@ try
     mktdata_struct=struct();
     [mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct, ...
                     path_mktdata,input_filename_mktdata,path_output_mktdata, ...
-                    path_archive,timestamp,archive_flag);
+                    path_archive,timestamp,archive_flag,para_object);
 
     % Converting classdef objects to ordinary structure in order to compare data
     tmp_mktdata_struct = mktdata_struct;

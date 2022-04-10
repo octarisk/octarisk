@@ -637,7 +637,7 @@ function para = get_cfvalues_FAB(valuation_date, value_type, para, instrument, r
                 d2 = para.cf_datesnum(2:length(para.cf_datesnum));
                 % preallocate memory
                 amount_outstanding_vec = zeros(rows(prepayment_factor),number_payments) ...
-                                                                .+ out_balance;              
+                                                                + out_balance;              
                 cf_interest_pp = zeros(rows(prepayment_factor),number_payments);
                 cf_principal_pp = zeros(rows(prepayment_factor),number_payments); 
                 cf_annuity = zeros(rows(prepayment_factor),number_payments);                

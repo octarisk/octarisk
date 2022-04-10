@@ -16,7 +16,7 @@
 %# Load data from mktdata object specification file and generate objects with parsed data. Store all objects in provided mktdata struct and return the final struct and a cell containing the failed mktdata ids.
 %# @end deftypefn
 
-function [mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct,path_mktdata,file_mktdata,path_output,path_archive,tmp_timestamp,archive_flag)
+function [mktdata_struct id_failed_cell] = load_mktdata_objects(mktdata_struct,path_mktdata,file_mktdata,path_output,path_archive,tmp_timestamp,archive_flag,para_object)
 
 % A) Prepare instrument object generation
 % A.0) Specify local variables
@@ -232,6 +232,15 @@ for ii = 1 : 1 : length(tmp_list_files)
                     error_flag = 1;
                 end
             end
+            
+            if strcmpi(para_object.cvar_type,'IR+100bp')
+                disp('=== Adjust for CVaR IR+100bp ===')
+                if regexpi(i.id,'^IR_')
+                    i = i.set('rates_base',i.get('rates_base')+0.01)
+                    i
+                end
+            end     
+            
             %disp('=== Final Object ===')
             %i     
             % B.3c) Error checking for mktdata object: 

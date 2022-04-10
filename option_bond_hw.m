@@ -139,7 +139,7 @@ if ( length(cf_dates) > 1 ) % coupon bearing bonds
                 tmp_accr_int = 0.0;
             end
         elseif ( idx == length(cf_dates)) % final cash flow
-            tmp_accr_int = cf_values(end) .- notional;
+            tmp_accr_int = cf_values(end) - notional;
         else
             tmp_accr_int = 0.0;
         end
@@ -147,7 +147,7 @@ if ( length(cf_dates) > 1 ) % coupon bearing bonds
     end
  
 else    % zero coupon bonds or bullet bonds
-    accr_int(:,end) = cf_values(end) .- notional;
+    accr_int(:,end) = cf_values(end) - notional;
 end
 
 % ------------------------------------------------------------------------------

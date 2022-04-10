@@ -168,7 +168,7 @@ endfunction
 %! v2 = [1,1,1,1]';
 %! x = [.2, .4, .6, .8];
 %! v3 = betainc_vec (x, a, b);
-%! v4 = 1 - betainc_vec (1.-x, b, a);
+%! v4 = 1 - betainc_vec (1-x, b, a);
 %! assert (v1, v2, sqrt (eps));
 %! assert (v3, v4, sqrt (eps));
 
@@ -180,7 +180,7 @@ endfunction
 %! v2 = single ([1,1,1,1])';
 %! x = single ([.2, .4, .6, .8]);
 %! v3 = betainc_vec (x, a, b);
-%! v4 = 1 - betainc_vec (1.-x, b, a);
+%! v4 = 1 - betainc_vec (1-x, b, a);
 %! assert (v1, v2, sqrt (eps ("single")));
 %! assert (v3, v4, sqrt (eps ("single")));
 
@@ -192,7 +192,7 @@ endfunction
 %! v2 = single ([1,1,1,1])';
 %! x = [.2, .4, .6, .8];
 %! v3 = betainc_vec (x, a, b);
-%! v4 = 1-betainc_vec (1.-x, b, a);
+%! v4 = 1-betainc_vec (1-x, b, a);
 %! assert (v1, v2, sqrt (eps ("single")));
 %! assert (v3, v4, sqrt (eps ("single")));
 

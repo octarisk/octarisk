@@ -133,4 +133,3 @@ end
 %!assert(get_basis('dummy'),3)
 %!assert(get_basis(),3)
 %!assert(get_basis(888),3)
-%!assert(get_basis('act/act','act/365'),0)

@@ -91,7 +91,7 @@ cms_df(:,end) = cms_df(:,end) .* (prem_end + swap.notional);
 % Calculate CMS rate:
 
 % get difference between first and last df per scenario
-nominator = cms_df(:,1) .- cms_df(:,end);
+nominator = cms_df(:,1) - cms_df(:,end);
 
  % sum up all timefactor weighted discount factors per scenario
 cms_df_tmp = cms_df(:,2:end);  % remove first discount factor

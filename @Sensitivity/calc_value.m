@@ -162,7 +162,7 @@ else
         if (sensi_cross(jj) > 0) % cross term
             cross_matrix(:,sensi_cross(jj)) = cross_matrix(:,sensi_cross(jj)) .* tmp_poly_value;
         else
-            single_vec = single_vec .+ tmp_poly_value;
+            single_vec = single_vec + tmp_poly_value;
         end
         % calculate sensi value as sum of all single and cross terms across columns
         theo_value = sum(cross_matrix,2) + single_vec;
