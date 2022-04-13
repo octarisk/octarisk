@@ -188,7 +188,10 @@ elseif (strcmpi(type,'latex'))
 	    fprintf(filc, '\\begin{itemize}\n');
 	    fprintf(filc, '\\itemsep0pt\n');
 	    fprintf(filc, '\\label{table_port_comments}\n');
-        fprintf(filc, '\\item Runcode for report: %s\n',para_object.runcode);
+        fprintf(filc, '\\item Runcode for report: %s\n',strrep(para_object.runcode,'_',' '));
+        if strcmpi(para_object.runcode,'Crisis')
+            fprintf(filc, '\\item Crisis scenario: EQ-40\\%%, Alt-70\\%%, IR+200bps, INFL+500bps, CS+100bps, FX-10\\%%, RE-50\\%%, COM+20\\%%\n');
+        end
 	    for kk=1:1:length(comments_cell)
 			fprintf(filc, '\\item %s\n',comments_cell{kk});
 	    end

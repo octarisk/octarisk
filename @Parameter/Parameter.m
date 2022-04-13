@@ -164,8 +164,8 @@ classdef Parameter
       end % Set.shred_type
       
       function obj = set.cvar_type(obj,cvar_type)
-         if ~(sum(strcmpi(cvar_type,{'base','IR+100bp'}))>0  )
-            error('CVaR type must be (either) BASE or IR+100bp')
+         if ~(sum(strcmpi(cvar_type,{'base','IR+100bp','EQ-30pct','Crisis'}))>0  )
+            error('CVaR type must be (either) BASE, EQ-30pct, Crisis or IR+100bp')
          end
          obj.cvar_type = cvar_type;
       end % Set.cvar_type

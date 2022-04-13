@@ -185,8 +185,10 @@ first_eval      = para_object.first_eval;
 % load packages
 pkg load financial;     % load financial packages (needed throughout all scripts)
 pkg load statistics;    % load statistics packages (needed throughout all scripts)
+#bug_parallel_fixed = 0; % parallel package bug exists with Octave 7.1.0
+#if (isunix && para_object.use_parallel_pkg == true && bug_parallel_fixed)
 if (isunix && para_object.use_parallel_pkg == true)
-	global use_parallel_pkg = true;
+	global use_parallel_pkg = false;
 	global number_parallel_cores = para_object.number_parallel_cores;
 	pkg load parallel; 	% load parallel packages (required for some cpp pricing functions
 	pkg load ndpar; 	% only load if use_parallel_pkg parameter was set
@@ -276,7 +278,7 @@ end
 instrument_struct=struct();
 [instrument_struct id_failed_cell] = load_instruments(instrument_struct, ...
                     valuation_date,path_input,input_filename_instruments, ...
-                    path_output_instruments,path_archive,timestamp,archive_flag);
+                    path_output_instruments,path_archive,timestamp,archive_flag,para_object);
               
 
 % 2. Processing Riskfactor data

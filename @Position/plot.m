@@ -419,6 +419,7 @@ elseif (strcmpi(type,'stress'))
         xlabelstr = ['Absolute PnL (in k',obj.currency,')'];
         xlabel(xlabelstr,'fontsize',14);
         title('Stresstest Results','fontsize',14);
+        %set(hs, "paperunits", "points", "papersize", [600, 300], 'PaperPosition', [0 0 600 300]);
         grid on;
         % save plotting
         filename_plot_stress = strcat(path_reports,'/',obj.id,'_stress_plot.png');

@@ -20,7 +20,7 @@
 %# derivatives (OPT,SWAPT,SYNTH) are coming last.
 %# @end deftypefn
 
-function [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_instruments,file_instruments,path_output,path_archive,tmp_timestamp,archive_flag)
+function [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_instruments,file_instruments,path_output,path_archive,tmp_timestamp,archive_flag,para_object)
 
 % A) Prepare instrument object generation
 % A.0) Specify local variables
@@ -305,7 +305,48 @@ for ii = 1 : 1 : length(tmp_list_files)
                 end
             end
             %disp('=== Final Object ===')
-            %i     
+            if strcmpi(para_object.cvar_type,'EQ-30pct')
+                disp('=== Adjust for CVaR EQ-30% ===')
+                if regexpi(i.asset_class,'Equity')
+                    disp('=== Asset Class Equity detected ===')
+                    old_value = i.getValue('base')
+                    new_value = old_value * 0.7
+                    i = i.set('value_base',new_value);
+                    #i = i.set('exposure_base',i.get('exposure_base').*0.7);
+                    i
+                end
+            elseif strcmpi(para_object.cvar_type,'Crisis')
+                disp('=== Adjust for CVaR Crisis ===')
+                if regexpi(i.asset_class,'Equity')
+                    disp('=== Asset Class Equity detected ===')
+                    old_value = i.getValue('base')
+                    new_value = old_value * 0.6
+                    i = i.set('value_base',new_value);
+                    #i = i.set('exposure_base',i.get('exposure_base').*0.7);
+                    i
+                elseif regexpi(i.asset_class,'Alternative')
+                    disp('=== Asset Class Alternative detected ===')
+                    old_value = i.getValue('base')
+                    new_value = old_value * 0.3
+                    i = i.set('value_base',new_value);
+                    #i = i.set('exposure_base',i.get('exposure_base').*0.7);
+                    i 
+                elseif regexpi(i.asset_class,'Commodity')
+                    disp('=== Asset Class Commodity detected ===')
+                    old_value = i.getValue('base')
+                    new_value = old_value * 1.2
+                    i = i.set('value_base',new_value);
+                    #i = i.set('exposure_base',i.get('exposure_base').*0.7);
+                    i
+                elseif regexpi(i.asset_class,'Real Estate')
+                    disp('=== Asset Class Real Estate detected ===')
+                    old_value = i.getValue('base')
+                    new_value = old_value * 0.5
+                    i = i.set('value_base',new_value);
+                    #i = i.set('exposure_base',i.get('exposure_base').*0.7);
+                    i            
+                end    
+            end        
             % B.3c) Error checking for instrument: 
             if ( error_flag > 0 )
                 fprintf('ERROR: There has been an error for instrument: %s \n',i.id);

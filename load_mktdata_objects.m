@@ -236,9 +236,36 @@ for ii = 1 : 1 : length(tmp_list_files)
             if strcmpi(para_object.cvar_type,'IR+100bp')
                 disp('=== Adjust for CVaR IR+100bp ===')
                 if regexpi(i.id,'^IR_')
-                    i = i.set('rates_base',i.get('rates_base')+0.01)
+                    i = i.set('rates_base',i.get('rates_base')+0.01);
                     i
                 end
+            elseif strcmpi(para_object.cvar_type,'EQ-30pct')
+                disp('=== Adjust for CVaR EQ-30% ===')
+                if regexpi(i.id,'^EQ_')
+                    i = i.set('value_base',i.getValue('base').*0.7);
+                    i
+                end
+            elseif strcmpi(para_object.cvar_type,'Crisis')
+                disp('=== Adjust for CVaR Crisis ===')
+                if regexpi(i.id,'^EQ_')
+                    i = i.set('value_base',i.getValue('base').*0.6);
+                    i
+                elseif regexpi(i.id,'^COM_')
+                    i = i.set('value_base',i.getValue('base').*1.2);
+                    i
+                elseif regexpi(i.id,'^FX_')
+                    i = i.set('value_base',i.getValue('base').*0.9);
+                    i    
+                elseif regexpi(i.id,'^IR_')
+                    i = i.set('rates_base',i.get('rates_base')+0.025);
+                    i
+                elseif regexpi(i.id,'^SPREAD_')
+                    i = i.set('rates_base',i.get('rates_base')+0.02);
+                    i    
+                elseif regexpi(i.id,'^INFL_')
+                    i = i.set('rates_base',i.get('rates_base')+0.05);
+                    i    
+                end    
             end     
             
             %disp('=== Final Object ===')

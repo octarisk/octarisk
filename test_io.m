@@ -169,7 +169,7 @@ try
     instrument_struct=struct();
     [instrument_struct id_failed_cell] = load_instruments(instrument_struct, ...
                     valuation_date,path_input,input_filename_instruments, ...
-                    path_output_instruments,path_archive,timestamp,archive_flag);
+                    path_output_instruments,path_archive,timestamp,archive_flag,para_object);
 
     % Converting classdef objects to ordinary structure in order to compare data
     tmp_instrument_struct = instrument_struct;
