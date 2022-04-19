@@ -111,17 +111,25 @@ function [g,l,a] = gini(pop,val,makeplot)
     end
     pop = pop(isok); val = val(isok);
     
-    assert(all(pop>=0) && all(val>=0), ...
-        'gini expects nonnegative vectors (neg elements in pop = %d, in val = %d).', ...
-        sum(pop<0),sum(val<0))
-    
     % process input
     z = val .* pop;
     [~,ord] = sort(val);
-    pop    = pop(ord);     z    = z(ord);
-    pop    = cumsum(pop);  z    = cumsum(z);
-    relpop = pop/pop(end); relz = z/z(end);
+    z_tmp = z;
+    pop    = pop(ord);     
+    z    = z(ord);
+    pop    = cumsum(pop);  
+    z    = cumsum(z);
+    relpop = pop/pop(end); 
+    relz = z/z(end);
     
+    
+    disp("val | pop | z | cumsum z | relpop | relz")
+    [val(1:20),pop(1:20),z_tmp(1:20),z(1:20),relpop(1:20),relz(1:20)]
+    disp("val end")
+    val(end-10:end)
+    disp("z end")
+    z(end-10:end)
+
     % Gini coefficient
 
     % We compute the area below the Lorentz curve. We do this by

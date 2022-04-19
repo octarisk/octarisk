@@ -637,6 +637,7 @@ if ( para_object.plotting )
             port_obj = port_obj.plot(para_object,'var',tmp_scen_set);		
             port_obj = port_obj.plot(para_object,'history',tmp_scen_set);	
             port_obj = port_obj.plot(para_object,'liquidity',tmp_scen_set);								
+            % port_obj = port_obj.plot(para_object,'lorentz',tmp_scen_set);	 % I do not what to do with Gini coefficient and Lorentz curve							
             port_obj = port_obj.plot(para_object,'riskfactor',tmp_scen_set, ...
                                 stresstest_struct,curve_struct,riskfactor_struct);								
         end

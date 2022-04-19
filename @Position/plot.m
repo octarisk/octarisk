@@ -383,6 +383,15 @@ elseif (strcmpi(type,'asset_allocation'))
 	  repstruct = plot_AA_piecharts(repstruct,path_reports,obj);	
   end
 
+% --------------    Lorentz Curve Plotting   -----------------------------
+elseif (strcmpi(type,'lorentz'))    
+  if ( strcmpi(scen_set,'stress') || strcmpi(scen_set,'base'))
+	  %fprintf('plot: No Gini plots exists for scenario set >>%s<<\n',scen_set);
+  else
+	  fprintf('plot: Plotting Lorentz curve results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+	  repstruct = calc_gini(obj,repstruct,para_object,path_reports);	
+  end
+  
 % --------------    IR sensitivity   -----------------------------
 elseif (strcmpi(type,'ir_sensitivity'))    
   if ( strcmpi(scen_set,'base'))
