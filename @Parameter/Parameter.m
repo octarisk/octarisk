@@ -168,6 +168,9 @@ classdef Parameter
             error('CVaR type must be (either) BASE, EQ-30pct, Crisis or IR+100bp')
          end
          obj.cvar_type = cvar_type;
+         if ~(strcmpi(cvar_type,'base'))
+            obj.cvar_flag = 1;
+         end
       end % Set.cvar_type
       
       

@@ -175,7 +175,7 @@ elseif ( strfind(tmp_type,'option') > 0 )
     end
 
     % Calibration of Option vola spread 
-    if ( option.get('calibration_flag') == false ) 
+    if ( option.get('calibration_flag') == false ) && (strcmpi(para_object.cvar_type,'base'))
         if (strcmpi(class(tmp_underlying_obj),'Synthetic') ...
                         && tmp_underlying_obj.is_basket ...
                         && strcmpi(tmp_underlying_obj.basket_vola_type,'Beisser'))
@@ -239,7 +239,7 @@ elseif ( strfind(tmp_type,'swaption') > 0 )
     end
     
     % Calibration of swaption vola spread            
-    if ( swaption.get('calibration_flag') == false )
+    if ( swaption.get('calibration_flag') == false ) && (strcmpi(para_object.cvar_type,'base'))
         swaption = swaption.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
     end
     % calculate value
@@ -308,7 +308,7 @@ elseif ( strfind(tmp_type,'capfloor') > 0 )
     end
     
     % Calibration of capfloor vola spread            
-    if ( capfloor.get('calibration_flag') == false ) 
+    if ( capfloor.get('calibration_flag') == false ) && (strcmpi(para_object.cvar_type,'base'))
         capfloor = capfloor.calc_vola_spread(valuation_date,tmp_rf_curve_obj,tmp_vola_surf_obj);
     end
     capfloor = capfloor.rollout(valuation_date,scenario,tmp_rf_curve_obj,tmp_vola_surf_obj);
@@ -592,7 +592,7 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
             fprintf('WARNING: instrument_valuation: unknown BOND sub_type >>%s<< for id >>%s<<\n',bond.id,tmp_sub_type);
         end 
     % c) Calculate spread over yield (if not already run...)
-        if ( bond.get('calibration_flag') == 0 )
+        if ( bond.get('calibration_flag') == 0 ) && (strcmpi(para_object.cvar_type,'base'))
             bond = bond.calc_spread_over_yield(valuation_date,tmp_curve_object);
         end
     % d) get net present value of all Cashflows (discounting of all cash flows)

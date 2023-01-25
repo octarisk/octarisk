@@ -508,12 +508,12 @@ end
 
 % print all base values
 fprintf('Instrument Base and stress Values: \n');
-fprintf('ID,Base,StressBase,%s,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(4).name,stresstest_struct(5).name);
+fprintf('ID,Base,StressBase,%s,%s,%s,Currency\n',stresstest_struct(2).name,stresstest_struct(3).name,stresstest_struct(11).name);
 for kk = 1:1:length(instrument_struct)
     obj = instrument_struct(kk).object;
     stressvec = obj.getValue('stress');
     if (length(stressvec) > 4)
-        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(4),any2str(obj.currency));
+        fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(2),stressvec(3),stressvec(11),any2str(obj.currency));
     else
         fprintf('%s,%9.8f,%9.8f,%9.8f,%9.8f,%9.8f,%s\n',obj.id,obj.getValue('base'),stressvec(1),stressvec(1),stressvec(1),stressvec(1),any2str(obj.currency));
     end

@@ -320,10 +320,14 @@ for ii = 1 : 1 : length(tmp_list_files)
                 if regexpi(i.asset_class,'Equity')
                     disp('=== Asset Class Equity detected ===')
                     old_value = i.getValue('base')
-                    new_value = old_value * 0.6
-                    i = i.set('value_base',new_value);
-                    #i = i.set('exposure_base',i.get('exposure_base').*0.7);
-                    i
+                    if (strcmpi(i.id,'840400'))
+                        new_value = old_value * 0.4
+                    else
+                        new_value = old_value * 0.6
+                    end
+                        i = i.set('value_base',new_value);
+                        #i = i.set('exposure_base',i.get('exposure_base').*0.7);
+                        i
                 elseif regexpi(i.asset_class,'Alternative')
                     disp('=== Asset Class Alternative detected ===')
                     old_value = i.getValue('base')

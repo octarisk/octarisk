@@ -308,7 +308,7 @@ classdef Position
             fprintf('90_Modified_duration_to_maturity_date: %s\n',any2str(a.tpt_90));  
          elseif (strcmpi(a.type,'Portfolio'))
 			fprintf('diversification_ratio: %2.1f%% \n',a.diversification_ratio*100);
-			fprintf('diversification_amount: %12.2f%% \n',a.diversification_amount);
+			fprintf('diversification_amount: %12.2f %s\n',a.diversification_amount,a.currency);
 			fprintf('mean_shock: %3.2f \n',a.mean_shock); 
             fprintf('std_shock: %3.2f \n',a.std_shock); 
             fprintf('skewness_shock: %3.2f \n',a.skewness_shock); 
