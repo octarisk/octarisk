@@ -1,5 +1,5 @@
 % Input folder
-path_working_folderCHAR,/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder
+path_working_folderCHAR,/Users/schinzilord/Documents/Programmierung/octarisk/working_folder
 folder_archiveCHAR,archive
 folder_inputCHAR,input
 folder_staticCHAR,static

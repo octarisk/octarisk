@@ -101,6 +101,8 @@ path_input = strcat(path,'/',para_object.folder_input);
 path_static = strcat(path,'/',para_object.folder_static);
 path_mktdata = strcat(path,'/',para_object.folder_mktdata);
 
+path
+
 mkdir(path_output);
 mkdir(path_output_instruments);
 mkdir(path_output_riskfactors);

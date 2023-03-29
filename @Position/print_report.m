@@ -654,6 +654,47 @@ elseif (strcmpi(type,'latex'))
 			repstruct.liquidity_class_cell = liquidity_class_cell;
 			repstruct.liquidity_class_exposure = liquidity_class_exposure;
 			
+			% print aggregated issuer, custodian, counterparty into table
+			%       Issuer:
+			latex_table_issuer_exposure = strcat(path_reports,'/table_pos_',obj.id,'_issuer_exposure.tex');
+			fiie = fopen (latex_table_issuer_exposure, 'w');
+			fprintf(fiie, '\\center\n');
+			fprintf(fiie, '\\begin{tabular}{l|r}\n');
+			fprintf(fiie, 'Issuer \& Exposure \\\\\\hline\\hline\n');	
+			for (ii=1:1:length(issuer_cell))
+				fprintf(fiie, '%s \& %s %s \\\\\n',issuer_cell{ii},any2str(round(issuer_exposure(ii))),obj.currency);
+			end
+			fprintf(fiie, '\\\hline Total \& %9.0f %s \\\\\\hline\n',round(sum(issuer_exposure)),obj.currency);
+			fprintf(fiie, '\\end{tabular}\n');
+			fclose (fiie);
+			
+			%       Counterparty:
+			latex_table_counterparty_exposure = strcat(path_reports,'/table_pos_',obj.id,'_counterparty_exposure.tex');
+			fiie = fopen (latex_table_counterparty_exposure, 'w');
+			fprintf(fiie, '\\center\n');
+			fprintf(fiie, '\\begin{tabular}{l|r}\n');
+			fprintf(fiie, 'Counterparty \& Exposure \\\\\\hline\\hline\n');	
+			for (ii=1:1:length(counterparty_cell))
+				fprintf(fiie, '%s \& %s %s \\\\\n',counterparty_cell{ii},any2str(round(counterparty_exposure(ii))),obj.currency);
+			end
+			fprintf(fiie, '\\\hline Total \& %9.0f %s \\\\\\hline\n',round(sum(counterparty_exposure)),obj.currency);
+			fprintf(fiie, '\\end{tabular}\n');
+			fclose (fiie);
+			
+			%       Custodian:
+			latex_table_custodian_exposure = strcat(path_reports,'/table_pos_',obj.id,'_custodian_exposure.tex');
+			fiie = fopen (latex_table_custodian_exposure, 'w');
+			fprintf(fiie, '\\center\n');
+			fprintf(fiie, '\\begin{tabular}{l|r}\n');
+			fprintf(fiie, 'Custodian \& Exposure \\\\\\hline\\hline\n');	
+			for (ii=1:1:length(custodian_bank_cell))
+				fprintf(fiie, '%s \& %s %s \\\\\n',custodian_bank_cell{ii},any2str(round(custodian_bank_exposure(ii))),obj.currency);
+			end
+			fprintf(fiie, '\\\hline Total \& %9.0f %s \\\\\\hline\n',round(sum(custodian_bank_exposure)),obj.currency);
+			fprintf(fiie, '\\end{tabular}\n');
+			fclose (fiie);
+			
+			
 			% calculate HHI of all cells/exposures
             HHI_total_sum = sum(issuer_exposure) + sum(custodian_bank_exposure) ...
                     + sum(counterparty_exposure) + sum(designated_sponsor_exposure) + ...
