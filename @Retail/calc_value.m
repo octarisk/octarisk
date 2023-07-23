@@ -47,7 +47,7 @@ function obj = calc_value(retail,valuation_date,value_type,discount_curve,iec,lo
 		end
 
 		if (strcmpi(obj.sub_type,'SAVPLAN') || strcmpi(obj.sub_type,'DCP'))
-		if ( obj.notice_period > 0 && columns(tmp_cashflow_values) == 2)
+		  if ( obj.notice_period > 0 && columns(tmp_cashflow_values) == 2)
 			% first column: cash flow under first put date, sec column: cf at maturity
 			theo_value_putable = pricing_npv(valuation_date, tmp_cashflow_dates(1), ...
 										tmp_cashflow_values(:,1), obj.soy, ...
@@ -73,15 +73,20 @@ function obj = calc_value(retail,valuation_date,value_type,discount_curve,iec,lo
 											comp_freq);
 				xirr = calibrate_generic(objfunc,x0,lb,ub);
 				obj = obj.set('ytm',xirr);
+				%obj
 			end
-		else % no redemption possible
+		  else % no redemption possible
 			theo_value = pricing_npv(valuation_date, tmp_cashflow_dates, ...
 										tmp_cashflow_values, obj.soy, ...
 										tmp_nodes, tmp_rates, basis, comp_type, ...
 										comp_freq, tmp_interp_discount, ...
 										tmp_curve_comp_type, tmp_curve_basis, ...
 										tmp_curve_comp_freq);
-		end 
+		  end 
+		% TODO: apply tax rate on defined contribution plans
+		  if (strcmpi(obj.sub_type,'DCP'))
+			theo_value = theo_value .* ( 1 - obj.tax_rate);
+		  end
 		else	% RETEXP: just discounting of cash flows
 			theo_value = pricing_npv(valuation_date, tmp_cashflow_dates, ...
 										tmp_cashflow_values, obj.soy, ...

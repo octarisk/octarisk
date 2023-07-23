@@ -1619,7 +1619,7 @@ end
 %! fprintf('\tdoc_instrument:\tPricing Defined Contribution Plan A\n');
 %! r = Retail();
 %! r = r.set('Name','Test_DCP_A','sub_type','DCP','coupon_rate',0.00,'coupon_generation_method','forward','term',1,'term_unit','months');
-%! r = r.set('maturity_date','01-Jun-2050','compounding_type','simple','savings_rate',192);
+%! r = r.set('maturity_date','01-Jun-2050','compounding_type','simple','savings_rate',192,'tax_rate',0.43);
 %! r = r.set('savings_startdate','01-Apr-2019','savings_enddate','01-May-2050');
 %! r = r.set('redemption_values',[328.65,2603.40,25343.14],'redemption_dates',{'31-May-2019','31-May-2020','31-May-2030'});
 %! r = r.set('notice_period',1,'notice_period_unit','years');
@@ -1629,12 +1629,12 @@ end
 %! r = r.calc_value(valuation_date,'stress',c);
 %! r = r.calc_sensitivities(valuation_date,c);
 %! r = r.calc_key_rates(valuation_date,c);
-%! assert(r.getValue('base'),319.728947,0.00001);
-%! assert(r.getValue('stress')(1),1508.251741,0.00001)
+%! assert(r.getValue('base'),319.728947 * 0.57,0.00001);
+%! assert(r.getValue('stress')(1),1508.251741 * 0.57,0.00001)
 %! fprintf('\tdoc_instrument:\tPricing Defined Contribution Plan P\n');
 %! r = Retail();
 %! r = r.set('Name','Test_DCP_B','sub_type','DCP','coupon_rate',0.006442,'coupon_generation_method','forward','term',1,'term_unit','months');
-%! r = r.set('maturity_date','01-Jan-2048','compounding_type','simple','savings_rate',240);
+%! r = r.set('maturity_date','01-Jan-2048','compounding_type','simple','savings_rate',240,'tax_rate',0.43);
 %! r = r.set('savings_startdate','01-Apr-2012','savings_enddate','01-Dec-2047');
 %! r = r.set('redemption_values',[15583,18631,25343.14],'redemption_dates',{'31-Dec-2018','31-Dec-2019','31-May-2030'});
 %! r = r.set('notice_period',1,'notice_period_unit','years');
@@ -1645,8 +1645,8 @@ end
 %! r = r.calc_value(valuation_date,'stress',c);
 %! r = r.calc_sensitivities(valuation_date,c);
 %! r = r.calc_key_rates(valuation_date,c);
-%! assert(r.getValue('base'),17311.498035,0.00001);
-%! assert(r.getValue('stress')(1),72369.277537,0.00001)
+%! assert(r.getValue('base'),17311.498035 * 0.57,0.00001);
+%! assert(r.getValue('stress')(1),72369.277537 * 0.57,0.00001)
 %! assert(r.get('eff_duration'),18.0048,0.0001);
 
 %!test

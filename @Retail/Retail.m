@@ -62,7 +62,7 @@ classdef Retail < Instrument
         pension_scores = 0; 	% Rentenpunkte
         widow_pension_rate = 0.6; 	% Ratio of Widow pension
         value_per_score = 0;	% Wert pro Rentenpunkt: gross_pension = value_per_score x pension_scores
-        tax_rate = 0;			% tax rate: net pension = gross penion x (1- tax_rate)
+        tax_rate = 0.0;			% tax rate: net pension = gross penion x (1- tax_rate)
         widow_pension_flag = 0;	% boolean: take into account pension payments for widow
         
         % Human Capital specific attributes
@@ -220,6 +220,7 @@ classdef Retail < Instrument
 			fprintf('savings_change_dates: %s\n',any2str(b.savings_change_dates)); 
 			fprintf('embedded_option_value: %s %s\n',any2str(b.embedded_option_value),b.currency); 
 			fprintf('Breakeven rate redemption: %f %% %s %s\n',100* b.ytm,b.compounding_type,b.day_count_convention); 
+			fprintf('tax_rate: %f\n',b.tax_rate); 
          end
          if strcmpi( b.sub_type,'HC')
 			fprintf('income_fix: %f  %s\n',b.income_fix,b.currency); 

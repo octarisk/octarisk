@@ -659,12 +659,14 @@ elseif (strcmpi(type,'latex'))
 			latex_table_issuer_exposure = strcat(path_reports,'/table_pos_',obj.id,'_issuer_exposure.tex');
 			fiie = fopen (latex_table_issuer_exposure, 'w');
 			fprintf(fiie, '\\center\n');
-			fprintf(fiie, '\\begin{tabular}{l|r}\n');
-			fprintf(fiie, 'Issuer \& Exposure \\\\\\hline\\hline\n');	
-			for (ii=1:1:length(issuer_cell))
-				fprintf(fiie, '%s \& %s %s \\\\\n',issuer_cell{ii},any2str(round(issuer_exposure(ii))),obj.currency);
+			fprintf(fiie, '\\begin{tabular}{l|r|r}\n');
+			fprintf(fiie, 'Issuer \& Exposure \& Pct. \\\\\\hline\\hline\n');
+			[tt idx_sorted] = sort(issuer_exposure,'descend');	
+			for (ii=1:1:length(idx_sorted))
+				tmp_idx = idx_sorted(ii);
+				fprintf(fiie, '%s \& %s %s \& %3.1f\\%% \\\\\n',issuer_cell{tmp_idx},any2str(round(issuer_exposure(tmp_idx))),obj.currency, ( 100 * issuer_exposure(tmp_idx) / port_basevalue_assets) );
 			end
-			fprintf(fiie, '\\\hline Total \& %9.0f %s \\\\\\hline\n',round(sum(issuer_exposure)),obj.currency);
+			fprintf(fiie, '\\\hline Total \& %9.0f %s \& %3.1f\\%% \\\\\\hline\n',round(sum(issuer_exposure)),obj.currency, round(100* sum(issuer_exposure) / port_basevalue_assets) );
 			fprintf(fiie, '\\end{tabular}\n');
 			fclose (fiie);
 			
@@ -672,12 +674,15 @@ elseif (strcmpi(type,'latex'))
 			latex_table_counterparty_exposure = strcat(path_reports,'/table_pos_',obj.id,'_counterparty_exposure.tex');
 			fiie = fopen (latex_table_counterparty_exposure, 'w');
 			fprintf(fiie, '\\center\n');
-			fprintf(fiie, '\\begin{tabular}{l|r}\n');
-			fprintf(fiie, 'Counterparty \& Exposure \\\\\\hline\\hline\n');	
-			for (ii=1:1:length(counterparty_cell))
-				fprintf(fiie, '%s \& %s %s \\\\\n',counterparty_cell{ii},any2str(round(counterparty_exposure(ii))),obj.currency);
+			fprintf(fiie, '\\begin{tabular}{l|r|r}\n');
+			fprintf(fiie, 'Counterparty \& Net Exposure \& Pct. \\\\\\hline\\hline\n');	
+			[tt idx_sorted] = sort(counterparty_exposure,'descend');
+			counterparty_exposure_scaled = counterparty_exposure .* 0.05; %scale for derivative exposure (worst case 5%)	
+			for (ii=1:1:length(idx_sorted))
+				tmp_idx = idx_sorted(ii);
+				fprintf(fiie, '%s \& %s %s \& %3.1f\\%% \\\\\n',counterparty_cell{tmp_idx},any2str(round(counterparty_exposure_scaled(tmp_idx))),obj.currency, ( 100 * counterparty_exposure_scaled(tmp_idx) / port_basevalue_assets) );
 			end
-			fprintf(fiie, '\\\hline Total \& %9.0f %s \\\\\\hline\n',round(sum(counterparty_exposure)),obj.currency);
+			fprintf(fiie, '\\\hline Total \& %9.0f %s \& %3.1f\\%% \\\\\\hline\n',round(sum(counterparty_exposure_scaled)),obj.currency, round(100* sum(counterparty_exposure_scaled) / port_basevalue_assets));
 			fprintf(fiie, '\\end{tabular}\n');
 			fclose (fiie);
 			
@@ -685,12 +690,29 @@ elseif (strcmpi(type,'latex'))
 			latex_table_custodian_exposure = strcat(path_reports,'/table_pos_',obj.id,'_custodian_exposure.tex');
 			fiie = fopen (latex_table_custodian_exposure, 'w');
 			fprintf(fiie, '\\center\n');
-			fprintf(fiie, '\\begin{tabular}{l|r}\n');
-			fprintf(fiie, 'Custodian \& Exposure \\\\\\hline\\hline\n');	
-			for (ii=1:1:length(custodian_bank_cell))
-				fprintf(fiie, '%s \& %s %s \\\\\n',custodian_bank_cell{ii},any2str(round(custodian_bank_exposure(ii))),obj.currency);
+			fprintf(fiie, '\\begin{tabular}{l|r|r}\n');
+			fprintf(fiie, 'Custodian \& Exposure \& Pct. \\\\\\hline\\hline\n');
+			[tt idx_sorted] = sort(custodian_bank_exposure,'descend');		
+			for (ii=1:1:length(idx_sorted))
+				tmp_idx = idx_sorted(ii);
+				fprintf(fiie, '%s \& %s %s \& %3.1f\\%% \\\\\n',custodian_bank_cell{tmp_idx},any2str(round(custodian_bank_exposure(tmp_idx))),obj.currency, ( 100 * custodian_bank_exposure(tmp_idx) / port_basevalue_assets) );
 			end
-			fprintf(fiie, '\\\hline Total \& %9.0f %s \\\\\\hline\n',round(sum(custodian_bank_exposure)),obj.currency);
+			fprintf(fiie, '\\\hline Total \& %9.0f %s \& %3.1f\\%% \\\\\\hline\n',round(sum(custodian_bank_exposure)),obj.currency, round(100* sum(custodian_bank_exposure) / port_basevalue_assets));
+			fprintf(fiie, '\\end{tabular}\n');
+			fclose (fiie);
+			
+			%       Custodian Bank Underlying:
+			latex_table_custodian_undrl_exposure = strcat(path_reports,'/table_pos_',obj.id,'_custodian_bank_underlying_exposure.tex');
+			fiie = fopen (latex_table_custodian_undrl_exposure, 'w');
+			fprintf(fiie, '\\center\n');
+			fprintf(fiie, '\\begin{tabular}{l|r|r}\n');
+			fprintf(fiie, 'Custodian Bank Underlying \& Exposure \& Pct. \\\\\\hline\\hline\n');
+			[tt idx_sorted] = sort(custodian_bank_underlyings_exposure,'descend');		
+			for (ii=1:1:length(idx_sorted))
+				tmp_idx = idx_sorted(ii);
+				fprintf(fiie, '%s \& %s %s \& %3.1f\\%% \\\\\n',custodian_bank_underlyings_cell{tmp_idx},any2str(round(custodian_bank_underlyings_exposure(tmp_idx))),obj.currency, ( 100 * custodian_bank_underlyings_exposure(tmp_idx) / port_basevalue_assets) );
+			end
+			fprintf(fiie, '\\\hline Total \& %9.0f %s \& %3.1f\\%% \\\\\\hline\n',round(sum(custodian_bank_underlyings_exposure)),obj.currency, (100* sum(custodian_bank_underlyings_exposure) / port_basevalue_assets));
 			fprintf(fiie, '\\end{tabular}\n');
 			fclose (fiie);
 			

@@ -31,6 +31,10 @@ end
 
 HHI_norm = sum((100.*exposure).^2) / (sum(exposure)^2);
 
+if isnan(HHI_norm)
+	HHI_norm = 0;
+end
+
 if HHI_norm < 100
 	concentration = "very low";
 elseif HHI_norm < 1500
@@ -48,4 +52,5 @@ end
 %!assert(calc_HHI([1,0]),10000)
 %!assert(calc_HHI(1),10000)
 %!assert(calc_HHI(0.6),10000)
+%!assert(calc_HHI([3 4 NaN 6]),0)
 %!assert(calc_HHI([0.8,0.10,0.10]),6600)
