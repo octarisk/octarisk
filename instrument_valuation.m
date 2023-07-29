@@ -620,13 +620,13 @@ elseif ( sum(strcmpi(tmp_type,'bond')) > 0 )
         bond = bond.calc_value (valuation_date,scenario,tmp_curve_object);
         
         % calculate yield to maturity
-        if (strcmpi(scenario,'base') )
-            bond = bond.calc_yield_to_mat(valuation_date);
-            if( strcmpi(tmp_sub_type,'ILB')) % calculate break even inflation rate
-				bond = bond.calc_ilb_break_even (valuation_date, ...
+        %if (strcmpi(scenario,'base') )
+        bond = bond.calc_yield_to_mat(valuation_date);
+        if( strcmpi(tmp_sub_type,'ILB')) % calculate break even inflation rate
+			bond = bond.calc_ilb_break_even (valuation_date, ...
 							   tmp_curve_object,iec_curve,hist_curve,cpi_index);				
-            end
         end
+        %end
 
     % e) store bond object:
     ret_instr_obj = bond;

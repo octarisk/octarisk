@@ -410,6 +410,9 @@ elseif (strcmpi(type,'latex'))
 		esg_score = 0;
 		esg_basevalue = 0;
 		region_sum = 0;
+		bond_exposure = 0;
+		bond_ytm = 0;
+		bond_ytm_duration = 0;
 	    if (isstruct(instrument_struct))
 			region_cell = obj.equity_target_region_id;
 			region_current_values = zeros(1,numel(region_cell));
@@ -474,6 +477,25 @@ elseif (strcmpi(type,'latex'))
 							port_rating = port_rating + instr_obj.rating_values .* pos_obj.getValue('base');
 						  end
 					  end %end balance_sheet_item Asset Loop
+					  
+					  % get yield to maturity
+					  if (strcmpi(instr_obj.get('type'),'Bond')) 
+						if ( instr_obj.isProp('ytm') && strcmpi(pos_obj.balance_sheet_item,'Asset'))
+							bond_exposure = bond_exposure + pos_obj.getValue('base');
+							bond_ytm = bond_ytm + instr_obj.get('ytm') * pos_obj.getValue('base');
+							bond_ytm_duration = bond_ytm_duration  + instr_obj.eff_duration * pos_obj.getValue('base');
+							instr_obj.id
+							instr_obj.get('ytm') 
+							instr_obj.eff_duration
+						end
+					  end
+
+					  % get rating
+					  if ( sum(instr_obj.rating_values) > 0)
+						port_rating = port_rating + instr_obj.rating_values .* pos_obj.getValue('base');
+					  end
+					  
+					  
 					  % required for KPI reporting
 					  if (strcmpi(instr_obj.get('asset_class'),'Cash'))
 					      cash_amount = cash_amount + pos_obj.getValue('base');	
@@ -631,6 +653,15 @@ elseif (strcmpi(type,'latex'))
 			tmpfilename = strcat(path_reports,'/',obj.id,'_entity_relationship.dot');
 			retval = print_graphviz(tmpfilename,entity_cell,entity_exposure,entity_relationship_cell);
 		
+			disp('======================================================')
+			bond_exposure
+			bond_ytm = bond_ytm / bond_exposure
+			bond_ytm_duration = bond_ytm_duration / bond_exposure
+			disp('======================================================')
+					  
+			repstruct.bond_exposure = bond_exposure;
+			repstruct.bond_ytm = bond_ytm;
+			repstruct.bond_ytm_duration = bond_ytm_duration;
 			repstruct.issuer_cell = issuer_cell;
 			repstruct.issuer_exposure = issuer_exposure;	
 			repstruct.category_cell = category_cell;
@@ -716,6 +747,15 @@ elseif (strcmpi(type,'latex'))
 			fprintf(fiie, '\\end{tabular}\n');
 			fclose (fiie);
 			
+			%       yield to maturity:
+			latex_table_ytm = strcat(path_reports,'/table_port_',obj.id,'_ytm.tex');
+			fiiy = fopen (latex_table_ytm, 'w');
+			fprintf(fiiy, '\\center\n');
+			fprintf(fiiy, '\\begin{tabular}{l|r|r}\n');
+			fprintf(fiiy, 'Bond Exp. \& Yield to Mat. \& Eff.Dur. \\\\\\hline\\hline\n');
+			fprintf(fiiy, '%9.0f %s \& %2.2f\\%%  \& %1.2f \\\\\\hline\n',round(bond_exposure),obj.currency, 100 * bond_ytm,bond_ytm_duration);
+			fprintf(fiiy, '\\end{tabular}\n');
+			fclose (fiiy);
 			
 			% calculate HHI of all cells/exposures
             HHI_total_sum = sum(issuer_exposure) + sum(custodian_bank_exposure) ...
