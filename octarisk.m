@@ -629,6 +629,7 @@ if ( para_object.plotting )
         port_obj = port_obj.plot(para_object,'concentration','base');										
         port_obj = port_obj.plot(para_object,'asset_allocation','base');										
         port_obj = port_obj.plot(para_object,'ir_sensitivity','base');										
+        port_obj = port_obj.plot(para_object,'equitystylebox','base');										
         % aggregation and risk calculation for all scenario sets
         for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
             tmp_scen_set  = scenario_set{ kk };    % get timestep string

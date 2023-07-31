@@ -471,6 +471,27 @@ elseif (strcmpi(type,'concentration'))
 	  repstruct = plot_HHI_piecharts(repstruct,path_reports,obj);						
   end
   
+ 
+% -------------    Equity Style Box plotting    ----------------------------- 
+elseif (strcmpi(type,'equitystylebox'))
+  if ( strcmpi(scen_set,'base'))
+		fprintf('plot: Equity style box plots for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+		xlabels = {'Value','Blend','Growth'};
+		ylabels = {'Large','Mid','Small'};
+
+		title_string = 'Equity Style Box';
+		x_axis_label = 'Size';
+		y_axis_label = 'Style';
+		filename = 'equity_stylebox';
+		sum_flag = true;
+		% reshape input
+		input_heatmap = repstruct.estab; % reshape from 1 x 9 into 3 x 3
+		input_heatmap = reshape(input_heatmap,3,3)';
+		retcode = plot_heatmap(input_heatmap,obj.id,path_reports,filename,title_string,x_axis_label,y_axis_label,xlabels,ylabels,sum_flag);
+  else
+		fprintf('plot: No Equity style box results plots exists for scenario set >>%s<<\n',scen_set);								
+  end 
+ 
   
 % -------------    VaR plotting    ----------------------------- 
 elseif (strcmpi(type,'var'))
