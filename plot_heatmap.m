@@ -20,7 +20,7 @@
 %# published under MIT license.
 
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {@var{repstruct} =} plot_heatmap (@var{input_heatmap}, @var{identifier}, @var{path_reports}, @var{filename}, @var{title_string}, @var{x_axis_label}, @var{y_axis_label}, @var{xlabels}, @var{ylabels}, @var{sum_flag})
+%# @deftypefn {Function File} {@var{retcode} =} plot_heatmap (@var{input_heatmap}, @var{identifier}, @var{path_reports}, @var{filename}, @var{title_string}, @var{x_axis_label}, @var{y_axis_label}, @var{xlabels}, @var{ylabels}, @var{sum_flag})
 %# Generic heatmap plot for any given n x n matrix. set sum_flag to true if you want to append rows and column with respective sums.
 %#
 %# @seealso{}

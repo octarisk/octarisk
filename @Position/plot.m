@@ -398,7 +398,21 @@ elseif (strcmpi(type,'ir_sensitivity'))
 	  fprintf('plot: Plotting IR sensitivity for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 	  repstruct = plot_sensitivities(obj,repstruct,path_reports);	
   end
-					
+
+% --------------    MVBS plotting   -----------------------------
+elseif (strcmpi(type,'mvbs_plotting'))    
+  if ( strcmpi(scen_set,'base'))
+	  fprintf('plot: Plotting MVBS balance sheet for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+	  
+	  assets_labels		= repstruct.mvbs_assets;
+	  assets_exp 		= repstruct.mvbs_asset_exposure;
+	  liabs_labels		= repstruct.mvbs_liabilities;
+	  liabs_exp 		= repstruct.mvbs_liab_exposure;
+	  
+	  title_string = 'Market Value Balance Sheet';
+	  retcode = plot_balancesheet(obj.id,path_reports,title_string,assets_exp,assets_labels,liabs_exp,liabs_labels);
+	  
+  end					
 
 % -------------    Stress test plotting    ----------------------------- 
 elseif (strcmpi(type,'stress'))
