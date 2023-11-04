@@ -56,15 +56,15 @@ end
     A_scaled_diff = A_scaled - M;
     %max(abs(A_scaled_diff));
     Max_diff = max(max(abs(A_scaled_diff)));
-    %StdDev_diff = std(std(A_scaled_diff));
+    StdDev_diff = std(std(A_scaled_diff));
     Frobenius_Norm = norm(A_scaled_diff,'fro');
     %Max_Singular_Value_Norm = norm(A_scaled_diff);
-%fprintf('Test statistics: \n');    
-%fprintf('Standard deviation of delta:  %1.4f \n', StdDev_diff);
-fprintf('Maximum correlation deviation: %1.4f \n', Max_diff);    
-fprintf('Frobenius norm: %1.4f \n', Frobenius_Norm);
-%fprintf(' Maximum singular value: %1.4f \n', Max_Singular_Value_Norm);
-%fprintf('Algorithm converged after %d steps.\n', step);
+fprintf('Test statistics: \n');    
+fprintf('   Standard deviation of delta:  %1.4f \n', StdDev_diff);
+fprintf('   Maximum correlation deviation: %1.4f \n', Max_diff);    
+fprintf('   Frobenius norm: %1.4f \n', Frobenius_Norm);
+%fprintf('   Maximum singular value: %1.4f \n', Max_Singular_Value_Norm);
+fprintf('   Algorithm converged after %d steps.\n', step);
 pos_sem_def_bool =testpsd(A_scaled);
 if (pos_sem_def_bool == true)
     fprintf ('Correction successful: Matrix is positive semidefinite.\n')

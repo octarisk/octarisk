@@ -118,6 +118,9 @@ function s = rollout (bond, value_type, arg1, arg2, arg3, arg4)
     ret_values = s.get('cf_values');
     accr_int = 0.0;
     last_coupon_date = 0.0;
+    
+    % any maturity date is sufficient
+    s = s.set('maturity_date',ret_dates(end) + today);
   
   % ----------------------------------------------------------------------------
   % type CMS Floating Leg or FRN Special (capitalized, average, min, max CMS rates)

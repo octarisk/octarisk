@@ -143,6 +143,7 @@ ret_date_last_coupon = para.ret_dates_all_cfs(para.ret_dates_all_cfs<0);
 % A) issue_date.......first_cf_date...valuation_date....2nd_cf_date.....mat_date
 % B) valuation_date...issue_date......first_cf_date.....2nd_cf_date.....mat_date
 % C) issue_date.......valuation_date..first_cf_date.....2nd_cf_date.....mat_date
+% D) valuation_date = mat_date
 
 % adjustment to accrued interest required if calculated
 % from next cashflow (background: next cashflow is adjusted for
@@ -163,7 +164,12 @@ if length(ret_date_last_coupon) > 0                 % CASE A
         dib = 365;
     end    
     days_from_last_coupon = ret_date_last_coupon;
-    days_to_next_coupon = para.ret_dates(1);
+    
+    if (para.valuation_date == para.maturitydatenum)
+		days_to_next_coupon = 0;
+	else	
+		days_to_next_coupon = para.ret_dates(1);
+    end
     adj_factor = dib / (days_from_last_coupon + days_to_next_coupon);
     if ~( para.term == 365)
         adj_factor = adj_factor .* para.term / 12;
@@ -189,7 +195,13 @@ else
     end
 end
 % value of next coupon -> accrued interest is pro-rata share of next coupon
-ret_value_next_coupon = para.ret_interest_values(:,1);
+	if (para.valuation_date == para.maturitydatenum)
+		ret_value_next_coupon = 0;
+	else	
+		ret_value_next_coupon = para.ret_interest_values(:,1);
+    end
+    
+
 
 % scale tf according to term:
 if ~( para.term == 365 || para.term == 0)
@@ -236,7 +248,7 @@ function [para] = get_final_cf_values(para)
     if ( sum(para.ret_values(:,1)) == 0.0)
         pay_dates_num(1,:)=[];
     end
-
+	
     para.ret_dates = pay_dates_num' - para.valuation_date;
 
     if ( columns(para.ret_values) < columns(para.ret_dates))
@@ -248,6 +260,14 @@ function [para] = get_final_cf_values(para)
     para.ret_values = para.ret_values(:,(end-length(para.ret_dates)+1):end);
     para.ret_interest_values = para.cf_interest(:,(end-length(para.ret_dates)+1):end);
     para.ret_principal_values = para.cf_principal(:,(end-length(para.ret_dates)+1):end);
+    
+    if (para.valuation_date == para.maturitydatenum) % spcial case Matdate = Valdate
+		para.ret_dates = 0; 
+		para.ret_interest_values = para.cf_interest(:,(end-length(para.ret_dates)+1):end);
+		para.ret_principal_values = para.cf_principal(:,(end-length(para.ret_dates)+1):end);
+		para.ret_values = para.ret_interest_values + para.ret_principal_values;
+    end
+    
 
 end % end get_final_cf_values
 

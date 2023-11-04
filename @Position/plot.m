@@ -686,7 +686,7 @@ elseif (strcmpi(type,'marketdata'))
 			ylabel('Rates', "fontsize",12);
 		    legend({"Base Scenario Rates","VaR scenarios"},"fontsize",12,"location","southeast");
       end
-      [curve_obj retcode] = get_sub_object(curve_struct,'IR_USD');
+      [curve_obj retcode] = get_sub_object(curve_struct,'EUR_CORP_SO'); % IR_USD
       if retcode == 0
 		 printf('plot: Warning: no curve object found for id  >>%s<<\n',obj.id);	
       else

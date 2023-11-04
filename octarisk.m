@@ -331,7 +331,7 @@ if (run_mc == true)
     %corr_matrix = load(input_filename_corr_matrix); % path to correlation matrix
 
     [corr_matrix riskfactor_cell] = load_correlation_matrix(path_mktdata,input_filename_corr_matrix,path_archive,timestamp,archive_flag);
-    	
+
     %corr_matrix = eye(length(riskfactor_struct));  % for test cases
 
     % b) Get distribution parameters: all four moments and return for marginal distributions are taken directly from riskfactors
@@ -547,6 +547,9 @@ end
 %~ tmp_obj
 %~ tmp_obj.get('rates_stress')'
 
+
+
+
 % ----------------------------------------------------------------------
 % 6. Portfolio Aggregation
 aggr = 0;
@@ -656,7 +659,13 @@ plottime = toc;
 
 
 % ----------------------------------------------------------------------
-% 9. Statistics
+% 9. Export to database:
+%para_object = para_object.set('export_to_redis_db',1);
+export_to_redis(para_object,instrument_struct,index_struct,port_obj_struct);
+
+
+% ----------------------------------------------------------------------
+% 10. Statistics
 totaltime = round((parseinput + scengen + curve_gen_time + fulvia + aggr + plottime + saving_time + reporting_time)*10)/10;
 fprintf('\n');
 fprintf('=== Total Time for Calculation ===\n');
@@ -678,7 +687,7 @@ fprintf('=======================================================\n');
 fprintf('\n');
 
 % ----------------------------------------------------------------------
-% 10. Final clean up
+% 11. Final clean up
 
     %  move all reports files to an TAR in folder archive
     try

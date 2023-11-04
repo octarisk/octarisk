@@ -40,7 +40,6 @@ end
 % default arguments
 fontsize = 14;
 
-input_heatmap
 % extend matrix with Size/Style values to include new row/column with sums
 if sum_flag
 	rows_estab = rows(input_heatmap);
@@ -57,7 +56,6 @@ if sum_flag
 else
 	plotmat = input_heatmap;
 end
-plotmat
 
 % prepare matrix
 
@@ -98,10 +96,9 @@ end
 
 colormap(flipud(confColorMap));
 
-plotmat
 % Create strings from the matrix values and remove spaces
-textStrings = num2str([plotmat(:)], '%.1f%%\n')
-textStrings = strtrim(cellstr(textStrings))
+textStrings = num2str([plotmat(:)], '%.1f%%\n');
+textStrings = strtrim(cellstr(textStrings));
 
 % Create x and y coordinates for the strings and plot them
 [x,y] = meshgrid(1:numlabels);

@@ -317,7 +317,7 @@ elseif (strcmpi(type,'latex'))
 		[pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock,'descend');
 		idx = 1; 
 		% plot Top 25 Positions
-		max_positions = 25;
+		max_positions = 28;
 		for ii = 1:1:min(length(pie_chart_values_pos_shock),max_positions);
 			pie_chart_values_plot_pos_shock(idx)     = pie_chart_values_sorted_pos_shock(ii) ;
 			pie_chart_desc_plot_pos_shock(idx)       = pie_chart_desc_pos_shock(sorted_numbers_pos_shock(ii));
@@ -881,9 +881,10 @@ elseif (strcmpi(type,'latex'))
 			port_duration = port_duration ./ sum(port_duration);
 			obj.rating_values = port_rating;
 			obj.duration_values = port_duration;
-			
-			country_exposure = 100 .* country_exposure ./ sum(country_exposure);
+			repstruct.country_exposure_abs = country_exposure;
+			country_exposure = country_exposure ./ sum(country_exposure);
 			repstruct.country_exposure = country_exposure;
+			repstruct.country_cell = country_cell;
 		% print country exposure to LaTeX table
 			dm_string = '';
 			em_string = '';

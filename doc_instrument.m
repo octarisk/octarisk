@@ -36,6 +36,32 @@ end
 %! b = b.rollout('stress','31-Dec-2015');
 %! b = b.calc_value('31-Dec-2015','stress',c);
 %! assert(b.getValue('stress'),[101.810615897273;101.810615897273;101.810615897273],0.0000001); 
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing 2nd Zero Coupon Bond Bond Object\n');
+%! b = Bond();
+%! b = b.set('Name','Bundesrep.Deutschland Bundesobl.Ser.171 v.2015(20)', 'id','114171','coupon_rate',0.00,'value_base',101.1190,'coupon_generation_method','backward');
+%! b = b.set('maturity_date','31-Dec-2015','notional',100,'compounding_type','disc','issue_date','21-Apr-2015','term',12,'compounding_freq','annual','sub_type','ZCB');
+%! [ret_dates ret_values ret_int ret_principal accr_int last_coupon_date] = rollout_structured_cashflows('31-Dec-2015','base',b);
+%! b = b.rollout('base','31-Dec-2015');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[365,1095,1825],'rates_base',[-0.00519251,-0.00508595,-0.00367762],'method_interpolation','linear');
+%! b = b.calc_value('31-Dec-2015','base',c);
+%! assert(b.getValue('base'),100.0,0.0000001); 
+
+%!test 
+%! fprintf('\tdoc_instrument:\tPricing Cashflow Instrument\n');
+%! b = Bond();
+%! b = b.set('Name','TEST_CF','cf_dates',[365,730,1090],'cf_values',[500,500,1000],'sub_type','CASHFLOW');
+%! c = Curve();
+%! c = c.set('id','IR_EUR','nodes',[1390,3216],'rates_base',[0.056,0.056],'method_interpolation','linear');
+%! b = b.rollout('base','31-Oct-2023');
+%! b = b.calc_value('31-Oct-2023','base',c);
+%! b = b.calc_sensitivities('31-Oct-2023',c);
+%! b = b.calc_key_rates('31-Oct-2023',c);
+%! assert(b.get('mod_duration'), 2.2048,0.0001); 
+%! assert(b.get('value_base'), 1765.794271,0.000001); 
+%! assert(b.get('key_rate_eff_dur'), [0.267742089380071,0.525945945443089,1.41135947519655,0,0,0,0,0,0,0],0.000001); 
                                                                                                                       
 %!test 
 %! fprintf('\tdoc_instrument:\tPricing 1st Fixed Rate Bond Object\n');

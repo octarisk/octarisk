@@ -64,8 +64,11 @@ liabs = -liabs; % for plotting: liabs needs to be positive
 % amend own funds to liabs
 liabs(end+1) = sum(assets) - sum(liabs); %since liabs are positive, we need to subtract liabs from assets to get own funds
 
-liabs_labels(end + 1) = 'Own Funds';
-
+if (liabs(end) < 0)	% negative own funds
+	liabs_labels(end + 1) = 'Negative Own Funds';
+elseif
+	liabs_labels(end + 1) = 'Own Funds';
+end
 
 dummy_assets = zeros(1,numel(assets));
 dummy_liabs = zeros(1,numel(liabs));
@@ -96,7 +99,12 @@ text(xt(1) * ones(1,size(assets,2)), joblblpos(1,:), assets_labels, 'HorizontalA
 % Annotation for Liabs:
 xt = get(gca, 'XTick');
 yd = get(hBarL, 'YData');
-barbase = cumsum([zeros(size(liabs,1),1) liabs(:,1:end-1)],2);
+if (liabs(end) >= 0)
+	barbase = cumsum([zeros(size(liabs,1),1) liabs(:,1:end-1)],2);
+else
+	barbase = cumsum([zeros(size(liabs,1),1) liabs(:,1:end-1)],2);
+	barbase(end) = liabs(end)/16;
+end
 joblblpos = liabs/2 + barbase;
 text(xt(2) * ones(1,size(liabs,2)), joblblpos(1,:), liabs_labels, 'HorizontalAlignment','center');
 
@@ -162,7 +170,6 @@ assets_unique = {
 'Life excluding health and index-linked and unit-linked', 
 'Life index-linked and unit-linked', 
 'Deposits to cedants', 
-'Insurance and intermediaries receivables', 
 'Pension claims from government',
 'Pension claims from insurance companies',
 'Other insurance receivables',

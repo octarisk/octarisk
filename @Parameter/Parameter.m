@@ -43,6 +43,12 @@ classdef Parameter
         input_filename_vola_ir = 'vol_ir_';
         input_filename_surf_stoch = 'surf_stochastic_';
         input_filename_matrix = 'matrix_';
+        
+        % redis database parameter
+        redis_ip = '127.0.0.1'
+        redis_dbnr = 0
+        redis_port = 6379
+        
 
         % Boolean variables
         plotting = 1;
@@ -54,6 +60,7 @@ classdef Parameter
         stable_seed = 1;
         mc_scen_analysis = 0;
         aggregation_flag = 0;
+        export_to_redis_db = 0;
         cvar_flag = 0;
         no_stresstest_plot = 1;
         first_eval = 1;
