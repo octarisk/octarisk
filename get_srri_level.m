@@ -45,3 +45,9 @@ function [srri vola_limit] = get_srri_level(vola,horizon,quantile)
 	end
 
 end
+
+%!test
+%! assert(get_srri_level(0.05,250,normcdf(1)),4,eps);
+%! assert(get_srri_level(0.0049,250,normcdf(1)),1,eps);
+%! assert(get_srri_level(0.005,250,normcdf(1)),2,eps);
+%! assert(get_srri_level(0.14999,250,normcdf(1)),5,eps);

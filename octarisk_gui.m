@@ -24,10 +24,10 @@
 
 % Specify path to parameter.csv (Recommendation for first try: /path/to/octarisk/ and parameter.csv)
 if (isunix)
-    input_path = '/home/schinzilord/Dokumente/Programmierung/octarisk/testing_folder';
+    input_path = '/Users/schinzilord/Documents/Programmierung/octarisk/testing_folder';
     parameter_file = 'parameter.csv';
 else
-    input_path = 'C:/Dokumente/Work/octarisk/testing_folder';
+    input_path = '/Users/schinzilord/Documents/Programmierung/octarisk/testing_folder';
     parameter_file = 'parameter.csv';
 end
 

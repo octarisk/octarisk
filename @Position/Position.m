@@ -64,6 +64,9 @@ classdef Position
 		var99_abs      = 0;
 		var999_abs     = 0;
 		var9999_abs    = 0;
+		srri_pos = 0;	% srri class of position [1...7]
+		sri_pos = 0;	% sri class of position [1...7]
+		vola_pos_pa = 0; % annualized position volatility
 		marg_var = 0; % only relevant for positions
 		incr_var = 0; % only relevant for positions 
         % Tripartite Template attributes:
@@ -490,6 +493,22 @@ classdef Position
              obj.tpt_1 = id;
          end
       end % Set.id  
+      
+      function obj = set.srri_pos(obj,srri_pos)
+		if (sum(srri_pos == [1,2,3,4,5,6,7]) == 1)
+			obj.srri_pos = srri_pos;
+		else
+			fprintf('WARNING: Position: unknown srri class >>%s<< for position %s. SRRI class must be 1...7\n',any2str(srri_pos),obj.id);
+        end
+      end % Set.srri_pos  
+
+	function obj = set.srr_pos(obj,sri_pos)
+		if (sum(sri_pos == [1,2,3,4,5,6,7]) == 1)
+			obj.sri_pos = sri_pos;
+		else
+			fprintf('WARNING: Position: unknown sri class >>%s<< for position %s. SRI class must be 1...7\n',any2str(sri_pos),obj.id);
+        end
+      end % Set.sri_pos  
       
       % name Position sets tpt_17, Portfolio sets tpt_3
       function obj = set.name(obj,name)

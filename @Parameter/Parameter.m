@@ -46,7 +46,7 @@ classdef Parameter
         
         % redis database parameter
         redis_ip = '127.0.0.1'
-        redis_dbnr = 0
+        redis_dbnr = 1
         redis_port = 6379
         
 
@@ -85,7 +85,7 @@ classdef Parameter
         sobol_seed = 1;
         filename_sobol_direction_number = 'new-joe-kuo-6.21201'; % Reference: http://web.maths.unsw.edu.au/~fkuo/sobol/
         path_sobol_direction_number = 'static';
-        shred_type =  {'TOTAL'}; %{'IR','EQ'}; %
+        shred_type =  'TOTAL'; %{'IR','EQ'}; %
         cvar_type = 'base'; %
 
         % WRT amd SII standard model specific variables
@@ -161,12 +161,9 @@ classdef Parameter
       end % Set.type
       
        function obj = set.shred_type(obj,shred_type)
-         for (kk = 1:numel(shred_type))
-            tmp_shred = shred_type{kk};
-             if ~(sum(strcmpi(tmp_shred,{'TOTAL','IR','SPREAD','COM','EQ','VOLA','ALT','RE','FX','INFL'}))>0  )
-                error('Shred type must be either TOTAL, IR, SPREAD, COM, RE, EQ, VOLA, ALT, INFL or FX')
-             end
-         end
+		 if ~(sum(strcmpi(shred_type,{'TOTAL','IR','SPREAD','COM','EQ','VOLA','ALT','RE','FX','INFL'}))>0  )
+			error('Shred type must be either TOTAL, IR, SPREAD, COM, RE, EQ, VOLA, ALT, INFL or FX')
+		 end
          obj.shred_type = shred_type;
       end % Set.shred_type
       

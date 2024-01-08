@@ -613,7 +613,8 @@ if ( para_object.reporting )
 	end
     port_obj
     port_obj_struct(ii).object = port_obj;
-  end	
+  end
+  fprintf('\nSUCCESS: Reporting for all portfolios successful.\n');	
 end
 reporting_time = toc;
 
@@ -643,6 +644,7 @@ if ( para_object.plotting )
                                                 stresstest_struct,curve_struct);
             port_obj = port_obj.plot(para_object,'var',tmp_scen_set);		
             port_obj = port_obj.plot(para_object,'history',tmp_scen_set);	
+            port_obj = port_obj.plot(para_object,'position_srri',tmp_scen_set);	
             port_obj = port_obj.plot(para_object,'liquidity',tmp_scen_set);								
             % port_obj = port_obj.plot(para_object,'lorentz',tmp_scen_set);	 % I do not what to do with Gini coefficient and Lorentz curve							
             port_obj = port_obj.plot(para_object,'riskfactor',tmp_scen_set, ...
@@ -652,7 +654,7 @@ if ( para_object.plotting )
         % currently no shred plot implemented
     end
     port_obj_struct(ii).object = port_obj;	
-    									
+    fprintf('\nSUCCESS: Portfolio plotting successful.\n');										
   end	
 end
 plottime = toc;
@@ -660,8 +662,14 @@ plottime = toc;
 
 % ----------------------------------------------------------------------
 % 9. Export to database:
-%para_object = para_object.set('export_to_redis_db',1);
-export_to_redis(para_object,instrument_struct,index_struct,port_obj_struct);
+if strcmpi(para_object.get('cvar_type'),'base')
+	fprintf('\nExport to redis:\n');	
+	para_object = para_object.set('export_to_redis_db',1);
+	fprintf('=== Export to Redis: Type >>%s<< and shred type >>%s<< ===\n',para_object.get('cvar_type'),para_object.get('shred_type'));
+	export_to_redis(para_object,instrument_struct,index_struct,port_obj_struct);
+	para_object = para_object.set('export_to_redis_db',0);
+end
+
 
 
 % ----------------------------------------------------------------------

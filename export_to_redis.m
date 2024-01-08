@@ -22,18 +22,31 @@
 function ret = export_to_redis(para,instrument_struct,index_struct,port_obj_struct)
 
 export_flag = para.get('export_to_redis_db');
+fprintf('Exporting to redis database.\n');
 
+% determin shred type and cvar_type
+shred_type = para.get('shred_type');
+if (strcmpi(shred_type,'TOTAL') || strcmpi(shred_type,'EQ') || strcmpi(shred_type,'IR'))
+	fprintf('Shred type equals TOTAL, IR or EQ. Export to db.\n');
+	export_flag = 1;
+else
+    fprintf('Shred type not TOTAL, IR or EQ. No export to db.\n');
+	export_flag = 0;
+end
+	
 if (export_flag == 1)
 	ip = para.get('redis_ip');
 	port = para.get('redis_port');
 	dbnr = para.get('redis_dbnr');
-	fprintf('Exporting to database %s.\n',ip);
+	shred = strcat(toupper(para.get('cvar_type')),'_',toupper(shred_type));
+	
+	fprintf('Exporting to database %s for shred type %s.\n',ip,shred);
 	pong = '';
 	try
 		r = redis('hostname', ip,'port', port,'dbnr',dbnr);
 		pong = r.ping;
 	catch
-		fprintf('WARN: Database connection not established to >>%s<< on port >>%s<< with database >>%s<<.\n',any2str(ip),any2str(port),any2str(dbnr));
+		fprintf('WARN: Database connection not established to >>%s<< on port >>%s<< with database >>%s<<. Skipping export.\n',any2str(ip),any2str(port),any2str(dbnr));
 		ret = 0;
 	end
 	if strcmpi(pong,'PONG')
@@ -44,7 +57,7 @@ if (export_flag == 1)
 				if (isobject(obj))
 					JSON_text = jsonencode(obj);
 					fprintf('Exporting instrument >>%s<< to database.\n',obj.id);
-					tmp_id = strcat('INSTR_',obj.id);
+					tmp_id = strcat(shred,'_INSTR_',obj.id);
 					ret = r.set(tmp_id,JSON_text);
 					fprintf('Ret code of operation >>%s<<.\n',ret);
 				end
@@ -54,7 +67,7 @@ if (export_flag == 1)
 				if (isobject(obj))
 					JSON_text = jsonencode(obj);
 					fprintf('Exporting index object >>%s<< to database.\n',obj.id);
-					tmp_id = strcat('INDEX_',obj.id);
+					tmp_id = strcat(shred,'_INDEX_',obj.id);
 					ret = r.set(tmp_id,JSON_text);
 					fprintf('Ret code of operation >>%s<<.\n',ret);
 				end
@@ -65,22 +78,27 @@ if (export_flag == 1)
 				if (isobject(obj))
 					JSON_text = jsonencode(obj);
 					fprintf('Exporting portfolio >>%s<< to database.\n',obj.id);
-					tmp_id = strcat('PORT_',obj.id);
+					tmp_id = strcat(shred,'_PORT_',obj.id);
 					ret = r.set(tmp_id,JSON_text);
 					fprintf('Ret code of operation >>%s<<.\n',ret);
 				end
 			end
+			
+			JSON_text = jsonencode(para);
+			fprintf('Exporting Parameter to database.\n');
+			ret = r.set(strcat(shred,'_PARAMETER'),JSON_text);
+			fprintf('Ret code of operation >>%s<<.\n',ret);
 			
 		catch   
 			fprintf('There was an error: %s\n',lasterr);
 		end
 		ret = 1;
 	else
-		fprintf('WARN: Database connection not established to >>%s<< on port >>%s<< with database >>%s<<.\n',any2str(ip),any2str(port),any2str(dbnr));
+		fprintf('WARN: Database connection not established to >>%s<< on port >>%s<< with database >>%s<<. Skipping export.\n',any2str(ip),any2str(port),any2str(dbnr));
 		ret = 0;
 	end
 else
-	fprintf('Export flag is false. No Exporting to database.\n');
+	fprintf('Export flag is false. No Exporting to redis database.\n');
 	ret = 0;
 end
 

@@ -258,6 +258,18 @@ function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
                 theo_value   = tmp_instr_object.getValue(scen_set) ...
                                         .* tmp_quantity .* tmp_fx_value_shock;
                 theo_value_at = theo_value - (theo_value - obj.getValue('base')) .* obj.tax_rate;
+                
+                % calculate position vola and SRRI (incl. FX risk)
+                obj.vola_pos_pa =   std((theo_value_at - obj.getValue('base')) / obj.getValue('base')) * sqrt(250/para.mc_timestep_days);
+                obj.srri_pos 	= get_srri_level(obj.vola_pos_pa,250,normcdf(1)); 
+                obj.sri_pos 	= get_sri_level(obj.getValue('base'),theo_value_at,para.mc_timestep_days); 
+                        
+                %~ disp("####################################################")
+                %~ obj.id
+                %~ tmp_vola = std(theo_value_at - obj.getValue('base'))
+                %~ tmp_vola_pa = obj.vola_pos_pa
+                %~ tmp_srri = obj.srri_pos             
+                %~ tmp_sri = obj.sri_pos             
             end
             
             % Fill cash flow values
@@ -593,6 +605,16 @@ dict = struct(   ...
                 'UNRATED', 9 ...
             );
 cqs = getfield(dict,upper(rating));
+
+end
+
+% ------------------------------------------------------------------------------
+function vola_pa = calc_vola_annualized(value_base,value_mc,mc_timestep_days)
+
+	no_scen = rows(value_mc);
+	pnl_abs_sorted = sort(value_mc - value_base);
+	vola    = -pnl_abs_sorted(ceil((1-normcdf(1))*no_scen)) / value_base;	
+	vola_pa = vola * sqrt(250/mc_timestep_days);
 
 end
 

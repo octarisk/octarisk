@@ -76,6 +76,8 @@ elseif (strcmpi(type,'latex'))
 					para_object.folder_output,'/',para_object.folder_output_reports);
 	  
 	  % get asset and liability base values
+	  srri_actual = get_srri_level(abs(obj.varhd_rel),tmp_ts,para_object.quantile);
+	  % sri_actual  = get_sri_level(obj.get('value_base'),obj.get('value_mc'),para_object.mc_timestep_days); % unused, gives less conservative classification
 	  port_basevalue_assets = 0.0;
 	  port_basevalue_liabs = 0.0;
 	  port_basevalue_dtl = 0.0;
@@ -336,9 +338,9 @@ elseif (strcmpi(type,'latex'))
 		latex_table_decomp = strcat(path_reports,'/table_port_',obj.id,'_decomp_id.tex');
 		fiid = fopen (latex_table_decomp, 'w');
 		fprintf(fiid, '\\center\n');
-		fprintf(fiid, '\\begin{tabular}{l|r|r|r|r}\n');
-		fprintf(fiid, 'Position ID \& Basevalue \& Standalone VaR \& Decomp VaR \& Pct.\\\\\\hline\\hline\n');
-		fprintf(fiid, 'Portfolio \& %9.0f %s \& %9.0f  %s\& %9.0f %s \& %3.1f\\%%\\\\\\hline\n',obj.getValue('base'),obj.currency,obj.varhd_abs,obj.currency,obj.varhd_abs,obj.currency,100);
+		fprintf(fiid, '\\begin{tabular}{l|r|r|r|r|r}\n');
+		fprintf(fiid, 'Position ID \& Basevalue \& Standalone VaR \& Decomp VaR \& Pct. \& SRRI \\\\\\hline\\hline\n');
+		fprintf(fiid, 'Portfolio \& %9.0f %s \& %9.0f  %s\& %9.0f %s \& %3.1f\\%% \&  %s \\\\\\hline\n',obj.getValue('base'),obj.currency,obj.varhd_abs,obj.currency,obj.varhd_abs,obj.currency,100,any2str(srri_actual));
 		for kk=1:1:length(pie_chart_desc_plot_pos_shock)
 			pos_id = pie_chart_desc_plot_pos_shock{kk};
 			[pos_obj retcode] = get_sub_object(obj.positions,pos_id);
@@ -346,10 +348,10 @@ elseif (strcmpi(type,'latex'))
 				tmp_id = strrep(pos_obj.id,"_","");
 				other_var = other_var - pos_obj.decomp_varhd;
 				other_value = other_value - pos_obj.getValue('base');
-				fprintf(fiid, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\& %3.1f\\%%\\\\\n',tmp_id,pos_obj.getValue('base'),pos_obj.currency,pos_obj.varhd_abs,obj.currency,pos_obj.decomp_varhd,obj.currency,100*pos_obj.decomp_varhd/obj.varhd_abs);
+				fprintf(fiid, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\& %3.1f\\%% \& %s\\\\\n',tmp_id,pos_obj.getValue('base'),pos_obj.currency,pos_obj.varhd_abs,obj.currency,pos_obj.decomp_varhd,obj.currency,100*pos_obj.decomp_varhd/obj.varhd_abs,any2str(pos_obj.srri_pos));
 			end
 		end
-		fprintf(fiid, '%s \& %9.0f %s \& %s \& %9.0f %s\& %3.1f\\%%\\\\\n','Other',other_value,obj.currency,'--',other_var,obj.currency,100*other_var/obj.varhd_abs);
+		fprintf(fiid, '%s \& %9.0f %s \& %s \& %9.0f %s\& %3.1f\\%% \& -- \\\\\n','Other',other_value,obj.currency,'--',other_var,obj.currency,100*other_var/obj.varhd_abs);
 		fprintf(fiid, '\\end{tabular}\n');
 		fclose (fiid);
 		
@@ -783,7 +785,7 @@ elseif (strcmpi(type,'latex'))
                         HHI_custund *  sum(custodian_bank_underlyings_exposure) + ... 
                         HHI_coo *  sum(country_of_origin_exposure)) / HHI_total_sum;
 			end
-			% plot pie charts
+			% get ESG  score for portfolio (weighted sum of position ESG scores)
 			if ( abs(esg_basevalue) > 0)
 				esg_score = esg_score / esg_basevalue;
 				esg_rating = get_esg_rating(esg_score);
@@ -793,6 +795,7 @@ elseif (strcmpi(type,'latex'))
 			end
 			repstruct.esg_score = esg_score;
 			repstruct.esg_rating = esg_rating;
+
 		% calculate portfolio effective duration / convexity
 		    port_eff_duration = 0;          
             port_eff_convexity = 0;          
@@ -974,7 +977,10 @@ elseif (strcmpi(type,'latex'))
 			fprintf(fice, '\\tikzset{set state val/.style args={#1/#2}{#1={fill=octariskgreen!#2}}};\n');
 			fprintf(fice, '\\tikzset{set state val/.list={%s}};\n',em_string);
 			fprintf(fice, '\\definecolor{customgrey}{RGB}{204, 204, 204}\n');
-			fprintf(fice, '\\node[draw,align=left] at (13.5,-8.78) {\\textcolor{octariskblue}{$\\blacksquare$} Developed Markets %2.0f\\%%  \\textcolor{octariskgreen}{$\\blacksquare$} Emerging Markets %2.0f\\%%  \\textcolor{customgrey}{$\\blacksquare$} Other %2.0f\\%%};\n',dm_exp,em_exp,other_exp);
+			fprintf(fice, '\\node[draw,align=left] at (13.5,-8.78) {\\textcolor{octariskblue}{$\\blacksquare$} Developed Markets %2.0f\\%%  \\textcolor{octariskgreen}{$\\blacksquare$} Emerging Markets %2.0f\\%%  \\textcolor{customgrey}{$\\blacksquare$} Other %2.0f\\%%};\n',100*dm_exp,100*em_exp,100*other_exp);
+			
+			dm_exp
+			em_exp
 			
 			% Plot legends for DM and EM
 			[dm_exp_sorted sort_numbers] = sort(dm_exposure_vec,'descend');
@@ -995,9 +1001,9 @@ elseif (strcmpi(type,'latex'))
 				readiness_score = get_readinessscore(dm_exposure_cell{kk});
 				readiness_class = get_readinessclass(readiness_score);
 				if (kk==1)
-					fprintf(fice, 'Exposure \\& Risk \\\\ \\textcolor{orbluecustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,dm_exposure_cell{kk},dm_exp_sorted(kk),readiness_class);
+					fprintf(fice, 'Exposure \\& Risk \\\\ \\textcolor{orbluecustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,dm_exposure_cell{kk},100*dm_exp_sorted(kk),readiness_class);
 				else
-					fprintf(fice, '\\\\ \\textcolor{orbluecustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,dm_exposure_cell{kk},dm_exp_sorted(kk),readiness_class);
+					fprintf(fice, '\\\\ \\textcolor{orbluecustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,dm_exposure_cell{kk},100*dm_exp_sorted(kk),readiness_class);
 				end
 			end
 			fprintf(fice, '};\n');
@@ -1019,14 +1025,15 @@ elseif (strcmpi(type,'latex'))
 				inform_score = get_informscore(em_exposure_cell{kk});
 				inform_class = get_informclass(inform_score);
 				if (kk==1)
-					fprintf(fice, 'Exposure \\& Risk \\\\ \\textcolor{orgreencustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,em_exposure_cell{kk},em_exp_sorted(kk),inform_class);
+					fprintf(fice, 'Exposure \\& Risk \\\\ \\textcolor{orgreencustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,em_exposure_cell{kk},100*em_exp_sorted(kk),inform_class);
 				else
-					fprintf(fice, '\\\\ \\textcolor{orgreencustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,em_exposure_cell{kk},em_exp_sorted(kk),inform_class);
+					fprintf(fice, '\\\\ \\textcolor{orgreencustom%d}{$\\blacksquare$} %s %2.0f\\%% %s',kk,em_exposure_cell{kk},100*em_exp_sorted(kk),inform_class);
 				end
 			end
 			fprintf(fice, '};\n');
 			fprintf(fice, '\\WORLD[every state={draw=white, thick, fill=black!20}]\n');
 			fclose (fice);
+			
 			
 			% print rating / duration table
 			ratingtable = 100 .* port_rating;
@@ -1116,27 +1123,26 @@ elseif (strcmpi(type,'latex'))
 			ctry = country_cell{jj};
 			if ~(strcmpi(ctry,'Other'))
 				ctry_readiness_risk = get_readinessscore(ctry);
-				exposure = abs(country_exposure(jj)) / 100;
+				exposure = abs(country_exposure(jj));
 				readiness_score = readiness_score + exposure * ctry_readiness_risk;
 			else
-				exp_other = abs(country_exposure(jj)) / 100;
+				exp_other = abs(country_exposure(jj));
 			end
 		end
 		readiness_score = readiness_score / (1 - exp_other);
 		readiness_class = get_readinessclass(readiness_score);
 		repstruct.readiness_score = readiness_score;
 		repstruct.readiness_class = readiness_class;
-		
 		% get portfolio INFORM risk score and class
 		inform_score = 0;
 		for jj=1:1:numel(country_cell)
 			ctry = country_cell{jj};
 			if ~(strcmpi(ctry,'Other'))
 				ctry_inform_risk = get_informscore(ctry);
-				exposure = abs(country_exposure(jj)) / 100;
+				exposure = abs(country_exposure(jj));
 				inform_score = inform_score + exposure * ctry_inform_risk;
 			else
-				exp_other = abs(country_exposure(jj)) / 100;
+				exp_other = abs(country_exposure(jj));
 			end
 		end
 		inform_score = inform_score / (1 - exp_other);

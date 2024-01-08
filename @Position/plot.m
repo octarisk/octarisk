@@ -484,7 +484,15 @@ elseif (strcmpi(type,'concentration'))
       fprintf('plot: Plotting concentration risk results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);						
 	  repstruct = plot_HHI_piecharts(repstruct,path_reports,obj);						
   end
-  
+
+% -------------    Position SRRI plotting    ----------------------------- 
+elseif (strcmpi(type,'position_srri'))
+  if ~( strcmpi(scen_set,'base'))
+      fprintf('plot: Plotting SRRI exposure for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);						
+	  retcode = plot_position_srri(path_reports,obj);						
+  end
+
+
  
 % -------------    Equity Style Box plotting    ----------------------------- 
 elseif (strcmpi(type,'equitystylebox'))
