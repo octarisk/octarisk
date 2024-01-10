@@ -20,14 +20,14 @@ function [sri VEV] = get_sri_level(value_base,value_mc,mc_timestep_days)
 % SRI is based on P&L 250day --> scale 2.5percentile to 250d holding period
 % calculate equivalent volatility based on relatice 97.5% VaR @250d
 
-	no_scen = rows(value_mc)
+	no_scen = rows(value_mc);
 	pnl_abs_sorted = sort(value_mc - value_base);
 	var_975_rel    = -pnl_abs_sorted(ceil(0.025*no_scen)) / value_base;
 	var_975_rel_pa = var_975_rel * sqrt(250/mc_timestep_days);
 	
-	VaR_ret_space = -var_975_rel_pa
+	VaR_ret_space = -var_975_rel_pa;
 	
-	VEV = (sqrt(3.842 - 2*VaR_ret_space) - 1.96) % / sqrt(1) already annualized
+	VEV = (sqrt(3.842 - 2*VaR_ret_space) - 1.96); % / sqrt(1) already annualized
 
 	% calculate SRI class:
 	sri = 1;

@@ -1,0 +1,330 @@
+# Created by Octave 8.2.0, Wed Jan 10 10:32:10 2024 CET <schinzilord@MacbookPro.fritz.box>
+# name: hashtable
+# type: scalar struct
+# ndims: 2
+ 1 1
+# length: 46
+# name: FUND_AAA_entity_relationship.dot
+# type: sq_string
+# elements: 1
+# length: 32
+eac1de06968137a38a9ebf9c9f322b77
+
+
+# name: FUND_AAA_key_figures.tex
+# type: sq_string
+# elements: 1
+# length: 32
+efb8f5806e2944c9729edc16808c4407
+
+
+# name: FUND_AAA_key_figures_simple.tex
+# type: sq_string
+# elements: 1
+# length: 32
+487c063f6bde895cef6e4ed1492df4e5
+
+
+# name: FUND_AAA_mvbs.tex
+# type: sq_string
+# elements: 1
+# length: 32
+cffaa985bed079ac81da9a67ee26e8e9
+
+
+# name: FUND_AAA_qrt.csv
+# type: sq_string
+# elements: 1
+# length: 32
+26c0e8b6e97390e00453f307400b3266
+
+
+# name: FUND_AAA_recon.csv
+# type: sq_string
+# elements: 1
+# length: 32
+36f3f2c4cd4eec97e2b151758e0bbbf4
+
+
+# name: FUND_AAA_world_map_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+e42ced27bfc378d5ff4bc2795b344fd4
+
+
+# name: FUND_BBB_entity_relationship.dot
+# type: sq_string
+# elements: 1
+# length: 32
+eac1de06968137a38a9ebf9c9f322b77
+
+
+# name: FUND_BBB_key_figures.tex
+# type: sq_string
+# elements: 1
+# length: 32
+55e9da704ffd6725826273c2b849d8a8
+
+
+# name: FUND_BBB_key_figures_simple.tex
+# type: sq_string
+# elements: 1
+# length: 32
+ae355afc70574458caf374593984ecec
+
+
+# name: FUND_BBB_mvbs.tex
+# type: sq_string
+# elements: 1
+# length: 32
+cffaa985bed079ac81da9a67ee26e8e9
+
+
+# name: FUND_BBB_qrt.csv
+# type: sq_string
+# elements: 1
+# length: 32
+563c3bb4b52d1713b456d41ad2d1caa8
+
+
+# name: FUND_BBB_recon.csv
+# type: sq_string
+# elements: 1
+# length: 32
+36f3f2c4cd4eec97e2b151758e0bbbf4
+
+
+# name: FUND_BBB_world_map_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+e42ced27bfc378d5ff4bc2795b344fd4
+
+
+# name: table_port_FUND_AAA_aa.tex
+# type: sq_string
+# elements: 1
+# length: 32
+dc8d8e2514c4e762c6024c15302bcdeb
+
+
+# name: table_port_FUND_AAA_comments.tex
+# type: sq_string
+# elements: 1
+# length: 32
+bc46a893f72f428b34b9c400a8e285ef
+
+
+# name: table_port_FUND_AAA_decomp.tex
+# type: sq_string
+# elements: 1
+# length: 32
+9bf5c7e553bdab23b8cc62c25dbb4a71
+
+
+# name: table_port_FUND_AAA_decomp_id.tex
+# type: sq_string
+# elements: 1
+# length: 32
+388758ba476436f7276ed7f2e97a1eaa
+
+
+# name: table_port_FUND_AAA_kpi.tex
+# type: sq_string
+# elements: 1
+# length: 32
+1199a058b4e7b1af121bf87257f7fe2c
+
+
+# name: table_port_FUND_AAA_var.tex
+# type: sq_string
+# elements: 1
+# length: 32
+ebda3390b26148d5955f322e4c3ba02b
+
+
+# name: table_port_FUND_AAA_var_tax.tex
+# type: sq_string
+# elements: 1
+# length: 32
+63a27ab78a2ba4dcc85d294178f7fb2f
+
+
+# name: table_port_FUND_AAA_ytm.tex
+# type: sq_string
+# elements: 1
+# length: 32
+75686f76f3152e29c9b7a58da4d22211
+
+
+# name: table_port_FUND_BBB_aa.tex
+# type: sq_string
+# elements: 1
+# length: 32
+99b94e7f486fd623d34693c840cb83d6
+
+
+# name: table_port_FUND_BBB_comments.tex
+# type: sq_string
+# elements: 1
+# length: 32
+bc46a893f72f428b34b9c400a8e285ef
+
+
+# name: table_port_FUND_BBB_decomp.tex
+# type: sq_string
+# elements: 1
+# length: 32
+547cc03dac281f133ff248d6625f8c3d
+
+
+# name: table_port_FUND_BBB_decomp_id.tex
+# type: sq_string
+# elements: 1
+# length: 32
+89f758a566301a20a5e068ae4b4a7aa6
+
+
+# name: table_port_FUND_BBB_kpi.tex
+# type: sq_string
+# elements: 1
+# length: 32
+339248488e9c39f9145f4616dbf7eef8
+
+
+# name: table_port_FUND_BBB_var.tex
+# type: sq_string
+# elements: 1
+# length: 32
+5f4a8a534f1b2d3b6bc53e2fb89116e2
+
+
+# name: table_port_FUND_BBB_var_tax.tex
+# type: sq_string
+# elements: 1
+# length: 32
+9a4c009a03a20d0c7083527b1babf3fa
+
+
+# name: table_port_FUND_BBB_ytm.tex
+# type: sq_string
+# elements: 1
+# length: 32
+91a9a9f0912573988867a71df4c3449d
+
+
+# name: table_pos_FUND_AAA_counterparty_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+0d9bcf1f23f3454a1cab2cc7c58f1bc0
+
+
+# name: table_pos_FUND_AAA_custodian_bank_underlying_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+21c6c6eba1a4c2331938d6d86fbc8973
+
+
+# name: table_pos_FUND_AAA_custodian_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+65cd17e60e510d9462c12d0d3b321d82
+
+
+# name: table_pos_FUND_AAA_equity_region.tex
+# type: sq_string
+# elements: 1
+# length: 32
+4f14f22d40ff00ff95adf07d73feb817
+
+
+# name: table_pos_FUND_AAA_equity_style.tex
+# type: sq_string
+# elements: 1
+# length: 32
+bb2d3d41b7c5bd1c9e463c3297e2c271
+
+
+# name: table_pos_FUND_AAA_fi_style.tex
+# type: sq_string
+# elements: 1
+# length: 32
+1f8da0868028d92f817182dec772eade
+
+
+# name: table_pos_FUND_AAA_incr_var.tex
+# type: sq_string
+# elements: 1
+# length: 32
+f15f25c48d05f1a4d92086ab82cf4338
+
+
+# name: table_pos_FUND_AAA_issuer_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+dd55f096b12574f7325fae88278231d1
+
+
+# name: table_pos_FUND_BBB_counterparty_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+0d9bcf1f23f3454a1cab2cc7c58f1bc0
+
+
+# name: table_pos_FUND_BBB_custodian_bank_underlying_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+21c6c6eba1a4c2331938d6d86fbc8973
+
+
+# name: table_pos_FUND_BBB_custodian_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+65cd17e60e510d9462c12d0d3b321d82
+
+
+# name: table_pos_FUND_BBB_equity_region.tex
+# type: sq_string
+# elements: 1
+# length: 32
+4f14f22d40ff00ff95adf07d73feb817
+
+
+# name: table_pos_FUND_BBB_equity_style.tex
+# type: sq_string
+# elements: 1
+# length: 32
+bb2d3d41b7c5bd1c9e463c3297e2c271
+
+
+# name: table_pos_FUND_BBB_fi_style.tex
+# type: sq_string
+# elements: 1
+# length: 32
+9d192079a1b1e31a694d16cd23613d5d
+
+
+# name: table_pos_FUND_BBB_incr_var.tex
+# type: sq_string
+# elements: 1
+# length: 32
+85cd4e150f7d9a14050b72f8920194bd
+
+
+# name: table_pos_FUND_BBB_issuer_exposure.tex
+# type: sq_string
+# elements: 1
+# length: 32
+dd55f096b12574f7325fae88278231d1
+
+
+
+

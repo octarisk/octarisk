@@ -93,8 +93,17 @@ end
         M(end + 1,1) = 0;
         M(end,2) = 2;
     end
+
+% 5) Run comparison of octarisk reports:
+	fprintf('\nCompare generated reports:\n');
+	[tmp_success_tests,tmp_total_tests] = test_report_files(path_folder);
+	tests_total = tests_total + tmp_success_tests + tmp_total_tests;
+	tests_fail = tests_fail + tmp_total_tests - tmp_success_tests;
+	function_cell(end + 1) = 'test_report_files';
+	M(end + 1,1) = tmp_success_tests;
+    M(end,2) = tmp_total_tests - tmp_success_tests;
     
-% 5) Print statistics
+% 6) Print statistics
 fprintf('\nVisualization:\n');
 for ii = 1 : 1 : rows(M)
     success_string = '';
@@ -112,5 +121,10 @@ fprintf('\nSummary:\n');
 fprintf('\tFUNCTIONS\t%d \n',length(function_cell));
 fprintf('\tPASS\t\t%d \n',tests_total - tests_fail);
 fprintf('\tFAIL\t\t%d \n',tests_fail);
+if tests_fail > 0
+	fprintf('\n');
+	fprintf('##############   ACTION REQUIRED: failed tests detected ##############');
+	fprintf('\n');
+end
 chdir(old_dir);
 end
