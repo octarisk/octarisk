@@ -1,14 +1,77 @@
-# Created by Octave 8.2.0, Wed Jan 10 10:32:10 2024 CET <schinzilord@MacbookPro.fritz.box>
+# Created by Octave 8.2.0, Thu Jan 11 15:35:44 2024 CET <schinzilord@MacbookPro.fritz.box>
 # name: hashtable
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 46
+# length: 80
+# name: FUND_AAA_SRRI_classes_chart.png
+# type: sq_string
+# elements: 1
+# length: 32
+89ab1b4c538907b81e0e27ab7e8bfa83
+
+
+# name: FUND_AAA_SRRI_classes_scale_simple.png
+# type: sq_string
+# elements: 1
+# length: 32
+7b4160d1f8b8a81ec980289a3ca6b282
+
+
+# name: FUND_AAA_SRRI_pos_bars.png
+# type: sq_string
+# elements: 1
+# length: 32
+81a5f8a3f34c2c99b14d35f7ed147597
+
+
+# name: FUND_AAA_aa_pie_charts.png
+# type: sq_string
+# elements: 1
+# length: 32
+b861d04e7fbcc120944d07dba0b7368e
+
+
+# name: FUND_AAA_cf_plot.png
+# type: sq_string
+# elements: 1
+# length: 32
+ac76fac561dbdd5de0ae146fb49b364a
+
+
+# name: FUND_AAA_cf_plot_mc.png
+# type: sq_string
+# elements: 1
+# length: 32
+7959f83ef8cb20517ea38d8b2f92e2fb
+
+
+# name: FUND_AAA_concentration_pie_charts.png
+# type: sq_string
+# elements: 1
+# length: 32
+6d5435293d1aead216603cd78cfff7d8
+
+
 # name: FUND_AAA_entity_relationship.dot
 # type: sq_string
 # elements: 1
 # length: 32
 eac1de06968137a38a9ebf9c9f322b77
+
+
+# name: FUND_AAA_equity_stylebox.png
+# type: sq_string
+# elements: 1
+# length: 32
+4ac776c7c8fd54e146a81bea7ffc31a6
+
+
+# name: FUND_AAA_ir_sensitivity_chart.png
+# type: sq_string
+# elements: 1
+# length: 32
+7570e88c70a6a2152414358f5b43e65a
 
 
 # name: FUND_AAA_key_figures.tex
@@ -25,6 +88,20 @@ efb8f5806e2944c9729edc16808c4407
 487c063f6bde895cef6e4ed1492df4e5
 
 
+# name: FUND_AAA_liquidity_classes.png
+# type: sq_string
+# elements: 1
+# length: 32
+26dee97568c1e702c45fa117220225ec
+
+
+# name: FUND_AAA_mktdata_curves.png
+# type: sq_string
+# elements: 1
+# length: 32
+ae85d97c7e90a075b9d6db6b9cd2f0bf
+
+
 # name: FUND_AAA_mvbs.tex
 # type: sq_string
 # elements: 1
@@ -32,18 +109,60 @@ efb8f5806e2944c9729edc16808c4407
 cffaa985bed079ac81da9a67ee26e8e9
 
 
-# name: FUND_AAA_qrt.csv
+# name: FUND_AAA_rf_plot.png
 # type: sq_string
 # elements: 1
 # length: 32
-26c0e8b6e97390e00453f307400b3266
+52c0f5cc5367bfc5007c8aa43fd29370
 
 
-# name: FUND_AAA_recon.csv
+# name: FUND_AAA_rf_plot_tail.png
 # type: sq_string
 # elements: 1
 # length: 32
-36f3f2c4cd4eec97e2b151758e0bbbf4
+4f350d682cf14b4955a1ab191cb50ba3
+
+
+# name: FUND_AAA_rf_quantile_plot.png
+# type: sq_string
+# elements: 1
+# length: 32
+e9bcd860ccdbb692a6c1d3b50d7d3aef
+
+
+# name: FUND_AAA_rf_quantile_plot_tail.png
+# type: sq_string
+# elements: 1
+# length: 32
+e9bcd860ccdbb692a6c1d3b50d7d3aef
+
+
+# name: FUND_AAA_risk_scale.png
+# type: sq_string
+# elements: 1
+# length: 32
+fe14bfa8da4b1663a5d50c8a5e101d37
+
+
+# name: FUND_AAA_stress_plot.png
+# type: sq_string
+# elements: 1
+# length: 32
+8da9db1fea83763f6e80b4441cbafdfd
+
+
+# name: FUND_AAA_var_plot.png
+# type: sq_string
+# elements: 1
+# length: 32
+e82339dc9e8512d2ce2b1eba42d067e8
+
+
+# name: FUND_AAA_var_pos_instr.png
+# type: sq_string
+# elements: 1
+# length: 32
+d11bed22bab5c5b17803d12b7a55a9c7
 
 
 # name: FUND_AAA_world_map_exposure.tex
@@ -53,11 +172,74 @@ cffaa985bed079ac81da9a67ee26e8e9
 e42ced27bfc378d5ff4bc2795b344fd4
 
 
+# name: FUND_BBB_SRRI_classes_chart.png
+# type: sq_string
+# elements: 1
+# length: 32
+92cf807811da6837ac95c5b450354249
+
+
+# name: FUND_BBB_SRRI_classes_scale_simple.png
+# type: sq_string
+# elements: 1
+# length: 32
+dcf07307f2e215d5137c6932f130918d
+
+
+# name: FUND_BBB_SRRI_pos_bars.png
+# type: sq_string
+# elements: 1
+# length: 32
+6c61014c9946915606ea4e43bd1987e9
+
+
+# name: FUND_BBB_aa_pie_charts.png
+# type: sq_string
+# elements: 1
+# length: 32
+68c9ce7d2a8b112bdb75366e0af861aa
+
+
+# name: FUND_BBB_cf_plot.png
+# type: sq_string
+# elements: 1
+# length: 32
+6525f278bcaaa3189a4c3691717d4b27
+
+
+# name: FUND_BBB_cf_plot_mc.png
+# type: sq_string
+# elements: 1
+# length: 32
+a1302743835bae81a47685ecd0cfc214
+
+
+# name: FUND_BBB_concentration_pie_charts.png
+# type: sq_string
+# elements: 1
+# length: 32
+6d5435293d1aead216603cd78cfff7d8
+
+
 # name: FUND_BBB_entity_relationship.dot
 # type: sq_string
 # elements: 1
 # length: 32
 eac1de06968137a38a9ebf9c9f322b77
+
+
+# name: FUND_BBB_equity_stylebox.png
+# type: sq_string
+# elements: 1
+# length: 32
+4ac776c7c8fd54e146a81bea7ffc31a6
+
+
+# name: FUND_BBB_ir_sensitivity_chart.png
+# type: sq_string
+# elements: 1
+# length: 32
+c5ef601daa249ba43a7cb658ce213aac
 
 
 # name: FUND_BBB_key_figures.tex
@@ -74,6 +256,20 @@ eac1de06968137a38a9ebf9c9f322b77
 ae355afc70574458caf374593984ecec
 
 
+# name: FUND_BBB_liquidity_classes.png
+# type: sq_string
+# elements: 1
+# length: 32
+26dee97568c1e702c45fa117220225ec
+
+
+# name: FUND_BBB_mktdata_curves.png
+# type: sq_string
+# elements: 1
+# length: 32
+0217ba87c805320ccd0936d6d958baec
+
+
 # name: FUND_BBB_mvbs.tex
 # type: sq_string
 # elements: 1
@@ -81,18 +277,60 @@ ae355afc70574458caf374593984ecec
 cffaa985bed079ac81da9a67ee26e8e9
 
 
-# name: FUND_BBB_qrt.csv
+# name: FUND_BBB_rf_plot.png
 # type: sq_string
 # elements: 1
 # length: 32
-563c3bb4b52d1713b456d41ad2d1caa8
+133b7ce8e7466869d96d1d06938a8cd8
 
 
-# name: FUND_BBB_recon.csv
+# name: FUND_BBB_rf_plot_tail.png
 # type: sq_string
 # elements: 1
 # length: 32
-36f3f2c4cd4eec97e2b151758e0bbbf4
+56c4295b378506b37b8a052531cefabd
+
+
+# name: FUND_BBB_rf_quantile_plot.png
+# type: sq_string
+# elements: 1
+# length: 32
+e9bcd860ccdbb692a6c1d3b50d7d3aef
+
+
+# name: FUND_BBB_rf_quantile_plot_tail.png
+# type: sq_string
+# elements: 1
+# length: 32
+e9bcd860ccdbb692a6c1d3b50d7d3aef
+
+
+# name: FUND_BBB_risk_scale.png
+# type: sq_string
+# elements: 1
+# length: 32
+041599f4519e510d6ad0ef7535a44f6e
+
+
+# name: FUND_BBB_stress_plot.png
+# type: sq_string
+# elements: 1
+# length: 32
+edc3dbb8f934adada17f1b96968f2570
+
+
+# name: FUND_BBB_var_plot.png
+# type: sq_string
+# elements: 1
+# length: 32
+bf6d110e3d4f098d4b58efc85dd5861e
+
+
+# name: FUND_BBB_var_pos_instr.png
+# type: sq_string
+# elements: 1
+# length: 32
+56560e3e691623adc05d665fa6ee7eac
 
 
 # name: FUND_BBB_world_map_exposure.tex

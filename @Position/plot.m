@@ -326,7 +326,9 @@ elseif (strcmpi(type,'riskfactor'))
 		xlabel('Quantile','fontsize',14);
 		ylabel('Risk Factor Shock (in Pct.)','fontsize',14);
 		%title('Risk Factor tail dependency','fontsize',14);
-		legend(cellstr(id_cell)(2:end),'fontsize',12,'location','southeast');
+		if length(id_cell) > 0
+			legend(cellstr(id_cell)(2:end),'fontsize',12,'location','southeast');
+		end
 		grid on;
 		% save plotting
         filename_plot_rf_quantile = strcat(path_reports,'/',obj.id,'_rf_quantile_plot.png');
@@ -356,7 +358,9 @@ elseif (strcmpi(type,'riskfactor'))
 		xlabel('Quantile','fontsize',14);
 		ylabel('Risk Factor Shock (in Pct.)','fontsize',14);
 		%title('Risk Factor tail dependency','fontsize',14);
-		legend(cellstr(id_cell)(2:end),'fontsize',12,'location','southeast');
+		if length(id_cell) > 0
+			legend(cellstr(id_cell)(2:end),'fontsize',12,'location','southeast');
+		end
 		grid on;
 		% save plotting
         filename_plot_rf_quantile_ext = strcat(path_reports,'/',obj.id,'_rf_quantile_plot_tail.png');

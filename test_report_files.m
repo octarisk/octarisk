@@ -41,8 +41,8 @@ else
 				filetype = tmp_file(end-2:end);
 				% generate md5sum 
 				tmp_filepath 	= strcat(path_reports,'/',tmp_file);
-				if strcmpi(filetype,'tex') || strcmpi(filetype,'csv') || strcmpi(filetype,'dot') 
-					tmp_hash 		= hash(hash_algo, fileread(tmp_filepath));
+				if (strcmpi(filetype,'tex') || strcmpi(filetype,'dot') || strcmpi(filetype,'png') || strcmpi(filetype,'dot'))
+					tmp_hash  = hash(hash_algo, fileread(tmp_filepath));
 					hashtable = setfield(hashtable, tmp_file, tmp_hash);
 				end
 			end

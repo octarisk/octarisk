@@ -22,118 +22,123 @@ assets = [];
 assets_labels = {};
 
 
-for kk=1:1:numel(assets_labels_input)
-	tmp_label = assets_labels_input{kk};
-	if (sum(strcmpi(assets_unique,tmp_label)))
-		if (assets_input(kk) != 0.0)
-			assets(end+1) = assets_input(kk);
-			assets_labels(end+1) = tmp_label;
-		end
-	end
-end
-
-
-liabs = [];
-liabs_labels = {};
-
-for kk=1:1:numel(liabs_labels_input)
-	tmp_label = liabs_labels_input{kk};
-	if (sum(strcmpi(liabs_unique,tmp_label)))
-		if (liabs_input(kk) != 0.0)
-			liabs(end+1) = liabs_input(kk);
-			liabs_labels(end+1) = tmp_label;
-		end
-	end
-end
-%%%%%%%%%%%%%%%%
-
-
-colorbrewer_map = [ ...
-222,235,247;
-198,219,239;
-158,202,225;
-107,174,214;
-66,146,198; ...
-] ./255;
-
-% rescacle to kEUR
-assets = assets ./1000;
-liabs = liabs ./1000;
-		
-liabs = -liabs; % for plotting: liabs needs to be positive
-% amend own funds to liabs
-liabs(end+1) = sum(assets) - sum(liabs); %since liabs are positive, we need to subtract liabs from assets to get own funds
-
-if (liabs(end) < 0)	% negative own funds
-	liabs_labels(end + 1) = 'Negative Own Funds';
-elseif
-	liabs_labels(end + 1) = 'Own Funds';
-end
-
-dummy_assets = zeros(1,numel(assets));
-dummy_liabs = zeros(1,numel(liabs));
-
-% plot stacked bar chart
-clf;
-hf1 = figure(1);
-
-hBarA = bar([assets;dummy_assets],"stacked");
-hold on;
-hBarL = bar([dummy_liabs;liabs],"stacked");
-
-xlabel('MVBS');
-ylabel('Amount (in kEUR)');
-title(sprintf(title_string));
-
-labels = ['Assets'; 'Liabilties and Own Funds'];
-set(gca, 'XTickLabel', labels) ;
-
-% Annotation for Assets:
-xt = get(gca, 'XTick');
-yd = get(hBarA, 'YData');
-barbase = cumsum([zeros(size(assets,1),1) assets(:,1:end-1)],2);
-joblblpos = assets/2 + barbase;
-text(xt(1) * ones(1,size(assets,2)), joblblpos(1,:), assets_labels, 'HorizontalAlignment','center');
-
-
-% Annotation for Liabs:
-xt = get(gca, 'XTick');
-yd = get(hBarL, 'YData');
-if (liabs(end) >= 0)
-	barbase = cumsum([zeros(size(liabs,1),1) liabs(:,1:end-1)],2);
+if (sum(liabs_input) == 0 && sum(assets_input) == 0)
+	retcode = 0;
+	fprintf('plot: Plotting MVBS balance sheet for portfolio >>%s<< not possible, no exposure MVBS categories.\n',identifier);	
 else
-	barbase = cumsum([zeros(size(liabs,1),1) liabs(:,1:end-1)],2);
-	barbase(end) = liabs(end)/16;
-end
-joblblpos = liabs/2 + barbase;
-text(xt(2) * ones(1,size(liabs,2)), joblblpos(1,:), liabs_labels, 'HorizontalAlignment','center');
 
-% color coding of bar chart
-for ii = 1:1:numel(hBarA)
-	if ii>rows(colorbrewer_map)
-		kk = mod(ii,rows(colorbrewer_map)) + 1;
-	else
-		kk = ii;
+	for kk=1:1:numel(assets_labels_input)
+		tmp_label = assets_labels_input{kk};
+		if (sum(strcmpi(assets_unique,tmp_label)))
+			if (assets_input(kk) != 0.0)
+				assets(end+1) = assets_input(kk);
+				assets_labels(end+1) = tmp_label;
+			end
+		end
 	end
-	set (hBarA(ii), "facecolor", colorbrewer_map(kk,:));
-end
 
-for ii = 1:1:numel(hBarL)
-	if ii>rows(colorbrewer_map)
-		kk = mod(ii,rows(colorbrewer_map)) + 1;
-	else
-		kk = ii;
+
+	liabs = [];
+	liabs_labels = {};
+
+	for kk=1:1:numel(liabs_labels_input)
+		tmp_label = liabs_labels_input{kk};
+		if (sum(strcmpi(liabs_unique,tmp_label)))
+			if (liabs_input(kk) != 0.0)
+				liabs(end+1) = liabs_input(kk);
+				liabs_labels(end+1) = tmp_label;
+			end
+		end
 	end
-	set (hBarL(ii), "facecolor", colorbrewer_map(kk,:));
-end
-hold off;
-    
-% save plotting
-filename_plot  = strcat(path_reports,'/',identifier,'_mvbs_bars.png');
-print (hf1,filename_plot, "-dpng", "-S700,400");
-filename_plot = strcat(path_reports,'/',identifier,'_mvbs_bars.pdf');
-print (hf1,filename_plot, "-dpdf", "-S700,400");
-	  
+	%%%%%%%%%%%%%%%%
+
+
+	colorbrewer_map = [ ...
+	222,235,247;
+	198,219,239;
+	158,202,225;
+	107,174,214;
+	66,146,198; ...
+	] ./255;
+
+	% rescacle to kEUR
+	assets = assets ./1000;
+	liabs = liabs ./1000;
+			
+	liabs = -liabs; % for plotting: liabs needs to be positive
+	% amend own funds to liabs
+	liabs(end+1) = sum(assets) - sum(liabs); %since liabs are positive, we need to subtract liabs from assets to get own funds
+
+	if (liabs(end) < 0)	% negative own funds
+		liabs_labels(end + 1) = 'Negative Own Funds';
+	elseif
+		liabs_labels(end + 1) = 'Own Funds';
+	end
+
+	dummy_assets = zeros(1,numel(assets));
+	dummy_liabs = zeros(1,numel(liabs));
+
+	% plot stacked bar chart
+	clf;
+	hf1 = figure(1);
+
+	hBarA = bar([assets;dummy_assets],"stacked");
+	hold on;
+	hBarL = bar([dummy_liabs;liabs],"stacked");
+
+	xlabel('MVBS');
+	ylabel('Amount (in kEUR)');
+	title(sprintf(title_string));
+
+	labels = ['Assets'; 'Liabilties and Own Funds'];
+	set(gca, 'XTickLabel', labels) ;
+
+	% Annotation for Assets:
+	xt = get(gca, 'XTick');
+	yd = get(hBarA, 'YData');
+	barbase = cumsum([zeros(size(assets,1),1) assets(:,1:end-1)],2);
+	joblblpos = assets/2 + barbase;
+	text(xt(1) * ones(1,size(assets,2)), joblblpos(1,:), assets_labels, 'HorizontalAlignment','center');
+
+
+	% Annotation for Liabs:
+	xt = get(gca, 'XTick');
+	yd = get(hBarL, 'YData');
+	if (liabs(end) >= 0)
+		barbase = cumsum([zeros(size(liabs,1),1) liabs(:,1:end-1)],2);
+	else
+		barbase = cumsum([zeros(size(liabs,1),1) liabs(:,1:end-1)],2);
+		barbase(end) = liabs(end)/16;
+	end
+	joblblpos = liabs/2 + barbase;
+	text(xt(2) * ones(1,size(liabs,2)), joblblpos(1,:), liabs_labels, 'HorizontalAlignment','center');
+
+	% color coding of bar chart
+	for ii = 1:1:numel(hBarA)
+		if ii>rows(colorbrewer_map)
+			kk = mod(ii,rows(colorbrewer_map)) + 1;
+		else
+			kk = ii;
+		end
+		set (hBarA(ii), "facecolor", colorbrewer_map(kk,:));
+	end
+
+	for ii = 1:1:numel(hBarL)
+		if ii>rows(colorbrewer_map)
+			kk = mod(ii,rows(colorbrewer_map)) + 1;
+		else
+			kk = ii;
+		end
+		set (hBarL(ii), "facecolor", colorbrewer_map(kk,:));
+	end
+	hold off;
+		
+	% save plotting
+	filename_plot  = strcat(path_reports,'/',identifier,'_mvbs_bars.png');
+	print (hf1,filename_plot, "-dpng", "-S700,400");
+	filename_plot = strcat(path_reports,'/',identifier,'_mvbs_bars.pdf');
+	print (hf1,filename_plot, "-dpdf", "-S700,400");
+end 	  
 	  
 end
 

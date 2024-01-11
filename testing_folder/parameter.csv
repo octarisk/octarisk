@@ -29,13 +29,14 @@ input_filename_surf_stochCHAR,surf_stochastic_
 input_filename_matrixCHAR,matrix_
 
 % Boolean variables
-plottingBOOL,0
+plottingBOOL,1
 savingBOOL,0
 archive_flagBOOL,0
 stable_seedBOOL,1
 mc_scen_analysisBOOL,1
 aggregation_flagBOOL,true
 first_evalBOOL,1
+no_stresstest_plotNMBR,10
 
 % VAR specific variables
 mcNMBR,50000
