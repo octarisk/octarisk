@@ -53,3 +53,12 @@ else
 	end
 end
 end 
+
+
+%!assert(get_readinessclass(1),'very low')
+%!error(get_readinessclass(10))
+%!error(get_readinessclass(-1))
+%!assert(get_readinessclass(0),'very high')
+%!assert(get_readinessclass(0.5),'medium')
+
+

@@ -35,7 +35,8 @@ function_cell= {'pricing_npv','option_bs','option_willowtree', ...
                 'get_cms_rate_hull', 'harrell_davis_weight', 'get_sub_struct', ...
                 'addtodatefinancial','epanechnikov_weight','get_quantile_estimator', ...
                 'get_informclass','get_informscore','get_esg_rating','calc_HHI', ...
-                'get_credit_rating','map_country_isocodes'};
+                'get_credit_rating','map_country_isocodes','get_readinessclass', ...
+                'test_oct_files','get_sri_level','get_srri_level'};
 fprintf('=== Running unit tests for %d functions=== \n',length(function_cell)); 
 % 2) Run tests
 tests_total = 0;
@@ -101,39 +102,46 @@ narg = nargin(functionname);
 % get help string and try to get infos about arguments
 s = help(functionname);
 
-% get all arguments between description of function call
-functionstring = strsplit(s,')'){1}; % get string until first ')'
-argumentstring = strsplit(functionstring,'('){2}; % get string after first '('
+% check for ( and )
+if (findstr(s,'(') && findstr(s,')'))
 
-arguments_cell = strsplit(argumentstring,',');
-arguments_cell = strtrim(arguments_cell);
-lencell = numel(arguments_cell);
-% 1. function call arguments consistency check
-if lencell != narg
-    fprintf('WARN: function %s: unequal number of arguments (%s in call vs. %s in description)\n',functionname,any2str(narg),any2str(lencell));
-    errorcode = errorcode + 1;
+	% get all arguments between description of function call
+	functionstring = strsplit(s,')'){1}; % get string until first ')'
+	argumentstring = strsplit(functionstring,'('){2}; % get string after first '('
+
+	arguments_cell = strsplit(argumentstring,',');
+	arguments_cell = strtrim(arguments_cell);
+	lencell = numel(arguments_cell);
+	% 1. function call arguments consistency check
+	if lencell != narg
+		fprintf('WARN: function %s: unequal number of arguments (%s in call vs. %s in description)\n',functionname,any2str(narg),any2str(lencell));
+		errorcode = errorcode + 1;
+	end
+
+	% 2get variables description:
+	strpos = regexpi(s,'variables:');
+	if isempty(strpos)
+		fprintf('WARN: function %s has no Variables description at all.\n',functionname);
+	else 
+		% account for case sensitivity
+		if isempty(strfind(s,'variables:'))
+			varstring = strsplit(s,'Variables:'){2}; % get all variables
+		else
+			varstring = strsplit(s,'variables:'){2}; % get all variables
+		end
+		% consistency check description
+		for jj=1:1:length(arguments_cell)
+			tmp_arg = arguments_cell{jj};
+			strpos = regexpi(varstring,tmp_arg);
+			if isempty(strpos)
+				fprintf('WARN: function %s has no Variables description for argument %s.\n',functionname,any2str(tmp_arg));
+				errorcode = errorcode + 1;
+			end
+		end
+	end
+
+else
+	fprintf('WARN: function %s has no function classification at all.\n',functionname);
+	errorcode = errorcode + 1;
 end
-
-% 2get variables description:
-strpos = regexpi(s,'variables:');
-if isempty(strpos)
-    fprintf('WARN: function %s has no Variables description at all.\n',functionname);
-else 
-    % account for case sensitivity
-    if isempty(strfind(s,'variables:'))
-        varstring = strsplit(s,'Variables:'){2}; % get all variables
-    else
-        varstring = strsplit(s,'variables:'){2}; % get all variables
-    end
-    % consistency check description
-    for jj=1:1:length(arguments_cell)
-        tmp_arg = arguments_cell{jj};
-        strpos = regexpi(varstring,tmp_arg);
-        if isempty(strpos)
-            fprintf('WARN: function %s has no Variables description for argument %s.\n',functionname,any2str(tmp_arg));
-            errorcode = errorcode + 1;
-        end
-    end
-end
-
 end

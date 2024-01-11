@@ -13,7 +13,13 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{m} =} get_srri_level (@var{vola}, @var{horizon}, @var{quantile})
 %# Calculate current SRRI level per given vola, time horizon and quantile.
-%#
+%# @*
+%# Variables:
+%# @itemize @bullet
+%# @item @var{vola}: Volatility in relative terms (float)
+%# @item @var{horizon}: time horizon (number of days volatility was estimated)
+%# @item @var{quantile}: Quantile volatility was estimated (typically volatility equals = one standard deviation)
+%# @end itemize
 %# @seealso{}
 %# @end deftypefn
 function [srri vola_limit] = get_srri_level(vola,horizon,quantile)

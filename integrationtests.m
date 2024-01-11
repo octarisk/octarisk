@@ -125,6 +125,10 @@ if tests_fail > 0
 	fprintf('\n');
 	fprintf('##############   ACTION REQUIRED: failed tests detected ##############');
 	fprintf('\n');
+else
+	fprintf('\n');
+	fprintf('##############          ALL TESTS SUCCESSFULL          ##############');
+	fprintf('\n');
 end
 chdir(old_dir);
 end

@@ -19,7 +19,18 @@
 function [sri VEV] = get_sri_level(value_base,value_mc,mc_timestep_days)
 % SRI is based on P&L 250day --> scale 2.5percentile to 250d holding period
 % calculate equivalent volatility based on relatice 97.5% VaR @250d
-
+	
+	if ~(nargin == 3)
+		error('Invalid nargin');
+	end
+	if ( numel(value_mc) < 2)
+		error('Not a valid P&L distribution for value_mc');
+	end
+	
+	if ~( isnumeric(mc_timestep_days))
+		error('mc_timestep_days needs to be numeric');
+	end
+ 
 	no_scen = rows(value_mc);
 	pnl_abs_sorted = sort(value_mc - value_base);
 	var_975_rel    = -pnl_abs_sorted(ceil(0.025*no_scen)) / value_base;
@@ -43,5 +54,6 @@ function [sri VEV] = get_sri_level(value_base,value_mc,mc_timestep_days)
 	end
 end
 
-%!test
-%! assert(get_sri_level(1000,randn(500000,1) * 0.1959 * 1000 + 1000,250),4,eps);
+
+%!assert(get_sri_level(1000,randn(500000,1) * 0.1959 * 1000 + 1000,250),4,eps);
+%!error(get_sri_level(1000,randn(500000,1) * 0.1959 * 1000 + 1000,'mc250d'));
