@@ -33,7 +33,7 @@ mcNMBR,50000
 mc_scen_analysisBOOL,0
 mc_timestepCHAR,10d
 nuNMBR,7
-path_working_folderCHAR,/home/schinzilord/Dokumente/Programmierung/octarisk/working_folder
+path_working_folderCHAR,/Users/schinzilord/Documents/Programmierung/octarisk/working_folder
 plottingBOOL,1
 quantileNMBR,0.999
 quantile_bandwitdhNMBR,50

@@ -363,6 +363,10 @@ if (run_mc == true)
     % --------------------------------------------------------------------------------------------------------------------
     % 2.) Monte Carlo Riskfactor Simulation for all timesteps
     [riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timestep,mc_timestep_days,para_object);
+
+    if (strcmpi(para_object.shred_type,'TOTAL'))	% only plot realized correlations for TOTAL Shred and for core risk factors (without mapped RF)
+        retcode = calc_rlzd_corr(riskfactor_cell,riskfactor_struct,corr_matrix,para_object,mc_timestep,path_reports,true);
+    end
     
     % map risk factors 
     % Processing MC Mapping file
