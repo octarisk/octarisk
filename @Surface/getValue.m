@@ -116,5 +116,5 @@ function d = calc_distance(x,y,norm)
         error('calc_distance: points needs to be of same y dimension');
     end
     % calculate distance
-    d = (sum( abs(x .- y).^norm,2)).^(1/norm);
+    d = (sum( abs(x - y).^norm,2)).^(1/norm);
 end

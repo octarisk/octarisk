@@ -10,13 +10,13 @@
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
 %# -*- texinfo -*-
-%# @deftypefn {Function File} {[@var{retcode} @var{rlzd_corr}]=} calc_rlzd_corr (@var{riskfactor_cell}, @var{riskfactor_struct}, @var{corr_target}, @var{para_object}, @var{mc_timestep}, @var{path_reports}, @var{plot_flag})
+%# @deftypefn {Function File} {[@var{retcode} @var{rlzd_corr} @var{diff_corr}]=} calc_rlzd_corr (@var{riskfactor_cell}, @var{riskfactor_struct}, @var{corr_target}, @var{para_object}, @var{mc_timestep}, @var{path_reports}, @var{plot_flag})
 %# Calculate correlation matrix and call plotting function for realized risk factor correlations. Optional (false): plot_flag.
 %#
 %# @seealso{plot_corr_matrix}
 %# @end deftypefn
 
-function [retcode rlzd_corr] = calc_rlzd_corr(riskfactor_cell,riskfactor_struct,corr_target,para_object,mc_timestep,path_reports,plot_flag)
+function [retcode rlzd_corr diff_corr] = calc_rlzd_corr(riskfactor_cell,riskfactor_struct,corr_target,para_object,mc_timestep,path_reports,plot_flag)
 
 retcode = 0;
 if nargin < 6 || nargin > 7

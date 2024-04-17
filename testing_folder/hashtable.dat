@@ -1,4 +1,4 @@
-# Created by Octave 8.4.0, Mon Feb 05 11:34:47 2024 CET <schinzilord@MacbookPro.fritz.box>
+# Created by Octave 9.1.0, Mon Apr 15 22:28:45 2024 CEST <schinzilord@MacbookPro.fritz.box>
 # name: hashtable
 # type: scalar struct
 # ndims: 2
@@ -15,14 +15,14 @@
 # type: sq_string
 # elements: 1
 # length: 32
-bbbbe200630e073d23df71727b3051ca
+540e318adfb31606d59dec2a94337da4
 
 
 # name: FUND_AAA_SRRI_classes_chart.png
 # type: sq_string
 # elements: 1
 # length: 32
-89ab1b4c538907b81e0e27ab7e8bfa83
+047a36c7a1b7144a44c69a42ae32f56f
 
 
 # name: FUND_AAA_SRRI_classes_scale_simple.png
@@ -64,7 +64,7 @@ ac76fac561dbdd5de0ae146fb49b364a
 # type: sq_string
 # elements: 1
 # length: 32
-6d5435293d1aead216603cd78cfff7d8
+a0ef089c0a5951ea966e4a2d81cf4959
 
 
 # name: FUND_AAA_entity_relationship.dot
@@ -113,7 +113,7 @@ efb8f5806e2944c9729edc16808c4407
 # type: sq_string
 # elements: 1
 # length: 32
-ae85d97c7e90a075b9d6db6b9cd2f0bf
+ffbcf92495052b481020f3217af4884e
 
 
 # name: FUND_AAA_mvbs.tex
@@ -232,7 +232,7 @@ a1302743835bae81a47685ecd0cfc214
 # type: sq_string
 # elements: 1
 # length: 32
-6d5435293d1aead216603cd78cfff7d8
+a0ef089c0a5951ea966e4a2d81cf4959
 
 
 # name: FUND_BBB_entity_relationship.dot
@@ -281,7 +281,7 @@ ae355afc70574458caf374593984ecec
 # type: sq_string
 # elements: 1
 # length: 32
-0217ba87c805320ccd0936d6d958baec
+e76054fcfe97bd6439694b0d05825a1c
 
 
 # name: FUND_BBB_mvbs.tex

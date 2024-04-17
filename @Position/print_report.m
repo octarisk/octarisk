@@ -1167,10 +1167,14 @@ elseif (strcmpi(type,'latex'))
 				
 				if ( srri_actual == obj.srri_target )
 					status_str = '\colorbox{octariskgreen}{on track}';
+					var_status = 'on track';
 				else
 					status_str = '\colorbox{octariskorange}{action required}';
+					var_status = 'action required';
 				end
-				fprintf(fikpi, '%s \& %s \& %d \& %d \& %s \\\\\\hline\n','Risk','SRRI class',obj.srri_target,srri_actual,status_str);	
+				fprintf(fikpi, '%s \& %s \& %d \& %d \& %s \\\\\\hline\n','Risk','SRRI class',obj.srri_target,srri_actual,status_str);
+				repstruct.srri_target = obj.srri_target;
+				repstruct.var_status = var_status;	
 			else % asset and liability portfolio
 			 % b) Solvency Ratio
 				% Risk | Solvency Ratio | >200% | 195% | on track v rebalancing v monitoring
@@ -1186,10 +1190,14 @@ elseif (strcmpi(type,'latex'))
 					status_str = '\colorbox{yellow}{monitor}';
 				elseif ( sr_actual >= 2.0 )
 					status_str = '\colorbox{octariskgreen}{on track}';	
+					var_status = 'on track';
 				else
 					status_str = '\colorbox{octariskorange}{action required}';
+					var_status = 'action required';
 				end
 				fprintf(fikpi, '%s \& %s \& >%3.1f\\%% \& %4.1f\\%% \& %s \\\\\\hline\n','Risk','Solvency Ratio',sr_limit_higher*100,sr_actual*100,status_str);	
+				repstruct.srri_target = obj.srri_target;
+				repstruct.var_status = var_status;
 			end
 		% 2) VaR trend
 			% Risk | VaR trend | -> | up | on track v action required
@@ -1212,30 +1220,44 @@ elseif (strcmpi(type,'latex'))
 				if (length(hist_var_rel) >= 1)
 					arrow_str = '$\rightarrow$'; % default if inside +-2% last VaR (MC error)
 					status_str = '\colorbox{octariskgreen}{on track}';
+					var_trend = 'on track';
 					if ( var_rel >= 1.02*hist_var_rel(end))
 						arrow_str = '$\nearrow$';
 						status_str = '\colorbox{yellow}{monitor}';
+						var_trend = 'monitor';
 						if ( var_rel > 1.02*max(hist_var_rel))
 							arrow_str = '$\uparrow$';
 							status_str = '\colorbox{octariskorange}{action required}';
+							var_trend = 'action required';
 						end
 					elseif ( var_rel <= 0.98*hist_var_rel(end))
 						arrow_str = '$\searrow$';
 						status_str = '\colorbox{yellow}{monitor}';
+						var_trend = 'monitor';
 						if ( var_rel < 0.98*min(hist_var_rel))
 							arrow_str = '$\downarrow$';
 							status_str = '\colorbox{octariskorange}{action required}';
+							var_trend = 'action required';
 						end
 					end
 				else
 					arrow_str = '$\rightarrow$';
 					status_str = '\colorbox{octariskgreen}{no history}';
+					var_trend = 'not available';
 				end
 			else % no historical values set
 				arrow_str = '$\rightarrow$';
 				status_str = '\colorbox{octariskgreen}{no history}';
+				var_trend = 'not available';
 			end
 			fprintf(fikpi, '%s \& %s \& %s \& %s \& %s \\\\\\hline\n','Risk','VaR Trend','$\rightarrow$',arrow_str,status_str);
+			if numel(hist_var)>=1
+				repstruct.var_last = hist_var(end);
+			else
+				repstruct.var_last = 0;
+			end
+			repstruct.var_curr = obj.varhd_abs;
+			repstruct.var_trend = var_trend;
 		% 3) Strategic Asset Allocation
 			% SAA | Deviation  | <10% | 6% | on track v action
 			max_deviation = 10;
@@ -1273,6 +1295,8 @@ elseif (strcmpi(type,'latex'))
 				status_str = '\colorbox{octariskorange}{action required}';
 			end
 			fprintf(fikpi, '%s \& %s \& >%9.0f %s \& %9.0f %s \& %s \\\\\\hline\n','Allocation','Cash',obj.min_req_cash,obj.currency,cash_amount,obj.currency,status_str);
+			repstruct.alloc_cash_target = obj.min_req_cash;
+			repstruct.alloc_cash_actual = cash_amount;
 		% 5) READINESS risk class
 			% Risk | Country Risk | (very) low | low | on track v action
 			if ( strcmpi(readiness_class,'very low') || strcmpi(readiness_class,'low') )
@@ -1330,6 +1354,10 @@ elseif (strcmpi(type,'latex'))
 		% end
 		fprintf(fikpi, '\\end{tabular}\n');
 		fclose (fikpi);
+		
+		% Call llm for providing an individual risk analysis and recommendations for further action:
+		[retcode prompt response] = call_llm_risk_analysis(obj, repstruct, path_reports);
+		
   end
 % ------------------------------------------------------------------------------  
 elseif (strcmpi(type,'stress'))

@@ -42,8 +42,8 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
         if ( strcmpi(obj.type,'PORTFOLIO'))
           
           base_value = obj.getValue('base');
-          pnl_abs = obj.getValue(scen_set) .- base_value;
-          pnl_abs_at = obj.get('value_mc_at') .- base_value;
+          pnl_abs = obj.getValue(scen_set) - base_value;
+          pnl_abs_at = obj.get('value_mc_at') - base_value;
           tt = 1:1:no_scen;
           confi = 1 - para.quantile;
           confi_scenario = max(round(confi * no_scen),1);
@@ -103,7 +103,7 @@ function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
 														pos_currency,'base');
 				pos_value_portcur = pos_value ./ fx_rate;
 				base_value 		= pos_obj_new.getValue('base') ./ fx_rate_base;									
-				pos_pnl_abs     = pos_value_portcur .- base_value;
+				pos_pnl_abs     = pos_value_portcur - base_value;
 				[pnl_abs_sorted_pos scen_order_shock_pos] = sort(pos_pnl_abs);
 				pos_decomp_varhd = - dot(hd_vec,pos_pnl_abs(scen_order_shock));
 				decomp_varhd_abs = decomp_varhd_abs + pos_decomp_varhd;
