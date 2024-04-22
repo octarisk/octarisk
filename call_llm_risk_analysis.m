@@ -25,6 +25,7 @@ function [retcode prompt response] = call_llm_risk_analysis(obj, repstruct, path
 	% concatenate curl statement:
 	model = "mistral"	# latest 7B v0.2 2024/03
 	#model ="llama2:13b"
+	model ="llama3"
 
 	str_begin = strcat("curl http://localhost:11434/api/generate -d '{\"model\": \"",model,"\",\"prompt\": \"");
 	prompt = [ ...
@@ -65,7 +66,7 @@ function [retcode prompt response] = call_llm_risk_analysis(obj, repstruct, path
 		fclose (llm_prompt);
 		
 	else
-		fprintf("Something went wrong with status message: %s. Was the LLM server started?", any2str(status))
+		fprintf('Something went wrong with status message: %s. Was the LLM server started?\n', any2str(status))
 		retcode = status;
 	end
 

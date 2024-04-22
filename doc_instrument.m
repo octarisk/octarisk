@@ -1783,13 +1783,3 @@ end
 %! assert(r.getValue('base'),726608.226467,0.00001);
 %! assert(r.getValue('stress')(2),308149.174565,0.00001);
 
-%!test
-%! fprintf('\tdoc_instrument:\tTesting MariaDB database connection:\n');
-%! pass_file = strcat(pwd,'/../private_folder/static/password.txt');
-%! pw_cell = textread(pass_file,"%s");
-%! password = pw_cell{1};
-%! sql = mariadb('hostname', '192.168.178.60', 'username','stefan','password', password,'database','finance', 'port', 3306);
-%! cell_in = sql.query('select * from assets;')
-%! assert(rows(cell_in),17);
-%! assert(columns(cell_in),3);
-
