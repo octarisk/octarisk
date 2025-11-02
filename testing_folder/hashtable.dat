@@ -1,9 +1,9 @@
-# Created by Octave 9.1.0, Mon Apr 15 22:28:45 2024 CEST <schinzilord@MacbookPro.fritz.box>
+# Created by Octave 9.3.0, Tue Feb 04 10:12:40 2025 CET <schinzilord@MacbookPro.fritz.box>
 # name: hashtable
 # type: scalar struct
 # ndims: 2
  1 1
-# length: 82
+# length: 86
 # name: 2016Q3_rlzd_corr.png
 # type: sq_string
 # elements: 1
@@ -15,7 +15,7 @@
 # type: sq_string
 # elements: 1
 # length: 32
-540e318adfb31606d59dec2a94337da4
+129c87bc30080e75bc8aa2c656bb459e
 
 
 # name: FUND_AAA_SRRI_classes_chart.png
@@ -113,7 +113,7 @@ efb8f5806e2944c9729edc16808c4407
 # type: sq_string
 # elements: 1
 # length: 32
-ffbcf92495052b481020f3217af4884e
+d4c9bff93ac73ab695236b304b1fd40a
 
 
 # name: FUND_AAA_mvbs.tex
@@ -127,14 +127,14 @@ cffaa985bed079ac81da9a67ee26e8e9
 # type: sq_string
 # elements: 1
 # length: 32
-52c0f5cc5367bfc5007c8aa43fd29370
+f94e390f9362649b53ac581a00663c83
 
 
 # name: FUND_AAA_rf_plot_tail.png
 # type: sq_string
 # elements: 1
 # length: 32
-4f350d682cf14b4955a1ab191cb50ba3
+33d6cb8102298f39f05e4837ea9c4634
 
 
 # name: FUND_AAA_rf_quantile_plot.png
@@ -162,7 +162,7 @@ fe14bfa8da4b1663a5d50c8a5e101d37
 # type: sq_string
 # elements: 1
 # length: 32
-8da9db1fea83763f6e80b4441cbafdfd
+484ea313aac40fafad768b69ff957566
 
 
 # name: FUND_AAA_var_plot.png
@@ -281,7 +281,7 @@ ae355afc70574458caf374593984ecec
 # type: sq_string
 # elements: 1
 # length: 32
-e76054fcfe97bd6439694b0d05825a1c
+f68b3bab52367b879048d2aada23a8a3
 
 
 # name: FUND_BBB_mvbs.tex
@@ -295,14 +295,14 @@ cffaa985bed079ac81da9a67ee26e8e9
 # type: sq_string
 # elements: 1
 # length: 32
-133b7ce8e7466869d96d1d06938a8cd8
+96c0c9fa426cfd46460be198738f3fa6
 
 
 # name: FUND_BBB_rf_plot_tail.png
 # type: sq_string
 # elements: 1
 # length: 32
-56c4295b378506b37b8a052531cefabd
+50ccc5a1d3a55064b839b3a71196936f
 
 
 # name: FUND_BBB_rf_quantile_plot.png
@@ -330,7 +330,7 @@ e9bcd860ccdbb692a6c1d3b50d7d3aef
 # type: sq_string
 # elements: 1
 # length: 32
-edc3dbb8f934adada17f1b96968f2570
+44db4dd70949e301e0e2af30c7b1eb52
 
 
 # name: FUND_BBB_var_plot.png
@@ -352,6 +352,34 @@ bf6d110e3d4f098d4b58efc85dd5861e
 # elements: 1
 # length: 32
 e42ced27bfc378d5ff4bc2795b344fd4
+
+
+# name: risk_analysis_FUND_AAA_llm.tex
+# type: sq_string
+# elements: 1
+# length: 32
+27a5e74bc1a795ff540467d958b1261c
+
+
+# name: risk_analysis_FUND_BBB_llm.tex
+# type: sq_string
+# elements: 1
+# length: 32
+3b7c9ea0c401e9dbc5f963553897be65
+
+
+# name: risk_prompt_FUND_AAA_llm.tex
+# type: sq_string
+# elements: 1
+# length: 32
+d0fa420a4e3ad5621513fdcd08552411
+
+
+# name: risk_prompt_FUND_BBB_llm.tex
+# type: sq_string
+# elements: 1
+# length: 32
+6cf73d14702a60f3cf0bc6f36e17955d
 
 
 # name: table_port_FUND_AAA_aa.tex

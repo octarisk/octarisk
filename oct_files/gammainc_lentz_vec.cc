@@ -74,36 +74,42 @@ Input and output variables:\n\
 		else 
 			a = a_arg;
 
-		static const double tiny = pow (2, -100);
-        static const double eps = std::numeric_limits<double>::epsilon();
-        double y, Cj, Dj, bj, aj, Deltaj;
-        int j, maxit;
-        maxit = 200;
-        // loop via all scenarios
+		static const double tiny = pow(2, -100);
+		static const double eps = std::numeric_limits<double>::epsilon();
+
+		// Preallocate local variables to reduce overhead
+		ColumnVector y(len), Cj(len), Dj(len), bj(len), aj(len), Deltaj(len);
+
+		int maxit = 200;
+		int j;
+
+		// Loop through all scenarios
 		for (octave_idx_type ii = 0; ii < len; ++ii) 
 		{
-		  // catch ctrl + c
 		  OCTAVE_QUIT;
-		  y = tiny;
-          Cj = y;
-          Dj = 0;
-          bj = x(ii) - a(ii) + 1;
-          aj = a(ii);
-          Deltaj = 0;
-		  j = 1;
 		  
-          while((std::abs((Deltaj - 1) / y)  > eps) & (j < maxit))
-            {
-              Cj = bj + aj/Cj;
-              Dj = 1 / (bj + aj*Dj);
-              Deltaj = Cj * Dj;
-              y *= Deltaj;
-              bj += 2;
-              aj = j * (a(ii) - j);
-              j++;
-            }
-          f(ii) = y;
-        }
+		  y(ii) = tiny;
+		  Cj(ii) = y(ii);
+		  Dj(ii) = 0.0;
+		  bj(ii) = x(ii) - a(ii) + 1;
+		  aj(ii) = a(ii);
+		  Deltaj(ii) = 0.0;
+
+		  j = 1;
+		  while ((std::abs((Deltaj(ii) - 1) / y(ii)) > eps) && (j < maxit))
+		  {
+			  Cj(ii) = bj(ii) + aj(ii) / Cj(ii);
+			  Dj(ii) = 1.0 / (bj(ii) + aj(ii) * Dj(ii));
+			  Deltaj(ii) = Cj(ii) * Dj(ii);
+			  y(ii) *= Deltaj(ii);
+
+			  bj(ii) += 2;
+			  aj(ii) = j * (a(ii) - j);
+			  ++j;
+		  }
+		  f(ii) = y(ii);
+		}
+
 		outargs(0) = f;
 	}
   return octave_value (outargs);

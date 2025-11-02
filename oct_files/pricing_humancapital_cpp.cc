@@ -338,55 +338,56 @@ double norminv_custom(double x)
     Copyright (C) 2005-2005 Vivien Chappelier, Herve Jegou
 	http://libit.sourceforge.net/
 */
-double erfinv(double x)
-    {
-		double aa0 = 0.886226899;
-		double aa1 = -1.645349621;
-		double aa2 = 0.914624893;
-		double aa3 = -0.140543331;
-		double bb0 = 1.0;
-		double bb1 = -2.118377725;
-		double bb2 = 1.442710462;
-		double bb3 = -0.329097515;
-		double bb4 = 0.012229801;
-		double cc0 = -1.970840454;
-		double cc1 = -1.62490649;
-		double cc2 = 3.429567803;
-		double cc3 = 1.641345311;
-		double dd0 = 1.0;
-		double dd1 = 3.543889200;
-		double dd2 = 1.637067800;
-		double sqrtPI = sqrt(M_PI);
-        double  r, y;
-        int  sign_x;
-			
-        if (x < -1 || x > 1) {
-            return NAN;
-		}
-		
-        if (x == 0.0) {
-            return 0.0;
-        }
-        if (x > 0) {
-            sign_x = 1;
-        } else {
-            sign_x = -1;
-            x = -x;
-        }
-        if (x <= 0.7)  {
-            double x2 = x * x;
-            r = x * (((aa3 * x2 + aa2) * x2 + aa1) * x2 + aa0);
-            r /= (((bb4 * x2 + bb3) * x2 + bb2) * x2 + bb1) * x2 + bb0;
-        } else {
-            y = sqrt (-log ((1.0 - x) / 2.0));
-            r = (((cc3 * y + cc2) * y + cc1) * y + cc0);
-            r /= ((dd2 * y + dd1) * y + dd0);
-        }
-        r = r * sign_x;
-        x = x * sign_x;
-        r -= (erf (r) - x) / (2 / sqrtPI * exp (-r * r));
-        r -= (erf (r) - x) / (2 / sqrtPI * exp (-r * r));
-        return r;
+double erfinv(double x) {
+    double aa0 = 0.886226899;
+    double aa1 = -1.645349621;
+    double aa2 = 0.914624893;
+    double aa3 = -0.140543331;
+    double bb0 = 1.0;
+    double bb1 = -2.118377725;
+    double bb2 = 1.442710462;
+    double bb3 = -0.329097515;
+    double bb4 = 0.012229801;
+    double cc0 = -1.970840454;
+    double cc1 = -1.62490649;
+    double cc2 = 3.429567803;
+    double cc3 = 1.641345311;
+    double dd0 = 1.0;
+    double dd1 = 3.543889200;
+    double dd2 = 1.637067800;
+    static const double sqrtPI = sqrt(M_PI);
+    
+    if (x < -1 || x > 1) {
+        return NAN;
+    }
+    
+    if (fabs(x) < DBL_EPSILON) { // Handles both 0 and very small numbers
+        return 0.0;
+    }
+
+    int sign_x = (x >= 0) ? 1 : -1;
+    double abs_x = fabs(x);
+    double r;
+
+    if (abs_x <= 0.7) {
+        double x2 = abs_x * abs_x;
+        r = abs_x * (((aa3 * x2 + aa2) * x2 + aa1) * x2 + aa0);
+        r /= (((bb4 * x2 + bb3) * x2 + bb2) * x2 + bb1) * x2 + bb0;
+    } else {
+        double y = sqrt(-log((1.0 - abs_x) / 2.0));
+        r = (((cc3 * y + cc2) * y + cc1) * y + cc0);
+        r /= ((dd2 * y + dd1) * y + dd0);
+    }
+
+    r *= sign_x;
+    
+    // Use a loop to refine the approximation
+    for (int i = 0; i < 2; ++i) {
+        double erf_r = erf(r);
+        r -= (erf_r - sign_x * abs_x) / (2 / sqrtPI * exp(-r * r));
+    }
+
+    return r;
 }
 				
 // static function for input parameter checks 

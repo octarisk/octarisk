@@ -61,6 +61,7 @@ classdef Parameter
         mc_scen_analysis = 0;
         aggregation_flag = 0;
         export_to_redis_db = 0;
+        export_to_csv = 0;
         cvar_flag = 0;
         no_stresstest_plot = 1;
         first_eval = 1;
@@ -105,7 +106,12 @@ classdef Parameter
         mc_timestep_days = 0;
         scenario_set = {'stress'};
         tax_rate = 0.0;
-
+		
+		% Utility function
+		utility_beta = 0.77;
+		utility_wealth_initial = 1360000;
+		utility_var_initial = 110000;
+		
         % specify unique runcode and timestamp:
         runcode = '';
         timestamp = '';

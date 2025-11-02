@@ -49,7 +49,7 @@ Input and output variables:\n\
 		int len_x = x_arg.rows ();
 		int len_a = a_arg.rows ();
 		int len_b = b_arg.rows ();
-		int len = std::max(std::max(len_x,len_a),len_b);
+		int len = std::max({len_x, len_a, len_b});
 
 	  // input checks
 		if (len_x > 1 && len_x != len)
@@ -68,57 +68,48 @@ Input and output variables:\n\
 		NDArray b (dim_scen);
 		
 	  // initialize scenario dependent input values (idx either 0 or ii)
-		if ( len_x == 1 )
-			x.fill(x_arg(0));
-		else 
-			x = x_arg;
-		//		
-		if ( len_a == 1 )
-			a.fill(a_arg(0));
-		else 
-			a = a_arg;
-		//
-		if ( len_b == 1 )
-			b.fill(b_arg(0));
-		else
-			b = b_arg;
+		if (len_x == 1) x.fill(x_arg(0)); else x = x_arg;
+		if (len_a == 1) a.fill(a_arg(0)); else a = a_arg;
+		if (len_b == 1) b.fill(b_arg(0)); else b = b_arg;
 
 		static const double tiny = pow (2, -100);
         static const double eps = std::numeric_limits<double>::epsilon();
-        double f_tmp, C, D, alpha_m, beta_m, x2, Delta;
-        int m, maxit;
-        m = 1;
-        maxit = 200;
-        // loop via all scenarios
-		for (octave_idx_type ii = 0; ii < len; ++ii) 
-		{
-		  // catch ctrl + c
-		  OCTAVE_QUIT;
-          f_tmp = tiny;
-          C = f_tmp;
-          D = 0;
-          alpha_m = 1;
-          beta_m = a(ii) - (a(ii) * (a(ii)+b(ii))) / (a(ii) + 1) * x(ii);
-          x2 = x(ii)* x(ii);
-          Delta = 0;
-          m = 1;
-          while((std::abs(Delta - 1) > eps) & (m < maxit))
-            {
-               D = beta_m + alpha_m * D;
-               if (D == 0)
-                 D = tiny;
-               C = beta_m + alpha_m / C;
-               if (C == 0)
-                 C = tiny;
-               D = 1 / D;
-               Delta = C * D;
-               f_tmp *= Delta;
-               alpha_m = ((a(ii) + m - 1) * (a(ii) + b(ii) + m - 1) * (b(ii) - m) * m) / ((a(ii) + 2 * m - 1) * (a(ii) + 2 * m - 1)) * x2;
-               beta_m = a(ii) + 2 * m + ((m * (b(ii) - m)) / (a(ii) + 2 * m - 1) - ((a(ii) + m) * (a(ii) + b(ii) + m)) / (a(ii) + 2 * m + 1)) * x(ii);
-               m++;
-             }
-          f(ii) = f_tmp;
-        }
+        for (octave_idx_type ii = 0; ii < len; ++ii) {
+			// catch ctrl + c
+			OCTAVE_QUIT;
+
+			double f_tmp = tiny;
+			double C = f_tmp;
+			double D = 0.0;
+			double alpha_m = 1.0;
+			double beta_m = a(ii) - (a(ii) * (a(ii) + b(ii))) / (a(ii) + 1) * x(ii);
+			double x2 = x(ii) * x(ii);
+			double Delta = 0.0;
+
+			int maxit = 200;
+			for (int m = 1; std::abs(Delta - 1) > eps && m < maxit; ++m) {
+				D = beta_m + alpha_m * D;
+				if (D == 0.0) D = tiny;
+				C = beta_m + alpha_m / C;
+				if (C == 0.0) C = tiny;
+
+				D = 1.0 / D;
+				Delta = C * D;
+				f_tmp *= Delta;
+
+				// Reuse computed values to avoid recalculations
+				double a_i = a(ii);
+				double b_i = b(ii);
+
+				alpha_m = ((a_i + m - 1) * (a_i + b_i + m - 1) * (b_i - m) * m) / 
+						  ((a_i + 2 * m - 1) * (a_i + 2 * m - 1)) * x2;
+
+				beta_m = a_i + 2 * m + 
+						 ((m * (b_i - m)) / (a_i + 2 * m - 1) - 
+						  ((a_i + m) * (a_i + b_i + m)) / (a_i + 2 * m + 1)) * x(ii);
+			}
+			f(ii) = f_tmp;
+		}
 		outargs(0) = f;
       }
   

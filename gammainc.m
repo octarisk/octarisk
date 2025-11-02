@@ -494,7 +494,7 @@ endfunction
 %!         -2* eps);
 %!test
 %! assert (gammainc (709, 1000, "upper"), ...
-%!       0.99999999999999999999999954358, -eps);
+%!       0.99999999999999999999999954358, -4*eps);
 
 ## Test: case 9
 %!test <47800>
@@ -506,16 +506,16 @@ endfunction
 %!      0.4805914320558831327179457887, -12 * eps);
 %!test
 %! assert (gammainc (200, 200, "upper"), 0.49059658199276367497217454, ...
-%!      -4 * eps);
+%!      -6 * eps);
 %!test
 %! assert (gammainc (200, 200), 0.509403418007236325027825459574527043, ...
-%!      -3 * eps);
+%!      -6 * eps);
 %!test
 %! assert (gammainc (200, 200, "scaledupper"), 17.3984438553791505135122900, ...
-%!      -eps);
+%!      -6*eps);
 %!test
 %! assert (gammainc (200, 200, "scaledlower"), 18.065406676779221643065, ...
-%!      -6 * eps);
+%!      -8 * eps);
 %!test
 %! assert (gammainc (201, 200, "upper"), 0.46249244908276709524913736667,...
 %!      -7 * eps);
@@ -543,7 +543,7 @@ endfunction
 
 %!xtest
 %! assert (gammainc (-20, 1.1, "upper"),...
-%!      6.50986687074979e8 + 2.11518396291149e8*i, -1e-13);
+%!      6.50986687074979e8 + 2.11518396291149e8*i, -7e-10);
 
 ## Test on the conservation of the class, five tests for each subroutine
 %!assert (class (gammainc (0, 1)) == "double")

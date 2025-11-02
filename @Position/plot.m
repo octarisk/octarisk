@@ -377,8 +377,15 @@ elseif (strcmpi(type,'history'))
 	  fprintf('plot: Plotting VaR history results for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
 	  retcode = plot_hist_var(obj,para_object,path_reports);
 	  retcode = plot_hist_var_simple(obj,para_object,path_reports);
+	  retcode = plot_hist_var_with_regimes(obj, para_object, path_reports);
   end
 
+% --------------    VaR Utility Plotting   -----------------------------
+elseif (strcmpi(type,'utility'))    
+  if strcmpi(scen_set,'base')
+	  fprintf('plot: Plotting VaR utility function for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
+	  retcode = plot_utility_var(obj,para_object,path_reports);
+  end
 
 % --------------    AA Pie Chart Plotting   -----------------------------
 elseif (strcmpi(type,'asset_allocation'))    

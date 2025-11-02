@@ -638,7 +638,8 @@ if ( para_object.plotting )
         port_obj = port_obj.plot(para_object,'asset_allocation','base');										
         port_obj = port_obj.plot(para_object,'ir_sensitivity','base');										
         port_obj = port_obj.plot(para_object,'equitystylebox','base');										
-        port_obj = port_obj.plot(para_object,'mvbs_plotting','base');										
+        port_obj = port_obj.plot(para_object,'mvbs_plotting','base');	
+        port_obj = port_obj.plot(para_object,'utility','base');									
         % aggregation and risk calculation for all scenario sets
         for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
             tmp_scen_set  = scenario_set{ kk };    % get timestep string
@@ -665,13 +666,24 @@ plottime = toc;
 
 
 % ----------------------------------------------------------------------
-% 9. Export to database:
+% 9A. Export to database:
 if strcmpi(para_object.get('cvar_type'),'base')
 	fprintf('\nExport to redis:\n');	
 	para_object = para_object.set('export_to_redis_db',1);
 	fprintf('=== Export to Redis: Type >>%s<< and shred type >>%s<< ===\n',para_object.get('cvar_type'),para_object.get('shred_type'));
 	export_to_redis(para_object,instrument_struct,index_struct,port_obj_struct);
 	para_object = para_object.set('export_to_redis_db',0);
+end
+
+
+% ----------------------------------------------------------------------
+% 9B. Export to CSV:
+if strcmpi(para_object.get('cvar_type'),'base')
+	fprintf('\nExport to csv file:\n');	
+	para_object = para_object.set('export_to_csv',1);
+	fprintf('=== Export to csv: Type >>%s<< and shred type >>%s<< ===\n',para_object.get('cvar_type'),para_object.get('shred_type'));
+	export_to_csv(para_object,instrument_struct,port_obj_struct);
+	para_object = para_object.set('export_to_csv',0);
 end
 
 

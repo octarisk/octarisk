@@ -53,7 +53,10 @@ end
 
 fqrt = fopen (filepathtex, 'w');
 frecon = fopen (filepathrecon, 'w');
-fprintf(fqrt, '\\center\n');
+
+fprintf(fqrt, '\\begingroup\n');
+fprintf(fqrt, '\\ttfamily\n');
+fprintf(fqrt, '\\begin{center}\n');
 fprintf(frecon, 'MVBS Reconciliation\n');
 fprintf(frecon, 'Assets\n');
 fprintf('=============== Assets ===============\n');
@@ -252,6 +255,8 @@ fprintf(frecon, 'Deferred tax,%1.0f\n',tax);
 fprintf(frecon, 'Own Funds after tax,%1.0f\n',of_at);
 
 fprintf(fqrt, '\\end{tabular}\n');
+fprintf(fqrt, '\\end{center}\n');
+fprintf(fqrt, '\\endgroup\n');
 fclose (fqrt);
 fclose (frecon);
 

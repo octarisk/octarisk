@@ -352,7 +352,7 @@ ColumnVector get_EU_option_price_BS(const bool& call_flag, const NDArray& S,
 	// initialize scenario dependent output:
 	dim_vector dim_scen (len, 1);
 	ColumnVector OptionVec (dim_scen);
-	const double sqr2 = std::sqrt(2);
+	const double sqr2_inv = 1.0 / std::sqrt(2);
 	double eta = 1.0;
 	if (call_flag == false)   // Option is Put
 				eta = -1.0;
@@ -371,8 +371,8 @@ ColumnVector get_EU_option_price_BS(const bool& call_flag, const NDArray& S,
 		d1 = (std::log(S(ii)/X(ii)) + (r(ii) - q(ii) + 
 								0.5*sigma(ii)*sigma(ii))*TF_i) / sigma_sqrTF;
 		d2 = d1 - sigma_sqrTF;
-		normcdf_eta_d1 = 0.5 *(1+erf(eta * d1/sqr2));
-		normcdf_eta_d2 = 0.5 *(1+erf(eta * d2/sqr2));
+		normcdf_eta_d1 = 0.5 *(1+erf(eta * d1 * sqr2_inv));
+		normcdf_eta_d2 = 0.5 *(1+erf(eta * d2 * sqr2_inv));
 						 
 		// Calculating value: 
 		OptionVec(ii) =  eta * (std::exp(-q(ii)*T(ii)) * S(ii) * normcdf_eta_d1 - 
