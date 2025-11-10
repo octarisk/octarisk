@@ -666,6 +666,29 @@ plottime = toc;
 
 
 % ----------------------------------------------------------------------
+% 8B. Risk Schema Reporting
+schema_reporting_time = 0;
+tic;
+if ( para_object.reporting )
+  for ii = 1:1:length(port_obj_struct)
+	port_obj = port_obj_struct(ii).object;
+    port_obj = port_obj.print_schema(para_object,'yaml','base');
+    
+    % aggregation and risk calculation for all scenario sets
+	for kk = 1 : 1 : length( scenario_set )      % {stress, MCscenset}
+		tmp_scen_set  = scenario_set{ kk };    % get timestep string
+        % standard reporting: Total shred
+        if strcmpi(para_object.shred_type,'TOTAL')
+            port_obj = port_obj.print_schema(para_object,'yaml',tmp_scen_set,stresstest_struct,instrument_struct);
+        end
+	end
+    port_obj_struct(ii).object = port_obj;
+  end
+  fprintf('\nSUCCESS: Risk schmema reporting for all portfolios successful.\n');	
+end
+schema_reporting_time = toc;
+
+% ----------------------------------------------------------------------
 % 9A. Export to database:
 if strcmpi(para_object.get('cvar_type'),'base')
 	fprintf('\nExport to redis:\n');	
@@ -701,7 +724,7 @@ fprintf('Total time for aggregation:  %6.2f s\n', aggr);
 fprintf('Total time for plotting:  %6.2f s\n', plottime);
 fprintf('Total time for reporting:  %6.2f s\n', reporting_time);
 fprintf('Total time for saving data:  %6.2f s\n', saving_time);
-totaltime = round((parseinput + scengen + curve_gen_time + fulvia + saving_time + plottime + aggr + reporting_time)*10)/10;
+totaltime = round((parseinput + scengen + curve_gen_time + fulvia + saving_time + plottime + aggr + reporting_time + schema_reporting_time)*10)/10;
 fprintf('Total Runtime:  %6.2f s\n',totaltime);
 
 fprintf('\n');

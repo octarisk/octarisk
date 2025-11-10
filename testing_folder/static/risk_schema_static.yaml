@@ -1,0 +1,297 @@
+# top-level metadata about this specification instance
+metadata:
+  id: risk_specification_2025-11-09        # unique id
+  version: 1.0
+  author: Stefan
+  created_at: 2025-11-09T10:25:00+01:00
+  description: "Framework for risk measures, market inputs, thresholds, constraints, allocations, and rebalancing rules"
+
+# universe of tradable instruments and attributes used across dependencies
+instruments:
+  - id: EUR_GOVT_10Y
+    name: "Germany 10Y Government Bond"
+    type: bond
+    currency: EUR
+    notional: 1000000
+    attributes:
+      coupon: 0.0
+      maturity: 2035-03-15
+      issuer: DE_GOV
+      liquidity_score: 0.9
+      sector: sovereign
+  - id: US_EQ_SPX
+    name: "US Large Cap Equity (SPX ETF)"
+    type: equity
+    currency: USD
+    notional: 500000
+    attributes:
+      beta: 1.02
+      market_cap_bucket: large
+      liquidity_score: 0.95
+      factor_exposures:
+        - equity_market: 1.0
+        - size: 0.0
+        - value: -0.1
+
+# sources and provenance for market data used in calculations
+market_data:
+  required_keys:
+    - price
+    - yield
+    - volatility
+    - fx_rate
+    - spread
+    - liquidity
+  sources:
+    - source_id: md_feed_1
+      provider: Bloomberg
+      latency: "1m"
+      fields: [price, yield, spread, volume]
+    - source_id: md_feed_fx
+      provider: Reuters
+      latency: "1m"
+      fields: [fx_rate]
+  refresh:
+    default: 60           # seconds
+    intraday: true
+  provenance:
+    last_snapshot: 2025-11-09T09:58:00+01:00
+
+# risk measures and how they are calculated; dependencies point to market_data fields, instruments, or other measures
+risk_measures:
+  - id: PnL
+    description: "Mark-to-market PnL (unrealized)"
+    unit: EUR
+    formula:
+      - type: instrument_level
+        expression: "(price - prior_price) * notional * fx_rate"
+        inputs: [price, prior_price, notional, fx_rate]
+    dependencies:
+      instruments: [all]
+      market_data: [price, fx_rate]
+  - id: VaR_99_10d
+    description: "Portfolio 99% VaR over 10 trading days"
+    unit: EUR
+    method: parametric
+    params:
+      confidence: 0.99
+      horizon_days: 10
+    inputs:
+      - name: returns_covariance
+        source: historical_covariance_1y
+      - name: positions
+        source: portfolio.positions
+    dependencies:
+      risk_measures: [PnL]
+      market_data: [volatility, price]
+  - id: ES_97_5d
+    description: "Expected shortfall 97% over 5 days"
+    unit: EUR
+    method: historical
+    params:
+      confidence: 0.97
+      horizon_days: 5
+    dependencies:
+      risk_measures: [PnL]
+      market_data: [price, returns]
+
+# movement/attribution model for decomposing changes (used to explain drivers)
+movements:
+  - id: market_move
+    label: "Market price movement"
+    decomposition:
+      - name: price_change
+        source: market_data.price
+        calc: "(price_t - price_t-1) * position"
+      - name: fx_move
+        source: market_data.fx_rate
+        calc: "(fx_t - fx_t-1) * local_value"
+  - id: contributions
+    label: "Risk measure contributions"
+    mapping:
+      VaR_contribution: "marginal_contribution_of_position_to_VaR"
+      ES_contribution: "expected_tail_contribution"
+
+# thresholds, tolerance bands and hard constraints used for alerts and governance triggers
+thresholds_constraints:
+  thresholds:
+    - id: VaR_limit
+      measure: VaR_99_10d
+      level: 2000000        # absolute EUR
+      operator: "<="
+      severity: high
+      action: stop_trading
+    - id: ES_alert
+      measure: ES_97_5d
+      level: 1500000
+      operator: "<="
+      severity: medium
+      action: review_portfolio
+  soft_tolerance:
+    VaR_99_10d:
+      delta_pct: 0.05       # allow 5% intraday deviation before escalation
+      cool_off_minutes: 30
+  hard_constraints:
+    max_gross_leverage: 3.0
+    max_net_exposure_pct: 0.8   # of NAV
+    instrument_constraints:
+      - instrument_id: EUR_GOVT_10Y
+        max_notional: 5000000
+      - instrument_type: equity
+        max_sector_pct: 0.25
+
+# portfolio state, positions, exposures and derived aggregates
+portfolio:
+  id: main_fund
+  currency: EUR
+  nav: 25000000
+  cash: 2000000
+  positions:
+    - instrument_id: EUR_GOVT_10Y
+      side: long
+      notional: 1000000
+      units: 1000
+      avg_price: 100.0
+    - instrument_id: US_EQ_SPX
+      side: long
+      notional: 500000
+      units: 5000
+      avg_price: 100.0
+  aggregates:
+    gross_exposure: 1.5        # x NAV
+    net_exposure: 0.6
+    sector_exposures:
+      sovereign: 0.4
+      equity: 0.6
+    factor_exposures:
+      equity_market: 0.55
+      rate_sensitivity: -0.1
+
+# target allocations, active views, and permitted deviations
+allocations:
+  strategic:
+    - asset_class: government_bonds
+      target_pct: 0.35
+      min_pct: 0.25
+      max_pct: 0.45
+    - asset_class: equities
+      target_pct: 0.50
+      min_pct: 0.40
+      max_pct: 0.60
+    - asset_class: cash
+      target_pct: 0.15
+      min_pct: 0.05
+      max_pct: 0.25
+  tactical_views:
+    - id: underweight_equity_q4
+      rationale: "Short-term risk-on indicators weak; reduce equities"
+      target_adjustment:
+        equities: -0.05
+        cash: +0.05
+      valid_until: 2025-12-31
+  permitted_deviations:
+    rebalancing_band_pct: 0.03   # 3% absolute band around target before rebalance
+
+# rebalancing rules and execution primitives
+rebalancing:
+  frequency:
+    type: rule_based
+    triggers:
+      - type: threshold_exceeded
+        reference: VaR_limit
+      - type: allocation_band
+        reference: allocations.permitted_deviations.rebalancing_band_pct
+      - type: calendar
+        schedule: "monthly"
+  actions:
+    - id: partial_rebalance
+      description: "Bring allocations back to strategic targets within transaction cost budget"
+      rules:
+        max_turnover_pct: 0.10
+        prioritize: [reduce_overweight, increase_underweight]
+        execution_slicing: true
+        max_order_size_pct_of_daily_volume: 0.02
+    - id: emergency_delever
+      description: "Fast delever if hard constraint violated"
+      preconditions:
+        - hard_constraint: max_gross_leverage
+      rules:
+        target_gross_leverage: 2.0
+        allowed_execution: market_orders_allowed: true
+  transaction_costs:
+    model: linear_plus_slippage
+    params:
+      linear_pct: 0.001
+      slippage_alpha: 0.0005
+
+# investment strategies expressed declaratively so GenAI can reason over them
+strategies:
+  - id: carry_focused
+    description: "Bias toward positive carry instruments while respecting risk limits"
+    objectives:
+      - maximize: portfolio_carry
+      - subject_to: [thresholds_constraints.hard_constraints, allocations.strategic]
+    signals:
+      - name: carry
+        source: market_data.yield
+      - name: liquidity
+        source: market_data.liquidity
+    rule_set:
+      - if: "carry > carry_threshold and liquidity > 0.5"
+        then: "increase position up to max_notional"
+      - if: "VaR_99_10d > 0.9 * VaR_limit"
+        then: "reduce risk weighted exposure by 20%"
+  - id: risk_parity_variant
+    description: "Equal risk contribution target with tactical cap"
+    parameters:
+      target_risk_contribution: equal
+      max_allocation_to_single_factor: 0.25
+    reweighting:
+      method: inverse_volatility
+      lookback_days: 252
+
+# governance, approvals and audit trail required for actions
+governance:
+  approval_workflow:
+    levels:
+      - level: desk
+        threshold_action: partial_rebalance
+        approver: portfolio_manager
+      - level: risk
+        threshold_action: emergency_delever
+        approver: risk_committee
+  audit:
+    enable: true
+    fields_required: [timestamp, user, recommended_action, rationale, inputs_snapshot]
+    retention_days: 3650
+
+# outputs to request from GenAI and how to interpret them
+outputs_for_genai:
+  requested_products:
+    - name: rebalancing_recommendation
+      format: ranked_list
+      fields: [instrument_id, action, notional_change, expected_pnl, expected_var_change, rationale]
+    - name: scenario_impact_report
+      format: table
+      fields: [scenario_id, nav_change, var_change, top_contributors]
+    - name: compliance_check
+      format: boolean_with_violations
+      fields: [violated_constraints, remediation_steps]
+  explainability:
+    require_marginals: true
+    require_input_snapshots: true
+    confidence_threshold: 0.7
+
+# runtime and ingestion settings for automated pipelines
+runtime:
+  ingest:
+    mapping:
+      instruments: instruments
+      market_data: market_data.sources
+      positions: portfolio.positions
+    validation:
+      schema_check: true
+      tolerances:
+        price_mismatch_pct: 0.5
+  refresh_interval_seconds: 60
+  max_processing_lag_seconds: 300

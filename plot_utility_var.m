@@ -20,7 +20,7 @@
 %# 
 %# @end deftypefn
 
-function retcode = plot_utility_var(obj,para_object,path_reports);
+function [obj retcode] = plot_utility_var(obj,para_object,path_reports);
 
 retcode = 1;
 
@@ -59,6 +59,8 @@ if nargin == 3
 		diff_str = ['Actual VaR ',any2str(round(abs(var_util_diff))),' ',obj.currency,' smaller than utility VaR. Consider re-risking'];
 	end
 	
+	% store utility var in Portfolio object
+	obj = obj.set('utility_var',var_utility_act);
 	% plot limits:
 	var_max = ceil(VaR_tol(end)/10000)*10000;
 	

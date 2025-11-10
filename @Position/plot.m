@@ -384,7 +384,7 @@ elseif (strcmpi(type,'history'))
 elseif (strcmpi(type,'utility'))    
   if strcmpi(scen_set,'base')
 	  fprintf('plot: Plotting VaR utility function for portfolio >>%s<< into folder: %s\n',obj.id,path_reports);	
-	  retcode = plot_utility_var(obj,para_object,path_reports);
+	  [obj retcode] = plot_utility_var(obj,para_object,path_reports);
   end
 
 % --------------    AA Pie Chart Plotting   -----------------------------

@@ -231,7 +231,8 @@ function obj = set(obj, varargin)
 				'duration_values', 'numeric', ...
 				'esg_score', 'numeric', ...
                 'aggr_key_struct_assets', 'struct', ...
-                'aggr_key_struct', 'struct'
+                'aggr_key_struct', 'struct',
+                'utility_var', 'numeric'
                );
   % B) store values in object
   if (length (varargin) < 2 || rem (length (varargin), 2) ~= 0)

@@ -225,6 +225,7 @@ classdef Position
 		duration_id = {'Low<3','Mid3-7','High>7'};
 		country_id = {'US','Other'};
 		esg_score = [];
+		utility_var = 0;
         comments_items_cell = {'Risk factor shocks are based on a combination of Solvency2 Standard Formula shocks and historic time series calibration.', ...
                         'Market risks are assessed quantitatively, while concentration risks are assessed qualitatively only.', ...
                         'Credit, operational, governance and regulatory risks are not taken into account.'};

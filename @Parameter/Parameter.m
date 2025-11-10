@@ -5,6 +5,7 @@ classdef Parameter
         id = 'para_object';
         description = 'Parameter Object';
         type = 'Parameter'; 
+        version = 'bb056e7';
         % input folder properties
         path_working_folder = '';
         folder_archive = 'archive';

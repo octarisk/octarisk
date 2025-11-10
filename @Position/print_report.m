@@ -979,8 +979,8 @@ elseif (strcmpi(type,'latex'))
 			fprintf(fice, '\\definecolor{customgrey}{RGB}{204, 204, 204}\n');
 			fprintf(fice, '\\node[draw,align=left] at (13.5,-8.78) {\\textcolor{octariskblue}{$\\blacksquare$} Developed Markets %2.0f\\%%  \\textcolor{octariskgreen}{$\\blacksquare$} Emerging Markets %2.0f\\%%  \\textcolor{customgrey}{$\\blacksquare$} Other %2.0f\\%%};\n',100*dm_exp,100*em_exp,100*other_exp);
 			
-			dm_exp
-			em_exp
+			%dm_exp
+			%em_exp
 			
 			% Plot legends for DM and EM
 			[dm_exp_sorted sort_numbers] = sort(dm_exposure_vec,'descend');
