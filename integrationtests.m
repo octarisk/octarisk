@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} integrationtests(@var{path_folder})
 %# Call integrationtests of specified functions and return test statistics. @*
 %# Input parameter: path to folder with testdata. All integration test scripts
 %# have to be hard coded in this script.
 %# @end deftypefn
-
 function integrationtests(path_folder)
 old_dir = pwd;
 % change directory

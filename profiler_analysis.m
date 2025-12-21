@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} profiler_analysis(@var{script_name},@var{argument},@var{depth})
 %# Call profiler for specified script and argument and return detailed statistics.
@@ -20,8 +19,6 @@
 %# @item @var{depth}: number of sub-functions to analyse [optional, default = 10]
 %# @end itemize
 %# @end deftypefn
-
-
 function profiler_analysis(script_name,argument,depth,arg2,arg3)
 
 

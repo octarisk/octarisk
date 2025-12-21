@@ -1,4 +1,3 @@
-% method of class @Curve
 function s = getValue (curve, property)
   obj = curve;
   if (nargin == 1)

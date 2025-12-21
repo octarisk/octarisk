@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{npv} @var{MacDur} @var{Convexity} @var{MonDur} @var{Convexity_alt}] =} pricing_npv(@var{valuation_date}, @var{cashflow_dates}, @var{cashflow_values}, @var{spread_constant}, @var{discount_nodes}, @var{discount_rates}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{interp_discount}, @var{comp_type_curve}, @var{basis_curve}, @var{comp_freq_curve}, @var{sensi_flag})
 %#
@@ -58,7 +57,6 @@
 %# @end itemize
 %# @seealso{timefactor, discount_factor, interpolate_curve, convert_curve_rates}
 %# @end deftypefn
-
 function [npv MacDur Convexity MonDur Convexity_alt] = pricing_npv(valuation_date, ...
             cashflow_dates, cashflow_values, spread_constant, discount_nodes, ...
             discount_rates, basis, comp_type, comp_freq, interp_discount, ...

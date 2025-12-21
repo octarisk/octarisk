@@ -1,4 +1,3 @@
-% Position Class @Position
 function obj = del_scen_data (obj)
     obj.timestep_mc = {};
     obj.value_mc = [];

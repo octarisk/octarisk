@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} get_dependencies(@var{path_octarisk}, @var{path_out})
 %# Print a GraphViz .dot file containing all dependencies between
@@ -25,7 +24,6 @@
 %# @end group
 %# @end example
 %# @end deftypefn
-
 function get_dependencies(path_octarisk,path_out)
 
 

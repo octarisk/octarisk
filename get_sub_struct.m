@@ -9,15 +9,11 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{match_struct} @var{ret_code}] =} get_sub_object(@var{input_struct}, @var{input_id})
 %# Return the sub-structure contained in a structure matching a given ID. 
 %# Return code 1 (success) and 0 (fail).
 %# @end deftypefn
-
-% III) %#%#%%#         HELPER FUNCTIONS              %#%#
-% function for extracting sub-structure from struct object according to id
 function  [match_struct ret_code matches] = get_sub_struct(input_struct, input_id)
     matches = 0;    
     ret_code = 0;

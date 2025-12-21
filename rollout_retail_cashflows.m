@@ -1,4 +1,3 @@
-
 %# Copyright (C) 2015 Schinzilord <schinzilord@octarisk.com>
 %#
 %# This program is free software; you can redistribute it and/or modify it under
@@ -10,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{ret_dates} @var{ret_values} @var{accrued_interest}] =} rollout_retail_cashflows (@var{valuation_date}, @var{value_type}, @var{instrument}, @var{ref_curve}, @var{surface}, @var{riskfactor})
 %#
@@ -19,7 +17,6 @@
 %#
 %# @seealso{timefactor, discount_factor, get_forward_rate, interpolate_curve}
 %# @end deftypefn
-
 function [ret_dates ret_values ret_interest_values ret_principal_values ...
                                     accrued_interest last_coupon_date] = ...
                     rollout_retail_cashflows(valuation_date, value_type, ...

@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{value} =} option_asian_vorst90 (@var{CallPutFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
 %#
@@ -33,7 +32,6 @@
 %# @end itemize
 %# @seealso{option_bs, option_asian_levy}
 %# @end deftypefn
-
 function [value] = option_asian_vorst90(CallPutFlag,S,X,T,r,sigma,divrate)
  
  if nargin < 6 || nargin > 8

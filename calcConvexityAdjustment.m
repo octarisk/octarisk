@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{adj_rate} @var{adj}] =} calcConvexityAdjustment (@var{valuation_date}, @var{instrument}, @var{r}, @var{sigma}, @var{t1}, @var{t2})
 %#
@@ -34,7 +33,6 @@
 %#
 %# @seealso{timefactor}
 %# @end deftypefn
-
 function [adj_rate adj] = calcConvexityAdjustment(valuation_date,instrument,r,sigma,t1,t2)
 
 % Error and input checks

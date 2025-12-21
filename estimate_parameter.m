@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} estimate_parameter()
 %# Calculate statistics for historic time series. This script is not used in 
@@ -23,7 +22,6 @@
 %# distributed value. Moreover mean reversion rates and levels are calculated 
 %# assuming ergodic and regression methods. @*
 %# @end deftypefn
-
 function estimate_parameter(path,filename,stepsize_days)
 
 if nargin == 1

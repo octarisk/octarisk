@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{m} =} get_srri (@var{vola_act}, @var{horizon}, @var{quantile}, @var{filepath})
 %# Classify portfolio VaR according to SRRI classes and given time horizon and quantile.
@@ -17,7 +16,6 @@
 %#
 %# @seealso{}
 %# @end deftypefn
-
 function [ret idx_figure] = get_srri_simple(vola_act,horizon=250,quantile=normcdf(1),filepath="",port_id="",idx_figure=1,basevalue=0,srri_target=0)
 try
 	if (strcmpi(filepath,""))

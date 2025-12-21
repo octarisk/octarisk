@@ -9,12 +9,10 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} unittests()
 %# Call unittests of specified functions and return test statistics.
 %# @end deftypefn
-
 function unittests()
 
 pkg load statistics;

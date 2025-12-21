@@ -19,7 +19,6 @@
 %# Output data: Rewritten m.files
 %# @seealso{replacement_script}
 %# @end deftypefn
-
 function adapt_matlab
 
 % Delete unneccessary scripts

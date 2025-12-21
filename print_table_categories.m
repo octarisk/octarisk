@@ -12,13 +12,11 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{retcode} ] =} print_table_categories(@var{port_obj},@var{repstruct},@var{filepathtex},@var{filepathrecon})
 %# Print MVBS table to tex and csv file.
 %# 
 %# @end deftypefn
-
 function [retcode repstruct] = print_table_categories(port_obj,repstruct,filepathtex,filepathrecon)
 retcode = 1;
 fprintf('print: Printing  MVBS table for portfolio >>%s<< into file: %s\n',port_obj.id,filepathtex);	

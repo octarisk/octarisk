@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{repstruct} =} plot_HHI_piecharts (@var{repstruct}, @var{path_reports}, @var{obj})
 %# Plot HHI piecharts for all categories (custodian bank, designated sponsor,
@@ -17,7 +16,6 @@
 %#
 %# @seealso{}
 %# @end deftypefn
-
 function repstruct = plot_HHI_piecharts(repstruct,path_reports,obj)
 
 cusbank_undr_exp = repstruct.custodian_bank_underlyings_exposure;

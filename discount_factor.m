@@ -12,7 +12,6 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{df} =} discount_factor (@var{d1}, @var{d2}, @var{rate}, @var{comp_type}, @var{basis}, @var{comp_freq})
 %#
@@ -33,7 +32,6 @@
 %# @end itemize
 %# @seealso{timefactor}
 %# @end deftypefn
-
 function df = discount_factor (d1, d2, rate, comp_type, basis, comp_freq)
 % Error check
 if nargin < 3

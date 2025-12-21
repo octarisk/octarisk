@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Script File} {} octarisk_gui
 %#
@@ -19,10 +18,6 @@
 %# See www.octarisk.com for further information.
 %#
 %# @end deftypefn
-
-% ##############################################################################
-
-% Specify path to parameter.csv (Recommendation for first try: /path/to/octarisk/ and parameter.csv)
 if (isunix)
     input_path = '/Users/schinzilord/Documents/Programmierung/octarisk/testing_folder';
     parameter_file = 'parameter.csv';

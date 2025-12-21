@@ -9,12 +9,10 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} save_objects(@var{path_output}, @var{riskfactor_struct}, @var{instrument_struct}, @var{portfolio_struct}, @var{stresstest_struct})
 %# Save provided structs for riskfactors, instruments, positions and stresstests.
 %# @end deftypefn
-
 function [save_cell] = save_objects(path_output,riskfactor_struct, ...
                             instrument_struct,portfolio_struct,stresstest_struct)
 

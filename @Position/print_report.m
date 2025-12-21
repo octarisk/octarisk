@@ -1355,8 +1355,7 @@ elseif (strcmpi(type,'latex'))
 		fprintf(fikpi, '\\end{tabular}\n');
 		fclose (fikpi);
 		
-		% Call llm for providing an individual risk analysis and recommendations for further action:
-		[retcode prompt response] = call_llm_risk_analysis(obj, repstruct, path_reports);
+		
 		
   end
 % ------------------------------------------------------------------------------  

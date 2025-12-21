@@ -1,4 +1,3 @@
-% @Position/plot: Plot figures
 function obj = plot(obj, para_object,type,scen_set,stresstest_struct = [],curve_struct = [],riskfactor_struct = [])
   if (nargin < 4)   
 		print_usage();
@@ -443,7 +442,8 @@ elseif (strcmpi(type,'stress'))
 		p_l_relativ_stress = p_l_relativ_stress(1:no_stresstest_plot);
 		
         xx = 1:1:length(p_l_relativ_stress)-1;
-        hs = figure(1);
+        % hs = figure('visible', 'off');
+        hs = figure();
         clf;
         barh(p_l_relativ_stress(2:end), 'facecolor', or_blue);
         h=get (gcf, 'currentaxes');

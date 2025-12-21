@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{repstruct} =} plot_sensitivities (@var{obj}, @var{repstruct}, @var{path_reports})
 %# Plot interest rate sensitivities of assets, liabilities and total portfolio.
 %#
 %# @seealso{}
 %# @end deftypefn
-
 function repstruct = plot_sensitivities(obj,repstruct,path_reports)
 
 or_green = [0.56863   0.81961   0.13333]; 

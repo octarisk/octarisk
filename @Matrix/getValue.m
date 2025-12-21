@@ -1,4 +1,3 @@
-% method of class @Matrix
 function y = getValue (matrix,xx,yy)
   s = matrix;
   if (nargin == 1)

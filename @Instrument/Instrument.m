@@ -21,7 +21,6 @@
 %#
 %# @seealso{Bond, Forward, Option, Swaption, Debt, Sensitivity, Synthetic}
 %# @end deftypefn
-
 classdef Instrument
     % file: @Instrument/Instrument.m
     properties

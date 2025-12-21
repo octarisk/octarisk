@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{ret_instr_obj}] =} instrument_valuation (@var{instr_obj}, @var{valuation_date}, @var{scenario}, @var{instrument_struct}, @var{surface_struct}, @var{matrix_struct}, @var{curve_struct}, @var{index_struct}, @var{riskfactor_struct}, @var{path_static}, @var{scen_number}, @var{first_eval})
 %#
@@ -37,7 +36,6 @@
 %# @item @var{ret_instr_obj}: RETURN: evaluated instrument object
 %# @end itemize
 %# @end deftypefn
-
 function [ret_instr_obj] = instrument_valuation(instr_obj, valuation_date, scenario, ...
                                     instrument_struct, surface_struct, matrix_struct, ...
                                     curve_struct, index_struct, riskfactor_struct, para_object)

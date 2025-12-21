@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{VAR} @var{ES}] =} get_gpd_var(@var{chi}, @var{sigma}, @var{u}, @var{q}, @var{n}, @var{nu})
 %# Return Value-at-risk (VAR) and expected shortfall (ES) according to a generalized Pareto distribution.
@@ -33,7 +32,6 @@
 %#      [VAR ES] = get_gpd_var(0.00001,1632.9,5930.8,[0.99;0.995;0.999],50000,1250)
 %#  @end example
 %# @end deftypefn
-
 function [VAR ES] = get_gpd_var(chi, sigma, u, q, n, nu) 
     % Input checks
     if nargin < 6

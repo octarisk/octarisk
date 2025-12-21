@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{value} =} option_asian_levy (@var{CallPutFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate}, @var{n})
 %#
@@ -35,7 +34,6 @@
 %# @end itemize
 %# @seealso{option_bs, option_asian_vorst90}
 %# @end deftypefn
-
 function Value = option_asian_levy(CallPutFlag,S,X,T,r,sigma,divrate)
  
  if nargin < 6 || nargin > 7

@@ -12,7 +12,6 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{class} ] =} get_informclass(@var{score})
 %#
@@ -20,7 +19,6 @@
 %# See http://www.inform-index.org/ for further information.
 %# 
 %# @end deftypefn
-
 function class = get_informclass(score)
 
 if nargin < 1

@@ -1,4 +1,3 @@
-% method of class @Curve
 function curve = apply_rf_shock (curve, value_type, rf)
   
 % input checks

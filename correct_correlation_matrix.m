@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{A_scaled} @var{pos_sem_def_bool}] =} correct_correlation_matrix(@var{M})
 %# Return a positive semi-definite matrix @var{A_scaled} to a given input 
@@ -19,7 +18,6 @@
 %# @*
 %# Reference: 'Implementing Value at Risk', Best, Philip W., 1998.
 %# @end deftypefn
-
 function [A_scaled pos_sem_def_bool]= correct_correlation_matrix(M)
 pos_sem_def_bool = testpsd(M);
 if (pos_sem_def_bool == true)

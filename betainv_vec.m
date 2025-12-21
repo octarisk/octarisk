@@ -16,7 +16,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Octave; see the file COPYING.  If not, see
 ## <http://www.gnu.org/licenses/>.
-
 ## -*- texinfo -*-
 ## @deftypefn {} {} betainv_vec (@var{x}, @var{a}, @var{b})
 ## For each element of @var{x}, compute the quantile (the inverse of the CDF)
@@ -24,11 +23,9 @@
 ## Performance improvement: Calling vectorized version of betacdf (batainc_vec).
 ## Supporting full double precision.
 ## @end deftypefn
-
 ## Authors: KH <Kurt.Hornik@wu-wien.ac.at>
 ## Authors: Stefan Schloegl <schinzilord@octarisk.com>
 ## Description: Quantile function of the Beta distribution
-
 function inv = betainv_vec (x, a, b)
 
   if (nargin != 3)

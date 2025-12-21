@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{repstruct} =} plot_hist_var_simple (@var{obj}, @var{para_object}, @var{path_reports})
 %# Plot current and historical VaR and portfolio value in simplified version.
 %#
 %# @seealso{}
 %# @end deftypefn
-
 function retcode = plot_hist_var_simple(obj,para_object,path_reports)
 
 retcode = 1;

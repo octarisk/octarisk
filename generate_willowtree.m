@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{value} =} generate_willowtree (@var{N}, @var{dk}, @var{z_method}, @var{willowtree_save_flag}, @var{path_static})
 %#
@@ -39,8 +38,6 @@
 %# @end itemize
 %# @seealso{option_willowtree}
 %# @end deftypefn
-
-
 function [Transition_matrix z] = generate_willowtree(N,dk,z_method,willowtree_save_flag,path_static)
 
  if nargin < 5 || nargin > 5

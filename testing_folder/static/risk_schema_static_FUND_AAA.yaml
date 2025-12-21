@@ -1,0 +1,109 @@
+[YAML]  
+Here is the YAML document:
+
+# ============================
+# Outputs for GenAI
+# ============================
+outputs_for_genai:
+  requested_products:
+    - id: "summarize_current_portfolio_risk_profile"
+      format: "narrative"
+      content: "Summarize in a concise way the main portfolio risk metrics given under section portfolio_risk_metrics. Provide portfolio_risk_metrics.portfolio_value as Total Portfolio value, portfolio_risk_metrics.var_abs_EUR as Total value-at-risk, portfolio_risk_metrics.volatility_annualized as annualized volatility of the portfolio, and portfolio_risk_metrics.diversification_benefit as diversification benefit of the diversified portfolio. Provide your assessment of these portfolio risk metrics under the context of performing risk analysis."
+    - id: "long_term_strategy_assessment"
+      format: "narrative"
+      content: "Critically elaborate on rationale for long-term strategy given under strategies.long_term_views, alignment with rebalancing rules, and stress test consistency"
+    - id: "tactical_view_assessment"
+      format: "narrative"
+      content: "Critically elaborate on rationale for tactical view given under strategies.tactical_views, check for consistency with long-term strategy and align with rebalancing rules"
+    - id: "rebalancing_recommendation"
+      format: "ranked_list"
+      fields: ["asset_class", "instrument_id", "action", "notional_change", "expected_var_change", "rationale"]
+    - id: "scenario_impact_report"
+      format: "table"
+      content: "Summarize stresstest results as given by portfolio_stresstesting and comment on current likelyhood for such a scenario"
+      scenarios_to_report: ["CRISIS", "AIBUBBLEBURST", "Covid-19", "Stagflation"]
+      fields: ["scenario_id", "nav_change","likelyhood"]
+    - id: "compliance_check"
+      format: "boolean_with_violations"
+      fields: ["violated_constraints", "remediation_steps"]
+      pass_criteria:
+        var_within_utility_thresholds: true
+        allocations_within_Bands: true
+        tactical_views_valid: true
+        tactical_views_consistent_with_long_term_strategy: true
+
+# ============================
+# Investment strategies
+# ============================
+strategies:
+  long_term_views:
+    - id: "long_term_investment_strategy"
+      rationale: "Provide long-term growth under given risk tolerance"
+      rules:
+        stay_within_target_allocations: true
+        allow_tactical_views_if_within_targets: true
+        rebalance_if_var_exceeds_threshold: true
+        rebalance_if_allocation_outside_targets: true
+        tactical_override_priority: "risk_limits_first"
+
+# ============================
+# Rebalancing rules
+# ============================
+rebalancing:
+  frequency:
+    type: "rule_based"
+    triggers:
+      - type: "threshold_exceeded"
+        reference: "portfolio_risk_metrics.utility_var.thresholds"
+      - type: "asset_allocation_band"
+        reference: "allocations.target_asset_allocation"
+      - type: "equity_allocation_band"
+        reference: "allocations.target_equity_region_allocation"
+  actions:
+    - id: "partial_asset_class_rebalance"
+      description: "Bring allocations back to target asset allocations while aligning with tactical views"
+      rules:
+        max_turnover_pct: 0.50
+        prioritize: ["reduce_overweight", "increase_underweight"]
+    - id: "partial_equity_rebalance"
+      description: "Bring equity allocations back to target asset allocations while aligning with tactical views"
+      rules:
+        max_turnover_pct: 0.50
+        prioritize: ["reduce_overweight", "increase_underweight"]
+    - id: "utility_var_rebalance"
+      description: "Actual after tax VaR given under portfolio_risk_metrics.utility_var.var_after_tax_EUR must be within portfolio_risk_metrics.utility_var.thresholds.lower_limit_EUR and portfolio_risk_metrics.utility_var.thresholds.upper_limit_EUR. Adjust portfolio VaR by making rebalancing recommendations to stay within utility VaR thresholds"
+      preconditions:
+        - hard_constraint: "actual_var_exceeds_utility_var"
+      rules:
+        max_turnover_pct: 1.00
+        var_estimation_method: "marginal_var_linear_approximation"
+        formula: "delta_VAR = marginal_var_per_1000 x (notional_change / 1000)"
+        var_data_source: "portfolio_positions.marginal_var"
+        expected_return_assumption: "zero"
+        prioritize: ["adjust_var_within_targets"]
+        selection_method: "rebalance_asset_classes_with_largest_deviation"
+    - id: "emergency_delever"
+      description: "Fast delever if portfolio VaR portfolio_risk_metrics.utility_var.var_after_tax_EUR exceeds upper limit utility VaR portfolio_risk_metrics.utility_var.thresholds.upper_limit_EUR by more than 1.2"
+      preconditions:
+        - hard_constraint: "actual_var_exceeds_utility_var_1.2x"
+      rules:
+        max_turnover_pct: 1.0
+        prioritize: ["reduce_var"]
+        max_iterations: 3
+        convergence_tolerance_var: 0.02 x utility_var
+        var_estimation_method: "marginal_var_linear"
+
+
+# ============================
+# Explanations
+# ============================
+explanations:
+    base_value: "Value of portfolio or position (instrument value times quantity)."
+    standalone_var: "Positional VaR on a standalone, non-diversified basis."
+    decomposition_var: "Positional contribution to portfolio VaR. Sum of all Decomposition VaR equals Portfolio VaR before tax."
+    incremental_var: "Marginal positional contribution to Portfolio VaR (Initial change in Portfolio VaR if position is included in portfolio.)"
+    marginal_var: "Change in Portfolio VaR if position value will be increased by 1000 currency units."
+
+# ============================
+# Top-level metadata
+# ============================ 

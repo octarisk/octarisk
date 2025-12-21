@@ -1,4 +1,3 @@
-% @Position/aggregate.m: Aggregate all positions (to portfolio) or instruments to position
 function obj = aggregate (obj, scen_set, instrument_struct, index_struct, para)
     if ~(nargin == 5)
         print_usage ();

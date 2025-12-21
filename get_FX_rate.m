@@ -12,7 +12,6 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{fx_rate} ] =} get_FX_rate(@var{index_struct},@var{curA},@var{curB},@var{scen_set})
 %#
@@ -29,7 +28,6 @@
 %# @end itemize
 %# @seealso{timefactor}
 %# @end deftypefn
-
 function fx_rate = get_FX_rate(index_struct,curA,curB,scen_set);
 	if ( strcmpi(curA,curB) == 1 )
 		fx_rate = 1.0;

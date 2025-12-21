@@ -10,7 +10,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{theo_value} ] =} pricing_forward (@var{valuation_date}, @var{forward}, @var{discount_curve_object}, @var{underlying_object}, @var{und_curve_object},@var{fx})
 %#
@@ -28,7 +27,6 @@
 %# @end itemize
 %# @seealso{timefactor, discount_factor, convert_curve_rates}
 %# @end deftypefn
-
 function [theo_value theo_price] = pricing_forward(valuation_date,value_type, forward, ...
     discount_curve_object, underlying_object, und_curve_object, fx )
 

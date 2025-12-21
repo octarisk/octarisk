@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{SwaptionBachelierValue}] =} swaption_bachelier (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, @var{sigma}, @var{Annuity})
 %#
@@ -41,7 +40,6 @@
 %# @end itemize
 %# @seealso{option_bs}
 %# @end deftypefn
-
 function value = swaption_bachelier(PayerReceiverFlag,F,X,T,sigma,Annuity)
  
  if nargin < 6 || nargin > 6

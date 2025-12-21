@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{TermForward} @var{spotrates_floored} @var{forwardrates}  @var{forwardrates_floored}] =} getFlooredSpotByFlooringForwardCurve(@var{TermSpot}, @var{SpotRates}, @var{floor_rate}, @var{term_forwardrate}, @var{basis}, @var{comp_type}, @var{comp_freq}, @var{interp_method})
 %#
@@ -39,7 +38,6 @@
 %# @end itemize
 %# @seealso{timefactor}
 %# @end deftypefn
-
 function [TermForward spotrates_floored forwardrates forwardrates_floored ] = getFlooredSpotByFlooringForwardCurve(TermSpot, ...
             SpotRates,floor_rate,term_forwardrate,basis,comp_type,comp_freq,interp_method)
 

@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{m} =} get_srri_level (@var{vola}, @var{horizon}, @var{quantile})
 %# Calculate current SRRI level per given vola, time horizon and quantile.

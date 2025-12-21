@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{value}] =} pricing_humancapital (@var{obj},@var{value_type},@var{discount},@var{iec},@var{longev})
 %#
@@ -18,7 +17,6 @@
 %# This script is a wrapper for the function pricing_humancapital_cpp
 %# and handles all input and ouput data.
 %# @end deftypefn
-
 function hc_value = pricing_humancapital(obj,valuation_date,value_type,discount_curve,iec,longev,equity)
  
  if nargin < 7 || nargin > 7

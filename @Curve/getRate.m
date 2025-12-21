@@ -1,4 +1,3 @@
-% method of class @Curve
 function rate = getRate (curve, value_type, node)
   
 % input checks

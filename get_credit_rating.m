@@ -12,13 +12,11 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{rating} ] =} get_credit_rating(@var{entity})
 %#
 %# Map the entity id to credit rating (AAA-D). Input from various sources. 
 %# @end deftypefn
-
 function rating = get_credit_rating(entity)
 
 if nargin < 1

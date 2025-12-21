@@ -12,14 +12,12 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{score} ] =} get_readinessscore(@var{isocode})
 %#
 %# Map the ISO-2 currency code to ND-GAIN readiness risk score.
 %# See https://gain.nd.edu/our-work/country-index/methodology/ for further information.
 %# @end deftypefn
-
 function score = get_readinessscore(isocode)
 
 if nargin < 1

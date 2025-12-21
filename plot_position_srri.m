@@ -9,15 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{retcode} =} plot_position_srri (@var{path_reports}, @var{obj})
 %# Plot barchart with relative asset exposure to SRRI levels per position.
 %#
 %# @seealso{}
 %# @end deftypefn
-
-
 function retcode = plot_position_srri(path_reports,obj)
 
 srri_classes = [1,2,3,4,5,6,7];

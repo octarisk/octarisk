@@ -1,4 +1,3 @@
-% setting attribute values
 function obj = set(obj, varargin)
   % A) Specify fieldnames <-> types key/value pairs
   typestruct = struct(...

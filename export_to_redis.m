@@ -12,13 +12,11 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{retcode} ] =} export_to_redis(@var{para},@var{instrument_struct},@var{index_struct},@var{port_obj_struct})
 %# Exports instruments, index and portfolio objects to a Redis database using go-redis library for Octave (https://github.com/markuman/go-redis).
 %# All objects are exported as JSON and can be loaded by other programs (e.g. with Python).
 %# @end deftypefn
-
 function ret = export_to_redis(para,instrument_struct,index_struct,port_obj_struct)
 
 export_flag = para.get('export_to_redis_db');

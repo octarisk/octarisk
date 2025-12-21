@@ -9,12 +9,10 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{riskfactor_struct} @var{rf_failed_cell}] =} load_riskfactor_scenarios(@var{riskfactor_struct}, @var{M_struct}, @var{mc_timestep}, @var{mc_timestep_days},@var{para_object})
 %# Generate MC scenario shock values for risk factor curve objects. Store all MC scenario shock values in provided struct and return the final struct and a cell containing all failed risk factor ids.
 %# @end deftypefn
-
 function [tmp_riskfactor_struct rf_failed_cell ] = load_riskfactor_scenarios(riskfactor_struct,M_struct,riskfactor_cell,mc_timestep,mc_timestep_days,para_object)
 
 % reorder tmp_riskfactor_struct

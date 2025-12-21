@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{m} =} plot_solvencyratio (@var{vola_act}, @var{filepath})
 %# Plot solvency ratio and show relationship to safety zones.
 %#
 %# @seealso{}
 %# @end deftypefn
-
 function [ret idx_figure] = plot_solvencyratio(sratio,filepath="",port_id="",idx_figure=1)
 or_green = [0.56863   0.81961   0.13333]; 
 or_blue  = [0.085938   0.449219   0.761719]; 

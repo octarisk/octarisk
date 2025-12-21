@@ -12,7 +12,6 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{basis} ] =} get_basis(@var{dcc_string})
 %#
@@ -44,7 +43,6 @@
 %# @end itemize
 %# @seealso{timefactor}
 %# @end deftypefn
-
 function basis = get_basis(dcc_string)
 
 if nargin < 1

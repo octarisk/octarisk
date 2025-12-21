@@ -1,4 +1,3 @@
-% method of class @CapFloor
 function s = getCF (capfloor, property)
   obj = capfloor;
   if (nargin == 1)

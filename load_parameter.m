@@ -9,12 +9,10 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{parameter_struct} @var{id_failed_cell}] =} load_parameter(@var{path_parameter}, @var{filename_parameter})
 %# Load data from parameter specification file and generate parameter object with parsed data.
 %# @end deftypefn
-
 function [para_struct id_failed_cell] = load_parameter(path_parameter,filename_parameter)
 
 % A) Prepare loading input from file

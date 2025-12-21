@@ -15,7 +15,6 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{r} @var{type} ] =} get_marginal_distr_pearson (@var{mu}, @var{sigma}, @var{skew}, @var{kurt}, @var{Z})
 %#
@@ -55,7 +54,6 @@
 %# @end itemize
 %# @seealso{discount_factor}
 %# @end deftypefn
-
 function [r,type] = get_marginal_distr_pearson(mu,sigma,skew,kurt,Z)
 
 % Classify Pearson Distribution Type I - VII and calculate shape parameters 

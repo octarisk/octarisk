@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{R} @var{distr_type} @var{Z}] =} scenario_generation_MC (@var{corr_matrix}, @var{P}, @var{mc}, @var{copulatype}, @var{nu}, @var{time_horizon}, @var{path_static}, @var{para_object})
 %#
@@ -36,7 +35,6 @@
 %# @end itemize
 %# @seealso{get_marginal_distr_pearson, mvnrnd, normcdf, mvtrnd ,tcdf}
 %# @end deftypefn
-
 function [R distr_type Z] = scenario_generation_MC(corr_matrix,P,mc, ...
                             copulatype,nu,time_horizon,path_static,para_object)
 % A) Input checks

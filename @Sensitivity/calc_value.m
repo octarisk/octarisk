@@ -1,4 +1,3 @@
-% @Sensitivity method calc_value
 function obj = calc_value(sensi,valuation_date,scenario,riskfactor_struct,instrument_struct,index_struct,curve_struct,surface_struct,scen_number)
 obj = sensi;
 if ( nargin < 8) && strcmpi(obj.sub_type,'SENSI')

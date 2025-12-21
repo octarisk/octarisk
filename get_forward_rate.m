@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{forward_rate}=} get_forward_rate(@var{nodes}, @var{rates}, @var{days_to_t1}, @var{days_to_t2}, @var{comp_type}, @var{interp_method}, @var{comp_freq},, @var{basis}, @var{valuation_date}, @var{comp_type_curve}, @var{basis_curve}, @var{comp_freq_curve} , @var{floor_flag})
 %#
@@ -38,7 +37,6 @@
 %# @end itemize
 %# @seealso{interpolate_curve, convert_curve_rates,timefactor}
 %# @end deftypefn
-
 function forward_rate = get_forward_rate(nodes, rates, days_to_t1, days_to_t2, ...
                        comp_type, interp_method, comp_freq, basis, valuation_date, ...
                        comp_type_curve, basis_curve, comp_freq_curve,floor_flag)

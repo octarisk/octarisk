@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{w}] =} get_quantile_estimator (@var{kernel}, @var{scenarios}, @var{vec}, @var{alpha}, @var{bandwidth})
 %#
@@ -27,7 +26,6 @@
 %# @item @var{w}: OUTPUT: column vector with scenario weights
 %# @end itemize
 %# @end deftypefn
-
 function w = get_quantile_estimator(kernel,scenarios,vec,alpha,bandwidth = 0)
 if nargin < 4 || nargin > 5
     print_usage ();

@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{retval}] =} return_checked_input (@var{obj}, @var{val}, @var{prop}, @var{type})
 %#
@@ -21,7 +20,6 @@
 %# generic approach according to different types are performed in the second
 %# part.
 %# @end deftypefn
-
 function retval = return_checked_input(obj,val,prop,type)
 
 if ( nargin ~= 4)

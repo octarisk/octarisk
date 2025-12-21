@@ -10,7 +10,6 @@
 %#
 %# @seealso{Bond, Forward, Option, Swaption, Debt, Sensitivity, Synthetic}
 %# @end deftypefn
-
 classdef Stochastic < Instrument
    
     properties   % All properties of Class Bond with default values

@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} { [@var{newdatenum} @var{newdatevec}] =} addtodatefinancial(@var{valdate}, @var{arg1}, @var{arg2}, @var{arg3})
 %# Add or subtract given years, months or days to a given input date. 
@@ -41,7 +40,6 @@
 %# @end example
 %# @seealso{addtodate}
 %# @end deftypefn
-
 function [newdatenum newdatevec] = addtodatefinancial(valdate, arg1, arg2, arg3)
 
 % input checks

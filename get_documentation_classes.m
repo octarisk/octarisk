@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} get_documentation_classes(@var{type}, @var{path_octarisk}, @var{path_documentation})
 %# Print documentation for all Octave Class definitions in specified path. 
@@ -19,7 +18,6 @@
 %#
 %# The path to all files has to be set in the variable path_documentation.
 %# @end deftypefn
-
 function get_documentation_classes(type,path_octarisk,path_documentation)
 
 % set up cell with commands to Classes where help text is specified

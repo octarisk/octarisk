@@ -2,7 +2,6 @@
 %# @deftypefn {Function File} {} test_oct_files()
 %# Call unittests for compiled oct files.
 %# @end deftypefn
-
 function test_oct_files()
     % this is only a dummy function for containing all the oct file testing 
     % suites.

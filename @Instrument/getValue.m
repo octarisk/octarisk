@@ -1,4 +1,3 @@
-% Instrument Class @Instrument
 function s = getValue (instrument, property)
   obj = instrument;
   if (nargin == 1)

@@ -12,13 +12,11 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{retcode} ] =} print_qrt_cells(@var{obj},@var{repstruct},@var{para},@var{filepathqrt})
 %# Print QRT related attribute values to a file incl. Excel cell coordinates.
 %# 
 %# @end deftypefn
-
 function [retcode repstruct] = print_qrt_cells(obj,repstruct,para,filepathqrt)
 
 retcode = 1;

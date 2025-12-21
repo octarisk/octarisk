@@ -13,7 +13,6 @@
 %# @end itemize
 %# @seealso{Instrument}
 %# @end deftypefn
-
 function s = getValue (riskfactor, property, abs_flag, sensitivity) % method getValue for riskfactors
   obj = riskfactor;
   if (nargin == 1)

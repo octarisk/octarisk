@@ -1,4 +1,3 @@
-% method of class @Bond
 function s = getCF (bond, property)
   obj = bond;
   if (nargin == 1)

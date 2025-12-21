@@ -15,7 +15,6 @@
 %#
 %# You should have received a copy of the GNU General Public License
 %# along with this program; If not, see <http://www.gnu.org/licenses/>.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{m} =} unvech (@var{v}, @var{scale})
 %# Performs the reverse of @code{vech} on the vector @var{v}.
@@ -29,7 +28,6 @@
 %#
 %# @seealso{vech, ind2sub, sub2ind_tril}
 %# @end deftypefn
-
 function M = unvech (v, scale = 1)
 
   if ( nargin < 1 || nargin > 2 )

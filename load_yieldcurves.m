@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{rf_ir_cur_cell} @var{curve_struct}] =} load_yieldcurves(@var{curve_struct}, @var{riskfactor_struct}, @var{mc_timestep}, @var{path_output}, @var{saving})
 %# Generate curve objects from risk factor objects. Store all curves in provided 
 %# struct and return the final struct and a cell containing all interest rate 
 %# risk factor currency / ratings.
 %# @end deftypefn
-
 function [rf_ir_cur_cell curve_struct curve_failed_cell] = load_yieldcurves( ...
                 curve_struct,riskfactor_struct,mc_timestep,path_output,saving,run_mc)
 

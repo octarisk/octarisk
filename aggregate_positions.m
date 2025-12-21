@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{position_struct} @var{position_failed_cell} @var{portfolio_value} @var{portfolio_shock}] =} aggregate_positions (@var{position_struct}, @var{position_failed_cell}, @var{instrument_struct}, @var{index_struct}, @var{scennumber},  @var{scen_set}, @var{fund_currency}, @var{port_id}, @var{printflag})
 %#
@@ -33,7 +32,6 @@
 %# @end itemize
 %# @seealso{aggregate_position_base}
 %# @end deftypefn
-
 function [position_struct position_failed_cell retvec] = aggregate_positions(position_struct,position_failed_cell,instrument_struct,index_struct,scennumber,scen_set,fund_currency,port_id,printflag)
 
 % Loop through all positions and calculate portfolio MC shock and position MC constributions

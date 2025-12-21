@@ -1,4 +1,4 @@
-% @Option/get.m: return attribute value for given property key
+
 function s = get (obj, property)
   if (nargin == 1)
     s = obj.name;

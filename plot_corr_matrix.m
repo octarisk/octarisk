@@ -18,15 +18,12 @@
 %#
 %# Source: https://github.com/gutierrezps/plotConfMat
 %# published under MIT license.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{retcode} =} plot_corr_matrix (@var{input_heatmap}, @var{identifier}, @var{path_reports}, @var{filename}, @var{title_string}, @var{x_axis_label}, @var{y_axis_label}, @var{xlabels}, @var{ylabels})
 %# Generic correlation matrix plot for any given n x n matrix.
 %#
 %# @seealso{}
 %# @end deftypefn
-
-
 function retcode = plot_corr_matrix(plotmat,identifier,path_reports,filename,title_string,x_axis_label,y_axis_label,xlabels,ylabels)
 
 retcode = 1;

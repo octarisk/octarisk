@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{repstruct} =} plot_gini (@var{obj}, @var{para})
 %# Plot Lorentz curve for portfolio distribution. 
 %#
 %# @seealso{}
 %# @end deftypefn
-
 function repstruct = calc_gini(obj,repstruct,para,path_reports)
 
 or_blue  = [0.085938   0.449219   0.761719]; 

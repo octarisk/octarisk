@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{sri} @var{VEV}] =} get_sri_level (@var{value_base}, @var{value_mc}, @var{mc_timestep_days})
 %# Calculate SRI level per given P&L distribution according to PRIIPS SRI methodology.

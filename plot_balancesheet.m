@@ -11,7 +11,6 @@
 %#
 %# @seealso{}
 %# @end deftypefn
-
 function  retcode = plot_balancesheet(identifier,path_reports,title_string,assets_input,assets_labels_input,liabs_input,liabs_labels_input);
 retcode = 1;
 

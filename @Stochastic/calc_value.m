@@ -1,4 +1,3 @@
-% @Stochastic method calc_value
 function obj = calc_value(stochastic,valuation_date,value_type,rf_obj,surf_obj)
 obj = stochastic;
 if ( nargin < 5)

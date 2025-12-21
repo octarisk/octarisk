@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{value} @var{delta} @var{gamma} @var{vega} @var{theta} @var{rho} @var{omega}] =} option_bs (@var{CallPutFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
 %#
@@ -40,7 +39,6 @@
 %# @end itemize
 %# @seealso{option_willowtree, swaption_black76}
 %# @end deftypefn
-
 function [value delta gamma vega theta rho omega] = option_bs(CallPutFlag,S,X, ...
                                                               T,r,sigma,divrate)
  

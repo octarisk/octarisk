@@ -12,12 +12,10 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{retcode} ] =} export_to_csv(@var{para},@var{instrument_struct},@var{port_obj_struct})
 %# Exports MC scenario profit and loss values of instruments and portfolio objects to a csv file.
 %# @end deftypefn
-
 function ret = export_to_csv(para,instrument_struct,port_obj_struct)
 
 export_flag = para.get('export_to_csv');

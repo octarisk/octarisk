@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{basket_vola}, @var{basket_dict} ] =} get_basket_volatility (@var{valuation_date}, @var{value_type}, @var{option}, @var{instrument_struct}, @var{index_struct}, @var{curve_struct}, @var{riskfactor_struct}, @var{matrix_struct}, @var{surface_struct})
 %#
@@ -30,7 +29,6 @@
 %# @end itemize
 %#
 %# @end deftypefn
-
 function [basket_vola basket_dict] = get_basket_volatility(valuation_date,value_type,basket,option,instrument_struct,index_struct,curve_struct,riskfactor_struct,matrix_struct,surface_struct)
 
 if ( nargin < 9)

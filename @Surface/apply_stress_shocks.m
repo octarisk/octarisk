@@ -1,4 +1,3 @@
-% method of class @Surface
 function [surface] = apply_stress_shocks (surface, stress_struct)
     % store risk factor shock values for all underlying risk factors given in
     % riskfactor_struct

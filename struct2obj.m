@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{obj}] =} struct2obj(@var{s},@var{verbose})
 %# Converting structs into objects. Therefore the constructors of hard-coded 
@@ -25,7 +24,6 @@
 %# @item @var{obj}: OUTPUT: objects
 %# @end itemize
 %# @end deftypefn
-
 function obj = struct2obj(s,verbose)
 
 if nargin == 1

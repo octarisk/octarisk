@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{rate}] =} getCapFloorRate (@var{CapFlag}, @var{F}, @var{X}, @var{tf}, @var{sigma}, @var{model})
 %#
@@ -56,7 +55,6 @@
 %# @*
 %# @seealso{swaption_bachelier, swaption_black76}
 %# @end deftypefn
-
 function rate = getCapFloorRate(CapFlag, F, X, tf, sigma, model)
 
 % Error and input checks

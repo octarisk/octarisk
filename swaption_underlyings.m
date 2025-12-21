@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{SwaptionValue}] =} swaption_underlyings (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{m}, @var{tau})
 %#
@@ -17,7 +16,6 @@
 %# or Normal pricing functions using underlying fixed and floating legs.
 %# @seealso{swaption_bachelier, swaption_black76}
 %# @end deftypefn
-
 function value = swaption_underlyings(PayerReceiverFlag,K,V_fix,V_float,T,sigma,model)
 
  if nargin < 7 || nargin > 7

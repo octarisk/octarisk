@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{surface_struct} @var{vola_failed_cell}] =} load_volacubes(@var{surface_struct}, @var{path_mktdata}, @var{input_filename_vola_index}, @var{input_filename_vola_ir}, @var{input_filename_vola_stochastic})
 %# Load data from mktdata volatility surfaces / cubes specification files and 
 %# generate a struct with parsed data. Store all stresstests in provided struct 
 %# and return the final struct and a cell containing the failed volatility ids.
 %# @end deftypefn
-
 function [surface_struct vola_failed_cell] = load_volacubes(surface_struct, ...
                   path_mktdata,input_filename_vola_index,input_filename_vola_ir, ...
                   input_filename_surf_stochastic,stress_struct,riskfactor_struct,run_mc)

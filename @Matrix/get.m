@@ -1,4 +1,3 @@
-% @Matrix/get.m: return attribute value for given property key
 function m = get (obj, property)
   if (nargin == 1)
     m = obj.name;

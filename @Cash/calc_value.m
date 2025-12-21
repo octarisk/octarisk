@@ -1,4 +1,3 @@
-% @Cash/calc_value.m
 function obj = calc_value (cash,value_type,scen_number)
   obj = cash;
   if ( nargin < 3 )

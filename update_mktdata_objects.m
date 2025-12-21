@@ -10,7 +10,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{index_struct} @var{curve_struct} @var{id_failed_cell}] =} update_mktdata_objects(@var{mktdata_struct}, @var{index_struct}, @var{riskfactor_struct}, @var{curve_struct})
 %# Update all market data objects with scenario dependent risk factor and curve shocks.
@@ -19,7 +18,6 @@
 %# During aggregation and instrument currency conversion the appropriate FX exchange rate is always chosen by FX_BasecurrencyForeigncurrency)
 %# Volatility surfaces and cube MC and stress shocks are generated in script load_volacubes.m
 %# @end deftypefn
-
 function [index_struct curve_struct surface_struct id_failed_cell] = update_mktdata_objects(valuation_date,instrument_struct,mktdata_struct,index_struct,riskfactor_struct,curve_struct,surface_struct,timesteps_mc,mc,no_stresstests,run_mc,stress_struct)
 
 id_failed_cell = {};

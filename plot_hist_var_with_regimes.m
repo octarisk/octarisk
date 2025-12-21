@@ -9,13 +9,11 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{retcode} =} plot_hist_var_with_regimes(@var{obj}, @var{para_object}, @var{path_reports})
 %# Plot full historical monthly VaR (relative %) with regime color coding. 
 %# Adds a separate regime legend with mean and std VaR.
 %# @end deftypefn
-
 function retcode = plot_hist_var_with_regimes(obj, para_object, path_reports)
 
   retcode = 1;

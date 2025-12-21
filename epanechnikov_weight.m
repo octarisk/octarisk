@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{X}] =} epanechnikov_weight (@var{scenarios}, @var{bandwidth}, @var{alpha})
 %#
@@ -25,7 +24,6 @@
 %# @item @var{X}: OUTPUT: EP-weight column vector
 %# @end itemize
 %# @end deftypefn
-
 function X = epanechnikov_weight(scenarios,bandwidth,alpha)
 % ##############################################################################
 % #                                  Epanechnikov Estimator                    #

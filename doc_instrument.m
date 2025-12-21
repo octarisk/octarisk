@@ -9,14 +9,11 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} { @var{} =} doc_instrument ()
 %# This script contains all integration test cases for Octarisk's instruments.
 %# This script if part of the integration test suite.
 %# @end deftypefn
-
-
 function a = doc_instrument()
     % this is only a dummy function for containing all the documentation
     % and unittests for instrument classes.

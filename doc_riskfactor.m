@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn  {Function File} { @var{object} =} Riskfactor ()
 %# @deftypefnx  {Function File} { @var{object} =} Riskfactor (@var{name}, @var{id}, @var{type}, @var{description}, @var{model}, @var{parameters})
@@ -77,7 +76,6 @@
 %# @*
 %# @seealso{Instrument}
 %# @end deftypefn
-
 function a = doc_riskfactor()
     % this is only a dummy function for containing all the documentation.
 end

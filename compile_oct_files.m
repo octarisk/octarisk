@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} compile_oct_files (@var{path_octarisk})
 %#
@@ -17,7 +16,6 @@
 %# successfully compiled .oct files to top folder. 
 %#
 %# @end deftypefn
-
 function compile_oct_files(path_octarisk)
 % it is assumed that all oct files are in subfolder /oct_files
 current_dir = pwd;
@@ -38,7 +36,7 @@ for ii = 1 : 1 : length(oct_file_list)
             link_to_file = strcat(path_to_oct_files,'/',tmp_filename);
             
             % compile .cc file (forcing gnu++11 standards)
-            [outfile, status] =feval("mkoctfile","-v","-O3","-std=gnu++11",link_to_file);
+            [outfile, status] =feval("mkoctfile","-v","-O3","-std=gnu++17",link_to_file);
             if ( status == 0 )
                 fprintf('----> File >>%s<< successfully compiled\n',tmp_filename);
                 counter_compiled += 1;

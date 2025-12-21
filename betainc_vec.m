@@ -15,10 +15,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Octave; see the file COPYING.  If not, see
 ## <http://www.gnu.org/licenses/>.
-
 ## Authors: Michele Ginesi <michele.ginesi@gmail.com>
 ## Authors: Stefan Schloegl <schinzilord@octarisk.com>
-
 ## -*- texinfo -*-
 ## @deftypefn {} {} betainc_vec (@var{x}, @var{a}, @var{b})
 ## @deftypefnx {} {} betainc_vec (@var{x}, @var{a}, @var{b}, @var{tail})
@@ -70,7 +68,6 @@
 ## @seealso{beta, betaincinv, betaln}
 ##
 ## @end deftypefn
-
 function [y] = betainc_vec (x, a, b, tail = "lower")
 
   if (nargin > 4 || nargin < 3)

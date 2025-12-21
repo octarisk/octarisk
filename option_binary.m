@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{value}] =} option_binary (@var{CallPutFlag}, @var{binary_type}, @var{S}, @var{X1}, @var{X2}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
 %#
@@ -80,7 +79,6 @@
 %# @end itemize
 %# @seealso{option_willowtree, option_bs}
 %# @end deftypefn
-
 function value = option_binary(CallPutFlag,binary_type,S,X1,X2,T,r,sigma,divrate)
  
  if nargin < 7 || nargin > 9

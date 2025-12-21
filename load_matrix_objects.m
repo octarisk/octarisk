@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{matrix_struct} @var{matrix_failed_cell}] =} load_matrix_objects(@var{matrix_struct}, @var{path_mktdata}, @var{input_filename_matrix_index})
 %# Load data from mktdata matrix object specification files and 
 %# generate a struct with parsed data. Store all objects in provided struct 
 %# and return the final struct and a cell containing the failed matrix ids.
 %# @end deftypefn
-
 function [matrix_struct matrix_failed_cell] = load_matrix_objects(matrix_struct, ...
                   path_mktdata,input_filename_matrix_index)
 

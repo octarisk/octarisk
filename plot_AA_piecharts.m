@@ -9,14 +9,12 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{repstruct} =} plot_HHI_piecharts (@var{repstruct}, @var{path_reports}, @var{obj})
 %# Plot asset allocation pie chart.
 %#
 %# @seealso{}
 %# @end deftypefn
-
 function repstruct = plot_AA_piecharts(repstruct,path_reports,obj)
 
 			

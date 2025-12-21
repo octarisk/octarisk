@@ -11,7 +11,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{value}] =} option_bjsten (@var{CallPutFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{divrate})
 %# Calculate the option price of an American call or 
@@ -46,7 +45,6 @@
 %# @end itemize
 %# @seealso{option_willowtree, option_bs}
 %# @end deftypefn 
-    
 function [value] = option_bjsten(CallFlag, S, X, Time, r, sigma, divrate)
 
  if nargin < 6 || nargin > 7

@@ -17,7 +17,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Octave; see the file COPYING.  If not, see
 ## <http://www.gnu.org/licenses/>.
-
 ## -*- texinfo -*-
 ## @deftypefn  {} {} gammainc (@var{x}, @var{a})
 ## @deftypefnx {} {} gammainc (@var{x}, @var{a}, @var{tail})
@@ -87,10 +86,8 @@
 ##
 ## @seealso{gamma, gammainc, gammaln}
 ## @end deftypefn
-
 ## P(a,x) = gamma(a,x)/Gamma(a), upper
 ## 1-P(a,x)=Q(a,x)=Gamma(a,x)/Gamma(a), lower
-
 function y = gammainc (x, a, tail = "lower")
 
   if (nargin >= 4 || nargin <= 1)

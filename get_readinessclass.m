@@ -12,14 +12,12 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{class} ] =} get_readinessclass(@var{score})
 %#
 %# Map the ND-GAIN readiness score to risk class very low ... very high.
 %# 
 %# @end deftypefn
-
 function class = get_readinessclass(score)
 
 if nargin < 1

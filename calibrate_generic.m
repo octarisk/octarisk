@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} { [@var{calibrated_value} @var{retcode}] =} calibrate_generic(@var{objf}, @var{x0}, @var{lb}, @var{ub}) 
 %#
@@ -25,7 +24,6 @@
 %# @end itemize
 %# @seealso{fmincon}
 %# @end deftypefn
-
 function [calibrated_value retcode] = calibrate_generic(objf,x0,lb,ub)
 
 if nargin < 2

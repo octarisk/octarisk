@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{value} =} option_willowtree (@var{CallPutFlag}, @var{AmericanFlag}, @var{S}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{dividend}, @var{dk}, @var{nodes}, @var{path_static})
 %#
@@ -49,7 +48,6 @@
 %# @end itemize
 %# @seealso{option_binomial, option_bs, option_exotic_mc}
 %# @end deftypefn
-
 function [option_willowtree V_eur_option] = option_willowtree(CallFlag,AmericanFlag,S0,K,T,rf,sigma,dividend,dk,nodes,path_static)
 
 %-------------------------------------------------------------------------

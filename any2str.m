@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} { [@var{output} @var{type}] =} any2str(@var{value})
 %# Convert input value into string. Therefore a type dependent conversion is
@@ -24,7 +23,6 @@
 %# @item @var{type}:    output type
 %# @end itemize
 %# @end deftypefn
-
 function [output] = any2str(value)
 if nargin > 1
     fprintf('WARNING: Only one argument is allowed.\n');

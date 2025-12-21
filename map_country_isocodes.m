@@ -12,13 +12,11 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{iso3} ] =} map_country_isocodes(@var{iso2})
 %#
 %# Map the ISO-2 country code to ISO-3 code.
 %# @end deftypefn
-
 function iso3 = map_country_isocodes(iso2)
 
 if nargin < 1

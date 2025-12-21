@@ -35,6 +35,7 @@ path_reports = strcat(path_main,'/', ...
 			para_object.folder_output,'/',para_object.folder_output_reports);
 
 yaml_risk_schema = strcat(path_reports,'/risk_schema_port_',obj.id,'.yaml');
+
 	    
 % ---------------------------------    YAML schema    --------------------------------
 if (strcmpi(type,'yaml'))  
@@ -87,8 +88,13 @@ if (strcmpi(type,'yaml'))
 			for ii=1:1:length(obj.aa_target_values)
 				fprintf(yaml, '    - asset_class: "%s"\n',obj.aa_target_id{ii});
 				fprintf(yaml, '      target_allocation: %2.2f\n',obj.aa_target_values(ii));
-				fprintf(yaml, '      minimum_allocation: %2.2f\n',0.05);
-				fprintf(yaml, '      maximum_allocation: %2.2f\n',min(obj.aa_target_values(ii)*2,0.8));
+				if (sum(strcmpi(obj.aa_target_id{ii},{"Equity","Fixed Income"}))>0)
+					fprintf(yaml, '      minimum_allocation: %2.2f\n',max(0,obj.aa_target_values(ii) - 0.15));
+					fprintf(yaml, '      maximum_allocation: %2.2f\n',min(0.8,obj.aa_target_values(ii) + 0.15));
+				else
+					fprintf(yaml, '      minimum_allocation: %2.2f\n',max(0.025,obj.aa_target_values(ii) - 0.10));
+					fprintf(yaml, '      maximum_allocation: %2.2f\n',min(obj.aa_target_values(ii)+0.1,0.3));
+				end
 			end
 		end
 		if ( length(obj.equity_target_region_values) == length(obj.equity_target_region_id) && length(obj.equity_target_region_values) > 0 )
@@ -118,13 +124,16 @@ if (strcmpi(type,'yaml'))
 			stressnames = {stresstest_struct.name};
 			stressvec = obj.getValue('stress');
 			for jj=2:1:length(stressnames)
-				fprintf(yaml, '    - stresstest_name: "%s"\n',stressnames{jj});
-				fprintf(yaml, '      profit_or_loss_%s: %2.0f\n',obj.currency,stressvec(jj) - obj.getValue('base') );
+				if (sum(strcmpi(stressnames{jj},{"CRISIS",  "Covid-19", "Stagflation", "AIBUBBLEBURST"}))>0)
+					fprintf(yaml, '    - stresstest_name: "%s"\n',stressnames{jj});
+					fprintf(yaml, '      profit_or_loss_%s: %2.0f\n',obj.currency,stressvec(jj) - obj.getValue('base') );
+				end
 			end
 		else
 			fprintf('print_report: No stresstest_struct input provided.\n');
 		end
 		fclose (yaml)
+		
 
   else % ######################### MC reporting #########################
 	    
@@ -212,7 +221,7 @@ if (strcmpi(type,'yaml'))
             fprintf(yaml, '    crisis_scenario: EQ-40%%, Alt-70%%, IR+200bps, INFL+500bps, CS+100bps, FX-10%%, RE-50%%, COM+20%%\n');
         end
 	    for kk=1:1:length(comments_cell)
-			fprintf(yaml, '    assummption %s: "%s"\n',any2str(kk),comments_cell{kk});
+			fprintf(yaml, '    assumption %s: "%s"\n',any2str(kk),comments_cell{kk});
 	    end
 
 		% ####  position level report
@@ -285,7 +294,7 @@ if (strcmpi(type,'yaml'))
 				fprintf(yaml, '        base_value_contribution_rel: %1.2f\n',tmp_aggregation_basevalue_pos/obj.getValue('base'));
 				fprintf(yaml, '        standalone_var_%s: %2.2f\n',obj.currency,tmp_standalone_aggr_key_var);
 				fprintf(yaml, '        decomposition_var_%s: %2.2f\n',obj.currency,tmp_decomp_aggr_key_var);
-				fprintf(yaml, '        decomposition_var_rel: %1.2f\n',tmp_pos_obj.incr_var);
+				fprintf(yaml, '        decomposition_var_rel: %1.2f\n',tmp_decomp_aggr_key_var/obj.varhd_abs);
 			end
 			saa_deviation = devation_sum;
 			saa_riskimpact = risk_impact_sum;
@@ -318,373 +327,97 @@ if (strcmpi(type,'yaml'))
 				fprintf(yaml, '        base_value_contribution_rel: %1.2f\n',tmp_aggregation_basevalue_pos/obj.getValue('base'));
 				fprintf(yaml, '        standalone_var_%s: %2.2f\n',obj.currency,tmp_standalone_aggr_key_var);
 				fprintf(yaml, '        decomposition_var_%s: %2.2f\n',obj.currency,tmp_decomp_aggr_key_var);
-				fprintf(yaml, '        decomposition_var_rel: %1.2f\n',tmp_pos_obj.incr_var);
+				fprintf(yaml, '        decomposition_var_rel: %1.2f\n',tmp_decomp_aggr_key_var/obj.varhd_abs);
 			end
 			
 		  end
 		  fprintf('\n');
 		end
 	
-		# historical VaR reporting
-		fprintf(yaml, '  portfolio_historical_risk_metrics:\n');
-	    if ( iscell(obj.hist_report_dates) && ...
-					numel(obj.hist_report_dates) == length(obj.hist_base_values) && ...
-					length(obj.hist_base_values) == length(obj.hist_var_abs))
-				for(kk=1:1:numel(obj.hist_base_values))
-					fprintf(yaml, '    - historical_reporting_date: "%s"\n',datestr(datestr(obj.hist_report_dates{kk}),"YYYY-mm-DD"));
-					fprintf(yaml, '      portfolio_base_value_%s: %2.0f\n',obj.currency,obj.hist_base_values(kk));
-					fprintf(yaml, '      portfolio_historical_var_%s: %2.0f\n',obj.currency,obj.hist_var_abs(kk));
-					fprintf(yaml, '      portfolio_historical_var_rel: %1.3f\n',obj.hist_var_abs(kk)/obj.hist_base_values(kk));
-				end
-        end
-            
-            
-	    %~ % #### Position ID Decomp LaTeX Table
-	    %~ mc_var_shock = obj.varhd_abs;
-	    %~ fund_currency = obj.currency; 	
-		%~ pie_chart_values_pos_shock = [];
-		%~ pie_chart_desc_pos_shock = {};
-		%~ % loop through all positions
-		%~ for (ii=1:1:length(obj.positions))
-			%~ try
-			  %~ pos_obj = obj.positions(ii).object;
-			  %~ if (isobject(pos_obj))
-					%~ pie_chart_values_pos_shock(ii) = (pos_obj.decomp_varhd) ;
-					%~ pie_chart_desc_pos_shock(ii) = cellstr( strcat(pos_obj.id));
-			  %~ end
-			%~ catch
-				%~ printf('Portfolio.print_report: decomp there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
-			%~ end
-		%~ end
-		%~ % prepare vector for piechart:
-		%~ [pie_chart_values_sorted_pos_shock sorted_numbers_pos_shock ] = sort(pie_chart_values_pos_shock,'descend');
-		%~ idx = 1; 
-		%~ % plot Top 25 Positions
-		%~ max_positions = 28;
-		%~ for ii = 1:1:min(length(pie_chart_values_pos_shock),max_positions);
-			%~ pie_chart_values_plot_pos_shock(idx)     = pie_chart_values_sorted_pos_shock(ii) ;
-			%~ pie_chart_desc_plot_pos_shock(idx)       = pie_chart_desc_pos_shock(sorted_numbers_pos_shock(ii));
-			%~ idx = idx + 1;
-		%~ end
-		%~ % append remaining part
-		%~ if (idx == (max_positions + 1))
-			%~ pie_chart_values_plot_pos_shock(idx)     = mc_var_shock - sum(pie_chart_values_plot_pos_shock) ;
-			%~ pie_chart_desc_plot_pos_shock(idx)       = "Other";
-		%~ end
-		%~ pie_chart_values_plot_pos_shock = pie_chart_values_plot_pos_shock ./ sum(pie_chart_values_plot_pos_shock);
-  
-		%~ % Plot LaTeX table Decomp ID
-		%~ other_var = obj.varhd_abs;
-		%~ other_value = obj.getValue('base');
-
-		%~ fprintf(yaml, 'Decomp ID\n');
-		%~ fprintf(yaml, '\\begin{tabular}{l|r|r|r|r|r}\n');
-		%~ fprintf(yaml, 'Position ID \& Basevalue \& Standalone VaR \& Decomp VaR \& Pct. \& SRRI \\\\\\hline\\hline\n');
-		%~ fprintf(yaml, 'Portfolio \& %9.0f %s \& %9.0f  %s\& %9.0f %s \& %3.1f\\%% \&  %s \\\\\\hline\n',obj.getValue('base'),obj.currency,obj.varhd_abs,obj.currency,obj.varhd_abs,obj.currency,100,any2str(srri_actual));
-		%~ for kk=1:1:length(pie_chart_desc_plot_pos_shock)
-			%~ pos_id = pie_chart_desc_plot_pos_shock{kk};
-			%~ [pos_obj retcode] = get_sub_object(obj.positions,pos_id);
-			%~ if ( retcode == 1)
-				%~ tmp_id = strrep(pos_obj.id,"_","");
-				%~ other_var = other_var - pos_obj.decomp_varhd;
-				%~ other_value = other_value - pos_obj.getValue('base');
-				%~ fprintf(yaml, '%s \& %9.0f %s \& %9.0f %s \& %9.0f %s\& %3.1f\\%% \& %s\\\\\n',tmp_id,pos_obj.getValue('base'),pos_obj.currency,pos_obj.varhd_abs,obj.currency,pos_obj.decomp_varhd,obj.currency,100*pos_obj.decomp_varhd/obj.varhd_abs,any2str(pos_obj.srri_pos));
-			%~ end
-		%~ end
-		%~ fprintf(yaml, '%s \& %9.0f %s \& %s \& %9.0f %s\& %3.1f\\%% \& -- \\\\\n','Other',other_value,obj.currency,'--',other_var,obj.currency,100*other_var/obj.varhd_abs);
-		%~ fprintf(yaml, '\\end{tabular}\n');
-		
-		%~ % #### print Incremental and Marginal VaR Report
-		%~ if (para_object.calc_marg_incr_var = true)
-			%~ fprintf(yaml, 'Incremental and Marginal VaR Report\n');
-			%~ fprintf(yaml, '\\begin{tabular}{l|r|r|r }\n');
-			%~ fprintf(yaml, 'Position ID\& Basevalue \& Incremental VaR \& Marginal VaR\\\\ \\hline\\hline\n');
-		%~ for kk=1:1:length(pie_chart_desc_plot_pos_shock)
-			%~ pos_id = pie_chart_desc_plot_pos_shock{kk};
-			%~ [pos_obj retcode] = get_sub_object(obj.positions,pos_id);
-			%~ if ( retcode == 1)
-				%~ fprintf(yaml, '%s \& %9.0f %s \& %9.0f %s\& %9.0f %s\\\\\n',strrep(pos_id,"_",""),pos_obj.getValue('base'),obj.currency,pos_obj.incr_var,obj.currency,pos_obj.marg_var,obj.currency);
-			  %~ end
-		%~ end
-			%~ fprintf(yaml, '\\end{tabular}\n');
-		%~ end
-	  
-	   %~ % Equity Style / Region Allocation & Fixed Income Style box
-	   %~ % loop through all positions
-	    %~ eq_deviation = 0;
-	    %~ eq_basevalue = 0;
-	    %~ cash_amount = 0;
-	    %~ country_cell = obj.country_id;
-		%~ country_exposure = zeros(1,numel(country_cell));
-		%~ liquidity_class_cell = {};
-		%~ liquidity_class_exposure = [];
-		%~ issuer_cell = {};
-		%~ issuer_exposure = [];		
-		%~ category_cell = {};
-		%~ category_exposure = [];	
-		%~ custodian_bank_cell = {};
-		%~ custodian_bank_exposure = [];		
-		%~ counterparty_cell = {};
-		%~ counterparty_exposure = [];		
-		%~ designated_sponsor_cell = {};
-		%~ designated_sponsor_exposure = [];		
-		%~ market_maker_cell = {};
-		%~ market_maker_exposure = [];		
-		%~ custodian_bank_underlyings_cell = {};
-		%~ custodian_bank_underlyings_exposure = [];		
-		%~ country_of_origin_cell = {};
-		%~ country_of_origin_exposure = [];		
-		%~ fund_replication_cell = {};
-		%~ fund_replication_exposure = [];	
-		%~ entity_cell = {};
-		%~ entity_exposure = [];
-		%~ entity_relationship_cell = {};
-		%~ issuer = '';
-	    %~ country_of_origin = '';
-	    %~ custodian_bank_underlyings = '';
-	    %~ designated_sponsor = '';
-	    %~ custodian_bank = '';
-	    %~ counterparty = '';	  
-		%~ esg_score = 0;
-		%~ esg_basevalue = 0;
-		%~ region_sum = 0;
-		%~ bond_exposure = 0;
-		%~ bond_ytm = 0;
-		%~ bond_ytm_duration = 0;
-	    %~ if (isstruct(instrument_struct))
-			%~ region_cell = obj.equity_target_region_id;
-			%~ region_current_values = zeros(1,numel(region_cell));
-			%~ region_current_decomp = zeros(1,numel(region_cell));
-			%~ style_port_values = zeros(1,9);
-			%~ port_rating = zeros(1,length(obj.rating_values));
-			%~ port_duration = zeros(1,length(obj.duration_values));
-			%~ for (ii=1:1:length(obj.positions))
-				%~ try
-				  %~ pos_obj = obj.positions(ii).object;
-				  %~ if (isobject(pos_obj))
-				   %~ pos_id = pos_obj.id;
-				   %~ instr_obj = get_sub_object(instrument_struct,pos_id);
-				   %~ if (instr_obj.isProp('asset_class'))
-					  %~ if (strcmpi(instr_obj.get('asset_class'),'Equity'))
-						%~ region_cell_pos  = instr_obj.region_id;
-						%~ if (abs(sum(instr_obj.region_values) - 1) > 0.01)
-							%~ fprintf('WARNING: Position.print_report: >>%s<< has region allocation not equal to 1\n',instr_obj.id);
-						%~ end
-						%~ region_values_abs  = instr_obj.region_values .* pos_obj.getValue('base');
-						%~ region_decomp_abs  = instr_obj.region_values .* pos_obj.decomp_varhd;
-                        
-						%~ for kk=1:1:length(region_cell)
-							%~ tmp_region = region_cell{kk};
-							%~ for jj=1:1:length(region_cell_pos)
-								%~ if ( strcmpi(tmp_region,region_cell_pos{jj}))
-									%~ region_current_values(kk) = region_current_values(kk) + region_values_abs(jj);
-									%~ region_current_decomp(kk) = region_current_decomp(kk) + region_decomp_abs(jj);
-								%~ end
-							%~ end
-						%~ end
-					  %~ end
-					  %~ % save portfolio equity style box
-					  %~ if (strcmpi(instr_obj.get('asset_class'),'Equity'))
-						%~ style_cell_pos  = instr_obj.style_id;
-						%~ style_pos_values = instr_obj.style_values .* pos_obj.getValue('base');
-						%~ style_port_values = style_port_values + style_pos_values;
-					  %~ end
-					  %~ % save portfolio rating / duration box
-					  %~ if (strcmpi(pos_obj.balance_sheet_item,'Asset'))
-						  %~ if (strcmpi(instr_obj.type,'Debt'))
-								%~ if ( instr_obj.duration < 3 )
-									%~ port_duration(1) = port_duration(1) + pos_obj.getValue('base');
-								%~ elseif ( instr_obj.duration >= 3 && instr_obj.duration < 7  )
-									%~ port_duration(2) = port_duration(2) + pos_obj.getValue('base');
-								%~ elseif ( instr_obj.duration >= 7 )
-									%~ port_duration(3) = port_duration(3) + pos_obj.getValue('base');
-								%~ end
-						  %~ else 
-							%~ if ( instr_obj.isProp('eff_duration'))
-								%~ if ( instr_obj.eff_duration < 3 )
-									%~ port_duration(1) = port_duration(1) + pos_obj.getValue('base');
-								%~ elseif ( instr_obj.eff_duration >= 3 && instr_obj.eff_duration < 7  )
-									%~ port_duration(2) = port_duration(2) + pos_obj.getValue('base');
-								%~ elseif ( instr_obj.eff_duration >= 7 )
-									%~ port_duration(3) = port_duration(3) + pos_obj.getValue('base');
-								%~ end
-							%~ end
-						  %~ end
-						  %~ % get rating
-						  %~ if ( sum(instr_obj.rating_values) > 0)
-							%~ port_rating = port_rating + instr_obj.rating_values .* pos_obj.getValue('base');
-						  %~ end
-					  %~ end %end balance_sheet_item Asset Loop
-					  
-					  %~ % get yield to maturity
-					  %~ if (strcmpi(instr_obj.get('type'),'Bond')) 
-						%~ if ( instr_obj.isProp('ytm') && strcmpi(pos_obj.balance_sheet_item,'Asset'))
-							%~ bond_exposure = bond_exposure + pos_obj.getValue('base');
-							%~ bond_ytm = bond_ytm + instr_obj.get('ytm') * pos_obj.getValue('base');
-							%~ bond_ytm_duration = bond_ytm_duration  + instr_obj.eff_duration * pos_obj.getValue('base');
-							%~ instr_obj.id
-							%~ instr_obj.get('ytm') 
-							%~ instr_obj.eff_duration
-						%~ end
-					  %~ end
-
-					  %~ % get rating
-					  %~ if ( sum(instr_obj.rating_values) > 0)
-						%~ port_rating = port_rating + instr_obj.rating_values .* pos_obj.getValue('base');
-					  %~ end
-					  
-					  
-					  %~ % required for KPI reporting
-					  %~ if (strcmpi(instr_obj.get('asset_class'),'Cash'))
-					      %~ cash_amount = cash_amount + pos_obj.getValue('base');	
-					  %~ end
-					  %~ % get country
-					  %~ if ( sum(instr_obj.country_values) > 0)
-					    %~ for kk=1:1:length(instr_obj.country_id)
-							%~ tmp_ctry = instr_obj.country_id{kk};
-							%~ if (strcmpi(country_cell,tmp_ctry) == false)
-								%~ country_cell = [country_cell,tmp_ctry];
-								%~ country_exposure = [country_exposure,0];
-							%~ end
-							%~ idx_vec = linspace(1,numel(country_cell),numel(country_cell))'; % find index of country
-							%~ idx = strcmpi(country_cell,tmp_ctry) * idx_vec;
-							%~ country_exposure(idx) = country_exposure(idx) + ...
-										%~ instr_obj.country_values(kk) * pos_obj.getValue('base');
-					    %~ end
-					  %~ end
-					  %~ % get ESG score
-					  %~ if (~isempty(instr_obj.esg_score))
-						  %~ if (instr_obj.esg_score > 0)
-							  %~ esg_score = esg_score + (instr_obj.esg_score * ...
-									%~ abs(pos_obj.getValue('base')));
-							  %~ esg_basevalue = esg_basevalue + abs(pos_obj.getValue('base'));
-						  %~ end
-					  %~ end
-					  %~ % get further instrument properties and load into cell exposure vector
-					  %~ issuer
-					  %~ if ( ~isnull(instr_obj.issuer))
-							%~ [issuer_cell, issuer_exposure] = add_to_exposure_cell(...
-									%~ issuer_cell, issuer_exposure, ...
-									%~ instr_obj.issuer,pos_obj.getValue('base'));
-							%~ [entity_cell, entity_exposure] = add_to_exposure_cell(...
-									%~ entity_cell, entity_exposure, ...
-									%~ instr_obj.issuer,pos_obj.getValue('base'));
-					  %~ end
-					  
-					  %~ category
-					  %~ if ( ~isnull(pos_obj.category))
-							%~ [category_cell, category_exposure] = add_to_exposure_cell(...
-									%~ category_cell, category_exposure, ...
-									%~ pos_obj.category,pos_obj.getValue('base'));
-					  %~ end
-
-					  %~ %-  liquidity class
-					  %~ if (strcmpi(pos_obj.balance_sheet_item,'Asset'))
-						  %~ if ( ~isnull(instr_obj.liquidity_class))
-								%~ [liquidity_class_cell, liquidity_class_exposure] = add_to_exposure_cell(...
-										%~ liquidity_class_cell, liquidity_class_exposure, ...
-										%~ instr_obj.liquidity_class,pos_obj.getValue('base'));
-						  %~ end
-					  %~ end % liquidity classification for assets only
-					  %~ custodian_bank
-					  %~ if ( ~isnull(pos_obj.custodian_bank))
-							%~ [custodian_bank_cell, custodian_bank_exposure] = add_to_exposure_cell(...
-									%~ custodian_bank_cell, custodian_bank_exposure, ...
-									%~ pos_obj.custodian_bank,pos_obj.getValue('base'));
-							%~ [entity_cell, entity_exposure] = add_to_exposure_cell(...
-									%~ entity_cell, entity_exposure, ...
-									%~ pos_obj.custodian_bank,pos_obj.getValue('base'));
-									
-							%~ if ( ~isnull(instr_obj.issuer))
-								%~ tmpstr = strcat('"',pos_obj.custodian_bank,'"->"',instr_obj.issuer,'" [colorscheme=greys9 color =9]');
-								%~ if (strcmpi(entity_relationship_cell,tmpstr) == false || isempty(strcmpi(entity_relationship_cell,tmpstr)))
-									%~ entity_relationship_cell = [entity_relationship_cell,tmpstr];
-								%~ end
-							%~ end
-								
-					  %~ end
-					  %~ counterparty
-					  %~ if ( ~isnull(instr_obj.counterparty))
-							%~ [counterparty_cell, counterparty_exposure] = add_to_exposure_cell(...
-									%~ counterparty_cell, counterparty_exposure, ...
-									%~ instr_obj.counterparty,pos_obj.getValue('base'));
-							%~ [entity_cell, entity_exposure] = add_to_exposure_cell(...
-									%~ entity_cell, entity_exposure, ...
-									%~ instr_obj.counterparty,pos_obj.getValue('base'));
-									
-							%~ if ( ~isnull(instr_obj.issuer))
-								%~ tmpstr = strcat('"',instr_obj.issuer,'"->"',instr_obj.counterparty,'" [colorscheme=greys9 color =8]');
-								%~ if (strcmpi(entity_relationship_cell,tmpstr) == false  || isempty(strcmpi(entity_relationship_cell,tmpstr)))
-									%~ entity_relationship_cell = [entity_relationship_cell,tmpstr];
-								%~ end
-							%~ end		
-					  %~ end
-					  %~ designated_sponsor
-					  %~ if ( ~isnull(instr_obj.designated_sponsor))
-							%~ [designated_sponsor_cell, designated_sponsor_exposure] = add_to_exposure_cell(...
-									%~ designated_sponsor_cell, designated_sponsor_exposure, ...
-									%~ instr_obj.designated_sponsor,pos_obj.getValue('base'));
-							%~ [entity_cell, entity_exposure] = add_to_exposure_cell(...
-									%~ entity_cell, entity_exposure, ...
-									%~ instr_obj.designated_sponsor,pos_obj.getValue('base'));
-									
-							%~ if ( ~isnull(instr_obj.issuer))
-								%~ tmpstr = strcat('"',instr_obj.issuer,'"->"',instr_obj.designated_sponsor,'" [colorscheme=greys9 color =7]');
-								%~ if (strcmpi(entity_relationship_cell,tmpstr) == false  || isempty(strcmpi(entity_relationship_cell,tmpstr)))
-									%~ entity_relationship_cell = [entity_relationship_cell,tmpstr];
-								%~ end
-							%~ end			
-					  %~ end
-					  %~ market_maker
-					  %~ if ( ~isnull(instr_obj.market_maker))
-							%~ [market_maker_cell, market_maker_exposure] = add_to_exposure_cell(...
-									%~ market_maker_cell, market_maker_exposure, ...
-									%~ instr_obj.market_maker,pos_obj.getValue('base'));
-					  %~ end
-					  %~ custodian_bank_underlyings
-					  %~ if ( ~isnull(instr_obj.custodian_bank_underlyings))
-							%~ [custodian_bank_underlyings_cell, custodian_bank_underlyings_exposure] = add_to_exposure_cell(...
-									%~ custodian_bank_underlyings_cell, custodian_bank_underlyings_exposure, ...
-									%~ instr_obj.custodian_bank_underlyings,pos_obj.getValue('base'));
-							%~ [entity_cell, entity_exposure] = add_to_exposure_cell(...
-									%~ entity_cell, entity_exposure, ...
-									%~ instr_obj.custodian_bank_underlyings,pos_obj.getValue('base'));
-									
-							%~ if ( ~isnull(instr_obj.issuer))
-								%~ tmpstr = strcat('"',instr_obj.issuer,'"->"',instr_obj.custodian_bank_underlyings,'"  [colorscheme=greys9 color =6]');
-								%~ if (strcmpi(entity_relationship_cell,tmpstr) == false  || isempty(strcmpi(entity_relationship_cell,tmpstr)))
-									%~ entity_relationship_cell = [entity_relationship_cell,tmpstr];
-								%~ end
-							%~ end	
-					  %~ end
-					  %~ country_of_origin
-					  %~ if ( ~isnull(instr_obj.country_of_origin))
-							%~ [country_of_origin_cell, country_of_origin_exposure] = add_to_exposure_cell(...
-									%~ country_of_origin_cell, country_of_origin_exposure, ...
-									%~ instr_obj.country_of_origin,pos_obj.getValue('base'));
-							%~ [entity_cell, entity_exposure] = add_to_exposure_cell(...
-									%~ entity_cell, entity_exposure, ...
-									%~ instr_obj.country_of_origin,pos_obj.getValue('base'));
-									
-							%~ if ( ~isnull(instr_obj.custodian_bank_underlyings))
-								%~ tmpstr = strcat('"',instr_obj.custodian_bank_underlyings,'"->"',instr_obj.country_of_origin,'" [colorscheme=greys9 color =5]');
-								%~ if (strcmpi(entity_relationship_cell,tmpstr) == false  || isempty(strcmpi(entity_relationship_cell,tmpstr)))
-									%~ entity_relationship_cell = [entity_relationship_cell,tmpstr];
-								%~ end
-							%~ end	
-					  %~ end
-					  %~ fund_replication
-					  %~ if ( ~isnull(instr_obj.fund_replication))
-							%~ [fund_replication_cell, fund_replication_exposure] = add_to_exposure_cell(...
-									%~ fund_replication_cell, fund_replication_exposure, ...
-									%~ instr_obj.fund_replication,pos_obj.getValue('base'));
-					  %~ end					  
-					%~ end
-				  %~ end
-				%~ catch
-					%~ printf('Portfolio.print_report: cell and exposure: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+		%~ # historical VaR reporting (Disabled, too confusing, no added value for providing short-term actions)
+		%~ fprintf(yaml, '  portfolio_historical_risk_metrics:\n');
+	    %~ if ( iscell(obj.hist_report_dates) && ...
+					%~ numel(obj.hist_report_dates) == length(obj.hist_base_values) && ...
+					%~ length(obj.hist_base_values) == length(obj.hist_var_abs))
+				%~ act_minus_10_dates = max(numel(obj.hist_base_values)-10,1);
+				%~ for(kk=act_minus_10_dates:1:numel(obj.hist_base_values))
+					%~ fprintf(yaml, '    - historical_reporting_date: "%s"\n',datestr(datestr(obj.hist_report_dates{kk}),"YYYY-mm-DD"));
+					%~ fprintf(yaml, '      portfolio_base_value_%s: %2.0f\n',obj.currency,obj.hist_base_values(kk));
+					%~ fprintf(yaml, '      portfolio_historical_var_%s: %2.0f\n',obj.currency,obj.hist_var_abs(kk));
+					%~ fprintf(yaml, '      portfolio_historical_var_rel: %1.3f\n',obj.hist_var_abs(kk)/obj.hist_base_values(kk));
 				%~ end
-			%~ end
+        %~ end
+            
+             
+	    % Equity Region Allocation
+	    % loop through all positions
+	    fprintf(yaml, '  portfolio_equity_region_allocation:\n');
+	    eq_deviation = 0;
+	    eq_basevalue = 0;
+	    if (isstruct(instrument_struct))
+			region_cell = obj.equity_target_region_id;
+			region_current_values = zeros(1,numel(region_cell));
+			region_current_decomp = zeros(1,numel(region_cell));
+			for (ii=1:1:length(obj.positions))
+				try
+				  pos_obj = obj.positions(ii).object;
+				  if (isobject(pos_obj))
+				   pos_id = pos_obj.id;
+				   instr_obj = get_sub_object(instrument_struct,pos_id);
+				   if (instr_obj.isProp('asset_class'))
+					  if (strcmpi(instr_obj.get('asset_class'),'Equity'))
+						region_cell_pos  = instr_obj.region_id;
+						if (abs(sum(instr_obj.region_values) - 1) > 0.01)
+							fprintf('WARNING: Position.print_schema: >>%s<< has region allocation not equal to 1\n',instr_obj.id);
+						end
+						region_values_abs  = instr_obj.region_values .* pos_obj.getValue('base');
+						region_decomp_abs  = instr_obj.region_values .* pos_obj.decomp_varhd;
+                        
+						for kk=1:1:length(region_cell)
+							tmp_region = region_cell{kk};
+							for jj=1:1:length(region_cell_pos)
+								if ( strcmpi(tmp_region,region_cell_pos{jj}))
+									region_current_values(kk) = region_current_values(kk) + region_values_abs(jj);
+									region_current_decomp(kk) = region_current_decomp(kk) + region_decomp_abs(jj);
+								end
+							end
+						end
+					  end
+					end
+				  end
+				catch
+					printf('Portfolio.print_schema: cell and exposure: there was an error for position id>>%s<<: %s\n',pos_obj.id,lasterr);
+				end
+			end
+			
+			
+			% print Equity region allocation to Schema	
+			for kk=1:1:length(region_cell)
+				region = region_cell{kk};
+				region_val = region_current_values(kk);
+				region_decomp = region_current_decomp(kk);
+				region_sum = sum(region_current_values);
+				aa_target = obj.equity_target_region_values(kk);
+				aa_current = region_val ./ region_sum;
+				tmp_deviation = (aa_current - aa_target) * region_sum;               
+                if (region_val == 0)
+                    tmp_risk_impact = NaN;
+                else
+                    tmp_risk_impact = (tmp_deviation / region_val) * region_decomp;
+                    risk_impact_sum = risk_impact_sum + tmp_risk_impact;
+                end
+				devation_sum = devation_sum + abs(tmp_deviation);
+				fprintf(yaml, '    - region: %s\n',region);      
+				fprintf(yaml, '      region_base_value_%s: %2.0f\n',obj.currency,region_val);
+				fprintf(yaml, '      target_region_allocation: %1.3f\n',aa_target);
+				fprintf(yaml, '      current_region_allocation: %1.3f\n',aa_current);
+				fprintf(yaml, '      deviation_base_value_%s: %2.0f\n',obj.currency,tmp_deviation);
+				fprintf(yaml, '      deviation_risk_impact_%s: %2.0f\n',obj.currency,tmp_risk_impact);
+			
+			end
+		else
+			fprintf('No instrument_struct n');
+		end	
 			%~ entity_cell;
 			%~ entity_exposure;
 			%~ entity_relationship_cell;
@@ -1029,31 +762,7 @@ if (strcmpi(type,'yaml'))
 			%~ fprintf(yaml, '\\end{tabular}\n');
 
 			
-			%~ % print Equity region allocation to LaTeX Table
-			%~ fprintf(yaml, '\\center\n');
-			%~ fprintf(yaml, '\\begin{tabular}{l|r|r|r|r|r}\n');
-			%~ fprintf(yaml, 'Region \& Basevalue \& Target AA \& Actual AA \& Deviation \& Risk Impact\\\\\\hline\\hline\n');	
-			%~ for kk=1:1:length(region_cell)
-				%~ region = region_cell{kk};
-				%~ region_val = region_current_values(kk);
-				%~ region_decomp = region_current_decomp(kk);
-				%~ region_sum = sum(region_current_values);
-				%~ aa_target = obj.equity_target_region_values(kk);
-				%~ aa_current = region_val ./ region_sum;
-				%~ tmp_deviation = (aa_current - aa_target) * region_sum;
-                
-                %~ if (region_val == 0)
-                    %~ tmp_risk_impact = NaN;
-                %~ else
-                    %~ tmp_risk_impact = (tmp_deviation / region_val) * region_decomp;
-                    %~ risk_impact_sum = risk_impact_sum + tmp_risk_impact;
-                %~ end
-				
-				%~ devation_sum = devation_sum + abs(tmp_deviation);
-				%~ fprintf(yaml, '%s \& %9.0f %s \& %3.1f\\%% \& %3.1f\\%% \& %9.0f %s\& %9.0f %s\\\\\n',region,region_val,obj.currency,aa_target*100,aa_current*100,tmp_deviation,obj.currency,tmp_risk_impact,obj.currency);
-			%~ end
-			%~ fprintf(yaml, '\\\hline Equity \& %9.0f %s \& %3.1f\\%% \& %3.1f\\%% \& %9.0f %s\& %9.0f %s\\\\\\hline\n',region_sum,obj.currency,100,100,devation_sum,obj.currency,risk_impact_sum,obj.currency);
-			%~ fprintf(yaml, '\\end{tabular}\n');
+;
 
 			%~ eq_deviation = devation_sum;
 			%~ eq_basevalue = region_sum;

@@ -12,7 +12,6 @@
 %#
 %# You should have received a copy of the GNU General Public License along with
 %# this program; if not, see <http://www.gnu.org/licenses/>.
- 
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{tf} @var{dip} @var{dib}] =} timefactor(@var{d1}, @var{d2}, @var{basis})
 %#
@@ -31,7 +30,6 @@
 %# @end itemize
 %# @seealso{discount_factor, yeardays, get_basis}
 %# @end deftypefn
-
 function [tf dip dib] = timefactor (d1, d2, basis)
 
 % Error check

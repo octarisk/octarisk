@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{retcode}=} plot_utility_var(@var{obj}, @var{para_object}, @var{path_reports})
 %#
@@ -19,7 +18,6 @@
 %# utility VAR are calculated and printed to the plot.
 %# 
 %# @end deftypefn
-
 function [obj retcode] = plot_utility_var(obj,para_object,path_reports);
 
 retcode = 1;

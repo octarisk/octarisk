@@ -1,4 +1,3 @@
-% Risk Factor Superclass, for documentation see dummy function doc_riskfactor.m
 classdef Riskfactor
    % file: @Riskfactor/Riskfactor.m
    properties

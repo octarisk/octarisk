@@ -1,4 +1,3 @@
-% Instrument Class @Instrument
 function obj = del_scen_data (obj)
     obj.timestep_mc = {};
     obj.value_mc = [];

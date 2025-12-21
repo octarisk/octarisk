@@ -10,12 +10,10 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{mktdata_struct} @var{id_failed_cell}] =} load_mktdata_objects(@var{mktdata_struct}, @var{path_mktdata}, @var{file_mktdata}, @var{path_output}, @var{path_archive}, @var{tmp_timestamp}, @var{archive_flag})
 %# Load data from mktdata object specification file and generate objects with parsed data. Store all objects in provided mktdata struct and return the final struct and a cell containing the failed mktdata ids.
 %# @end deftypefn
-
 function [corr_matrix cell_unique] = load_correlation_matrix(path_mktdata,file_corr_matrix,path_archive,tmp_timestamp,archive_flag)
 
 % A) Prepare instrument object generation

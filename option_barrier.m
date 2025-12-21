@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{value}] =} option_barrier (@var{CallPutFlag}, @var{UpFlag}, @var{S}, @var{X}, @var{H}, @var{T}, @var{r}, @var{sigma}, @var{q}, @var{Rebate})
 %#
@@ -32,7 +31,6 @@
 %# @item @var{Rebate}: Rebate of barrier option
 %# @end itemize
 %# @end deftypefn
-
 function [optionValue] = option_barrier(PutOrCall,UpOrDown,OutorIn,S0,X,H,T,r,sigma,q,Rebate)
  if nargin < 9 || nargin > 11
     print_usage ();

@@ -1,4 +1,3 @@
-% Curve Class @Curve
 function ret = isProp (Curve, property)
   obj = Curve;
   if (nargin == 1)

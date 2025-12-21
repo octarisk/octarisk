@@ -10,7 +10,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{instrument_struct} @var{id_failed_cell}] =} load_instruments(@var{instrument_struct}, @var{valuation_date}, @var{path_instruments}, @var{file_instruments}, @var{path_output}, @var{path_archive}, @var{tmp_timestamp}, @var{archive_flag})
 %# Load data from instrument specification file and generate objects with parsed data. 
@@ -19,7 +18,6 @@
 %# The order of the final instrument structure is automatically set that all 
 %# derivatives (OPT,SWAPT,SYNTH) are coming last.
 %# @end deftypefn
-
 function [instrument_struct id_failed_cell] = load_instruments(instrument_struct,valuation_date,path_instruments,file_instruments,path_output,path_archive,tmp_timestamp,archive_flag,para_object)
 
 % A) Prepare instrument object generation

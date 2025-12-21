@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{value}] =} option_bond_hw (@var{value_type},@var{bond},@var{curve},@var{callschedule},@var{putschedule})
 %#
@@ -25,7 +24,6 @@
 %# 
 %# @seealso{pricing_callable_bond_cpp}
 %# @end deftypefn
-
 function [OptionValue OptionValuePut OptionValueCall] = option_bond_hw(value_type,bond,curve,callschedule,putschedule)
  
  if nargin < 5 || nargin > 5

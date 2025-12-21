@@ -1,4 +1,3 @@
-% @Position/calc_risk.m: Calculate risk figures based on pre-aggregated portfolio / position values
 function obj = calc_risk (obj, scen_set, instrument_struct, index_struct, para)
     if ~(nargin == 5)
         print_usage ();

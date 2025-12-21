@@ -1,4 +1,3 @@
-% method of class @Position
 function s = getCF (pos, property)
   obj = pos;
   if (nargin == 1)

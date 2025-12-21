@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{X}] =} harrell_davis_weight (@var{scenarios}, @var{observation}, @var{alpha})
 %#
@@ -27,7 +26,6 @@
 %# @item @var{X}: OUTPUT: HD-weight corresponding to observation vector
 %# @end itemize
 %# @end deftypefn
-
 function X = harrell_davis_weight(scenarios,observation,alpha)
 % ############################################################################################
 % #                                  Harrell-Davis Estimator                                 #

@@ -1,4 +1,3 @@
-% method of class @Retail
 function s = getCF (retail, property)
   obj = retail;
   if (nargin == 1)

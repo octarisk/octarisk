@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{SwaptionB76Value}] =} swaption_black76 (@var{PayerReceiverFlag}, @var{F}, @var{X}, @var{T}, @var{r}, @var{sigma}, @var{m}, @var{tau})
 %#
@@ -41,7 +40,6 @@
 %# @end itemize
 %# @seealso{swaption_bachelier}
 %# @end deftypefn
-
 function SwaptionB76Value = swaption_black76(PayerReceiverFlag,F,X,T,r, ...
                                                 sigma,m,tau)
 

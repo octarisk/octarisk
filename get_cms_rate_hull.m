@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {@var{forward_rate}=} get_cms_rate_hull(@var{valuation_date}, @var{value_type}, @var{swap}, @var{curve}, @var{sigma}, @var{model})
 %#
@@ -28,7 +27,6 @@
 %# @end itemize
 %# @seealso{discount_factor, timefactor, rollout_structured_cashflows}
 %# @end deftypefn
-
 function [cms_rate convex_adj] = get_cms_rate_hull(valuation_date,value_type,swap,curve,sigma,model)
  
  if nargin < 6 || nargin > 6

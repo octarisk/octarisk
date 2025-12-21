@@ -10,12 +10,10 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{portfolio_struct} @var{id_failed_cell}] =} load_positions(@var{portfolio_struct}, @var{valuation_date}, @var{path_positions}, @var{file_positions}, @var{path_output}, @var{path_archive}, @var{tmp_timestamp}, @var{archive_flag})
 %# Load data from position specification file and generate objects with parsed data. Store all objects in provided position struct and return the final struct and a cell containing the failed position ids.
 %# @end deftypefn
-
 function [tmp_portfolio_struct id_failed_cell positions_cell port_obj_struct] = load_positions(portfolio_struct, path_positions,file_positions,path_output,path_archive,tmp_timestamp,archive_flag)
 
 % A) Prepare position object generation

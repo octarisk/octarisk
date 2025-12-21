@@ -12,7 +12,6 @@
 %%
 %%    You should have received a copy of the GNU General Public License
 %%    along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 %% -*- texinfo -*-
 %% @deftypefn {Function File} {[ @var{r}, @var{c} ] = } ind2sub_tril (@var{N}, @var{idx})
 %% Convert a linear index to subscripts of a trinagular matrix.
@@ -45,7 +44,6 @@
 %%
 %% @seealso{vech, ind2sub, sub2ind_tril}
 %% @end deftypefn
-
 function [r c] = ind2sub_tril(N,idx)
 
   %% Horrible lengthly check

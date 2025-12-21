@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} { [@var{x} @var{obj} @var{info} @var{iter} @var{nf} @var{lambda}] =} fmincon(@var{objf}, @var{x0}, @var{A}, @var{b}, @var{Aeq}, @var{beq}, @var{lb}, @var{ub})
 %# Wrap basic functionality of Matlab's solver fmincon to Octave's sqp. @*
@@ -60,7 +59,6 @@
 %# @end itemize
 %# @seealso{sqp}
 %# @end deftypefn
-
 function [x, obj, info, iter, nf, lambda] = fmincon (objf,x0,A,b,Aeq,beq,lb,ub)
 % Wrapper function for Matlab compatibility 
 

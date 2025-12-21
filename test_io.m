@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{success_tests} @var{total_tests}] =} test_io(@var{path_testing_folder})
 %# Perform integration tests for all functions which rely on input and output 
@@ -20,7 +19,6 @@
 %# converted back again into objects using constructor and set methods.
 %# See section B.2 for an example.
 %# @end deftypefn
-
 function [success_tests,total_tests] = test_io(path_testing_folder);
 if nargin == 0
     error('Please provide the path to the testing folder! Aborting.');

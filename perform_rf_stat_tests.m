@@ -9,13 +9,11 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} { [@var{retcode}] =} perform_rf_stat_tests(@var{riskfactor_cell},@var{riskfactor_struct},@var{RndMat},@var{distr_type})
 %# Perform statistical tests on risk factor shock vector. Return 1 if all tests
 %# pass, return 255 if at least one test fails.
 %# @end deftypefn
-
 function retcode = perform_rf_stat_tests(riskfactor_cell,riskfactor_struct,RndMat,distr_type)
 retcode = 1;
 rejection_rate_mean = 0;

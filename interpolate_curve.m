@@ -10,7 +10,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} { [@var{y}] =} interpolate_curve (@var{nodes}, @var{rates}, @var{timestep}, @var{interp_method}, @var{ufr}, @var{alpha}, @var{method_extrapolation})
 %#
@@ -45,7 +44,6 @@
 %# @end itemize
 %# @seealso{interp1, interp2, interp3, interpn}
 %# @end deftypefn
-
 function y = interpolate_curve(nodes,rates,timestep,method,ufr,alpha,method_extrapolation)
 
   if (nargin < 3 || nargin > 7)

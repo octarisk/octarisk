@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} octarisk (@var{path_working_folder})
 %#
@@ -18,7 +17,6 @@
 %# See www.octarisk.com for further information.
 %#
 %# @end deftypefn
-
 function [instrument_struct, curve_struct, index_struct, surface_struct, para_object, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct, mc_var_shock_pct, port_obj_struct] = octarisk(path_parameter,filename_parameter)
 
 
@@ -688,6 +686,29 @@ if ( para_object.reporting )
 end
 schema_reporting_time = toc;
 
+
+% ----------------------------------------------------------------------
+% 8C. Risk Schema LLM Analysis
+schema_llm_time = 0;
+tic;
+if ( para_object.reporting )
+  for ii = 1:1:length(port_obj_struct)
+	port_obj = port_obj_struct(ii).object;  
+
+    if strcmpi(para_object.shred_type,'TOTAL')
+		% Export prompt for LLM risk analysis: 
+		[retcode prompt] = export_prompt_for_llm_risk_analysis(port_obj, para_object);	
+		
+        % Call separate local language model for providing an individual risk analysis and recommendations for further action:
+		[retcode prompt response] = call_llm_risk_analysis_lmstudio(port_obj, para_object);	
+    end
+
+  end
+  fprintf('\nLLM analysis performed with retcode >>%s<<.\n',any2str(retcode));	
+end
+schema_llm_time = toc;    
+
+
 % ----------------------------------------------------------------------
 % 9A. Export to database:
 if strcmpi(para_object.get('cvar_type'),'base')
@@ -724,7 +745,7 @@ fprintf('Total time for aggregation:  %6.2f s\n', aggr);
 fprintf('Total time for plotting:  %6.2f s\n', plottime);
 fprintf('Total time for reporting:  %6.2f s\n', reporting_time);
 fprintf('Total time for saving data:  %6.2f s\n', saving_time);
-totaltime = round((parseinput + scengen + curve_gen_time + fulvia + saving_time + plottime + aggr + reporting_time + schema_reporting_time)*10)/10;
+totaltime = round((parseinput + scengen + curve_gen_time + fulvia + saving_time + plottime + aggr + reporting_time + schema_reporting_time + schema_llm_time)*10)/10;
 fprintf('Total Runtime:  %6.2f s\n',totaltime);
 
 fprintf('\n');

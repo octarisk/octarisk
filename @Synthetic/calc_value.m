@@ -1,4 +1,3 @@
-% @Synthetic method calc_value
 function obj = calc_value(synthetic,valuation_date,value_type,instrument_struct,index_struct)
 obj = synthetic;
 if ( nargin < 4)

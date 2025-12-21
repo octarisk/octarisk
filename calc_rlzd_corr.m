@@ -15,7 +15,6 @@
 %#
 %# @seealso{plot_corr_matrix}
 %# @end deftypefn
-
 function [retcode rlzd_corr diff_corr] = calc_rlzd_corr(riskfactor_cell,riskfactor_struct,corr_target,para_object,mc_timestep,path_reports,plot_flag)
 
 retcode = 0;

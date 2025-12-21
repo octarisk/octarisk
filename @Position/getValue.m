@@ -1,4 +1,3 @@
-% Position Class @Position
 function s = getValue (position, property)
   obj = position;
   if (nargin == 1)

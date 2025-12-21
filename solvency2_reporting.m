@@ -9,7 +9,6 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {} solvency2_reporting (@var{path_working_folder})
 %#
@@ -27,7 +26,6 @@
 %# See www.octarisk.com for further information.
 %#
 %# @end deftypefn
-
 function solvency2_reporting(path_working_folder)
 
 % call calculation modulewith settings from path_working_folder/parameter.csv:

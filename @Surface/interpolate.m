@@ -1,4 +1,3 @@
-% method of class @Surface
 function y = interpolate (surface, xx,yy,zz)
   s = surface;
   if (nargin == 1)

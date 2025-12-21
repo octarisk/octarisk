@@ -15,9 +15,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Octave; see the file COPYING.  If not, see
 ## <http://www.gnu.org/licenses/>.
-
 ## Author: Michele Ginesi <michele.ginesi@gmail.com>
-
 ## -*- texinfo -*-
 ## @deftypefn  {} {} gammaincinv (@var{y}, @var{a})
 ## @deftypefnx {} {} gammaincinv (@var{y}, @var{a}, @var{tail})
@@ -85,7 +83,6 @@
 ##
 ## @seealso{gamma, gammainc, gammaln}
 ## @end deftypefn
-
 function [x] = gammaincinv (y, a, tail = "lower")
 
   if (nargin >= 4 || nargin <= 1)

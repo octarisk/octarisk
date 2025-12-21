@@ -9,12 +9,10 @@
 %# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 %# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 %# details.
-
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{mapping_struct} @var{rf_failed_cell}] =} load_riskfactor_mapping(@var{mapping_struct}, @var{rf_struct},@var{path_input}, @var{input_filename_mc_mapping})
 %# Load csv file with mapped risk factors for MC scenarios.
 %# @end deftypefn
-
 function [rf_struct rf_cell rf_mapping_failed_cell] = load_riskfactor_mapping(rf_struct, rf_cell,path_input,input_filename_mc_mapping)
 
 rf_mapping_failed_cell = {};
