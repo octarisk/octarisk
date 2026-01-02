@@ -17,12 +17,14 @@
 %# VAR around given actual wealth. Differences between actual VAR and
 %# utility VAR are calculated and printed to the plot.
 %# 
+%# Tolerance bands are plotted using the same power-law scaling, anchored
+%# at the current portfolio value. At wealth=0, tolerance=0.
+%# 
 %# @end deftypefn
 function [obj retcode] = plot_utility_var(obj,para_object,path_reports);
-
 retcode = 1;
-
 if nargin == 3
+
 	if obj.value_base > 10000000
 		wealth_max = ceil(obj.value_base/10000000)*10000000;
 		wealth = linspace(0,wealth_max,100000);
@@ -50,11 +52,35 @@ if nargin == 3
 												para_object.utility_var_initial , ...
 												para_object.utility_beta, ...
 												obj.value_base);
+	
+	% Calculate tolerance bands scaled by wealth
+	% Tolerance at current wealth is given, scale to all wealth levels using power-law
+	% tolerance(wealth) = tolerance_at_current * (wealth / current_wealth)^beta
+	% This ensures tolerance = 0 at wealth = 0
+	tolerance_at_current = 0.05 * VaR_tol(end);
+	tolerance_scaled = get_scaled_tolerance(obj.value_base, ...
+											tolerance_at_current, ...
+											para_object.utility_beta, ...
+											wealth);
+	
+	VaR_upper = VaR_tol + tolerance_scaled;
+	VaR_lower = VaR_tol - tolerance_scaled;
+	VaR_lower(VaR_lower < 0) = 0;  % VaR cannot be negative
+	
+	
 	var_util_diff = obj.varhd_abs - var_utility_act;	% difference between actual var and utility var
-	if var_util_diff > 0
-		diff_str = ['WARNING: Actual VaR ',any2str(round(var_util_diff)),' ',obj.currency,' larger than utility VaR. Consider de-risking.'];
+	if var_util_diff > tolerance_at_current
+		diff_str = ['WARNING: Actual VaR ',any2str(round(var_util_diff)),' ',obj.currency,' above utility VaR (exceeds tolerance). Consider de-risking.'];
+		status_color = 'red';
+	elseif var_util_diff > 0
+		diff_str = ['Actual VaR ',any2str(round(var_util_diff)),' ',obj.currency,' above utility VaR (within tolerance).'];
+		status_color = [0.945312   0.398438   0.035156]; % orange
+	elseif var_util_diff > -tolerance_at_current
+		diff_str = ['Actual VaR ',any2str(round(abs(var_util_diff))),' ',obj.currency,' below utility VaR (within tolerance).'];
+		status_color = [0.56863   0.81961   0.13333]; % green
 	else
-		diff_str = ['Actual VaR ',any2str(round(abs(var_util_diff))),' ',obj.currency,' smaller than utility VaR. Consider re-risking'];
+		diff_str = ['Actual VaR ',any2str(round(abs(var_util_diff))),' ',obj.currency,' below utility VaR (exceeds tolerance). Consider re-risking.'];
+		status_color = [0.56863   0.81961   0.13333]; % green
 	end
 	
 	% store utility var in Portfolio object
@@ -67,69 +93,113 @@ if nargin == 3
 	or_blue  = [0.085938   0.449219   0.761719]; 
 	or_orange =  [0.945312   0.398438   0.035156];
 	light_blue = [0.50000   0.69922   0.99609];
+	tolerance_color = [0.8 0.8 0.8];  % light gray for tolerance bands
 
 	% plotting
 	uvar = figure(1);
 	clf;
-	h1 = plot(wealth,VaR_tol,'color',or_blue,'linestyle','-','linewidth',4);
-	ax=get (gcf, 'currentaxes');
-	hold on;
-
-	xlabel(ax,['Wealth (in ',obj.currency,')'],'fontsize',12);
-	set(ax,'visible','on');
-	set(ax,'layer','top');
-	set(ax,'xlim',[0.0, wealth(end)]);
-	set(ax,'ylim',[0, max(1.1*obj.varhd_abs,VaR_tol(end))]);
-	%set(ax,'xticklabel','xx');
-	%set(ax,'xtick',[wealth_max/4, wealth_max/2, 3/4*wealth_max,wealth_max]);
-	%set(ax,'xticklabel',{'-200','-100', '0', '100', '200'},'fontsize',9);
-	ylabel (ax, ['Tolerable VaR (in ',obj.currency,')'],'fontsize',12);
-	set (h1,'linewidth',4);
-	h2 = plot(obj.value_base,obj.varhd_abs,"ro");
-	set (h2,'color',or_blue);
-	set (h2,'marker','o');
-	set (h2,'markersize',12);
-	set (h2,'markerfacecolor',or_orange);
-	annotation("textbox",[0.15,0.15,0.2,0.2],"string", ...
-				diff_str,"edgecolor",'white', ...
-				"backgroundcolor","white","color",or_orange,"fontsize",12);
 	
-	if numel(hist_var)>0 && numel(hist_bv) == numel(hist_var)	
-		h3 = plot(hist_bv,hist_var,"go-");
+	% Plot tolerance band as filled area
+	ax = axes();
+	hold on;
+	
+	% Fill between upper and lower tolerance (shaded area)
+	fill_x = [wealth, fliplr(wealth)];
+	fill_y = [VaR_upper, fliplr(VaR_lower)];
+	h_fill = fill(fill_x, fill_y, tolerance_color, 'EdgeColor', 'none', 'FaceAlpha', 0.4);
+	
+	% Plot tolerance band boundaries (dashed lines)
+	h_upper = plot(wealth, VaR_upper, 'color', or_orange, 'linestyle', '--', 'linewidth', 1.5);
+	h_lower = plot(wealth, VaR_lower, 'color', or_orange, 'linestyle', '--', 'linewidth', 1.5);
+	
+	% Plot main utility VaR curve
+	h1 = plot(wealth, VaR_tol, 'color', or_blue, 'linestyle', '-', 'linewidth', 4);
+
+	xlabel(ax, ['Wealth (in ',obj.currency,')'], 'fontsize', 12);
+	set(ax, 'visible', 'on');
+	set(ax, 'layer', 'top');
+	set(ax, 'xlim', [0.0, wealth(end)]);
+	set(ax, 'ylim', [0, max(1.1*obj.varhd_abs, VaR_upper(end))]);
+	ylabel(ax, ['Tolerable VaR (in ',obj.currency,')'], 'fontsize', 12);
+
+	% Plot historical values if available
+	if numel(hist_var) > 0 && numel(hist_bv) == numel(hist_var)	
+		h2 = plot(hist_bv, hist_var, "go-");
+		set(h2, 'color', or_green);
+		set(h2, 'linewidth', 2);
+		set(h2, 'markersize', 8);
+		set(h2, 'markerfacecolor', or_green);
 	end	
+		
+	% Plot current position
+	h3 = plot(obj.value_base, obj.varhd_abs, "o");
+	set(h3, 'color', or_blue);
+	set(h3, 'marker', 'o');
+	set(h3, 'markersize', 12);
+	set(h3, 'markerfacecolor', or_orange);
+	
+	% Add status annotation
+	annotation("textbox", [0.15, 0.15, 0.2, 0.2], "string", ...
+				diff_str, "edgecolor", 'white', ...
+				"backgroundcolor", "white", "color", status_color, "fontsize", 11);
+	
+
+	
+	% Add legend
+	if numel(hist_var) > 0 && numel(hist_bv) == numel(hist_var)
+		legend([h1, h_upper, h_fill, h2, h3], ...
+			{'Utility VaR', 'Tolerance bounds', 'Tolerance band', 'Historical', 'Current position'}, ...
+			'location', 'northwest');
+	else
+		legend([h1, h_upper, h_fill, h2], ...
+			{'Utility VaR', 'Tolerance bounds', 'Tolerance band', 'Current position'}, ...
+			'location', 'northwest');
+	end
+	
 	hold off;
 
 	% save plotting
-	filename_plot_var_utility = strcat(path_reports,'/',obj.id,'_var_utility.png');
-	print (uvar,filename_plot_var_utility, "-dpng", "-S800,600");	
-	filename_plot_var_utility = strcat(path_reports,'/',obj.id,'_var_utility.pdf');
-	print (uvar,filename_plot_var_utility, "-dpdf", "-S800,600");	
+	filename_plot_var_utility = strcat(path_reports, '/', obj.id, '_var_utility.png');
+	print(uvar, filename_plot_var_utility, "-dpng", "-S800,600");	
+	filename_plot_var_utility = strcat(path_reports, '/', obj.id, '_var_utility.pdf');
+	print(uvar, filename_plot_var_utility, "-dpdf", "-S800,600");	
 		
 
 else
 	retcode = 0;
-	fprintf('plot: Plotting Utility VaR not possible for portfolio >>%s<<, attributes are not filled. \n',obj.id);	
+	fprintf('plot: Plotting Utility VaR not possible for portfolio >>%s<<, attributes are not filled. \n', obj.id);	
 end
 		
 end
 
 
-
-
-% Helper function
-
-function [VaR_tol VaR_rel] = get_utility_tolerable_var(wealth_0,var_0,beta,wealth)
+% Helper function for utility VaR calculation
+function [VaR_tol VaR_rel] = get_utility_tolerable_var(wealth_0, var_0, beta, wealth)
  
- if nargin < 4 || nargin > 4
-    print_usage ();
- end
+	if nargin < 4 || nargin > 4
+		print_usage();
+	end
  
- 
-VaR_tol = var_0 * (wealth/wealth_0) .^ beta; 
-VaR_rel = VaR_tol / wealth;
+	VaR_tol = var_0 * (wealth / wealth_0) .^ beta; 
+	VaR_rel = VaR_tol ./ wealth;
  
 end
 
+
+% Helper function for scaled tolerance calculation
+% Scales tolerance from current wealth to all wealth levels using power-law
+% At wealth=0, tolerance=0; at current_wealth, tolerance=tolerance_at_current
+function tolerance = get_scaled_tolerance(current_wealth, tolerance_at_current, beta, wealth)
+
+	if nargin ~= 4
+		print_usage();
+	end
+	
+	% Scale tolerance using same power-law as utility VaR
+	% tolerance(w) = tolerance_at_current * (w / current_wealth)^beta
+	tolerance = tolerance_at_current * (wealth / current_wealth) .^ beta;
+
+end
 
 
 
@@ -139,6 +209,8 @@ end
 
 %~ if nargin == 0
 
+	%~ obj = Position();
+	%~ para_object = Parameter();
 	%~ path_reports = '/Users/schinzilord/Documents/Programmierung/Octavedateien'
 	%~ obj.id = 'Private'
 	%~ obj.currency = 'EUR'
@@ -151,4 +223,6 @@ end
 	
 	%~ obj.hist_base_values = [350000,400000,425000]
 	%~ obj.hist_var_abs = [38000,39500,41252]
+	
+	%~ %---------
 % =======
