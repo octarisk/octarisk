@@ -443,7 +443,7 @@ elseif (strcmpi(type,'stress'))
 		
         xx = 1:1:length(p_l_relativ_stress)-1;
         % hs = figure('visible', 'off');
-        hs = figure();
+        hs = figure(1);
         clf;
         barh(p_l_relativ_stress(2:end), 'facecolor', or_blue);
         h=get (gcf, 'currentaxes');

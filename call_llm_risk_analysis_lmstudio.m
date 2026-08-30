@@ -21,16 +21,29 @@
 
 function [retcode prompt_text response] = call_llm_risk_analysis_lmstudio(obj, para_object)
 	retcode = 0;
-	response = 'No LLM recommendations available for this report. LM Studio server was not running or could not be reached.';
+	response = 'No LLM recommendations available for this report. LLM server was not running or could not be reached.';
 	prompt_text = '';
 	server_running = false;
 	model = 'unknown';
-	
+
+	% ========================================================================
+	% BACKEND SELECTION: set to 'lmstudio' or 'ollama'
+	% ========================================================================
+	backend = 'ollama';   % <-- change this to switch between backends
+
 	% LM Studio Configuration
-	lm_studio_url = "http://localhost:1234/v1/chat/completions";
-	lm_studio_models_url = "http://localhost:1234/v1/models";
+	lm_studio_url        = 'http://localhost:1234/v1/chat/completions';
+	lm_studio_models_url = 'http://localhost:1234/v1/models';
+
+	% Ollama Configuration
+	ollama_host       = 'http://localhost:11434';
+	ollama_url        = [ollama_host '/v1/chat/completions'];   % OpenAI-compat endpoint
+	ollama_tags_url   = [ollama_host '/api/tags'];              % model-list endpoint
+	ollama_model      = 'qwen3.5:9b';                             % model to use
+
+	% Shared parameters
 	temperature = 0.3;      % Adjustable: 0.0 (deterministic) to 2.0 (creative)
-	max_tokens = 6000;      % Maximum length of response
+	max_tokens  = 6000;     % Maximum length of response
 	
 	% get path
 	if ( strcmpi(para_object.path_working_folder,''))
@@ -46,18 +59,7 @@ function [retcode prompt_text response] = call_llm_risk_analysis_lmstudio(obj, p
 	% ========================================================================
 	try				
 		repstruct = obj.report_struct;
-		
-		%~ prompt_text = [ ...
-			%~ "You are a professional financial risk manager. Write a recommendation for further action based on the following key risk indicators: value-at-risk last month was at ",any2str(round(repstruct.var_last /1000)), " thousand EUR,", ... 
-			%~ " this month ",any2str(round(repstruct.var_curr / 1000)) , " thousand EUR.", ...
-			%~ " Overall risk level is ",any2str(repstruct.srri_actual), ...
-			%~ " (out of 7), desired risk level is ",any2str(repstruct.srri_target),". If the overall risk level is above the desired risk level, action to rebalance is required. " ...
-			%~ " The Value-at-risk trend is ",any2str(repstruct.var_trend), ". If the trend equals increasing, then across the last three month the Value-at-risk continuously increased. If the trend equals decreasing, then across the last three month the Value-at-Risk was always decreasing. If it is stable, then no specific movement occurred across the last three months. If the trend equals increasing and the overall risk level is above the desired risk level, then immediate action is required. If the trend equals decreasing and the overall risk level is above the desired risk level, close monitoring is required, since the Value-at-Risk could revert back automatically that the desired risk level is matched again. ", ...
-			%~ "; Value-at-risk status is: ",any2str(repstruct.var_status), ". in case of status equals on track, no special monitoring action is required. If status is monitor, close observation of further movements are required and risk rebalancing is already recommended. In case of status equals action required, immediate risk rebalancing needs to be performed, otherwise severe risk of realization of higher than desired losses can materialize. ", ...
-			%~ "; Current cash allocation: ", any2str(round(repstruct.alloc_cash_actual / 1000)) , " thousand EUR means, that currently this amount is hold in Cash. ", ...
-			%~ " The target cash allocation should be a minimum of: ", any2str(round(repstruct.alloc_cash_target / 1000)) , " thousand EUR. If the current cash allocation is below the minimum cash allocation, then immediate action is required and additional cash reserves have to be built. If the current allocation is significantly higher than the minimum cash allocation, action is recommended, since the unused cash could be used to either reduce risk or to increase expected return. " ...
-			%~ " Give a concise response, provide action items in bullet points and answer in third person, passive and in business english tone. If you do not know the answer to a particular topic, do not provide any misleading information and do not make up an answer."]
-		prompt_text = generate_risk_analysis_prompt(obj, repstruct);
+        prompt_text = generate_risk_analysis_prompt(obj, repstruct);
 	catch
 		fprintf('call_llm_risk_analysis_lmstudio: Repstruct not found for Portfolio >>%s<<\n',obj.id);
 		prompt_text = 'Error: Could not load prompt files.';
@@ -65,47 +67,89 @@ function [retcode prompt_text response] = call_llm_risk_analysis_lmstudio(obj, p
 	end
 	
 	% ========================================================================
-	% STEP 2: Check if LM Studio server is running and query loaded model
+	% STEP 2: Check if server is running and resolve the active model
 	% ========================================================================
-	fprintf('\n=== Checking LM Studio Server Status ===\n');
-	[status, output] = system(sprintf('curl -s --connect-timeout 2 %s', lm_studio_models_url));
-	
-	if status == 0
-		try
-			output_json = jsondecode(output);
-			if isfield(output_json, 'data') && length(output_json.data) > 0
-				model = output_json.data(1).id;
-				server_running = true;
-				fprintf('✓ LM Studio server is running\n');
-				fprintf('✓ Model loaded: %s\n', model);
-			else
-				fprintf('✗ LM Studio server responded but no model is loaded\n');
-				fprintf('  Please load a model in LM Studio before running risk analysis\n');
-				response = 'No LLM recommendations available. Please load a model in LM Studio (Local Server tab).';
+	if strcmpi(backend, 'lmstudio')
+		fprintf('\n=== Checking LM Studio Server Status ===\n');
+		[status, output] = system(sprintf('curl -s --connect-timeout 2 %s', lm_studio_models_url));
+
+		if status == 0
+			try
+				output_json = jsondecode(output);
+				if isfield(output_json, 'data') && length(output_json.data) > 0
+					model = output_json.data(1).id;
+					server_running = true;
+					fprintf('✓ LM Studio server is running\n');
+					fprintf('✓ Model loaded: %s\n', model);
+				else
+					fprintf('✗ LM Studio server responded but no model is loaded\n');
+					fprintf('  Please load a model in LM Studio before running risk analysis\n');
+					response = 'No LLM recommendations available. Please load a model in LM Studio (Local Server tab).';
+				end
+			catch
+				fprintf('✗ Could not parse response from LM Studio server\n');
+				fprintf('  Raw output: %s\n', output);
+				response = 'No LLM recommendations available. LM Studio server returned invalid response.';
 			end
-		catch
-			fprintf('✗ Could not parse response from LM Studio server\n');
-			fprintf('  Raw output: %s\n', output);
-			response = 'No LLM recommendations available. LM Studio server returned invalid response.';
+		else
+			fprintf('✗ LM Studio server is not running or not reachable\n');
+			fprintf('  Please start the server in LM Studio: Local Server tab -> Start Server\n');
+			fprintf('  Expected URL: %s\n', lm_studio_models_url);
+			response = 'No LLM recommendations available. LM Studio server is not running. Please start the Local Server in LM Studio.';
+			retcode = 2;
 		end
+
+	elseif strcmpi(backend, 'ollama')
+		fprintf('\n=== Checking Ollama Server Status ===\n');
+		% Use /api/version for a lightweight reachability check (tiny, flat JSON)
+		ollama_version_url = [ollama_host '/api/version'];
+		[status, output] = system(sprintf('curl -s --connect-timeout 2 %s', ollama_version_url));
+
+		if status == 0
+			% Server is reachable - use the configured model name directly.
+			% Avoid parsing /api/tags because models with mixed fields (local vs
+			% cloud) cause jsondecode to fail in Octave.
+			model = ollama_model;
+			server_running = true;
+			fprintf('✓ Ollama server is running\n');
+			% Try to extract version string for informational output
+			version_str = regexp(output, '"version"\s*:\s*"([^"]+)"', 'tokens', 'once');
+			if ~isempty(version_str)
+				fprintf('  Version: %s\n', version_str{1});
+			end
+			fprintf('  Using model: %s\n', model);
+		else
+			fprintf('✗ Ollama server is not running or not reachable\n');
+			fprintf('  Start Ollama with: ollama serve\n');
+			fprintf('  Expected URL: %s\n', ollama_version_url);
+			response = 'No LLM recommendations available. Ollama server is not running. Please run "ollama serve".';
+			retcode = 2;
+		end
+
 	else
-		fprintf('✗ LM Studio server is not running or not reachable\n');
-		fprintf('  Please start the server in LM Studio: Local Server tab -> Start Server\n');
-		fprintf('  Expected URL: %s\n', lm_studio_models_url);
-		response = 'No LLM recommendations available. LM Studio server is not running. Please start the Local Server in LM Studio.';
+		fprintf('✗ Unknown backend: "%s". Use ''lmstudio'' or ''ollama''.\n', backend);
 		retcode = 2;
 	end
 	
 	% ========================================================================
-	% STEP 3: Call API only if server is running and model is loaded
+	% STEP 3: Call API only if server is running and model is resolved
 	% ========================================================================
 	if server_running
-		fprintf('\n=== Calling LM Studio API ===\n');
-		
-		% Escape the prompt for JSON (handles nested JSON properly)
+		% Select endpoint URL based on backend
+		if strcmpi(backend, 'lmstudio')
+			api_url = lm_studio_url;
+			backend_label = 'LM Studio';
+		else
+			api_url = ollama_url;
+			backend_label = 'Ollama';
+		end
+
+		fprintf('\n=== Calling %s API ===\n', backend_label);
+
+		% Escape the prompt for JSON
 		escaped_prompt = escape_json_string(prompt_text);
-		
-		% Build OpenAI-compatible JSON payload for LM Studio
+
+		% Build OpenAI-compatible JSON payload (works for both backends)
 		json_payload = sprintf(['{' ...
 			'"model": "%s",' ...
 			'"messages": [' ...
@@ -116,42 +160,42 @@ function [retcode prompt_text response] = call_llm_risk_analysis_lmstudio(obj, p
 			'"max_tokens": %d,' ...
 			'"stream": false' ...
 		'}'], model, escaped_prompt, temperature, max_tokens);
-		
-		% Build curl command for LM Studio API
+
+		% Build curl command
 		curl_cmd = sprintf('curl -s -X POST "%s" -H "Content-Type: application/json" -d ''%s''', ...
-			lm_studio_url, json_payload);
+			api_url, json_payload);
 
 		fprintf('Submitting prompt to model: %s\n', model);
 		fprintf('Temperature: %.2f, Max tokens: %d\n', temperature, max_tokens);
-		
+
 		[status, output] = system(curl_cmd);
-		
+
 		if status == 0
-			fprintf('✓ Response received from LM Studio\n');
+			fprintf('✓ Response received from %s\n', backend_label);
 			try
 				ret = jsondecode(output);
-				
-				% LM Studio returns OpenAI format:
+
+				% Both LM Studio and Ollama return OpenAI format:
 				% {"choices": [{"message": {"content": "..."}}]}
 				if isfield(ret, 'choices') && length(ret.choices) > 0
 					response = ret.choices(1).message.content;
 					fprintf('✓ Successfully parsed response (length: %d characters)\n', length(response));
 				else
-					fprintf('✗ Unexpected response format from LM Studio\n');
-					response = 'Error: Could not parse LM Studio response. Response format was unexpected.';
+					fprintf('✗ Unexpected response format from %s\n', backend_label);
+					response = sprintf('Error: Could not parse %s response. Response format was unexpected.', backend_label);
 					retcode = 3;
 				end
-				
+
 			catch
-				fprintf('✗ Failed to parse JSON response from LM Studio\n');
+				fprintf('✗ Failed to parse JSON response from %s\n', backend_label);
 				fprintf('  Raw output (first 500 chars): %s\n', substr(output, 1, min(500, length(output))));
-				response = 'Error: Failed to decode JSON response from LM Studio. The response may be malformed.';
+				response = sprintf('Error: Failed to decode JSON response from %s. The response may be malformed.', backend_label);
 				retcode = 3;
 			end
-			
+
 		else
 			fprintf('✗ API call failed with status: %s\n', any2str(status));
-			response = sprintf('Error calling LM Studio API (status code: %d). Check LM Studio console for errors.', status);
+			response = sprintf('Error calling %s API (status code: %d). Check server console for errors.', backend_label, status);
 			retcode = status;
 		end
 	else
@@ -213,6 +257,7 @@ function [retcode prompt_text response] = call_llm_risk_analysis_lmstudio(obj, p
 	% STEP 6: Summary
 	% ========================================================================
 	fprintf('\n=== Summary ===\n');
+	fprintf('Backend: %s\n', backend);
 	fprintf('Portfolio ID: %s\n', obj.id);
 	fprintf('Server status: %s\n', ternary(server_running, 'Running', 'Not running'));
 	fprintf('Model: %s\n', model);
@@ -265,7 +310,10 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
     utility_var_upper = 1.05 * utility_var;
     utility_var_lower = 0.95 * utility_var;
     var_difference = var_after_tax - utility_var;
-    var_exceeds_threshold = var_after_tax > utility_var_upper;
+    
+    % Separate boolean flags (bug fix from previous version)
+    var_exceeds_upper = var_after_tax > utility_var_upper;
+    var_below_lower = var_after_tax < utility_var_lower;
     
     % ========================================================================
     % SECTION 2: Extract Asset Class Data
@@ -296,7 +344,7 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
         end
     end
     
-    % Sort positions by marginal VaR (highest risk impact)
+    % Sort positions by decomposition VaR (highest risk impact)
     [decompvar_sorted, idx_decompvar] = sort(pos_decomp_var, 'descend');
     top_risk_positions = min(5, length(pos_ids));
     
@@ -308,10 +356,10 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
         var_curr = repstruct.var_curr;
         var_change = var_curr - var_last;
         if (var_last > 0)
-			var_change_pct = (var_change / var_last) * 100;
-		else
-			var_change_pct = 0;
-		end
+            var_change_pct = (var_change / var_last) * 100;
+        else
+            var_change_pct = 0;
+        end
     else
         var_last = 0;
         var_curr = var_abs;
@@ -319,10 +367,20 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
         var_change_pct = 0;
     end
     
+    % Determine trend direction
+    if var_change_pct > 5
+        trend_label = 'INCREASING';
+    elseif var_change_pct < -5
+        trend_label = 'DECREASING';
+    else
+        trend_label = 'STABLE';
+    end
+    
     % ========================================================================
-    % SECTION 5: Build Structured Prompt for 14B Model
+    % SECTION 5: Build Structured Prompt with Reasoning Scaffolding
     % ========================================================================
     
+    % --- Data Section ---
     prompt_text = sprintf([...
         '# PORTFOLIO RISK ANALYSIS DATA\n\n' ...
         '## Portfolio Overview\n' ...
@@ -331,19 +389,30 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
         'VaR as percentage: %.1f%%\n' ...
         'VaR after tax: %d EUR\n' ...
         'Volatility (annualized): %.1f%%\n\n' ...
-        '## Risk Threshold Analysis\n' ...
-        'Utility VaR (risk tolerance): %d EUR\n' ...
-        'Upper threshold: %d EUR\n' ...
-        'Lower threshold: %d EUR\n' ...
-        'Current VaR exceeds upper threshold: %s\n' ...
-        'Difference to utility VaR: %d EUR (%.0f%%)\n\n' ...
     ], ...
     round(port_value), round(var_abs), var_rel*100, round(var_after_tax), ...
-    repstruct.vola_pa, round(utility_var), round(utility_var_upper), ...
-    round(utility_var_lower), ternary(var_exceeds_threshold, 'YES', 'NO'), ...
-    round(var_difference), (var_difference/utility_var)*100);
+    repstruct.vola_pa);
     
-    % Add VaR trend if available
+    % --- Risk Threshold Analysis with semantic definition ---
+    prompt_text = [prompt_text, sprintf([...
+        '## Risk Threshold Analysis\n' ...
+        'Utility VaR (risk tolerance target): %d EUR\n' ...
+        'Upper threshold (105%% of utility): %d EUR\n' ...
+        'Lower threshold (95%% of utility): %d EUR\n' ...
+        'Current VaR exceeds upper threshold: %s\n' ...
+        'Current VaR below lower threshold: %s\n' ...
+        'Difference to utility VaR: %d EUR (%.0f%%)\n\n' ...
+        'The utility VaR defines the OPTIMAL risk level, not a maximum.\n' ...
+        '- VaR ABOVE upper threshold = portfolio takes TOO MUCH risk -> reduce exposure\n' ...
+        '- VaR BELOW lower threshold = portfolio takes TOO LITTLE risk -> increase exposure\n' ...
+        '- VaR WITHIN thresholds = portfolio risk is appropriate -> maintain\n\n' ...
+    ], ...
+    round(utility_var), round(utility_var_upper), round(utility_var_lower), ...
+    ternary(var_exceeds_upper, 'YES', 'NO'), ...
+    ternary(var_below_lower, 'YES', 'NO'), ...
+    round(var_difference), (var_difference/utility_var)*100)];
+    
+    % --- VaR Movement ---
     if (var_last > 0)
         prompt_text = [prompt_text, sprintf([...
             '## VaR Movement\n' ...
@@ -353,10 +422,10 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
             'Trend: %s\n\n' ...
         ], ...
         round(var_last), round(var_curr), round(var_change), var_change_pct, ...
-        ternary(var_change_pct > 5, 'INCREASING', ternary(var_change_pct < -5, 'DECREASING', 'STABLE')))];
+        trend_label)];
     end
     
-    % Add asset class contributions
+    % --- Asset Class Contributions ---
     prompt_text = [prompt_text, sprintf('## Top Risk Contributing Asset Classes\n')];
     for ii = 1:top_risk_contributors
         idx = idx_sorted(ii);
@@ -367,7 +436,7 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
     end
     prompt_text = [prompt_text, sprintf('\n')];
     
-    % Add top risky positions by Decomp VaR
+    % --- Top Positions by Decomposition VaR ---
     if (top_risk_positions > 0)
         prompt_text = [prompt_text, sprintf('## Top Positions by Decomposition VaR\n')];
         prompt_text = [prompt_text, sprintf('(Decomposition VaR = VaR contribution of position to total Portfolio VaR)\n')];
@@ -380,7 +449,7 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
         prompt_text = [prompt_text, sprintf('\n')];
     end
     
-    % Add cash allocation if available
+    % --- Cash Allocation ---
     if (isfield(repstruct, 'alloc_cash_actual') && isfield(repstruct, 'alloc_cash_target'))
         cash_actual = repstruct.alloc_cash_actual;
         cash_target = repstruct.alloc_cash_target;
@@ -390,44 +459,73 @@ function prompt_text = generate_risk_analysis_prompt(obj, repstruct)
             '## Cash Allocation\n' ...
             'Current cash: %d EUR\n' ...
             'Target minimum cash: %d EUR\n' ...
-            'Difference: %d EUR (%s)\n\n' ...
+            'Excess cash: %d EUR (%s)\n\n' ...
         ], ...
         round(cash_actual), round(cash_target), round(cash_difference), ...
         ternary(cash_difference >= 0, 'SUFFICIENT', 'BELOW TARGET'))];
     end
     
     % ========================================================================
-    % SECTION 6: Add Structured Instructions for 14B Model
+    % SECTION 6: Two-Step Task Instructions (Reasoning Scaffolding)
     % ========================================================================
     
     prompt_text = [prompt_text, sprintf([...
-        '# TASK: Generate Risk Assessment Report\n\n' ...
-        'Create a brief risk report with these 4 sections:\n\n' ...
-        '## SECTION 1: Risk Status Summary\n' ...
-        'Write 2-3 sentences summarizing:\n' ...
-        '- Whether portfolio VaR after tax is within utility VaR thresholds\n' ...
-        '- The magnitude of any breach\n' ...
-        '- Current trend direction\n\n' ...
-        '## SECTION 2: Risk Contributors\n' ...
-        'Write 2 sentences identifying:\n' ...
+        '---\n\n' ...
+        '# TASK: Two-step process\n\n' ...
+        '## STEP 1: Risk Analysis (answer these questions first)\n\n' ...
+        'Answer each question with the data above. This is a reasoning task.\n\n' ...
+        'Q1: Compare VaR after tax (%d EUR) to the lower threshold (%d EUR).\n' ...
+        '    Which number is larger? What does this mean for portfolio risk positioning?\n\n' ...
+        'Q2: The difference to utility VaR is %d EUR (%.0f%%).\n' ...
+        '    A negative difference means the portfolio is BELOW optimal risk.\n' ...
+        '    Is the portfolio currently over-risked, under-risked, or within tolerance?\n\n' ...
+        'Q3: Given your answer to Q2, should the portfolio INCREASE or DECREASE\n' ...
+        '    risk exposure to move toward the optimal utility VaR?\n\n' ...
+    ], ...
+    round(var_after_tax), round(utility_var_lower), ...
+    round(var_difference), (var_difference/utility_var)*100)];
+    
+    % Add Q4 only if cash data is available
+    if (isfield(repstruct, 'alloc_cash_actual') && isfield(repstruct, 'alloc_cash_target'))
+        prompt_text = [prompt_text, sprintf([...
+            'Q4: Current excess cash is %d EUR above the minimum target.\n' ...
+            '    Given your answer to Q3, should this excess cash be deployed to\n' ...
+            '    increase exposure, or held as a buffer?\n\n' ...
+        ], ...
+        round(cash_difference))];
+    end
+    
+    % --- Step 2: Report Generation anchored to Step 1 ---
+    prompt_text = [prompt_text, sprintf([...
+        '## STEP 2: Generate Risk Report\n\n' ...
+        'Using ONLY your answers from Step 1, write the report below.\n' ...
+        'All conclusions in the report MUST be consistent with Step 1 answers.\n\n' ...
+        '### SECTION 1: Risk Status Summary\n' ...
+        'Write 2-3 sentences:\n' ...
+        '- State the portfolio value and current risk positioning (from Q2)\n' ...
+        '- State the magnitude of deviation from utility VaR\n' ...
+        '- State the trend direction\n\n' ...
+        '### SECTION 2: Risk Contributors\n' ...
+        'Write 2 sentences:\n' ...
         '- Which asset classes contribute most to portfolio risk\n' ...
-        '- Which specific positions have highest decomposition VaR\n\n' ...
-        '## SECTION 3: Action Required\n' ...
-        'State YES or NO, then write 1-2 sentences:\n' ...
-        '- If VaR after tax exceeds upper threshold: State "YES - Immediate rebalancing required"\n' ...
-        '- If VaR after tax  within thresholds: State "NO - Continue monitoring"\n' ...
-        '- If VaR after tax  slightly above but trend decreasing: State "MONITOR - Close observation"\n\n' ...
-        '## SECTION 4: Specific Recommendations\n' ...
-        'Write 2-4 bullet points with concrete actions:\n' ...
-        '- If action required: Which positions/asset classes to reduce\n' ...
-        '- Cash allocation adjustments if needed\n' ...
-        '- Risk mitigation priorities\n\n' ...
-        'Use professional financial terminology. Keep responses factual and concise.\n' ...
-        'Base recommendations only on the data provided above.\n'...
+        '- Which positions have highest decomposition VaR\n\n' ...
+        '### SECTION 3: Action Required\n' ...
+        'Based on Q2 and Q3:\n' ...
+        '- If OVER-RISKED: "YES - Immediate rebalancing required to reduce risk exposure"\n' ...
+        '- If UNDER-RISKED: "YES - Rebalancing recommended to utilize available risk budget"\n' ...
+        '- If WITHIN-TOLERANCE: "NO - Continue monitoring"\n' ...
+        'Then write 1-2 sentences explaining.\n\n' ...
+        '### SECTION 4: Specific Recommendations\n' ...
+        'Write 2-4 bullet points. All recommendations must follow from Q3 and Q4:\n' ...
+        '- If UNDER-RISKED: recommend increasing exposure in appropriate asset classes\n' ...
+        '- If OVER-RISKED: recommend reducing high-VaR positions\n' ...
+        '- Address whether excess cash should be deployed or held\n' ...
+        '- State monitoring priorities\n\n' ...
+        'Keep responses factual and concise. Use professional financial terminology.\n' ...
+        'Base all recommendations on the data and your Step 1 analysis only.\n' ...
     ])];
     
 end
-
 
 % Helper Function: Ternary operator simulation
 function result = ternary(condition, true_val, false_val)

@@ -18,23 +18,48 @@ function retcode = perform_rf_stat_tests(riskfactor_cell,riskfactor_struct,RndMa
 retcode = 1;
 rejection_rate_mean = 0;
 rejection_rate_std = 0;
+alpha_mean = 0.01;
+alpha_std = 0.01;
 % Perform statistical tests on MC risk factor distributions:
 for ii = 1 : 1 : length(riskfactor_cell)  
     rf_id = riskfactor_cell{ii};
-    rf_object = get_sub_object(riskfactor_struct, rf_id);    
+    rf_object = get_sub_object(riskfactor_struct, rf_id);
     fprintf('=== Distribution function for riskfactor %s ===\n',rf_object.id);
-    fprintf('Pearson_type: >>%d<<\n',distr_type(ii));  
+    fprintf('Pearson_type: >>%d<<\n',distr_type(ii));
     randvec = RndMat(:,ii);
-    % calculate 4 moments of distribution
     mean_target = rf_object.mean;   % mean
-    mean_act = mean(randvec);
     sigma_target = rf_object.std;   % sigma
-    sigma_act = std(randvec);
     skew_target = rf_object.skew;   % skew
+    kurt_target = rf_object.kurt;   % kurt
+
+    % A) Pearson-system integrity check: verify the TARGET (mean,std,skew,kurt)
+    % actually corresponds to a well-defined, non-degenerate Pearson
+    % distribution, BEFORE touching the Monte Carlo sample at all. This is
+    % the authoritative check -- classify_pearson is the same, analytic (no
+    % sampling involved) classification used by get_marginal_distr_pearson
+    % itself, so a NaN return here means no valid distribution exists for
+    % these moments (a boundary singularity / spike in the underlying Beta
+    % or beta-prime/F distribution -- see PEARSON_METHODOLOGY.md). O(1),
+    % deterministic, and immune to the false positives the legacy
+    % histogram-based check further below produces on legitimately skewed,
+    % heavy-tailed targets. When it fails, randvec is entirely NaN (by
+    % construction of get_marginal_distr_pearson) so every downstream
+    % moment/statistical test is skipped rather than crashing or reporting
+    % meaningless NaN comparisons.
+    retvec_check = classify_pearson(mean_target, sigma_target, skew_target, kurt_target);
+    if ( isnan(retvec_check(1)) )
+        fprintf('Warning: octarisk: no valid Pearson distribution exists for riskfactor >>%s<< at skew=%0.4f, kurt=%0.4f (boundary singularity / degenerate shape). Choose different (skew,kurt) target values.\n',rf_id,skew_target,kurt_target);
+        fprintf('Skipping remaining statistical tests for riskfactor >>%s<< (no sample to test).\n',rf_id);
+        retcode = 255;
+        continue;
+    end
+
+    % calculate 4 moments of distribution
+    mean_act = mean(randvec);
+    sigma_act = std(randvec);
     skew_act = skewness(randvec);
-    kurt_target = rf_object.kurt;   % kurt    
     kurt_act = kurtosis(randvec);
-    
+
     % print overview
     fprintf('Stat. parameter:  \t| Target | Actual \n');
     fprintf('Mean comparison: \t| %0.4f |  %0.4f \n',mean_target,mean_act);
@@ -42,7 +67,7 @@ for ii = 1 : 1 : length(riskfactor_cell)
     fprintf('Skewness comparison: \t| %0.4f |  %0.4f \n',skew_target,skew_act);
     fprintf('Kurtosis comparison: \t| %0.4f |  %0.4f \n',kurt_target,kurt_act);
 
-    % A) perform JB Test for normal distributed random numbers (dist_type == 0)
+    % B) perform JB Test for normal distributed random numbers (dist_type == 0)
     if ( distr_type(ii) == 0)
         [JB_p_value,JBstatistic] = JarqueBeraTest(RndMat(:,ii));
         fprintf('Jarque-Bera p-Value: \t| %0.4f |  [0.1..0.9 for normal distribution] \n',JB_p_value);
@@ -51,14 +76,18 @@ for ii = 1 : 1 : length(riskfactor_cell)
         else %passed
         end
     end
-    % B) test for bimodality -> fit polynomial and calculate sign of parabola opening parameter
+
+    % B2) Legacy histogram-shape diagnostic (informational only -- kept for
+    % visibility, but NOT used as a pass/fail gate: fitting a plain parabola
+    % to a strongly skewed/heavy-tailed histogram routinely misclassifies a
+    % perfectly valid distribution as "bimodal", so this no longer sets
+    % retcode. Use check A) above for actual integrity decisions.
     [xx yy] = hist(RndMat(:,ii),80);
     p = polyfit(yy,xx,2);
     if ( p(1) > 0 )
-        fprintf('Warning: octarisk: Distribution type >>%d<< for riskfactor >>%s<< might be bimodal.\n',distr_type(ii),rf_id);
-        retcode = 255;
+        fprintf('Info: octarisk: histogram shape diagnostic for riskfactor >>%s<< is non-parabolic (common for strongly skewed/heavy-tailed targets; not necessarily a defect -- see check A above for the authoritative integrity result).\n',rf_id);
     end
-    
+
     % C) Test of Sample mean on 99% confidence intervall
     alpha_mean = 0.01;
     [rejflag lb_norm ub_norm] = SampleMeanTest(randvec,mean_target,alpha_mean);

@@ -68,9 +68,43 @@ classdef Parameter
         first_eval = 1;
         use_parallel_pkg = 0;
         number_parallel_cores = 4;
-        frob_norm_limit = 0.05;   % Frobenius Norm: threshold of rlzd corrmat and 
+        frob_norm_limit = 0.05;   % Frobenius Norm: threshold of rlzd corrmat and
                             % input corrmat, where to draw new random numbers
-            
+        max_corr_deviation_limit = 0.05;   % max abs deviation allowed between the
+                            % correlation matrix realized by the generated risk
+                            % factor marginal distributions (R) and the target
+                            % correlation matrix, for mc = 50000 scenarios.
+                            % Exceeding this aborts scenario generation: it is
+                            % the single check that catches loading order
+                            % errors, sign errors and factorization errors in
+                            % scenario_generation_MC. scenario_generation_MC
+                            % also runs an iterative NORTA-style correlation
+                            % matching correction before this is checked (see
+                            % corr_matching_max_iter/corr_matching_damping),
+                            % which typically gets deviation down to a few
+                            % permille for a loosely correlated risk factor
+                            % set; a tightly, densely correlated set (several
+                            % pairs near +-1, pinning eigenvalues close to
+                            % zero) can plateau in the low percent range
+                            % because pushing several pairs' correlations up
+                            % at once repeatedly collides with the positive
+                            % semi-definiteness boundary, so 0.01 is too
+                            % tight a default for such matrices; 0.05 still
+                            % catches gross errors (a sign flip like the
+                            % original RF_EQ Pearson Type VI bug produces
+                            % deviations around 1, two orders of magnitude
+                            % above this) while tolerating that plateau.
+        riskfactor_coverage_whitelist = {};    % cell with risk factor ids from
+                            % riskfactors.csv explicitly allowed to be absent
+                            % from both the correlation matrix and
+                            % mc-mapping.csv (i.e. never shocked in the MC).
+                            % See validate_riskfactor_coverage.
+        corr_matching_max_iter = 15;   % max iterations scenario_generation_MC
+                            % spends adjusting the copula's input correlation
+                            % matrix so the correlation realized by the
+                            % generated risk factor marginal distributions
+                            % matches the target within max_corr_deviation_limit.
+
         % VAR specific variables
         mc = 50000;
         scen_number = 1;
@@ -108,10 +142,6 @@ classdef Parameter
         scenario_set = {'stress'};
         tax_rate = 0.0;
 		
-		% Utility function
-		utility_beta = 0.77;
-		utility_wealth_initial = 1360000;
-		utility_var_initial = 110000;
 		
         % specify unique runcode and timestamp:
         runcode = '';

@@ -69,7 +69,7 @@ if (strcmpi(type,'yaml'))
 	  fprintf(yaml, 'metadata:\n');
 	  fprintf(yaml, '  valuation_date: "%s"\n',datestr(para_object.valuation_date,"YYYY-mm-DD"));
 	  fprintf(yaml, '  runcode: "%s"\n',para_object.runcode);
-	  fprintf(yaml, '  timestamp: "%s"\n',asctime(localtime(time)));
+	  fprintf(yaml, '  timestamp: "%s"\n',asctime(localtime(time))(1:end-1));
 	  fprintf(yaml, '  octarisk_version: "%s"\n',para_object.version);
 	  fprintf(yaml, '  description: "Framework for risk measures, market inputs, thresholds, constraints, allocations, and rebalancing rules"\n');
 	  fprintf(yaml, '  scr_calculation_method: "%s"\n',para_object.scr_calculation_method);
@@ -93,7 +93,7 @@ if (strcmpi(type,'yaml'))
 					fprintf(yaml, '      maximum_allocation: %2.2f\n',min(0.8,obj.aa_target_values(ii) + 0.15));
 				else
 					fprintf(yaml, '      minimum_allocation: %2.2f\n',max(0.025,obj.aa_target_values(ii) - 0.10));
-					fprintf(yaml, '      maximum_allocation: %2.2f\n',min(obj.aa_target_values(ii)+0.1,0.3));
+					fprintf(yaml, '      maximum_allocation: %2.2f\n',min(obj.aa_target_values(ii) + 0.10,0.3));
 				end
 			end
 		end
@@ -102,11 +102,14 @@ if (strcmpi(type,'yaml'))
 			for ii=1:1:length(obj.equity_target_region_values)
 				fprintf(yaml, '    - equity_region: "%s"\n',obj.equity_target_region_id{ii});
 				fprintf(yaml, '      target_allocation: %2.2f\n',obj.equity_target_region_values(ii));
-				fprintf(yaml, '      minimum_allocation: %2.2f\n',0.0);
-				fprintf(yaml, '      maximum_allocation: %2.2f\n',min(obj.equity_target_region_values(ii)*2,0.8));
+				fprintf(yaml, '      minimum_allocation: %2.2f\n',max(0.025,obj.equity_target_region_values(ii)/2));
+				fprintf(yaml, '      maximum_allocation: %2.2f\n',min(obj.equity_target_region_values(ii)*1.5,0.7));
 			end
-
-			fprintf(yaml, '  permitted_deviations: "Within minimum and maximum equity region allocations if justification provided in tactical_views section."\n');
+			fprintf(yaml, '  permitted_deviations:\n'); 
+			fprintf(yaml, '    description: "Sum of absolute deviations from target allocations must be below 30 percentage points"\n');
+			fprintf(yaml, '    max_total_absolute_deviation: 0.30\n');
+			fprintf(yaml, '    requires_justification: true\n');
+			fprintf(yaml, '    justification_location: "tactical_views"\n');
 		end
 		
 	  fclose (yaml)
@@ -172,7 +175,9 @@ if (strcmpi(type,'yaml'))
 		fprintf(yaml, 'portfolio_risk_metrics:\n');
 		fprintf(yaml, '  portfolio_value: %9.0f\n',obj.getValue('base'));   
 		fprintf(yaml, '  portfolio_currency: %s\n',obj.currency);   
-		fprintf(yaml, '  time_horizon: %s days\n',any2str(tmp_ts));   
+		fprintf(yaml, '  time_horizon:\n');   
+		fprintf(yaml, '    value: %s\n',any2str(tmp_ts));   
+		fprintf(yaml, '    unit: "days"\n');   
 		fprintf(yaml, '  quantile: %1.3f\n',para_object.quantile);   
 		fprintf(yaml, '  var_rel: %1.3f\n',-obj.varhd_rel);
 		fprintf(yaml, '  var_abs_%s: %2.0f\n',obj.currency,obj.varhd_abs);
@@ -186,23 +191,23 @@ if (strcmpi(type,'yaml'))
 
 	    % ####  print tax details as table
 		fprintf(yaml, '  tax_details:\n');
-		fprintf(yaml, '    var_after_tax_%s:  %2.0f\n',obj.currency,obj.varhd_abs_at);
-		fprintf(yaml, '    var_before_tax_%s:  %2.0f\n',obj.currency,obj.varhd_abs);
-		fprintf(yaml, '    tax_benefit_%s:  %2.0f\n',obj.currency,obj.tax_benefit);
-		fprintf(yaml, '    tax_benefit_rel:  %1.3f\n',abs(obj.tax_benefit/obj.varhd_abs));
-		fprintf(yaml, '    deferred_tax_liability_%s:  %2.0f\n',obj.currency,abs(obj.dtl));
+		fprintf(yaml, '    var_after_tax_%s: %2.0f\n',obj.currency,obj.varhd_abs_at);
+		fprintf(yaml, '    var_before_tax_%s: %2.0f\n',obj.currency,obj.varhd_abs);
+		fprintf(yaml, '    tax_benefit_%s: %2.0f\n',obj.currency,obj.tax_benefit);
+		fprintf(yaml, '    tax_benefit_rel: %1.3f\n',abs(obj.tax_benefit/obj.varhd_abs));
+		fprintf(yaml, '    deferred_tax_liability_%s: %2.0f\n',obj.currency,abs(obj.dtl));
 
 		 % ####  print utility var
-		fprintf(yaml, '  utility_var\n');
-		fprintf(yaml, '    explanations: "Utility VaR is calibrated to portfolio owner risk profile."\n');
-		fprintf(yaml, '    var_after_tax_%s:  %2.0f\n',obj.currency,obj.varhd_abs_at);
-		fprintf(yaml, '    utility_var_%s:  %2.0f\n',obj.currency,obj.utility_var);
+		fprintf(yaml, '  utility_var:\n');
+		fprintf(yaml, '    explanations: "Utility VaR is calibrated to portfolio owner risk profile. Utility VaR is specified as after tax."\n');
+		fprintf(yaml, '    var_after_tax_%s: %2.0f\n',obj.currency,obj.varhd_abs_at);
+		fprintf(yaml, '    utility_var_%s: %2.0f\n',obj.currency,obj.utility_var);
 		var_util_diff = obj.varhd_abs_at - obj.utility_var;	% difference between actual var and utility var
-		fprintf(yaml, '    difference_%s:  %2.0f\n',obj.currency,var_util_diff);
+		fprintf(yaml, '    difference_%s: %2.0f\n',obj.currency,var_util_diff);
 		fprintf(yaml, '    thresholds:\n');
-		fprintf(yaml, '      upper_limit_%s:  %2.0f\n',obj.currency,1.05*obj.utility_var);
-		fprintf(yaml, '      lower_limit_%s:  %2.0f\n',obj.currency,0.95*obj.utility_var);
-		fprintf(yaml, '    action_recommendation: "Actual VaR within thresholds."\n');
+		fprintf(yaml, '      upper_limit_%s: %2.0f\n',obj.currency,1.10*obj.utility_var);
+		fprintf(yaml, '      lower_limit_%s: %2.0f\n',obj.currency,0.90*obj.utility_var);
+		fprintf(yaml, '    action_recommendation: "Actual VaR shall be within utility VaR thresholds."\n');
 		%~ fprintf(yaml, '      If difference between actual VaR and utility VaR exceeds thresholds, propose rebalancing actions based on rebalancing strategy:\n');
 		
 		%~ if (var_util_diff > 1.05*obj.utility_var) 
@@ -221,7 +226,7 @@ if (strcmpi(type,'yaml'))
             fprintf(yaml, '    crisis_scenario: EQ-40%%, Alt-70%%, IR+200bps, INFL+500bps, CS+100bps, FX-10%%, RE-50%%, COM+20%%\n');
         end
 	    for kk=1:1:length(comments_cell)
-			fprintf(yaml, '    assumption %s: "%s"\n',any2str(kk),comments_cell{kk});
+			fprintf(yaml, '    assumption_%s: "%s"\n',any2str(kk),comments_cell{kk});
 	    end
 
 		% ####  position level report
@@ -248,7 +253,7 @@ if (strcmpi(type,'yaml'))
 		aa_target_values = obj.get('aa_target_values');
 
 		fprintf(yaml, '    - aggregation_key: "Asset Class"\n');
-		fprintf(yaml, '      contributions:"\n');
+		fprintf(yaml, '      contributions:\n');
 		saa_deviation = 0;
 		saa_riskimpact = 0;
 		for jj = 1:1:length(aggr_key_struct)
@@ -407,16 +412,17 @@ if (strcmpi(type,'yaml'))
                     risk_impact_sum = risk_impact_sum + tmp_risk_impact;
                 end
 				devation_sum = devation_sum + abs(tmp_deviation);
-				fprintf(yaml, '    - region: %s\n',region);      
+				fprintf(yaml, '    - region: "%s"\n',region);      
 				fprintf(yaml, '      region_base_value_%s: %2.0f\n',obj.currency,region_val);
-				fprintf(yaml, '      target_region_allocation: %1.3f\n',aa_target);
+				%fprintf(yaml, '      target_region_allocation: %1.3f\n',aa_target);
 				fprintf(yaml, '      current_region_allocation: %1.3f\n',aa_current);
-				fprintf(yaml, '      deviation_base_value_%s: %2.0f\n',obj.currency,tmp_deviation);
-				fprintf(yaml, '      deviation_risk_impact_%s: %2.0f\n',obj.currency,tmp_risk_impact);
+				%fprintf(yaml, '      deviation_base_value_%s: %2.0f\n',obj.currency,region_decomp);
+				fprintf(yaml, '      decomposition_var_%s: %2.2f\n',obj.currency,region_decomp);
+				%fprintf(yaml, '      deviation_risk_impact_%s: %2.0f\n',obj.currency,tmp_risk_impact);
 			
 			end
 		else
-			fprintf('No instrument_struct n');
+			fprintf('No instrument_struct \n');
 		end	
 			%~ entity_cell;
 			%~ entity_exposure;

@@ -28,19 +28,25 @@
 %# @item @var{para_object}:   object with parameters (stable_seed, use_sobol, 
 %# sobol_seed, path_working_folder, path_sobol_direction_number, 
 %# filename_sobol_direction_number,frob_norm_limit)
+%# @item @var{rf_names}:   OPTIONAL: cell with risk factor names (same order as
+%# columns of @var{corr_matrix} / @var{P}) used for printing and exporting the
+%# realized correlation matrix. Defaults to generic names >>RF1<<, >>RF2<<, ...
 %# @item @var{R}:    OUTPUT: scenario matrix (rows: scenarios, cols: risk factors)
-%# @item @var{distr_type}:    OUTPUT: cell with marginal distribution types 
+%# @item @var{distr_type}:    OUTPUT: cell with marginal distribution types
 %# @item @var{Z}:    OUTPUT: copula dependence (uniform marginal distributions)
 %# according to Pearson
 %# @end itemize
 %# @seealso{get_marginal_distr_pearson, mvnrnd, normcdf, mvtrnd ,tcdf}
 %# @end deftypefn
 function [R distr_type Z] = scenario_generation_MC(corr_matrix,P,mc, ...
-                            copulatype,nu,time_horizon,path_static,para_object)
+                            copulatype,nu,time_horizon,path_static,para_object,rf_names)
 % A) Input checks
     % 1) Arguments checks
     if nargin < 8
         print_usage ();
+    end
+    if (nargin < 9)
+        rf_names = {};
     end
                                 
     % A) input data checks
@@ -68,11 +74,29 @@ function [R distr_type Z] = scenario_generation_MC(corr_matrix,P,mc, ...
     corr_matrix = correct_correlation_matrix(corr_matrix);
     new_corr = false;
     
+% para_object may be a plain struct (as in the embedded %!test below) or a
+% Parameter class instance -- isfield does not work on the latter, so probe
+% via try/catch instead (mirrors Parameter.isProp), here and everywhere else
+% below a para_object.<field> is read with a fallback default.
+max_corr_deviation_limit = get_para_field(para_object,'max_corr_deviation_limit',0.05);
+corr_matching_max_iter   = get_para_field(para_object,'corr_matching_max_iter',15);
+corr_matching_damping    = get_para_field(para_object,'corr_matching_damping',0.5);
+
+% corr_target is what R actually needs to correlate to. corr_matrix, below,
+% is instead the copula's own parameter matrix: it starts out equal to
+% corr_target, but gets iteratively adjusted in the loop further down to
+% correct for the fact that a copula correlation does not survive unchanged
+% through a non-linear (skewed/fat-tailed) Pearson marginal transform -- two
+% risk factors with identical marginal shape barely need correcting, but two
+% risk factors of differing shape can see their realized Pearson correlation
+% come out several percent short of the copula correlation feeding them.
+corr_target = corr_matrix;
+
 % B.1) Generating multivariate random variables if stable_seed is 0
 tmp_number_rf = rows(corr_matrix);  % get number of risk factors
 tmp_filename = strcat(path_static,'/random_numbers_',num2str(mc),'_', ...
-                        num2str(tmp_number_rf),'_',copulatype,'.mat');
-% use existing correlated random numbers                        
+                        num2str(tmp_number_rf),'_',copulatype,'_',any2str(nu),'.mat');
+% use existing correlated random numbers
 if ( exist(tmp_filename,'file') && (stable_seed == 1))
     fprintf('scenario_generation_MC: Taking file >>%s<< with random numbers from static folder\n',tmp_filename);
     Z_struct = load(tmp_filename);  % read in from stored file
@@ -83,14 +107,31 @@ if ( exist(tmp_filename,'file') && (stable_seed == 1))
         fprintf('scenario_generation_MC: WARNING: Frobenius norm %s of correlation matrix drawn from random numbers minus correlation settings > %s. New random numbers will be drawn.\n',any2str(frob_norm),any2str(frob_norm_limit));
         new_corr = true;
     else
-		fprintf('scenario_generation_MC: Frobenius norm %s of correlation matrix drawn from random numbers minus correlation settings <= %s. No new random numbers will be drawn.\n',any2str(frob_norm),any2str(frob_norm_limit));
+        % the cached Z was drawn under some (possibly already NORTA-corrected)
+        % copula matrix -- validate it against the actually relevant metric,
+        % the correlation realized by the generated marginal distributions R,
+        % not just the copula-space Z. Only accept the cache if that holds up.
+        [R distr_type] = apply_marginal_distributions(Z,P,factor_time_horizon);
+        rlzd_corr = corr(R);
+        max_abs_deviation = max(max(abs(rlzd_corr - corr_target)));
+        if ( max_abs_deviation > max_corr_deviation_limit )
+            fprintf('scenario_generation_MC: WARNING: max abs deviation %s of realized marginal-distribution correlation vs. target > %s. New random numbers will be drawn.\n',any2str(max_abs_deviation),any2str(max_corr_deviation_limit));
+            new_corr = true;
+        else
+            fprintf('scenario_generation_MC: Frobenius norm %s of correlation matrix drawn from random numbers minus correlation settings <= %s. No new random numbers will be drawn.\n',any2str(frob_norm),any2str(frob_norm_limit));
+        end
     end
 % otherwise draw new random numbers and save to static folder for next run
-else 
+else
     new_corr = true;
 end
 
-% B.2) draw new random numbers and apply copula
+% B.2) draw new random numbers, then iteratively adjust the copula's input
+%      correlation matrix (NORTA-style correlation matching) until the
+%      correlation actually realized by the generated marginal distributions
+%      R matches corr_target within max_corr_deviation_limit -- or the
+%      iteration budget runs out, in which case the closest iteration found
+%      is kept and the permanent assertion in step D catches the shortfall.
 if ( new_corr == true)
     dim = length(corr_matrix);
     if ( use_sobol == false)
@@ -111,54 +152,127 @@ if ( new_corr == true)
         % scale randn_matrix to get 0,1 normally distributed numbers
         randn_matrix = randn_matrix ./ std(randn_matrix);
     end
-    
-    % ############    apply Copula    ######################################
-    if ( strcmpi(copulatype, 'Gaussian') ) % Gaussian copula   
-        % draw random variables from multivariate normal distribution
-        Y   =   mvnrnd_custom(zeros(1,dim),corr_matrix,mc,randn_matrix);  
-        Z   =   normcdf(Y,0,1); 
-        
-    elseif ( strcmpi(copulatype, 't')) % t-copula 
-        % draw random variables from multivariate student-t distribution
-        Y   =   mvtrnd_custom(corr_matrix,nu,mc,randn_matrix);    
-        Z   =   tcdf(Y,nu);
-        
-    elseif ( strcmpi(copulatype, 'Clayton') || strcmpi(copulatype, 'Gumbel') 
-                                                || strcmpi(copulatype, 'Frank')) 
-        % draw uniform distributed correlated random numbers 
-        % for n scenarios and d risk factors
-        Y   =   normcdf(mvnrnd_custom(zeros(1,dim),corr_matrix,mc,randn_matrix));
-        % apply copula
-        Z   =   mvarchcop (copulatype,Y,nu);  
-        
-    else
-        error('scenario_generation_MC: unknown Copula type >>%s<<. Must be >>t<< or >>Gaussian<<.\n',copulatype);
+
+    sigma_z = corr_target;     % copula input correlation, adjusted each iteration
+    best_max_abs_deviation = Inf;
+    converged = false;
+    for iter = 1 : 1 : corr_matching_max_iter
+        % ############    apply Copula    ######################################
+        if ( strcmpi(copulatype, 'Gaussian') ) % Gaussian copula
+            % draw random variables from multivariate normal distribution
+            Y   =   mvnrnd_custom(zeros(1,dim),sigma_z,mc,randn_matrix);
+            Z   =   normcdf(Y,0,1);
+        elseif ( strcmpi(copulatype, 't')) % t-copula
+            % draw random variables from multivariate student-t distribution
+            Y   =   mvtrnd_custom(sigma_z,nu,mc,randn_matrix);
+            Z   =   tcdf(Y,nu);
+        elseif ( strcmpi(copulatype, 'Clayton') || strcmpi(copulatype, 'Gumbel')
+                                                    || strcmpi(copulatype, 'Frank'))
+            % draw uniform distributed correlated random numbers
+            % for n scenarios and d risk factors
+            Y   =   normcdf(mvnrnd_custom(zeros(1,dim),sigma_z,mc,randn_matrix));
+            % apply copula
+            Z   =   mvarchcop (copulatype,Y,nu);
+        else
+            error('scenario_generation_MC: unknown Copula type >>%s<<. Must be >>t<< or >>Gaussian<<.\n',copulatype);
+        end
+        if ( iter == 1 )
+            if ( strcmpi(copulatype,'Gaussian') )
+                fprintf('scenario_generation_MC: Applying Copulatype %s.\n',copulatype);
+            else
+                fprintf('scenario_generation_MC: Applying Copulatype %s and nu %d.\n',copulatype,nu);
+            end
+        end
+
+        % C) Apply marginal distributions to uniform distributed multivariate random numbers
+        [R distr_type] = apply_marginal_distributions(Z,P,factor_time_horizon);
+
+        % correlation matching: measure the correlation actually realized by
+        % the generated risk factor marginal distributions R (not Z) against
+        % corr_target, and adjust the copula input sigma_z accordingly.
+        rlzd_corr = corr(R);
+        diff_corr = rlzd_corr - corr_target;
+        max_abs_deviation = max(max(abs(diff_corr)));
+        fprintf('scenario_generation_MC: correlation matching iteration %d: max abs deviation of realized vs. target correlation (based on generated risk factor marginal distributions): %.4f\n',iter,max_abs_deviation);
+
+        if ( max_abs_deviation < best_max_abs_deviation )
+            best_max_abs_deviation = max_abs_deviation;
+            best_R = R;
+            best_distr_type = distr_type;
+            best_Z = Z;
+            best_rlzd_corr = rlzd_corr;
+        end
+        if ( max_abs_deviation <= max_corr_deviation_limit )
+            converged = true;
+            break;
+        end
+
+        % elementwise NORTA-style ratio correction of the copula's input
+        % correlation, damped and clipped, then re-projected onto the set of
+        % valid (positive semi-definite) correlation matrices before the
+        % next draw. Elements where the realized correlation is too close to
+        % zero to give a stable ratio are left uncorrected. Damping keeps
+        % each step small enough that the PSD re-projection right after it
+        % (which itself shrinks off-diagonal magnitude a little) does not
+        % cancel out the correction and leave the iteration oscillating
+        % around a fixed point instead of converging onto it.
+        ratio = ones(size(rlzd_corr));
+        safe = abs(rlzd_corr) > 1e-4;
+        ratio(safe) = corr_target(safe) ./ rlzd_corr(safe);
+        ratio = min(max(ratio,0.5),2.0);   % clip the correction step itself
+        ratio = 1 + corr_matching_damping .* (ratio - 1);
+        sigma_z = sigma_z .* ratio;
+        sigma_z = min(max(sigma_z,-0.999),0.999);
+        sigma_z = (sigma_z + sigma_z') / 2;    % re-symmetrize
+        sigma_z(logical(eye(dim))) = 1;
+        sigma_z = correct_correlation_matrix(sigma_z);
     end
-    
+    R = best_R; distr_type = best_distr_type; Z = best_Z; rlzd_corr = best_rlzd_corr;
+    if ( converged )
+        fprintf('scenario_generation_MC: correlation matching converged after %d iteration(s), max abs deviation %.4f.\n',iter,best_max_abs_deviation);
+    else
+        fprintf('scenario_generation_MC: WARNING: correlation matching did not converge within %d iterations, best max abs deviation %.4f.\n',corr_matching_max_iter,best_max_abs_deviation);
+    end
+
     if (stable_seed == 1)
         save ('-v7',tmp_filename,'Z');
     end
-    
 end
-    
 
-% C) Apply marginal distributions to uniform distributed multivariate random numbers
-R = zeros(mc,columns(corr_matrix));
-distr_type = zeros(1,columns(Z));
-% now loop via all columns of Z and apply individual marginal distribution
-for ii = 1 : 1 : columns(Z);
-    % mu needs geometric compounding adjustment
-    tmp_mu      = P(1,ii) .^(1/factor_time_horizon);
-    % volatility needs adjustment with sqr(t)-rule 
-    tmp_sigma   = P(2,ii) ./ sqrt(factor_time_horizon);
-    tmp_skew    = P(3,ii);
-    tmp_kurt    = P(4,ii);
-    tmp_ucr = Z(:,ii);
-    %generate distribution based on Pearson System (Type 1-7)
-    [ret_vec type]= get_marginal_distr_pearson(tmp_mu,tmp_sigma, ...
-                                                tmp_skew,tmp_kurt,tmp_ucr); 
-    distr_type(ii) = type;
-    R(:,ii) = ret_vec;
+% D) Print/export the realized correlation matrix based on the generated risk
+%    factor marginal distributions (R), then enforce max_corr_deviation_limit
+%    as a permanent assertion -- this is the single check that catches
+%    loading order errors, sign errors (e.g. a Pearson marginal distribution
+%    mapping that is decreasing instead of increasing in the copula draw) and
+%    factorization errors, all in one place. max_corr_deviation_limit is
+%    calibrated for mc = 50000 scenarios (MC standard error of a correlation
+%    coefficient ~ 0.005 there); scale para_object.max_corr_deviation_limit
+%    accordingly if mc is set much lower.
+diff_corr = rlzd_corr - corr_target;
+frob_norm_marginal = norm(abs(diff_corr));
+max_abs_deviation = max(max(abs(diff_corr)));
+fprintf(['scenario_generation_MC: Frobenius norm of realized correlation matrix ', ...
+        '(based on generated risk factor marginal distributions) vs. target ', ...
+        'correlation matrix: %s\n'],any2str(frob_norm_marginal));
+fprintf('scenario_generation_MC: max abs deviation: %.4f\n',max_abs_deviation);
+
+% print/export the realized matrix before the assertion below, so it is
+% still available for inspection even when scenario generation is aborted.
+if (isempty(rf_names))
+    rf_names = cell(1,columns(R));
+    for ii = 1 : 1 : columns(R)
+        rf_names{ii} = strcat('RF',num2str(ii));
+    end
+end
+print_realized_correlation_matrix(rlzd_corr,rf_names,path_static);
+
+if ( max_abs_deviation > max_corr_deviation_limit )
+    error(['scenario_generation_MC: max abs deviation %s between realized correlation ', ...
+        'matrix (based on generated risk factor marginal distributions) and target ', ...
+        'correlation matrix exceeds limit %s. This points to a loading order, sign, ', ...
+        'factorization or correlation matching error upstream of the marginal ', ...
+        'distribution mapping.'], ...
+        any2str(max_abs_deviation),any2str(max_corr_deviation_limit));
 end
 
 end
@@ -166,7 +280,93 @@ end
 
 
 % ##############################################################################
-% custom functions 
+% custom functions
+
+% Read a para_object.<field_name>, falling back to default_value if the field
+% does not exist or is empty. para_object may be a plain struct (as in the
+% embedded %!test below) or a Parameter class instance -- isfield does not
+% work on the latter, so probe via try/catch instead (mirrors Parameter.isProp).
+function val = get_para_field(para_object,field_name,default_value)
+    try
+        val = para_object.(field_name);
+        if (isempty(val))
+            error('empty');
+        end
+    catch
+        val = default_value;
+    end
+end
+
+% Apply the Pearson marginal distribution of each risk factor (columns of P)
+% to the corresponding column of uniform distributed correlated random
+% numbers Z, returning the scenario matrix R and the vector of Pearson types
+% selected per risk factor. Factored out of the main function so it can be
+% called repeatedly inside the correlation matching iteration below without
+% duplicating the loop.
+function [R distr_type] = apply_marginal_distributions(Z,P,factor_time_horizon)
+    R = zeros(rows(Z),columns(Z));
+    distr_type = zeros(1,columns(Z));
+    for ii = 1 : 1 : columns(Z)
+        % mu needs geometric compounding adjustment
+        tmp_mu      = P(1,ii) .^(1/factor_time_horizon);
+        % volatility needs adjustment with sqr(t)-rule
+        tmp_sigma   = P(2,ii) ./ sqrt(factor_time_horizon);
+        tmp_skew    = P(3,ii);
+        tmp_kurt    = P(4,ii);
+        tmp_ucr = Z(:,ii);
+        %generate distribution based on Pearson System (Type 1-7)
+        [ret_vec type]= get_marginal_distr_pearson(tmp_mu,tmp_sigma, ...
+                                                    tmp_skew,tmp_kurt,tmp_ucr);
+        distr_type(ii) = type;
+        R(:,ii) = ret_vec;
+    end
+end
+
+% Print the realized correlation matrix to the screen and, if path_static is a
+% valid folder, export it as a CSV file (leading empty header cell, comma
+% separated, values rounded to 3 significant digits) e.g.:
+%   ,RF1,RF2
+%   RF1,1,0.349
+%   RF2,0.349,1
+function print_realized_correlation_matrix(rlzd_corr,rf_names,path_static)
+
+    no_rf = columns(rlzd_corr);
+    header_line = '';
+    for ii = 1 : 1 : no_rf
+        header_line = strcat(header_line,',',rf_names{ii});
+    end
+    lines_out = cell(no_rf + 1,1);
+    lines_out{1} = header_line;
+    for ii = 1 : 1 : no_rf
+        row_line = rf_names{ii};
+        for jj = 1 : 1 : no_rf
+            row_line = strcat(row_line,',',num2str(rlzd_corr(ii,jj),3));
+        end
+        lines_out{ii + 1} = row_line;
+    end
+
+    fprintf('scenario_generation_MC: Realized correlation matrix based on generated risk factor marginal distributions:\n');
+    for ii = 1 : 1 : length(lines_out)
+        fprintf('%s\n',lines_out{ii});
+    end
+
+    % export to CSV file if a valid output folder was provided
+    if ( ischar(path_static) && ~isempty(path_static) && exist(path_static,'dir'))
+        tmp_filename = strcat(path_static,'/realized_correlation_matrix.csv');
+        fid = fopen(tmp_filename,'w');
+        if (fid == -1)
+            fprintf('scenario_generation_MC: WARNING: Could not open file >>%s<< for writing realized correlation matrix.\n',tmp_filename);
+        else
+            for ii = 1 : 1 : length(lines_out)
+                fprintf(fid,'%s\n',lines_out{ii});
+            end
+            fclose(fid);
+            fprintf('scenario_generation_MC: Realized correlation matrix exported to file >>%s<<.\n',tmp_filename);
+        end
+    end
+end
+
+% ##############################################################################
 %# Copyright (C) 2003 Iain Murray
 %# taken and modified from Octave's statistical package
 function s = mvnrnd_custom(mu,sigma,n,randn_matrix);  

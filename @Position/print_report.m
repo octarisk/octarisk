@@ -964,6 +964,10 @@ elseif (strcmpi(type,'latex'))
 			[retcode repstruct] = print_table_categories(obj,repstruct, ...
 								latex_table_mvbs,latex_table_reconciliation);
 			
+			
+			% Print Exposure.yaml 
+			retcode = export_network_exposures_yaml(obj, instrument_struct, path_reports);
+			
 			% Print QRT reporting file
 			latex_table_qrt = strcat(path_reports,'/',obj.id,'_qrt.csv');
 			[retcode repstruct] = print_qrt_cells(obj,repstruct, ...
@@ -1067,7 +1071,70 @@ elseif (strcmpi(type,'latex'))
 			fprintf(fifi, '%s \& %3.1f\\%% \& %s \& %3.1f\\%%  \\\\\\hline\n','Low (BB-C)',ratingtable(3),durationdesc{3},durationtable(3))	
 			fprintf(fifi, 'Sum \& %3.1f\\%% \& Sum \& %3.1f\\%% \\\\\n',sum(ratingtable),sum(durationtable));	
 			fprintf(fifi, '\\end{tabular}\n');
-			fclose (fifi);
+			
+			% Print maturity dates of all Fixed Income instruments
+			cell_matdate = {};
+			cell_id = {};
+			exposure_vec = [];
+			cell_name = {};
+			cell_currency = {};
+			notional_vec = [];
+			if (isstruct(instrument_struct))
+				
+				for (ii=1:1:length(obj.positions))
+					try
+					    pos_obj = obj.positions(ii).object;
+					    if (isobject(pos_obj))
+						    pos_id = pos_obj.id;
+						    instr_obj = get_sub_object(instrument_struct,pos_id);
+						    % get maturity date
+						    if (sum(strcmpi(instr_obj.get('type'),{'Bond','CapFloor','Forward','Option','Swaption'}))>0) 
+							    if ( instr_obj.isProp('notional') && instr_obj.isProp('maturity_date') && strcmpi(pos_obj.balance_sheet_item,'Asset'))
+								    mat_date = datestr(instr_obj.get('maturity_date'),'YYYY-mm-DD');
+								    cell_matdate = [cell_matdate,mat_date];
+								    cell_id = [cell_id,strrep(instr_obj.id,'_',' ')];
+								    cell_name = [cell_name,strrep(instr_obj.name,'_',' ')];
+								    cell_currency = [cell_currency,pos_obj.currency];   
+								    exposure_vec = cat(2,exposure_vec,pos_obj.getValue('base'));
+								    notional_vec = cat(2,notional_vec,instr_obj.notional * pos_obj.quantity); 
+							    end
+						    end
+						end
+					end
+				end
+				% insert loop through all cell content and sort by cell_matdate and print to file
+				if (~isempty(cell_matdate))
+					fprintf(fifi, '\\center\n');
+					fprintf(fifi, '\\begin{tabular}{l | c | r | r | r }\n');
+					fprintf(fifi, 'Instrument Name \& Identifier \& Exposure \& Notional \& Maturity Date  \\\\\\hline\\hline\n');	
+					% Convert date strings to datenum for proper chronological sorting
+					matdate_nums = cellfun(@(x) datenum(x, 'yyyy-mm-dd'), cell_matdate);
+					
+					% Get sorting indices (ascending order by maturity date)
+					[~, sort_idx] = sort(matdate_nums);
+					
+					% Reorder all cell arrays according to sorted maturity dates
+					cell_matdate_sorted = cell_matdate(sort_idx);
+					cell_id_sorted = cell_id(sort_idx);
+					cell_name_sorted = cell_name(sort_idx);
+					exposure_vec_sorted = exposure_vec(sort_idx);
+					cell_currency_sorted = cell_currency(sort_idx);
+					notional_vec_sorted = notional_vec(sort_idx);
+					
+					% Print sorted data row by row
+					for kk = 1:length(cell_matdate_sorted)
+						fprintf(fifi, '%s \& %s \& %.0f %s \& %.0f %s \& %s \\\\\n', ...
+								cell_name_sorted{kk}, ...
+								cell_id_sorted{kk}, ...
+								exposure_vec_sorted(kk), cell_currency_sorted{kk},...
+								notional_vec_sorted(kk), cell_currency_sorted{kk},...
+								cell_matdate_sorted{kk});
+					end
+					fprintf(fifi, '\\end{tabular}\n');
+				end
+				
+			end
+			fclose (fifi);	% end Fixed Income Style table reporting
 			
 			% print Equity region allocation to LaTeX Table
 			latex_table_equity_region = strcat(path_reports,'/table_pos_',obj.id,'_equity_region.tex');

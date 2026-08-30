@@ -225,7 +225,10 @@ classdef Position
 		duration_id = {'Low<3','Mid3-7','High>7'};
 		country_id = {'US','Other'};
 		esg_score = [];
-		utility_var = 0;
+		utility_var = 0; % Utility function
+		utility_beta = 0.50;
+		utility_wealth_initial = 1360000;
+		utility_var_initial = 110000;
         comments_items_cell = {'Risk factor shocks are based on a combination of Solvency2 Standard Formula shocks and historic time series calibration.', ...
                         'Market risks are assessed quantitatively, while concentration risks are assessed qualitatively only.', ...
                         'Credit, operational, governance and regulatory risks are not taken into account.'};
@@ -325,6 +328,7 @@ classdef Position
 			fprintf('solvency_ratio: %4.1f%%\n',a.solvency_ratio * 100); 
 			fprintf('deferred_tax_liability: %12.2f %s\n',a.dtl,a.currency); 
             fprintf('srri_target: %d \n',a.srri_target); 
+            fprintf('utility_var: %12.2f %s\n',a.utility_var,a.currency); 
             fprintf('TPT Portfolio data:\n');
             fprintf('1_Portfolio_identifying_data: %s\n',any2str(a.tpt_1));
             fprintf('4_Portfolio_currency_(B): %s\n',any2str(a.tpt_4));

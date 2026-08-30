@@ -1,5 +1,5 @@
 %# Copyright (C) 2016 Stefan Schlögl <schinzilord@octarisk.com>
-%# Copyright (C) 2013 Martin Becker and Stefan Kloessner: 
+%# Copyright (C) 2013 Martin Becker and Stefan Kloessner:
 %# modified R package 'PearsonDS':
 %# http://CRAN.R-project.org/package=PearsonDS
 %#
@@ -18,13 +18,13 @@
 %# -*- texinfo -*-
 %# @deftypefn {Function File} {[@var{r} @var{type} ] =} get_marginal_distr_pearson (@var{mu}, @var{sigma}, @var{skew}, @var{kurt}, @var{Z})
 %#
-%# Compute a marginal distribution for given set of uniform random variables 
-%# with given mean, standard deviation skewness and kurtosis. The mapping is 
+%# Compute a marginal distribution for given set of uniform random variables
+%# with given mean, standard deviation skewness and kurtosis. The mapping is
 %# done via the Pearson distribution family.
 %# @*
-%# The implementation is based on the R package 'PearsonDS: Pearson Distribution 
+%# The implementation is based on the R package 'PearsonDS: Pearson Distribution
 %# System' and the function 'pearsonFitM' by @*
-%# Martin Becker and Stefan Kloessner (2013) @* 
+%# Martin Becker and Stefan Kloessner (2013) @*
 %# R package version 0.97. @*
 %# URL: http://CRAN.R-project.org/package=PearsonDS @*
 %# licensed under the GPL >= 2.0 @*
@@ -35,28 +35,28 @@
 %# @item @var{skew}:    skewness of marginal distribution (scalar)
 %# @item @var{kurt}:    kurtosis of marginal distribution (scalar)
 %# @item @var{Z}:       uniform distributed random variables (Nx1 vector)
-%# @item @var{r}:       OUTPUT: Nx1 vector with random variables distributed 
+%# @item @var{r}:       OUTPUT: Nx1 vector with random variables distributed
 %# according to Pearson type (vector)
 %# @item @var{type}:    OUTPUT: Pearson distribution type (I - VII) (scalar)
 %# @end itemize
-%# The marginal distribution type is chosen according to the input parameters 
+%# The marginal distribution type is chosen according to the input parameters
 %# out of the Pearson Type I-VII distribution family: @*
 %# @itemize @bullet
 %# @item @var{Type 0}   = normal distribution
 %# @item @var{Type I}   = generalization of beta distribution
 %# @item @var{Type II}  = symmetric beta distribution
 %# @item @var{Type III} = gamma or chi-squared distribution
-%# @item @var{Type IV}  = special distribution, not related to any other 
+%# @item @var{Type IV}  = special distribution, not related to any other
 %# distribution
 %# @item @var{Type V}   = inverse gamma distribution
 %# @item @var{Type VI}  = beta-prime or F distribution
-%# @item @var{Type VII} = Student's t distribution 
+%# @item @var{Type VII} = Student's t distribution
 %# @end itemize
-%# @seealso{discount_factor}
+%# @seealso{discount_factor, classify_pearson}
 %# @end deftypefn
 function [r,type] = get_marginal_distr_pearson(mu,sigma,skew,kurt,Z)
 
-% Classify Pearson Distribution Type I - VII and calculate shape parameters 
+% Classify Pearson Distribution Type I - VII and calculate shape parameters
 % (scale and location will be applied in the end)
 retvec = classify_pearson(mu,sigma,skew,kurt);
 type = retvec(1);
@@ -65,7 +65,15 @@ if ( kurt <= 0.0)
     error('ERROR: et_marginal_distr_pearson: kurtosis has to be larger than 0.0\n');
 end
 
-% generate standard marginal distribution (zero mean, unit variance) values for 
+% classify_pearson signals an invalid or ill-shaped (boundary-singularity /
+% bimodal) parameterization by returning type = NaN. Propagate this as a
+% NaN vector instead of silently generating a distorted distribution.
+if ( isnan(type) )
+    r = NaN(size(Z));
+    return;
+end
+
+% generate standard marginal distribution (zero mean, unit variance) values for
 % given correlated random numbers
 if ( type == 0)
     % normal distribution
@@ -88,23 +96,23 @@ elseif ( type == 2)
     r = a1 + 2*abs(a1) .* betainv_vec(Z,m+1,m+1);
 elseif ( type == 3)
     % gamma or chi-squared distribution
-    m  = retvec(2); 
+    m  = retvec(2);
     a1 = retvec(3);
-    c1 = retvec(4); 
+    c1 = retvec(4);
     r = c1 .* gaminv(Z,m+1,1) + a1;
 elseif ( type == 4)
     % special distribution, not related to any other distribution
-    m = retvec(2); 
+    m = retvec(2);
     nu = retvec(3);
     a = retvec(4);
     lambda = retvec(5);
     r_uncorr = rpears4(m,nu,a,lambda,length(Z));
-    % uncorrelated distribution -> draw correlated univariate random numbers 
+    % uncorrelated distribution -> draw correlated univariate random numbers
     % from 'empirical' pearson type IV distribution:
     r =  empirical_inv (Z, r_uncorr);
 elseif ( type == 5)
     % inverse gamma distribution
-    c1 = retvec(2); 
+    c1 = retvec(2);
     c2 = retvec(3);
     C1 = retvec(4);
     r = -((c1 - C1) ./ c2) ./ gaminv(Z,1./c2 - 1,1) - C1;
@@ -114,19 +122,30 @@ elseif ( type == 6)
     a2 = retvec(3);
     m1 = retvec(4);
     m2 = retvec(5);
-    % get nu1 and nu2 taking into account the order -> case dependency
-    if a2 < 0
-        nu1 = 2*(m2 + 1);
-        nu2 = -2*(m1 + m2 + 1);
+    % Map to the beta-prime/F distribution (single formula, verified against
+    % the reference R implementation PearsonDS::pearsonFitM).
+    nu1 = 2*(m2 + 1);
+    nu2 = -2*(m1 + m2 + 1);
+    % classify_pearson's Type VI root ordering (a1,a2) is not guaranteed to
+    % satisfy a2 >= a1 -- unlike Type I/IV/VII, whose ordering conventions
+    % keep every other branch in this file an increasing function of Z
+    % (norminv/betainv_vec/gaminv/tinv/empirical_inv all are), a2 < a1 here
+    % makes (a2-a1) negative and r a DEcreasing function of Z. Since Z is the
+    % shared copula draw, a decreasing marginal for this risk factor flips
+    % the sign of its correlation with every other risk factor while leaving
+    % same-type correlations intact (two sign flips cancel) -- exactly the
+    % failure mode this guards against. finv(1-Z,nu1,nu2) has the identical
+    % distribution to finv(Z,nu1,nu2) (mirrors the uniform draw), so this
+    % restores the increasing convention without altering the marginal shape
+    % (mean/std/skew/kurt).
+    if ( a2 >= a1 )
         r = a2 + (a2 - a1) .* (nu1./nu2) .* finv(Z,nu1,nu2);
-    else % a2 > a1
-        nu1 = 2*(m1 + 1);
-        nu2 = -2*(m1 + m2 + 1);
-        r = a1 + (a1 - a2) .* (nu1./nu2) .* finv(Z,nu1,nu2);
+    else
+        r = a2 + (a2 - a1) .* (nu1./nu2) .* finv(1-Z,nu1,nu2);
     end
 elseif ( type == 7)
     % Student's t distribution
-    nu = retvec(2); 
+    nu = retvec(2);
     c0 = retvec(3);
     c2 = retvec(4);
     r = sqrt(c0 ./ (1-c2)) .* tinv(Z,nu);
@@ -140,44 +159,44 @@ end % end of Main function
 %%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%##
 
 function r = rpears4(m,nu,a,lam,len_vec)
-%   Implemention taken from 'Non-Uniform Random Variate Generation' 
+%   Implemention taken from 'Non-Uniform Random Variate Generation'
 %      by Luc Devroye (1986)
 %   http://www.eirene.de/Devroye.pdf
 
 %  === returns random Pearson IV deviate ===
-%   
+%
 %   'A Guide to the Pearson Type IV Distribution'
 %   Joel Heinrich—University of Pennsylvania
 %   December 21, 2004
 %   http://www-cdf.fnal.gov/physics/statistics/notes/cdf6820_pearson4.pdf
 
 
-% Calling implementation of the complex hypergeometric distribution of 
+% Calling implementation of the complex hypergeometric distribution of
 % CDF/MEMO/STATISTICS/PUBLIC/6820
 % gammar2_cs = -log(gammar2_c(m,nu/2));
 
-% Calling implementation of the function type4norm of 
+% Calling implementation of the function type4norm of
 % CDF/MEMO/STATISTICS/PUBLIC/6820
 k = 0.5*(2/sqrt(pi))*gammar2_c(m,nu/2)*exp(gammaln(m)-gammaln(m-0.5))/a;
 logk = log(k);
 
 % Define variables
 b = 2*(m-1);
-M = atan(-nu./b); 
+M = atan(-nu./b);
 cosM = a ./ sqrt(b-1);
-rM = b.*log(cosM) - nu.*M; 
-rC = exp(-rM - logk); 
+rM = b.*log(cosM) - nu.*M;
+rC = exp(-rM - logk);
 
 r = zeros(len_vec,1);
 j = 1:numel(r);
 % log-concave density: Solution of Excercise 2.7C (Devroye: page 308)
 while length(j) > 0
     U = 4*rand(size(j)); % Draw random numbers from univariate distribution([0,4])
-    S = (U>2); 
-    U(S) = U(S) - 2; 
-    negative_Estar = log(max(U,1)-(U>1)); 
-    X = min(U,1) - negative_Estar; 
-    Z = log(rand(size(j))) + negative_Estar; 
+    S = (U>2);
+    U(S) = U(S) - 2;
+    negative_Estar = log(max(U,1)-(U>1));
+    X = min(U,1) - negative_Estar;
+    Z = log(rand(size(j))) + negative_Estar;
     X = M + (2*S-1).*X.*rC;
     k = (abs(X) < pi/2) & (Z <= b.*log(abs(cos(X))) - nu.*X - rM);
     r(j(k)) = X(k);
@@ -191,8 +210,8 @@ end % end of rpears4 function
 %%#%#%#%#%#%#%#%#%#%#%#%#%#%#%#%##
 
 %=======================
-% Implementation of the complex hypergeometric distribution from 
-% the C-Code example from 
+% Implementation of the complex hypergeometric distribution from
+% the C-Code example from
 % http://www-cdf.fnal.gov/physics/statistics/notes/cdf6820_pearson4.pdf
 % CDF/MEMO/STATISTICS/PUBLIC/6820:
 % 'A Guide to the Pearson Type IV Distribution'
@@ -200,19 +219,19 @@ end % end of rpears4 function
 % December 21, 2004
 function retval = gammar2_c(x,y)
 %/* returns abs(gamma(x+iy)/gamma(x))^2 */
-y2=y*y; 
+y2=y*y;
 xmin = max(2*y2,10);
-r=1; 
-s=1; 
-p=1; 
+r=1;
+s=1;
+p=1;
 f=0;
-while(x<xmin) 
+while(x<xmin)
     t = y/x;
     x = x + 1;
     r = r *( 1 + t*t);
 end
 
-while (p > s*eps)   
+while (p > s*eps)
     f = f + 1;
     p = p * (y2 + f*f) / (x  * f);
     x = x + 1;
@@ -223,122 +242,8 @@ retval = 1.0/(r*s);
 end
 %=======================
 
-
-
-function retvec = classify_pearson(mean,stddev,skewness,kurtosis)
-% function for classification of pearson distribution system and calculation 
-% of scale and shape parameters
-% Modified and adapted from Function 'pearsonFitM':
-%   Martin Becker and Stefan Klößner (2013). 
-%   PearsonDS: Pearson Distribution System. 
-%   R package version 0.97. URL http://CRAN.R-project.org/package=PearsonDS
-% licensed under the GPL >= 2.0
-
-mmm = mean; 
-vvv = stddev^2; 
-sss = skewness; 
-kkk = kurtosis;
-
-% special case singularity:  
-if (abs(10*kkk - 12*sss^2 - 18) < sqrt(realmin))
-    disp('Pearson distribution system: special case singularity for values of skewness and kurtosis')
-    type = 1;       % special case Type I
-    a1 = 1/2*((-sss*(kkk+3)-sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
-    a2 = 1/2*((-sss*(kkk+3)+sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
-    if (a1>0) 
-        tmp = a1; 
-        a1 = a2; 
-        a2 = tmp; 
-    end
-    c1  = sss*(kkk+3);
-    c2  = (2*kkk-3*sss^2-6);
-        
-    m1 = c1 ./ (c2 .* (a2 - a1));
-    m2 = -c1 ./ (c2 .* (a2 - a1));
-    retvec = [ type, m1, m2, a1, a2 ]; 
-    return;    
-end
-
-% start calculation of parameters for normal cases
-  c0  = (4*kkk-3*sss^2)/(10*kkk-12*sss^2-18);
-  c1  = sss*(kkk+3)/(10*kkk-12*sss^2-18);
-  c2  = (2*kkk-3*sss^2-6)/(10*kkk-12*sss^2-18);
-  
-% get appropriate distribution type Pearson type I to VII
-  if (sss == 0)
-    if (kkk == 3)
-        type=0;                            % type 0 (normal distribution)
-        retvec = [ type, 0, 1 ];
-    elseif (kkk<3)                         % type II
-      a1 = -1/2*(-sqrt(-16*kkk*(2*kkk-6))/(2*kkk-6));
-      m = (c1 + a1) ./ (c2 .* 2*abs(a1));
-      if ( m < -1)
-        disp('WARNING: no distribution type defined, setting to default case')
-        m = -0.999;
-      end
-      % return:
-         type = 2;                        % type II -> scale*beta(a,a)+location
-         retvec = [type, m, a1 ];
-    elseif (kkk>3)                        % type VII
-      r      = 6*(kkk-1)/(2*kkk-6);
-      dof    = 1+r;
-      type=7;                                            
-      retvec = [ type, dof, c0, c2 ];
-    end  
-  elseif ~(2*kkk-3*sss^2-6 == 0)
-    kap = 0.25*sss^2*(kkk+3)^2/((4*kkk-3*sss^2)*(2*kkk-3*sss^2-6));
-    if (kap<0)                            % type I
-      a1 = 1/2*((-sss*(kkk+3)-sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
-      a2 = 1/2*((-sss*(kkk+3)+sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
-      if (a1>0) 
-        tmp = a1; 
-        a1 = a2; 
-        a2 = tmp; 
-      end  
-      a  = c1;
-      m1 = -(sss*(kkk+3)+a1*(10*kkk-12*sss^2-18)/1)/(sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)));
-      m2 = -(-sss*(kkk+3)-a2*(10*kkk-12*sss^2-18)/1)/(sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)));
-       if ~((m1>-1)&&(m2>-1))
-         disp('WARNING: get_marginal_distr_pearson: no distribution type defined, setting to default case')
-         m1 = -0.999;
-         m2 = m1;
-       end
-      type=1;
-      retvec = [ type, m1, m2, a1, a2 ];
-    elseif (kap==1 )                      % type V
-      C1 = c1/(2*c2);
-      retvec = [ type, c1, c2, C1 ]
-    elseif (kap>1)                        % type VI
-      a1 = 1/2*((-sss*(kkk+3)-sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
-      a2 = 1/2*((-sss*(kkk+3)+sqrt(sss^2*(kkk+3)^2-4*(4*kkk-3*sss^2)*(2*kkk-3*sss^2-6)))/(2*kkk-3*sss^2-6));
-      if (a1>0) 
-        tmp = a1; 
-        a1 = a2; 
-        a2 = tmp;
-      end
-      a  = c1;
-      m1 = (a + a1)/(c2*(a2-a1));
-      m2 = - (a + a2)/(c2*(a2-a1));      
-      type=6;
-      retvec = [ type, a1, a2, m1, m2 ];
-    end  
-    if ((kap>0)&&(kap<1))                  % type IV
-      r        = 6*(kkk-sss^2-1)/(2*kkk-3*sss^2-6);
-      nu       = -r*(r-2)*sss/sqrt(16*(r-1)-sss^2*(r-2)^2);
-      scale    = - sqrt(vvv*(16*(r-1)-sss^2*(r-2)^2))/4;
-      location = - mmm - ((r-2)*sss*sqrt(vvv))/4;
-      m      = 1+r/2;
-      type=4;
-      b = 2*(m-1);
-      location = sqrt(b.^2 .* (b-1) ./ (b.^2 + nu.^2)); 
-      scale = location.*nu ./ b; 
-      retvec = [ type, m, nu, location, scale ];
-    end
-  else                                      % type III
-    m = (c0./c1 - c1) ./ c1;
-    a1 = -c0 ./ c1;
-    type=3;
-    retvec = [ type, m, a1, c1 ];
-  end
-
-end
+% NOTE: classify_pearson used to be a private subfunction defined here. It is
+% now its own file, classify_pearson.m, so it can be reused directly (e.g. as
+% a fast, sampling-free integrity check on candidate (skew,kurt) risk factor
+% calibrations in perform_rf_stat_tests.m) without duplicating this logic.
+% See classify_pearson.m and PEARSON_METHODOLOGY.md.

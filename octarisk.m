@@ -19,7 +19,7 @@
 %# @end deftypefn
 function [instrument_struct, curve_struct, index_struct, surface_struct, para_object, matrix_struct, riskfactor_struct, portfolio_struct, stresstest_struct, mc_var_shock_pct, port_obj_struct] = octarisk(path_parameter,filename_parameter)
 
-
+set(0, 'DefaultFigureVisible', 'off');
 
 % ##############################################################################################
 % Content:
@@ -286,6 +286,14 @@ riskfactor_struct=struct();
 [riskfactor_struct id_failed_cell] = load_riskfactors(riskfactor_struct, ...
             path_input,input_filename_riskfactors,path_output_riskfactors, ...
             path_archive,timestamp,archive_flag);
+% snapshot of all risk factor ids as defined in riskfactors.csv, taken before
+% riskfactor_struct is extended with mc-mapping.csv target ids below -- used
+% by validate_riskfactor_coverage to catch risk factors that are defined but
+% never actually driven by the MC simulation (see e.g. RF_EQ_PE_HIGH: passes
+% every positive-semi-definiteness check of the correlation matrix, because a
+% missing risk factor is not the same as a zero row/column -- it never shows
+% up as a row/column at all).
+all_riskfactor_ids = {riskfactor_struct.id};
 
 % 3. Processing Positions data
 portfolio_struct=struct();
@@ -348,7 +356,7 @@ if (run_mc == true)
     end
     % c) call MC scenario generation (Copula approach, Pearson distribution types 1-7 according four moments of distribution parameters)
     %    returns matrix R with a mc_scenarios x 1 vector with correlated random variables fulfilling skewness and kurtosis
-    [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,para_object);
+    [R_250 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,256,path_static,para_object,riskfactor_cell);
     %[R_1 distr_type] = scenario_generation_MC(corr_matrix,rf_para_distributions,mc,copulatype,nu,1); % only needed if independent random numbers are desired
 
     % variable for switching statistical analysis on and off
@@ -366,11 +374,16 @@ if (run_mc == true)
         retcode = calc_rlzd_corr(riskfactor_cell,riskfactor_struct,corr_matrix,para_object,mc_timestep,path_reports,true);
     end
     
-    % map risk factors 
+    % map risk factors
     % Processing MC Mapping file
 	[riskfactor_struct riskfactor_cell mapping_failed_cell] = ...
 				load_riskfactor_mapping(riskfactor_struct, riskfactor_cell, ...
 				path_input,para_object.input_filename_mc_mapping);
+
+    % validate that every risk factor defined in riskfactors.csv is actually
+    % driven by the MC simulation (correlation matrix or mc-mapping.csv),
+    % failing loudly instead of silently reading unused std/skew/kurt values.
+    validate_riskfactor_coverage(all_riskfactor_ids,riskfactor_cell,para_object.riskfactor_coverage_whitelist);
 end
 
 % update riskfactor with stresses
