@@ -137,6 +137,27 @@ if ( new_corr == true)
     if ( use_sobol == false)
         fprintf('scenario_generation_MC: New random numbers are drawn for %d MC scenarios and Copulatype %s.\n',mc,copulatype);
         randn_matrix = randn(mc,dim);
+        
+        
+        %~ % load seed from file: randn_state_20260901_225233.txt
+        %~ tmp_state = load(strcat('/Users/schinzilord/Documents/Programmierung/octarisk/private_folder/static/seed/','randn_state_20260901_225233.txt'));  % read in from stored file
+        %~ fprintf('Setting seed to:\n');
+        %~ tmp_state
+        %~ randn ("state", tmp_state)
+        %~ randn_matrix = randn(mc,dim);
+        
+        %~ % save used seed:
+        %~ v = randn ("state");
+		%~ seed_dir = strcat (path_static, '/seed/');
+		%~ if (~exist (seed_dir, 'dir'))
+		  %~ mkdir (seed_dir);
+		%~ end
+		%~ fname = strcat (seed_dir, 'randn_state_', datestr (now (), 'yyyymmdd_HHMMSS'), '.txt');
+		%~ fprintf('scenario_generation_MC: exporting seed to %s.\n',fname);
+		%~ fid = fopen (fname, 'w');
+		%~ fprintf (fid, '%.20g\n', v);
+		%~ fclose (fid);
+        
     else
         % generate Sobol numbers
         sobol_seed = max(sobol_seed,1); % minimum Sobol seed = 1: first Sobol numbers 0.5

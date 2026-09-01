@@ -272,6 +272,11 @@ elseif (strcmpi(type,'latex'))
 			repstruct.aa_cell = aa_cell;
 			repstruct.aa_sa = aa_sa;
 			repstruct.aa_decomp = aa_decomp;
+
+			% symmetric-adjustment shock vs. exposure movement bridge table
+			% (Gold/REIT/Equity/Crypto): must run after repstruct.aa_cell /
+			% aa_exposure / aa_sa above are populated.
+			retcode = print_sym_adj_shock_movements(obj,repstruct,para_object,path_reports);
 		  % plot currency decomposition
 		  elseif strcmpi(tmp_aggr_key_name,'currency')
 			fprintf(fild,'\\\hline ');

@@ -295,6 +295,12 @@ riskfactor_struct=struct();
 % up as a row/column at all).
 all_riskfactor_ids = {riskfactor_struct.id};
 
+% append today's calibrated std for the symmetric-adjustment-driven risk
+% factors (Gold/REIT/Equity/Crypto) to a small rolling history file, so
+% print_sym_adj_shock_movements (called later from Position.print_report)
+% can measure the relative shock-size movement since the last run.
+retcode = update_riskfactor_std_history(riskfactor_struct,path_static,para_object.valuation_date);
+
 % 3. Processing Positions data
 portfolio_struct=struct();
 [portfolio_struct id_failed_cell positions_cell port_obj_struct] = load_positions(portfolio_struct, ...
