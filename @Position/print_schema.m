@@ -312,7 +312,7 @@ if (strcmpi(type,'yaml'))
 		  % plot currency decomposition
 		  elseif strcmpi(tmp_aggr_key_name,'currency')
 			fprintf(yaml, '    - aggregation_key: "Currency"\n');
-			fprintf(yaml, '      contributions:"\n');
+			fprintf(yaml, '      contributions:\n');
 			%fprintf(fild, '\\\hline Currency \& Basevalue \& Pct. \& Standalone VaR \& Decomp VaR\& Pct.\\\\\\hline\n');
 			devation_sum = 0;
 			risk_impact_sum = 0;

@@ -656,6 +656,9 @@ function [entity_country_map] = get_entity_country_map()
         'Pensionskasse der Deutschen Wirtschaft', 'DE';  % Germany
         'Deutsche Beamtenkasse',                'DE';  % Germany
         'Allianz',                              'DE';  % Germany
+        'Deutsche Rentenversicherung',          'DE';  % Germany
+        'Deutsche Kreditbank',                  'DE';  % Germany
+        'JohnsonMatthey',                       'UK';  % United Kingdom
         'Wallet',                               'XX';  % Crypto/Self-custody (no jurisdiction)
         'Physical',                             'XX';  % Physical assets (no jurisdiction)
         
